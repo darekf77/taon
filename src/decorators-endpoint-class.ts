@@ -193,7 +193,10 @@ export function init(host: string, app = undefined, socket = undefined) {
             notFound.forEach(ctrl => {
                 console.error(`Decorator "@ENDPOINT(..)" is missing on class ${ctrl.name}`);
             });
+            providers.forEach(p => AngularProviders.push(p))
             return providers;
         }
     }
 }
+
+export const AngularProviders = [];
