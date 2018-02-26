@@ -1,6 +1,6 @@
 {
   "name": "morphi",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Isomorphic solution for expressjs and angular5",
   "main": "index.js",
   "scripts": {
