@@ -1,5 +1,5 @@
 
-//#region backend
+//#region @backend
 import { Response, Request, NextFunction, RequestHandler } from "express";
 //#endregion
 
@@ -23,17 +23,17 @@ export type ParamType = 'Path' | 'Query' | 'Cookie' | 'Header' | 'Body';
 export type ContextENDPOINT = { target: Function; initFN: Function; };
 
 export interface GlobalVars {
-    app: any;
-    socket: any;
-    endpoints: ContextENDPOINT[],
-    entities: Function[];
-    connection: Connection;
-    base_controllers: Function[];
+  app: any;
+  socket: any;
+  endpoints: ContextENDPOINT[],
+  entities: Function[];
+  connection: Connection;
+  base_controllers: Function[];
 };
 
 export function getExpressPath(c: ClassConfig, pathOrClassConfig: MethodConfig | string) {
-    if (typeof pathOrClassConfig === 'string') return `${c.basePath}${pathOrClassConfig}`.replace(/\/$/, '')
-    return `${c.basePath}${pathOrClassConfig.path}`.replace(/\/$/, '')
+  if (typeof pathOrClassConfig === 'string') return `${c.basePath}${pathOrClassConfig}`.replace(/\/$/, '')
+  return `${c.basePath}${pathOrClassConfig.path}`.replace(/\/$/, '')
 }
 
 // export function getExpressPath(basePath: string, path: string, a =) {
@@ -42,30 +42,32 @@ export function getExpressPath(c: ClassConfig, pathOrClassConfig: MethodConfig |
 
 
 export class ParamConfig {
-    name: string;
-    paramType: ParamType;
-    index: number;
-    defaultType: any;
-    expireInSeconds?: number;
+  name: string;
+  paramType: ParamType;
+  index: number;
+  defaultType: any;
+  expireInSeconds?: number;
 }
 
 export class MethodConfig {
-    name: string;
-    path: string;
-    descriptor: PropertyDescriptor;
-    type: HttpMethod;
-    realtimeUpdate: boolean;
-    requestHandler: RequestHandler;
-    parameters: { [paramName: string]: ParamConfig } = {};
+  name: string;
+  path: string;
+  descriptor: PropertyDescriptor;
+  type: HttpMethod;
+  realtimeUpdate: boolean;
+  //#region @backend
+  requestHandler: RequestHandler;
+  //#endregion
+  parameters: { [paramName: string]: ParamConfig } = {};
 }
 
 
 export class ClassConfig {
-    singleton: Object = {};
-    injections: { getter: Function, propertyName: string; }[] = [];
-    basePath: string;
-    name: string;
-    methods: { [methodName: string]: MethodConfig } = {};
+  singleton: Object = {};
+  injections: { getter: Function, propertyName: string; }[] = [];
+  basePath: string;
+  name: string;
+  methods: { [methodName: string]: MethodConfig } = {};
 }
 
 import { Response as ExpressResponse, Request as ExpressRequest } from "express";
@@ -75,43 +77,45 @@ export type SyncResponse<T> = string | T;
 export type MixResponse<T> = SyncResponse<T> | ExpressContext<T>;
 
 export interface ClientAction<T> {
-    received?: PromiseObservableMix<HttpResponse<T>>;
+  received?: PromiseObservableMix<HttpResponse<T>>;
 }
 
 export interface __Response<T> {
-    send?: MixResponse<T>;
+  send?: MixResponse<T>;
 }
 
 export interface AsyncResponse<T> {
-    (req?: ExpressRequest, res?: ExpressResponse): Promise<SyncResponse<T>>;
+  (req?: ExpressRequest, res?: ExpressResponse): Promise<SyncResponse<T>>;
 }
 
 export type Response<T=string> = (__Response<T> | AsyncResponse<T>) & ClientAction<T> & __Response<T>;
 
 export class Errors {
 
-    public toString = (): string => {
-        return this.message
-    }
+  public toString = (): string => {
+    return this.message
+  }
 
-    private constructor(public message: string, private code: HttpCode = 400) {
+  private constructor(public message: string, private code: HttpCode = 400) {
 
-    }
+  }
 
-    private static create(message: string, code: HttpCode = 400) {
-        return new Errors(message, code);
-    }
+  private static create(message: string, code: HttpCode = 400) {
+    return new Errors(message, code);
+  }
 
-    public static entityNotFound(entity?: Function) {
-        return Errors.create(`Entity ${entity.name} not found`);
-    }
+  public static entityNotFound(entity?: Function) {
+    return Errors.create(`Entity ${entity.name} not found`);
+  }
 
-    public static custom(message: string, code: HttpCode = 400) {
-        return Errors.create(message, code);
-    }
+  public static custom(message: string, code: HttpCode = 400) {
+    return Errors.create(message, code);
+  }
 
 }
 
+//#region @backend
 export interface AuthCallBack {
-    (methodReference: Function): RequestHandler;
+  (methodReference: Function): RequestHandler;
 }
+//#endregion

@@ -31,7 +31,7 @@ export abstract class BaseCRUD<T>  {
 
     constructor() {
         console.log('Perfect')
-        //#region backend
+        //#region @backendFunc
         if (isNode && this.entity) {
             this.repo = this.connection.getRepository(this.entity as any)
         }
@@ -40,7 +40,7 @@ export abstract class BaseCRUD<T>  {
 
     @GET(`/${model}`)
     getAll(): Response<T[]> {
-        //#region backend
+        //#region @backendFunc
         return async () => {
             const models = await this.repo.find();
             return models;
@@ -50,7 +50,7 @@ export abstract class BaseCRUD<T>  {
 
     @GET(`/${model}/:id`)
     getBy( @PathParam(`id`) id: number): Response<T> {
-        //#region backend
+        //#region @backendFunc
         return async () => {
             const model = await this.repo.findOneById(id)
             return model;
@@ -60,7 +60,7 @@ export abstract class BaseCRUD<T>  {
 
     @PUT(`/${model}/:id`)
     updateById( @PathParam(`id`) id: number, @BodyParam() item: T): Response<T> {
-        //#region backend
+        //#region @backendFunc
         return async () => {
             await this.repo.updateById(id, item);
             return await this.repo.findOneById(id)
@@ -70,7 +70,7 @@ export abstract class BaseCRUD<T>  {
 
     @POST(`/${model}`)
     create( @BodyParam() item: T): Response<T> {
-        //#region backend
+        //#region @backendFunc
         return async () => {
             const model = await this.repo.create(item)
             return model;
