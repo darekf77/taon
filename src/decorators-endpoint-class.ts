@@ -1,10 +1,9 @@
-//#region  imports
 import {
   ClassConfig, MethodConfig, ParamConfig, ParamType,
   CLASS_META_CONFIG, Response, isNode, isBrowser,
   METHOD_DECORATOR, getExpressPath, GlobalVars,
   CLASS_DECORATOR_CONTEXT, ContextENDPOINT,
-  //#region backend
+  //#region @backend
   AuthCallBack
   //#endregion
 } from "./models";
@@ -35,11 +34,9 @@ if (isNode) {
 }
 
 if (isBrowser) {
-  var { initEntities } = require("ng2-rest/browser");
+  var { initEntities } = require("ng2-rest");
 }
 
-
-//#endregion
 
 export { Connection } from "typeorm";
 export function OrmConnection(target: Object, propertyName: string) {
@@ -70,7 +67,13 @@ export type BaseLevelPath = (previousPath: string[]) => string;
 
 
 
-export function ENDPOINT(options?: { path?: string | BaseLevelPath, auth?: AuthCallBack }) {
+export function ENDPOINT(options?: {
+  path?: string | BaseLevelPath,
+  auth?
+  //#region @backend
+  : AuthCallBack
+  //#endregion
+}) {
   return function (target: Function) {
     const { path, auth } = options ? options : {} as any;
     const initFN = (function (target, path, auth) {
@@ -93,7 +96,7 @@ export function ENDPOINT(options?: { path?: string | BaseLevelPath, auth?: AuthC
           const type: HttpMethod = m.type;
           const expressPath = getExpressPath(c, m);
           if (isNode) {
-            //#region backend
+            //#region @backend
             if (checkAuthFn) {
               m.requestHandler = auth(m.descriptor.value);
             }

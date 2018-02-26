@@ -17,7 +17,7 @@ if (isNode) {
   var errorHandler = require('errorhandler');
   var cookieParser = require('cookie-parser')
   var methodOverride = require('method-override');
-  var { decode } = require('ng2-rest/browser');
+  var { decode } = require('ng2-rest');
   //#endregion
 }
 
@@ -63,7 +63,7 @@ export function initMidleware(global: GlobalVars) {
 export function initMethodNodejs(
   gb: GlobalVars, type: HttpMethod,
   m: MethodConfig, c: ClassConfig, expressPath) {
-
+  //#region @backendFunc
   const requestHandler = (m.requestHandler && typeof m.requestHandler === 'function')
     ? m.requestHandler : (req, res, next) => { next() };
 
@@ -122,4 +122,5 @@ export function initMethodNodejs(
     }
 
   })
+  //#endregion
 }

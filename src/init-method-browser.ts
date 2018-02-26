@@ -10,7 +10,7 @@ declare var require: any;
 import { tryTransformParam } from "./helpers";
 
 if (isBrowser) {
-    var { Resource } = require("ng2-rest/browser");
+    var { Resource } = require("ng2-rest");
     var io = require('socket.io-client');
 }
 
