@@ -5,11 +5,15 @@
         "**/.hg": true,
         "**/CVS": true,
         "**/.DS_Store": true,
-        // "index.*": true,
-        // "client.*": true,
-        // "dist": true,
-        // "bundle": true,
-        "node_modules": true
+        "index.*": true,
+        "client.*": true,
+        "dist": true,
+        "bundle": true,
+        "tmp*": true,
+        "browser": true,
+        "node_modules": true,
+        "tsconfig.*": true,
+        "tslint.*": true
     },
     "workbench.colorCustomizations": {
         "activityBar.background": "#8b31d4"
