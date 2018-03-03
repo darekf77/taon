@@ -1,3 +1,4 @@
 #!/usr/bin/env node
 
-consle.log('morphi)
+var run = require('../dist/build-tool/index.js').run;
+run(process.argv);
