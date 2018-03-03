@@ -5,7 +5,7 @@
   "command": "tnp",
   "isShellCommand": true,
   "args": [
-    "task:start"
+    "npm-run webpack-dev-server --port=4200"
   ],
   "showOutput": "always"
 }

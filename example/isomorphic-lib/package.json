@@ -3,6 +3,10 @@
     "version": "0.0.0",
     "license": "UNLICENSED",
     "main": "index.js",
+    "scripts": {
+        "preinstall": "morphi ln ../node_modules .",
+        "postinstall": "morphi ln ../isomorphic-lib ../node_modules"
+    },
     "tnp": {
         "type": "isomorphic-lib",
         "resources": [

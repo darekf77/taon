@@ -5,7 +5,7 @@
     "command": "tnp",
     "isShellCommand": true,
     "args": [
-        "task:start"
+        "watch \"morphi build\" src"
     ],
     "showOutput": "always"
 }

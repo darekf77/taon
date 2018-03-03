@@ -8,6 +8,9 @@
       "README.md"
     ]
   },
+  "scripts": {
+    "preinstall": "npm-run rimraf node_modules/isomorphic-lib"
+  },
   "dependencies": {
     "@angular-devkit/build-optimizer": "^0.3.1",
     "@angular-devkit/schematics": "^0.0.42",
@@ -35,7 +38,6 @@
     "@types/password-hash": "^1.2.19",
     "@types/q": "^1.0.3",
     "@types/validator": "^6.2.2",
-    "angular-lib": "file:angular-lib",
     "babel-preset-env": "^1.6.1",
     "bcrypt": "^1.0.3",
     "core-js": "2.5.3",
@@ -45,7 +47,6 @@
     "gulp": "^3.9.1",
     "gulp-inline-ng2-template": "^4.1.0",
     "hammerjs": "^2.0.8",
-    "isomorphic-lib": "file:isomorphic-lib",
     "lodash": "4.17.4",
     "morphi": "0.0.8",
     "ng2-logger": "^2.0.35",
