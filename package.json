@@ -14,6 +14,9 @@
       "README.md"
     ]
   },
+  "bin": {
+    "morphi": "bin/morphi"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/darekf77/morphi.git"
