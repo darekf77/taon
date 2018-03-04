@@ -1,12 +1,15 @@
 {
-    "name": "isomorphic-lib",
-    "version": "0.0.0",
-    "license": "UNLICENSED",
-    "main": "index.js",
-    "tnp": {
-        "type": "isomorphic-lib",
-        "resources": [
-            "README.md"
-        ]
-    }
+  "name": "isomorphic-lib",
+  "version": "0.0.0",
+  "license": "UNLICENSED",
+  "main": "index.js",
+  "tnp": {
+    "type": "isomorphic-lib",
+    "resources": [
+      "README.md"
+    ]
+  },
+  "scripts": {
+    "build:watch": "watch \"morphi build\" src"
+  }
 }
