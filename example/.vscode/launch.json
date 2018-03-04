@@ -1,22 +1,16 @@
 {
   "version": "0.2.0",
   "configurations": [
-    // {
-    //   "type": "node",
-    //   "request": "launch",
-    //   "name": "Launch Program",
-    //   "program": "${workspaceFolder}/dist/run.js"
-    // },
     {
       "type": "node",
       "request": "launch",
-      "remoteRoot": "${workspaceRoot}/dist",
+      "remoteRoot": "${workspaceRoot}/isomorphic-lib/dist",
       "name": "Lanuch nodemon debugger",
       "runtimeExecutable": "npm-run",
       "runtimeArgs": [
         "nodemon"
       ],
-      "program": "${workspaceFolder}/dist/run.js",
+      "program": "${workspaceFolder}/isomorphic-lib/dist/run.js",
       "restart": true,
       "sourceMaps": true,
       "console": "internalConsole",

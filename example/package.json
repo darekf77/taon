@@ -2,25 +2,23 @@
   "name": "workspace",
   "version": "0.0.0",
   "license": "UNLICENSED",
-  "tnp": {
-    "type": "workspace",
-    "resources": [
-      "README.md"
-    ]
-  },
   "scripts": {
+    "b:w:angular-client": "cd angular-client && npm run build:watch",
+    "b:w:isomorphic-lib": "cd isomorphic-lib && npm run build:watch",
+    "build:watch": "npm-run concurrently  --allow-restart \"npm run b:w:isomorphic-lib\" \"npm run b:w:angular-client\"",
     "clean": "rimraf node_modules/isomorphic-lib && npm run rm:nm",
+    "clear": "npm run clean",
     "preinstall": "npm run clean",
-    "link:nm:isomorphic-lib": "morphi ln node_modules isomorphic-lib/",
-    "link:pkg:isomorphic-lib": "morphi ln isomorphic-lib node_modules/",
-    "link:nm:angular-client": "morphi ln node_modules angular-client/",
-    "rm:nm:isomorphic-lib": "rimraf isomorphic-lib/node_modules",
-    "rm:nm:angular-client": "rimraf angular-client/node_modules",
-    "rm:nm": "npm run rm:nm:isomorphic-lib && npm run rm:nm:angular-client",
-    "link:nm": "npm run link:nm:isomorphic-lib && npm run link:nm:angular-client",
-    "link:pkg": "npm run link:pkg:isomorphic-lib",
+    "postinstall": "npm run link",
     "link": "npm run link:nm && npm run link:pkg",
-    "postinstall": "npm run link"
+    "link:nm": "npm run link:nm:isomorphic-lib && npm run link:nm:angular-client",
+    "link:nm:angular-client": "morphi ln node_modules angular-client/",
+    "link:nm:isomorphic-lib": "morphi ln node_modules isomorphic-lib/",
+    "link:pkg": "npm run link:pkg:isomorphic-lib",
+    "link:pkg:isomorphic-lib": "morphi ln isomorphic-lib node_modules/",
+    "rm:nm": "npm run rm:nm:isomorphic-lib && npm run rm:nm:angular-client",
+    "rm:nm:angular-client": "rimraf angular-client/node_modules",
+    "rm:nm:isomorphic-lib": "rimraf isomorphic-lib/node_modules"
   },
   "dependencies": {
     "@angular-devkit/build-optimizer": "^0.3.1",
@@ -87,6 +85,7 @@
     "chai": "^4.1.2",
     "circular-dependency-plugin": "^4.2.1",
     "codelyzer": "^4.0.2",
+    "concurrently": "^3.5.1",
     "copy-webpack-plugin": "^4.1.1",
     "cpr": "^3.0.0",
     "css-loader": "^0.28.1",
@@ -124,11 +123,18 @@
     "typescript": "2.6.2",
     "uglifyjs-webpack-plugin": "~1.1.2",
     "url-loader": "^0.6.2",
+    "watch": "^1.0.2",
     "webpack": "3.10.0",
     "webpack-dev-server": "~2.9.3"
   },
   "engines": {
     "node": ">=9.2.0",
     "npm": ">=5.6.0"
+  },
+  "tnp": {
+    "type": "workspace",
+    "resources": [
+      "README.md"
+    ]
   }
 }

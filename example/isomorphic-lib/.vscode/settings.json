@@ -12,7 +12,7 @@
     "backend.*": true,
     "dist": true,
     "bundle": true,
-    "tmp*": true,
+    "tmp-src": true,
     ".gitignore": true,
     ".npmignore": true,
     ".npmrc": true,
@@ -20,7 +20,7 @@
     ".editorconfig": true,
     "node_modules": true,
     "tslint.*": true,
-    "browser": true
+    // "browser": true
   },
   "workbench.colorCustomizations": {
     "activityBar.background": "#3186d4"
