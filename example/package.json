@@ -9,7 +9,16 @@
     ]
   },
   "scripts": {
-    "preinstall": "npm-run rimraf node_modules/isomorphic-lib"
+    "preinstall": "rimraf node_modules/isomorphic-lib && npm run rm:nm",
+    "link:nm:isomophic-lib": "morphi ln node_modules isomorphic-lib/",
+    "link:pkg:isomophic-lib": "morphi ln isomorphic-lib node_modules/",
+    "link:nm:angular-client": "morphi ln node_modules angular-client/",
+    "rm:nm:isomophic-lib": "rimraf isomophic-lib/node_modules",
+    "rm:nm:angular-client": "rimraf angular-client/node_modules",
+    "rm:nm": "npm run rm:nm:isomophic-lib && npm run rm:nm:angular-client",
+    "link:nm": "npm run link:nm:isomophic-lib && npm run link:nm:angular-client",
+    "link:pkg": "npm run link:pkg:isomophic-lib",
+    "postinstall": "npm run link:nm && npm run link:pkg"
   },
   "dependencies": {
     "@angular-devkit/build-optimizer": "^0.3.1",
