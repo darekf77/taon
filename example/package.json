@@ -9,16 +9,18 @@
     ]
   },
   "scripts": {
-    "preinstall": "rimraf node_modules/isomorphic-lib && npm run rm:nm",
-    "link:nm:isomophic-lib": "morphi ln node_modules isomorphic-lib/",
-    "link:pkg:isomophic-lib": "morphi ln isomorphic-lib node_modules/",
+    "clean": "rimraf node_modules/isomorphic-lib && npm run rm:nm",
+    "preinstall": "npm run clean",
+    "link:nm:isomorphic-lib": "morphi ln node_modules isomorphic-lib/",
+    "link:pkg:isomorphic-lib": "morphi ln isomorphic-lib node_modules/",
     "link:nm:angular-client": "morphi ln node_modules angular-client/",
-    "rm:nm:isomophic-lib": "rimraf isomophic-lib/node_modules",
+    "rm:nm:isomorphic-lib": "rimraf isomorphic-lib/node_modules",
     "rm:nm:angular-client": "rimraf angular-client/node_modules",
-    "rm:nm": "npm run rm:nm:isomophic-lib && npm run rm:nm:angular-client",
-    "link:nm": "npm run link:nm:isomophic-lib && npm run link:nm:angular-client",
-    "link:pkg": "npm run link:pkg:isomophic-lib",
-    "postinstall": "npm run link:nm && npm run link:pkg"
+    "rm:nm": "npm run rm:nm:isomorphic-lib && npm run rm:nm:angular-client",
+    "link:nm": "npm run link:nm:isomorphic-lib && npm run link:nm:angular-client",
+    "link:pkg": "npm run link:pkg:isomorphic-lib",
+    "link": "npm run link:nm && npm run link:pkg",
+    "postinstall": "npm run link"
   },
   "dependencies": {
     "@angular-devkit/build-optimizer": "^0.3.1",
@@ -60,6 +62,7 @@
     "morphi": "0.0.8",
     "ng2-logger": "^2.0.35",
     "ng2-rest": "^9.0.10",
+    "ngx-bootstrap": "^2.0.2",
     "node-sass": "^4.7.2",
     "passport": "^0.3.2",
     "passport-http-bearer": "^1.0.1",

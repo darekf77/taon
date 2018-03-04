@@ -23,8 +23,7 @@ init('http://localhost:4000')
 
 @NgModule({
   declarations: [
-    AppComponent,
-    LoginComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,

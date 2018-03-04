@@ -1,21 +1,32 @@
-<ng-template #loader>
-  <p>
-    login works!
+<form>
+
+
+  <div class="form-group">
+    <label for=""></label>
     <input type="text"
+           class="form-control"
            [(ngModel)]="model.username"
+           [ngModelOptions]="{standalone: true}"
            placeholder="Username or email" />
+    <small id="helpId"
+           class="text-muted">Try: admin</small>
+  </div>
+  <div class="form-group">
+    <label for=""></label>
     <input type="text"
+           class="form-control"
            [(ngModel)]="model.password"
+           [ngModelOptions]="{standalone: true}"
            placeholder="Password" />
-    <button (click)="login(model)"> Login </button>
-    <button (click)="info()"> info </button>
-  </p>
-</ng-template>
+    <small id="helpId"
+           class="text-muted">Try: admin</small>
+  </div>
 
-
-<div *ngIf="observable.isLoggedIn | async;else loader; let authOK">
-  <h1> Is Logged in ? {{authOK}} </h1>
-  <button (click)="logout()"> logout</button>
-  <button (click)="info()"> info </button>
   <br>
-</div>
+  <a (click)="login(model)"
+     class="btn btn-primary"
+     href="#"
+     role="button">Login</a>
+
+
+</form>

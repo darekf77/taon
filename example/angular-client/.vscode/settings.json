@@ -1,0 +1,36 @@
+{
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "node_modules": true,
+    "index.*": true,
+    "dist": true,
+    "tmp": true,
+    "e2e": true,
+    "tslint.json": true,
+    ".editorconfig": true,
+    "protractor.conf.js": true,
+    "karma.conf.js": true,
+    "bin": true,
+    ".gitignore": true,
+    ".npmignore": true,
+    ".npmrc": true,
+    "tsconfig.*": true,
+    "webpack.*": true
+  },
+  "workbench.colorCustomizations": {
+    "activityBar.background": "#da5a5a",
+    "activityBar.foreground": "#313129"
+  },
+  "editor.rulers": [
+    100,
+    120
+  ],
+  "html.format.wrapAttributes": "force-aligned",
+  "workbench.colorTheme": "Default Light+",
+  "tslint.autoFixOnSave": true,
+  "tslint.enable": true
+}

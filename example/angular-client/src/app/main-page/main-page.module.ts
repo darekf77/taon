@@ -2,16 +2,17 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AppMainPageComponent } from './main-page.component';
 import { FormsModule } from '@angular/forms';
+import { AccordionModule, ModalModule } from "ngx-bootstrap";
 
-// import { MyLibModule } from 'angular-lib';
 import { Routes, RouterModule } from '@angular/router';
+import { LoginComponent } from '../login/login.component';
 
 
 export const routes: Routes = [
   {
-      path: '',
-      pathMatch: 'prefix',
-      component: AppMainPageComponent
+    path: '',
+    pathMatch: 'prefix',
+    component: AppMainPageComponent
   },
 ];
 
@@ -20,8 +21,10 @@ export const routes: Routes = [
     CommonModule,
     FormsModule,
     RouterModule.forChild(routes),
-    // MyLibModule.forRoot()
+    AccordionModule.forRoot(),
+    ModalModule.forRoot()
   ],
-  declarations: [AppMainPageComponent]
+  declarations: [AppMainPageComponent, LoginComponent],
+  exports: [LoginComponent]
 })
 export class AppMainPageModule { }

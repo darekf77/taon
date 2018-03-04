@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap';
+import { AuthController } from 'isomorphic-lib/browser';
 
 @Component({
   selector: 'app-main-page',
@@ -8,10 +10,24 @@ import { Component, OnInit } from '@angular/core';
 export class AppMainPageComponent implements OnInit {
 
 
-  constructor( ) { }
+  modalRef: BsModalRef;
+  constructor(private modalService: BsModalService, public auth: AuthController) { }
+
+  openModal(template: TemplateRef<any>) {
+    console.log('open!!!')
+    this.modalRef = this.modalService.show(template);
+  }
+
+  getAppHeight() {
+    return window.outerHeight;
+  }
 
   ngOnInit(): void {
-
+    this.auth.isLoggedIn.subscribe(d => {
+      if (this.modalRef) {
+        this.modalRef.hide()
+      }
+    })
   }
 
 }
