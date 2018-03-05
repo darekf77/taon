@@ -1,6 +1,6 @@
 {
   "name": "morphi",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Isomorphic solution for expressjs and angular5",
   "main": "index.js",
   "scripts": {
@@ -12,7 +12,10 @@
   "tnp": {
     "type": "isomorphic-lib",
     "resources": [
-      "README.md"
+      "README.md",
+      "example",
+      "logo_github.png",
+      "logo.png"
     ]
   },
   "bin": {
@@ -45,7 +48,7 @@
     "json5": "^0.5.1",
     "lodash": "^4.17.4",
     "method-override": "^2.3.10",
-    "ng2-rest": "^9.0.10",
+    "ng2-rest": "^9.0.11",
     "reflect-metadata": "^0.1.10",
     "rxjs": "^5.5.2",
     "socket.io": "^2.0.4",

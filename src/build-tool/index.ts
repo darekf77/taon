@@ -1,9 +1,9 @@
 import * as child from 'child_process';
-import * as dateformat from "dateformat";
+
 import * as path from 'path';
 
 import { Helpers } from './helpers';
-import { buildIsomorphicVersion } from "./build";
+import { buildIsomorphic } from "./build";
 import { copyExampleTo } from './new';
 
 export * from './helpers';
@@ -16,16 +16,7 @@ export function run(argsv: string[]) {
 
 
     if (commandName === 'build') {
-      const date = `[${dateformat(new Date(), 'HH:MM:ss')}]`;
-      try {
-        console.log(`${date} Building server/browser version of ${path.basename(process.cwd())}...`)
-        buildIsomorphicVersion();
-        console.log(`${date} Typescript compilation OK`)
-      } catch (error) {
-        console.error(`${date} Typescript compilation ERROR`)
-        process.exit(0)
-      }
-
+        buildIsomorphic();
     } else if (commandName === 'ln') {
       if (!Array.isArray(argsv) || argsv.length < 2) {
         console.log(`To few arguments for linking function...`);

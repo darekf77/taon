@@ -5,6 +5,7 @@ import * as child from 'child_process';
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import * as glob from "glob";
+import * as dateformat from "dateformat";
 
 import { IsomorphicRegions } from './isomorphic';
 
@@ -20,12 +21,29 @@ export interface BuildPathes {
     cpr: string;
     mkdirp: string;
   };
+  build?: {
+    forNPMlink?: boolean;
+    withoutBackend?: boolean;
+  }
   onlyMainIndex?: boolean;
 }
 
-export function buildIsomorphicVersion(options?: BuildPathes) {
+export function buildIsomorphic(options?: BuildPathes) {
+  const date = `[${dateformat(new Date(), 'HH:MM:ss')}]`;
+  try {
+    console.log(`${date} Building server/browser version of ${path.basename(process.cwd())}...`)
+    buildIsomorphicVersion(options);
+    console.log(`${date} Typescript compilation OK`)
+  } catch (error) {
+    console.error(`${date} Typescript compilation ERROR`)
+    process.exit(0)
+  }
+}
+
+
+function buildIsomorphicVersion(options?: BuildPathes) {
   if (!options) options = {} as any;
-  const { foldersPathes = {}, toolsPathes = {} } = options;
+  const { foldersPathes = {}, toolsPathes = {}, build = {} } = options;
   const FOLDER = _.merge({
     dist: 'dist',
     browser: 'browser',
@@ -41,9 +59,15 @@ export function buildIsomorphicVersion(options?: BuildPathes) {
     cpr: 'npm-run cpr',
     mkdirp: 'npm-run mkdirp'
   }, toolsPathes);
+  const BUILD = _.merge({
+    forNPMlink: true,
+    withoutBackend: false
+  }, build);
 
-  child.execSync(`${TOOLS.rimraf} ${FOLDER.dist}`)
-  child.execSync(`${TOOLS.tsc} --outDir ${FOLDER.dist}`, { stdio: [0, 1, 2] })
+  if (!BUILD.withoutBackend) {
+    child.execSync(`${TOOLS.rimraf} ${FOLDER.dist}`)
+    child.execSync(`${TOOLS.tsc} --outDir ${FOLDER.dist}`, { stdio: [0, 1, 2] })
+  }
   child.execSync(`${TOOLS.rimraf} ${FOLDER.browser}  ${FOLDER.tmpSrc}`)
   child.execSync(`${TOOLS.mkdirp} ${FOLDER.tmpSrc}`)
   child.execSync(`${TOOLS.cpr} src/ ${FOLDER.tmpSrc} --overwrite`)
@@ -54,6 +78,8 @@ export function buildIsomorphicVersion(options?: BuildPathes) {
     IsomorphicRegions.deleteFrom(f);
   })
   child.execSync(`${TOOLS.tsc} --outDir ../${FOLDER.dist}/${FOLDER.browser}`, { stdio: [0, 1, 2], cwd: tempSrc })
-  child.execSync(`${TOOLS.cpr} ${FOLDER.dist}/${FOLDER.browser} ${FOLDER.browser} --overwrite`)
+  if (BUILD.forNPMlink) {
+    child.execSync(`${TOOLS.cpr} ${FOLDER.dist}/${FOLDER.browser} ${FOLDER.browser} --overwrite`)
+  }
 }
 
