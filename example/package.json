@@ -90,7 +90,6 @@
     "@types/chai": "^4.1.2",
     "@types/jasmine": "~2.8.0",
     "@types/jasminewd2": "~2.0.2",
-    "@types/mocha": "^2.2.47",
     "autoprefixer": "^6.5.3",
     "babel-cli": "^6.26.0",
     "chai": "^4.1.2",
