@@ -1,4 +1,9 @@
 #!/usr/bin/env node
-
-var run = require('../dist/build-tool/index.js').run;
+var fs = require('fs')
+var path = {
+  dist: '../dist/build-tool/index.js',
+  bundle: '../build-tool/index.js'
+}
+var p = fs.existsSync(path.dist) ? path.dist : path.bundle;
+var run = require(p).run;
 run(process.argv);
