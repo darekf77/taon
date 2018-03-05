@@ -1,11 +1,6 @@
 
 import { Repository, Connection } from 'typeorm';
-
-import {
-    Controllers, Entities, TestUser
-} from '../index';
-
-
+import { TestUser } from '../entities/examples/User';
 
 
 export class MockData {

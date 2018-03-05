@@ -1,6 +1,6 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
-import { AuthController } from 'isomorphic-lib/browser';
+import { AuthController } from 'isomorphic-lib/browser/controllers/AuthController';
 
 @Component({
   selector: 'app-main-page',

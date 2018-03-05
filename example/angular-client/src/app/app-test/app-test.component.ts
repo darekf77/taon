@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  HelloController, UsersController, TestController,
-  ParentClass, ChildClass, ChildClass2
-} from 'isomorphic-lib/browser';
+import { HelloController } from "isomorphic-lib/browser/controllers/examples/HelloController";
+import { TestController } from "isomorphic-lib/browser/controllers/examples/TestController";
+import { UsersController } from "isomorphic-lib/browser/controllers/examples/UsersController";
+import { ParentClass } from "isomorphic-lib/browser/controllers/examples/ParentControllers";
+import { ChildClass } from "isomorphic-lib/browser/controllers/examples/Child1Controller";
+import { ChildClass2 } from "isomorphic-lib/browser/controllers/examples/Child2Controller";
 
 @Component({
   selector: 'app-app-test',

@@ -25,7 +25,7 @@ export interface BuildPathes {
 
 export function buildIsomorphicVersion(options?: BuildPathes) {
   if (!options) options = {} as any;
-  const { foldersPathes = {}, toolsPathes = {}, onlyMainIndex = true } = options;
+  const { foldersPathes = {}, toolsPathes = {} } = options;
   const FOLDER = _.merge({
     dist: 'dist',
     browser: 'browser',
@@ -43,28 +43,17 @@ export function buildIsomorphicVersion(options?: BuildPathes) {
   }, toolsPathes);
 
   child.execSync(`${TOOLS.rimraf} ${FOLDER.dist}`)
-  child.execSync(`${TOOLS.tsc} --outDir ${FOLDER.dist}`)
+  child.execSync(`${TOOLS.tsc} --outDir ${FOLDER.dist}`, { stdio: [0, 1, 2] })
   child.execSync(`${TOOLS.rimraf} ${FOLDER.browser}  ${FOLDER.tmpSrc}`)
   child.execSync(`${TOOLS.mkdirp} ${FOLDER.tmpSrc}`)
-  child.execSync(`${TOOLS.cpr} src/ ${FOLDER.tmpSrc}`)
+  child.execSync(`${TOOLS.cpr} src/ ${FOLDER.tmpSrc} --overwrite`)
   const tempSrc = path.join(process.cwd(), `${FOLDER.tmpSrc}`);
-  if (onlyMainIndex) {
-    const folders = fs.readdirSync(tempSrc)
-    folders.forEach(f => {
-      const file = path.join(tempSrc, f);
-      // console.log(`f`, f)
-      // console.log(`file`, file)
-      if (f !== `index.ts` && !fs.lstatSync(file).isDirectory()) {
-        child.execSync(`${TOOLS.rimraf} ${file}`)
-      }
-    })
-  }
   fse.copyFileSync(`${FOLDER.tsconfig.browser}`, `${FOLDER.tmpSrc}/${FOLDER.tsconfig.default}`);
   const files = glob.sync(`./${FOLDER.tmpSrc}/**/*.ts`);
   files.forEach(f => {
     IsomorphicRegions.deleteFrom(f);
   })
-  child.execSync(`${TOOLS.tsc} --outDir ../${FOLDER.dist}/${FOLDER.browser}`, { cwd: tempSrc })
-  child.execSync(`${TOOLS.cpr} ${FOLDER.dist}/${FOLDER.browser} ${FOLDER.browser}`)
+  child.execSync(`${TOOLS.tsc} --outDir ../${FOLDER.dist}/${FOLDER.browser}`, { stdio: [0, 1, 2], cwd: tempSrc })
+  child.execSync(`${TOOLS.cpr} ${FOLDER.dist}/${FOLDER.browser} ${FOLDER.browser} --overwrite`)
 }
 
