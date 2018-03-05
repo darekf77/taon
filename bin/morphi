@@ -1,8 +1,9 @@
 #!/usr/bin/env node
+var path = require('path')
 var fs = require('fs')
 var path = {
-  dist: '../dist/build-tool/index.js',
-  bundle: '../build-tool/index.js'
+  dist: path.join(__dirname, '../dist/build-tool/index.js'),
+  bundle: path.join(__dirname, '../build-tool/index.js')
 }
 var p = fs.existsSync(path.dist) ? path.dist : path.bundle;
 var run = require(p).run;
