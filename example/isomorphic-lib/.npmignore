@@ -1,10 +1,10 @@
-.vscode
 dist/
-src/
 /scripts
 /docs
 /preview
 /tests
+/tmp*
+/browser
+/dist
 
-tsconfig.json
 npm-debug.log*
