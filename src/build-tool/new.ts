@@ -3,6 +3,7 @@ import * as fse from "fs-extra";
 import * as fs from 'fs';
 import chalk from 'chalk';
 import * as child from 'child_process';
+
 export function copyExampleTo(folder: string) {
   const options: fse.CopyOptions = {
     overwrite: true,
@@ -17,7 +18,13 @@ export function copyExampleTo(folder: string) {
     bundle: path.join(__dirname, '..', 'example')
   }
   const destinationPath = path.join(process.cwd(), folder)
-  fse.copySync(fs.existsSync(example.dist) ? example.dist : example.bundle, destinationPath, options);
+  const distMode = fs.existsSync(example.dist)
+  const sourcePath = distMode ? example.dist : example.bundle;
+  if (distMode) {
+    fse.copySync(sourcePath, destinationPath, options);
+  } else {
+    child.execSync(`npm-run cpr ${sourcePath} ${destinationPath} --owerwrite`);
+  }
   console.log(chalk.green(`Morphi example structure created sucessfully, installing npm...`));
   child.execSync('npm i', { cwd: destinationPath })
   child.execSync('code isomorphic-lib && code angular-client', { cwd: destinationPath })
