@@ -2,6 +2,8 @@ import * as child from 'child_process';
 
 import * as path from 'path';
 
+import * as fs from 'fs';
+
 import { Helpers } from './helpers';
 import { buildIsomorphic } from "./build";
 import { copyExampleTo } from './new';
@@ -12,11 +14,11 @@ export * from './build';
 export function run(argsv: string[]) {
 
   if (argsv.length >= 3) {
-    const commandName: 'build' | 'ln' | 'new' = argsv[2] as any;
+    const commandName: 'build' | 'ln' | 'new' | '-v' = argsv[2] as any;
 
 
     if (commandName === 'build') {
-        buildIsomorphic();
+      buildIsomorphic();
     } else if (commandName === 'ln') {
       if (!Array.isArray(argsv) || argsv.length < 2) {
         console.log(`To few arguments for linking function...`);
@@ -32,6 +34,8 @@ export function run(argsv: string[]) {
       }
       const name = argsv[3]
       copyExampleTo(name)
+    } else if (commandName === '-v') {
+      console.log(JSON.parse(fs.readFileSync(path.join(__dirname, '../..', 'package.json').toString(), 'utf8').toString()).version)
     }
     process.exit(0)
 

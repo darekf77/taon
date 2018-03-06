@@ -25,10 +25,14 @@ export namespace Helpers {
       if (fs.existsSync(target)) {
         fs.unlinkSync(target);
       }
+      target = path.win32.normalize(target)
+      link = path.win32.normalize(link)
+      // console.log('taget', target)
+      // console.log('link', link)
       command = "mklink \/D "
-        + path.win32.normalize(target)
+        + target
         + " "
-        + path.win32.normalize(link)
+        + link
         + " >nul 2>&1 "
       // console.log('LINK COMMAND', command)
     } else {

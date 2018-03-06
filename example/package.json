@@ -10,7 +10,6 @@
     "clean": "rimraf node_modules/isomorphic-lib && npm run rm:nm",
     "clear": "npm run clean",
     "preinstall": "npm run clean",
-    "postinstall": "npm run link",
     "link": "npm run link:nm && npm run link:pkg",
     "link:nm": "npm run link:nm:isomorphic-lib && npm run link:nm:angular-client && npm run link:nm:ionic-client",
     "link:nm:angular-client": "morphi ln node_modules angular-client/",

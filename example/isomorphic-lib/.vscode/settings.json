@@ -25,6 +25,7 @@
   "workbench.colorCustomizations": {
     "activityBar.background": "#3186d4"
   },
+  "workbench.colorTheme": "Default Light+",
   "editor.rulers": [
     100,
     120

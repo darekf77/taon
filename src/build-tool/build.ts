@@ -28,14 +28,17 @@ export interface BuildPathes {
   onlyMainIndex?: boolean;
 }
 
+function date() {
+  return `[${dateformat(new Date(), 'HH:MM:ss')}]`;
+}
+
 export function buildIsomorphic(options?: BuildPathes) {
-  const date = `[${dateformat(new Date(), 'HH:MM:ss')}]`;
   try {
-    console.log(`${date} Building server/browser version of ${path.basename(process.cwd())}...`)
+    console.log(`${date()} Building server/browser version of ${path.basename(process.cwd())}...`)
     buildIsomorphicVersion(options);
-    console.log(`${date} Typescript compilation OK`)
+    console.log(`${date()} Typescript compilation OK`)
   } catch (error) {
-    console.error(`${date} Typescript compilation ERROR`)
+    console.error(`${date()} Typescript compilation ERROR`)
     process.exit(0)
   }
 }
