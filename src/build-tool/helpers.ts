@@ -26,6 +26,9 @@ export namespace Helpers {
         fs.unlinkSync(target);
       }
       target = path.win32.normalize(target)
+      if (link === '.' || link === './') {
+        link = process.cwd()
+      }
       link = path.win32.normalize(link)
       // console.log('taget', target)
       // console.log('link', link)
