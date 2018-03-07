@@ -5,12 +5,12 @@
   "homepage": "http://ionicframework.com/",
   "private": true,
   "scripts": {
-    "clean": "ionic-app-scripts clean",
-    "build": "ionic-app-scripts build",
-    "lint": "ionic-app-scripts lint",
-    "ionic:build": "ionic-app-scripts build",
-    "ionic:serve": "ionic-app-scripts serve",
-    "build:watch": "ionic serve --no-open"
+    "clean": "npm-run ionic-app-scripts clean",
+    "build": "npm-run ionic-app-scripts build",
+    "lint": "npm-run ionic-app-scripts lint",
+    "ionic:build": "npm-run ionic-app-scripts build",
+    "ionic:serve": "npm-run ionic-app-scripts serve",
+    "build:watch": "npm-run ionic serve --no-open"
   },
   "description": "An Ionic project",
   "tnp": {

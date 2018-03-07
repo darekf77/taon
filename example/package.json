@@ -55,6 +55,7 @@
     "@types/validator": "^6.2.2",
     "babel-preset-env": "^1.6.1",
     "bcrypt": "^1.0.3",
+    "check-node-version": "^3.2.0",
     "core-js": "2.5.3",
     "cors": "^2.8.4",
     "fbgraph": "^1.4.1",
