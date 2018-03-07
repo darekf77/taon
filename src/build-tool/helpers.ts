@@ -3,6 +3,8 @@ import * as child from 'child_process';
 import * as os from 'os';
 import * as fs from 'fs';
 import chalk from 'chalk';
+import check from 'check-node-version';
+
 const commandExistsSync = require('command-exists').sync;
 
 export namespace Helpers {
@@ -38,6 +40,8 @@ export namespace Helpers {
         process.exit(0)
       }
     })
+
+    child.execSync(`npm-run check-node-version --node '>= 9.2'`, { stdio: [0, 1, 2] })
 
   }
 
