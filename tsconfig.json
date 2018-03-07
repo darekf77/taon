@@ -20,7 +20,8 @@
         "types": [
             "node"
         ],
-        "rootDir": "./src"
+        "rootDir": "./src",
+        "outDir": "dist"
     },
     "include": [
         "src/**/*"

@@ -12,7 +12,7 @@ export * from './helpers';
 export * from './build';
 
 export function run(argsv: string[]) {
-
+  Helpers.checkEnvironment()
   if (argsv.length >= 3) {
     const commandName: 'build' | 'ln' | 'new' | '-v' = argsv[2] as any;
 
