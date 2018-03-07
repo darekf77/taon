@@ -12,7 +12,13 @@ export namespace Helpers {
       npm: [
         'npm-run',
         'cpr'
-      ]
+      ],
+      programs: [
+        {
+          name: 'code',
+          website: 'https://code.visualstudio.com/'
+        }
+      ] as { name: string; website: string }[]
     }
 
     globalDependencies.npm.forEach(name => {
@@ -24,6 +30,15 @@ export namespace Helpers {
         process.exit(0)
       }
     })
+
+    globalDependencies.programs.forEach(p => {
+      if (!commandExistsSync(p.name)) {
+        console.log(chalk.red(`Missing command line tool "${p.name}".`))
+        console.log(`Please install it from: ${chalk.green(p.website)}`)
+        process.exit(0)
+      }
+    })
+
   }
 
   export function isPlainFileOrFolder(filePath) {
