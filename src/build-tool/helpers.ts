@@ -11,13 +11,14 @@ export namespace Helpers {
     const globalDependencies = {
       npm: [
         'npm-run',
-        'cpr'
+        'cpr',
+        'dupa'
       ]
     }
 
     globalDependencies.npm.forEach(name => {
       if (!commandExistsSync(name)) {
-        console.log(chalk.red(`Missing npm dependencies.aaa`))
+        console.log(chalk.red(`Missing npm dependency "${name}".`))
         const sudo = !(os.platform() === 'win32' || os.platform() === 'darwin')
         const cmd = `${sudo ? 'sudo' : ''}npm install -g ${name}`;
         console.log(`Please run: ${chalk.green(cmd)}`)
