@@ -13,8 +13,7 @@ export namespace Helpers {
     if (isPlainFileOrFolder(link)) {
       link = path.join(process.cwd(), link);
     }
-    // console.log('taget', target)
-    // console.log('link', link)
+
     let command: string;
     if (os.platform() === 'win32') {
       if (target === '.' || target === './') {
@@ -39,8 +38,12 @@ export namespace Helpers {
         + " >nul 2>&1 "
       // console.log('LINK COMMAND', command)
     } else {
+      if (link === '.' || link === './') {
+        link = process.cwd()
+      }
       command = `ln -sf "${link}" "${target}"`;
     }
+    // console.log(command)
     return command;
   }
 
