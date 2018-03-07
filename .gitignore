@@ -5,6 +5,8 @@
 /out-tsc
 bundle.umd.js
 /browser
+/.sourcemaps
+/www
 
 # dependencies
 /node_modules
