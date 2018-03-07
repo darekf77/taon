@@ -9,7 +9,7 @@ const commandExistsSync = require('command-exists').sync;
 
 export namespace Helpers {
 
-  export async function checkEnvironment() {
+  export function checkEnvironment() {
     const globalDependencies = {
       npm: [
         'npm-run',
@@ -41,7 +41,11 @@ export namespace Helpers {
       }
     })
 
-    child.execSync(`npm-run check-node-version --node '>= 9.2'`, { stdio: [0, 1, 2] })
+    try {
+      child.execSync(`npm-run check-node-version --node '>= 9.2'`, { stdio: [0, 1, 2] })
+    } catch (error) {
+      process.exit(0)
+    }
 
   }
 
