@@ -11,8 +11,7 @@ export namespace Helpers {
     const globalDependencies = {
       npm: [
         'npm-run',
-        'cpr',
-        'dupa'
+        'cpr'
       ]
     }
 

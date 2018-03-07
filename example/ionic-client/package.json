@@ -12,5 +12,8 @@
     "ionic:serve": "ionic-app-scripts serve",
     "build:watch": "ionic serve --no-open"
   },
-  "description": "An Ionic project"
+  "description": "An Ionic project",
+  "tnp": {
+    "type": "ionic-client"
+  }
 }
