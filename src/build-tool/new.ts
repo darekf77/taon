@@ -23,10 +23,10 @@ export function copyExampleTo(folder: string) {
   if (distMode) {
     fse.copySync(sourcePath, destinationPath, options);
   } else {
-    child.execSync(`npm-run cpr ${sourcePath} ${destinationPath} --owerwrite`);
+    child.execSync(`cpr ${sourcePath} ${destinationPath} --owerwrite`);
   }
   console.log(chalk.green(`Morphi example structure created sucessfully, installing npm...`));
   child.execSync('npm i', { cwd: destinationPath })
-  child.execSync('code isomorphic-lib && code angular-client', { cwd: destinationPath })
+  child.execSync('code .', { cwd: destinationPath })
   console.log(chalk.green('Done.'));
 }
