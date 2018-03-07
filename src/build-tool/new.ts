@@ -25,13 +25,14 @@ export function copyExampleTo(folder: string) {
     sourcePath = path.win32.normalize(sourcePath);
     destinationPath = path.win32.normalize(destinationPath)
   }
+  console.log(chalk.green(`Creating example structure... please wait.`));
   if (distMode) {
     fse.copySync(sourcePath, destinationPath, options);
   } else {
     child.execSync(`cpr "${sourcePath}" "${destinationPath}" --owerwrite`);
   }
-  console.log(chalk.green(`Morphi example structure created sucessfully, installing npm...`));
-  child.execSync('npm i', { cwd: destinationPath })
+  // console.log(chalk.green(`Morphi example structure created sucessfully, installing npm...`));
+  // child.execSync('npm i', { cwd: destinationPath })
   child.execSync('code .', { cwd: destinationPath })
   console.log(chalk.green('Done.'));
 }
