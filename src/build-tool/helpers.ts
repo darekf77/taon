@@ -42,7 +42,7 @@ export namespace Helpers {
     })
 
     try {
-      child.execSync(`npm-run check-node-version --node '>= 9.2'`, { stdio: [0, 1, 2] })
+      child.execSync(`npm-run check-node-version --node ">= 9.2"`, { stdio: [0, 1, 2] })
     } catch (error) {
       process.exit(0)
     }
