@@ -35,7 +35,7 @@ npm install -g morphi
 morphi new myAwesomeIsomrphicApp
 ```
 ### Visual Studio Code
-Open you project in *VSCode* to get the maximum of development experience.
+Open your project in *VSCode* to get the maximum of development experience.
 ```
 code myAwesomeIsomrphicApp
 ```
@@ -58,7 +58,10 @@ Instead of `npm run build:watch` you can also open each sub-project in separated
 and press: **ctrl(cmd) + shift + b**.
 
 # Main idea - Isomorphic TypeScript Classes
-The main reason why this framework has huge potential is that you can use your backend code ( usualy ExpressJS, REST controllers ) as Anguar 2+ services, to access your RESTfull backend.
+The main reason why this framework has huge potential is that you can use your backend code 
+( usualy ExpressJS, REST controllers ) as Anguar 2+ services, to access your RESTfull backend.
+
+This will allow you to change business login very quickly, without confusion.
 
 **Morphi CLI tool** is responsible for magic behing stripping of backend code for browser version ( web app or ionic mobile app).
 
@@ -152,7 +155,7 @@ import { Endpoint, GET } from 'morphi/browser'
 @Endpoint('/users') 
 class UserController {
 	 // 'return undefined' is for purpose on the browser side
-	 // The function body will be replaced throught decorate
+	 // The function body will be replaced through decorate
 	 // to now access REST endpoint '/users/all'
 	@GET('/all')
 	getAllUser() { return undefined; }	
@@ -198,6 +201,6 @@ Users:
 ```
 
 
-Of course Angular services can be used inside Angular web apps and Ionic framwork app. 
+Of course Angular services can be used inside Angular web and Ionic mobile apps. 
 
 
