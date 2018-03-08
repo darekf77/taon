@@ -35,6 +35,7 @@ export namespace Helpers {
       }
     })
 
+    /*
     globalDependencies.programs.forEach(p => {
       if (!commandExistsSync(p.name)) {
         console.log(chalk.red(`Missing command line tool "${p.name}".`))
@@ -42,6 +43,7 @@ export namespace Helpers {
         process.exit(0)
       }
     })
+    */
 
     try {
       child.execSync(`check-node-version --node ">= 9.2"`, { stdio: [0, 1, 2] })
