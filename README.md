@@ -7,13 +7,18 @@
   <p>
     Iso<b>morphi</b> framework in TypeScript for NodeJS back-end and browser front-end. 
     <br><br><br>
-    Do no repeat yourself anymore ! 
+   <strong > Do no repeat yourself anymore, never !!! </strong>
     <br>
     <br>
     <ul>
       <li> <strong>Isomorphic class</strong> - as Angular/Ionic Services and ExpressJS controllers. </li>
       <li><strong>One node_modules folder</strong> for browser and server and mobile </li>
       <li><strong> Write everything in typescript</strong> all the time and strip off server code for browser/ionic versions.</li>
+      <li>Use power of  <a style="color:red;" href="https://github.com/typeorm/typeorm">TypeORM</a> entities to write awesome, robust, clean backend NodeJS conected to SQLite, Mysql and many other... </li>
+      <li> <strong>Keep amazing code consistency</strong>
+        thanks to isomorphic entities classes that you can use to
+        create backend table and inside frontend template.        
+      </li>
     </ul>
   <p>
 </div>
