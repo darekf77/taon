@@ -17,7 +17,7 @@
       <li>Use power of  <a style="color:red;" href="https://github.com/typeorm/typeorm">TypeORM</a> framwork to write awesome, robust, clean NodeJS backend connected to SQLite, Mysql and many others... </li>
       <li> <strong>Keep amazing code consistency</strong>
         thanks to isomorphic entities classes, that you can use to
-        create backend tables and also inside frontend-angular templates to type-checking.        
+        create backend tables and also inside frontend-angular templates with type checking.        
       </li>
     </ul>
   <p>
