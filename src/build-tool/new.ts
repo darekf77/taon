@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import * as os from 'os';
 import chalk from 'chalk';
 import * as child from 'child_process';
+const commandExistsSync = require('command-exists').sync;
 
 export function copyExampleTo(folder: string) {
   const options: fse.CopyOptions = {
@@ -33,6 +34,9 @@ export function copyExampleTo(folder: string) {
   }
   // console.log(chalk.green(`Morphi example structure created sucessfully, installing npm...`));
   // child.execSync('npm i', { cwd: destinationPath })
-  child.execSync('code .', { cwd: destinationPath })
+
   console.log(chalk.green('Done.'));
+  if (commandExistsSync('code')) {
+    child.execSync('code .', { cwd: destinationPath })
+  }
 }
