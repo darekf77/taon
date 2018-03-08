@@ -6,6 +6,7 @@
     "thekalinga.bootstrap4-vscode",
     "robinbentley.sass-indented",
     "wcwhitehead.bootstrap-3-snippets",
-    "thekalinga.bootstrap4-vscode"
+    "thekalinga.bootstrap4-vscode",
+    "chrisdias.vscode-opennewinstance"
   ]
 }
