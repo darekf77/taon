@@ -12,6 +12,7 @@ export namespace Helpers {
   export function checkEnvironment() {
     const globalDependencies = {
       npm: [
+        'rimraf',
         'npm-run',
         'cpr',
         'check-node-version'
