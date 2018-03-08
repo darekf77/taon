@@ -185,7 +185,7 @@ and really keep you MVVM amazing.
 **app-test.html**  
 ```html
 Users:
-<ul   *ngIf="users.received.observable.allUsers() | async; else loader; let users" >
+<ul   *ngIf="users.getAllUsers().received.observable | async; else loader; let users" >
 
   <li  *ngFor="let user of users"> 
   		{{user.id}} {{user.fullName()}} 
