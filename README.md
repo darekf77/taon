@@ -14,7 +14,7 @@
       <li> <strong>Isomorphic classes</strong> as Angular/Ionic Services and ExpressJS controllers. </li>
       <li><strong>One node_modules folder</strong> for browser, mobile and server.</li>
       <li><strong> Write everything in TypeScript</strong> all the time and strip off server code for browser/ionic versions.</li>
-      <li>Use power of  <a style="color:red;" href="https://github.com/typeorm/typeorm">TypeORM</a> framwork to write awesome, robust, clean NodeJS backend connected to SQLite, Mysql and many other... </li>
+      <li>Use power of  <a style="color:red;" href="https://github.com/typeorm/typeorm">TypeORM</a> framwork to write awesome, robust, clean NodeJS backend connected to SQLite, Mysql and many others... </li>
       <li> <strong>Keep amazing code consistency</strong>
         thanks to isomorphic entities classes, that you can use to
         create backend tables and also inside frontend-angular templates to type-checking.        
