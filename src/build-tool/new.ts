@@ -16,8 +16,8 @@ export function copyExampleTo(folder: string) {
     }
   };
   let example = {
-    dist: path.join(__dirname, '..', '..', 'example'),
-    bundle: path.join(__dirname, '..', 'example')
+    dist: path.join(__dirname, '..', '..', 'examples'),
+    bundle: path.join(__dirname, '..', 'examples')
   }
   let destinationPath = path.join(process.cwd(), folder)
   const distMode = fs.existsSync(example.dist)

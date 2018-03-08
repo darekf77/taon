@@ -33,6 +33,7 @@
         "dist",
         "bundle",
         "example",
+        "examples",
         "tests",
         "tmp-src"
     ]
