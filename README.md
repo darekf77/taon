@@ -11,13 +11,13 @@
     <br>
     <br>
     <ul>
-      <li> <strong>Isomorphic class</strong> - as Angular/Ionic Services and ExpressJS controllers. </li>
-      <li><strong>One node_modules folder</strong> for browser and server and mobile </li>
-      <li><strong> Write everything in typescript</strong> all the time and strip off server code for browser/ionic versions.</li>
-      <li>Use power of  <a style="color:red;" href="https://github.com/typeorm/typeorm">TypeORM</a> entities to write awesome, robust, clean backend NodeJS conected to SQLite, Mysql and many other... </li>
+      <li> <strong>Isomorphic classes</strong> as Angular/Ionic Services and ExpressJS controllers. </li>
+      <li><strong>One node_modules folder</strong> for browser, mobile and server.</li>
+      <li><strong> Write everything in TypeScript</strong> all the time and strip off server code for browser/ionic versions.</li>
+      <li>Use power of  <a style="color:red;" href="https://github.com/typeorm/typeorm">TypeORM</a> framwork to write awesome, robust, clean NodeJS backend connected to SQLite, Mysql and many other... </li>
       <li> <strong>Keep amazing code consistency</strong>
-        thanks to isomorphic entities classes that you can use to
-        create backend table and inside frontend template.        
+        thanks to isomorphic entities classes, that you can use to
+        create backend tables and also inside frontend-angular templates to type-checking.        
       </li>
     </ul>
   <p>
@@ -39,24 +39,58 @@ Open you project in *VSCode* to get the maximum of development experience.
 ```
 code myAwesomeIsomrphicApp
 ```
-### Linking one version of node_modules
+### Link one version of node_modules
 Once you have your app opened... 
-!\[files\](files.png)
-link *node_module* for each subproject:
+
+![files](files.png)
+
+run:
 ```
-npm run link
+npm install && npm run link
 ```
+to install and link *node_module* folder for each subproject.
 ### Build and run sub-projects with auto-reload
 - isomorphic-lib: `npm run build:watch` + F5 to run server
 - angular-client: `npm run build:watch` + open browser [http:\\localhost:4200](http:%5C%5Clocalhost:4200)
 - ionic-client: `npm run build:watch` + open browser [http:\\localhost:8100](http:%5C%5Clocalhost:8100)
 
 # Main idea - Isomorphic TypeScript Classes
-The main reason why this framework has huge potential is that you can you your backend code classes ( usualy ExpressJS REST controllers ) as Anguar 2+ services, to access you backend.
-**Morphi CLI tool** is responsible for magic behing stripping of backend code for browser ( web app or ionic mobile app).
+The main reason why this framework has huge potential is that you can use your backend code ( usualy ExpressJS, REST controllers ) as Anguar 2+ services, to access your RESTfull backend.
 
-#### Example Isomporphic (ExpressJS controller) class with morphi *@backend,@backendFunc* regions
-The difference between @backend and @backendFunc is that @backendFunc will replace code with 'return undefined', it is needed for typescript compilation.
+**Morphi CLI tool** is responsible for magic behing stripping of backend code for browser version ( web app or ionic mobile app).
+
+#### Example Isomorphic (ExpressJS controller) class with morphi *@backend,@backendFunc* regions
+The difference between @backend and @backendFunc is that @backendFunc will replace code with 'return undefined' (it is needed for typescript compilation) and @backend
+will precisely delete all lines between.
+
+- Typeorm isomorphic ENTITY in NodeJS backend:
+```ts
+import { Entity } from 'typeorm';
+
+@Entity('user_table')
+export class User {
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+    @Column()
+    name: string;
+
+    @Column()
+    surname: string;
+
+    fullName() {
+      return `${this.name} ${this.surname}`
+    }
+    
+    #region @backend  // backend code invisible for frontend
+    password: string
+    #endregion
+
+}
+```
+
+- Morphi isomorphic CONTROLLER in NodeJS backend:
 ```ts
 import { Endpoint, GET } from 'morphi'
 
@@ -64,7 +98,7 @@ import { Endpoint, GET } from 'morphi'
 @Endpoint('/users') 
 class UserController {
 	
-	#region backend // backend code invisible for frontend
+	#region @backend // backend code invisible for frontend
 	private @OrmConnection  connection:  Connection;
 	private  repository:  Repository<TestUser>;
 	#endregion
@@ -72,19 +106,43 @@ class UserController {
 	@GET('/all')
 	getAllUser() {
 		#region @backendFunc // backend code invisible for frontend
-		this.repository  =  this.connection.getRepository(TestUser) as  any;
+		this.repository  =  this.connection.getRepository(User) as  any;
 		return  async (req, res) => {
 			return await  this.repository.findAll();
 		}
 		#endregino
 	}	
 }
+
 ```
-After isomorphic compilation by morphi;
+After **isomorphic compilation** by morphi;
 ```
 morphi build
 ```
 The result for browser will be like below:
+
+- Typeorm isomorphic ENTITY in browser version:
+```ts
+import { Entity } from 'typeorm/browser';
+
+@Entity('user_table')
+export class User {
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+    @Column()
+    name: string;
+
+    @Column()
+    surname: string;
+
+    fullName() {
+      return `${this.name} ${this.surname}`
+    }
+}
+```
+- Morphi isomorphic CONTROLLER in NodeJS backend:
 ```ts
 import { Endpoint, GET } from 'morphi/browser'
 
@@ -101,7 +159,7 @@ And that kind of class you can use as **Angular 2+ service**:
 ```ts
 @Component({
 	selector:  'app-test',
-	templateUrl:  '...',
+	templateUrl:'app-test.html' ,
 	styleUrls: ['...'\]
 })
 class  AppTestComponent  implements  OnInit {
@@ -116,7 +174,28 @@ class  AppTestComponent  implements  OnInit {
 	}
 }
 ```
-Of course Angular services can be used inside Angular web apps and Ionic framwork app.  To simplify object receiving from backend you can use **async** pipes from (available from angular4) 
+To simplify object receiving from backend you can use **async** pipes from (available from angular4) 
 and really keep you MVVM amazing.
+
+**app-test.html**  
+```html
+Users:
+<ul   *ngIf="users.received.observable.allUsers() | async; else loader; let users" >
+
+  <li  *ngFor="let user of users"> 
+  		{{user.id}} {{user.fullName()}} 
+		  <br>
+		<input type="name" [(NgModel)]="user.name" >
+		<button (click)="model.update(user)" > Update </button>
+  </li>
+
+</ul>
+
+<ng-template #loader> loading users...  </ng-template>
+
+```
+
+
+Of course Angular services can be used inside Angular web apps and Ionic framwork app. 
 
 
