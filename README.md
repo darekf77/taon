@@ -165,8 +165,7 @@ And that kind of class you can use as **Angular 2+ service**:
 ```ts
 @Component({
 	selector:  'app-test',
-	templateUrl:'app-test.html' ,
-	styleUrls: ['...'\]
+	templateUrl:'app-test.html'
 })
 class  AppTestComponent  implements  OnInit {
 
