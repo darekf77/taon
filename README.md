@@ -113,7 +113,7 @@ class UserController {
 		return  async (req, res) => {
 			return await  this.repository.findAll();
 		}
-		#endregino
+		#endregion
 	}	
 }
 
