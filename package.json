@@ -14,7 +14,7 @@
     "type": "isomorphic-lib",
     "resources": [
       "README.md",
-      "example",
+      "examples",
       "bin",
       "logo_github.png",
       "logo.png",
