@@ -51,8 +51,8 @@ npm install && npm run link
 to install and link *node_module* folder for each subproject.
 ### Build and run sub-projects with auto-reload
 - isomorphic-lib: `npm run build:watch` + F5 to run server
-- angular-client: `npm run build:watch` + open browser [http:\\localhost:4200](http:%5C%5Clocalhost:4200)
-- ionic-client: `npm run build:watch` + open browser [http:\\localhost:8100](http:%5C%5Clocalhost:8100)
+- angular-client: `npm run build:watch` + open browser [http:\\\\localhost:4200](http:%5C%5Clocalhost:4200)
+- ionic-client: `npm run build:watch` + open browser [http:\\\\localhost:8100](http:%5C%5Clocalhost:8100)
 
 Instead of `npm run build:watch` you can also open each sub-project in separated vscode window `code <sub-project-name>`
 and press: **ctrl(cmd) + shift + b**.
