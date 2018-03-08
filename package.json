@@ -16,7 +16,8 @@
       "example",
       "bin",
       "logo_github.png",
-      "logo.png"
+      "logo.png",
+      "files.png"
     ]
   },
   "bin": {
