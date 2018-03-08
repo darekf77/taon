@@ -54,6 +54,9 @@ to install and link *node_module* folder for each subproject.
 - angular-client: `npm run build:watch` + open browser [http:\\localhost:4200](http:%5C%5Clocalhost:4200)
 - ionic-client: `npm run build:watch` + open browser [http:\\localhost:8100](http:%5C%5Clocalhost:8100)
 
+Instead of `npm run build:watch` you can also open each sub-project in separated vscode window `code <sub-project-name>`
+and press: **ctrl(cmd) + shift + b**.
+
 # Main idea - Isomorphic TypeScript Classes
 The main reason why this framework has huge potential is that you can use your backend code ( usualy ExpressJS, REST controllers ) as Anguar 2+ services, to access your RESTfull backend.
 
@@ -142,7 +145,7 @@ export class User {
     }
 }
 ```
-- Morphi isomorphic CONTROLLER in NodeJS backend:
+- Morphi isomorphic CONTROLLER in browser version:
 ```ts
 import { Endpoint, GET } from 'morphi/browser'
 
@@ -165,7 +168,7 @@ And that kind of class you can use as **Angular 2+ service**:
 class  AppTestComponent  implements  OnInit {
 
 	// Inject isomorphic class as service into component
-	constructor(public UserController users) { } 
+	constructor(public users: UserController) { } 
 	
 	ngOnInit() {
 		this.users.getAllUsers().received.observable.subscribe( users => {
@@ -186,7 +189,6 @@ Users:
   		{{user.id}} {{user.fullName()}} 
 		  <br>
 		<input type="name" [(NgModel)]="user.name" >
-		<button (click)="model.update(user)" > Update </button>
   </li>
 
 </ul>
