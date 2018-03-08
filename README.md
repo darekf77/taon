@@ -5,7 +5,7 @@
 
   <h1>Morphi</h1>
   <p>
-    Iso<b>morphi</b> framework in TypeScript for NodeJS back-end and browser front-end. 
+    Iso<b>morphi</b>c framework in TypeScript for NodeJS back-end and browser front-end. 
     <br><br><br>
    <strong > Do no repeat yourself anymore, never !!! </strong>
     <br>
