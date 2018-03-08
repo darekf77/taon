@@ -29,7 +29,7 @@ export namespace Helpers {
       if (!commandExistsSync(name)) {
         console.log(chalk.red(`Missing npm dependency "${name}".`))
         const sudo = !(os.platform() === 'win32' || os.platform() === 'darwin')
-        const cmd = `${sudo ? 'sudo' : ''}npm install -g ${name}`;
+        const cmd = `npm install -g ${name}`;
         console.log(`Please run: ${chalk.green(cmd)}`)
         process.exit(0)
       }
