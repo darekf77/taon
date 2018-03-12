@@ -5,7 +5,7 @@
 
   <h1>Morphi</h1>
   <p>
-    Iso<b>morphi</b>c framework in TypeScript for NodeJS back-end and browser front-end. 
+    Iso<b>morphi</b>c framework in TypeScript for NodeJS back-end and browser (web/mobile) front-end. 
     <br><br><br>
    <strong > Do no repeat yourself anymore, never !!! </strong>
     <br>    
@@ -35,10 +35,13 @@
         <br>
         <br>
         TODO: <br>
-        - realtime update of backend (in progress) <br>
+        - firebase like... realtime update of backend/frontend (in progress) <br>
         - authentication based on isomorphic decorators metadata (in progress) <br>
-        - vscode extension to compile time support <br>
+        - isomoprhic unit tests (with inheritance) in mocha/jasmine  <br>
+        - vscode extension to support @backend, @backendFunc #regions <br>
         - optimized isomorphic build <br>
+        - extended global cli tool <br>
+        - patch, head methods rest api <br>
       </li>
     </ul>
   <p>
@@ -153,7 +156,7 @@ morphi build
 
 ## BROWSER VERSION 
 
-The result for browser will be like below:
+The result for browser client will be like below:
 
 - Typeorm isomorphic ENTITY in browser version:
 ```ts
@@ -184,7 +187,7 @@ import { Endpoint, GET } from 'morphi/browser'
 class UserController {
 	 // 'return undefined' is for purpose on the browser side
 	 // The function body will be replaced through decorate
-	 // to now access REST endpoint '/users/all'
+	 // to access REST endpoint '/users/all'
 	@GET('/all')
 	getAllUser() { return undefined; }	
 }
@@ -246,7 +249,13 @@ Of course Angular services can be used inside Angular web and Ionic mobile apps.
 # REST API
 
 With morphi you can have amzing types hints thanks to strong relation between backend
-end frontend. Avaliable rest methods: **PUT, GET, POST, PATCH, DELETE, HEAD**.
+end frontend. 
+
+
+Avaliable REST methods: **PUT, GET, POST, DELETE**.
+
+If you find any problems with REST API please check my another, responsible for it project - 
+[ng2-rest](https://github.com/darekf77/ng2-rest).
 
 
 - backend
@@ -365,8 +374,5 @@ Again... do not repeat yourself writing controllers and entities - inherit class
 
   }
 
-  
-
-
-
 ```
+
