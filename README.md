@@ -345,7 +345,6 @@ Again... do not repeat yourself writing controllers and entities - inherit class
 
   @Entity(Email.name)
   class Email extends BaseEntity {  // ENTITIES INHERITANCE
-    id:number;
     address:string;
   }
 
