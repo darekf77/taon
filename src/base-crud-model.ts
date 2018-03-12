@@ -24,7 +24,7 @@ export abstract class BaseCRUD<T>  {
     public __model = {
         getAll: () => this.getAll(),
         getOneBy: (id: number) => this.getBy(id),
-        deleteBy: (id: number) => this.getBy(id),
+        deleteBy: (id: number) => this.deleteById(id),
         updateById: (id: number, item: T) => this.updateById(id, item),
         create: (item: T) => this.create(item)
     }
@@ -67,6 +67,18 @@ export abstract class BaseCRUD<T>  {
         }
         //#endregion
     }
+
+    @DELETE(`/${model}/:id`)
+    deleteById( @PathParam(`id`) id: number): Response<T> {
+        //#region @backendFunc
+        return async () => {
+            const deletedEntity = await this.repo.findOneById(id)
+            await this.repo.removeById(id);
+            return deletedEntity;
+        }
+        //#endregion
+    }
+
 
     @POST(`/${model}`)
     create( @BodyParam() item: T): Response<T> {
