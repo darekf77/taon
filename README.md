@@ -258,7 +258,7 @@ If you find any problems with REST API please check my another, responsible for 
 [ng2-rest](https://github.com/darekf77/ng2-rest).
 
 
-- backend
+- backend version
 ```ts
   import { Endpoint, Entity, PUT, Response } from 'morphi'
 
@@ -284,7 +284,7 @@ If you find any problems with REST API please check my another, responsible for 
 ```
 
 
-- frontend
+- frontend version ( after automatic, in background, isomorphic build )
 ```ts
   import { Endpoint, Entity, PUT, Response } from 'morphi/browser'
 
@@ -302,6 +302,10 @@ If you find any problems with REST API please check my another, responsible for 
     save(user:User):Response<User> { return undefined; }	
   }
 
+```
+- frontend, angular component
+
+```ts
   @Component({
 	  selector:  'books-test',
     template: '...'
@@ -364,12 +368,12 @@ Again... do not repeat yourself writing controllers and entities - inherit class
 
       await this.__model.getBy(1).received //  get one email by id
 
-      await this.__model.getBy(1).received //  get one email by id
+      await this.__model.deleteById(2).received //  delete email by id
 
-      const newEmail = await this.__model.create(new Email()).received // create email
-      newEmail.address = 'test@test.pl'
+      const email = await this.__model.create(new Email()).received // create email
+      email.address = 'test@test.pl'
 
-      await  this.__model.updateById(12,newEmail).received
+      await  this.__model.updateById(12,email).received // update email
     }
 
   }

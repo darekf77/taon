@@ -24,7 +24,7 @@ export abstract class BaseCRUD<T>  {
     public __model = {
         getAll: () => this.getAll(),
         getOneBy: (id: number) => this.getBy(id),
-        deleteBy: (id: number) => this.deleteById(id),
+        deleteById: (id: number) => this.deleteById(id),
         updateById: (id: number, item: T) => this.updateById(id, item),
         create: (item: T) => this.create(item)
     }
