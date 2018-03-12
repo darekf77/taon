@@ -31,6 +31,15 @@
       <li  style="margin-top:20px;font-size:90%" > Project is under development, but every 
         juicy features just works... try example.
       </li>
+      <li>
+        <br>
+        <br>
+        TODO: <br>
+        - realtime update of backend (in progress) <br>
+        - authentication based on isomorphic decorators metadata (in progress) <br>
+        - vscode extension to compile time support <br>
+        - optimized isomorphic build <br>
+      </li>
     </ul>
   <p>
 </div>
@@ -234,10 +243,10 @@ Users:
 Of course Angular services can be used inside Angular web and Ionic mobile apps. 
 
 
-# REST API (PUT,GET,POST,PATCH,DELETE,HEAD)
+# REST API
 
 With morphi you can have amzing types hints thanks to strong relation between backend
-end frontend.
+end frontend. Avaliable rest methods: **PUT, GET, POST, PATCH, DELETE, HEAD**.
 
 
 - backend
@@ -304,7 +313,8 @@ end frontend.
 ```
 
 
-# ENTITES, CONTROLLERS INHERITANCE => FAST RESTfull CRUD
+# Inheritance of entities and controllers
+## Fast CRUD
 
 With morphi there is very nice possiblity of writing CRUD (Create,Read,Update,Delete).
 
