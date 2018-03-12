@@ -4,7 +4,7 @@
   "description": "Isomorphic solution for expressjs and angular5",
   "main": "index.js",
   "scripts": {
-    "release:patch": "npm version patch && tnp build:bundle && tnp --copy-resources && cd bundle && npm publish && cd .. && git push origin master && echo \"done\"",
+    "release:patch": "npm version patch && tnp clear:bundle && tnp build:bundle && tnp --copy-resources && cd bundle && npm publish && cd .. && git push origin master && echo \"done\"",
     "build:watch": "npm-run watch \"morphi build\" src",
     "build": "./node_modules/.bin/ts-node ./node_modules/typescript-npm-project/index.ts",
     "build:publish": "./node_modules/.bin/ts-node ./node_modules/typescript-npm-project/index.ts --publish",
