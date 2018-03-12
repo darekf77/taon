@@ -36,7 +36,7 @@
         <br>
         TODO: <br>
         - firebase like... realtime update of backend/frontend (in progress) <br>
-        - authentication based on isomorphic decorators metadata (in progress) <br>
+        - extended authentication based on isomorphic decorators metadata and db roles (in progress) <br>
         - isomoprhic unit tests (with inheritance) in mocha/jasmine  <br>
         - vscode extension to support @backend, @backendFunc #regions <br>
         - optimized isomorphic build <br>
@@ -54,7 +54,7 @@ First install global tool:
 ```
 npm install -g morphi
 ```
-### Create new isomorphic project ( mobile, web, server + sqlite db ) 
+### Create new isomorphic project ( mobile, web, server + sqlite db + basic rest authentication ) 
 ```
 morphi new myAwesomeIsomrphicApp
 ```
