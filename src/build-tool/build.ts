@@ -20,6 +20,7 @@ export interface BuildPathes {
     tsc: string;
     cpr: string;
     mkdirp: string;
+    ln:string
   };
   build?: {
     forNPMlink?: boolean;
@@ -60,7 +61,8 @@ function buildIsomorphicVersion(options?: BuildPathes) {
     rimraf: 'npm-run rimraf',
     tsc: 'npm-run tsc',
     cpr: 'npm-run cpr',
-    mkdirp: 'npm-run mkdirp'
+    mkdirp: 'npm-run mkdirp',
+    ln: 'morphi ln'
   }, toolsPathes);
   const BUILD = _.merge({
     forNPMlink: true,
@@ -82,7 +84,7 @@ function buildIsomorphicVersion(options?: BuildPathes) {
   })
   child.execSync(`${TOOLS.tsc} --outDir ../${FOLDER.dist}/${FOLDER.browser}`, { stdio: [0, 1, 2], cwd: tempSrc })
   if (BUILD.forNPMlink) {
-    child.execSync(`${TOOLS.cpr} ${FOLDER.dist}/${FOLDER.browser} ${FOLDER.browser} --overwrite`)
+    child.execSync(`${TOOLS.ln} ${FOLDER.dist}/${FOLDER.browser} .`)
   }
 }
 
