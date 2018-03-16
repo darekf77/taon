@@ -11,8 +11,10 @@ import { copyExampleTo } from './new';
 export * from './helpers';
 export * from './build';
 
-export function run(argsv: string[]) {
-  Helpers.checkEnvironment()
+export function run(argsv: string[], morphiEnvironmentCheck = true) {
+  if (morphiEnvironmentCheck) {
+    Helpers.checkEnvironment()
+  }
   if (argsv.length >= 3) {
     const commandName: 'build' | 'ln' | 'new' | '-v' = argsv[2] as any;
 

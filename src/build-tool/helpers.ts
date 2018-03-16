@@ -7,35 +7,42 @@ import check from 'check-node-version';
 
 const commandExistsSync = require('command-exists').sync;
 
+export interface GlobalDependencies {
+  npm?: { name: string; version?: string }[];
+  programs?: { name: string; website: string; version?: string; }[];
+}
+
+
+export const MorphiGlobalDependencies: GlobalDependencies = {
+  npm: [
+    { name: 'rimraf' },
+    { name: 'npm-run' },
+    { name: 'cpr' },
+    { name: 'check-node-version' }
+  ],
+  programs: [
+    // {
+    //   name: 'code',
+    //   website: 'https://code.visualstudio.com/'
+    // }
+  ] as { name: string; website: string }[]
+}
+
 export namespace Helpers {
 
-  export function checkEnvironment() {
-    const globalDependencies = {
-      npm: [
-        'rimraf',
-        'npm-run',
-        'cpr',
-        'check-node-version'
-      ],
-      programs: [
-        {
-          name: 'code',
-          website: 'https://code.visualstudio.com/'
-        }
-      ] as { name: string; website: string }[]
-    }
+  export function checkEnvironment(globalDependencies: GlobalDependencies = MorphiGlobalDependencies) {
 
-    globalDependencies.npm.forEach(name => {
-      if (!commandExistsSync(name)) {
-        console.log(chalk.red(`Missing npm dependency "${name}".`))
+
+    globalDependencies.npm.forEach(pkg => {
+      if (!commandExistsSync(pkg.name)) {
+        console.log(chalk.red(`Missing npm dependency "${pkg.name}@${pkg.version}".`))
         const sudo = !(os.platform() === 'win32' || os.platform() === 'darwin')
-        const cmd = `npm install -g ${name}`;
+        const cmd = `npm install -g ${pkg.name}`;
         console.log(`Please run: ${chalk.green(cmd)}`)
         process.exit(0)
       }
     })
 
-    /*
     globalDependencies.programs.forEach(p => {
       if (!commandExistsSync(p.name)) {
         console.log(chalk.red(`Missing command line tool "${p.name}".`))
@@ -43,7 +50,7 @@ export namespace Helpers {
         process.exit(0)
       }
     })
-    */
+
 
     try {
       child.execSync(`check-node-version --node ">= 9.2"`, { stdio: [0, 1, 2] })
