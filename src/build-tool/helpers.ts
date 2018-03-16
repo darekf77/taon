@@ -7,9 +7,17 @@ import check from 'check-node-version';
 
 const commandExistsSync = require('command-exists').sync;
 
+
+export interface GlobalNpmDependency {
+  name: string; version?: string | number;
+}
+
+export interface GlobalCommandLineProgramDependency {
+  name: string; website: string; version?: string;
+}
 export interface GlobalDependencies {
-  npm?: { name: string; version?: string }[];
-  programs?: { name: string; website: string; version?: string; }[];
+  npm?: GlobalNpmDependency[];
+  programs?: GlobalCommandLineProgramDependency[];
 }
 
 
@@ -33,15 +41,23 @@ export namespace Helpers {
   export function checkEnvironment(globalDependencies: GlobalDependencies = MorphiGlobalDependencies) {
 
 
+    const missingNpm: GlobalNpmDependency[] = [];
     globalDependencies.npm.forEach(pkg => {
       if (!commandExistsSync(pkg.name)) {
-        console.log(chalk.red(`Missing npm dependency "${pkg.name}@${pkg.version}".`))
-        const sudo = !(os.platform() === 'win32' || os.platform() === 'darwin')
-        const cmd = `npm install -g ${pkg.name}`;
-        console.log(`Please run: ${chalk.green(cmd)}`)
-        process.exit(0)
+        missingNpm.push(pkg)
       }
     })
+
+    if (missingNpm.length > 0) {
+
+      const toInstall = missingNpm
+        .map(pkg => pkg.version ? `${pkg.name}@${pkg.version}` : pkg.name)
+        .join(' ');
+      console.log(chalk.red(`Missing npm dependencies.`))
+      const cmd = `npm install -g ${toInstall}`;
+      console.log(`Please run: ${chalk.green(cmd)}`)
+      process.exit(0)
+    }
 
     globalDependencies.programs.forEach(p => {
       if (!commandExistsSync(p.name)) {
