@@ -7,24 +7,26 @@ import * as fse from 'fs-extra';
 import * as glob from "glob";
 import * as dateformat from "dateformat";
 
-import { IsomorphicRegions } from './isomorphic';
+import { CodeTransform } from './isomorphic';
 
 export interface BuildPathes {
   foldersPathes?: {
     dist?: string;
     browser?: string;
     tmpSrc?: string;
+    src?: string;
   };
   toolsPathes?: {
     rimraf: string;
     tsc: string;
     cpr: string;
     mkdirp: string;
-    ln:string
+    ln: string
   };
   build?: {
     forNPMlink?: boolean;
     withoutBackend?: boolean;
+    forSitePurpose?: boolean;
   }
   onlyMainIndex?: boolean;
 }
@@ -39,6 +41,7 @@ export function buildIsomorphic(options?: BuildPathes) {
     buildIsomorphicVersion(options);
     console.log(`${date()} Typescript compilation OK`)
   } catch (error) {
+    console.log(error);
     console.error(`${date()} Typescript compilation ERROR`)
     process.exit(0)
   }
@@ -52,6 +55,7 @@ function buildIsomorphicVersion(options?: BuildPathes) {
     dist: 'dist',
     browser: 'browser',
     tmpSrc: 'tmp-src',
+    src: 'src',
     tsconfig: {
       browser: 'tsconfig.browser.json',
       default: 'tsconfig.json'
@@ -66,22 +70,33 @@ function buildIsomorphicVersion(options?: BuildPathes) {
   }, toolsPathes);
   const BUILD = _.merge({
     forNPMlink: true,
-    withoutBackend: false
+    withoutBackend: false,
+    forSitePurpose: false
   }, build);
+
+  if (BUILD.forSitePurpose) {
+    const siteSrc = `tmp-site-${FOLDER.src}`;
+    child.execSync(`rimraf ${siteSrc}`);
+    child.execSync(`${TOOLS.cpr} ${FOLDER.src} ${siteSrc} --overwrite`)
+    FOLDER.src = siteSrc;
+    FOLDER.tsconfig.default = 'tsconfig.site.json'
+    FOLDER.tsconfig.browser = 'tsconfig.site.browser.json'
+    const filesForSite = glob.sync(`./${siteSrc}/**/*.ts`);
+    CodeTransform.for.baselineSite(filesForSite);
+  }
 
   if (!BUILD.withoutBackend) {
     child.execSync(`${TOOLS.rimraf} ${FOLDER.dist}`)
-    child.execSync(`${TOOLS.tsc} --outDir ${FOLDER.dist}`, { stdio: [0, 1, 2] })
+    child.execSync(`${TOOLS.tsc} -p ${FOLDER.tsconfig.default} --outDir ${FOLDER.dist}`, { stdio: [0, 1, 2] })
   }
   child.execSync(`${TOOLS.rimraf} ${FOLDER.browser}  ${FOLDER.tmpSrc}`)
   child.execSync(`${TOOLS.mkdirp} ${FOLDER.tmpSrc}`)
-  child.execSync(`${TOOLS.cpr} src/ ${FOLDER.tmpSrc} --overwrite`)
+  child.execSync(`${TOOLS.cpr} ${FOLDER.src}/ ${FOLDER.tmpSrc} --overwrite`)
   const tempSrc = path.join(process.cwd(), `${FOLDER.tmpSrc}`);
   fse.copyFileSync(`${FOLDER.tsconfig.browser}`, `${FOLDER.tmpSrc}/${FOLDER.tsconfig.default}`);
   const files = glob.sync(`./${FOLDER.tmpSrc}/**/*.ts`);
-  files.forEach(f => {
-    IsomorphicRegions.deleteFrom(f);
-  })
+
+  CodeTransform.for.isomorphicLib(files);
   child.execSync(`${TOOLS.tsc} --outDir ../${FOLDER.dist}/${FOLDER.browser}`, { stdio: [0, 1, 2], cwd: tempSrc })
   if (BUILD.forNPMlink) {
     child.execSync(`${TOOLS.ln} ${FOLDER.dist}/${FOLDER.browser} .`)
