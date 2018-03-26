@@ -27,6 +27,7 @@ export interface BuildPathes {
     forNPMlink?: boolean;
     withoutBackend?: boolean;
     forSitePurpose?: boolean;
+    otherIsomorphicLibs?: string[];
   }
   onlyMainIndex?: boolean;
 }
@@ -71,8 +72,11 @@ function buildIsomorphicVersion(options?: BuildPathes) {
   const BUILD = _.merge({
     forNPMlink: true,
     withoutBackend: false,
-    forSitePurpose: false
+    forSitePurpose: false,
+    otherIsomorphicLibs: []
   }, build);
+
+
 
   if (BUILD.forSitePurpose) {
     const siteSrc = `tmp-site-${FOLDER.src}`;
@@ -96,7 +100,7 @@ function buildIsomorphicVersion(options?: BuildPathes) {
   fse.copyFileSync(`${FOLDER.tsconfig.browser}`, `${FOLDER.tmpSrc}/${FOLDER.tsconfig.default}`);
   const files = glob.sync(`./${FOLDER.tmpSrc}/**/*.ts`);
 
-  CodeTransform.for.isomorphicLib(files);
+  CodeTransform.for.isomorphicLib(files, BUILD.otherIsomorphicLibs);
   child.execSync(`${TOOLS.tsc} --outDir ../${FOLDER.dist}/${FOLDER.browser}`, { stdio: [0, 1, 2], cwd: tempSrc })
   if (BUILD.forNPMlink) {
     child.execSync(`${TOOLS.ln} ${FOLDER.dist}/${FOLDER.browser} .`)

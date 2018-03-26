@@ -6,7 +6,8 @@ export type TsUsage = 'import' | 'export';
 export class CodeTransform {
 
   private rawContent: string;
-  private constructor(public filePath: string) {
+  private constructor(public filePath: string, otherIsomorphicLibs: string[] = []) {
+    this.isomorphicLibs = this.isomorphicLibs.concat(otherIsomorphicLibs);
     this.rawContent = fs.readFileSync(filePath, 'utf8').toString();
   }
 
@@ -20,9 +21,11 @@ export class CodeTransform {
         })
 
       },
-      isomorphicLib(filesPathes: string[]) {
+      isomorphicLib(filesPathes: string[], otherIsomorphicLibs: string[] = []) {
         filesPathes.forEach(f => {
-          new CodeTransform(f)
+          new CodeTransform(f, otherIsomorphicLibs)
+            .flatTypescriptImportExport('import')
+            .flatTypescriptImportExport('export')
             .replace.regionsFor.isomorphicLib()
             .replace.ismorphicLibsFrom.fromTsImportExport('import')
             .replace.ismorphicLibsFrom.fromTsImportExport('export')
@@ -60,11 +63,12 @@ export class CodeTransform {
       })
       this.rawContent = output;
     }
-    this.rawContent = fileContent;
+    return this;
   }
 
+
   private get resolvePackageNameFrom() {
-    const slef = this;
+    const self = this;
     return {
       JSrequired(rawImport) {
         rawImport = rawImport.replace(new RegExp(`require\\((\\'|\\")`), '')
@@ -93,12 +97,37 @@ export class CodeTransform {
     };
   }
 
+  private isomorphicLibs = ['ng2-rest', 'typeorm', 'ng2-logger', 'morphi'];
 
 
-  private isPackageIsomorphic(packageName) {
-    return ['ng2-rest', 'typeorm', 'ng2-logger', 'morphi']
-      .filter(p => p == packageName)
-      .length >= 1;
+  private package(packageName: string) {
+
+    // console.log('MORPHI this.isomorphicLibs', this.isomorphicLibs)
+    let realName = packageName;
+    let isIsomorphic = false;
+    if (packageName !== null) {
+      isIsomorphic = this.isomorphicLibs
+        .filter(p => {
+          const slashes = (p.match(new RegExp("\/", "g")) || []).length;
+          if (slashes === 0) {
+            return p == packageName
+          }
+          // console.log('am here ', packageName)
+          // console.log('p', p)
+          if (p.startsWith(packageName)) {
+            realName = p;
+            // console.log('FOUDNED for ', packageName)
+            // console.log('is REAL', p)
+            return true;
+          }
+          return false;
+        })
+        .length >= 1;
+    }
+    return {
+      isIsomorphic,
+      realName
+    }
   }
 
   private replaceRegionsWith(stringContent = '', words = [], replacement = '') {
@@ -126,8 +155,13 @@ export class CodeTransform {
             if (_.isArray(imports)) {
               imports.forEach(imp => {
                 const pkgName = self.resolvePackageNameFrom.TSimportExport(imp, usage);
-                if (self.isPackageIsomorphic(pkgName)) {
-                  const replacedImp = imp.replace(pkgName, `${pkgName}/browser`);
+                // if (pkgName === null) {
+                //   console.log('null for ', imp)
+                //   process.exit(0)
+                // }
+                const p = self.package(pkgName)
+                if (p.isIsomorphic) {
+                  const replacedImp = imp.replace(p.realName, `${p.realName}/browser`);
                   self.rawContent = self.rawContent.replace(imp, replacedImp);
                 }
               })
@@ -143,9 +177,14 @@ export class CodeTransform {
             if (_.isArray(imports)) {
               imports.forEach(imp => {
                 const pkgName = self.resolvePackageNameFrom.JSrequired(imp);
-                if (self.isPackageIsomorphic(pkgName)) {
+                // if (pkgName === null) {
+                //   console.log('null for ', imp)
+                //   process.exit(0)
+                // }
+                const p = self.package(pkgName)
+                if (p.isIsomorphic) {
                   // console.log('isomorphic: ', pkgName)
-                  const replacedImp = imp.replace(pkgName, `${pkgName}/browser`);
+                  const replacedImp = imp.replace(p.realName, `${p.realName}/browser`);
                   self.rawContent = self.rawContent.replace(imp, replacedImp);
                 }
               })

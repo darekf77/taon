@@ -16,11 +16,19 @@ export function run(argsv: string[], morphiEnvironmentCheck = true) {
     Helpers.checkEnvironment()
   }
   if (argsv.length >= 3) {
-    const commandName: 'build' | 'ln' | 'new' | '-v' = argsv[2] as any;
+    const commandName: 'build' | 'ln' | 'new' | '-v' | '-h' | '--help' | '-help' = argsv[2] as any;
 
 
     if (commandName === 'build') {
-      buildIsomorphic();
+      buildIsomorphic({
+        build: {
+          otherIsomorphicLibs: argsv.slice(4)
+        }
+      });
+    } else if (commandName === '-h' || commandName === '-help' || commandName === '--help') {
+      console.log('Usage: morphi build <lib1> <lib2> ... ')
+      console.log('Where lib(n) is name of included in node_modules isomorphic lib')
+      console.log('Example isomorphic libs are: typeorm, ng2-rest, morphi...');
     } else if (commandName === 'ln') {
       if (!Array.isArray(argsv) || argsv.length < 2) {
         console.log(`To few arguments for linking function...`);
