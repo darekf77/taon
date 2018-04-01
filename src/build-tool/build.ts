@@ -55,7 +55,7 @@ export function buildIsomorphicVersion(options?: BuildPathes) {
   const FOLDER = _.merge({
     dist: 'dist',
     browser: 'browser',
-    tmpSrc: 'tmp-src',
+    tmpSrc: `tmp-src-${foldersPathes.dist === undefined ? 'dist' : foldersPathes.dist}`,
     src: 'src',
     tsconfig: {
       browser: 'tsconfig.browser.json',
