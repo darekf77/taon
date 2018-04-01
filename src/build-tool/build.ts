@@ -36,7 +36,7 @@ function date() {
   return `[${dateformat(new Date(), 'HH:MM:ss')}]`;
 }
 
-export function buildIsomorphic(options?: BuildPathes) {
+export function wrapperIsomorphicBuildProcess(options?: BuildPathes) {
   try {
     console.log(`${date()} Building server/browser version of ${path.basename(process.cwd())}...`)
     buildIsomorphicVersion(options);
@@ -49,7 +49,7 @@ export function buildIsomorphic(options?: BuildPathes) {
 }
 
 
-function buildIsomorphicVersion(options?: BuildPathes) {
+export function buildIsomorphicVersion(options?: BuildPathes) {
   if (!options) options = {} as any;
   const { foldersPathes = {}, toolsPathes = {}, build = {} } = options;
   const FOLDER = _.merge({

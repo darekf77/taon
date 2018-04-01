@@ -5,7 +5,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 import { Helpers } from './helpers';
-import { buildIsomorphic } from "./build";
+import { wrapperIsomorphicBuildProcess } from "./build";
 import { copyExampleTo } from './new';
 
 export * from './helpers';
@@ -20,7 +20,7 @@ export function run(argsv: string[], morphiEnvironmentCheck = true) {
 
 
     if (commandName === 'build') {
-      buildIsomorphic({
+      wrapperIsomorphicBuildProcess({
         build: {
           otherIsomorphicLibs: argsv.slice(4)
         }
