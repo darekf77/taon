@@ -26,7 +26,6 @@ export interface BuildPathes {
   build?: {
     forNPMlink?: boolean;
     withoutBackend?: boolean;
-    forSitePurpose?: boolean;
     otherIsomorphicLibs?: string[];
   }
   onlyMainIndex?: boolean;
@@ -72,22 +71,9 @@ export function buildIsomorphicVersion(options?: BuildPathes) {
   const BUILD = _.merge({
     forNPMlink: true,
     withoutBackend: false,
-    forSitePurpose: false,
     otherIsomorphicLibs: []
   }, build);
-
-
-
-  if (BUILD.forSitePurpose) {
-    const siteSrc = `tmp-site-${FOLDER.src}`;
-    child.execSync(`rimraf ${siteSrc}`);
-    child.execSync(`${TOOLS.cpr} ${FOLDER.src} ${siteSrc} --overwrite`)
-    FOLDER.src = siteSrc;
-    FOLDER.tsconfig.default = 'tsconfig.site.json'
-    FOLDER.tsconfig.browser = 'tsconfig.site.browser.json'
-    const filesForSite = glob.sync(`./${siteSrc}/**/*.ts`);
-    CodeTransform.for.baselineSite(filesForSite);
-  }
+  BUILD
 
   if (!BUILD.withoutBackend) {
     child.execSync(`${TOOLS.rimraf} ${FOLDER.dist}`)

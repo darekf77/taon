@@ -13,14 +13,7 @@ export class CodeTransform {
 
   public static get for() {
     return {
-      baselineSite(filesPathes: string[]) {
-        filesPathes.forEach(f => {
-          new CodeTransform(f)
-            .replace.regionsFor.baselineSite()
-            .save()
-        })
 
-      },
       isomorphicLib(filesPathes: string[], otherIsomorphicLibs: string[] = []) {
         filesPathes.forEach(f => {
           new CodeTransform(f, otherIsomorphicLibs)
@@ -66,7 +59,9 @@ export class CodeTransform {
     return this;
   }
 
-
+  /**
+   * Get "npm package name" from line of code in .ts or .js files
+   */
   private get resolvePackageNameFrom() {
     const self = this;
     return {
@@ -87,7 +82,7 @@ export class CodeTransform {
         rawImport = rawImport.replace(new RegExp(`${usage}.+from\\s+`), '')
         rawImport = rawImport.replace(new RegExp(`(\'|\")`, 'g'), '').trim()
         if (rawImport.startsWith(`./`)) return null;
-        const fisrtName = rawImport.match(new RegExp(`[a-zA-z]+\\/`))
+        const fisrtName = rawImport.match(new RegExp(`([a-zA-z]|\-)+\\/`))
         let res: string = (_.isArray(fisrtName) && fisrtName.length > 0) ? fisrtName[0] : rawImport;
         if (res.endsWith('/') && res.length > 1) {
           res = res.substring(0, res.length - 1)
@@ -99,18 +94,24 @@ export class CodeTransform {
 
   private isomorphicLibs = ['ng2-rest', 'typeorm', 'ng2-logger', 'morphi'];
 
-
-  private package(packageName: string) {
+  /**
+   * Check if package of isomorphic-lib type
+   * @param packageName 
+   */
+  private isIsomorphic(packageName: string) {
 
     // console.log('MORPHI this.isomorphicLibs', this.isomorphicLibs)
     let realName = packageName;
     let isIsomorphic = false;
     if (packageName !== null) {
-      isIsomorphic = this.isomorphicLibs
-        .filter(p => {
+      isIsomorphic = !!this.isomorphicLibs
+        .find(p => {
+          if (p === packageName) {
+            return true;
+          }
           const slashes = (p.match(new RegExp("\/", "g")) || []).length;
           if (slashes === 0) {
-            return p == packageName
+            return p === packageName
           }
           // console.log('am here ', packageName)
           // console.log('p', p)
@@ -121,8 +122,7 @@ export class CodeTransform {
             return true;
           }
           return false;
-        })
-        .length >= 1;
+        });
     }
     return {
       isIsomorphic,
@@ -155,11 +155,8 @@ export class CodeTransform {
             if (_.isArray(imports)) {
               imports.forEach(imp => {
                 const pkgName = self.resolvePackageNameFrom.TSimportExport(imp, usage);
-                // if (pkgName === null) {
-                //   console.log('null for ', imp)
-                //   process.exit(0)
-                // }
-                const p = self.package(pkgName)
+
+                const p = self.isIsomorphic(pkgName)
                 if (p.isIsomorphic) {
                   const replacedImp = imp.replace(p.realName, `${p.realName}/browser`);
                   self.rawContent = self.rawContent.replace(imp, replacedImp);
@@ -177,11 +174,8 @@ export class CodeTransform {
             if (_.isArray(imports)) {
               imports.forEach(imp => {
                 const pkgName = self.resolvePackageNameFrom.JSrequired(imp);
-                // if (pkgName === null) {
-                //   console.log('null for ', imp)
-                //   process.exit(0)
-                // }
-                const p = self.package(pkgName)
+
+                const p = self.isIsomorphic(pkgName)
                 if (p.isIsomorphic) {
                   // console.log('isomorphic: ', pkgName)
                   const replacedImp = imp.replace(p.realName, `${p.realName}/browser`);
@@ -203,15 +197,8 @@ export class CodeTransform {
               "backendFunc"
             ], '')
             return self;
-          },
-          baselineSite() {
-            self.rawContent = self.replaceRegionsWith(self.rawContent, [
-              '@cutForSite'
-            ], '')
-            return self;
           }
         }
-
       }
     };
 
