@@ -114,7 +114,7 @@ export namespace Helpers {
       }
       command = `ln -sf "${link}" "${target}"`;
     }
-    // console.log(command)
+    console.log(command)
     return command;
   }
 

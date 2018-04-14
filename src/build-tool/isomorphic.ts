@@ -192,9 +192,7 @@ export class CodeTransform {
           isomorphicLib() {
             self.rawContent = self.replaceRegionsWith(self.rawContent, [
               ["@backendFunc", `return undefined;`],
-              "@backend",
-              "backend",
-              "backendFunc"
+              "@backend"
             ], '')
             return self;
           }
