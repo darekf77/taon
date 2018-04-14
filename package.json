@@ -58,8 +58,10 @@
     "lodash": "^4.17.4",
     "method-override": "^2.3.10",
     "ng2-rest": "^9.0.11",
+    "ps-node": "^0.1.6",
     "reflect-metadata": "^0.1.10",
     "rxjs": "^5.5.2",
+    "sleep": "^5.1.1",
     "socket.io": "^2.0.4",
     "tslib": "^1.8.1",
     "typeorm": "^0.1.9"
