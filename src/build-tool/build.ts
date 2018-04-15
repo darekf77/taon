@@ -8,7 +8,7 @@ import * as glob from "glob";
 import * as dateformat from "dateformat";
 
 const ps = require('ps-node');
-const sleep = require('sleep')
+// const sleep = require('sleep')
 
 import { CodeTransform } from './isomorphic';
 import { Helpers } from './helpers';
