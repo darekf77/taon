@@ -86,3 +86,9 @@ export function getClassConfig(target: Function, configs: ClassConfig[] = []): C
     }
     return configs;
 }
+
+
+export function getSingleton<T>(target: Function): T {
+    const configs = getClassConfig(target)
+    return ((Array.isArray(configs) && configs.length >= 1) ? configs[0].singleton : undefined) as any;
+}
