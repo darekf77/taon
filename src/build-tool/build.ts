@@ -138,9 +138,10 @@ export async function buildIsomorphicVersion(options?: BuildPathes) {
   })
 
   CodeTransform.for.isomorphicLib(files, BUILD.otherIsomorphicLibs);
-  child.execSync(`${TOOLS.tsc} --outDir ../${FOLDER.dist}/${FOLDER.browser}`, { stdio: [0, 1, 2], cwd: tempSrc })
-
-  child.execSync(Helpers.createLink('.', path.join(dist, FOLDER.browser)))
+  try {
+    child.execSync(`${TOOLS.tsc} --outDir ../${FOLDER.dist}/${FOLDER.browser}`, { stdio: [0, 1, 2], cwd: tempSrc })
+    child.execSync(Helpers.createLink('.', path.join(dist, FOLDER.browser)))
+  } catch (error) { }
   removeLockfile()
 }
 
