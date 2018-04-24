@@ -13,13 +13,14 @@ const model = 'aaaaaa'
 @__ENDPOINT(undefined, BaseCRUD)
 export abstract class BaseCRUD<T>  {
 
+    //#region @backend
     @OrmConnection connection: Connection;
     public get repository(): Repository<T> {
         return this.repo;
     }
     private repo: Repository<any>;
     public abstract entity: T;
-
+    //#endregion
 
     public __model = {
         getAll: () => this.getAll(),
@@ -30,10 +31,14 @@ export abstract class BaseCRUD<T>  {
     }
 
     constructor() {
-        console.log('Perfect')
-        //#region @backendFunc
+        this.init()
+    }
+
+    private init() {
+        //#region @backend
         if (isNode && this.entity) {
             this.repo = this.connection.getRepository(this.entity as any)
+            console.log(`Base CRUD inited for: ${(this.entity as any).name}`)
         }
         //#endregion
     }
@@ -49,7 +54,7 @@ export abstract class BaseCRUD<T>  {
     }
 
     @GET(`/${model}/:id`)
-    getBy( @PathParam(`id`) id: number): Response<T> {
+    getBy(@PathParam(`id`) id: number): Response<T> {
         //#region @backendFunc
         return async () => {
             const model = await this.repo.findOneById(id)
@@ -59,7 +64,7 @@ export abstract class BaseCRUD<T>  {
     }
 
     @PUT(`/${model}/:id`)
-    updateById( @PathParam(`id`) id: number, @BodyParam() item: T): Response<T> {
+    updateById(@PathParam(`id`) id: number, @BodyParam() item: T): Response<T> {
         //#region @backendFunc
         return async () => {
             await this.repo.updateById(id, item);
@@ -69,7 +74,7 @@ export abstract class BaseCRUD<T>  {
     }
 
     @DELETE(`/${model}/:id`)
-    deleteById( @PathParam(`id`) id: number): Response<T> {
+    deleteById(@PathParam(`id`) id: number): Response<T> {
         //#region @backendFunc
         return async () => {
             const deletedEntity = await this.repo.findOneById(id)
@@ -81,7 +86,7 @@ export abstract class BaseCRUD<T>  {
 
 
     @POST(`/${model}`)
-    create( @BodyParam() item: T): Response<T> {
+    create(@BodyParam() item: T): Response<T> {
         //#region @backendFunc
         return async () => {
             const model = await this.repo.create(item)
