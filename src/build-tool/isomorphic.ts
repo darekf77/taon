@@ -1,5 +1,7 @@
 
 import * as fs from "fs";
+import * as path from "path";
+import * as fse from "fs-extra";
 import * as _ from "lodash";
 
 export type TsUsage = 'import' | 'export';
@@ -11,11 +13,19 @@ export class CodeTransform {
     this.rawContent = fs.readFileSync(filePath, 'utf8').toString();
   }
 
+  get isEmpty() {
+    // if (this.filePath === './tmp-src-dist/run.ts') {
+    //   console.log(`EMPTY: '${this.rawContent.replace(/\s/g, '').trim()}'`)
+    //   process.exit(0)
+    // }
+    return this.rawContent.replace(/\s/g, '').trim() === '';
+  }
+
   public static get for() {
     return {
 
       isomorphicLib(filesPathes: string[], otherIsomorphicLibs: string[] = []) {
-        filesPathes.forEach(f => {
+        filesPathes.forEach((f, i) => {
           new CodeTransform(f, otherIsomorphicLibs)
             .flatTypescriptImportExport('import')
             .flatTypescriptImportExport('export')
@@ -23,7 +33,7 @@ export class CodeTransform {
             .replace.ismorphicLibsFrom.fromTsImportExport('import')
             .replace.ismorphicLibsFrom.fromTsImportExport('export')
             .replace.ismorphicLibsFrom.fromJSrequire()
-            .save()
+            .saveOrDelete()
         })
       }
     };
@@ -144,7 +154,7 @@ export class CodeTransform {
 
   public get replace() {
 
-    const self = this as any; // TODO Quick fix
+    const self = this;
     return {
       get ismorphicLibsFrom() {
         return {
@@ -202,8 +212,16 @@ export class CodeTransform {
 
   }
 
-  save() {
-    fs.writeFileSync(this.filePath, this.rawContent, 'utf8');
+  saveOrDelete() {
+    if (this.isEmpty) {
+      const deletePath = path.join(process.cwd(), this.filePath);
+      // console.log(`Delete empty: ${deletePath}`)
+      fse.unlinkSync(deletePath)
+    } else {
+      // console.log(`Not empty: ${this.filePath}`)
+      fs.writeFileSync(this.filePath, this.rawContent, 'utf8');
+    }
+    
   }
 
 }
