@@ -38,7 +38,7 @@ export abstract class BaseCRUD<T>  {
         //#region @backend
         if (isNode && this.entity) {
             this.repo = this.connection.getRepository(this.entity as any)
-            console.log(`Base CRUD inited for: ${(this.entity as any).name}`)
+            // console.log(`Base CRUD inited for: ${(this.entity as any).name}`)
         }
         //#endregion
     }
