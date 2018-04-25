@@ -139,9 +139,9 @@ export async function buildIsomorphicVersion(options?: BuildPathes) {
 
   CodeTransform.for.isomorphicLib(files, BUILD.otherIsomorphicLibs);
   try {
-    child.execSync(`${TOOLS.tsc}  -v`, { stdio: [0, 1, 2], cwd: tempSrc })
+    // child.execSync(`${TOOLS.tsc}  -v`, { stdio: [0, 1, 2], cwd: tempSrc })
     const lasCMD = `${TOOLS.tsc}  -d false --outDir ../${FOLDER.dist}/${FOLDER.browser} -p tsconfig.json`;
-    console.log('lasCMD',lasCMD)
+    // console.log('lasCMD',lasCMD)
     child.execSync(lasCMD, { stdio: [0, 1, 2], cwd: tempSrc })
     child.execSync(Helpers.createLink('.', path.join(dist, FOLDER.browser)))
   } catch (error) { }
