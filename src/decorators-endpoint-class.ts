@@ -166,8 +166,10 @@ export function init(host: string, app = undefined, socket = undefined) {
             c.injections.forEach(inj => {
               Object.defineProperty(controller.prototype, inj.propertyName, { get: inj.getter as any });
             });
-            const singleton = new (controller as any)();
-            c.singleton = singleton;
+            if (!(c.singleton instanceof controller)) {
+              const singleton = new (controller as any)();
+              c.singleton = singleton;
+            }
           })(currentCtrl);
 
         }
