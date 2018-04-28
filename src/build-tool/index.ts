@@ -11,6 +11,7 @@ import { copyExampleTo } from './new';
 
 export * from './helpers';
 export * from './build';
+export * from './environment';
 
 export function run(argsv: string[], morphiEnvironmentCheck = true) {
   if (morphiEnvironmentCheck) {
