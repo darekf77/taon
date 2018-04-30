@@ -80,17 +80,22 @@ export namespace Helpers {
     return /^([a-zA-Z]|\-|\_|\@|\#|\$|\!|\^|\&|\*|\(|\))+$/.test(filePath);
   }
 
-  export function createLink(target, link) {
+  export function createLink(target: string, link: string) {
     if (isPlainFileOrFolder(link)) {
       link = path.join(process.cwd(), link);
     }
 
     let command: string;
     if (os.platform() === 'win32') {
-      if (target === '.' || target === './') {
-        target = path.win32.normalize(path.join(process.cwd(), path.basename(link)))
+
+      if (target.startsWith('./')) {
+        target = path.win32.normalize(path.join(process.cwd(), path.basename(target)))
       } else {
-        target = path.win32.normalize(path.join(target, path.basename(link)))
+        if (target === '.' || target === './') {
+          target = path.win32.normalize(path.join(process.cwd(), path.basename(link)))
+        } else {
+          target = path.win32.normalize(path.join(target, path.basename(link)))
+        }
       }
       if (fs.existsSync(target)) {
         fs.unlinkSync(target);
@@ -109,6 +114,9 @@ export namespace Helpers {
         + " >nul 2>&1 "
       // console.log('LINK COMMAND', command)
     } else {
+      if (target.startsWith('./')) {
+        target = target.replace(/^\.\//g, '');
+      }
       if (link === '.' || link === './') {
         link = process.cwd()
       }
