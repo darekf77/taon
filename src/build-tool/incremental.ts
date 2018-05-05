@@ -11,24 +11,40 @@ export class IncrementalBuild {
 
     constructor(
         private filesGlobPattern: string,
-        private actionOnFile: (input: string) => string;
+        private actionOnFile: (filePath: string) => void,
+        private otherAsyncProcesss?: () => void
     ) {
         this.resoveFiles();
+    }
+
+    public init() {
+
+        try {
+            console.log(`${this.date()} Building server/browser version of ${path.basename(process.cwd())}...`)
+            child.execSync(`${this.options.toolsPathes.tsc} --outDir ${this.options.foldersPathes.dist}`)
+            await this.build();
+
+            console.log(`${this.date()} Typescript compilation OK`)
+        } catch (error) {
+            this.removeLockfile()
+            console.log(error);
+            console.error(`${this.date()} Typescript compilation ERROR`)
+            process.exit(0)
+        }
+
 
         this.customizableFilesOrFolders.forEach(f => {
-            this.changeFileWithPath(f)
+            this.actionOnFile(f)
         })
+    }
 
+    public initAndWatch() {
+        this.init()
         this.watchFilesAndFolders((f, event, data) => {
-            this.changeFileWithPath(f);
+            this.actionOnFile(f);
         })
     }
 
-    private changeFileWithPath(f) {
-        const fileContent = fs.readFileSync(f, 'utf8').toString()
-        const dataChanged = this.actionOnFile(fileContent);
-        fs.writeFileSync(f, dataChanged)
-    }
 
     customizableFilesOrFolders: string[];
     location: string;

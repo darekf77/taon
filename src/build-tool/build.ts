@@ -7,146 +7,136 @@ import * as fse from 'fs-extra';
 import * as glob from "glob";
 import * as dateformat from "dateformat";
 
-const ps = require('ps-node');
-// const sleep = require('sleep')
 
 import { CodeTransform } from './isomorphic';
 import { Helpers } from './helpers';
+import { IncrementalBuild } from './incremental';
+import { FoldersPathes, ToolsPathes, BuildConfig, BuildPathes, ProcessInfo } from "./models";
 
-const lockfile = path.join(process.cwd(), 'tmp-lockfile-isomorphic-build.txt')
-type ProcessInfo = { arguments: string; pid: string; command: string; ppid: string; }
+export class IsomoprhicBuild {
 
-export interface BuildPathes {
-  foldersPathes?: {
-    dist?: string;
-    browser?: string;
-    tmpSrc?: string;
-    src?: string;
-  };
-  toolsPathes?: {
-    tsc: string;
-    morphi: string;
-  };
-  build?: {
-    otherIsomorphicLibs?: string[];
+  FOLDER: FoldersPathes;
+  TOOLS: ToolsPathes;
+  BUILD: BuildConfig;
+
+  constructor(private options?: BuildPathes) {
+    //#region prepare parems
+    if (!this.options) this.options = {} as any;
+    const { foldersPathes, toolsPathes = {}, build = {}, watch = false } = this.options;
+
+    this.FOLDER = _.merge({
+      dist: 'dist',
+      browser: 'browser',
+      tmpSrc: `tmp-src-${foldersPathes.dist === undefined ? 'dist' : foldersPathes.dist}`,
+      src: 'src',
+      tsconfig: {
+        browser: 'tsconfig.browser.json',
+        default: 'tsconfig.json'
+      }
+
+    }, foldersPathes);
+
+    this.TOOLS = _.merge({
+      tsc: 'npm-run tsc',
+      morphi: 'morphi'
+    }, toolsPathes);
+
+    this.BUILD = _.merge({
+      otherIsomorphicLibs: []
+    }, build);
+    //#endregion
   }
-}
 
-function date() {
-  return `[${dateformat(new Date(), 'HH:MM:ss')}]`;
-}
+  public async init() {
+    if (this.options.watch) {
+      new IncrementalBuild(
+        `./${this.FOLDER.tmpSrc}/**/*.ts`,
+        CodeTransform.for.isomorphicLib(this.options.build.otherIsomorphicLibs).file
+      ).init()
+    } else {
+      const tempSrc = path.join(process.cwd(), `${this.FOLDER.tmpSrc}`);
 
-function removeLockfile() {
-  if (fs.existsSync(lockfile)) {
-    // console.log('REMOVE LOCKIE FILE')
-    fs.unlinkSync(lockfile)
-  }
-}
+      new IncrementalBuild(
+        `./${this.FOLDER.tmpSrc}/**/*.ts`,
+        CodeTransform.for.isomorphicLib(this.options.build.otherIsomorphicLibs).file,
+        () => {
+          child.execSync(`${this.TOOLS.tsc} -w -d false --outDir ../${this.FOLDER.dist}/${this.FOLDER.browser}`,
+            { stdio: [0, 1, 2], cwd: tempSrc })
 
-export async function wrapperIsomorphicBuildProcess(options?: BuildPathes) {
-  try {
-    console.log(`${date()} Building server/browser version of ${path.basename(process.cwd())}...`)
-    child.execSync(`${options.toolsPathes.tsc} --outDir ${options.foldersPathes.dist}`)
-    await buildIsomorphicVersion(options);
-
-    console.log(`${date()} Typescript compilation OK`)
-  } catch (error) {
-    removeLockfile()
-    console.log(error);
-    console.error(`${date()} Typescript compilation ERROR`)
-    process.exit(0)
-  }
-}
-
-function isCurrent(pid: number, command = 'morphi'): boolean {
-  const i: ProcessInfo = JSON.parse(child.execSync(`${command} process-info ${pid}`).toString())
-  // console.log(`CHALENGER ppid`, i.ppid)
-  return (process.ppid == Number(i.ppid))  // (pid === parseInt(i.pid)) && (i.command === 'node');
-}
-
-function preventRaceCodition(morphiCommand = 'morphi') {
-  // console.log(`OWN PID ${process.pid}`)
-  // console.log(`OWN ppid ${process.ppid}`)
-  if (fs.existsSync(lockfile)) {
-    const pid = parseInt(fs.readFileSync(lockfile, 'utf8').toString());
-    if (isCurrent(pid, morphiCommand)) {
-      console.log(`From same process.. ${pid} killing...`)
-      process.kill(pid)
+          child.execSync(`${this.TOOLS.tsc} -w --noEmitOnError true --outDir ../${this.FOLDER.dist}/${this.FOLDER.browser}`,
+            { stdio: [0, 1, 2], cwd: tempSrc })
+        }
+      ).initAndWatch()
     }
-    fs.writeFileSync(lockfile, process.pid, 'utf8');
-  } else {
-    fs.writeFileSync(lockfile, process.pid, 'utf8');
   }
-}
 
-export async function buildIsomorphicVersion(options?: BuildPathes) {
 
-  if (!options) options = {} as any;
-  const { foldersPathes = {}, toolsPathes = {}, build = {} } = options;
-  const FOLDER = _.merge({
-    dist: 'dist',
-    browser: 'browser',
-    tmpSrc: `tmp-src-${foldersPathes.dist === undefined ? 'dist' : foldersPathes.dist}`,
-    src: 'src',
-    tsconfig: {
-      browser: 'tsconfig.browser.json',
-      default: 'tsconfig.json'
+
+  private date() {
+    return `[${dateformat(new Date(), 'HH:MM:ss')}]`;
+  }
+
+
+
+
+  public async  build() {
+    const dist = path.join(process.cwd(), this.FOLDER.dist)
+    const browser = path.join(process.cwd(), this.FOLDER.browser)
+    const tmpSrc = path.join(process.cwd(), this.FOLDER.tmpSrc)
+    const src = path.join(process.cwd(), this.FOLDER.src)
+
+
+    // console.log('wainting ')
+    // sleep.sleep(1000)
+    // console.log('AAAAA')
+
+    // browser folder
+    if (fs.existsSync(browser)) {
+      fs.unlinkSync(browser);
     }
 
-  }, foldersPathes);
+    // temp typescript source fodler
+    if (fs.existsSync(tmpSrc)) {
+      fse.emptyDirSync(tmpSrc);
+    }
 
-  const dist = path.join(process.cwd(), FOLDER.dist)
-  const browser = path.join(process.cwd(), FOLDER.browser)
-  const tmpSrc = path.join(process.cwd(), FOLDER.tmpSrc)
-  const src = path.join(process.cwd(), FOLDER.src)
+    fse.copySync(`${src}/`, tmpSrc, {
+      overwrite: true
+    })
 
+    const tempSrc = path.join(process.cwd(), `${this.FOLDER.tmpSrc}`);
+    fse.copyFileSync(`${this.FOLDER.tsconfig.browser}`, `${this.FOLDER.tmpSrc}/${this.FOLDER.tsconfig.default}`);
 
+    const files = glob.sync(`./${this.FOLDER.tmpSrc}/**/*.ts`, {
+      nosort: true
+    })
 
-  const TOOLS = _.merge({
-    tsc: 'npm-run tsc',
-    morphi: 'morphi'
-  }, toolsPathes);
-  const BUILD = _.merge({
-    otherIsomorphicLibs: []
-  }, build);
-  BUILD
+    CodeTransform.for.isomorphicLib(this.BUILD.otherIsomorphicLibs).files(files);
+    try {
+      child.execSync(`${this.TOOLS.tsc}  -d false --outDir ../${this.FOLDER.dist}/${this.FOLDER.browser}`,
+        { stdio: [0, 1, 2], cwd: tempSrc })
 
-  preventRaceCodition(TOOLS.morphi);
-  // console.log('wainting ')
-  // sleep.sleep(1000)
-  // console.log('AAAAA')
+      child.execSync(`${this.TOOLS.tsc} --noEmitOnError true --outDir ../${this.FOLDER.dist}/${this.FOLDER.browser}`,
+        { stdio: [0, 1, 2], cwd: tempSrc })
 
-  // browser folder
-  if (fs.existsSync(browser)) {
-    fs.unlinkSync(browser);
+      child.execSync(Helpers.createLink('.', path.join(dist, this.FOLDER.browser)))
+    } catch (error) { }
+    this.removeLockfile()
   }
 
-  // temp typescript source fodler
-  if (fs.existsSync(tmpSrc)) {
-    fse.emptyDirSync(tmpSrc);
-  }
 
-  fse.copySync(`${src}/`, tmpSrc, {
-    overwrite: true
-  })
-
-  const tempSrc = path.join(process.cwd(), `${FOLDER.tmpSrc}`);
-  fse.copyFileSync(`${FOLDER.tsconfig.browser}`, `${FOLDER.tmpSrc}/${FOLDER.tsconfig.default}`);
-
-  const files = glob.sync(`./${FOLDER.tmpSrc}/**/*.ts`, {
-    nosort: true
-  })
-
-  CodeTransform.for.isomorphicLib(files, BUILD.otherIsomorphicLibs);
-  try {
-    child.execSync(`${TOOLS.tsc}  -d false --outDir ../${FOLDER.dist}/${FOLDER.browser}`,
-      { stdio: [0, 1, 2], cwd: tempSrc })
-
-    child.execSync(`${TOOLS.tsc} --noEmitOnError true --outDir ../${FOLDER.dist}/${FOLDER.browser}`,
-      { stdio: [0, 1, 2], cwd: tempSrc })
-
-    child.execSync(Helpers.createLink('.', path.join(dist, FOLDER.browser)))
-  } catch (error) { }
-  removeLockfile()
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 

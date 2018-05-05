@@ -6,7 +6,7 @@ import * as fs from 'fs';
 const ps = require('ps-node');
 
 import { Helpers } from './helpers';
-import { wrapperIsomorphicBuildProcess } from "./build";
+import { IsomoprhicBuild } from "./build";
 import { copyExampleTo } from './new';
 
 export * from './helpers';
@@ -18,15 +18,23 @@ export function run(argsv: string[], morphiEnvironmentCheck = true) {
     Helpers.checkEnvironment()
   }
   if (argsv.length >= 3) {
-    const commandName: 'build' | 'ln' | 'new' | 'process-info' | '-v' | '-h' | '--help' | '-help' = argsv[2] as any;
+    const commandName: 'build' | 'build:watch' | 'ln' | 'new' | 'process-info' | '-v' | '-h' | '--help' | '-help' = argsv[2] as any;
 
 
     if (commandName === 'build') {
-      wrapperIsomorphicBuildProcess({
+      new IsomoprhicBuild({
         build: {
           otherIsomorphicLibs: argsv.slice(4)
         }
-      });
+      }).init()
+      process.exit(0)
+    } else if (commandName === 'build:watch') {
+      new IsomoprhicBuild({
+        watch: true,
+        build: {
+          otherIsomorphicLibs: argsv.slice(4)
+        }
+      }).init()
       process.exit(0)
     } else if (commandName === 'process-info') {
       // A simple pid lookup

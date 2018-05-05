@@ -24,17 +24,24 @@ export class CodeTransform {
   public static get for() {
     return {
 
-      isomorphicLib(filesPathes: string[], otherIsomorphicLibs: string[] = []) {
-        filesPathes.forEach((f, i) => {
-          new CodeTransform(f, otherIsomorphicLibs)
-            .flatTypescriptImportExport('import')
-            .flatTypescriptImportExport('export')
-            .replace.regionsFor.isomorphicLib()
-            .replace.ismorphicLibsFrom.fromTsImportExport('import')
-            .replace.ismorphicLibsFrom.fromTsImportExport('export')
-            .replace.ismorphicLibsFrom.fromJSrequire()
-            .saveOrDelete()
-        })
+      isomorphicLib(otherIsomorphicLibs: string[] = []) {
+        return {
+          files(filesPathes: string[]) {
+            filesPathes.forEach((f, i) => {
+              CodeTransform.for.isomorphicLib(otherIsomorphicLibs).file(f);
+            })
+          },
+          file(f) {
+            return new CodeTransform(f, otherIsomorphicLibs)
+              .flatTypescriptImportExport('import')
+              .flatTypescriptImportExport('export')
+              .replace.regionsFor.isomorphicLib()
+              .replace.ismorphicLibsFrom.fromTsImportExport('import')
+              .replace.ismorphicLibsFrom.fromTsImportExport('export')
+              .replace.ismorphicLibsFrom.fromJSrequire()
+              .saveOrDelete()
+          }
+        }
       }
     };
   }
@@ -221,7 +228,7 @@ export class CodeTransform {
       // console.log(`Not empty: ${this.filePath}`)
       fs.writeFileSync(this.filePath, this.rawContent, 'utf8');
     }
-    
+
   }
 
 }
