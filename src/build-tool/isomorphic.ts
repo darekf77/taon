@@ -222,7 +222,7 @@ export class CodeTransform {
   saveOrDelete() {
     // console.log('saving ismoprhic file', this.filePath)
     if (this.isEmpty) {
-      const deletePath = path.join(process.cwd(), this.filePath);
+      const deletePath = this.filePath;
       // console.log(`Delete empty: ${deletePath}`)
       fse.unlinkSync(deletePath)
     } else {

@@ -20,7 +20,7 @@ export class IsomoprhicBuild {
   constructor(private options?: BuildPathes) {
     //#region prepare parems
     if (!this.options) this.options = {} as any;
-    const { foldersPathes, toolsPathes = {}, build = {}, watch = false } = this.options;
+    const { foldersPathes, toolsPathes, build, watch = false } = this.options;
 
     this.FOLDER = _.merge({
       dist: 'dist',
@@ -39,8 +39,9 @@ export class IsomoprhicBuild {
     }, toolsPathes);
 
     this.BUILD = _.merge({
+      buildBackend: true,
       otherIsomorphicLibs: []
-    }, build);
+    } as BuildConfig, build);
     //#endregion
 
   }
@@ -50,12 +51,12 @@ export class IsomoprhicBuild {
     return filePath.replace(new RegExp(`^${pathPart}`, 'g'), '')
   }
 
-  public init() {
+  public init(processCWD: string = process.cwd()) {
     const self = this;
-    const src = path.join(process.cwd(), this.FOLDER.src)
-    const browser = path.join(process.cwd(), this.FOLDER.browser)
-    const tmpSrc = path.join(process.cwd(), this.FOLDER.tmpSrc)
-    const dist = path.join(process.cwd(), this.FOLDER.dist)
+    const src = path.join(processCWD, this.FOLDER.src)
+    const browser = path.join(processCWD, this.FOLDER.browser)
+    const tmpSrc = path.join(processCWD, this.FOLDER.tmpSrc)
+    const dist = path.join(processCWD, this.FOLDER.dist)
     const browserOut = `../${this.FOLDER.dist}/${this.FOLDER.browser}`;
 
     function tempVersion(file) {
@@ -69,6 +70,14 @@ export class IsomoprhicBuild {
       location: src,
 
       syncAction: (files) => {
+
+        if (this.BUILD.buildBackend) {
+          child.execSync(`${this.TOOLS.tsc} --noEmitOnError true --noEmit true --outDir ${this.FOLDER.dist}`,
+            { stdio: [0, 1, 2], cwd: processCWD })
+          child.execSync(`${this.TOOLS.tsc} -d false --outDir ${this.FOLDER.dist}`,
+            { stdio: [0, 1, 2], cwd: processCWD })
+        }
+
         // console.log('Sync action files: ', files)
 
         files = files.map(f => tempVersion(f))
@@ -91,11 +100,16 @@ export class IsomoprhicBuild {
         try {
           child.execSync(`${this.TOOLS.tsc} -d false --outDir ${browserOut}`, { stdio: [0, 1, 2], cwd: tmpSrc })
           child.execSync(`${this.TOOLS.tsc} --noEmitOnError true --outDir ${browserOut}`, { stdio: [0, 1, 2], cwd: tmpSrc })
-          child.execSync(Helpers.createLink('.', path.join(dist, this.FOLDER.browser)))
+          child.execSync(Helpers.createLink('.', path.join(dist, this.FOLDER.browser)), { cwd: processCWD })
         } catch (error) { }
       },
 
       preAsyncAction: () => {
+        if (this.BUILD.buildBackend) {
+          child.exec(`${this.TOOLS.tsc} --noEmitOnError true --noEmit true --outDir ${this.FOLDER.dist}`, { cwd: processCWD })
+          child.exec(`${this.TOOLS.tsc} -d false --outDir ${this.FOLDER.dist}`, { cwd: processCWD })
+        }
+
         child.exec(`${this.TOOLS.tsc} -w -d false --outDir ${browserOut}`, { cwd: tmpSrc })
         child.exec(`${this.TOOLS.tsc} -w --noEmitOnError true --outDir ${browserOut}`, { cwd: tmpSrc })
         console.log('Watching isomorphic files for changes.. ')
