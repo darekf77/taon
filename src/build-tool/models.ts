@@ -7,7 +7,7 @@ export interface FoldersPathes {
   browser?: string;
   tmpSrc?: string;
   src?: string;
-  tsconfig: {
+  tsconfig?: {
     browser: string;
     default: string;
   }
