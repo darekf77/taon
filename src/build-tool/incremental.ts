@@ -18,7 +18,7 @@ export class IncrementalBuild {
         preAsyncAction?: () => void
         asyncAction?: (filePath: string) => void;
     }) {
- 
+
         this.locationBasename = path.basename(this.options.location);
         this.customizableFilesOrFolders = glob.sync(path.join(this.locationBasename, this.options.filesPattern))
         // console.log('this.customizableFilesOrFolders', this.customizableFilesOrFolders)
@@ -70,8 +70,9 @@ export class IncrementalBuild {
 
             if (_.isString(f)) {
                 f = path.join(this.locationBasename, f.replace(monitorDir, ''))
+                console.log(f)
             }
-            // console.log(f)
+
             // process.exit(0)
             if (typeof f == "object" && prev === null && curr === null) {
                 // Finished walking the tree

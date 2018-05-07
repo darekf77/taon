@@ -57,10 +57,21 @@ export class IsomoprhicBuild {
     const browser = path.join(processCWD, this.FOLDER.browser)
     const tmpSrc = path.join(processCWD, this.FOLDER.tmpSrc)
     const dist = path.join(processCWD, this.FOLDER.dist)
-    const browserOut = `../${this.FOLDER.dist}/${this.FOLDER.browser}`;
+
 
     function tempVersion(file) {
       return path.join(tmpSrc, file.replace(new RegExp(`^${self.FOLDER.src}`), ''));
+    }
+
+    const argsBackend = {
+      jsAndMaps: `--noEmitOnError true --noEmit true --outDir ${this.FOLDER.dist}`,
+      dTs: `-d false --outDir ${this.FOLDER.dist}`
+    }
+
+    const browserOut = `../${this.FOLDER.dist}/${this.FOLDER.browser}`;
+    const argsBrowser = {
+      jsAndMaps: `--noEmitOnError true --outDir ${browserOut}`,
+      dTs: `-d false --outDir ${browserOut}`
     }
 
     const build = new IncrementalBuild({
@@ -71,13 +82,15 @@ export class IsomoprhicBuild {
 
       syncAction: (files) => {
 
+        console.log('Backend compilation started... ')
         if (this.BUILD.buildBackend) {
-          child.execSync(`${this.TOOLS.tsc} --noEmitOnError true --noEmit true --outDir ${this.FOLDER.dist}`,
+          child.execSync(`${this.TOOLS.tsc} ${argsBackend.jsAndMaps}`,
             { stdio: [0, 1, 2], cwd: processCWD })
-          child.execSync(`${this.TOOLS.tsc} -d false --outDir ${this.FOLDER.dist}`,
+          child.execSync(`${this.TOOLS.tsc} ${argsBackend.dTs}`,
             { stdio: [0, 1, 2], cwd: processCWD })
         }
-
+        console.log('Backend compilation finish. ')
+        console.log('Browser compilation started... ')
         // console.log('Sync action files: ', files)
 
         files = files.map(f => tempVersion(f))
@@ -98,20 +111,22 @@ export class IsomoprhicBuild {
         CodeTransform.for.isomorphicLib(this.options.build.otherIsomorphicLibs).files(files)
 
         try {
-          child.execSync(`${this.TOOLS.tsc} -d false --outDir ${browserOut}`, { stdio: [0, 1, 2], cwd: tmpSrc })
-          child.execSync(`${this.TOOLS.tsc} --noEmitOnError true --outDir ${browserOut}`, { stdio: [0, 1, 2], cwd: tmpSrc })
+
+          child.execSync(`${this.TOOLS.tsc} ${argsBrowser.jsAndMaps}`, { stdio: [0, 1, 2], cwd: tmpSrc })
+          child.execSync(`${this.TOOLS.tsc} ${argsBrowser.dTs}`, { stdio: [0, 1, 2], cwd: tmpSrc })
           child.execSync(Helpers.createLink('.', path.join(dist, this.FOLDER.browser)), { cwd: processCWD })
         } catch (error) { }
+        console.log('Browser compilation finish. ')
       },
 
       preAsyncAction: () => {
         if (this.BUILD.buildBackend) {
-          child.exec(`${this.TOOLS.tsc} --noEmitOnError true --noEmit true --outDir ${this.FOLDER.dist}`, { cwd: processCWD })
-          child.exec(`${this.TOOLS.tsc} -d false --outDir ${this.FOLDER.dist}`, { cwd: processCWD })
+          child.exec(`${this.TOOLS.tsc} -w ${argsBackend.jsAndMaps}`, { cwd: processCWD })
+          child.exec(`${this.TOOLS.tsc} -w ${argsBackend.dTs}`, { cwd: processCWD })
         }
 
-        child.exec(`${this.TOOLS.tsc} -w -d false --outDir ${browserOut}`, { cwd: tmpSrc })
-        child.exec(`${this.TOOLS.tsc} -w --noEmitOnError true --outDir ${browserOut}`, { cwd: tmpSrc })
+        child.exec(`${this.TOOLS.tsc} -w ${argsBrowser.jsAndMaps}`, { cwd: tmpSrc })
+        child.exec(`${this.TOOLS.tsc} -w ${argsBrowser.dTs}`, { cwd: tmpSrc })
         console.log('Watching isomorphic files for changes.. ')
       },
 
