@@ -113,7 +113,7 @@ export class CodeTransform {
 
   /**
    * Check if package of isomorphic-lib type
-   * @param packageName 
+   * @param packageName
    */
   private isIsomorphic(packageName: string) {
 
@@ -220,6 +220,7 @@ export class CodeTransform {
   }
 
   saveOrDelete() {
+    // console.log('saving ismoprhic file', this.filePath)
     if (this.isEmpty) {
       const deletePath = path.join(process.cwd(), this.filePath);
       // console.log(`Delete empty: ${deletePath}`)

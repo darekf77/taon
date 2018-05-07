@@ -35,7 +35,7 @@ export function run(argsv: string[], morphiEnvironmentCheck = true) {
           otherIsomorphicLibs: argsv.slice(4)
         }
       }).init()
-      process.exit(0)
+      process.stdin.resume();
     } else if (commandName === 'process-info') {
       // A simple pid lookup
       if (!Array.isArray(argsv) || argsv.length < 2) {

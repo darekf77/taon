@@ -1,6 +1,6 @@
 
 
-export type ProcessInfo = { arguments: string; pid: string; command: string; ppid: string; }
+
 
 export interface FoldersPathes {
   dist?: string;
@@ -15,7 +15,6 @@ export interface FoldersPathes {
 
 export interface ToolsPathes {
   tsc: string;
-  morphi: string;
 }
 
 export interface BuildConfig {
