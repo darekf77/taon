@@ -127,6 +127,7 @@ export class IsomoprhicBuild {
 
         child.exec(`${this.TOOLS.tsc} -w ${argsBrowser.jsAndMaps}`, { cwd: tmpSrc })
         child.exec(`${this.TOOLS.tsc} -w ${argsBrowser.dTs}`, { cwd: tmpSrc })
+        child.execSync(Helpers.createLink('.', path.join(dist, this.FOLDER.browser)), { cwd: processCWD })
         console.log('Watching isomorphic files for changes.. ')
       },
 

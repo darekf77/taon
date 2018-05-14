@@ -17,6 +17,7 @@ if (isNode) {
   var errorHandler = require('errorhandler');
   var cookieParser = require('cookie-parser')
   var methodOverride = require('method-override');
+  var fileUpload = require('express-fileupload');
   var { decode } = require('ng2-rest');
   //#endregion
 }
@@ -25,6 +26,7 @@ if (isNode) {
 export function initMidleware(global: GlobalVars) {
   //#region @backend
   const { app, socket } = global;
+  app.use(fileUpload())
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
   app.use(methodOverride());
