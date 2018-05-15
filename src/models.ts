@@ -23,6 +23,8 @@ export type ParamType = 'Path' | 'Query' | 'Cookie' | 'Header' | 'Body';
 export type ContextENDPOINT = { target: Function; initFN: Function; };
 
 export interface GlobalVars {
+  allowedHosts: URL[];
+  url: URL;
   app: any;
   socket: any;
   endpoints: ContextENDPOINT[],

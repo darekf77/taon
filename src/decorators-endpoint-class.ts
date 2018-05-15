@@ -18,6 +18,8 @@ declare var require: any;
 
 
 export const global: GlobalVars = {
+  allowedHosts: undefined,
+  url: undefined,
   app: undefined,
   socket: undefined,
   endpoints: [],
@@ -114,7 +116,8 @@ export function ENDPOINT(options?: {
   } as any;
 }
 
-export function init(host: string, app = undefined, socket = undefined) {
+// TODO allowed hosts in progress
+export function init(host: string, allowedHosts?: string[]) {
   // debugger;
   if (isNode) {
     //#region @backend
@@ -124,6 +127,10 @@ export function init(host: string, app = undefined, socket = undefined) {
     }
     const { URL } = require('url');
     const uri = new URL(host);
+    global.url = uri;
+    if (Array.isArray(allowedHosts)) {
+      global.allowedHosts = allowedHosts.map(h => new URL(h))
+    }
     http = http.Server(global.app);
     global.socket = io(http);
     global.socket.on('connection', (socket) => {
@@ -139,6 +146,10 @@ export function init(host: string, app = undefined, socket = undefined) {
   }
   if (isBrowser) {
     const uri = new URL(host);
+    global.url = uri;
+    if (Array.isArray(allowedHosts)) {
+      global.allowedHosts = allowedHosts.map(h => new URL(h))
+    }
     window['uri'] = uri;
     initRealtime();
   }

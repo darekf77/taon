@@ -53,7 +53,21 @@ export function initMidleware(global: GlobalVars) {
         }
 
       });
-      res.set('Access-Control-Expose-Headers', `Content-Type ,Authorization, ${MAPPING_CONFIG_HEADER}`)
+
+      let allowedHosts = [];
+      if (Array.isArray(global.allowedHosts)) {
+        allowedHosts = global.allowedHosts.map(h => `${h.href}*`)
+      }
+      // res.set('Access-Control-Allow-Credentials', true);
+      // res.set('Access-Control-Allow-Origin',
+      //   [`${global.url.href}*`].concat(allowedHosts).join(', '))
+      res.set('Access-Control-Expose-Headers',
+        [
+          'Content-Type',
+          'Authorization',
+          'X-Requested-With',
+          MAPPING_CONFIG_HEADER
+        ].join(', '))
       next();
     });
   })(global)
