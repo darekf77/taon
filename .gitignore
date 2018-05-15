@@ -2,6 +2,7 @@ node_modules
 tmp*
 dist*
 bundle*
+browser
 module
 www
 Thumbs.db
