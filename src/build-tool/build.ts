@@ -57,6 +57,9 @@ export class IsomoprhicBuild {
     const browser = path.join(processCWD, this.FOLDER.browser)
     const tmpSrc = path.join(processCWD, this.FOLDER.tmpSrc)
     const dist = path.join(processCWD, this.FOLDER.dist)
+    const tsconfig_browser = path.join(processCWD, this.FOLDER.tsconfig && this.FOLDER.tsconfig.browser);
+    const tsconfig_default = path.join(processCWD, this.FOLDER.tsconfig && this.FOLDER.tsconfig.default);
+
 
 
     function tempVersion(file) {
@@ -107,8 +110,8 @@ export class IsomoprhicBuild {
         fse.copySync(`${src}/`, tmpSrc, {
           overwrite: true
         })
-        fse.copyFileSync(`${this.FOLDER.tsconfig.browser}`, `${this.FOLDER.tmpSrc}/${this.FOLDER.tsconfig.default}`);
-        CodeTransform.for.isomorphicLib(this.options.build.otherIsomorphicLibs).files(files)
+        fse.copyFileSync(`${tsconfig_browser}`, `${tmpSrc}/${this.FOLDER.tsconfig.default}`);
+        CodeTransform.for.isomorphicLib(this.options.build.otherIsomorphicLibs).files(files);
 
         try {
 

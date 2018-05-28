@@ -27,7 +27,7 @@ export function getResponseValue<T>(response: Response<T>, req: ExpressRequest, 
                 const result = await asyncResponse(req, res);
                 resolve(result);
             } catch (error) {
-                console.error('Bad async function call ')
+                console.error('Bad async function call ', error)
                 reject(error);
             }
         } else if (typeof response === 'object') {
@@ -39,7 +39,7 @@ export function getResponseValue<T>(response: Response<T>, req: ExpressRequest, 
                     resolve(response.send as any)
                 }
             } catch (error) {
-                console.error('Bad synchonus function call ')
+                console.error('Bad synchonus function call ', error)
                 reject(error);
             }
         } else reject(`Not recognized type of reposne ${response}`);
