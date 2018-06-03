@@ -25,7 +25,7 @@ export function replay(model: string, method: HttpMethod) {
     const endpoints = window[ENDPOINT_META_CONFIG];
     // console.log('window', window)
     // console.log('endpoints', endpoints)
-    const endpoint = uri.origin;
+    const endpoint = uri.href;
     const rest = endpoints[endpoint][model];
     // console.log('rest', rest)
     if (rest) {
@@ -37,7 +37,7 @@ export function replay(model: string, method: HttpMethod) {
 
 export function initRealtime() {
     const uri: URL = window['uri'];
-    const socket = io(uri.origin);
+    const socket = io(uri.href);
     socket.emit('chat message');
     socket.on(SOCKET_MSG, function (msg) {
         if (msg && Array.isArray(msg.pathes)) {
@@ -52,14 +52,14 @@ export function initMethodBrowser(target, type: HttpMethod, m: MethodConfig, exp
 
         const uri: URL = window['uri'];
         if (!window[ENDPOINT_META_CONFIG]) window[ENDPOINT_META_CONFIG] = {};
-        if (!window[ENDPOINT_META_CONFIG][uri.origin]) window[ENDPOINT_META_CONFIG][uri.origin] = {};
+        if (!window[ENDPOINT_META_CONFIG][uri.href]) window[ENDPOINT_META_CONFIG][uri.href] = {};
         const endpoints = window[ENDPOINT_META_CONFIG];
         let rest;
-        if (!endpoints[uri.origin][expressPath]) {
-            rest = Resource.create(uri.origin, expressPath, MAPPING_CONFIG_HEADER);
-            endpoints[uri.origin][expressPath] = rest;
+        if (!endpoints[uri.href][expressPath]) {
+            rest = Resource.create(uri.href, expressPath, MAPPING_CONFIG_HEADER);
+            endpoints[uri.href][expressPath] = rest;
         } else {
-            rest = endpoints[uri.origin][expressPath];
+            rest = endpoints[uri.href][expressPath];
         }
 
 
