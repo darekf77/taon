@@ -85,7 +85,8 @@ export function initMethodNodejs(
 
   gb.url.pathname = gb.url.pathname.replace(/\/$/, "");
   expressPath = gb.url.pathname.startsWith('/') ? `${gb.url.pathname}${expressPath}` : expressPath;
-  
+  expressPath = expressPath.replace(/\/\//g, '/')
+  // console.log(`expressPath: ${expressPath}`)
   const { app, socket } = gb;
   app[type.toLowerCase()](expressPath, requestHandler, async (req, res) => {
     res[METHOD_DECORATOR] = m;
