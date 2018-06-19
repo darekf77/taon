@@ -3,30 +3,31 @@
 
 
 export interface FoldersPathes {
-    dist?: string;    
-    browser?: string;
-    tmpSrc?: string;
-    src?: string;
-    tsconfig?: {
-        browser: string;
-        default: string;
-    }
+  dist?: string;
+  browser?: string;
+  tmpSrc?: string;
+  src?: string;
+  tsconfig?: {
+    browser: string;
+    default: string;
+  }
 }
 
 export interface ToolsPathes {
-    tsc: string;
+  tsc: string;
 }
 
 export interface BuildConfig {
-    buildBackend?: boolean;
-    otherIsomorphicLibs: string[];
+  generateDeclarations?: boolean; // QUICK_FIX
+  buildBackend?: boolean;
+  otherIsomorphicLibs: string[];
 }
 
 export interface BuildPathes {
-    watch?: boolean;
-    foldersPathes?: FoldersPathes;
-    toolsPathes?: ToolsPathes;
-    build?: BuildConfig;
+  watch?: boolean;
+  foldersPathes?: FoldersPathes;
+  toolsPathes?: ToolsPathes;
+  build?: BuildConfig;
 }
 
 

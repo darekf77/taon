@@ -40,6 +40,7 @@ export class IsomoprhicBuild {
 
     this.BUILD = _.merge({
       buildBackend: true,
+      generateDeclarations: false,
       otherIsomorphicLibs: []
     } as BuildConfig, build);
     //#endregion
@@ -59,8 +60,7 @@ export class IsomoprhicBuild {
     const dist = path.join(processCWD, this.FOLDER.dist)
     const tsconfig_browser = path.join(processCWD, this.FOLDER.tsconfig && this.FOLDER.tsconfig.browser);
     const tsconfig_default = path.join(processCWD, this.FOLDER.tsconfig && this.FOLDER.tsconfig.default);
-
-
+    const generateDeclarations = (_.isBoolean(this.BUILD.generateDeclarations) && this.BUILD.generateDeclarations) ? 'true' : 'false';
 
     function tempVersion(file) {
       return path.join(tmpSrc, file.replace(new RegExp(`^${self.FOLDER.src}`), ''));
@@ -68,13 +68,13 @@ export class IsomoprhicBuild {
 
     const argsBackend = {
       jsAndMaps: `--noEmitOnError true --noEmit true --outDir ${this.FOLDER.dist}`,
-      dTs: `-d false --outDir ${this.FOLDER.dist}`
+      dTs: `-d ${generateDeclarations} --outDir ${this.FOLDER.dist}`
     }
 
     const browserOut = `../${this.FOLDER.dist}/${this.FOLDER.browser}`;
     const argsBrowser = {
       jsAndMaps: `--noEmitOnError true --outDir ${browserOut}`,
-      dTs: `-d false --outDir ${browserOut}`
+      dTs: `-d ${generateDeclarations} --outDir ${browserOut}`
     }
 
     const build = new IncrementalBuild({
