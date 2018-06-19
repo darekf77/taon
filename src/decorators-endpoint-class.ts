@@ -1,5 +1,4 @@
 import {
-  ClassConfig, MethodConfig, ParamConfig, ParamType,
   CLASS_META_CONFIG, Response, isNode, isBrowser,
   METHOD_DECORATOR, getExpressPath, GlobalVars,
   CLASS_DECORATOR_CONTEXT, ContextENDPOINT,
@@ -7,7 +6,7 @@ import {
   AuthCallBack
   //#endregion
 } from "./models";
-import { getClassConfig } from "./helpers";
+import { getClassConfig, ClassConfig, MethodConfig, ParamConfig, ParamType } from "ng2-rest";
 import { initMethodBrowser, initRealtime } from "./init-method-browser";
 import { initMethodNodejs, initMidleware } from "./init-method-node";
 import { HttpMethod, } from 'ng2-rest';

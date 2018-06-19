@@ -1,11 +1,10 @@
 import {
-  ClassConfig, MethodConfig, ParamConfig, ParamType,
-  CLASS_META_CONFIG, Response, isNode, isBrowser,
+  Response, isNode, isBrowser,
   METHOD_DECORATOR, CLASS_DECORATOR, SOCKET_MSG,
   getExpressPath, GlobalVars, MAPPING_CONFIG_HEADER,
-  Errors
+  Errors, CLASS_META_CONFIG
 } from "./models";
-import { HttpMethod } from "ng2-rest";
+import { ClassConfig, MethodConfig, ParamConfig, ParamType, HttpMethod } from "ng2-rest";
 
 import { tryTransformParam, getResponseValue } from "./helpers";
 

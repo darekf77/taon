@@ -1,10 +1,9 @@
 
 import {
-    ClassConfig, MethodConfig, ParamConfig, ParamType,
+
     CLASS_META_CONFIG, Response, isNode, isBrowser
 } from "./models";
-import { getClassConfig } from "./helpers";
-import { HttpMethod } from "ng2-rest";
+import { HttpMethod, getClassConfig, ClassConfig, MethodConfig, ParamConfig, ParamType, } from "ng2-rest";
 
 function metaReq(
     method: HttpMethod, path: string,
@@ -39,6 +38,14 @@ export function PUT(path: string) {
 export function DELETE(path: string) {
     return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
         metaReq('DELETE', path, target, propertyKey, descriptor);
+    }
+}
+
+export function CLASS_NAME(name: string) {
+    return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+        const configs = getClassConfig(target.constructor);
+        const c = configs[0];
+        c.className = name;
     }
 }
 
