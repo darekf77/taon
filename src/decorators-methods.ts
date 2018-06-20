@@ -41,11 +41,3 @@ export function DELETE(path: string) {
     }
 }
 
-export function CLASS_NAME(name: string) {
-    return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-        const configs = getClassConfig(target.constructor);
-        const c = configs[0];
-        c.className = name;
-    }
-}
-

@@ -66,6 +66,18 @@ export function __ENDPOINT(path?: string | BaseLevelPath, baseEntity?: Function)
 
 export type BaseLevelPath = (previousPath: string[]) => string;
 
+/**
+ * PLEASE PROVIDE NAME AS TYPED STRING, NOT VARIABLE
+ * Decorator requred for production mode
+ * @param name Name of class
+ */
+export function CLASSNAME(name: string) {
+  return function (target: Function) {
+    const configs = getClassConfig(target.constructor);
+    const c = configs[0];
+    c.className = name;
+  } as any;
+}
 
 
 export function ENDPOINT(options?: {

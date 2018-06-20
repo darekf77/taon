@@ -61,7 +61,7 @@ export class IsomoprhicBuild {
     const tsconfig_browser = path.join(processCWD, this.FOLDER.tsconfig && this.FOLDER.tsconfig.browser);
     const tsconfig_default = path.join(processCWD, this.FOLDER.tsconfig && this.FOLDER.tsconfig.default);
     const generateDeclarations = (_.isBoolean(this.BUILD.generateDeclarations) && this.BUILD.generateDeclarations) ? 'true' : 'false';
-
+    console.log('generateDeclarations', generateDeclarations)
     function tempVersion(file) {
       return path.join(tmpSrc, file.replace(new RegExp(`^${self.FOLDER.src}`), ''));
     }
