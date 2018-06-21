@@ -10,7 +10,7 @@ function metaParam(param: ParamType, name: string, expire: number, defaultValue 
   const m = c.methods[methodName] = (!c.methods[methodName] ? new MethodConfig() : c.methods[methodName]);
   const p = m.parameters[name] = (!m.parameters[name] ? new ParamConfig() : m.parameters[name]);
   p.index = args[2];
-  p.name = name;
+  p.paramName = name;
   p.paramType = param;
   p.defaultType = defaultValue;
   p.expireInSeconds = expire;

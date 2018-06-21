@@ -6,7 +6,7 @@ import {
   AuthCallBack
   //#endregion
 } from "./models";
-import { getClassConfig, ClassConfig, MethodConfig, ParamConfig, ParamType } from "ng2-rest";
+import { getClassConfig, ClassConfig, MethodConfig, ParamConfig, ParamType, getClassName } from "ng2-rest";
 import { initMethodBrowser, initRealtime } from "./init-method-browser";
 import { initMethodNodejs, initMidleware } from "./init-method-node";
 import { HttpMethod, } from 'ng2-rest';
@@ -18,6 +18,7 @@ declare var require: any;
 
 export const global: GlobalVars = {
   allowedHosts: undefined,
+  productionMode: false,
   url: undefined,
   app: undefined,
   socket: undefined,
@@ -95,8 +96,24 @@ export function ENDPOINT(options?: {
         //#region  access decorator config
         const configs = getClassConfig(target);
         const c: ClassConfig = configs[0];
+
+        if (isBrowser && !c.className && global.productionMode) {
+          throw `(PRODUCTION MODE ERROR)
+Please use decoartor CLASSNAME for each entity/controller
+This is preventing class mangle problem.
+
+import { CLASSNAME } from 'morphi/browser';
+
+@CLASSNAME('ExampleClass')
+class ExampleClass {
+  ...
+}
+`
+
+        }
+
         if (path === undefined) {
-          c.basePath = `/${c.name}`;
+          c.basePath = `/${getClassName(target)}`;
         } else if (typeof path === 'string') {
           c.basePath = path;
         } else if (typeof path === 'function') {
@@ -128,7 +145,7 @@ export function ENDPOINT(options?: {
 }
 
 // TODO allowed hosts in progress
-export function init(host: string, allowedHosts?: string[]) {
+export function init(host: string, allowedHosts?: string[], productionMode = false) {
   // debugger;
   if (isNode) {
     //#region @backend
@@ -139,6 +156,7 @@ export function init(host: string, allowedHosts?: string[]) {
     const { URL } = require('url');
     const uri = new URL(host);
     global.url = uri;
+    global.productionMode = productionMode;
     if (Array.isArray(allowedHosts)) {
       global.allowedHosts = allowedHosts.map(h => new URL(h))
     }
@@ -222,7 +240,7 @@ export function init(host: string, allowedHosts?: string[]) {
         }
       })
       notFound.forEach(ctrl => {
-        console.error(`Decorator "@ENDPOINT(..)" is missing on class ${ctrl.name}`);
+        console.error(`Decorator "@ENDPOINT(..)" is missing on class ${getClassName(ctrl)}`);
       });
       providers.forEach(p => AngularProviders.push(p))
       return providers;

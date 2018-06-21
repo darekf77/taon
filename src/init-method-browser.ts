@@ -47,7 +47,7 @@ export function initRealtime() {
 
 
 export function initMethodBrowser(target, type: HttpMethod, m: MethodConfig, expressPath) {
-  target.prototype[m.name] = function (...args) {
+  target.prototype[m.methodName] = function (...args) {
 
     const uri: URL = window['uri'];
     if (!window[ENDPOINT_META_CONFIG]) window[ENDPOINT_META_CONFIG] = {};
@@ -80,14 +80,14 @@ export function initMethodBrowser(target, type: HttpMethod, m: MethodConfig, exp
       //#endregion
       // debugger
       if (currentParam.paramType === 'Path') {
-        pathPrams[currentParam.name] = param;
+        pathPrams[currentParam.paramName] = param;
       }
       if (currentParam.paramType === 'Query') {
-        queryParams[currentParam.name] = param;
+        queryParams[currentParam.paramName] = param;
       }
       if (currentParam.paramType === 'Header') {
-        if (currentParam.name) {
-          Resource.Headers.request.set(currentParam.name, param)
+        if (currentParam.paramName) {
+          Resource.Headers.request.set(currentParam.paramName, param)
         } else {
           for (let header in param) {
             Resource.Headers.request.set(header, param[header])
@@ -95,11 +95,11 @@ export function initMethodBrowser(target, type: HttpMethod, m: MethodConfig, exp
         }
       }
       if (currentParam.paramType === 'Cookie') {
-        Resource.Cookies.write(currentParam.name, param, currentParam.expireInSeconds);
+        Resource.Cookies.write(currentParam.paramName, param, currentParam.expireInSeconds);
       }
       if (currentParam.paramType === 'Body') {
-        if (currentParam.name) {
-          item[currentParam.name] = param;
+        if (currentParam.paramName) {
+          item[currentParam.paramName] = param;
         } else {
           item = param;
         }

@@ -25,6 +25,7 @@ export const SOCKET_MSG = 'socketmessageng2rest';
 export type ContextENDPOINT = { target: Function; initFN: Function; };
 
 export interface GlobalVars {
+  productionMode?:boolean;
   allowedHosts: URL[];
   url: URL;
   app: any;

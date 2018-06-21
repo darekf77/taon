@@ -94,20 +94,20 @@ export function initMethodNodejs(
     Object.keys(m.parameters).forEach(paramName => {
       let p: ParamConfig = m.parameters[paramName];
       if (p.paramType === 'Path' && req.params) {
-        args.push(req.params[p.name])
+        args.push(req.params[p.paramName])
       }
       if (p.paramType === 'Query' && req.query) {
-        args.push(req.query[p.name])
+        args.push(req.query[p.paramName])
       }
       if (p.paramType === 'Header' && req.headers) {
-        args.push(req.headers[p.name.toLowerCase()])
+        args.push(req.headers[p.paramName.toLowerCase()])
       }
       if (p.paramType === 'Cookie' && req.cookies) {
-        args.push(req.cookies[p.name])
+        args.push(req.cookies[p.paramName])
       }
       if (p.paramType === 'Body' && req.body) {
-        if (p.name && typeof req.body === 'object') {
-          args.push(req.body[p.name])
+        if (p.paramName && typeof req.body === 'object') {
+          args.push(req.body[p.paramName])
         } else {
           args.push(req.body)
         }

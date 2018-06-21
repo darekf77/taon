@@ -12,7 +12,7 @@ function metaReq(
     const configs = getClassConfig(target.constructor);
     const c = configs[0];
     const m: MethodConfig = c.methods[propertyKey] = (!c.methods[propertyKey] ? new MethodConfig() : c.methods[propertyKey]);
-    m.name = propertyKey;
+    m.methodName = propertyKey;
     m.type = method;
     m.path = path;
     m.descriptor = descriptor;
