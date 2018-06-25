@@ -48,7 +48,7 @@ export function initRealtime() {
 
 export function initMethodBrowser(target, type: HttpMethod, m: MethodConfig, expressPath) {
   target.prototype[m.methodName] = function (...args) {
-
+    // console.log('expressPath', expressPath)
     const uri: URL = window['uri'];
     if (!window[ENDPOINT_META_CONFIG]) window[ENDPOINT_META_CONFIG] = {};
     if (!window[ENDPOINT_META_CONFIG][uri.href]) window[ENDPOINT_META_CONFIG][uri.href] = {};

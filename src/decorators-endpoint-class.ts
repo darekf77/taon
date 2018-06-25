@@ -6,10 +6,13 @@ import {
   AuthCallBack
   //#endregion
 } from "./models";
-import { getClassConfig, ClassConfig, MethodConfig, ParamConfig, ParamType, getClassName } from "ng2-rest";
+import {
+  getClassConfig, ClassConfig, MethodConfig
+  , getClassName, CLASSNAME, HttpMethod
+} from "ng2-rest";
 import { initMethodBrowser, initRealtime } from "./init-method-browser";
 import { initMethodNodejs, initMidleware } from "./init-method-node";
-import { HttpMethod, } from 'ng2-rest';
+export { CLASSNAME } from 'ng2-rest';
 import { Connection } from "typeorm";
 import * as _ from "lodash";
 import "reflect-metadata";
@@ -34,11 +37,6 @@ if (isNode) {
   var http = require('http');
   //#endregion
 }
-
-if (isBrowser) {
-  var { initEntities } = require("ng2-rest");
-}
-
 
 export { Connection } from "typeorm";
 export function OrmConnection(target: Object, propertyName: string) {
@@ -67,18 +65,6 @@ export function __ENDPOINT(path?: string | BaseLevelPath, baseEntity?: Function)
 
 export type BaseLevelPath = (previousPath: string[]) => string;
 
-/**
- * PLEASE PROVIDE NAME AS TYPED STRING, NOT VARIABLE
- * Decorator requred for production mode
- * @param name Name of class
- */
-export function CLASSNAME(name: string) {
-  return function (target: Function) {
-    const configs = getClassConfig(target.constructor);
-    const c = configs[0];
-    c.className = name;
-  } as any;
-}
 
 
 export function ENDPOINT(options?: {
@@ -92,39 +78,25 @@ export function ENDPOINT(options?: {
     const { path, auth } = options ? options : {} as any;
     const initFN = (function (target, path, auth) {
       return function () {
-
+        // console.log(`INITING ${target}`)
         //#region  access decorator config
         const configs = getClassConfig(target);
         const c: ClassConfig = configs[0];
-
-        if (isBrowser && !c.className && global.productionMode) {
-          throw `(PRODUCTION MODE ERROR)
-Please use decoartor CLASSNAME for each entity/controller
-This is preventing class mangle problem.
-
-import { CLASSNAME } from 'morphi/browser';
-
-@CLASSNAME('ExampleClass')
-class ExampleClass {
-  ...
-}
-`
-
-        }
-
         if (path === undefined) {
-          c.basePath = `/${getClassName(target)}`;
+          c.basePath = `/${getClassName(target, isBrowser && global.productionMode)}`;
         } else if (typeof path === 'string') {
           c.basePath = path;
         } else if (typeof path === 'function') {
           c.basePath = (path as Function).call(this, _.slice(configs, 1).map(bc => bc.basePath));
         }
+        // console.log(c.basePath)
         const checkAuthFn = (auth && typeof auth === 'function');
         //#endregion
         Object.keys(c.methods).forEach(methodName => {
           const m: MethodConfig = c.methods[methodName];
           const type: HttpMethod = m.type;
           const expressPath = getExpressPath(c, m);
+          // console.log('initfn expressPath', expressPath)
           if (isNode) {
             //#region @backend
             if (checkAuthFn) {
@@ -191,7 +163,7 @@ export function init(host: string, allowedHosts?: string[], productionMode = fal
       global.connection = connection;
       global.entities = config.entities;
       global.endpoints.filter(e => {
-        const currentCtrl = controllers.find(ctrl => ctrl.name === e.target.name);
+        const currentCtrl = controllers.find(ctrl => ctrl === e.target);
         if (currentCtrl) {
           e.initFN();
 
@@ -220,10 +192,9 @@ export function init(host: string, allowedHosts?: string[], productionMode = fal
       let { controllers, entities, connection } = config;
       global.base_controllers.forEach(bctrl => controllers.push(bctrl));
       controllers = _.sortedUniq(controllers);
-      initEntities(entities);
       const notFound: Function[] = [];
       const providers = controllers.filter(ctrl => {
-        const e = global.endpoints.find(e => ctrl.name === e.target.name);
+        const e = global.endpoints.find(e => ctrl === e.target);
         if (e) {
           // console.log('current controller ', currentCtrl)
           e.initFN();

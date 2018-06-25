@@ -5,12 +5,14 @@ import {
     PathParam, BodyParam, OrmConnection
 } from "./index";
 
+import { CLASSNAME } from 'ng2-rest';
 import { Repository, Connection } from "typeorm";
 import { Observable } from "rxjs/Observable";
 
 const model = 'aaaaaa'
 
 @__ENDPOINT(undefined, BaseCRUD)
+@CLASSNAME('BaseCRUD')
 export abstract class BaseCRUD<T>  {
 
     //#region @backend

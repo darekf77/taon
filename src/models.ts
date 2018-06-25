@@ -6,7 +6,7 @@ import { Response, Request, NextFunction, RequestHandler } from "express";
 import { Observable } from 'rxjs/Observable';
 import {
   HttpResponse, HttpMethod, HttpCode, PromiseObservableMix,
-  CLASS_META_CONFIG, ClassConfig, MethodConfig
+  CLASS_META_CONFIG, ClassConfig, MethodConfig, getClassName
 } from "ng2-rest";
 export { CLASS_META_CONFIG } from 'ng2-rest';
 import { Connection } from "typeorm";
@@ -83,7 +83,7 @@ export class Errors {
   }
 
   public static entityNotFound(entity?: Function) {
-    return Errors.create(`Entity ${entity.name} not found`);
+    return Errors.create(`Entity ${getClassName(entity) } not found`);
   }
 
   public static custom(message: string, code: HttpCode = 400) {

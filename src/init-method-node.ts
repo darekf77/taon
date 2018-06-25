@@ -120,7 +120,7 @@ export function initMethodNodejs(
 
       const result = await getResponseValue(response, req, res);
       // const result = typeof response.send === 'function' ? response.send.call(req, res) : response.send;
-      const entity = decode(result, gb.entities);
+      const entity = decode(result);
       res.set(MAPPING_CONFIG_HEADER, JSON.stringify(entity));
 
       if (typeof result === 'object') {

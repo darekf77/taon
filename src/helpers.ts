@@ -9,9 +9,9 @@ import { ClassConfig, MethodConfig, ParamConfig, ParamType, HttpMethod, getClass
 import { Response as ExpressResponse, Request as ExpressRequest } from "express";
 
 
-// function isAsync(fn) {
-//   return fn && fn.constructor && fn.constructor.name === 'AsyncFunction';
-// }
+function isAsync(fn) {
+  return fn && fn.constructor && fn.constructor.name === 'AsyncFunction';
+}
 
 export function getResponseValue<T>(response: Response<T>, req: ExpressRequest, res: ExpressResponse): Promise<SyncResponse<T>> {
   return new Promise<SyncResponse<T>>(async (resolve, reject) => {
