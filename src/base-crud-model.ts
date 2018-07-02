@@ -1,100 +1,103 @@
 import {
-    __ENDPOINT, isNode,
-    GET, PUT, POST, DELETE,
-    Response,
-    PathParam, BodyParam, OrmConnection
+  __ENDPOINT,
+  GET, PUT, POST, DELETE,
+  Response,
+  PathParam,
+  BodyParam,
+  //#region @backend
+  OrmConnection
+  //#endregion
 } from "./index";
 
 import { CLASSNAME } from 'ng2-rest';
 import { Repository, Connection } from "typeorm";
 import { Observable } from "rxjs/Observable";
+import { isNode } from 'ng2-logger';
 
-const model = 'aaaaaa'
-
-@__ENDPOINT(undefined, BaseCRUD)
+@__ENDPOINT(BaseCRUD)
 @CLASSNAME('BaseCRUD')
 export abstract class BaseCRUD<T>  {
 
+  //#region @backend
+  @OrmConnection connection: Connection;
+  public get repository(): Repository<T> {
+    return this.repo;
+  }
+  private repo: Repository<any>;
+  public entity: T;
+  //#endregion
+
+  public __model = {
+    getAll: () => this.getAll(),
+    getOneBy: (id: number) => this.getBy(id),
+    deleteById: (id: number) => this.deleteById(id),
+    updateById: (id: number, item: T) => this.updateById(id, item),
+    create: (item: T) => this.create(item)
+  }
+
+  constructor() {
+    this.init()
+  }
+
+  private init() {
     //#region @backend
-    @OrmConnection connection: Connection;
-    public get repository(): Repository<T> {
-        return this.repo;
+    if (isNode && this.entity) {
+      this.repo = this.connection.getRepository(this.entity as any)
+      // console.log(`Base CRUD inited for: ${(this.entity as any).name}`)
     }
-    private repo: Repository<any>;
-    public abstract entity: T;
     //#endregion
+  }
 
-    public __model = {
-        getAll: () => this.getAll(),
-        getOneBy: (id: number) => this.getBy(id),
-        deleteById: (id: number) => this.deleteById(id),
-        updateById: (id: number, item: T) => this.updateById(id, item),
-        create: (item: T) => this.create(item)
+  @GET(`/`)
+  getAll(): Response<T[]> {
+    //#region @backendFunc
+    return async () => {
+      const models = await this.repo.find();
+      return models;
     }
+    //#endregion
+  }
 
-    constructor() {
-        this.init()
+  @GET(`/:id`)
+  getBy(@PathParam(`id`) id: number): Response<T> {
+    //#region @backendFunc
+    return async () => {
+      const model = await this.repo.findOneById(id)
+      return model;
     }
+    //#endregion
+  }
 
-    private init() {
-        //#region @backend
-        if (isNode && this.entity) {
-            this.repo = this.connection.getRepository(this.entity as any)
-            // console.log(`Base CRUD inited for: ${(this.entity as any).name}`)
-        }
-        //#endregion
+  @PUT(`/:id`)
+  updateById(@PathParam(`id`) id: number, @BodyParam() item: T): Response<T> {
+    //#region @backendFunc
+    return async () => {
+      await this.repo.updateById(id, item);
+      return await this.repo.findOneById(id)
     }
+    //#endregion
+  }
 
-    @GET(`/${model}`)
-    getAll(): Response<T[]> {
-        //#region @backendFunc
-        return async () => {
-            const models = await this.repo.find();
-            return models;
-        }
-        //#endregion
+  @DELETE(`/:id`)
+  deleteById(@PathParam(`id`) id: number): Response<T> {
+    //#region @backendFunc
+    return async () => {
+      const deletedEntity = await this.repo.findOneById(id)
+      await this.repo.removeById(id);
+      return deletedEntity;
     }
+    //#endregion
+  }
 
-    @GET(`/${model}/:id`)
-    getBy(@PathParam(`id`) id: number): Response<T> {
-        //#region @backendFunc
-        return async () => {
-            const model = await this.repo.findOneById(id)
-            return model;
-        }
-        //#endregion
+
+  @POST(`/`)
+  create(@BodyParam() item: T): Response<T> {
+    //#region @backendFunc
+    return async () => {
+      const model = await this.repo.create(item)
+      return model;
     }
-
-    @PUT(`/${model}/:id`)
-    updateById(@PathParam(`id`) id: number, @BodyParam() item: T): Response<T> {
-        //#region @backendFunc
-        return async () => {
-            await this.repo.updateById(id, item);
-            return await this.repo.findOneById(id)
-        }
-        //#endregion
-    }
-
-    @DELETE(`/${model}/:id`)
-    deleteById(@PathParam(`id`) id: number): Response<T> {
-        //#region @backendFunc
-        return async () => {
-            const deletedEntity = await this.repo.findOneById(id)
-            await this.repo.removeById(id);
-            return deletedEntity;
-        }
-        //#endregion
-    }
-
-
-    @POST(`/${model}`)
-    create(@BodyParam() item: T): Response<T> {
-        //#region @backendFunc
-        return async () => {
-            const model = await this.repo.create(item)
-            return model;
-        }
-        //#endregion
-    }
+    //#endregion
+  }
 
 }

@@ -1,6 +1,3 @@
-import {
-  CLASS_META_CONFIG, Response, isNode, isBrowser
-} from "./models";
 import { ClassConfig, MethodConfig, ParamConfig, ParamType, HttpMethod, getClassConfig } from "ng2-rest";
 
 function metaParam(param: ParamType, name: string, expire: number, defaultValue = undefined, ...args: any[]) {

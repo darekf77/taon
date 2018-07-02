@@ -1,54 +1,22 @@
 
-//#region @backend
-import { Response, Request, NextFunction, RequestHandler } from "express";
-//#endregion
-
-import { Observable } from 'rxjs/Observable';
+import { Response, RequestHandler } from "express";
+import { Response as ExpressResponse, Request as ExpressRequest } from "express";
 import {
-  HttpResponse, HttpMethod, HttpCode, PromiseObservableMix,
-  CLASS_META_CONFIG, ClassConfig, MethodConfig, getClassName
+  HttpResponse, HttpCode, PromiseObservableMix,
+  ClassConfig, MethodConfig, getClassName
 } from "ng2-rest";
-export { CLASS_META_CONFIG } from 'ng2-rest';
-import { Connection } from "typeorm";
+
 import 'rxjs/add/operator/map'
-export const isNode = (typeof window === 'undefined')
-export const isBrowser = !isNode;
-
-
-export const MAPPING_CONFIG_HEADER = 'mappingheader'
-export const ENDPOINT_META_CONFIG = 'ng2_rest_endpoint_config'
-export const METHOD_DECORATOR = '$$ng2_rest_method'
-export const CLASS_DECORATOR = '$$ng2_rest_class'
-export const CLASS_DECORATOR_CONTEXT = '$$ng2_rest_class_context'
-export const SOCKET_MSG = 'socketmessageng2rest';
-
 export type ContextENDPOINT = { target: Function; initFN: Function; };
 
-export interface GlobalVars {
-  productionMode?:boolean;
-  allowedHosts: URL[];
-  url: URL;
-  app: any;
-  socket: any;
-  endpoints: ContextENDPOINT[],
-  entities: Function[];
-  connection: Connection;
-  base_controllers: Function[];
-};
 
 export function getExpressPath(c: ClassConfig, pathOrClassConfig: MethodConfig | string) {
   if (typeof pathOrClassConfig === 'string') return `${c.basePath}${pathOrClassConfig}`.replace(/\/$/, '')
   return `${c.basePath}${pathOrClassConfig.path}`.replace(/\/$/, '')
 }
 
-// export function getExpressPath(basePath: string, path: string, a =) {
-//     return `${basePath}${path}`.replace(/\/$/, '')
-// }
 
 
-
-
-import { Response as ExpressResponse, Request as ExpressRequest } from "express";
 export type ExpressContext<T> = (req: ExpressRequest, res: ExpressResponse) => T;
 
 export type SyncResponse<T> = string | T;
@@ -83,7 +51,7 @@ export class Errors {
   }
 
   public static entityNotFound(entity?: Function) {
-    return Errors.create(`Entity ${getClassName(entity) } not found`);
+    return Errors.create(`Entity ${getClassName(entity)} not found`);
   }
 
   public static custom(message: string, code: HttpCode = 400) {

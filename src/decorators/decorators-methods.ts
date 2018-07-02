@@ -1,9 +1,5 @@
 
-import {
-
-    CLASS_META_CONFIG, Response, isNode, isBrowser
-} from "./models";
-import { HttpMethod, getClassConfig, ClassConfig, MethodConfig, ParamConfig, ParamType, } from "ng2-rest";
+import { HttpMethod, getClassConfig, MethodConfig, } from "ng2-rest";
 
 function metaReq(
     method: HttpMethod, path: string,

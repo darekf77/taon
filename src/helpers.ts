@@ -1,11 +1,10 @@
-declare var require: any;
-var JSON5 = require('json5');
+
+import * as JSON5 from 'json5';
 import {
-  CLASS_META_CONFIG, Response, isNode, isBrowser,
-  ENDPOINT_META_CONFIG, SOCKET_MSG, __Response, AsyncResponse,
+  Response, __Response, AsyncResponse,
   SyncResponse
 } from "./models";
-import { ClassConfig, MethodConfig, ParamConfig, ParamType, HttpMethod, getClassConfig } from "ng2-rest";
+import { getClassConfig } from "ng2-rest";
 import { Response as ExpressResponse, Request as ExpressRequest } from "express";
 
 

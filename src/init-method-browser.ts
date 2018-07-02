@@ -1,61 +1,24 @@
-import {
-  CLASS_META_CONFIG, Response, isNode, isBrowser,
-  ENDPOINT_META_CONFIG, SOCKET_MSG, MAPPING_CONFIG_HEADER
-} from "./models";
-import { ClassConfig, MethodConfig, ParamConfig, ParamType, HttpMethod } from "ng2-rest";
 
-declare var require: any;
-
-import { tryTransformParam } from "./helpers";
-
-if (isBrowser) {
-  var { Resource } = require("ng2-rest");
-  var io = require('socket.io-client');
-}
+import { HttpMethod, MethodConfig, ParamConfig, Resource } from "ng2-rest";
+import { Global } from './global-config';
+import { SYMBOL } from './symbols';
 
 
-export function replay(model: string, method: HttpMethod) {
-  if (!model || !method) {
-    console.warn(`Incorrect method ${method} and model ${model}`);
-    return;
-  }
-  console.info(`replay ${model}, ${method}`)
-  const uri: URL = window['uri'];
-  const endpoints = window[ENDPOINT_META_CONFIG];
-  // console.log('window', window)
-  // console.log('endpoints', endpoints)
-  const endpoint = uri.href;
-  const rest = endpoints[endpoint][model];
-  // console.log('rest', rest)
-  if (rest) {
-    rest.replay(method);
-  } else {
-    console.warn(`No used method ${method} from ${endpoint}/${model}`);
-  }
-}
 
-export function initRealtime() {
-  const uri: URL = window['uri'];
-  const socket = io(uri.href);
-  socket.emit('chat message');
-  socket.on(SOCKET_MSG, function (msg) {
-    if (msg && Array.isArray(msg.pathes)) {
-      msg.pathes.forEach(p => replay(p, msg.method))
-    }
-  });
-}
+export function initMethodBrowser(target, type: HttpMethod, methodConfig: MethodConfig, expressPath) {
 
+  console.log(`Init ${target.name} method on ${expressPath}`)
 
-export function initMethodBrowser(target, type: HttpMethod, m: MethodConfig, expressPath) {
-  target.prototype[m.methodName] = function (...args) {
-    // console.log('expressPath', expressPath)
-    const uri: URL = window['uri'];
-    if (!window[ENDPOINT_META_CONFIG]) window[ENDPOINT_META_CONFIG] = {};
-    if (!window[ENDPOINT_META_CONFIG][uri.href]) window[ENDPOINT_META_CONFIG][uri.href] = {};
-    const endpoints = window[ENDPOINT_META_CONFIG];
+  target.prototype[methodConfig.methodName] = function (...args) {
+    console.log('FRONTEND expressPath', expressPath)
+
+    const uri: URL = Global.vars.url;
+    if (!window[SYMBOL.ENDPOINT_META_CONFIG]) window[SYMBOL.ENDPOINT_META_CONFIG] = {};
+    if (!window[SYMBOL.ENDPOINT_META_CONFIG][uri.href]) window[SYMBOL.ENDPOINT_META_CONFIG][uri.href] = {};
+    const endpoints = window[SYMBOL.ENDPOINT_META_CONFIG];
     let rest;
     if (!endpoints[uri.href][expressPath]) {
-      rest = Resource.create(uri.href, expressPath, MAPPING_CONFIG_HEADER);
+      rest = Resource.create(uri.href, expressPath, SYMBOL.MAPPING_CONFIG_HEADER as any );
       endpoints[uri.href][expressPath] = rest;
     } else {
       rest = endpoints[uri.href][expressPath];
@@ -70,8 +33,8 @@ export function initMethodBrowser(target, type: HttpMethod, m: MethodConfig, exp
     args.forEach((param, i) => {
       let currentParam: ParamConfig;
       //#region find param
-      for (let pp in m.parameters) {
-        let v = m.parameters[pp];
+      for (let pp in methodConfig.parameters) {
+        let v = methodConfig.parameters[pp];
         if (v.index === i) {
           currentParam = v;
           break;
