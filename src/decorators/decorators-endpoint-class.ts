@@ -28,9 +28,10 @@ import * as express from "express";
 import * as http from "http";
 //#endregion
 
-//#region @backend
+
 export { Connection } from "typeorm";
 export function OrmConnection(target: Object, propertyName: string) {
+  //#region @backend
   const configs = getClassConfig(target.constructor);
   const c: ClassConfig = configs[0];
   c.injections.push({
@@ -38,9 +39,10 @@ export function OrmConnection(target: Object, propertyName: string) {
     getter: function () {
       return Global.vars.connection;
     }
-  });;
+  });
+  //#endregion
 }
-//#endregion
+
 
 export function BaseCRUDEntity(entity: Function) {
   return function BaseCRUDEntity(target: Object, propertyName: string) {
@@ -56,6 +58,9 @@ export function __ENDPOINT(baseEntity?: Function): (...args: any[]) => any {
 }
 
 
+function isGoodPath(p: string) {
+  return p && typeof p === 'string' && p.trim() !== ''
+}
 
 export function ENDPOINT(options?: {
   path?: string,
@@ -70,24 +75,29 @@ export function ENDPOINT(options?: {
 
     const initFN = (function (target, path, auth) {
       return function () {
-        console.log(`INITING ${target.name}`)
+        // console.log(`INITING ${target.name}`)
         //#region  access decorator config
         const configs = getClassConfig(target);
         const classConfig: ClassConfig = configs[0];
-        const parentsBasePath = _.slice(configs, 1).map(bc => bc.basePath).join('/')
+        classConfig.path = path;
+        const parentscalculatedPath = _
+          .slice(configs, 1)
+          .reverse()
+          .map(bc => {
+            if (isGoodPath(bc.path)) {
+              return bc.path
+            }
+            return getClassName(bc.classReference);
+          }).join('/')
 
-        if (path === undefined) {
-
-          classConfig.basePath = `/${getClassName(target)}${parentsBasePath}`;
-          console.log(`*${target.name} path undefined, parentsPath: ${parentsBasePath}`)
-        } else if (typeof path === 'string') {
-          console.log(`*${target.name} path is static: ${path}`)
-          classConfig.basePath = path;
-        } else if (typeof path === 'function') {
-          classConfig.basePath = (path as Function).call(this, _.slice(configs, 1).map(bc => bc.basePath));
-          console.log(`*${target.name} path is function`)
+        if (isGoodPath(path)) {
+          classConfig.calculatedPath = path;
+        } else {
+          classConfig.calculatedPath = `/${parentscalculatedPath}/${getClassName(target)}`
+            .replace(/\/\//g, '/');
         }
-        console.log(`${classConfig.basePath} for ${classConfig.classReference.name}, target ${target.name}`)
+
+        // console.log(`${classConfig.calculatedPath}, target ${target.name}`)
         const checkAuthFn = (auth && typeof auth === 'function');
 
         _.slice(configs, 1).forEach(bc => {
@@ -99,7 +109,7 @@ export function ENDPOINT(options?: {
           const methodConfig: MethodConfig = classConfig.methods[methodName];
           const type: HttpMethod = methodConfig.type;
           const expressPath = getExpressPath(classConfig, methodConfig);
-          console.log('initfn expressPath', expressPath)
+          // console.log('initfn expressPath', expressPath)
           if (isNode) {
             //#region @backend
             if (checkAuthFn) {
@@ -168,9 +178,9 @@ export function init(config: {
   }
 
   return {
-    expressApp: (config: { connection?: Connection }) => {
+    expressApp: (connection: Connection) => {
       //#region @backendFunc
-      let { connection } = config;
+
       Global.vars.connection = connection;
 
       Global.vars.initFunc.filter(e => {

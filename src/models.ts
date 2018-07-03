@@ -11,8 +11,8 @@ export type ContextENDPOINT = { target: Function; initFN: Function; };
 
 
 export function getExpressPath(c: ClassConfig, pathOrClassConfig: MethodConfig | string) {
-  if (typeof pathOrClassConfig === 'string') return `${c.basePath}${pathOrClassConfig}`.replace(/\/$/, '')
-  return `${c.basePath}${pathOrClassConfig.path}`.replace(/\/$/, '')
+  if (typeof pathOrClassConfig === 'string') return `${c.calculatedPath}${pathOrClassConfig}`.replace(/\/$/, '')
+  return `${c.calculatedPath}${pathOrClassConfig.path}`.replace(/\/$/, '')
 }
 
 

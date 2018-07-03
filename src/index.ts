@@ -1,3 +1,4 @@
+export { isNode, isBrowser } from 'ng2-logger';
 export * from 'typeorm';
 export * from './decorators';
 export * from './models';

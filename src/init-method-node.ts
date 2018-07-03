@@ -69,7 +69,7 @@ export function initMethodNodejs(
   Global.vars.url.pathname = Global.vars.url.pathname.replace(/\/$/, "");
   expressPath = Global.vars.url.pathname.startsWith('/') ? `${Global.vars.url.pathname}${expressPath}` : expressPath;
   expressPath = expressPath.replace(/\/\//g, '/')
-  console.log(`BACKEND: expressPath: ${expressPath}`)
+  // console.log(`BACKEND: expressPath: ${expressPath}`)
 
   Global.vars.app[type.toLowerCase()](expressPath, requestHandler, async (req, res) => {
     res[SYMBOL.METHOD_DECORATOR] = methodConfig;

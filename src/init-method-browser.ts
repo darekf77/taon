@@ -7,10 +7,10 @@ import { SYMBOL } from './symbols';
 
 export function initMethodBrowser(target, type: HttpMethod, methodConfig: MethodConfig, expressPath) {
 
-  console.log(`Init ${target.name} method on ${expressPath}`)
+  // console.log(`FRONTEND ${target.name} method on ${expressPath}`)
 
   target.prototype[methodConfig.methodName] = function (...args) {
-    console.log('FRONTEND expressPath', expressPath)
+    // console.log('FRONTEND expressPath', expressPath)
 
     const uri: URL = Global.vars.url;
     if (!window[SYMBOL.ENDPOINT_META_CONFIG]) window[SYMBOL.ENDPOINT_META_CONFIG] = {};
