@@ -13,6 +13,7 @@ import { CLASSNAME } from 'ng2-rest';
 import { Repository, Connection } from "typeorm";
 import { Observable } from "rxjs/Observable";
 import { isNode } from 'ng2-logger';
+import { SYMBOL } from './symbols';
 
 @__ENDPOINT(BaseCRUD)
 @CLASSNAME('BaseCRUD')
@@ -48,7 +49,7 @@ export abstract class BaseCRUD<T>  {
     //#endregion
   }
 
-  @GET(`/`)
+  @GET(`/${SYMBOL.CRUD_TABLE_MODEL}`)
   getAll(): Response<T[]> {
     //#region @backendFunc
     return async () => {
@@ -58,7 +59,7 @@ export abstract class BaseCRUD<T>  {
     //#endregion
   }
 
-  @GET(`/:id`)
+  @GET(`/${SYMBOL.CRUD_TABLE_MODEL}/:id`)
   getBy(@PathParam(`id`) id: number): Response<T> {
     //#region @backendFunc
     return async () => {
@@ -68,7 +69,7 @@ export abstract class BaseCRUD<T>  {
     //#endregion
   }
 
-  @PUT(`/:id`)
+  @PUT(`/${SYMBOL.CRUD_TABLE_MODEL}/:id`)
   updateById(@PathParam(`id`) id: number, @BodyParam() item: T): Response<T> {
     //#region @backendFunc
     return async () => {
@@ -78,7 +79,7 @@ export abstract class BaseCRUD<T>  {
     //#endregion
   }
 
-  @DELETE(`/:id`)
+  @DELETE(`/${SYMBOL.CRUD_TABLE_MODEL}/:id`)
   deleteById(@PathParam(`id`) id: number): Response<T> {
     //#region @backendFunc
     return async () => {
@@ -90,7 +91,7 @@ export abstract class BaseCRUD<T>  {
   }
 
 
-  @POST(`/`)
+  @POST(`/${SYMBOL.CRUD_TABLE_MODEL}/`)
   create(@BodyParam() item: T): Response<T> {
     //#region @backendFunc
     return async () => {
