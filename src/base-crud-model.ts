@@ -25,8 +25,9 @@ export abstract class BaseCRUD<T>  {
     return this.repo;
   }
   private repo: Repository<any>;
-  public entity: T;
   //#endregion
+
+  public entity: T;
 
   public __model = {
     getAll: () => this.getAll(),

@@ -3,6 +3,7 @@ export * from 'typeorm';
 export * from './decorators';
 export * from './models';
 export * from './helpers';
+export * from './symbols';
 export * from './init-method-browser';
 export * from './init-method-node';
 export * from './base-crud-model';
