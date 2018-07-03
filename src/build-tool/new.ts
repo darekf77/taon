@@ -7,7 +7,7 @@ import * as child from 'child_process';
 const commandExistsSync = require('command-exists').sync;
 
 export function copyExampleTo(folder: string) {
-  const options: fse.CopyOptions = {
+  const options: fse.CopyOptionsSync = {
     overwrite: true,
     recursive: true,
     errorOnExist: true,
