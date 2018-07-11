@@ -36,7 +36,6 @@
   "homepage": "https://github.com/darekf77/morphi#readme",
   "dependencies": {
     "@types/express-fileupload": "^0.1.1",
-    "@types/fs-extra": "^5.0.1",
     "@types/glob": "^5.0.35",
     "@types/lodash": "^4.14.85",
     "@types/socket.io": "^1.4.31",
