@@ -68,7 +68,13 @@ export function defaultType(value) {
 
 
 
-export function getSingleton<T>(target: Function): T {
+export function getSingleton<T=Object>(target: Function): T {
   const configs = getClassConfig(target)
   return ((Array.isArray(configs) && configs.length >= 1) ? configs[0].singleton : undefined) as any;
+}
+
+
+export function getSingletons<T=Object>(target: Function): T[] {
+  const configs = getClassConfig(target)
+  return configs.map(c => c.singleton as T);
 }

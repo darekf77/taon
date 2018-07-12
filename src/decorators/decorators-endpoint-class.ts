@@ -22,6 +22,7 @@ import { Global } from '../global-config';
 import { isNode, isBrowser } from 'ng2-logger';
 import { SYMBOL } from '../symbols';
 import { Realtime } from '../realtime';
+import { getSingletons } from '../helpers';
 
 //#region @backend
 import * as express from "express";
@@ -46,9 +47,11 @@ export function OrmConnection(target: Object, propertyName: string) {
 
 export function BaseCRUDEntity(entity: Function) {
   return function BaseCRUDEntity(target: Object, propertyName: string) {
-    const configs = getClassConfig(target.constructor);
-    const c: ClassConfig = configs[0];
-    target.constructor['__proto__'].prototype[propertyName] = entity;
+
+    getSingletons(target.constructor).forEach(s => {
+      s[propertyName] = entity;
+    });
+
   }
 }
 
@@ -201,7 +204,11 @@ export function init(config: {
             });
             if (!(c.singleton instanceof controller)) {
               const singleton = new (controller as any)();
+              const oldSingleton = c.singleton;
               c.singleton = singleton;
+              Object.keys(oldSingleton).forEach(key => {
+                c.singleton[key] = oldSingleton[key];
+              })
             }
           })(currentCtrl);
 
