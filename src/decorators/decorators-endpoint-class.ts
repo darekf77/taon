@@ -27,6 +27,7 @@ import { getSingletons } from '../helpers';
 //#region @backend
 import * as express from "express";
 import * as http from "http";
+import { config } from 'tnp';
 //#endregion
 
 
@@ -47,10 +48,18 @@ export function OrmConnection(target: Object, propertyName: string) {
 
 export function BaseCRUDEntity(entity: Function) {
   return function BaseCRUDEntity(target: Object, propertyName: string) {
-
-    getSingletons(target.constructor).forEach(s => {
-      s[propertyName] = entity;
-    });
+    if (propertyName !== 'entity') {
+      throw `Please use for @BaseCRUDEntity() "entity" property instead of "${propertyName}"`
+    }
+    const configs = getClassConfig(target.constructor);
+    configs.forEach(c => {
+      const classReference  = c.classReference;
+      const constructor = classReference.constructor;
+      debugger
+    })
+    // getSingletons(target.constructor).forEach(s => {
+    //   s[propertyName] = entity;
+    // });
 
   }
 }
