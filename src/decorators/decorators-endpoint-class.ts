@@ -54,8 +54,8 @@ export function BaseCRUDEntity(entity: Function) {
     const configs = getClassConfig(target.constructor);
     configs.forEach(c => {
       const classReference  = c.classReference;
-      const constructor = classReference.constructor;
-      debugger
+      const prototype = classReference.prototype;
+      prototype[propertyName] = entity;
     })
     // getSingletons(target.constructor).forEach(s => {
     //   s[propertyName] = entity;
