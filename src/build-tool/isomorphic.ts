@@ -161,7 +161,7 @@ export class CodeTransform {
 
   public get replace() {
 
-    const self = this;
+    const self = this as any;
     return {
       get ismorphicLibsFrom() {
         return {

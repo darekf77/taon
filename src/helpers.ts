@@ -78,3 +78,18 @@ export function getSingletons<T=Object>(target: Function): T[] {
   const configs = getClassConfig(target)
   return configs.map(c => c.singleton as T);
 }
+
+export class Describer {
+  private static FRegEx = new RegExp(/(?:this\.)(.+?(?= ))/g);
+  public static describe(val: Function, parent = false): string[] {
+    var result = [];
+    if (parent) {
+      var proto = Object.getPrototypeOf(val.prototype);
+      if (proto) {
+        result = result.concat(this.describe(proto.constructor, parent));
+      }
+    }
+    result = result.concat(val.toString().match(this.FRegEx) || []);
+    return result.map(prop => prop.replace('this.', ''))
+  }
+}
