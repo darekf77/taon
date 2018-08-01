@@ -1,7 +1,8 @@
 
 
 export const SYMBOL = {
-  FORMLY_METADATA: Symbol(),
+  FORMLY_METADATA_ARRAY: Symbol(),
+  FORMLY_METADATA_OBJECT: Symbol(),
   CRUD_TABLE_MODEL: 'model',
   MAPPING_CONFIG_HEADER: 'mappingheader',
   ENDPOINT_META_CONFIG: 'ng2_rest_endpoint_config',
