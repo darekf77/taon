@@ -20,7 +20,7 @@ export function FormlyForm(fromFn?: (from: FormlyFieldConfig[]) => FormlyFieldCo
           key: propName,
           type,
           templateOptions: {
-            label: _.toUpper(_.kebabCase(propName))
+            label: _.startCase(propName)
           }
         }
       })
