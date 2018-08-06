@@ -7,11 +7,10 @@ import { getModelsMapping } from './models-mapping';
 import { FormlyFromType } from './models';
 
 
-function getFromlyConfigFor(target: Function, mapping?: Object, parentKey?: string): FormlyFieldConfig[] {
+function getFromlyConfigFor(target: Function, parentKey?: string): FormlyFieldConfig[] {
 
-  if (!mapping) {
-    mapping = getModelsMapping(target);
-  }
+  const mapping = getModelsMapping(target);
+
 
   if (!target[SYMBOL.FORMLY_METADATA_ARRAY]) {
     target[SYMBOL.FORMLY_METADATA_ARRAY] = [];
@@ -21,26 +20,30 @@ function getFromlyConfigFor(target: Function, mapping?: Object, parentKey?: stri
 
   const fieldNames = Describer.describeByDefaultModel(target);
   let additionalConfig = [];
+
   const result = fieldNames.map(key => {
     if (key === '') {
       return
     }
     let type = 'input';
-    let model = key;
+    const propKey = key;
+    if (parentKey) {
+      key = `${parentKey}.${key}`
+    }
 
-    //#region boolean
-    if (mapping[key] === Boolean || _.isBoolean(target.prototype[key])) {
+    const prototypeDefaultValue = _.get(target.prototype, key);
+
+
+    if (mapping[key] === Boolean || _.isBoolean(prototypeDefaultValue)) {
       type = ((formType: FormlyFromType) => {
         if (formType === 'material') {
           return 'toggle'
         }
       }) as any;
     }
-    //#endregion
 
-    //#region Date
     let isDate = false;
-    if (mapping[key] === Date || _.isDate(target.prototype[key])) {
+    if (mapping[key] === Date || _.isDate(prototypeDefaultValue)) {
       isDate = true;
       type = ((formType: FormlyFromType) => {
         if (formType === 'material') {
@@ -48,15 +51,9 @@ function getFromlyConfigFor(target: Function, mapping?: Object, parentKey?: stri
         }
       }) as any;
     }
-    //#endregion
-
-
-    if (!isDate && (_.isObject(target.prototype[key] || ))) {
-      return;
-    }
 
     if (!isDate && _.isFunction(mapping[key])) {
-      additionalConfig = additionalConfig.concat(getFromlyConfigFor(target, mapping, key));
+      additionalConfig = additionalConfig.concat(getFromlyConfigFor(mapping[key], key));
     }
 
     if (_.isFunction(target.prototype[key])) {
@@ -66,17 +63,18 @@ function getFromlyConfigFor(target: Function, mapping?: Object, parentKey?: stri
       return;
     }
 
+    const camelCaseKey = _.camelCase(key.split('.').join('_'));
+
     const res: FormlyFieldConfig = {
-      key,
-      model: (model == key) ? undefined : model,
+      key: propKey,
+      model: parentKey ? `model.${parentKey}` : void 0,
       type,
       templateOptions: {
-        label: _.startCase(key)
+        label: _.startCase(propKey)
       }
     };
     return res;
   }).filter(f => !!f);
-
 
   return result.concat(additionalConfig);
 }
@@ -87,12 +85,11 @@ export function FormlyForm(fromFn?:
     => FormlyFieldConfig[]) {
   return function (target: Function) {
 
-    target[SYMBOL.FORMLY_METADATA_ARRAY] = getFromlyConfigFor(target);
-
+    const config = getFromlyConfigFor(target);
 
     //#region user override
     if (typeof fromFn === 'function') {
-      target[SYMBOL.FORMLY_METADATA_ARRAY] = fromFn(target[SYMBOL.FORMLY_METADATA_ARRAY]);
+      target[SYMBOL.FORMLY_METADATA_ARRAY] = fromFn(config);
     }
     //#endregion
   }

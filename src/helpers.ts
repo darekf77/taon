@@ -14,9 +14,11 @@ function isAsync(fn) {
   return fn && fn.constructor && fn.constructor.name === 'AsyncFunction';
 }
 
-//#region @backend
+/**
+ * Backend only function
+ */
 export function getResponseValue<T>(response: Response<T>, req: ExpressRequest, res: ExpressResponse): Promise<SyncResponse<T>> {
-
+  //#region @backendFunc
   return new Promise<SyncResponse<T>>(async (resolve, reject) => {
     const resp: __Response<T> = response;
     if (!response && response.send === undefined) {
@@ -46,9 +48,9 @@ export function getResponseValue<T>(response: Response<T>, req: ExpressRequest, 
       }
     } else reject(`Not recognized type of reposne ${response}`);
   });
-
+  //#endregion
 }
-//#endregion
+
 
 
 export function tryTransformParam(param) {
