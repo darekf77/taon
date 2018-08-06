@@ -9,6 +9,7 @@ import {
 import 'rxjs/add/operator/map'
 export type ContextENDPOINT = { target: Function; initFN: Function; };
 
+export type FormlyFromType = 'material' | 'bootstrap';
 
 export function getExpressPath(c: ClassConfig, pathOrClassConfig: MethodConfig | string) {
   if (typeof pathOrClassConfig === 'string') return `${c.calculatedPath}${pathOrClassConfig}`.replace(/\/$/, '')
@@ -27,7 +28,9 @@ export interface ClientAction<T> {
 }
 
 export interface __Response<T> {
+  //#region @backend
   send?: MixResponse<T>;
+  //#endregion
 }
 
 export interface AsyncResponse<T> {

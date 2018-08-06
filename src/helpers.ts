@@ -1,18 +1,22 @@
 
 import * as JSON5 from 'json5';
+import * as _ from 'lodash';
 import {
   Response, __Response, AsyncResponse,
   SyncResponse
 } from "./models";
 import { getClassConfig } from "ng2-rest";
 import { Response as ExpressResponse, Request as ExpressRequest } from "express";
+import { getEntityFieldsProperties } from './models-mapping';
 
 
 function isAsync(fn) {
   return fn && fn.constructor && fn.constructor.name === 'AsyncFunction';
 }
 
+//#region @backend
 export function getResponseValue<T>(response: Response<T>, req: ExpressRequest, res: ExpressResponse): Promise<SyncResponse<T>> {
+
   return new Promise<SyncResponse<T>>(async (resolve, reject) => {
     const resp: __Response<T> = response;
     if (!response && response.send === undefined) {
@@ -42,7 +46,9 @@ export function getResponseValue<T>(response: Response<T>, req: ExpressRequest, 
       }
     } else reject(`Not recognized type of reposne ${response}`);
   });
+
 }
+//#endregion
 
 
 export function tryTransformParam(param) {
@@ -81,15 +87,30 @@ export function getSingletons<T=Object>(target: Function): T[] {
 
 export class Describer {
   private static FRegEx = new RegExp(/(?:this\.)(.+?(?= ))/g);
-  public static describe(val: Function, parent = false): string[] {
+
+
+  /**
+   * Describe fields assigned in class
+   */
+  public static describe(target: Function, parent = false): string[] {
     var result = [];
     if (parent) {
-      var proto = Object.getPrototypeOf(val.prototype);
+      var proto = Object.getPrototypeOf(target.prototype);
       if (proto) {
         result = result.concat(this.describe(proto.constructor, parent));
       }
     }
-    result = result.concat(val.toString().match(this.FRegEx) || []);
+    result = result.concat(target.toString().match(this.FRegEx) || []);
     return result.map(prop => prop.replace('this.', ''))
+
   }
+
+  /**
+   * Describe fields assigne through @DefaultModelWithMapping decorator
+   * without functions
+   */
+  public static describeByDefaultModel(target: Function) {
+    return getEntityFieldsProperties(target);
+  }
+
 }

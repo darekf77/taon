@@ -27,7 +27,6 @@ import { getSingletons } from '../helpers';
 //#region @backend
 import * as express from "express";
 import * as http from "http";
-import { config } from 'tnp';
 //#endregion
 
 
