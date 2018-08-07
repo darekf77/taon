@@ -7,12 +7,15 @@ import { getModelsMapping } from './models-mapping';
 import { FormlyFromType } from './models';
 
 
-function getFromlyConfigFor(target: Function, parentKey?: string,
+function getFromlyConfigFor(target: Function, parentKeyPath?: string,
   keysPathesToExclude?: string[],
   keysPathesToInclude?: string[]
 ): FormlyFieldConfig[] {
 
   const mapping = getModelsMapping(target);
+
+  // console.log(`mapping from ${target.name}`, mapping)
+
   const checkExclude = (_.isArray(keysPathesToExclude) && keysPathesToExclude.length > 0);
   const checkInclude = (_.isArray(keysPathesToInclude) && keysPathesToInclude.length > 0);
 
@@ -30,15 +33,15 @@ function getFromlyConfigFor(target: Function, parentKey?: string,
       return
     }
     let type = 'input';
-    const propKey = key;
-    if (parentKey) {
-      key = `${parentKey}.${key}`
+    let keyPath = key;
+    if (parentKeyPath) {
+      keyPath = `${parentKeyPath}.${key}`
     }
     if (checkExclude && keysPathesToExclude.includes(key)) {
       return;
     }
 
-    const prototypeDefaultValue = _.get(target.prototype, propKey);
+    const prototypeDefaultValue = target.prototype[key];
 
     let isSimpleJStype = false;
 
@@ -63,7 +66,7 @@ function getFromlyConfigFor(target: Function, parentKey?: string,
     }
 
     if (!isSimpleJStype && _.isFunction(mapping[key])) {
-      additionalConfig = additionalConfig.concat(getFromlyConfigFor(mapping[key], key));
+      additionalConfig = additionalConfig.concat(getFromlyConfigFor(mapping[key], keyPath));
       return;
     }
 
@@ -77,13 +80,13 @@ function getFromlyConfigFor(target: Function, parentKey?: string,
     // const camelCaseKey = _.camelCase(key.split('.').join('_'));
 
     const res: FormlyFieldConfig = {
-      key,
+      key: keyPath,
       // model: _.isString(parentKey) ? parentKey : void 0,
       type,
-      defaultValue: target.prototype[propKey],
+      defaultValue: target.prototype[key],
       templateOptions: {
-        label: _.isString(parentKey) ? `${_.startCase(parentKey)} / ${_.startCase(propKey)}`
-          : _.startCase(propKey)
+        label: _.isString(parentKeyPath) ? `${parentKeyPath.split('.').map(l => _.startCase(l)).join(' / ')} / ${_.startCase(key)}`
+          : _.startCase(key)
       }
     };
     return res;
@@ -134,4 +137,12 @@ export function getFormlyFrom(entity: Function, formType: FormlyFromType = 'mate
   }
 }
 
+
+export function checkSyncValidators(entity: Function) {
+  const fomrmlyConfig = getFormlyFrom(entity);
+  let validators: Function[] = [];
+  fomrmlyConfig.forEach(c => {
+    validators = validators.concat(Object.keys(c.validators) as any)
+  })
+}
 
