@@ -61,6 +61,7 @@ export function DefaultModelWithMapping<T=Object>(
 
       target[SYMBOL.DEFAULT_MODEL] = _.merge(toMerge, defaultModelValues);
       _.merge(target.prototype, target[SYMBOL.DEFAULT_MODEL])
+      // console.log(`DEFAULT VALUE MERGE for ${target.name}`)
     }
   }
 }
