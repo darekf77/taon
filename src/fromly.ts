@@ -26,6 +26,7 @@ function getFromlyConfigFor(target: Function, parentKeyPath?: string,
   }
 
   const fieldNames = Describer.describeByDefaultModel(target);
+  // console.log('DescribeByDefaultModel field names', fieldNames)
   let additionalConfig = [];
 
   const result = fieldNames.map(key => {
@@ -100,21 +101,24 @@ export type FormlyArrayTransformFn =
     fieldObject?: { [propKey: string]: FormlyFieldConfig })
     => FormlyFieldConfig[]
 
-export function FormlyForm(
+
+export function FormlyForm<T=Object>(
   fromFn?: FormlyArrayTransformFn,
-  keyPathesToExclude?: string[],
+  keyPathesToExclude?: keyof T,
   /**
    * TODO
    */
-  keyPathesToInclude?: string[]
+  keyPathesToInclude?:  keyof T
 ) {
   return function (target: Function) {
 
-    const config = getFromlyConfigFor(target, undefined, keyPathesToExclude, keyPathesToInclude);
+    const config = getFromlyConfigFor(target, undefined, keyPathesToExclude as any, keyPathesToInclude as any);
 
     //#region user override
     if (typeof fromFn === 'function') {
       target[SYMBOL.FORMLY_METADATA_ARRAY] = fromFn(config);
+    } else {
+      target[SYMBOL.FORMLY_METADATA_ARRAY] = config;
     }
     //#endregion
   }

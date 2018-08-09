@@ -38,10 +38,12 @@ export function DefaultModelWithMapping<T=Object>(
     }
     _.merge(target[SYMBOL.MODELS_MAPPING], mapping);
 
-    // console.info(`IAM IN DefaultModel`)
+    // console.info(`IAM IN DefaultModel, taget: ${target && target.name}`)
+    // console.info('defaultModelValues:', defaultModelValues)
+    // console.info('mapping', mapping)
     if (_.isObject(defaultModelValues)) {
       const toMerge = {};
-      const describedTarget = Describer.describe(target)
+      const describedTarget = Describer.describeByDefaultModel(target)
       // console.log(`describedTarget: ${describedTarget} for ${target.name}`)
       describedTarget.forEach(propDefInConstr => {
         if (defaultModelValues[propDefInConstr]) {
