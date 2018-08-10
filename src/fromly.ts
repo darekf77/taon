@@ -104,11 +104,11 @@ export type FormlyArrayTransformFn =
 
 export function FormlyForm<T=Object>(
   fromFn?: FormlyArrayTransformFn,
-  keyPathesToExclude?: keyof T,
+  keyPathesToExclude?: (keyof T)[],
   /**
    * TODO
    */
-  keyPathesToInclude?:  keyof T
+  keyPathesToInclude?: (keyof T)[]
 ) {
   return function (target: Function) {
 
