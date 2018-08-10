@@ -1,5 +1,5 @@
 
-import { SYMBOL } from "./SYMBOLS";
+import { SYMBOL } from "./symbols";
 import { FormlyFormOptions, FormlyFieldConfig } from '@ngx-formly/core';
 import { Describer } from './helpers';
 import * as _ from 'lodash';
