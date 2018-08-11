@@ -96,7 +96,9 @@ export abstract class BaseCRUD<T>  {
   create(@BodyParam() item: T): Response<T> {
     //#region @backendFunc
     return async () => {
+      
       const model = await this.repo.create(item)
+      await this.repo.save(model);
       return model;
     }
     //#endregion
