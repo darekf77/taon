@@ -4,6 +4,7 @@ import {
   Response,
   PathParam,
   BodyParam,
+  QueryParam,
   //#region @backend
   OrmConnection
   //#endregion
@@ -51,9 +52,10 @@ export abstract class BaseCRUD<T>  {
   }
 
   @GET(`/${SYMBOL.CRUD_TABLE_MODEL}`)
-  getAll(): Response<T[]> {
+  getAll(@QueryParam() allQueryParams?: Object): Response<T[]> {
     //#region @backendFunc
     return async () => {
+      console.log('allQueryParams', allQueryParams)
       const models = await this.repo.find();
       return models;
     }
@@ -96,7 +98,7 @@ export abstract class BaseCRUD<T>  {
   create(@BodyParam() item: T): Response<T> {
     //#region @backendFunc
     return async () => {
-      
+
       const model = await this.repo.create(item)
       await this.repo.save(model);
       return model;

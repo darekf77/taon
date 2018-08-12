@@ -19,7 +19,7 @@ export function PathParam(name: string) {
   };
 }
 
-export function QueryParam(name: string) {
+export function QueryParam(name?: string) {
   return function (...args: any[]) {
     metaParam('Query', name, undefined, {}, ...args)
   };

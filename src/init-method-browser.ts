@@ -18,7 +18,7 @@ export function initMethodBrowser(target, type: HttpMethod, methodConfig: Method
     const endpoints = window[SYMBOL.ENDPOINT_META_CONFIG];
     let rest;
     if (!endpoints[uri.href][expressPath]) {
-      rest = Resource.create(uri.href, expressPath, SYMBOL.MAPPING_CONFIG_HEADER as any );
+      rest = Resource.create(uri.href, expressPath, SYMBOL.MAPPING_CONFIG_HEADER as any);
       endpoints[uri.href][expressPath] = rest;
     } else {
       rest = endpoints[uri.href][expressPath];
@@ -28,7 +28,7 @@ export function initMethodBrowser(target, type: HttpMethod, methodConfig: Method
     const method = type.toLowerCase();
     const isWithBody = (method === 'put' || method === 'post');
     const pathPrams = {};
-    const queryParams = {};
+    let queryParams = {};
     let item = {};
     args.forEach((param, i) => {
       let currentParam: ParamConfig;
@@ -46,7 +46,11 @@ export function initMethodBrowser(target, type: HttpMethod, methodConfig: Method
         pathPrams[currentParam.paramName] = param;
       }
       if (currentParam.paramType === 'Query') {
-        queryParams[currentParam.paramName] = param;
+        if (currentParam.paramName) {
+          queryParams[currentParam.paramName] = param;
+        } else {
+          queryParams = param;
+        }
       }
       if (currentParam.paramType === 'Header') {
         if (currentParam.paramName) {

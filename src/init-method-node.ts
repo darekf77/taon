@@ -81,7 +81,11 @@ export function initMethodNodejs(
         args.push(req.params[p.paramName])
       }
       if (p.paramType === 'Query' && req.query) {
-        args.push(req.query[p.paramName])
+        if (p.paramName) {
+          args.push(req.query[p.paramName])
+        } else {
+          args.push(req.query);
+        }
       }
       if (p.paramType === 'Header' && req.headers) {
         args.push(req.headers[p.paramName.toLowerCase()])

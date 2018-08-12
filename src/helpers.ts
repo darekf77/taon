@@ -116,3 +116,24 @@ export class Describer {
   }
 
 }
+
+
+function parseJSONwithStringJSONs(object: Object): Object {
+
+  if (!object) {
+    return object;
+  }
+
+  let res = object;
+
+  Object.keys(object).forEach(key => {
+    let isJson = false;
+    try {
+      const possibleJSON = JSON.parse(object[key]);
+      object[key] = possibleJSON;
+    } catch (e) { }
+    object[key] = parseJSONwithStringJSONs(object[key])
+  });
+
+  return res;
+}
