@@ -1,8 +1,10 @@
 
+const MAX_DATA_LENGTH_SENT_TO_CLIENT = 100;
 
 export interface IArrayDataPagination {
-  pageNumer: Number;
-  rowsDisplayed: Number;
+  pageNumber: number;
+  rowsDisplayed: number;
+  totalElements?: number;
 }
 
 export interface IArrayDataSorting {
@@ -38,8 +40,40 @@ export interface IArrayDataConfig {
 export class ArrayDataConfig {
 
   constructor(
-    public config: IArrayDataConfig) {
+    public config?: IArrayDataConfig) {
 
+    if (!config) {
+      this.config = this.defaultConfig;
+      debugger
+      console.log('config HERE', this.config)
+    }
+  }
+
+  //#region @backend
+  fromModels(models: any[]) {
+    const self = this;
+    return {
+      getPagination<T=any>(): T[] {
+        let { pageNumber, rowsDisplayed } = self.config.pagination;
+        let indexStart = (pageNumber - 1) * rowsDisplayed;
+        let indexEnd = indexStart + rowsDisplayed;
+        return models.slice(indexStart, indexEnd);
+      }
+    };
+  }
+  //#endregion
+
+  private get defaultConfig(): IArrayDataConfig {
+    return {
+      filters: [],
+      joins: [],
+      sorting: {},
+      pagination: {
+        pageNumber: 1,
+        rowsDisplayed: MAX_DATA_LENGTH_SENT_TO_CLIENT,
+        totalElements: MAX_DATA_LENGTH_SENT_TO_CLIENT
+      }
+    }
   }
 
 

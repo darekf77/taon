@@ -92,6 +92,7 @@ export class Describer {
 
 
   /**
+   * @DEPRECATED
    * Describe fields assigned in class
    */
   public static describe(target: Function, parent = false): string[] {
@@ -115,24 +116,45 @@ export class Describer {
     return getEntityFieldsProperties(target);
   }
 
+  public static describeByEverything(target: Function) {
+    const d1 = this.describe(target);
+    const d2 = this.describeByDefaultModel(target);
+    let uniq = {};
+    d1.concat(d2).forEach(p => uniq[p] = p);
+    return Object.keys(uniq).filter(d => !!d)
+  }
+
 }
 
 
-function parseJSONwithStringJSONs(object: Object): Object {
+export function parseJSONwithStringJSONs(object: Object, waring = true): Object {
+  // console.log('checking object', object)
+  if (!_.isObject(object)) {
+    if (waring) {
+      console.error(`
+      parseJSONwithStringJSONs(...)
+      Parameter should be a object
+      `, object)
+    }
 
-  if (!object) {
     return object;
   }
 
-  let res = object;
+  let res = _.cloneDeep(object);
 
-  Object.keys(object).forEach(key => {
+  Object.keys(res).forEach(key => {
     let isJson = false;
     try {
-      const possibleJSON = JSON.parse(object[key]);
-      object[key] = possibleJSON;
-    } catch (e) { }
-    object[key] = parseJSONwithStringJSONs(object[key])
+      const possibleJSON = JSON.parse(res[key]);
+      res[key] = possibleJSON;
+      isJson = true;
+    } catch (e) {
+      isJson = false;
+    }
+    // console.log(`key ${key} is json `, isJson)
+    if (isJson) {
+      res[key] = parseJSONwithStringJSONs(res[key], false)
+    }
   });
 
   return res;

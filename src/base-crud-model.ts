@@ -16,6 +16,7 @@ import { Observable } from "rxjs/Observable";
 import { isNode } from 'ng2-logger';
 import { SYMBOL } from './symbols';
 import { ArrayDataConfig } from './config-array-data';
+import { parseJSONwithStringJSONs } from './helpers';
 
 @__ENDPOINT(BaseCRUD)
 @CLASSNAME('BaseCRUD')
@@ -56,12 +57,14 @@ export abstract class BaseCRUD<T>  {
   getAll(@QueryParam() allQueryParams?: Object): Response<T[]> {
     //#region @backendFunc
     return async () => {
+      allQueryParams = parseJSONwithStringJSONs(allQueryParams);
       console.log('allQueryParams', allQueryParams)
       const config = new ArrayDataConfig(allQueryParams as any);
 
-
       const models = await this.repo.find();
-      return models;
+      const res = config.fromModels(models).getPagination()
+      console.log('backend models', models)
+      return res;
     }
     //#endregion
   }
