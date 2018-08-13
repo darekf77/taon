@@ -15,6 +15,7 @@ import { Repository, Connection } from "typeorm";
 import { Observable } from "rxjs/Observable";
 import { isNode } from 'ng2-logger';
 import { SYMBOL } from './symbols';
+import { ArrayDataConfig } from './config-array-data';
 
 @__ENDPOINT(BaseCRUD)
 @CLASSNAME('BaseCRUD')
@@ -56,6 +57,9 @@ export abstract class BaseCRUD<T>  {
     //#region @backendFunc
     return async () => {
       console.log('allQueryParams', allQueryParams)
+      const config = new ArrayDataConfig(allQueryParams as any);
+
+
       const models = await this.repo.find();
       return models;
     }
