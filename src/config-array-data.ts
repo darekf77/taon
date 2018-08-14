@@ -1,3 +1,4 @@
+import { parseJSONwithStringJSONs } from './helpers';
 
 const MAX_DATA_LENGTH_SENT_TO_CLIENT = 100;
 
@@ -14,19 +15,19 @@ export interface IArrayDataSorting {
 
 export interface IArrayDataConfig {
 
-  pagination: IArrayDataPagination;
+  pagination?: IArrayDataPagination;
 
   /**
    * Filters data
    * EXAMPLE:
    * ['book.category.id = 23','book.author.id > 23' ]
    */
-  filters: string[];
+  filters?: string[];
 
   /**
    * Sorting by entity properties
    */
-  sorting: IArrayDataSorting;
+  sorting?: IArrayDataSorting;
 
   /**
    * Join some colums
@@ -37,14 +38,19 @@ export interface IArrayDataConfig {
 
 }
 
-export class ArrayDataConfig {
+export class ArrayDataConfig implements IArrayDataConfig {
 
   constructor(
-    public config?: IArrayDataConfig) {
+    private config?: IArrayDataConfig) {
+
 
     if (!config) {
       this.config = this.defaultConfig;
+    }
 
+    if (config['config']) {
+      this.config = parseJSONwithStringJSONs(config);
+    } else {
       if (!this.config.pagination) {
         this.config.pagination = this.defaultConfig.pagination;
       }
@@ -60,9 +66,12 @@ export class ArrayDataConfig {
       if (!this.config.joins) {
         this.config.joins = this.defaultConfig.joins;
       }
-
-      console.log('config HERE', this.config)
     }
+
+
+
+
+    console.log('config HERE', this.config)
   }
 
   //#region @backend
@@ -92,5 +101,20 @@ export class ArrayDataConfig {
     }
   }
 
+  get pagination() {
+    return this.config.pagination;
+  }
+
+  get filters() {
+    return this.config.filters;
+  }
+
+  get sorting() {
+    return this.config.sorting;
+  }
+
+  get joins() {
+    return this.config.joins
+  }
 
 }

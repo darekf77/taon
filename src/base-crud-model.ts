@@ -54,12 +54,11 @@ export abstract class BaseCRUD<T>  {
   }
 
   @GET(`/${SYMBOL.CRUD_TABLE_MODEL}`)
-  getAll(@QueryParam() allQueryParams?: Object): Response<T[]> {
+  getAll(@QueryParam() allQueryParams?: any): Response<T[]> {
     //#region @backendFunc
     return async (request, response) => {
-      allQueryParams = parseJSONwithStringJSONs(allQueryParams);
-      console.log('allQueryParams', allQueryParams)
-      const config = new ArrayDataConfig(allQueryParams as any);
+
+      const config = new ArrayDataConfig(allQueryParams);
 
       const totalCount = await this.repo.count();
 
