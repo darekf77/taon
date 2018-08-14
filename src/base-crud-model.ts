@@ -62,7 +62,8 @@ export abstract class BaseCRUD<T>  {
       const config = new ArrayDataConfig(allQueryParams as any);
 
       const models = await this.repo.find();
-      const res = config.fromModels(models).getPagination()
+      let res = models;
+      res = config.fromModels(models).getPagination()
       console.log('backend models', models)
       return res;
     }

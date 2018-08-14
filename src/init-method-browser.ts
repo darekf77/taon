@@ -2,7 +2,7 @@
 import { HttpMethod, MethodConfig, ParamConfig, Resource } from "ng2-rest";
 import { Global } from './global-config';
 import { SYMBOL } from './symbols';
-
+import * as _ from 'lodash';
 
 
 export function initMethodBrowser(target, type: HttpMethod, methodConfig: MethodConfig, expressPath) {
@@ -49,7 +49,7 @@ export function initMethodBrowser(target, type: HttpMethod, methodConfig: Method
         if (currentParam.paramName) {
           queryParams[currentParam.paramName] = param;
         } else {
-          queryParams = param;
+          queryParams = _.cloneDeep(param);
         }
       }
       if (currentParam.paramType === 'Header') {

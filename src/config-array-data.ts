@@ -44,7 +44,23 @@ export class ArrayDataConfig {
 
     if (!config) {
       this.config = this.defaultConfig;
-      debugger
+
+      if (!this.config.pagination) {
+        this.config.pagination = this.defaultConfig.pagination;
+      }
+
+      if (!this.config.filters) {
+        this.config.filters = this.defaultConfig.filters;
+      }
+
+      if (!this.config.sorting) {
+        this.config.sorting = this.defaultConfig.sorting;
+      }
+
+      if (!this.config.joins) {
+        this.config.joins = this.defaultConfig.joins;
+      }
+
       console.log('config HERE', this.config)
     }
   }
