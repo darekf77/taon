@@ -56,15 +56,19 @@ export abstract class BaseCRUD<T>  {
   @GET(`/${SYMBOL.CRUD_TABLE_MODEL}`)
   getAll(@QueryParam() allQueryParams?: Object): Response<T[]> {
     //#region @backendFunc
-    return async () => {
+    return async (request, response) => {
       allQueryParams = parseJSONwithStringJSONs(allQueryParams);
       console.log('allQueryParams', allQueryParams)
       const config = new ArrayDataConfig(allQueryParams as any);
+
+      const totalCount = await this.repo.count();
 
       const models = await this.repo.find();
       let res = models;
       res = config.fromModels(models).getPagination()
       console.log('backend models', models)
+      response.setHeader(SYMBOL.X_TOTAL_COUNT, totalCount)
+
       return res;
     }
     //#endregion

@@ -45,6 +45,7 @@ export function initMidleware() {
           'Content-Type',
           'Authorization',
           'X-Requested-With',
+          SYMBOL.X_TOTAL_COUNT,
           SYMBOL.MAPPING_CONFIG_HEADER
         ].join(', '))
       next();
