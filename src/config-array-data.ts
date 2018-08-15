@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import { parseJSONwithStringJSONs } from './helpers';
 
-const MAX_DATA_LENGTH_SENT_TO_CLIENT = 100;
+const MAX_DATA_LENGTH_SENT_TO_CLIENT = 10000;
 
 export interface IArrayDataPagination {
   pageNumber: number;
@@ -19,13 +19,6 @@ export interface IArrayDataConfig {
   pagination?: IArrayDataPagination;
 
   /**
-   * Filters data
-   * EXAMPLE:
-   * ['book.category.id = 23','book.author.id > 23' ]
-   */
-  filters?: string[];
-
-  /**
    * Sorting by entity properties
    */
   sorting?: IArrayDataSorting;
@@ -33,7 +26,7 @@ export interface IArrayDataConfig {
   /**
    * Join some colums
    * EXAMPLE:
-   * [book.author, book.publisher]
+   * [author, author.publisher]
    */
   joins?: string[];
 
@@ -68,10 +61,6 @@ export class ArrayDataConfig implements IArrayDataConfig {
       this.config.pagination = this.defaultConfig.pagination;
     }
 
-    if (_.isUndefined(this.config.filters)) {
-      this.config.filters = this.defaultConfig.filters;
-    }
-
     if (_.isUndefined(this.config.sorting)) {
       this.config.sorting = this.defaultConfig.sorting;
     }
@@ -102,7 +91,6 @@ export class ArrayDataConfig implements IArrayDataConfig {
 
   private get defaultConfig(): IArrayDataConfig {
     return {
-      filters: [],
       joins: [],
       where: [],
       sorting: {},
@@ -114,28 +102,90 @@ export class ArrayDataConfig implements IArrayDataConfig {
     }
   }
 
+  private get preprae() {
+    return {
+      where(command: string) {
+        let res = {};
+        const [wherePath, value] = command.split('=').map(c => c.trim());
+        _.set(res, wherePath, value);
+        return res;
+      },
+      joinInnerAndSelect(commands: string[]) {
+        let res = {
+          alias: 'entity',
+          innerJoinAndSelect: {
+            // 'category': 'entity.category'
+          }
+        };
+
+        // TODO commands sorting
+
+        commands.forEach(c => {
+          let split = c.split('.');
+
+          if (_.first(split) === '') {
+            split = split.slice(1);
+          }
+
+          if (split.length === 1) { // join entity property
+            const entityPropertyFirstLevel = _.first(split);
+            res.innerJoinAndSelect[entityPropertyFirstLevel] =
+              `${res.alias}.${entityPropertyFirstLevel}`;
+          } else if (split.length === 2) {
+            const entityPropertyFirstLevel = _.first(split);
+            const entityPropertySecondLevel = _.first(split.slice(1));
+
+            res.innerJoinAndSelect[entityPropertySecondLevel] =
+              `${entityPropertyFirstLevel}.${entityPropertySecondLevel}`;
+          }
+        })
+
+        return res;
+      }
+    }
+  }
+
+  get db() {
+    const self = this;
+    return {
+      get where() {
+        let res = {};
+        self.where.forEach(c => {
+          res = _.merge(res, self.preprae.where(c));
+        });
+        return res;
+      },
+      get join() {
+        return self.preprae.joinInnerAndSelect(self.joins);
+      },
+      get skip() {
+        let { pageNumber, rowsDisplayed } = self.config.pagination;
+        let indexStart = (pageNumber - 1) * rowsDisplayed;
+        return indexStart;
+      },
+      get take() {
+        return self.config.pagination.rowsDisplayed;
+      }
+    }
+  }
+
   get pagination() {
-    
+
     return this.config.pagination;
   }
 
-  get filters() {
-    
-    return this.config.filters;
-  }
-
   get sorting() {
-    
+
     return this.config.sorting;
   }
 
   get joins() {
-    
+
     return this.config.joins
   }
 
   get where() {
-    
+
     return this.config.where
   }
 
