@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import { parseJSONwithStringJSONs } from './helpers';
 
 const MAX_DATA_LENGTH_SENT_TO_CLIENT = 100;
@@ -36,42 +37,53 @@ export interface IArrayDataConfig {
    */
   joins?: string[];
 
+  /**
+   * Find data where
+   * EXAMPLE:
+   * ['book.author.id === 2']
+   */
+  where?: string[];
+
 }
 
 export class ArrayDataConfig implements IArrayDataConfig {
 
-  constructor(
-    private config?: IArrayDataConfig) {
+  private config?: IArrayDataConfig;
 
+  constructor(config?: IArrayDataConfig) {
 
-    if (!config) {
+    if (config && _.isString(config['config'])) {
+      console.log('from nested config')
+      this.config = parseJSONwithStringJSONs(JSON.parse(config['config']));
+    } else if (config) {
+      console.log('from normal interface config')
+      this.config = parseJSONwithStringJSONs(config);
+    } else {
+      console.log('from default config')
       this.config = this.defaultConfig;
     }
 
-    if (config['config']) {
-      this.config = parseJSONwithStringJSONs(config);
-    } else {
-      if (!this.config.pagination) {
-        this.config.pagination = this.defaultConfig.pagination;
-      }
 
-      if (!this.config.filters) {
-        this.config.filters = this.defaultConfig.filters;
-      }
-
-      if (!this.config.sorting) {
-        this.config.sorting = this.defaultConfig.sorting;
-      }
-
-      if (!this.config.joins) {
-        this.config.joins = this.defaultConfig.joins;
-      }
+    if (_.isUndefined(this.config.pagination)) {
+      this.config.pagination = this.defaultConfig.pagination;
     }
 
+    if (_.isUndefined(this.config.filters)) {
+      this.config.filters = this.defaultConfig.filters;
+    }
 
+    if (_.isUndefined(this.config.sorting)) {
+      this.config.sorting = this.defaultConfig.sorting;
+    }
 
+    if (_.isUndefined(this.config.joins)) {
+      this.config.joins = this.defaultConfig.joins;
+    }
 
-    console.log('config HERE', this.config)
+    if (_.isUndefined(this.config.where)) {
+      this.config.where = this.defaultConfig.where;
+    }
+
   }
 
   //#region @backend
@@ -92,6 +104,7 @@ export class ArrayDataConfig implements IArrayDataConfig {
     return {
       filters: [],
       joins: [],
+      where: [],
       sorting: {},
       pagination: {
         pageNumber: 1,
@@ -102,19 +115,28 @@ export class ArrayDataConfig implements IArrayDataConfig {
   }
 
   get pagination() {
+    
     return this.config.pagination;
   }
 
   get filters() {
+    
     return this.config.filters;
   }
 
   get sorting() {
+    
     return this.config.sorting;
   }
 
   get joins() {
+    
     return this.config.joins
+  }
+
+  get where() {
+    
+    return this.config.where
   }
 
 }
