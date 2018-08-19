@@ -46,13 +46,13 @@ export class ArrayDataConfig implements IArrayDataConfig {
   constructor(config?: IArrayDataConfig) {
 
     if (config && _.isString(config['config'])) {
-      console.log('from nested config')
+      // console.log('from nested config')
       this.config = parseJSONwithStringJSONs(JSON.parse(config['config']));
     } else if (config) {
-      console.log('from normal interface config')
+      // console.log('from normal interface config')
       this.config = parseJSONwithStringJSONs(config);
     } else {
-      console.log('from default config')
+      // console.log('from default config')
       this.config = this.defaultConfig;
     }
 
