@@ -2,7 +2,10 @@ import * as path from 'path';
 import * as child from 'child_process';
 import * as os from 'os';
 import * as fs from 'fs';
+import * as fse from 'fs-extra';
 import chalk from 'chalk';
+import * as rimraf from 'rimraf';
+import { sleep } from 'sleep';
 import check from 'check-node-version';
 
 const commandExistsSync = require('command-exists').sync;
@@ -18,6 +21,29 @@ export interface GlobalCommandLineProgramDependency {
 export interface GlobalDependencies {
   npm?: GlobalNpmDependency[];
   programs?: GlobalCommandLineProgramDependency[];
+}
+
+
+export function tryRemoveDir(dirpath) {
+  try {
+    rimraf.sync(dirpath)
+  } catch (e) {
+    console.log(`Trying to remove directory: ${dirpath}`)
+    sleep(1);
+    tryRemoveDir(dirpath);
+  }
+}
+
+export function tryCopyFrom(source, destination) {
+  try {
+    fse.copySync(source, destination, {
+      overwrite: true
+    })
+  } catch (e) {
+    console.log(`Trying to copy from: ${source} to ${destination}`)
+    sleep(1);
+    tryCopyFrom(source, destination)
+  }
 }
 
 

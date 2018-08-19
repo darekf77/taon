@@ -7,7 +7,7 @@ import * as fse from 'fs-extra';
 
 
 import { CodeTransform } from './isomorphic';
-import { Helpers } from './helpers';
+import { Helpers, tryRemoveDir, tryCopyFrom } from './helpers';
 import { IncrementalBuild } from './incremental';
 import { FoldersPathes, ToolsPathes, BuildConfig, BuildPathes } from "./models";
 
@@ -104,12 +104,11 @@ export class IsomoprhicBuild {
         }
 
         if (fs.existsSync(tmpSrc)) {
-          fse.emptyDirSync(tmpSrc);
+          tryRemoveDir(tmpSrc);
         }
 
-        fse.copySync(`${src}/`, tmpSrc, {
-          overwrite: true
-        })
+        tryCopyFrom(`${src}/`, tmpSrc);
+
         fse.copyFileSync(`${tsconfig_browser}`, `${tmpSrc}/${this.FOLDER.tsconfig.default}`);
         CodeTransform.for.isomorphicLib(this.options.build.otherIsomorphicLibs).files(files);
 
