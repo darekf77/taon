@@ -1,4 +1,15 @@
 {
+  "tnp": {
+    "resources": [
+      "README.md",
+      "examples",
+      "bin",
+      "logo_github.png",
+      "logo.png",
+      "files.png"
+    ],
+    "type": "isomorphic-lib"
+  },
   "name": "morphi",
   "version": "1.0.41",
   "description": "Isomorphic solution for expressjs and angular5",
@@ -9,17 +20,6 @@
     "build": "./node_modules/.bin/ts-node ./node_modules/typescript-npm-project/index.ts",
     "build:publish": "./node_modules/.bin/ts-node ./node_modules/typescript-npm-project/index.ts --publish",
     "build:clean": "./node_modules/.bin/ts-node ./node_modules/typescript-npm-project/index.ts --clean"
-  },
-  "tnp": {
-    "type": "isomorphic-lib",
-    "resources": [
-      "README.md",
-      "examples",
-      "bin",
-      "logo_github.png",
-      "logo.png",
-      "files.png"
-    ]
   },
   "bin": {
     "morphi": "bin/morphi"
@@ -58,7 +58,7 @@
     "lodash": "^4.17.4",
     "method-override": "^2.3.10",
     "ng2-logger": "^2.0.35",
-    "ng2-rest": "^9.1.3",
+    "ng2-rest": "9.1.7",
     "ps-node": "^0.1.6",
     "reflect-metadata": "^0.1.10",
     "rimraf": "^2.6.2",

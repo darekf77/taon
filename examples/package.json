@@ -1,4 +1,10 @@
 {
+  "tnp": {
+    "resources": [
+      "README.md"
+    ],
+    "type": "workspace"
+  },
   "name": "workspace",
   "version": "0.0.0",
   "license": "UNLICENSED",
@@ -67,9 +73,9 @@
     "ionic-angular": "^3.9.2",
     "ionicons": "^3.0.0",
     "lodash": "4.17.4",
-    "morphi": "^1.0.37",
+    "morphi": "1.0.42",
     "ng2-logger": "^2.0.35",
-    "ng2-rest": "^9.1.1",
+    "ng2-rest": "9.1.7",
     "ngx-bootstrap": "^2.0.2",
     "node-sass": "^4.7.2",
     "passport": "^0.3.2",
@@ -141,11 +147,5 @@
   "engines": {
     "node": ">=9.2.0",
     "npm": ">=5.6.0"
-  },
-  "tnp": {
-    "type": "workspace",
-    "resources": [
-      "README.md"
-    ]
   }
 }
