@@ -9,7 +9,7 @@ export * from './symbols';
 export * from './init-method-browser';
 export * from './init-method-node';
 export * from './base-crud-model';
-export * from './config-array-data';
+export * from './model-data-config';
 //#region @backend
 export * from './build-tool';
 //#endregion

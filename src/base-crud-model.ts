@@ -10,12 +10,13 @@ import {
   //#endregion
 } from "./index";
 
+import * as _ from 'lodash';
 import { CLASSNAME } from 'ng2-rest';
 import { Repository, Connection } from "typeorm";
 import { Observable } from "rxjs/Observable";
 import { isNode } from 'ng2-logger';
 import { SYMBOL } from './symbols';
-import { ArrayDataConfig } from './config-array-data';
+import { ModelDataConfig } from './model-data-config';
 import { parseJSONwithStringJSONs } from './helpers';
 
 @__ENDPOINT(BaseCRUD)
@@ -54,10 +55,10 @@ export abstract class BaseCRUD<T>  {
   }
 
   @GET(`/${SYMBOL.CRUD_TABLE_MODEL}`)
-  getAll(@QueryParam() allQueryParams?: any): Response<T[]> {
+  getAll(@QueryParam() allQueryParams?: ModelDataConfig): Response<T[]> {
     //#region @backendFunc
     return async (request, response) => {
-      const config = new ArrayDataConfig(allQueryParams);
+      const config = new ModelDataConfig(allQueryParams);
       const totalCount = await this.repo.count();
       const models = await this.repo.find(
         {
@@ -74,10 +75,14 @@ export abstract class BaseCRUD<T>  {
   }
 
   @GET(`/${SYMBOL.CRUD_TABLE_MODEL}/:id`)
-  getBy(@PathParam(`id`) id: number): Response<T> {
+  getBy(@PathParam(`id`) id: number, @QueryParam() allQueryParams?: ModelDataConfig): Response<T> {
     //#region @backendFunc
     return async () => {
-      const model = await this.repo.findOneById(id)
+      const config = new ModelDataConfig(allQueryParams);
+      const model = await this.repo.findOne({
+        where: _.merge({ id }, config.db.where),
+        join: config.db.join
+      })
       return model;
     }
     //#endregion

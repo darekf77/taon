@@ -3,25 +3,25 @@ import { parseJSONwithStringJSONs } from './helpers';
 
 const MAX_DATA_LENGTH_SENT_TO_CLIENT = 10000;
 
-export interface IArrayDataPagination {
+export interface IModelDataPagination {
   pageNumber: number;
   rowsDisplayed: number;
   totalElements?: number;
 }
 
-export interface IArrayDataSorting {
+export interface IModelDataSorting {
   [entityPath: string]: 'ASC' | "DESC";
 }
 
 
-export interface IArrayDataConfig {
+export interface IModelDataConfig {
 
-  pagination?: IArrayDataPagination;
+  pagination?: IModelDataPagination;
 
   /**
    * Sorting by entity properties
    */
-  sorting?: IArrayDataSorting;
+  sorting?: IModelDataSorting;
 
   /**
    * Join some colums
@@ -39,11 +39,11 @@ export interface IArrayDataConfig {
 
 }
 
-export class ArrayDataConfig implements IArrayDataConfig {
+export class ModelDataConfig implements IModelDataConfig {
 
-  private config?: IArrayDataConfig;
+  private config?: IModelDataConfig;
 
-  constructor(config?: IArrayDataConfig) {
+  constructor(config?: IModelDataConfig) {
 
     if (config && _.isString(config['config'])) {
       // console.log('from nested config')
@@ -89,7 +89,7 @@ export class ArrayDataConfig implements IArrayDataConfig {
   }
   //#endregion
 
-  private get defaultConfig(): IArrayDataConfig {
+  private get defaultConfig(): IModelDataConfig {
     return {
       joins: [],
       where: [],
