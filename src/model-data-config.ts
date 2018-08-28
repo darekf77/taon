@@ -1,4 +1,6 @@
 import * as _ from 'lodash';
+// import { Subject } from 'rxjs/Subject'; // TODO use rxjs to detec change
+// import { Observable } from 'rxjs/Observable';
 import { parseJSONwithStringJSONs } from './helpers';
 
 const MAX_DATA_LENGTH_SENT_TO_CLIENT = 10000;
@@ -15,6 +17,7 @@ export interface IModelDataSorting {
 
 
 export interface IModelDataConfig {
+
 
   pagination?: IModelDataPagination;
 
@@ -37,9 +40,13 @@ export interface IModelDataConfig {
    */
   where?: string[];
 
+
 }
 
-export class ModelDataConfig implements IModelDataConfig {
+export class ModelDataConfig {
+
+  // protected _modelConfigChanged = new Subject();
+  // public onChange = this._modelConfigChanged.asObservable();
 
   private config?: IModelDataConfig;
 
@@ -72,7 +79,7 @@ export class ModelDataConfig implements IModelDataConfig {
     if (_.isUndefined(this.config.where)) {
       this.config.where = this.defaultConfig.where;
     }
-
+    console.log('config', config)
   }
 
   //#region @backend
@@ -102,6 +109,7 @@ export class ModelDataConfig implements IModelDataConfig {
     }
   }
 
+  //#region @backend
   private get preprae() {
     return {
       where(command: string) {
@@ -145,6 +153,8 @@ export class ModelDataConfig implements IModelDataConfig {
     }
   }
 
+
+
   get db() {
     const self = this;
     return {
@@ -168,7 +178,72 @@ export class ModelDataConfig implements IModelDataConfig {
       }
     }
   }
+  //#endregion
 
+  get set() {
+    const self = this;
+    return {
+      where(command: string) {
+        if (command === undefined) {
+          return;
+        }
+        const [wherePath, value] = command.split('=').map(c => c.trim());
+        const founded = self.config.where.find(c => {
+          const [wherePath2] = c.split('=').map(c => c.trim());
+          return (wherePath === wherePath2);
+        })
+
+        if (command.trim().endsWith('=') || (value && value.trim() === 'undefined')) {
+          self.config.where = self.config.where.filter(c => {
+            const [wherePath2] = c.split('=').map(c => c.trim());
+            return (wherePath !== wherePath2);
+          });
+          return;
+        }
+
+        if (founded) {
+          let index = self.config.where.indexOf(founded);
+          self.config.where[index] = command;
+        } else {
+          self.config.where.push(command)
+        }
+        // self._modelConfigChanged.next(self);
+      },
+      joins(command: string) {
+        if (command === undefined) {
+          return;
+        }
+        let founded = self.config.joins.find(j => command.trim() === j.trim());
+        if (founded) {
+          let index = self.config.joins.indexOf(founded);
+          self.config.joins[index] = command;
+        } else {
+          self.config.joins.push(command)
+        }
+        // self._modelConfigChanged.next(self);
+      },
+
+      get pagination() {
+        return {
+          totalElement(value: number) {
+            self.config.pagination.totalElements = value;
+            // self._modelConfigChanged.next(self);
+          },
+          pageNumber(value: number) {
+            self.config.pagination.pageNumber = value;
+            // self._modelConfigChanged.next(self);
+          },
+          rowDisplayed(value: number) {
+            self.config.pagination.rowsDisplayed = value;
+            // self._modelConfigChanged.next(self);
+          }
+        }
+      }
+
+    }
+  }
+
+  //#region @backend
   get pagination() {
 
     return this.config.pagination;
@@ -188,5 +263,6 @@ export class ModelDataConfig implements IModelDataConfig {
 
     return this.config.where
   }
+  //#endregion
 
 }
