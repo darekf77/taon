@@ -7,7 +7,8 @@ import {
   ParamConfig,
   HttpMethod,
   //#region @backend
-  decode
+  decode,
+  encode
   //#endregion
 } from "ng2-rest";
 import { tryTransformParam, getResponseValue } from "./helpers";
@@ -73,9 +74,35 @@ export function initMethodNodejs(
   // console.log(`BACKEND: expressPath: ${expressPath}`)
 
   Global.vars.app[type.toLowerCase()](expressPath, requestHandler, async (req, res) => {
+
     res[SYMBOL.METHOD_DECORATOR] = methodConfig;
     res[SYMBOL.CLASS_DECORATOR] = classConfig;
     const args: any[] = [];
+
+    // make class instance from body
+    console.log('req.headers', req.headers)
+    if (req.headers[SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS]) {
+      const entity = req.headers[SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS];
+      req.params = encode(req.params, entity);
+    } else {
+      Object.keys(req.params).forEach(paramName => {
+        const entityForParam = req.headers[`${SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS}${paramName}`];
+        req.params[paramName] = encode(req.params[paramName], entityForParam);
+      })
+    }
+
+    // make class instance from query params
+    console.log('req.headers', req.query)
+    if (req.headers[SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS]) {
+      const entity = req.headers[SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS];
+      req.query = encode(req.query, entity);
+    } else {
+      Object.keys(req.query).forEach(queryParamName => {
+        const entityForParam = req.headers[`${SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${queryParamName}`];
+        req.query[queryParamName] = encode(req.query[queryParamName], entityForParam);
+      });
+    }
+
     Object.keys(methodConfig.parameters).forEach(paramName => {
       let p: ParamConfig = methodConfig.parameters[paramName];
       if (p.paramType === 'Path' && req.params) {
@@ -88,6 +115,7 @@ export function initMethodNodejs(
           args.push(req.query);
         }
       }
+
       if (p.paramType === 'Header' && req.headers) {
         args.push(req.headers[p.paramName.toLowerCase()])
       }

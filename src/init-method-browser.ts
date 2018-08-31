@@ -1,8 +1,9 @@
 
-import { HttpMethod, MethodConfig, ParamConfig, Resource } from "ng2-rest";
+import { HttpMethod, MethodConfig, ParamConfig, Resource, getModelsMapping } from "ng2-rest";
 import { Global } from './global-config';
 import { SYMBOL } from './symbols';
 import * as _ from 'lodash';
+import { getClassFromObject } from './helpers';
 
 
 export function initMethodBrowser(target, type: HttpMethod, methodConfig: MethodConfig, expressPath) {
@@ -47,8 +48,20 @@ export function initMethodBrowser(target, type: HttpMethod, methodConfig: Method
       }
       if (currentParam.paramType === 'Query') {
         if (currentParam.paramName) {
+          const mapping = getModelsMapping(getClassFromObject(param), true);
+          if (mapping) {
+            Resource.Headers.request.set(
+              `${SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${currentParam.paramName}`,
+              JSON.stringify(mapping))
+          }
           queryParams[currentParam.paramName] = param;
         } else {
+          const mapping = getModelsMapping(getClassFromObject(param), true);
+          if (mapping) {
+            Resource.Headers.request.set(
+              SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS,
+              JSON.stringify(mapping))
+          }
           queryParams = _.cloneDeep(param);
         }
       }
@@ -66,8 +79,20 @@ export function initMethodBrowser(target, type: HttpMethod, methodConfig: Method
       }
       if (currentParam.paramType === 'Body') {
         if (currentParam.paramName) {
+          const mapping = getModelsMapping(getClassFromObject(param), true);
+          if (mapping) {
+            Resource.Headers.request.set(
+              `${SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS}${currentParam.paramName}`,
+              JSON.stringify(mapping))
+          }
           item[currentParam.paramName] = param;
         } else {
+          const mapping = getModelsMapping(getClassFromObject(param), true);
+          if (mapping) {
+            Resource.Headers.request.set(
+              SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS,
+              JSON.stringify(mapping))
+          }
           item = param;
         }
       }
@@ -78,3 +103,5 @@ export function initMethodBrowser(target, type: HttpMethod, methodConfig: Method
     }
   };
 }
+
+

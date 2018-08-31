@@ -9,6 +9,10 @@ import { getClassConfig } from "ng2-rest";
 import { Response as ExpressResponse, Request as ExpressRequest } from "express";
 import { getEntityFieldsProperties } from './models-mapping';
 
+export function getClassFromObject(o: Object) {
+  const p = Object.getPrototypeOf(o)
+  return p && p.constructor;
+}
 
 function isAsync(fn) {
   return fn && fn.constructor && fn.constructor.name === 'AsyncFunction';

@@ -6,7 +6,8 @@ import {
   BodyParam,
   QueryParam,
   //#region @backend
-  OrmConnection
+  OrmConnection,
+  getRepository
   //#endregion
 } from "./index";
 
@@ -17,7 +18,7 @@ import { Observable } from "rxjs/Observable";
 import { isNode } from 'ng2-logger';
 import { SYMBOL } from './symbols';
 import { ModelDataConfig } from './model-data-config';
-import { parseJSONwithStringJSONs } from './helpers';
+import { parseJSONwithStringJSONs, getClassFromObject } from './helpers';
 
 @__ENDPOINT(BaseCRUD)
 @CLASSNAME('BaseCRUD')
@@ -55,10 +56,10 @@ export abstract class BaseCRUD<T>  {
   }
 
   @GET(`/${SYMBOL.CRUD_TABLE_MODEL}`)
-  getAll(@QueryParam() allQueryParams?: ModelDataConfig): Response<T[]> {
+  getAll(@QueryParam() config?: ModelDataConfig): Response<T[]> {
     //#region @backendFunc
     return async (request, response) => {
-      const config = new ModelDataConfig(allQueryParams);
+
       const totalCount = await this.repo.count();
       const models = await this.repo.find(
         {
@@ -75,10 +76,10 @@ export abstract class BaseCRUD<T>  {
   }
 
   @GET(`/${SYMBOL.CRUD_TABLE_MODEL}/:id`)
-  getBy(@PathParam(`id`) id: number, @QueryParam() allQueryParams?: ModelDataConfig): Response<T> {
+  getBy(@PathParam(`id`) id: number, @QueryParam() config?: ModelDataConfig): Response<T> {
     //#region @backendFunc
     return async () => {
-      const config = new ModelDataConfig(allQueryParams);
+
       const model = await this.repo.findOne({
         where: _.merge({ id }, config.db.where),
         join: config.db.join
@@ -89,11 +90,22 @@ export abstract class BaseCRUD<T>  {
   }
 
   @PUT(`/${SYMBOL.CRUD_TABLE_MODEL}/:id`)
-  updateById(@PathParam(`id`) id: number, @BodyParam() item: T): Response<T> {
+  updateById(@PathParam(`id`) id: number, @BodyParam() item: T, @QueryParam() config?: ModelDataConfig): Response<T> {
     //#region @backendFunc
+
     return async () => {
+
+      await forPropertiesOf(item).run((r, partialItem) => {
+        return r.updateById(partialItem['id'], partialItem as any);
+      })
+
       await this.repo.updateById(id, item);
-      return await this.repo.findOneById(id)
+
+      const model = await this.repo.findOne({
+        where: _.merge({ id }, config.db.where),
+        join: config.db.join
+      })
+      return model;
     }
     //#endregion
   }
@@ -122,4 +134,24 @@ export abstract class BaseCRUD<T>  {
     //#endregion
   }
 
+}
+
+
+function forPropertiesOf(item) {
+  return {
+    async run(action: (r: Repository<any>, partialItem: Object, entityClass?: Function, ) => Promise<any>) {
+      const objectPropertiesToUpdate = [];
+      Object.keys(item).forEach(propertyName => {
+        if (_.isObject(item[propertyName])) {
+          const partialItem = item[propertyName];
+          const entityClass = getClassFromObject(partialItem);
+          const repo = entityClass && getRepository(entityClass);
+          if (repo) {
+            objectPropertiesToUpdate.push(action(repo, partialItem, entityClass))
+          }
+        }
+      })
+      return Promise.all(objectPropertiesToUpdate);
+    }
+  }
 }

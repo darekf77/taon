@@ -6,6 +6,7 @@ import { SYMBOL } from "./symbols";
 import { FormlyFormOptions, FormlyFieldConfig } from '@ngx-formly/core';
 import { Describer } from './helpers';
 import * as _ from 'lodash';
+import { getDefaultMappingModel } from 'ng2-rest';
 
 export type ModelsMappingObject<T> = {
   /**
@@ -21,11 +22,6 @@ export type ModelValue<T> = {
   [propName in keyof T]?: T[propName];
 };
 
-function getDefaultMappingModel(target) {
-  return ({
-    '': target
-  })
-}
 
 export function DefaultModelWithMapping<T=Object>(
   defaultModelValues: ModelValue<T>,
@@ -85,18 +81,7 @@ export function getEntityFieldsProperties(target: Function): string[] {
 }
 
 
-export function getModelsMapping(entity: Function) {
-  if (_.isUndefined(entity)) {
-    return;
-  }
-  if (!_.isFunction(entity)) {
-    return;
-  }
-  if (_.isObject(entity[SYMBOL.MODELS_MAPPING])) {
-    return entity[SYMBOL.MODELS_MAPPING]
-  }
-  return getDefaultMappingModel(entity);
-}
+
 
 
 

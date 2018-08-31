@@ -2,6 +2,8 @@ import * as _ from 'lodash';
 // import { Subject } from 'rxjs/Subject'; // TODO use rxjs to detec change
 // import { Observable } from 'rxjs/Observable';
 import { parseJSONwithStringJSONs } from './helpers';
+import { CLASSNAME } from 'ng2-rest';
+import { DefaultModelWithMapping } from './models-mapping';
 
 const MAX_DATA_LENGTH_SENT_TO_CLIENT = 10000;
 
@@ -43,6 +45,8 @@ export interface IModelDataConfig {
 
 }
 
+@CLASSNAME('ModelDataConfig')
+@DefaultModelWithMapping<ModelDataConfig>({})
 export class ModelDataConfig {
 
   // protected _modelConfigChanged = new Subject();
@@ -79,7 +83,7 @@ export class ModelDataConfig {
     if (_.isUndefined(this.config.where)) {
       this.config.where = this.defaultConfig.where;
     }
-    console.log('config', config)
+    // console.log('config', config)
   }
 
   //#region @backend
@@ -240,6 +244,25 @@ export class ModelDataConfig {
         }
       }
 
+    }
+  }
+
+  get get() {
+    const self = this;
+    return {
+      get pagination() {
+        return {
+          get totalElements() {
+            return Number(_.get(self, "config.pagination.totalElements"));
+          },
+          get pageNumber() {
+            return Number(_.get(self, "config.pagination.pageNumber"));
+          },
+          get rowsDisplayed() {
+            return Number(_.get(self, "config.pagination.rowsDisplayed"));
+          }
+        }
+      }
     }
   }
 
