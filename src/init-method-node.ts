@@ -87,24 +87,32 @@ export function initMethodNodejs(
     // make class instance from body
     // console.log('req.headers', req.headers)
     if (req.headers[SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS]) {
-      const entity = JSON.parse(req.headers[SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS]);
-      tBody = encode(tBody, entity);
+      try {
+        const entity = JSON.parse(req.headers[SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS]);
+        tBody = encode(tBody, entity);
+      } catch (e) { }
     } else {
       Object.keys(tBody).forEach(paramName => {
-        const entityForParam = JSON.parse(req.headers[`${SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS}${paramName}`]);
-        tBody[paramName] = encode(tBody[paramName], entityForParam);
+        try {
+          const entityForParam = JSON.parse(req.headers[`${SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS}${paramName}`]);
+          tBody[paramName] = encode(tBody[paramName], entityForParam);
+        } catch (e) { }
       })
     }
 
     // make class instance from query params
     // console.log('req.headers', tQuery)
     if (req.headers[SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS]) {
-      const entity = JSON.parse(req.headers[SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS]);
-      tQuery = parseJSONwithStringJSONs(encode(tQuery, entity));
+      try {
+        const entity = JSON.parse(req.headers[SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS]);
+        tQuery = parseJSONwithStringJSONs(encode(tQuery, entity));
+      } catch (e) { }
     } else {
       Object.keys(tQuery).forEach(queryParamName => {
-        const entityForParam = JSON.parse(req.headers[`${SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${queryParamName}`]);
-        tQuery[queryParamName] = parseJSONwithStringJSONs(encode(tQuery[queryParamName], entityForParam));
+        try {
+          const entityForParam = JSON.parse(req.headers[`${SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${queryParamName}`]);
+          tQuery[queryParamName] = parseJSONwithStringJSONs(encode(tQuery[queryParamName], entityForParam));
+        } catch (e) { }
       });
     }
 

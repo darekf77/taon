@@ -98,7 +98,7 @@ export abstract class BaseCRUD<T>  {
       //   return r.updateById(partialItem['id'], partialItem as any);
       // })
 
-      await this.repo.updateById(id, item);
+      await this.repo.update(id, item);
 
       const model = await this.repo.findOne({
         where: _.merge({ id }, config && config.db && config.db.where),
@@ -114,8 +114,8 @@ export abstract class BaseCRUD<T>  {
   deleteById(@PathParam(`id`) id: number): Response<T> {
     //#region @backendFunc
     return async () => {
-      const deletedEntity = await this.repo.findOneById(id)
-      await this.repo.removeById(id);
+      const deletedEntity = await this.repo.findOne(id)
+      await this.repo.remove(id);
       return deletedEntity;
     }
     //#endregion
