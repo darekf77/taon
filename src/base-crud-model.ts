@@ -83,6 +83,9 @@ export abstract class BaseCRUD<T>  {
         where: _.merge({ id }, config && config.db && config.db.where),
         join: config && config.db && config.db.join
       })
+
+      preventUndefinedModel(model, config, id)
+
       return model;
     }
     //#endregion
@@ -94,9 +97,10 @@ export abstract class BaseCRUD<T>  {
 
     return async () => {
 
-      // await forObjectPropertiesOf(item).run((r, partialItem) => {
-      //   return r.updateById(partialItem['id'], partialItem as any);
-      // })
+      await forObjectPropertiesOf(item).run((r, partialItem) => {
+        return r.update(partialItem['id'], partialItem as any);
+      })
+
 
       await this.repo.update(id, item);
 
@@ -104,6 +108,9 @@ export abstract class BaseCRUD<T>  {
         where: _.merge({ id }, config && config.db && config.db.where),
         join: config && config.db && config.db.join
       })
+
+      preventUndefinedModel(model, config, id)
+
       return model;
 
     }
@@ -143,6 +150,13 @@ export abstract class BaseCRUD<T>  {
 }
 
 //#region @backend
+function preventUndefinedModel(model, config, id) {
+  if (_.isUndefined(model)) {
+    console.error(config)
+    throw `Bad update by id, config, id: ${id}`
+  }
+}
+
 function forObjectPropertiesOf(item) {
   return {
     async run(action: (r: Repository<any>, partialItem: Object, entityClass?: Function, ) => Promise<any>) {

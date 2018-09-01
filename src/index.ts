@@ -1,5 +1,5 @@
 export { isNode, isBrowser } from 'ng2-logger';
-export { DefaultModelWithMapping, Describer } from 'ng2-rest';
+export { DefaultModelWithMapping, describeClassProperites } from 'ng2-rest';
 export * from 'typeorm';
 export * from './decorators';
 export * from './models';

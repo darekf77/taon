@@ -124,7 +124,7 @@ export class ModelDataConfig {
       joinInnerAndSelect(commands: string[]) {
         let res = {
           alias: 'entity',
-          innerJoinAndSelect: {
+          leftJoinAndSelect: {
             // 'category': 'entity.category'
           }
         };
@@ -140,13 +140,13 @@ export class ModelDataConfig {
 
           if (split.length === 1) { // join entity property
             const entityPropertyFirstLevel = _.first(split);
-            res.innerJoinAndSelect[entityPropertyFirstLevel] =
+            res.leftJoinAndSelect[entityPropertyFirstLevel] =
               `${res.alias}.${entityPropertyFirstLevel}`;
           } else if (split.length === 2) {
             const entityPropertyFirstLevel = _.first(split);
             const entityPropertySecondLevel = _.first(split.slice(1));
 
-            res.innerJoinAndSelect[entityPropertySecondLevel] =
+            res.leftJoinAndSelect[entityPropertySecondLevel] =
               `${entityPropertyFirstLevel}.${entityPropertySecondLevel}`;
           }
         })

@@ -2,7 +2,7 @@
 import { SYMBOL } from "./symbols";
 import { FormlyFormOptions, FormlyFieldConfig } from '@ngx-formly/core';
 import * as _ from 'lodash';
-import { getModelsMapping, Describer } from 'ng2-rest';
+import { getModelsMapping, describeClassProperites } from 'ng2-rest';
 import { FormlyFromType } from './models';
 
 
@@ -18,13 +18,17 @@ function getFromlyConfigFor(target: Function, parentKeyPath?: string,
   const checkExclude = (_.isArray(keysPathesToExclude) && keysPathesToExclude.length > 0);
   const checkInclude = (_.isArray(keysPathesToInclude) && keysPathesToInclude.length > 0);
 
+
+
   if (!target[SYMBOL.FORMLY_METADATA_ARRAY]) {
     target[SYMBOL.FORMLY_METADATA_ARRAY] = [];
   } else {
-    return target[SYMBOL.FORMLY_METADATA_ARRAY];
+    if (_.isUndefined(parentKeyPath)) { // TODO try to make this more efficeien  ???
+      return target[SYMBOL.FORMLY_METADATA_ARRAY];
+    }
   }
 
-  const fieldNames = Describer.describeByDefaultModel(target);
+  const fieldNames = describeClassProperites(target);
   // console.log('DescribeByDefaultModel field names', fieldNames)
   let additionalConfig = [];
 
@@ -37,6 +41,8 @@ function getFromlyConfigFor(target: Function, parentKeyPath?: string,
     if (parentKeyPath) {
       keyPath = `${parentKeyPath}.${key}`
     }
+    // console.log(`key: ${keyPath}, parentkeyPath: ${parentKeyPath} for ${target.name}`)
+
     if (checkExclude && keysPathesToExclude.includes(key)) {
       return;
     }
@@ -65,8 +71,14 @@ function getFromlyConfigFor(target: Function, parentKeyPath?: string,
       }) as any;
     }
 
-    if (!isSimpleJStype && _.isFunction(mapping[key])) {
-      additionalConfig = additionalConfig.concat(getFromlyConfigFor(mapping[key] as Function, keyPath));
+    if (!isSimpleJStype && _.isFunction(mapping[key] && checkInclude && keysPathesToInclude.includes(key))) {
+      console.log('contact this object ', (mapping[key] as Function).name)
+      additionalConfig = additionalConfig.concat(
+        getFromlyConfigFor(mapping[key] as Function,
+          keyPath,
+          keysPathesToExclude,
+          keysPathesToInclude)
+      );
       return;
     }
 
