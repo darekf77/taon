@@ -12,13 +12,12 @@ import {
 } from "./index";
 
 import * as _ from 'lodash';
-import { CLASSNAME } from 'ng2-rest';
+import { CLASSNAME, getClassFromObject } from 'ng2-rest';
 import { Repository, Connection } from "typeorm";
 import { Observable } from "rxjs/Observable";
 import { isNode } from 'ng2-logger';
 import { SYMBOL } from './symbols';
 import { ModelDataConfig } from './model-data-config';
-import { parseJSONwithStringJSONs, getClassFromObject } from './helpers';
 
 @__ENDPOINT(BaseCRUD)
 @CLASSNAME('BaseCRUD')
@@ -63,10 +62,10 @@ export abstract class BaseCRUD<T>  {
       const totalCount = await this.repo.count();
       const models = await this.repo.find(
         {
-          where: config.db.where,
-          join: config.db.join,
-          skip: config.db.skip,
-          take: config.db.take
+          where: config && config.db && config.db.where,
+          join: config && config.db && config.db.join,
+          skip: config && config.db && config.db.skip,
+          take: config && config.db && config.db.take
         }
       );
       response.setHeader(SYMBOL.X_TOTAL_COUNT, totalCount)
@@ -81,8 +80,8 @@ export abstract class BaseCRUD<T>  {
     return async () => {
 
       const model = await this.repo.findOne({
-        where: _.merge({ id }, config.db.where),
-        join: config.db.join
+        where: _.merge({ id }, config && config.db && config.db.where),
+        join: config && config.db && config.db.join
       })
       return model;
     }
@@ -95,17 +94,18 @@ export abstract class BaseCRUD<T>  {
 
     return async () => {
 
-      await forPropertiesOf(item).run((r, partialItem) => {
-        return r.updateById(partialItem['id'], partialItem as any);
-      })
+      // await forObjectPropertiesOf(item).run((r, partialItem) => {
+      //   return r.updateById(partialItem['id'], partialItem as any);
+      // })
 
       await this.repo.updateById(id, item);
 
       const model = await this.repo.findOne({
-        where: _.merge({ id }, config.db.where),
-        join: config.db.join
+        where: _.merge({ id }, config && config.db && config.db.where),
+        join: config && config.db && config.db.join
       })
       return model;
+
     }
     //#endregion
   }
@@ -123,12 +123,18 @@ export abstract class BaseCRUD<T>  {
 
 
   @POST(`/${SYMBOL.CRUD_TABLE_MODEL}/`)
-  create(@BodyParam() item: T): Response<T> {
+  create(@BodyParam() item: T, @QueryParam() config?: ModelDataConfig): Response<T> {
     //#region @backendFunc
     return async () => {
 
-      const model = await this.repo.create(item)
-      await this.repo.save(model);
+      let model = await this.repo.create(item)
+      model = await this.repo.save(model);
+      const { id } = model;
+
+      model = await this.repo.findOne({
+        where: _.merge({ id }, config && config.db && config.db.where),
+        join: config && config.db && config.db.join
+      })
       return model;
     }
     //#endregion
@@ -136,14 +142,14 @@ export abstract class BaseCRUD<T>  {
 
 }
 
-
-function forPropertiesOf(item) {
+//#region @backend
+function forObjectPropertiesOf(item) {
   return {
     async run(action: (r: Repository<any>, partialItem: Object, entityClass?: Function, ) => Promise<any>) {
       const objectPropertiesToUpdate = [];
       Object.keys(item).forEach(propertyName => {
-        if (_.isObject(item[propertyName])) {
-          const partialItem = item[propertyName];
+        const partialItem = item[propertyName];
+        if (_.isObject(partialItem) && !_.isArray(partialItem)) {
           const entityClass = getClassFromObject(partialItem);
           const repo = entityClass && getRepository(entityClass);
           if (repo) {
@@ -155,3 +161,4 @@ function forPropertiesOf(item) {
     }
   }
 }
+//#endregion

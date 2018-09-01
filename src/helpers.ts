@@ -7,12 +7,8 @@ import {
 } from "./models";
 import { getClassConfig } from "ng2-rest";
 import { Response as ExpressResponse, Request as ExpressRequest } from "express";
-import { getEntityFieldsProperties } from './models-mapping';
 
-export function getClassFromObject(o: Object) {
-  const p = Object.getPrototypeOf(o)
-  return p && p.constructor;
-}
+
 
 function isAsync(fn) {
   return fn && fn.constructor && fn.constructor.name === 'AsyncFunction';
@@ -91,44 +87,6 @@ export function getSingletons<T=Object>(target: Function): T[] {
   return configs.map(c => c.singleton as T);
 }
 
-export class Describer {
-  private static FRegEx = new RegExp(/(?:this\.)(.+?(?= ))/g);
-
-
-  /**
-   * @DEPRECATED
-   * Describe fields assigned in class
-   */
-  public static describe(target: Function, parent = false): string[] {
-    var result = [];
-    if (parent) {
-      var proto = Object.getPrototypeOf(target.prototype);
-      if (proto) {
-        result = result.concat(this.describe(proto.constructor, parent));
-      }
-    }
-    result = result.concat(target.toString().match(this.FRegEx) || []);
-    return result.map(prop => prop.replace('this.', ''))
-
-  }
-
-  /**
-   * Describe fields assigne through @DefaultModelWithMapping decorator
-   * without functions
-   */
-  public static describeByDefaultModel(target: Function) {
-    return getEntityFieldsProperties(target);
-  }
-
-  public static describeByEverything(target: Function) {
-    const d1 = this.describe(target);
-    const d2 = this.describeByDefaultModel(target);
-    let uniq = {};
-    d1.concat(d2).forEach(p => uniq[p] = p);
-    return Object.keys(uniq).filter(d => !!d)
-  }
-
-}
 
 
 export function parseJSONwithStringJSONs(object: Object, waring = true): Object {

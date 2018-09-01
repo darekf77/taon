@@ -5,7 +5,9 @@ function metaParam(param: ParamType, name: string, expire: number, defaultValue 
   const configs = getClassConfig(args[0].constructor);
   let c = configs[0];
   const m = c.methods[methodName] = (!c.methods[methodName] ? new MethodConfig() : c.methods[methodName]);
-  const p = m.parameters[name] = (!m.parameters[name] ? new ParamConfig() : m.parameters[name]);
+
+  const nameKey = name ? name: param;
+  const p = m.parameters[nameKey] = (!m.parameters[nameKey] ? new ParamConfig() : m.parameters[nameKey]);
   p.index = args[2];
   p.paramName = name;
   p.paramType = param;

@@ -2,8 +2,7 @@ import * as _ from 'lodash';
 // import { Subject } from 'rxjs/Subject'; // TODO use rxjs to detec change
 // import { Observable } from 'rxjs/Observable';
 import { parseJSONwithStringJSONs } from './helpers';
-import { CLASSNAME } from 'ng2-rest';
-import { DefaultModelWithMapping } from './models-mapping';
+import { CLASSNAME, DefaultModelWithMapping } from 'ng2-rest';
 
 const MAX_DATA_LENGTH_SENT_TO_CLIENT = 10000;
 

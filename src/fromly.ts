@@ -1,9 +1,8 @@
 
 import { SYMBOL } from "./symbols";
 import { FormlyFormOptions, FormlyFieldConfig } from '@ngx-formly/core';
-import { Describer } from './helpers';
 import * as _ from 'lodash';
-import { getModelsMapping } from 'ng2-rest';
+import { getModelsMapping, Describer } from 'ng2-rest';
 import { FormlyFromType } from './models';
 
 
@@ -12,7 +11,7 @@ function getFromlyConfigFor(target: Function, parentKeyPath?: string,
   keysPathesToInclude?: string[]
 ): FormlyFieldConfig[] {
 
-  const mapping = getModelsMapping(target, true);
+  const mapping = getModelsMapping(target);
 
   // console.log(`mapping from ${target.name}`, mapping)
 
@@ -67,7 +66,7 @@ function getFromlyConfigFor(target: Function, parentKeyPath?: string,
     }
 
     if (!isSimpleJStype && _.isFunction(mapping[key])) {
-      additionalConfig = additionalConfig.concat(getFromlyConfigFor(mapping[key], keyPath));
+      additionalConfig = additionalConfig.concat(getFromlyConfigFor(mapping[key] as Function, keyPath));
       return;
     }
 

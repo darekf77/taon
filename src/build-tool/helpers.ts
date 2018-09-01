@@ -156,3 +156,19 @@ export namespace Helpers {
 
 
 
+export function getRecrusiveFilesFrom(dir): string[] {
+  let files = [];
+  const readed = fs.readdirSync(dir).map(f => {
+    const fullPath = path.join(dir, f);
+    // console.log(`is direcotry ${fs.lstatSync(fullPath).isDirectory()} `, fullPath)
+    if (fs.lstatSync(fullPath).isDirectory()) {
+      getRecrusiveFilesFrom(fullPath).forEach(aa => files.push(aa))
+    }
+    return fullPath;
+  })
+  if (Array.isArray(readed)) {
+    readed.forEach(r => files.push(r))
+  }
+  return files;
+}
+

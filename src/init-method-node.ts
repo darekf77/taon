@@ -11,7 +11,7 @@ import {
   encode
   //#endregion
 } from "ng2-rest";
-import { tryTransformParam, getResponseValue } from "./helpers";
+import { tryTransformParam, getResponseValue, parseJSONwithStringJSONs } from "./helpers";
 import { Global } from './global-config';
 import { Realtime } from './realtime';
 import { SYMBOL } from './symbols';
@@ -68,6 +68,7 @@ export function initMethodNodejs(
   const requestHandler = (methodConfig.requestHandler && typeof methodConfig.requestHandler === 'function')
     ? methodConfig.requestHandler : (req, res, next) => { next() };
 
+  const productionMode = Global.vars.productionMode;
   Global.vars.url.pathname = Global.vars.url.pathname.replace(/\/$/, "");
   expressPath = Global.vars.url.pathname.startsWith('/') ? `${Global.vars.url.pathname}${expressPath}` : expressPath;
   expressPath = expressPath.replace(/\/\//g, '/')
@@ -79,40 +80,44 @@ export function initMethodNodejs(
     res[SYMBOL.CLASS_DECORATOR] = classConfig;
     const args: any[] = [];
 
+    let tBody = req.body;
+    let tParams = req.params;
+    let tQuery = req.query;
+
     // make class instance from body
-    console.log('req.headers', req.headers)
+    // console.log('req.headers', req.headers)
     if (req.headers[SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS]) {
-      const entity = req.headers[SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS];
-      req.params = encode(req.params, entity);
+      const entity = JSON.parse(req.headers[SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS]);
+      tBody = encode(tBody, entity);
     } else {
-      Object.keys(req.params).forEach(paramName => {
-        const entityForParam = req.headers[`${SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS}${paramName}`];
-        req.params[paramName] = encode(req.params[paramName], entityForParam);
+      Object.keys(tBody).forEach(paramName => {
+        const entityForParam = JSON.parse(req.headers[`${SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS}${paramName}`]);
+        tBody[paramName] = encode(tBody[paramName], entityForParam);
       })
     }
 
     // make class instance from query params
-    console.log('req.headers', req.query)
+    // console.log('req.headers', tQuery)
     if (req.headers[SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS]) {
-      const entity = req.headers[SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS];
-      req.query = encode(req.query, entity);
+      const entity = JSON.parse(req.headers[SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS]);
+      tQuery = parseJSONwithStringJSONs(encode(tQuery, entity));
     } else {
-      Object.keys(req.query).forEach(queryParamName => {
-        const entityForParam = req.headers[`${SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${queryParamName}`];
-        req.query[queryParamName] = encode(req.query[queryParamName], entityForParam);
+      Object.keys(tQuery).forEach(queryParamName => {
+        const entityForParam = JSON.parse(req.headers[`${SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${queryParamName}`]);
+        tQuery[queryParamName] = parseJSONwithStringJSONs(encode(tQuery[queryParamName], entityForParam));
       });
     }
 
     Object.keys(methodConfig.parameters).forEach(paramName => {
       let p: ParamConfig = methodConfig.parameters[paramName];
-      if (p.paramType === 'Path' && req.params) {
-        args.push(req.params[p.paramName])
+      if (p.paramType === 'Path' && tParams) {
+        args.push(tParams[p.paramName])
       }
-      if (p.paramType === 'Query' && req.query) {
+      if (p.paramType === 'Query' && tQuery) {
         if (p.paramName) {
-          args.push(req.query[p.paramName])
+          args.push(tQuery[p.paramName])
         } else {
-          args.push(req.query);
+          args.push(tQuery);
         }
       }
 
@@ -122,11 +127,11 @@ export function initMethodNodejs(
       if (p.paramType === 'Cookie' && req.cookies) {
         args.push(req.cookies[p.paramName])
       }
-      if (p.paramType === 'Body' && req.body) {
-        if (p.paramName && typeof req.body === 'object') {
-          args.push(req.body[p.paramName])
+      if (p.paramType === 'Body' && tBody) {
+        if (p.paramName && typeof tBody === 'object') {
+          args.push(tBody[p.paramName])
         } else {
-          args.push(req.body)
+          args.push(tBody)
         }
       }
     })
@@ -137,7 +142,7 @@ export function initMethodNodejs(
 
       const result = await getResponseValue(response, req, res);
       // const result = typeof response.send === 'function' ? response.send.call(req, res) : response.send;
-      const entity = decode(result);
+      const entity = decode(result, { productionMode });
       res.set(SYMBOL.MAPPING_CONFIG_HEADER, JSON.stringify(entity));
 
       if (typeof result === 'object') {

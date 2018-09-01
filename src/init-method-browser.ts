@@ -1,9 +1,10 @@
 
-import { HttpMethod, MethodConfig, ParamConfig, Resource, getModelsMapping } from "ng2-rest";
+import {
+  HttpMethod, MethodConfig, ParamConfig, Resource, decode
+} from "ng2-rest";
 import { Global } from './global-config';
 import { SYMBOL } from './symbols';
 import * as _ from 'lodash';
-import { getClassFromObject } from './helpers';
 
 
 export function initMethodBrowser(target, type: HttpMethod, methodConfig: MethodConfig, expressPath) {
@@ -12,7 +13,7 @@ export function initMethodBrowser(target, type: HttpMethod, methodConfig: Method
 
   target.prototype[methodConfig.methodName] = function (...args) {
     // console.log('FRONTEND expressPath', expressPath)
-
+    const productionMode = Global.vars.productionMode;
     const uri: URL = Global.vars.url;
     if (!window[SYMBOL.ENDPOINT_META_CONFIG]) window[SYMBOL.ENDPOINT_META_CONFIG] = {};
     if (!window[SYMBOL.ENDPOINT_META_CONFIG][uri.href]) window[SYMBOL.ENDPOINT_META_CONFIG][uri.href] = {};
@@ -48,7 +49,7 @@ export function initMethodBrowser(target, type: HttpMethod, methodConfig: Method
       }
       if (currentParam.paramType === 'Query') {
         if (currentParam.paramName) {
-          const mapping = getModelsMapping(getClassFromObject(param), true);
+          const mapping = decode(param, { fromDecorator: true, productionMode });
           if (mapping) {
             Resource.Headers.request.set(
               `${SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${currentParam.paramName}`,
@@ -56,7 +57,7 @@ export function initMethodBrowser(target, type: HttpMethod, methodConfig: Method
           }
           queryParams[currentParam.paramName] = param;
         } else {
-          const mapping = getModelsMapping(getClassFromObject(param), true);
+          const mapping = decode(param, { fromDecorator: true, productionMode });
           if (mapping) {
             Resource.Headers.request.set(
               SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS,
@@ -79,7 +80,7 @@ export function initMethodBrowser(target, type: HttpMethod, methodConfig: Method
       }
       if (currentParam.paramType === 'Body') {
         if (currentParam.paramName) {
-          const mapping = getModelsMapping(getClassFromObject(param), true);
+          const mapping = decode(param, { fromDecorator: true, productionMode });
           if (mapping) {
             Resource.Headers.request.set(
               `${SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS}${currentParam.paramName}`,
@@ -87,7 +88,7 @@ export function initMethodBrowser(target, type: HttpMethod, methodConfig: Method
           }
           item[currentParam.paramName] = param;
         } else {
-          const mapping = getModelsMapping(getClassFromObject(param), true);
+          const mapping = decode(param, { fromDecorator: true, productionMode });
           if (mapping) {
             Resource.Headers.request.set(
               SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS,
