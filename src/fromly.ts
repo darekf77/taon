@@ -72,7 +72,7 @@ function getFromlyConfigFor(target: Function, parentKeyPath?: string,
     }
 
     if (!isSimpleJStype && _.isFunction(mapping[key] && checkInclude && keysPathesToInclude.includes(key))) {
-      console.log('contact this object ', (mapping[key] as Function).name)
+      // console.log('contact this object ', (mapping[key] as Function).name)
       additionalConfig = additionalConfig.concat(
         getFromlyConfigFor(mapping[key] as Function,
           keyPath,
@@ -113,6 +113,7 @@ export type FormlyArrayTransformFn =
     => FormlyFieldConfig[]
 
 
+
 export function FormlyForm<T=Object>(
   fromFn?: FormlyArrayTransformFn,
   keyPathesToExclude?: (keyof T)[],
@@ -135,9 +136,13 @@ export function FormlyForm<T=Object>(
   }
 }
 
+export interface AutoFromlyFormOptions {
+  formType?: FormlyFromType;
+}
 
 
-export function getFormlyFrom(entity: Function, formType: FormlyFromType = 'material'): FormlyFieldConfig[] {
+export function getFormlyFrom(entity: Function, options?: AutoFromlyFormOptions): FormlyFieldConfig[] {
+  const { formType = 'material' } = options;
   if (!entity) {
     return;
   }
