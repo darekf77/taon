@@ -1,5 +1,5 @@
 import { Global } from '../global-config';
-import { HttpMethod, MethodConfig, ClassConfig } from 'ng2-rest';
+// import { HttpMethod, MethodConfig, ClassConfig } from 'ng2-rest';
 
 //#region @backend
 import { Http2Server } from 'http2';
@@ -14,8 +14,9 @@ export class RealtimeNodejs {
   //#region @backend
   init(http: Http2Server) {
 
-    // Global.vars.socket = io(http);
-    // Global.vars.socket.on('connection', (socket) => {
+    const socket = io(http)
+    Global.vars.socket.BE = socket;
+    // socket.on('connection', (socket) => {
     //   console.log('user connected');
     //   socket.on('disconnect', function () {
     //     console.log('user disconnected');
@@ -45,5 +46,5 @@ export class RealtimeNodejs {
   }
 
 
-   //#endregion
+  //#endregion
 }

@@ -172,6 +172,7 @@ export function init(config: {
     const uri = new URL(config.host);
     Global.vars.url = uri;
     const h = new http.Server(Global.vars.app); //TODO is this working ?
+    Realtime.nodejs.init(h)
 
     h.listen(uri.port, function () {
       console.log('Server listening on port %d in %s mode', uri.port,

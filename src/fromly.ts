@@ -141,7 +141,7 @@ export interface AutoFromlyFormOptions {
 }
 
 
-export function getFormlyFrom(entity: Function, options?: AutoFromlyFormOptions): FormlyFieldConfig[] {
+export function getFormlyFrom(entity: Function, options: AutoFromlyFormOptions = { formType: 'material' }): FormlyFieldConfig[] {
   const { formType = 'material' } = options;
   if (!entity) {
     return;

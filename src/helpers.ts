@@ -57,12 +57,19 @@ export function tryTransformParam(param) {
   if (typeof param === 'string') {
     let n = Number(param);
     if (!isNaN(n)) return n;
-    let b = Boolean(param);
-    if (typeof b === 'boolean') return b;
+    const bool = param.trim().toLowerCase();
+    if (bool === 'true') {
+      return true;
+    }
+    if (bool === 'false') {
+      return false;
+    }
     try {
       const t = JSON5.parse(param);
       return t;
-    } catch (e) { }
+    } catch (e) {
+      return param;
+    }
   }
   return param;
 }

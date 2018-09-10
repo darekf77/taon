@@ -6,6 +6,7 @@ export * from './models';
 export * from './fromly';
 export * from './helpers';
 export * from './symbols';
+export * from './global-config';
 export * from './init-method-browser';
 export * from './init-method-node';
 export * from './base-crud-model';
