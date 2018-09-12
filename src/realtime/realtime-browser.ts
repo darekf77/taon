@@ -5,8 +5,39 @@ import { SYMBOL } from '../symbols';
 
 export class RealtimeBrowser {
   init() {
-    const uri: URL = Global.vars.url;
-    const socket = io(uri.href);
+    let uri: URL = Global.vars.urlSocket;
+    if (!uri) {
+      console.warn(`
+        MORPHI: Please use { hostSocket } in morphi init(..)
+        function to make socket works
+      `)
+      return
+    }
+    // const routePathame = (uri.pathname !== '/');
+    // console.log('uri', uri)
+    // console.log('uri.pathname', uri.pathname)
+    const socket = io(uri.href, {
+      // path: uri.pathname !== '/' ? `${uri.pathname}/socket.io` : undefined,
+      path: uri.pathname !== '/' ? uri.pathname : undefined,
+      // transports: routePathame ?
+      //     [
+      //       'websocket',
+      //       'flashsocket',
+      //       'htmlfile',
+      //       'xhr-polling',
+      //       'jsonp-polling',
+      //       'polling']
+      //     : undefined,
+
+      // transports: [
+      //   'websocket',
+      //   'flashsocket',
+      // 'htmlfile',
+      // 'xhr-polling',
+      // 'jsonp-polling',
+      // 'polling'
+      // ]
+    });
 
     Global.vars.socket.FE = socket as any;
 

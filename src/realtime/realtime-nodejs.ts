@@ -13,15 +13,38 @@ import { SYMBOL } from '../symbols';
 export class RealtimeNodejs {
   //#region @backend
   init(http: Http2Server) {
-
-    const socket = io(http)
+    const uri: URL = Global.vars.urlSocket;
+    if (!uri) {
+      console.warn(`
+        MORPHI: Please use { hostSocket } in morphi init(..)
+        function to make socket works
+      `)
+      return
+    }
+    // const routePathame = (uri.pathname !== '/');
+    const socket = io(http
+      , {
+        // path: routePathame ? '/api' : undefined,
+        // transports: routePathame ?
+        //   [
+        //     'websocket',
+        //     'flashsocket',
+        //     'htmlfile',
+        //     'xhr-polling',
+        //     'jsonp-polling',
+        //     'polling']
+        //   : undefined,
+      }
+    );
     Global.vars.socket.BE = socket;
-    // socket.on('connection', (socket) => {
-    //   console.log('user connected');
-    //   socket.on('disconnect', function () {
-    //     console.log('user disconnected');
-    //   });
-    // });
+
+
+    socket.on('connection', (socket) => {
+      console.log('user connected');
+      socket.on('disconnect', function () {
+        console.log('user disconnected');
+      });
+    });
 
   }
 

@@ -38,6 +38,7 @@ export class Global {
   }
   public expressPath: string;
   public url: URL;
+  public urlSocket: URL;
   public productionMode = false;
   public controllers: Function[] = []
   public __core_controllers: Function[] = []

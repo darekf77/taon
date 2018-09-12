@@ -52,7 +52,7 @@ export function BaseCRUDEntity(entity: Function) {
     }
     const configs = getClassConfig(target.constructor);
     configs.forEach(c => {
-      const classReference  = c.classReference;
+      const classReference = c.classReference;
       const prototype = classReference.prototype;
       prototype[propertyName] = entity;
     })
@@ -143,6 +143,7 @@ export function ENDPOINT(options?: {
 // TODO allowed hosts in progress
 export function init(config: {
   host: string,
+  hostSocket?: string,
   allowedHosts?: string[],
   controllers?: Function[], entities?: Function[]
   productionMode?: Boolean;
@@ -161,6 +162,21 @@ export function init(config: {
   config.controllers = _.sortedUniq(controllers);
   Global.vars.productionMode = !!config.productionMode;
 
+  // backend URI URL {
+  //   href: 'http://localhost:4000/api',
+  //   origin: 'http://localhost:4000',
+  //   protocol: 'http:',
+  //   username: '',
+  //   password: '',
+  //   host: 'localhost:4000',
+  //   hostname: 'localhost',
+  //   port: '4000',
+  //   pathname: '/api',
+  //   search: '',
+  //   searchParams: URLSearchParams {},
+  //   hash: '' }
+
+
 
   //#region @backend
   if (isNode) {
@@ -170,19 +186,31 @@ export function init(config: {
     }
     const { URL } = require('url');
     const uri = new URL(config.host);
+    const uriSocket = new URL(config.hostSocket);
+    Global.vars.urlSocket = uriSocket;
+    // console.log('backend URI', uri);
     Global.vars.url = uri;
+
+
+    // if (uri.pathname !== '/') {
+    //   console.log('INT EXPRESS BASE')
+    //   Global.vars.app.set('base', uri.pathname)
+    // }
     const h = new http.Server(Global.vars.app); //TODO is this working ?
     Realtime.nodejs.init(h)
 
     h.listen(uri.port, function () {
-      console.log('Server listening on port %d in %s mode', uri.port,
-        Global.vars.app.settings.env);
+      console.log(`Server listening on port: ${uri.port}, hostname: ${uri.pathname},
+        env: ${Global.vars.app.settings.env}
+      `);
     });
   }
   //#endregion
   if (isBrowser) {
     const uri = new URL(config.host);
     Global.vars.url = uri;
+    const uriSocket = new URL(config.hostSocket);
+    Global.vars.urlSocket = uriSocket;
     if (Array.isArray(allowedHosts)) {
       Global.vars.allowedHosts = allowedHosts.map(h => new URL(h))
     }
