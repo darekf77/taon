@@ -16,7 +16,7 @@ export class RealtimeBrowser {
     // const routePathame = (uri.pathname !== '/');
     // console.log('uri', uri)
     // console.log('uri.pathname', uri.pathname)
-    const socket = io(uri.href, {
+    const feRealtime = io(uri.href, {
       // path: uri.pathname !== '/' ? `${uri.pathname}/socket.io` : undefined,
       path: uri.pathname !== '/' ? uri.pathname : undefined,
       // transports: routePathame ?
@@ -39,10 +39,15 @@ export class RealtimeBrowser {
       // ]
     });
 
-    Global.vars.socket.FE = socket as any;
+    Global.vars.socket.FE = feRealtime as any;
 
-    socket.emit('test message');
-  }
+    console.log(feRealtime)
+
+  //   let d = feRealtime.io.socket('/adasdasd')
+  //   d.
+
+  //   feRealtime.emit('test message');
+  // }
 
   // intReplay() {
   //   // socket.on(SYMBOL.SOCKET_MSG, function (msg) {

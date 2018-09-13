@@ -22,7 +22,7 @@ export class RealtimeNodejs {
       return
     }
     // const routePathame = (uri.pathname !== '/');
-    const socket = io(http
+    const realimeBackedn = io(http
       , {
         // path: routePathame ? '/api' : undefined,
         // transports: routePathame ?
@@ -36,12 +36,15 @@ export class RealtimeNodejs {
         //   : undefined,
       }
     );
-    Global.vars.socket.BE = socket;
+    Global.vars.socket.BE = realimeBackedn;
 
     Global.vars.clientsSockets = new Map<string, io.Socket>();
     const socketSession = Global.vars.clientsSockets;
 
-    socket.on('connection', (socket) => {
+    realimeBackedn.on('connection', (socket) => {
+
+      // socket.join('room').send('')
+
       socketSession.set(socket.id, socket);
       console.info(`Client connected [id=${socket.id}]`);
       socket.on('disconnect', () => {
@@ -49,6 +52,8 @@ export class RealtimeNodejs {
         console.info(`Client gone [id=${socket.id}]`);
       });
     });
+
+
 
   }
 
