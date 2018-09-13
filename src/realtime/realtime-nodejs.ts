@@ -38,11 +38,15 @@ export class RealtimeNodejs {
     );
     Global.vars.socket.BE = socket;
 
+    Global.vars.clientsSockets = new Map<string, io.Socket>();
+    const socketSession = Global.vars.clientsSockets;
 
     socket.on('connection', (socket) => {
-      console.log('user connected');
-      socket.on('disconnect', function () {
-        console.log('user disconnected');
+      socketSession.set(socket.id, socket);
+      console.info(`Client connected [id=${socket.id}]`);
+      socket.on('disconnect', () => {
+        socketSession.delete(socket.id)
+        console.info(`Client gone [id=${socket.id}]`);
       });
     });
 

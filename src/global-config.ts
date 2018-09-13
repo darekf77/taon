@@ -50,6 +50,7 @@ export class Global {
 
   //#region @backend
   private socketBackend: Server;
+  public clientsSockets: Map<string, Socket>;
   public app: Application;
   public connection: Connection;
   //#endregion
