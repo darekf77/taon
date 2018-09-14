@@ -75,5 +75,5 @@ export class RealtimeBrowser {
   //   // } else {
   //   //   console.warn(`No used method ${method} from ${endpoint}/${model}`);
   //   // }
-  // }
+  }
 }
