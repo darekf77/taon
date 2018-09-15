@@ -11,6 +11,8 @@ export * from './init-method-browser';
 export * from './init-method-node';
 export * from './base-crud-model';
 export * from './model-data-config';
+export * from './meta-info';
 //#region @backend
 export * from './build-tool';
+export * from './start';
 //#endregion
