@@ -4,6 +4,7 @@ import { SYMBOL as NG2RestSYMBOL } from 'ng2-rest';
 
 export const SYMBOL = {
   FORMLY_METADATA_ARRAY: Symbol(),
+  IS_ENPOINT_REALTIME: Symbol(),
   MODELS_MAPPING: NG2RestSYMBOL.MODELS_MAPPING,
   DEFAULT_MODEL:  NG2RestSYMBOL.DEFAULT_MODEL,
   X_TOTAL_COUNT: 'x-total-count',

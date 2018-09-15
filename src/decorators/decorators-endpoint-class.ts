@@ -73,7 +73,12 @@ function isGoodPath(p: string) {
   return p && typeof p === 'string' && p.trim() !== ''
 }
 
+export function isRealtimeEndpoint(target: Function) {
+  return  target && target.prototype && target.prototype[SYMBOL.IS_ENPOINT_REALTIME];
+}
+
 export function ENDPOINT(options?: {
+  realtime?: boolean,
   path?: string,
   auth?
   //#region @backend
@@ -82,7 +87,8 @@ export function ENDPOINT(options?: {
 }) {
   return function (target: Function) {
 
-    const { path, auth } = options ? options : {} as any;
+    const { path, auth, realtime = false } = options ? options : {} as any;
+    target.prototype[SYMBOL.IS_ENPOINT_REALTIME] = realtime;
 
     const initFN = (function (target, path, auth) {
       return function () {
