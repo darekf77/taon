@@ -150,16 +150,23 @@ export function ENDPOINT(options?: {
 export function init(config: {
   host: string,
   hostSocket?: string,
+  ngZone?: any,
   allowedHosts?: string[],
   controllers?: Function[], entities?: Function[]
   productionMode?: Boolean;
 }) {
   const {
+    ngZone,
     controllers = [],
     entities = [],
     productionMode = false,
     allowedHosts = []
   } = config;
+
+  if (isBrowser && _.isUndefined(ngZone) && !!window['ng']) {
+    console.warn(`Please probide ngZone instance in angular apps`)
+  }
+  Global.vars.ngZone = ngZone;
 
   Global.vars.entities = config.entities;
   Global.vars.controllers = config.controllers;

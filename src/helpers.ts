@@ -30,9 +30,12 @@ export function getResponseValue<T>(response: Response<T>, req: ExpressRequest, 
       try {
         const result = await asyncResponse(req, res);
         resolve(result);
-      } catch (error) {
-        console.error('Bad async function call ', error)
-        reject(error);
+      } catch (e) {
+        if(e && e.stack) {
+          console.log(e.stack)
+        }
+        console.error('Bad async function call ', e)
+        reject(e);
       }
     } else if (typeof response === 'object') {
       try {
@@ -128,3 +131,5 @@ export function parseJSONwithStringJSONs(object: Object, waring = true): Object 
 
   return res;
 }
+
+

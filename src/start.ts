@@ -33,7 +33,8 @@ export async function start(options: StartOptions) {
   const entities = _.values(Entities) as any;
   const controllers = _.values(Controllers) as any;
   config['entities'] = entities as any;
-  config['subscribers'] = _.values(Controllers).filter(a => isRealtimeEndpoint(a as any)) as any;
+  config['subscribers'] = _.values(Controllers).filter(a => isRealtimeEndpoint(a as any))
+    .concat([META.BASE_CONTROLLER as any]) as any;
   const connection = await createConnections([config] as any);
   const firstConnection = connection[0];
 
