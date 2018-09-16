@@ -109,7 +109,7 @@ export class CodeTransform {
     };
   }
 
-  private isomorphicLibs = ['ng2-rest', 'typeorm', 'ng2-logger', 'morphi'];
+  private isomorphicLibs = ['ng2-rest', 'typeorm', 'ng2-logger', 'morphi', 'tnp-bundle'];
 
   /**
    * Check if package of isomorphic-lib type
