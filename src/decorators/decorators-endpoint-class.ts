@@ -74,7 +74,7 @@ function isGoodPath(p: string) {
 }
 
 export function isRealtimeEndpoint(target: Function) {
-  return  target && target.prototype && target.prototype[SYMBOL.IS_ENPOINT_REALTIME];
+  return target && target.prototype && target.prototype[SYMBOL.IS_ENPOINT_REALTIME];
 }
 
 export function ENDPOINT(options?: {
@@ -163,6 +163,10 @@ export function init(config: {
 
   Global.vars.entities = config.entities;
   Global.vars.controllers = config.controllers;
+
+  if (!_.isString(config.hostSocket)) {
+    config.hostSocket = config.host;
+  }
 
   Global.vars.__core_controllers.forEach(bctrl => controllers.push(bctrl));
   config.controllers = _.sortedUniq(controllers);
