@@ -26,14 +26,16 @@ export interface StartOptions {
   Controllers: META.BASE_CONTROLLER<any>[];
   Entities?: META.BASE_ENTITY<any>[];
   InitDataPriority?: META.BASE_CONTROLLER<any>[];
+  subscribers?: any[]
 }
 
 export async function start(options: StartOptions) {
-  const { config, host, Controllers, Entities, InitDataPriority, publicFilesFolder, hostSocket } = options;
+  const { config, host, Controllers, Entities, InitDataPriority, publicFilesFolder, hostSocket, subscribers = [] } = options;
   const entities = _.values(Entities) as any;
   const controllers = _.values(Controllers) as any;
   config['entities'] = entities as any;
-  config['subscribers'] = _.values(Controllers).filter(a => isRealtimeEndpoint(a as any)) as any;
+  config['subscribers'] = subscribers.concat(_.values(Controllers).filter(a => isRealtimeEndpoint(a as any)))
+    .concat([META.BASE_CONTROLLER as any]) as any;
   const connection = await createConnections([config] as any);
   const firstConnection = connection[0];
 

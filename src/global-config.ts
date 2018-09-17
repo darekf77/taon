@@ -40,6 +40,7 @@ export class Global {
   public url: URL;
   public urlSocket: URL;
   public productionMode = false;
+  public ngZone: any;
   public controllers: Function[] = []
   public __core_controllers: Function[] = []
   public entities: Function[] = []

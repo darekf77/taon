@@ -6,15 +6,23 @@ import { Connection } from "typeorm/connection/Connection";
 // import { BaseCRUD, CLASSNAME, ENDPOINT, describeClassProperites } from 'morphi';
 
 import * as _ from 'lodash';
-import { isBrowser, Log, Level } from 'ng2-logger';
-import { describeClassProperites, CLASSNAME } from 'ng2-rest';
-const log = Log.create('META', Level.__NOTHING)
+import { Observable } from 'rxjs/Observable';
+import { Subscription } from 'rxjs/Subscription';
+import { isBrowser, Log, Level, isNode } from 'ng2-logger';
+import { describeClassProperites, CLASSNAME, getClassBy, getClassName, getClassFromObject } from 'ng2-rest';
+const log = Log.create('META')
 import {
   ENDPOINT, BaseCRUD
 } from './index';
+import { Global } from './global-config';
+import { SYMBOL } from './symbols';
 
 export namespace META {
 
+
+  function realtimeEntityRoomName(className, entityId) {
+    return `${className}-${entityId}`;
+  }
 
   export function tableNameFrom(entityClass: Function | BASE_ENTITY<any>) {
     entityClass = entityClass as Function;
@@ -84,7 +92,106 @@ export namespace META {
 
     abstract id: number;
 
-    abstract fromRaw(obj: TRAW): T
+    abstract fromRaw(obj: TRAW): T;
+
+    private static realtimeEntityObservables: { [className: string]: { [entitiesIds: number]: Subscription; } } = {} as any;
+
+    public get realtimeEntity() {
+      const self = this;
+      log.i('sefl', this)
+      return {
+        activate(tarnsformFn?: (changedEntity: T) => T) {
+
+          const constructFn = getClassFromObject(self)
+
+          if (!constructFn) {
+            log.er(`Activate: Cannot retrive Class function from object`, self)
+            return
+          }
+
+          const className = getClassName(constructFn);
+
+          if (!BASE_ENTITY.realtimeEntityObservables[className]) {
+            BASE_ENTITY.realtimeEntityObservables[className] = {};
+          }
+
+          if (_.isObject(BASE_ENTITY.realtimeEntityObservables[className][self.id])) {
+            log.w('alread listen to this object realtime events', self)
+            return
+          }
+
+
+          const ngZone = Global.vars.ngZone;
+
+          const subject = new Observable(observer => {
+
+            const modelSocketRoomPath = realtimeEntityRoomName(className, self.id);
+            log.i(`Initiaing frontend sockets, path: ${modelSocketRoomPath}`)
+
+            const m = Global.vars.socket.FE;
+
+            m.on('connection', socket => {
+
+              socket.on(modelSocketRoomPath, data => {
+                log.i('data from socket without preparation (ngzone,rjxjs,transform)', data)
+                if (ngZone) {
+                  ngZone.run(() => {
+                    if (_.isFunction(tarnsformFn)) {
+                      observer.next(tarnsformFn(data))
+                    }
+                    observer.next(data);
+                  })
+                } else {
+                  if (_.isFunction(tarnsformFn)) {
+                    observer.next(tarnsformFn(data))
+                  }
+                  observer.next(data);
+                }
+              })
+
+            })
+
+            return () => {
+              log.i('something on disconnect')
+            };
+          })
+
+
+
+
+          BASE_ENTITY.realtimeEntityObservables[className][self.id] = subject.subscribe(d => {
+            log.i('DATA FROM SOCKET TO MERGE!', d)
+            // _.merge(this, d);
+          })
+
+
+        },
+        deactivate() {
+
+          const constructFn = getClassFromObject(self)
+
+          if (!constructFn) {
+            log.er(`Deactivate: Cannot retrive Class function from object`, self)
+            return
+          }
+
+          const className = getClassName(constructFn);
+
+          const obs = BASE_ENTITY.realtimeEntityObservables[className] && BASE_ENTITY.realtimeEntityObservables[className][self.id];
+          if (!obs) {
+            log.w(`No sunscribtion for entity with id ${self.id}`)
+          } else {
+            obs.unsubscribe();
+            BASE_ENTITY.realtimeEntityObservables[self.id] = undefined;
+          }
+
+        }
+
+      }
+    }
+
+
+
 
   }
 
@@ -119,13 +226,54 @@ export namespace META {
       if (isBrowser) {
         log.i('BASE_CONTROLLER, constructor', this)
       }
+
+      //#region @backend
+      const self = this;
+
+      this.realtimeEvents = {}
+      this.realtimeEvents.afterUpdate = (event) => {
+
+        try {
+          console.log('event afer update', event);
+          console.log('controller', self)
+          const entity = event.entity
+          const id = entity['id'];
+          // Global.vars.socket.BE.sockets.in()\
+
+          const constructFn = getClassFromObject(event.entity);
+          console.log('construcFN', constructFn)
+          if (!constructFn) {
+            console.log('not found class function from', event.entity)
+          } else {
+            const className = getClassName(constructFn);
+
+            const modelSocketRoomPath = realtimeEntityRoomName(className, id);
+            console.log(`Push entity to room with path: ${modelSocketRoomPath}`)
+
+            const s = Global.vars.socket.BE.of(SYMBOL.MORPHI_REALTIME_NAMESPACE);
+            s.in(modelSocketRoomPath).emit(SYMBOL.REALTIME_MODEL_UPDATE, event.entity);
+          }
+
+        } catch (err) {
+
+          console.log('err update ', err)
+
+        }
+
+
+
+      }
+
+      //#endregion
     }
 
 
-
-
     //#region @backend
+    private realtimeEvents: EntityEvents<T>;
 
+    protected __realitmeUpdate(model: T) {
+      this.realtimeEvents.afterUpdate({ entity: model } as any)
+    }
 
     listenTo() {
       // console.log('listen to ', this.entity)
@@ -179,22 +327,6 @@ export namespace META {
         this.entityEvents.afterLoad.call(this, entity)
       }
     }
-
-    // listenToChangesOf(entity: T) {
-    //   let observable = new Observable(observer => {
-
-    //     Global.vars.socket.FE.on('clearbuildend', (data) => {
-    //       this.ngZone.run(() => {
-    //         observer.next(data);
-    //       })
-    //     })
-
-    //     return () => {
-    //       log.i('something on disconnect')
-    //     };
-    //   })
-    //   return observable;
-    // }
 
 
     abstract get db(): { [entities: string]: Repository<any> }

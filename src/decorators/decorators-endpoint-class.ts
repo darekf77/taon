@@ -74,7 +74,7 @@ function isGoodPath(p: string) {
 }
 
 export function isRealtimeEndpoint(target: Function) {
-  return  target && target.prototype && target.prototype[SYMBOL.IS_ENPOINT_REALTIME];
+  return target && target.prototype && target.prototype[SYMBOL.IS_ENPOINT_REALTIME];
 }
 
 export function ENDPOINT(options?: {
@@ -150,19 +150,30 @@ export function ENDPOINT(options?: {
 export function init(config: {
   host: string,
   hostSocket?: string,
+  ngZone?: any,
   allowedHosts?: string[],
   controllers?: Function[], entities?: Function[]
   productionMode?: Boolean;
 }) {
   const {
+    ngZone,
     controllers = [],
     entities = [],
     productionMode = false,
     allowedHosts = []
   } = config;
 
+  if (isBrowser && _.isUndefined(ngZone) && !!window['ng']) {
+    console.warn(`Please probide ngZone instance in angular apps`)
+  }
+  Global.vars.ngZone = ngZone;
+
   Global.vars.entities = config.entities;
   Global.vars.controllers = config.controllers;
+
+  if (!_.isString(config.hostSocket)) {
+    config.hostSocket = config.host;
+  }
 
   Global.vars.__core_controllers.forEach(bctrl => controllers.push(bctrl));
   config.controllers = _.sortedUniq(controllers);

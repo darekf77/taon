@@ -39,41 +39,43 @@ export class RealtimeBrowser {
       // ]
     });
 
-    Global.vars.socket.FE = feRealtime as any;
+    // Global.vars.socket.FE = feRealtime as any;
 
-    console.log(feRealtime)
+    console.log('feRealtime', feRealtime)
 
-  //   let d = feRealtime.io.socket('/adasdasd')
-  //   d.
+    Global.vars.socket.FE = feRealtime.io.socket(SYMBOL.MORPHI_REALTIME_NAMESPACE) as any;
+    console.log('Global.vars.socket.FE', Global.vars.socket.FE)
 
-  //   feRealtime.emit('test message');
-  // }
+    //   d.
 
-  // intReplay() {
-  //   // socket.on(SYMBOL.SOCKET_MSG, function (msg) {
-  //   //   if (msg && Array.isArray(msg.pathes)) {
-  //   //     msg.pathes.forEach(p => this.replay(p, msg.method))
-  //   //   }
-  //   // });
-  // }
+    //   feRealtime.emit('test message');
+    // }
 
-  // replay(model: string, method: HttpMethod) {
-  //   // if (!model || !method) {
-  //   //   console.warn(`Incorrect method ${method} and model ${model}`);
-  //   //   return;
-  //   // }
-  //   // console.info(`replay ${model}, ${method}`)
-  //   // const uri: URL = Global.vars.url;
-  //   // const endpoints = window[SYMBOL.ENDPOINT_META_CONFIG];
-  //   // console.log('window', window)
-  //   // console.log('endpoints', endpoints)
-  //   // const endpoint = uri.href;
-  //   // const rest = endpoints[endpoint][model];
-  //   // console.log('rest', rest)
-  //   // if (rest) {
-  //   //   rest.replay(method);
-  //   // } else {
-  //   //   console.warn(`No used method ${method} from ${endpoint}/${model}`);
-  //   // }
+    // intReplay() {
+    //   // socket.on(SYMBOL.SOCKET_MSG, function (msg) {
+    //   //   if (msg && Array.isArray(msg.pathes)) {
+    //   //     msg.pathes.forEach(p => this.replay(p, msg.method))
+    //   //   }
+    //   // });
+    // }
+
+    // replay(model: string, method: HttpMethod) {
+    //   // if (!model || !method) {
+    //   //   console.warn(`Incorrect method ${method} and model ${model}`);
+    //   //   return;
+    //   // }
+    //   // console.info(`replay ${model}, ${method}`)
+    //   // const uri: URL = Global.vars.url;
+    //   // const endpoints = window[SYMBOL.ENDPOINT_META_CONFIG];
+    //   // console.log('window', window)
+    //   // console.log('endpoints', endpoints)
+    //   // const endpoint = uri.href;
+    //   // const rest = endpoints[endpoint][model];
+    //   // console.log('rest', rest)
+    //   // if (rest) {
+    //   //   rest.replay(method);
+    //   // } else {
+    //   //   console.warn(`No used method ${method} from ${endpoint}/${model}`);
+    //   // }
   }
 }
