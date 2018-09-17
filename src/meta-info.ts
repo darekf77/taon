@@ -235,18 +235,17 @@ export namespace META {
 
         try {
           console.log('event afer update', event);
-          console.log('entity from controller', self.entity)
+          console.log('controller', self)
           const entity = event.entity
           const id = entity['id'];
           // Global.vars.socket.BE.sockets.in()\
 
           const constructFn = getClassFromObject(event.entity);
-
-          if (constructFn) {
+          console.log('construcFN', constructFn)
+          if (!constructFn) {
+            console.log('not found class function from', event.entity)
+          } else {
             const className = getClassName(constructFn);
-            if (className !== 'BuildController') {
-              return
-            }
 
             const modelSocketRoomPath = realtimeEntityRoomName(className, id);
             console.log(`Push entity to room with path: ${modelSocketRoomPath}`)
@@ -254,6 +253,7 @@ export namespace META {
             const s = Global.vars.socket.BE.of(SYMBOL.MORPHI_REALTIME_NAMESPACE);
             s.in(modelSocketRoomPath).emit(SYMBOL.REALTIME_MODEL_UPDATE, event.entity);
           }
+
         } catch (err) {
 
           console.log('err update ', err)
@@ -270,6 +270,10 @@ export namespace META {
 
     //#region @backend
     private realtimeEvents: EntityEvents<T>;
+
+    protected __realitmeUpdate(model: T) {
+      this.realtimeEvents.afterUpdate({ entity: model } as any)
+    }
 
     listenTo() {
       // console.log('listen to ', this.entity)
@@ -305,7 +309,6 @@ export namespace META {
 
 
     afterUpdate(event: UpdateEvent<T>) {
-      this.realtimeEvents.afterUpdate.call(this, event);
       if (this.entityEvents && _.isFunction(this.entityEvents.afterUpdate)) {
         this.entityEvents.afterUpdate.call(this, event)
       }
@@ -324,22 +327,6 @@ export namespace META {
         this.entityEvents.afterLoad.call(this, entity)
       }
     }
-
-    // listenToChangesOf(entity: T) {
-    //   let observable = new Observable(observer => {
-
-    //     Global.vars.socket.FE.on('clearbuildend', (data) => {
-    //       this.ngZone.run(() => {
-    //         observer.next(data);
-    //       })
-    //     })
-
-    //     return () => {
-    //       log.i('something on disconnect')
-    //     };
-    //   })
-    //   return observable;
-    // }
 
 
     abstract get db(): { [entities: string]: Repository<any> }

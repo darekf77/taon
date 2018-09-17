@@ -91,14 +91,22 @@ export abstract class BaseCRUD<T>  {
     //#endregion
   }
 
+  //#region
+  protected __realitmeUpdate(model: T) {
+
+  }
+
+
+
   @PUT(`/${SYMBOL.CRUD_TABLE_MODEL}/:id`)
   updateById(@PathParam(`id`) id: number, @BodyParam() item: T, @QueryParam() config?: ModelDataConfig): Response<T> {
     //#region @backendFunc
 
     return async () => {
 
-      await forObjectPropertiesOf(item).run((r, partialItem) => {
-        return r.update(partialItem['id'], partialItem as any);
+      await forObjectPropertiesOf(item).run(async (r, partialItem) => {        
+        await r.update(partialItem['id'], partialItem as any);
+        this.__realitmeUpdate(partialItem as any);
       })
 
 
@@ -110,7 +118,7 @@ export abstract class BaseCRUD<T>  {
       })
 
       preventUndefinedModel(model, config, id)
-
+      this.__realitmeUpdate(model)
       return model;
 
     }
