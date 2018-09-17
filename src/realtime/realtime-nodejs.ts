@@ -9,6 +9,11 @@ import { getExpressPath } from '../models';
 import { SYMBOL } from '../symbols';
 //#endregion
 
+import { Log, Level } from 'ng2-logger';
+import { getClassFromObject } from 'ng2-rest/helpers';
+import { getClassName } from 'ng2-rest/classname';
+import { META } from '../meta-info';
+const log = Log.create('RealtimeNodejs', Level.__NOTHING)
 
 export class RealtimeNodejs {
   //#region @backend
@@ -21,40 +26,66 @@ export class RealtimeNodejs {
       `)
       return
     }
-    // const routePathame = (uri.pathname !== '/');
-    const realimeBackedn = io(http
-      , {
-        // path: routePathame ? '/api' : undefined,
-        // transports: routePathame ?
-        //   [
-        //     'websocket',
-        //     'flashsocket',
-        //     'htmlfile',
-        //     'xhr-polling',
-        //     'jsonp-polling',
-        //     'polling']
-        //   : undefined,
-      }
-    );
-    Global.vars.socket.BE = realimeBackedn;
 
-    Global.vars.clientsSockets = new Map<string, io.Socket>();
-    const socketSession = Global.vars.clientsSockets;
-
-    realimeBackedn.on('connection', (socket) => {
-
-      // socket.join('room').send('')
-
-      socketSession.set(socket.id, socket);
-      console.info(`Client connected [id=${socket.id}]`);
-      socket.on('disconnect', () => {
-        socketSession.delete(socket.id)
-        console.info(`Client gone [id=${socket.id}]`);
-      });
-    });
+    Global.vars.socketNamespace.BE = io(http);
 
 
+    const nsp = Global.vars.socketNamespace.BE;
+    nsp.on('connection', (clientSocket) => {
+      console.log('client conected to namespace', clientSocket.nsp.name)
+    })
 
+    const nspRealtime = nsp.of(SYMBOL.REALTIME.NAMESPACE);
+
+    Global.vars.socketNamespace.BE_REALTIME = nspRealtime;
+
+    nspRealtime.on('connection', (clientSocket) => {
+      console.log('client conected to namespace', clientSocket.nsp.name)
+
+      clientSocket.on(SYMBOL.REALTIME.ROOM.SUBSCRIBE_ENTITY_EVENTS, room => {
+        console.log(`Joining room ${room} in namespace ${nspRealtime.name} `)
+        clientSocket.join(room);
+      })
+
+      clientSocket.on(SYMBOL.REALTIME.ROOM.UNSUBSCRIBE_ENTITY_EVENTS, room => {
+        console.log(`Leaving room ${room} in namespace ${nspRealtime.name} `)
+        clientSocket.leave(room);
+      })
+
+    })
+
+
+  }
+
+
+  public static populate(event: { entity: META.BASE_ENTITY<any> }) {
+    log.d('event afer update', event);
+    // console.log('controller', self)
+    const entity = event.entity
+
+    if (!entity || !entity['id']) {
+      console.error(`Entity without iD !!!! from event`, event)
+      return
+    }
+
+    const id = entity['id'];
+    // Global.vars.socket.BE.sockets.in()\
+
+    const constructFn = getClassFromObject(event.entity);
+    // console.log('construcFN', constructFn)
+    if (!constructFn) {
+      log.d('not found class function from', event.entity)
+    } else {
+      const className = getClassName(constructFn);
+
+      const modelSocketRoomPath = SYMBOL.REALTIME.ROOM_NAME(className, id);
+      log.d(`Push entity to room with path: ${modelSocketRoomPath}`)
+
+
+
+      Global.vars.socketNamespace.BE_REALTIME.in(modelSocketRoomPath)
+        .emit(SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(className, id), event.entity)
+    }
   }
 
   request(req: Request, res: Response) {

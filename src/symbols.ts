@@ -6,9 +6,22 @@ export const SYMBOL = {
   FORMLY_METADATA_ARRAY: Symbol(),
   IS_ENPOINT_REALTIME: Symbol(),
   MODELS_MAPPING: NG2RestSYMBOL.MODELS_MAPPING,
-  DEFAULT_MODEL:  NG2RestSYMBOL.DEFAULT_MODEL,
-  MORPHI_REALTIME_NAMESPACE: 'morphirealtime',
-  REALTIME_MODEL_UPDATE: 'realtimemodelupdate',
+  DEFAULT_MODEL: NG2RestSYMBOL.DEFAULT_MODEL,
+  REALTIME: {
+    NAMESPACE: 'morphirealtime',
+    ROOM: {
+      SUBSCRIBE_ENTITY_EVENTS: 'subscribeEntityEvents',
+      UNSUBSCRIBE_ENTITY_EVENTS: 'unsubscribeEntityEvents'
+    },
+    EVENT: {
+      ENTITY_UPDATE_BY_ID(className, entityId) {
+        return `entityupdatebyid${className}${entityId}`;
+      }
+    },
+    ROOM_NAME(className, entityId) {
+      return `room${className}${entityId}`;
+    }
+  },
   X_TOTAL_COUNT: 'x-total-count',
   CRUD_TABLE_MODEL: 'model',
   MAPPING_CONFIG_HEADER: 'mappingheader',

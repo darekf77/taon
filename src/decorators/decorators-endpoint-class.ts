@@ -78,7 +78,7 @@ export function isRealtimeEndpoint(target: Function) {
 }
 
 export function ENDPOINT(options?: {
-  realtime?: boolean,
+  // realtime?: boolean,
   path?: string,
   auth?
   //#region @backend

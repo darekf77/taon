@@ -1,6 +1,6 @@
 import {
   Repository, EventSubscriber, EntitySubscriberInterface,
-  InsertEvent, UpdateEvent, RemoveEvent
+  InsertEvent, UpdateEvent, RemoveEvent, UpdateResult, DeepPartial, SaveOptions, FindConditions, ObjectID
 } from 'typeorm';
 import { Connection } from "typeorm/connection/Connection";
 // import { BaseCRUD, CLASSNAME, ENDPOINT, describeClassProperites } from 'morphi';
@@ -10,19 +10,18 @@ import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import { isBrowser, Log, Level, isNode } from 'ng2-logger';
 import { describeClassProperites, CLASSNAME, getClassBy, getClassName, getClassFromObject } from 'ng2-rest';
-const log = Log.create('META')
+const log = Log.create('META', Level.__NOTHING)
 import {
   ENDPOINT, BaseCRUD
 } from './index';
 import { Global } from './global-config';
 import { SYMBOL } from './symbols';
+import { RealtimeNodejs } from './realtime/realtime-nodejs';
 
 export namespace META {
 
 
-  function realtimeEntityRoomName(className, entityId) {
-    return `${className}-${entityId}`;
-  }
+
 
   export function tableNameFrom(entityClass: Function | BASE_ENTITY<any>) {
     entityClass = entityClass as Function;
@@ -75,7 +74,22 @@ export namespace META {
 
   // TODO fix it whe typescipt stable
   export abstract class BASE_REPOSITORY<Entity, GlobalAliases> extends Repository<Entity> {
+
+
     //#region @backend
+
+    constructor() {
+      super()
+    }
+
+    async update(criteria: string | string[] | number | number[] | Date | Date[] | ObjectID | ObjectID[] | FindConditions<Entity>,
+      partialEntity: DeepPartial<Entity>, options?: SaveOptions): Promise<UpdateResult> {
+      const m = await super.update(criteria, partialEntity, options);
+      const entity = await this.findOne(criteria as any)
+      RealtimeNodejs.populate({ entity: entity as any });
+      return m;
+    }
+
     __: { [prop in keyof GlobalAliases]: { [propertyName in keyof Entity]: string } };
     _: GlobalAliases;
 
@@ -84,6 +98,7 @@ export namespace META {
     pagination() {
       // TODO
     }
+
     //#endregion
 
   }
@@ -94,14 +109,15 @@ export namespace META {
 
     abstract fromRaw(obj: TRAW): T;
 
+    private static realtimeEntity: { [className: string]: { [entitiesIds: number]: any[]; } } = {} as any;
     private static realtimeEntityObservables: { [className: string]: { [entitiesIds: number]: Subscription; } } = {} as any;
 
     public get realtimeEntity() {
       const self = this;
-      log.i('sefl', this)
-      return {
-        activate(tarnsformFn?: (changedEntity: T) => T) {
 
+      return {
+        subscribe(changesListener: (changedEntity: T) => void) {
+          log.i('realtime entity this', self)
           const constructFn = getClassFromObject(self)
 
           if (!constructFn) {
@@ -115,67 +131,91 @@ export namespace META {
             BASE_ENTITY.realtimeEntityObservables[className] = {};
           }
 
-          if (_.isObject(BASE_ENTITY.realtimeEntityObservables[className][self.id])) {
-            log.w('alread listen to this object realtime events', self)
-            return
+          if (!BASE_ENTITY.realtimeEntity[className]) {
+            BASE_ENTITY.realtimeEntity[className] = {};
           }
 
+          if (!_.isArray(BASE_ENTITY.realtimeEntity[className][self.id])) {
+            BASE_ENTITY.realtimeEntity[className][self.id] = [];
+          }
 
+          if (_.isObject(BASE_ENTITY.realtimeEntityObservables[className][self.id])) {
+            log.w('alread listen to this object realtime events', self)
+            BASE_ENTITY.realtimeEntity[className][self.id].push(self);
+            // const currentEntity = BASE_ENTITY.realtimeEntity[className][self.id] as BASE_ENTITY<any>;
+            // if (currentEntity.id == self.id) {
+            //   log.i('Entity replaced', self)
+            //   BASE_ENTITY.realtimeEntity[className][self.id] = self;
+            // }
+            return
+          }
+          const roomName = SYMBOL.REALTIME.ROOM_NAME(className, self.id);
+          const realtime = Global.vars.socketNamespace.FE_REALTIME;
           const ngZone = Global.vars.ngZone;
+          const ApplicationRef = Global.vars.ApplicationRef;
 
           const subject = new Observable(observer => {
 
-            const modelSocketRoomPath = realtimeEntityRoomName(className, self.id);
-            log.i(`Initiaing frontend sockets, path: ${modelSocketRoomPath}`)
+            // realtime.on('connect', () => {
+            //   console.log(`conented to namespace ${realtime.nsp && realtime.nsp.name}`)
 
-            const m = Global.vars.socket.FE;
+            realtime.emit(SYMBOL.REALTIME.ROOM.SUBSCRIBE_ENTITY_EVENTS, roomName)
+            realtime.on(SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(className, self.id), (data) => {
 
-            m.on('connection', socket => {
-
-              socket.on(modelSocketRoomPath, data => {
-                log.i('data from socket without preparation (ngzone,rjxjs,transform)', data)
-                if (ngZone) {
-                  ngZone.run(() => {
-                    if (_.isFunction(tarnsformFn)) {
-                      observer.next(tarnsformFn(data))
-                    }
+              log.i('data from socket without preparation (ngzone,rjxjs,transform)', data)
+              if (ngZone) {
+                log.d('next from ngzone')
+                ngZone.runOutsideAngular(() => {
+                  if (_.isFunction(changesListener)) {
+                    observer.next(changesListener(data))
+                  } else {
                     observer.next(data);
-                  })
-                } else {
-                  if (_.isFunction(tarnsformFn)) {
-                    observer.next(tarnsformFn(data))
                   }
+                })
+              } else {
+                log.d('next without ngzone')
+                if (_.isFunction(changesListener)) {
+                  observer.next(changesListener(data))
+                } else {
                   observer.next(data);
                 }
-              })
-
+              }
+              if (ApplicationRef) {
+                log.i('tick application ')
+                ApplicationRef.tick()
+              }
+              // })
             })
 
             return () => {
               log.i('something on disconnect')
             };
           })
-
-
-
+          BASE_ENTITY.realtimeEntity[className][self.id].push(self);
 
           BASE_ENTITY.realtimeEntityObservables[className][self.id] = subject.subscribe(d => {
             log.i('DATA FROM SOCKET TO MERGE!', d)
-            // _.merge(this, d);
+
+            BASE_ENTITY.realtimeEntity[className][self.id].forEach(entityInstance => {
+              log.i('updating instance ', entityInstance)
+              _.merge(entityInstance, d);
+            })
+
+
           })
 
 
         },
-        deactivate() {
+        unsubscribe() {
 
           const constructFn = getClassFromObject(self)
-
           if (!constructFn) {
             log.er(`Deactivate: Cannot retrive Class function from object`, self)
             return
           }
 
           const className = getClassName(constructFn);
+          const roomName = SYMBOL.REALTIME.ROOM_NAME(className, self.id);
 
           const obs = BASE_ENTITY.realtimeEntityObservables[className] && BASE_ENTITY.realtimeEntityObservables[className][self.id];
           if (!obs) {
@@ -184,6 +224,11 @@ export namespace META {
             obs.unsubscribe();
             BASE_ENTITY.realtimeEntityObservables[self.id] = undefined;
           }
+
+          BASE_ENTITY.realtimeEntity[className][self.id] = undefined;
+
+          const realtime = Global.vars.socketNamespace.FE_REALTIME;
+          realtime.emit(SYMBOL.REALTIME.ROOM.UNSUBSCRIBE_ENTITY_EVENTS, roomName)
 
         }
 
@@ -224,43 +269,15 @@ export namespace META {
       ) {
       super();
       if (isBrowser) {
-        log.i('BASE_CONTROLLER, constructor', this)
+        // log.i('BASE_CONTROLLER, constructor', this)
       }
 
       //#region @backend
-      const self = this;
 
       this.realtimeEvents = {}
       this.realtimeEvents.afterUpdate = (event) => {
 
-        try {
-          console.log('event afer update', event);
-          console.log('controller', self)
-          const entity = event.entity
-          const id = entity['id'];
-          // Global.vars.socket.BE.sockets.in()\
-
-          const constructFn = getClassFromObject(event.entity);
-          console.log('construcFN', constructFn)
-          if (!constructFn) {
-            console.log('not found class function from', event.entity)
-          } else {
-            const className = getClassName(constructFn);
-
-            const modelSocketRoomPath = realtimeEntityRoomName(className, id);
-            console.log(`Push entity to room with path: ${modelSocketRoomPath}`)
-
-            const s = Global.vars.socket.BE.of(SYMBOL.MORPHI_REALTIME_NAMESPACE);
-            s.in(modelSocketRoomPath).emit(SYMBOL.REALTIME_MODEL_UPDATE, event.entity);
-          }
-
-        } catch (err) {
-
-          console.log('err update ', err)
-
-        }
-
-
+        RealtimeNodejs.populate(event as any);
 
       }
 
