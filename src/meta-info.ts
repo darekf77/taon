@@ -107,7 +107,13 @@ export namespace META {
 
     abstract id: number;
 
-    abstract fromRaw(obj: TRAW): T;
+    public static fromRaw(obj: any, prototype: Object): any {
+      return _.merge(Object.create(prototype), obj);
+    }
+
+    abstract fromRaw(obj: TRAW | T): T;
+
+
 
     private static realtimeEntity: { [className: string]: { [entitiesIds: number]: any[]; } } = {} as any;
     private static realtimeEntityObservables: { [className: string]: { [entitiesIds: number]: Subscription; } } = {} as any;
@@ -167,17 +173,17 @@ export namespace META {
                 log.d('next from ngzone')
                 ngZone.runOutsideAngular(() => {
                   if (_.isFunction(changesListener)) {
-                    observer.next(changesListener(data))
+                    observer.next(changesListener(BASE_ENTITY.fromRaw(data, constructFn.prototype)))
                   } else {
-                    observer.next(data);
+                    log.er('Please define changedEntity')
                   }
                 })
               } else {
                 log.d('next without ngzone')
                 if (_.isFunction(changesListener)) {
-                  observer.next(changesListener(data))
+                  observer.next(changesListener(BASE_ENTITY.fromRaw(data, constructFn.prototype)))
                 } else {
-                  observer.next(data);
+                  log.er('Please define changedEntity')
                 }
               }
               if (ApplicationRef) {
@@ -195,13 +201,6 @@ export namespace META {
 
           BASE_ENTITY.realtimeEntityObservables[className][self.id] = subject.subscribe(d => {
             log.i('DATA FROM SOCKET TO MERGE!', d)
-
-            BASE_ENTITY.realtimeEntity[className][self.id].forEach(entityInstance => {
-              log.i('updating instance ', entityInstance)
-              _.merge(entityInstance, d);
-            })
-
-
           })
 
 
