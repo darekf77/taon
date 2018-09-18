@@ -30,9 +30,8 @@ export interface StartOptions {
 
 export async function start(options: StartOptions) {
   const { config, host, Controllers, Entities, InitDataPriority, publicFilesFolder, hostSocket } = options;
-  const entities = _.values(Entities) as any;
-  const controllers = _.values(Controllers) as any;
-  config['entities'] = entities as any;
+
+  config['entities'] = Entities as any;
   // config['subscribers'] = subscribers.concat(_.values(Controllers).filter(a => isRealtimeEndpoint(a as any)))
   //   .concat([META.BASE_CONTROLLER as any]) as any;
   const connection = await createConnections([config] as any);
@@ -41,15 +40,15 @@ export async function start(options: StartOptions) {
   const app = init({
     host,
     hostSocket,
-    controllers,
-    entities
+    controllers: Controllers as any[],
+    entities: Entities as any[]
   }).expressApp(firstConnection as any)
 
   const rootPathStaticFiles = ENV.pathes.backup.assets;
 
   app.use(publicFilesFolder, express.static(rootPathStaticFiles))
 
-  let ctrls: META.BASE_CONTROLLER<any>[] = controllers as any;
+  let ctrls: META.BASE_CONTROLLER<any>[] = Controllers as any;
   ctrls = [
     ...(InitDataPriority ? InitDataPriority : []),
     ...(ctrls.filter(f => !InitDataPriority.includes(f)))
@@ -67,7 +66,7 @@ export async function start(options: StartOptions) {
   return {
     connection: firstConnection,
     config,
-    entities
+    entities: Entities
   };
 }
 
