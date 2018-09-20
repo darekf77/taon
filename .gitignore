@@ -20,7 +20,5 @@
 /.vscode/launch.json
 /run.js
 /src/typings.d.ts
-/src/entities.ts
-/src/controllers.ts
 /tsconfig.json
 /tsconfig.browser.json
