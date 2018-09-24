@@ -58,7 +58,7 @@
     "lodash": "^4.17.4",
     "method-override": "^2.3.10",
     "ng2-logger": "^2.0.35",
-    "ng2-rest": "9.1.11",
+    "ng2-rest": "9.1.12",
     "ps-node": "^0.1.6",
     "reflect-metadata": "^0.1.10",
     "rimraf": "^2.6.2",
