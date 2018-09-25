@@ -7,7 +7,8 @@ import {
   QueryParam,
   //#region @backend
   OrmConnection,
-  getRepository
+  getRepository,
+  META
   //#endregion
 } from "./index";
 
@@ -103,24 +104,18 @@ export abstract class BaseCRUD<T>  {
 
     return async () => {
 
-      // await forObjectPropertiesOf(item).run(async (r, partialItem) => {
-      //   await r.update(partialItem['id'], partialItem as any);
-      //   this.__realitmeUpdate(partialItem as any);
-      // })
-      _.forIn(item, (v, k) => {
-        if (typeof v === 'object') {
-          item[k] = undefined;
+      for (const key in item) {
+        if (item.hasOwnProperty(key) && typeof item[key] !== 'object') {
+          await this.repo.query(`UPDATE "${META.tableNameFrom(this.entity as any)}" SET "${key}"="${item[key]}" WHERE "id"="${id}"`)
         }
-      })
-
-      await this.repo.update(id, item);
-
-      const model = await this.repo.findOne({
+      }
+      // console.log('update ok!')
+      let model = await this.repo.findOne({
         where: _.merge({ id }, config && config.db && config.db.where),
         join: config && config.db && config.db.join
       })
-
       preventUndefinedModel(model, config, id)
+
       this.__realitmeUpdate(model)
       return model;
 
