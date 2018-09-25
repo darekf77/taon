@@ -4,13 +4,11 @@ import {
 } from 'typeorm';
 import { Connection } from "typeorm/connection/Connection";
 // import { BaseCRUD, CLASSNAME, ENDPOINT, describeClassProperites } from 'morphi';
-
 import * as _ from 'lodash';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
+
 import { isBrowser, Log, Level, isNode } from 'ng2-logger';
 import { describeClassProperites, CLASSNAME, getClassBy, getClassName, getClassFromObject } from 'ng2-rest';
-const log = Log.create('META', Level.__NOTHING)
+const log = Log.create('META')
 import {
   ENDPOINT, BaseCRUD
 } from './index';
@@ -82,7 +80,15 @@ export namespace META {
       super()
     }
 
-    async update(criteria: string | string[] | number | number[] | Date | Date[] | ObjectID | ObjectID[] | FindConditions<Entity>,
+    // async update(criteria: string | string[] | number | number[] | Date | Date[] | ObjectID | ObjectID[] | FindConditions<Entity>,
+    //   partialEntity: DeepPartial<Entity>, options?: SaveOptions): Promise<UpdateResult> {
+    //   const m = await super.update(criteria, partialEntity, options);
+    //   const entity = await this.findOne(criteria as any)
+    //   RealtimeNodejs.populate({ entity: entity as any });
+    //   return m;
+    // }
+
+    async updateRealtime(criteria: string | string[] | number | number[] | Date | Date[] | ObjectID | ObjectID[] | FindConditions<Entity>,
       partialEntity: DeepPartial<Entity>, options?: SaveOptions): Promise<UpdateResult> {
       const m = await super.update(criteria, partialEntity, options);
       const entity = await this.findOne(criteria as any)
@@ -115,8 +121,8 @@ export namespace META {
 
 
 
-    private static realtimeEntity: { [className: string]: { [entitiesIds: number]: any[]; } } = {} as any;
-    private static realtimeEntityObservables: { [className: string]: { [entitiesIds: number]: Subscription; } } = {} as any;
+    private static realtimeEntityListener: { [className: string]: { [entitiesIds: number]: any[]; } } = {} as any;
+    private static realtimeEntitySockets: { [className: string]: { [entitiesIds: number]: any } } = {} as any;
 
     public get realtimeEntity() {
       const self = this;
@@ -133,26 +139,26 @@ export namespace META {
 
           const className = getClassName(constructFn);
 
-          if (!BASE_ENTITY.realtimeEntityObservables[className]) {
-            BASE_ENTITY.realtimeEntityObservables[className] = {};
+          if (!BASE_ENTITY.realtimeEntitySockets[className]) {
+            BASE_ENTITY.realtimeEntitySockets[className] = {};
           }
 
-          if (!BASE_ENTITY.realtimeEntity[className]) {
-            BASE_ENTITY.realtimeEntity[className] = {};
+          if (!BASE_ENTITY.realtimeEntityListener[className]) {
+            BASE_ENTITY.realtimeEntityListener[className] = {};
           }
 
-          if (!_.isArray(BASE_ENTITY.realtimeEntity[className][self.id])) {
-            BASE_ENTITY.realtimeEntity[className][self.id] = [];
+          if (!_.isArray(BASE_ENTITY.realtimeEntityListener[className][self.id])) {
+            BASE_ENTITY.realtimeEntityListener[className][self.id] = [];
           }
 
-          if (_.isObject(BASE_ENTITY.realtimeEntityObservables[className][self.id])) {
+          if (_.isObject(BASE_ENTITY.realtimeEntitySockets[className][self.id])) {
             log.w('alread listen to this object realtime events', self)
-            BASE_ENTITY.realtimeEntity[className][self.id].push(self);
-            // const currentEntity = BASE_ENTITY.realtimeEntity[className][self.id] as BASE_ENTITY<any>;
-            // if (currentEntity.id == self.id) {
-            //   log.i('Entity replaced', self)
-            //   BASE_ENTITY.realtimeEntity[className][self.id] = self;
-            // }
+            if (!BASE_ENTITY.realtimeEntityListener[className][self.id].includes(changesListener)) {
+              log.d('new change listener added', self)
+              BASE_ENTITY.realtimeEntityListener[className][self.id].push(changesListener);
+            } else {
+              log.d('change listener already exist', self)
+            }
             return
           }
           const roomName = SYMBOL.REALTIME.ROOM_NAME(className, self.id);
@@ -160,48 +166,44 @@ export namespace META {
           const ngZone = Global.vars.ngZone;
           const ApplicationRef = Global.vars.ApplicationRef;
 
-          const subject = new Observable(observer => {
 
-            // realtime.on('connect', () => {
-            //   console.log(`conented to namespace ${realtime.nsp && realtime.nsp.name}`)
 
-            realtime.emit(SYMBOL.REALTIME.ROOM.SUBSCRIBE_ENTITY_EVENTS, roomName)
-            realtime.on(SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(className, self.id), (data) => {
+          // realtime.on('connect', () => {
+          //   console.log(`conented to namespace ${realtime.nsp && realtime.nsp.name}`)
 
-              log.i('data from socket without preparation (ngzone,rjxjs,transform)', data)
-              if (ngZone) {
-                log.d('next from ngzone')
-                ngZone.runOutsideAngular(() => {
-                  if (_.isFunction(changesListener)) {
-                    observer.next(changesListener(BASE_ENTITY.fromRaw(data, constructFn.prototype)))
-                  } else {
-                    log.er('Please define changedEntity')
-                  }
+          realtime.emit(SYMBOL.REALTIME.ROOM.SUBSCRIBE_ENTITY_EVENTS, roomName)
+          let sub = realtime.on(SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(className, self.id), (data) => {
+
+            function notify() {
+              if (_.isFunction(changesListener)) {
+                BASE_ENTITY.realtimeEntityListener[className][self.id].forEach(cl => {
+                  cl(BASE_ENTITY.fromRaw(data, constructFn.prototype))
                 })
               } else {
-                log.d('next without ngzone')
-                if (_.isFunction(changesListener)) {
-                  observer.next(changesListener(BASE_ENTITY.fromRaw(data, constructFn.prototype)))
-                } else {
-                  log.er('Please define changedEntity')
-                }
+                log.er('Please define changedEntity')
               }
-              if (ApplicationRef) {
-                log.i('tick application ')
-                ApplicationRef.tick()
-              }
-              // })
-            })
+            }
 
-            return () => {
-              log.i('something on disconnect')
-            };
-          })
-          BASE_ENTITY.realtimeEntity[className][self.id].push(self);
+            log.i('data from socket without preparation (ngzone,rjxjs,transform)', data)
+            if (ngZone) {
+              log.d('next from ngzone')
+              ngZone.run(() => {
+                notify()
+              })
+            } else {
+              log.d('next without ngzone')
+              notify()
+            }
+            // if (ApplicationRef) {
+            //   log.i('tick application ')
+            //   ApplicationRef.tick()
+            // }
 
-          BASE_ENTITY.realtimeEntityObservables[className][self.id] = subject.subscribe(d => {
-            log.i('DATA FROM SOCKET TO MERGE!', d)
           })
+
+
+          BASE_ENTITY.realtimeEntitySockets[className][self.id] = sub;
+          BASE_ENTITY.realtimeEntityListener[className][self.id].push(changesListener);
 
 
         },
@@ -216,15 +218,15 @@ export namespace META {
           const className = getClassName(constructFn);
           const roomName = SYMBOL.REALTIME.ROOM_NAME(className, self.id);
 
-          const obs = BASE_ENTITY.realtimeEntityObservables[className] && BASE_ENTITY.realtimeEntityObservables[className][self.id];
-          if (!obs) {
+          const sub = BASE_ENTITY.realtimeEntitySockets[className] && BASE_ENTITY.realtimeEntitySockets[className][self.id];
+          if (!sub) {
             log.w(`No sunscribtion for entity with id ${self.id}`)
           } else {
-            obs.unsubscribe();
-            BASE_ENTITY.realtimeEntityObservables[self.id] = undefined;
+            sub.removeAllListeners()
+            BASE_ENTITY.realtimeEntitySockets[self.id] = undefined;
           }
 
-          BASE_ENTITY.realtimeEntity[className][self.id] = undefined;
+          BASE_ENTITY.realtimeEntityListener[className][self.id] = undefined;
 
           const realtime = Global.vars.socketNamespace.FE_REALTIME;
           realtime.emit(SYMBOL.REALTIME.ROOM.UNSUBSCRIBE_ENTITY_EVENTS, roomName)
