@@ -91,11 +91,10 @@ export abstract class BaseCRUD<T>  {
     //#endregion
   }
 
-  //#region
+
   protected __realitmeUpdate(model: T) {
 
   }
-
 
 
   @PUT(`/${SYMBOL.CRUD_TABLE_MODEL}/:id`)
@@ -104,11 +103,15 @@ export abstract class BaseCRUD<T>  {
 
     return async () => {
 
-      await forObjectPropertiesOf(item).run(async (r, partialItem) => {        
-        await r.update(partialItem['id'], partialItem as any);
-        this.__realitmeUpdate(partialItem as any);
+      // await forObjectPropertiesOf(item).run(async (r, partialItem) => {
+      //   await r.update(partialItem['id'], partialItem as any);
+      //   this.__realitmeUpdate(partialItem as any);
+      // })
+      _.forIn(item, (v, k) => {
+        if (typeof v === 'object') {
+          item[k] = undefined;
+        }
       })
-
 
       await this.repo.update(id, item);
 
