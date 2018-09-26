@@ -128,7 +128,7 @@ export namespace META {
       const self = this;
 
       return {
-        subscribe(changesListener: (changedEntity: T) => void) {
+        subscribe(changesListener: () => void) {
           log.i('realtime entity this', self)
           const constructFn = getClassFromObject(self)
 
@@ -173,8 +173,7 @@ export namespace META {
 
           realtime.emit(SYMBOL.REALTIME.ROOM.SUBSCRIBE_ENTITY_EVENTS, roomName)
           let sub = realtime.on(SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(className, self.id), (data) => {
-
-            function notify() {
+            const cb = _.debounce(() => {
               if (_.isFunction(changesListener)) {
                 BASE_ENTITY.realtimeEntityListener[className][self.id].forEach(cl => {
                   cl(BASE_ENTITY.fromRaw(data, constructFn.prototype))
@@ -182,17 +181,17 @@ export namespace META {
               } else {
                 log.er('Please define changedEntity')
               }
-            }
+            }, 1000);
 
             log.i('data from socket without preparation (ngzone,rjxjs,transform)', data)
             if (ngZone) {
-              log.d('next from ngzone')
               ngZone.run(() => {
-                notify()
+                log.d('next from ngzone')
+                cb()
               })
             } else {
               log.d('next without ngzone')
-              notify()
+              cb()
             }
             // if (ApplicationRef) {
             //   log.i('tick application ')

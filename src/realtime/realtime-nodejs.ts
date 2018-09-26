@@ -84,7 +84,7 @@ export class RealtimeNodejs {
 
 
       Global.vars.socketNamespace.BE_REALTIME.in(modelSocketRoomPath)
-        .emit(SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(className, id), event.entity)
+        .emit(SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(className, id))
     }
   }
 
