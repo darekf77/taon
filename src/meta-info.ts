@@ -92,6 +92,8 @@ export namespace META {
       partialEntity: DeepPartial<Entity>, options?: SaveOptions): Promise<UpdateResult> {
       const m = await super.update(criteria, partialEntity, options);
       const entity = await this.findOne(criteria as any)
+      // console.log('ENtity to populate criteria: ', criteria)
+      // console.log('ENtity to populate: ', entity)
       RealtimeNodejs.populate({ entity: entity as any });
       return m;
     }
@@ -129,7 +131,7 @@ export namespace META {
 
       return {
         subscribe(changesListener: () => void) {
-          log.i('realtime entity this', self)
+          // log.i('realtime entity this', self)
           const constructFn = getClassFromObject(self)
 
           if (!constructFn) {
@@ -172,6 +174,7 @@ export namespace META {
           //   console.log(`conented to namespace ${realtime.nsp && realtime.nsp.name}`)
 
           realtime.emit(SYMBOL.REALTIME.ROOM.SUBSCRIBE_ENTITY_EVENTS, roomName)
+          console.log('SUBSCRIBE TO ' + SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(className, self.id))
           let sub = realtime.on(SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(className, self.id), (data) => {
             const cb = _.debounce(() => {
               if (_.isFunction(changesListener)) {

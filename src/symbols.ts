@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 
 import { SYMBOL as NG2RestSYMBOL } from 'ng2-rest';
 
@@ -15,11 +16,11 @@ export const SYMBOL = {
     },
     EVENT: {
       ENTITY_UPDATE_BY_ID(className, entityId) {
-        return `entityupdatebyid${className}${entityId}`;
+        return `entityupdatebyid${_.camelCase(className)}${entityId}`.toLowerCase();
       }
     },
     ROOM_NAME(className, entityId) {
-      return `room${className}${entityId}`;
+      return `room${_.camelCase(className)}${entityId}`.toLowerCase();
     }
   },
   X_TOTAL_COUNT: 'x-total-count',

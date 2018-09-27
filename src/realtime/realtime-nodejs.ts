@@ -79,12 +79,12 @@ export class RealtimeNodejs {
       const className = getClassName(constructFn);
 
       const modelSocketRoomPath = SYMBOL.REALTIME.ROOM_NAME(className, id);
-      log.d(`Push entity to room with path: ${modelSocketRoomPath}`)
+      console.log(`Push entity to room with path: ${modelSocketRoomPath}`)
 
 
-
+      console.log('populate entity change to ', SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(className, id))
       Global.vars.socketNamespace.BE_REALTIME.in(modelSocketRoomPath)
-        .emit(SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(className, id))
+        .emit(SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(className, id), '')
     }
   }
 
