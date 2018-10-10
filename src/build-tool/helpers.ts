@@ -69,7 +69,7 @@ export namespace Helpers {
 
     const missingNpm: GlobalNpmDependency[] = [];
     globalDependencies.npm.forEach(pkg => {
-      if (!commandExistsSync(pkg.installName ? pkg.installName : pkg.name)) {
+      if (!commandExistsSync(pkg.name)) {
         missingNpm.push(pkg)
       }
     })
@@ -77,7 +77,10 @@ export namespace Helpers {
     if (missingNpm.length > 0) {
 
       const toInstall = missingNpm
-        .map(pkg => pkg.version ? `${pkg.name}@${pkg.version}` : pkg.name)
+        .map(pkg => {
+          const n = pkg.installName ? pkg.installName : pkg.name
+          return pkg.version ? `${n}@${pkg.version}` : n
+        })
         .join(' ');
       console.log(chalk.red(`Missing npm dependencies.`))
       const cmd = `npm install -g ${toInstall}`;
