@@ -12,7 +12,7 @@ const commandExistsSync = require('command-exists').sync;
 
 
 export interface GlobalNpmDependency {
-  name: string; version?: string | number;
+  name: string; installName?: string; version?: string | number;
 }
 
 export interface GlobalCommandLineProgramDependency {
@@ -69,7 +69,7 @@ export namespace Helpers {
 
     const missingNpm: GlobalNpmDependency[] = [];
     globalDependencies.npm.forEach(pkg => {
-      if (!commandExistsSync(pkg.name)) {
+      if (!commandExistsSync(pkg.installName ? pkg.installName : pkg.name)) {
         missingNpm.push(pkg)
       }
     })
