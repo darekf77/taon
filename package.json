@@ -19,7 +19,9 @@
     "build:watch": "npm-run watch \"morphi build\" src",
     "build": "./node_modules/.bin/ts-node ./node_modules/typescript-npm-project/index.ts",
     "build:publish": "./node_modules/.bin/ts-node ./node_modules/typescript-npm-project/index.ts --publish",
-    "build:clean": "./node_modules/.bin/ts-node ./node_modules/typescript-npm-project/index.ts --clean"
+    "build:clean": "./node_modules/.bin/ts-node ./node_modules/typescript-npm-project/index.ts --clean",
+    "test": "mocha -r ts-node/register src/tests/**/*.ts",
+    "test:watch": "mocha  -r ts-node/register --watch  src/**/*.spec.ts --watch-extensions ts"
   },
   "bin": {
     "morphi": "bin/morphi"
@@ -71,7 +73,12 @@
   },
   "devDependencies": {
     "@ngtools/webpack": "^1.9.3",
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.5",
     "@types/socket.io-client": "^1.4.32",
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0",
+    "ts-node": "^7.0.1",
     "typescript": "2.6.2",
     "webpack": "3.10.0"
   }
