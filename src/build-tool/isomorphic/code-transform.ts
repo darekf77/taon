@@ -4,11 +4,12 @@ import * as path from "path";
 import * as fse from "fs-extra";
 import * as _ from "lodash";
 
+
 export type TsUsage = 'import' | 'export';
 export class CodeTransform {
 
-  private rawContent: string;
-  private constructor(public filePath: string, otherIsomorphicLibs: string[] = []) {
+  protected rawContent: string;
+  constructor(public filePath: string, otherIsomorphicLibs: string[] = []) {
     this.isomorphicLibs = this.isomorphicLibs.concat(otherIsomorphicLibs);
     this.rawContent = fs.readFileSync(filePath, 'utf8').toString();
   }
@@ -35,10 +36,10 @@ export class CodeTransform {
             return new CodeTransform(f, otherIsomorphicLibs)
               .flatTypescriptImportExport('import')
               .flatTypescriptImportExport('export')
-              .replace.regionsFor.isomorphicLib()
-              .replace.ismorphicLibsFrom.fromTsImportExport('import')
-              .replace.ismorphicLibsFrom.fromTsImportExport('export')
-              .replace.ismorphicLibsFrom.fromJSrequire()
+              .replaceRegionsForIsomorphicLib()
+              .replaceRegionsFromTsImportExport('import')
+              .replaceRegionsFromTsImportExport('export')
+              .replaceRegionsFromJSrequire()
               .saveOrDelete()
           }
         }
@@ -147,77 +148,80 @@ export class CodeTransform {
     }
   }
 
-  private replaceRegionsWith(stringContent = '', words = [], replacement = '') {
-    if (words.length === 0) return stringContent;
-    let word = words.shift();
-    if (Array.isArray(word) && word.length === 2) {
-      replacement = word[1];
-      word = word[0]
+
+
+  // REGEX_VALUE = /^\s*(\'|\")[a-z|A-Z|0-9|\_|\-|\.]+(\'|\")/
+  protected REGEX_REGION(pattern) {
+    return new RegExp("[\\t ]*\\/\\/\\s*#?region\\s+" + pattern + " ?[\\s\\S]*?\\/\\/\\s*#?endregion ?[\\t ]*\\n?", "g")
+  }
+  protected replaceRegionsWith(stringContent = '', replacementPatterns = [], replacement = '') {
+
+    if (replacementPatterns.length === 0) return stringContent;
+    let pattern = replacementPatterns.shift();
+    // console.log('replacementPatterns', replacementPatterns)
+    if (Array.isArray(pattern) && pattern.length === 2) {
+      const funOrString = pattern[1] as Function;
+      pattern = pattern[0] as string;
+      replacement = funOrString as any;
     }
-    var regexPattern = new RegExp("[\\t ]*\\/\\/\\s*#?region\\s+" + word + " ?[\\s\\S]*?\\/\\/\\s*#?endregion ?[\\t ]*\\n?", "g")
-    stringContent = stringContent.replace(regexPattern, replacement);
-    return this.replaceRegionsWith(stringContent, words);
+
+    stringContent = stringContent.replace(this.REGEX_REGION(pattern), replacement);
+    return this.replaceRegionsWith(stringContent, replacementPatterns);
   }
 
-  public get replace() {
 
-    const self = this as any;
-    return {
-      get ismorphicLibsFrom() {
-        return {
-          fromTsImportExport(usage: TsUsage) {
-            if (!_.isString(self.rawContent)) return;
-            const importRegex = new RegExp(`${usage}.+from\\s+(\\'|\\").+(\\'|\\")`, 'g')
-            let imports = self.rawContent.match(importRegex)
-            if (_.isArray(imports)) {
-              imports.forEach(imp => {
-                const pkgName = self.resolvePackageNameFrom.TSimportExport(imp, usage);
 
-                const p = self.isIsomorphic(pkgName)
-                if (p.isIsomorphic) {
-                  const replacedImp = imp.replace(p.realName, `${p.realName}/browser`);
-                  self.rawContent = self.rawContent.replace(imp, replacedImp);
-                }
-              })
-            }
-            return self;
-          },
-          fromJSrequire() {
-            if (!_.isString(self.rawContent)) return;
-            // fileContent = IsomorphicRegions.flattenRequiresForContent(fileContent, usage)
-            const importRegex = new RegExp(`require\\((\\'|\\").+(\\'|\\")\\)`, 'g')
-            let imports = self.rawContent.match(importRegex)
-            // console.log(imports)
-            if (_.isArray(imports)) {
-              imports.forEach(imp => {
-                const pkgName = self.resolvePackageNameFrom.JSrequired(imp);
+  replaceRegionsFromTsImportExport(usage: TsUsage) {
+    if (!_.isString(this.rawContent)) return;
+    const importRegex = new RegExp(`${usage}.+from\\s+(\\'|\\").+(\\'|\\")`, 'g')
+    let imports = this.rawContent.match(importRegex)
+    if (_.isArray(imports)) {
+      imports.forEach(imp => {
+        const pkgName = this.resolvePackageNameFrom.TSimportExport(imp, usage);
 
-                const p = self.isIsomorphic(pkgName)
-                if (p.isIsomorphic) {
-                  // console.log('isomorphic: ', pkgName)
-                  const replacedImp = imp.replace(p.realName, `${p.realName}/browser`);
-                  self.rawContent = self.rawContent.replace(imp, replacedImp);
-                }
-              })
-            }
-            return self;
-          }
-        };
-      },
-      get regionsFor() {
-        return {
-          isomorphicLib() {
-            self.rawContent = self.replaceRegionsWith(self.rawContent, [
-              ["@backendFunc", `return undefined;`],
-              "@backend"
-            ], '')
-            return self;
-          }
+        const p = this.isIsomorphic(pkgName)
+        if (p.isIsomorphic) {
+          const replacedImp = imp.replace(p.realName, `${p.realName}/browser`);
+          this.rawContent = this.rawContent.replace(imp, replacedImp);
         }
-      }
-    };
-
+      })
+    }
+    return this;
   }
+
+  replaceRegionsFromJSrequire() {
+    if (!_.isString(this.rawContent)) return;
+    // fileContent = IsomorphicRegions.flattenRequiresForContent(fileContent, usage)
+    const importRegex = new RegExp(`require\\((\\'|\\").+(\\'|\\")\\)`, 'g')
+    let imports = this.rawContent.match(importRegex)
+    // console.log(imports)
+    if (_.isArray(imports)) {
+      imports.forEach(imp => {
+        const pkgName = this.resolvePackageNameFrom.JSrequired(imp);
+
+        const p = this.isIsomorphic(pkgName)
+        if (p.isIsomorphic) {
+          // console.log('isomorphic: ', pkgName)
+          const replacedImp = imp.replace(p.realName, `${p.realName}/browser`);
+          this.rawContent = this.rawContent.replace(imp, replacedImp);
+        }
+      })
+    }
+    return this;
+  }
+
+  replaceRegionsForIsomorphicLib() {
+
+    this.rawContent = this.replaceRegionsWith(this.rawContent, [
+
+      ["@backendFunc", `return undefined;`],
+      "@backend"
+
+    ], '')
+    return this;
+  }
+
+
 
   saveOrDelete() {
     // console.log('saving ismoprhic file', this.filePath)
@@ -233,5 +237,3 @@ export class CodeTransform {
   }
 
 }
-
-

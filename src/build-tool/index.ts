@@ -6,12 +6,11 @@ import * as fs from 'fs';
 const ps = require('ps-node');
 
 import { Helpers } from './helpers';
-import { IsomoprhicBuild } from "./build";
+import { IsomoprhicBuild } from "./isomorphic/build";
 import { copyExampleTo } from './new';
 
 export * from './helpers';
-export * from './build';
-export * from './environment';
+export * from './isomorphic';
 
 export function run(argsv: string[], morphiEnvironmentCheck = true) {
   if (morphiEnvironmentCheck) {

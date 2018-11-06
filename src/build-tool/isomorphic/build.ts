@@ -6,18 +6,21 @@ import * as fs from 'fs';
 import * as fse from 'fs-extra';
 
 
-import { CodeTransform } from './isomorphic';
-import { Helpers, tryRemoveDir, tryCopyFrom } from './helpers';
+import { CodeTransform } from './code-transform';
+import { Helpers, tryRemoveDir, tryCopyFrom } from '../helpers';
 import { IncrementalBuild } from './incremental';
-import { FoldersPathes, ToolsPathes, BuildConfig, BuildPathes } from "./models";
+import { FoldersPathes, ToolsPathes, BuildConfig, BuildOptions } from "./models";
 
 export class IsomoprhicBuild {
 
+  public incrementalBuildClass = IncrementalBuild;
+  public CodeTransform = CodeTransform;
   FOLDER: FoldersPathes;
   TOOLS: ToolsPathes;
   BUILD: BuildConfig;
 
-  constructor(private options?: BuildPathes) {
+  constructor(private options?: BuildOptions) {
+
     //#region prepare parems
     if (!this.options) this.options = {} as any;
     const { foldersPathes, toolsPathes, build, watch = false } = this.options;
@@ -41,7 +44,7 @@ export class IsomoprhicBuild {
     this.BUILD = _.merge({
       buildBackend: true,
       generateDeclarations: false,
-      otherIsomorphicLibs: []
+      otherIsomorphicLibs: [],
     } as BuildConfig, build);
     //#endregion
 
@@ -52,7 +55,10 @@ export class IsomoprhicBuild {
     return filePath.replace(new RegExp(`^${pathPart}`, 'g'), '')
   }
 
+
+
   public init(processCWD: string = process.cwd()) {
+
     const self = this;
     const src = path.join(processCWD, this.FOLDER.src)
     const browser = path.join(processCWD, this.FOLDER.browser)
@@ -77,7 +83,7 @@ export class IsomoprhicBuild {
       dTs: `-d ${generateDeclarations} --outDir ${browserOut}`
     }
 
-    const build = new IncrementalBuild({
+    const build = new (this.incrementalBuildClass as { new(any?): IncrementalBuild })({
 
       filesPattern: `**/*.ts`,
 
@@ -110,7 +116,7 @@ export class IsomoprhicBuild {
         tryCopyFrom(`${src}/`, tmpSrc);
 
         fse.copyFileSync(`${tsconfig_browser}`, `${tmpSrc}/${this.FOLDER.tsconfig.default}`);
-        CodeTransform.for.isomorphicLib(this.options.build.otherIsomorphicLibs).files(files);
+        this.CodeTransform.for.isomorphicLib(this.options.build.otherIsomorphicLibs).files(files);
 
         try {
 

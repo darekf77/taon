@@ -1,7 +1,5 @@
 
 
-
-
 export interface FoldersPathes {
   dist?: string;
   browser?: string;
@@ -21,9 +19,10 @@ export interface BuildConfig {
   generateDeclarations?: boolean; // QUICK_FIX
   buildBackend?: boolean;
   otherIsomorphicLibs: string[];
+  environmentFileName?: string;
 }
 
-export interface BuildPathes {
+export interface BuildOptions {
   watch?: boolean;
   foldersPathes?: FoldersPathes;
   toolsPathes?: ToolsPathes;
