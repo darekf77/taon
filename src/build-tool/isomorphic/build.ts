@@ -6,10 +6,25 @@ import * as fs from 'fs';
 import * as fse from 'fs-extra';
 
 
-import { CodeTransform } from './code-transform';
+import { CodeTransform, ReplaceOptions, ReplaceOptionsExtended } from './code-transform';
 import { Helpers, tryRemoveDir, tryCopyFrom } from '../helpers';
 import { IncrementalBuild } from './incremental';
 import { FoldersPathes, ToolsPathes, BuildConfig, BuildOptions } from "./models";
+
+const replacements: ReplaceOptions = {
+  replacements: [
+    ["@backendFunc", `return undefined;`],
+    "@backend"
+  ]
+}
+
+const replacementsExtended: ReplaceOptionsExtended = {
+  replacements: replacements.replacements.concat(
+    ["@cutExpression ", (e, expression) => {
+      return eval(`(function(ENV){ ${expression} })(e)`);
+    }] as any
+  )
+}
 
 export class IsomoprhicBuild {
 

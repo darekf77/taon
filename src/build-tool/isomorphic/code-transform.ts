@@ -4,6 +4,15 @@ import * as path from "path";
 import * as fse from "fs-extra";
 import * as _ from "lodash";
 
+export interface ReplaceOptions {
+  replacements: (string | [string, string])[];
+}
+
+export interface ReplaceOptionsExtended implements ReplaceOptions {
+
+  replacements: (string | [string, string] | [string, (expression: any) => boolean])[];
+}
+
 
 export type TsUsage = 'import' | 'export';
 export class CodeTransform {
@@ -23,20 +32,21 @@ export class CodeTransform {
   }
 
   public static get for() {
+    const self = this;
     return {
 
-      isomorphicLib(otherIsomorphicLibs: string[] = []) {
+      isomorphicLib(otherIsomorphicLibs: string[] = [], options: ReplaceOptions) {
         return {
           files(filesPathes: string[]) {
             filesPathes.forEach((f, i) => {
-              CodeTransform.for.isomorphicLib(otherIsomorphicLibs).file(f);
+              self.for.isomorphicLib(otherIsomorphicLibs).file(f, options);
             })
           },
-          file(f) {
+          file(f, options) {
             return new CodeTransform(f, otherIsomorphicLibs)
               .flatTypescriptImportExport('import')
               .flatTypescriptImportExport('export')
-              .replaceRegionsForIsomorphicLib()
+              .replaceRegionsForIsomorphicLib(options)
               .replaceRegionsFromTsImportExport('import')
               .replaceRegionsFromTsImportExport('export')
               .replaceRegionsFromJSrequire()
@@ -210,14 +220,10 @@ export class CodeTransform {
     return this;
   }
 
-  replaceRegionsForIsomorphicLib() {
+  replaceRegionsForIsomorphicLib(options: ReplaceOptions) {
 
-    this.rawContent = this.replaceRegionsWith(this.rawContent, [
-
-      ["@backendFunc", `return undefined;`],
-      "@backend"
-
-    ], '')
+    this.rawContent = this.replaceRegionsWith(this.rawContent,
+      [options.replacements, '')
     return this;
   }
 

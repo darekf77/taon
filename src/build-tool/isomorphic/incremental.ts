@@ -57,9 +57,6 @@ export class IncrementalBuild {
     customizableFilesOrFolders: string[];
 
 
-    private resoveFiles() {
-
-    }
 
 
     private watchFilesAndFolders<WatchData=Object>(filesEventCallback: (absolutePath: string, event: FileEvent, data: WatchData | any) => any) {
