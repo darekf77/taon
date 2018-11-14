@@ -22,11 +22,11 @@ export function run(argsv: string[], morphiEnvironmentCheck = true) {
 
     if (commandName === 'build') {
       BrowserCodeCut.resolveAndAddIsomorphicLibs(argsv.slice(4))
-      new IncrementalBuildProcess().start()
+      new IncrementalBuildProcess().start('isomprphic build')
       process.exit(0)
     } else if (commandName === 'build:watch') {
       BrowserCodeCut.resolveAndAddIsomorphicLibs(argsv.slice(4))
-      new IncrementalBuildProcess().startAndWatch();
+      new IncrementalBuildProcess().startAndWatch('isomorphic build (watch)');
       process.stdin.resume();
     } else if (commandName === 'process-info') {
       // A simple pid lookup
