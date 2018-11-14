@@ -5,12 +5,12 @@ import * as path from 'path';
 import * as fs from 'fs';
 const ps = require('ps-node');
 
-import { Helpers } from './helpers';
-import { IsomoprhicBuild } from "./isomorphic/build";
+import { HelpersBackend as Helpers } from '../helpers';
 import { copyExampleTo } from './new';
+import { IncrementalBuildProcess } from '../build/incremental-build-process';
+import { BrowserCodeCut } from '../build/browser-code-cut';
 
-export * from './helpers';
-export * from './isomorphic';
+export * from '../helpers';
 
 export function run(argsv: string[], morphiEnvironmentCheck = true) {
   if (morphiEnvironmentCheck) {
@@ -21,19 +21,12 @@ export function run(argsv: string[], morphiEnvironmentCheck = true) {
 
 
     if (commandName === 'build') {
-      new IsomoprhicBuild({
-        build: {
-          otherIsomorphicLibs: argsv.slice(4)
-        }
-      }).init()
+      BrowserCodeCut.resolveAndAddIsomorphicLibs(argsv.slice(4))
+      new IncrementalBuildProcess().start()
       process.exit(0)
     } else if (commandName === 'build:watch') {
-      new IsomoprhicBuild({
-        watch: true,
-        build: {
-          otherIsomorphicLibs: argsv.slice(4)
-        }
-      }).init()
+      BrowserCodeCut.resolveAndAddIsomorphicLibs(argsv.slice(4))
+      new IncrementalBuildProcess().startAndWatch();
       process.stdin.resume();
     } else if (commandName === 'process-info') {
       // A simple pid lookup

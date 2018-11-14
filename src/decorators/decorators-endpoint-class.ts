@@ -22,7 +22,7 @@ import { Global } from '../global-config';
 import { isNode, isBrowser } from 'ng2-logger';
 import { SYMBOL } from '../symbols';
 import { Realtime } from '../realtime';
-import { getSingletons } from '../helpers';
+import { Helpers } from '../helpers';
 
 //#region @backend
 import * as express from "express";

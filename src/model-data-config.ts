@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 // import { Subject } from 'rxjs/Subject'; // TODO use rxjs to detec change
 // import { Observable } from 'rxjs/Observable';
-import { parseJSONwithStringJSONs } from './helpers';
+import { Helpers } from './helpers';
 import { CLASSNAME, DefaultModelWithMapping } from 'ng2-rest';
 
 const MAX_DATA_LENGTH_SENT_TO_CLIENT = 10000;
@@ -57,10 +57,10 @@ export class ModelDataConfig {
 
     if (config && _.isString(config['config'])) {
       // console.log('from nested config')
-      this.config = parseJSONwithStringJSONs(JSON.parse(config['config']));
+      this.config = Helpers.parseJSONwithStringJSONs(JSON.parse(config['config']));
     } else if (config) {
       // console.log('from normal interface config')
-      this.config = parseJSONwithStringJSONs(config);
+      this.config = Helpers.parseJSONwithStringJSONs(config);
     } else {
       // console.log('from default config')
       this.config = this.defaultConfig;

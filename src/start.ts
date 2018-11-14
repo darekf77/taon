@@ -8,7 +8,7 @@ import { createConnections, useContainer, ConnectionOptions, Connection } from '
 export { Connection } from 'typeorm';
 import { META } from "./meta-info";
 import { isRealtimeEndpoint, init } from './decorators/decorators-endpoint-class';
-import { getSingleton } from './helpers';
+import { HelpersBackend, Helpers } from './helpers';
 
 export interface IConnectionOptions {
   database: string;
@@ -56,7 +56,7 @@ export async function start(options: StartOptions) {
 
   const promises: Promise<any>[] = []
   ctrls.forEach(ctrl => {
-    ctrl = getSingleton(ctrl as any);
+    ctrl = Helpers.getSingleton(ctrl as any);
     if (ctrl && _.isFunction(ctrl.initExampleDbData)) {
       promises.push((ctrl.initExampleDbData()));
     }

@@ -11,7 +11,7 @@ import {
   encode
   //#endregion
 } from "ng2-rest";
-import { tryTransformParam, getResponseValue, parseJSONwithStringJSONs } from "./helpers";
+import { Helpers, HelpersBackend } from "./helpers";
 import { Global } from './global-config';
 import { Realtime } from './realtime';
 import { SYMBOL } from './symbols';
@@ -105,13 +105,13 @@ export function initMethodNodejs(
     if (req.headers[SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS]) {
       try {
         const entity = JSON.parse(req.headers[SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS]);
-        tQuery = parseJSONwithStringJSONs(encode(tQuery, entity));
+        tQuery = Helpers.parseJSONwithStringJSONs(encode(tQuery, entity));
       } catch (e) { }
     } else {
       Object.keys(tQuery).forEach(queryParamName => {
         try {
           const entityForParam = JSON.parse(req.headers[`${SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${queryParamName}`]);
-          tQuery[queryParamName] = parseJSONwithStringJSONs(encode(tQuery[queryParamName], entityForParam));
+          tQuery[queryParamName] = Helpers.parseJSONwithStringJSONs(encode(tQuery[queryParamName], entityForParam));
         } catch (e) { }
       });
     }
@@ -143,12 +143,12 @@ export function initMethodNodejs(
         }
       }
     })
-    const resolvedParams = args.reverse().map(v => tryTransformParam(v));
+    const resolvedParams = args.reverse().map(v => Helpers.tryTransformParam(v));
     try {
       const response: Response<any> = methodConfig.descriptor.value.apply(classConfig.singleton, resolvedParams)
       // console.log('response.send', response.send)
 
-      const result = await getResponseValue(response, req, res);
+      const result = await HelpersBackend.getResponseValue(response, req, res);
       // const result = typeof response.send === 'function' ? response.send.call(req, res) : response.send;
       const entity = decode(result, { productionMode });
       res.set(SYMBOL.MAPPING_CONFIG_HEADER, JSON.stringify(entity));
