@@ -7,7 +7,6 @@ import { config } from './config';
 import { HelpersBackend } from '../helpers';
 
 
-
 export class IncrementalBuildProcess {
 
     readonly backendCompilation: BackendCompilation;
@@ -28,6 +27,8 @@ export class IncrementalBuildProcess {
             cwd);
         this.browserCompilations = [browser]
     }
+
+
 
     protected browserTaksName(taskName: string, bc: BroswerCompilation) {
         return `browser ${taskName} in ${path.basename(bc.compilationFolderPath)}`

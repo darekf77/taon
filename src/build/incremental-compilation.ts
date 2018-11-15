@@ -83,6 +83,8 @@ export abstract class IncrementalCompilation {
     }
   }
 
+  private firstTimeFix = {};
+
   public initAndWatch(taskName?: string, afterInitCallBack?: () => void) {
     this.init(taskName, afterInitCallBack)
 
@@ -93,6 +95,10 @@ export abstract class IncrementalCompilation {
     }
     if (_.isFunction(this.asyncAction)) {
       this.watchFilesAndFolders((f, event) => {
+        if(!this.firstTimeFix[f]) {
+          this.firstTimeFix[f] = true;
+          return
+        }
         // console.log(`File "${event}" : ${f}`)
         if (event !== 'removed') {
           this.asyncAction(f);
@@ -111,15 +117,14 @@ export abstract class IncrementalCompilation {
       }
     }
 
-    if (fs.existsSync(this.watchDir)) {
-      watch(this.watchDir, {
-        followSymlinks: false
-      })
-        .on('change', callBackWithRelativePath('changed'))
-        .on('add', callBackWithRelativePath('changed'))
-        .on('unlink', callBackWithRelativePath('changed'))
 
-    }
+    watch(this.watchDir, {
+      followSymlinks: false,
+    })
+      .on('change', callBackWithRelativePath('changed'))
+      .on('change', callBackWithRelativePath('rename'))
+      .on('add', callBackWithRelativePath('created'))
+      .on('unlink', callBackWithRelativePath('removed'))
 
 
   }

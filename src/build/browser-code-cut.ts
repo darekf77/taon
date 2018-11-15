@@ -21,16 +21,16 @@ export class CodeCut {
         this.filesPathes.forEach((relativePathToFile) => {
             const absolutePathToFile = path.join(this.cwd, relativePathToFile)
             // console.log('process', absolutePathToFile)
-            this.file(absolutePathToFile, this.options);
+            this.file(absolutePathToFile);
         })
     }
 
-    file(absolutePathToFile, options) {
+    file(absolutePathToFile) {
         // console.log('options here ', options)
         return new BrowserCodeCut(absolutePathToFile)
             .flatTypescriptImportExport('import')
             .flatTypescriptImportExport('export')
-            .replaceRegionsForIsomorphicLib(_.cloneDeep(options))
+            .replaceRegionsForIsomorphicLib(_.cloneDeep(this.options))
             .replaceRegionsFromTsImportExport('import')
             .replaceRegionsFromTsImportExport('export')
             .replaceRegionsFromJSrequire()

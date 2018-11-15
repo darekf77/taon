@@ -17,7 +17,7 @@ function tscCompilation(cwd: string, watch = false, outDir?: string, generateDec
     const params = [
         watch ? '-w' : '',
         outDir ? `--outDir ${outDir}` : '',
-        !watch? '--noEmitOnError true': ''
+        !watch ? '--noEmitOnError true' : ''
     ]
 
     const commandJsAndMaps = `${tsExe} -d false  ${params.join(' ')}`
@@ -26,7 +26,7 @@ function tscCompilation(cwd: string, watch = false, outDir?: string, generateDec
     if (watch) {
         HelpersBackend.log(child.exec(commandJsAndMaps, { cwd }));
         if (generateDeclarations) {
-            HelpersBackend.log(child.exec(commandDts,  { cwd }));
+            HelpersBackend.log(child.exec(commandDts, { cwd }));
         }
     } else {
         child.execSync(commandJsAndMaps, {
@@ -77,6 +77,7 @@ export class BackendCompilation extends IncrementalCompilation {
     }
     asyncAction(filePath: string) {
         // noting here for backend
+
     }
 
 
@@ -129,6 +130,14 @@ export class BroswerCompilation extends BackendCompilation {
         super(outFolder, location, cwd)
         this.compilationFolderPath = path.join(this.cwd, this.sourceOutBrowser);
         this.initBrowser();
+    }
+
+    asyncAction(filePath: string) {
+        // noting here for backend
+        const relativeFilePath = filePath.replace(path.join(this.cwd, this.location), '');
+        const dest = path.join(this.cwd, this.sourceOutBrowser, relativeFilePath);
+        fse.copyFileSync(filePath, dest);
+        this.codecut.file(dest)
     }
 
     private initBrowser() {
