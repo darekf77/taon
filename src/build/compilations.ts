@@ -1,124 +1,180 @@
 //#region @backend
 import * as child from 'child_process';
 import * as fse from 'fs-extra';
+import * as rimraf from 'rimraf';
 import * as path from 'path';
-import { IncrementalBuild } from './incremental-build';
+import * as glob from 'glob';
+import { IncrementalCompilation } from './incremental-compilation';
 import { OutFolder } from './models';
 import { HelpersBackend } from '../helpers';
 import { CodeCut } from './browser-code-cut';
+import { config } from './config';
 
 
 
-function compile(cwd: string, watch = false, tsExe = 'tsc') {
+function tscCompilation(cwd: string, watch = false, outDir?: string, generateDeclarations = false, tsExe = 'tsc') {
 
-  const params = [
-    watch ? '-w' : ''
-  ]
+    const params = [
+        watch ? '-w' : '',
+        outDir ? `--outDir ${outDir}` : '',
+        !watch? '--noEmitOnError true': ''
+    ]
 
-  const command = `${tsExe} ${params.join(' ')}`
-  console.log(`${command} in ${cwd}`)
-  // child.execSync(command, {
-  //   cwd,
-  //   stdio: [0, 1, 2]
-  // })
+    const commandJsAndMaps = `${tsExe} -d false  ${params.join(' ')}`
+    const commandDts = `${tsExe}  ${params.join(' ')}`
+
+    if (watch) {
+        HelpersBackend.log(child.exec(commandJsAndMaps, { cwd }));
+        if (generateDeclarations) {
+            HelpersBackend.log(child.exec(commandDts,  { cwd }));
+        }
+    } else {
+        child.execSync(commandJsAndMaps, {
+            cwd,
+            stdio: [0, 1, 2]
+        })
+
+        if (generateDeclarations) {
+            child.execSync(commandDts, {
+                cwd,
+                stdio: [0, 1, 2]
+            })
+        }
+    }
+
+
+
+
+
 }
 
-export class BackendCompilation extends IncrementalBuild {
+export class BackendCompilation extends IncrementalCompilation {
 
 
-  prepareFiles() {
-    const outDistPath = path.join(this.cwd, this.outFolder);
-    HelpersBackend.tryRemoveDir(outDistPath)
-    fse.mkdirpSync(outDistPath);
-  }
+    prepareFiles() {
 
-  syncAction(filesPathes: string[]) {
-    this.prepareFiles();
-    compile(this.compilationFolderPath)
-  }
+        // init fiels
+        this.filesAndFoldesRelativePathes = glob.sync(this.globPattern, { cwd: this.compilationFolderPath });
+        // console.log('backend', this.filesAndFoldesRelativePathes.slice(0, 5))
 
-  preAsyncAction() {
-    compile(this.compilationFolderPath, true)
-  }
-  asyncAction(filePath: string) {
-    // noting here for backend
-  }
+        // recreate dist
+        const outDistPath = path.join(this.cwd, this.outFolder);
+        HelpersBackend.tryRemoveDir(outDistPath)
+        fse.mkdirpSync(outDistPath);
+    }
+
+    compile(watch = false) {
+        tscCompilation(this.compilationFolderPath, watch, `../${this.outFolder}` as any, false)
+    }
+
+    syncAction(filesPathes: string[]) {
+        this.prepareFiles();
+        this.compile()
+    }
+
+    preAsyncAction() {
+        this.compile(true)
+    }
+    asyncAction(filePath: string) {
+        // noting here for backend
+    }
 
 
-  get tsConfigName() {
-    return 'tsconfig.json'
-  }
-  get tsConfigBrowserName() {
-    return 'tsconfig.browser.json'
-  }
+    get tsConfigName() {
+        return 'tsconfig.json'
+    }
+    get tsConfigBrowserName() {
+        return 'tsconfig.browser.json'
+    }
 
-  constructor(
-    /**
-     * Output folder
-     * Ex. dist
-     */
-    protected outFolder: OutFolder,
-    /**
-     * Source location
-     * Ex. src
-     */
-    location?: string,
-    /**
-     * Current cwd same for browser and backend
-     * but browser project has own compilation folder
-     * Ex. /home/username/project/myproject
-     */
-    cwd?: string
-  ) {
-    super('**/*.ts', location, cwd)
-
-  }
+    constructor(
+        /**
+         * Output folder
+         * Ex. dist
+         */
+        public outFolder: OutFolder,
+        /**
+         * Source location
+         * Ex. src
+         */
+        location?: string,
+        /**
+         * Current cwd same for browser and backend
+         * but browser project has own compilation folder
+         * Ex. /home/username/project/myproject
+         */
+        cwd?: string
+    ) {
+        super('**/*.ts', location, cwd)
+        this.compilationFolderPath = path.join(cwd, config.folder.src);
+    }
 
 
 }
 
 export class BroswerCompilation extends BackendCompilation {
 
-  protected codecut: CodeCut = new CodeCut()
 
-  private _recreateTsConfig() {
-    const source = path.join(this.cwd, this.tsConfigBrowserName);
-    const dest = path.join(this.cwd, this.sourceOut, this.tsConfigName);
-    fse.copyFileSync(source, dest)
-  }
+    public codecut: CodeCut;
+    constructor(
+        /**
+         * Relative path for browser temporary src
+         * Ex.   tmp-src-dist-browser
+         */
+        public sourceOutBrowser: string,
+        outFolder: OutFolder,
+        location: string,
+        cwd: string
+    ) {
+        super(outFolder, location, cwd)
+        this.compilationFolderPath = path.join(this.cwd, this.sourceOutBrowser);
+        this.initBrowser();
+    }
 
-  private _recreateFolders() {
-    const outBrowserFiles = path.join(this.cwd, this.sourceOut);
-    HelpersBackend.tryRemoveDir(outBrowserFiles);
-    fse.mkdirpSync(outBrowserFiles);
-  }
+    private initBrowser() {
 
-  prepareFiles() {
-    super.prepareFiles()
+        if (fse.existsSync(this.compilationFolderPath)) {
+            rimraf.sync(this.compilationFolderPath)
+        }
+        fse.mkdirpSync(this.compilationFolderPath)
 
-    this._recreateFolders();
-    this._recreateTsConfig();
-    this.codecut.files(this)
+        HelpersBackend.tryCopyFrom(`${path.join(this.cwd, this.location)}/`, this.compilationFolderPath)
+
+        this.filesAndFoldesRelativePathes = glob.sync(this.globPattern, { cwd: this.compilationFolderPath });
+        // console.log('browser', this.filesAndFoldesRelativePathes.slice(0, 5))
+        this.initCodeCut()
+
+    }
+
+    compile(watch = false) {
+        tscCompilation(this.compilationFolderPath, watch, `../${this.outFolder}` as any, true)
+    }
+
+    initCodeCut() {
+        this.codecut = new CodeCut(this.compilationFolderPath, this.filesAndFoldesRelativePathes, {
+            replacements: [
+                ["@backendFunc", `return undefined;`],
+                "@backend"
+            ]
+        })
+    }
 
 
-  }
+    prepareFiles() {
 
+        // recreate dirst
+        const outDistPath = path.join(this.cwd, this.outFolder);
+        HelpersBackend.tryRemoveDir(outDistPath)
+        fse.mkdirpSync(outDistPath);
 
-  constructor(
-    /**
-     * Relative path for browser temporary src
-     * Ex.   tmp-src-dist-browser
-     */
-    public sourceOut: string,
-    outFolder: OutFolder,
-    location: string,
-    cwd: string
-  ) {
-    super(outFolder, location, cwd)
+        // tsconfig.browser.json
+        const source = path.join(this.cwd, this.tsConfigBrowserName);
+        const dest = path.join(this.cwd, this.sourceOutBrowser, this.tsConfigName);
 
-    this.compilationFolderPath = path.join(cwd, sourceOut);
+        fse.copyFileSync(source, dest)
+        this.codecut.files()
+    }
 
-  }
 
 
 
@@ -127,12 +183,4 @@ export class BroswerCompilation extends BackendCompilation {
 }
 
 
-export class BroswerForModuleCompilation extends BroswerCompilation {
-
-  constructor(private module: string, sourceOut: string, outFolder: OutFolder, location: string, cwd: string) {
-    super(sourceOut, outFolder, location, cwd)
-  }
-
-
-}
 //#endregion

@@ -6,15 +6,15 @@ import * as glob from 'glob';
 import * as dateformat from "dateformat";
 import * as _ from "lodash";
 import { Helpers } from '../helpers';
-export type FileEvent = 'created' | 'changed' | 'removed' | 'rename';
+import { FileEvent } from './models';
 
 
 
 
-export abstract class IncrementalBuild {
+export abstract class IncrementalCompilation {
 
   public compilationFolderPath: string;
-  private filesAndFoldesRelativePathes: string[] = []
+  protected filesAndFoldesRelativePathes: string[] = []
 
   private readonly watchDir: string;
 
@@ -70,35 +70,26 @@ export abstract class IncrementalBuild {
   ) {
 
     this.watchDir = path.join(cwd, location, globPattern)
-
-    this.compilationFolderPath = cwd;
-
   }
 
-  protected resolveFilesPathPattern() {
-    this.filesAndFoldesRelativePathes = glob.sync(path.join(this.location, this.globPattern), {
-      cwd: this.compilationFolderPath
-    })
-    console.log(this.filesAndFoldesRelativePathes.slice(0, 5))
-  }
-
-
-  public init(taskName?: string) {
+  public init(taskName?: string, afterInitCallBack?: () => void) {
     if (_.isFunction(this.syncAction)) {
       this.compilationWrapper(() => {
-        this.resolveFilesPathPattern()
         this.syncAction(this.filesAndFoldesRelativePathes);
       }, taskName)
     }
+    if (_.isFunction(afterInitCallBack)) {
+      afterInitCallBack()
+    }
   }
 
-  public initAndWatch(taskName?: string) {
-    this.init(taskName)
+  public initAndWatch(taskName?: string, afterInitCallBack?: () => void) {
+    this.init(taskName, afterInitCallBack)
 
     if (_.isFunction(this.preAsyncAction)) {
-      this.compilationWrapper(() => {
-        this.preAsyncAction()
-      }, `pre-async action for ${taskName}`)
+      // this.compilationWrapper(() => {
+      this.preAsyncAction()
+      // }, `pre-async action for ${taskName}`)
     }
     if (_.isFunction(this.asyncAction)) {
       this.watchFilesAndFolders((f, event) => {

@@ -1,3 +1,4 @@
+//#region @backend
 import * as path from 'path';
 import * as fse from "fs-extra";
 import * as fs from 'fs';
@@ -40,3 +41,4 @@ export function copyExampleTo(folder: string) {
     child.execSync('code .', { cwd: destinationPath })
   }
 }
+//#endregion

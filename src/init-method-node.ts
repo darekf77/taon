@@ -11,12 +11,13 @@ import {
   encode
   //#endregion
 } from "ng2-rest";
-import { Helpers, HelpersBackend } from "./helpers";
+import { Helpers } from "./helpers";
 import { Global } from './global-config';
 import { Realtime } from './realtime';
 import { SYMBOL } from './symbols';
 
 //#region @backend
+import {  HelpersBackend } from "./helpers";
 import * as  cors from 'cors';
 import * as bodyParser from 'body-parser';
 import * as errorHandler from 'errorhandler';

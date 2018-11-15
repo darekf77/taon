@@ -8,8 +8,7 @@ export const config = {
         dist: 'dist',
         src: 'src',
         
-        browser: 'browser',
-        
+        browser: 'browser',       
         
         node_modules: 'node_modules'
         

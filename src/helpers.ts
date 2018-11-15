@@ -150,7 +150,7 @@ export namespace HelpersBackend {
       } else if (typeof response === 'object') {
         try {
           if (typeof response.send === 'function') {
-            const result = response.send(req, res) as any
+            const result = (response as any).send(req, res) as any
             resolve(result)
           } else {
             resolve(response.send as any)
@@ -188,12 +188,14 @@ export namespace HelpersBackend {
   }
 
   export function tryCopyFrom(source, destination) {
+    // console.log(`Trying to copy from hahah: ${source} to ${destination}`)
     try {
       fse.copySync(source, destination, {
-        overwrite: true
+        overwrite: true,
+        recursive: true
       })
     } catch (e) {
-      console.log(`Trying to copy from: ${source} to ${destination}`)
+      console.log(e)
       sleep(1);
       tryCopyFrom(source, destination)
     }
@@ -260,6 +262,32 @@ export namespace HelpersBackend {
 
   export function isPlainFileOrFolder(filePath) {
     return /^([a-zA-Z]|\-|\_|\@|\#|\$|\!|\^|\&|\*|\(|\))+$/.test(filePath);
+  }
+
+  export function log(proc: child.ChildProcess) {
+    // processes.push(proc);
+
+
+    // let stdio = [0,1,2]
+    proc.stdout.on('data', (data) => {
+      process.stdout.write(data)
+      // console.log(data.toString());
+    })
+
+    proc.stdout.on('error', (data) => {
+      process.stdout.write(JSON.stringify(data))
+      // console.log(data);
+    })
+
+    proc.stderr.on('data', (data) => {
+      process.stderr.write(data);
+      // console.log(data.toString());
+    })
+
+    proc.stderr.on('error', (data) => {
+      process.stderr.write(JSON.stringify(data))
+      // console.log(data);
+    })
   }
 
   export function createLink(target: string, link: string) {
