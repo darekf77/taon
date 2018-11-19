@@ -4,6 +4,7 @@ import * as fse from 'fs-extra';
 import * as rimraf from 'rimraf';
 import * as path from 'path';
 import * as glob from 'glob';
+import * as _ from 'lodash';
 import { IncrementalCompilation } from './incremental-compilation';
 import { OutFolder } from './models';
 import { HelpersBackend } from '../helpers';
@@ -16,8 +17,13 @@ import { config } from './config';
 
 export class BackendCompilation extends IncrementalCompilation {
 
-  tscCompilation(cwd: string, watch = false, outDir?: string, generateDeclarations = false, tsExe = 'tsc') {
+  public isEnableCompilation = true;
 
+  tscCompilation(cwd: string, watch = false, outDir?: string, generateDeclarations = false, tsExe = 'tsc') {
+    if (!this.isEnableCompilation) {
+      console.log(`Compilation disabled for ${_.startCase(BackendCompilation.name)}`)
+      return;
+    }
     const params = [
       watch ? '-w' : '',
       outDir ? `--outDir ${outDir}` : '',

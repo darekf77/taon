@@ -9,59 +9,67 @@ import { HelpersBackend } from '../helpers';
 
 export class IncrementalBuildProcess {
 
-    protected backendCompilation: BackendCompilation;
-    protected browserCompilations: BroswerCompilation[];
+  protected backendCompilation: BackendCompilation;
+  protected browserCompilations: BroswerCompilation[];
+  protected compileOnce = false;
+
+  constructor(outFolder: OutFolder = 'dist', relativeLocationToCwd = 'src', cwd = process.cwd()) {
+
+    this.backendCompilation = new BackendCompilation(outFolder, relativeLocationToCwd, cwd)
+
+    let browserOutFolder = config.folder.browser;
+
+    const browser = new BroswerCompilation(
+      `tmp-src-${outFolder}-${browserOutFolder}`,
+      browserOutFolder as any,
+      relativeLocationToCwd,
+      cwd);
+    this.browserCompilations = [browser]
+  }
 
 
 
-    constructor(outFolder: OutFolder = 'dist', relativeLocationToCwd = 'src', cwd = process.cwd()) {
+  protected browserTaksName(taskName: string, bc: BroswerCompilation) {
+    return `browser ${taskName} in ${path.basename(bc.compilationFolderPath)}`
+  }
 
-        this.backendCompilation = new BackendCompilation(outFolder, relativeLocationToCwd, cwd)
+  protected backendTaskName(taskName) {
+    return `${taskName} in ${path.basename(this.backendCompilation.compilationFolderPath)}`
+  }
 
-        let browserOutFolder = config.folder.browser;
-
-        const browser = new BroswerCompilation(
-            `tmp-src-${outFolder}-${browserOutFolder}`,
-            browserOutFolder as any,
-            relativeLocationToCwd,
-            cwd);
-        this.browserCompilations = [browser]
+  start(taskName?: string) {
+    if (!this.compileOnce) {
+      this.compileOnce = true;
     }
+    this.backendCompilation.init(this.backendTaskName(taskName))
+    this.browserCompilations.forEach(bc => {
+      bc.init(this.browserTaksName(taskName, bc), () => {
+        HelpersBackend.tryCopyFrom(
+          path.join(bc.cwd, bc.outFolder),
+          path.join(bc.cwd, this.backendCompilation.outFolder, bc.outFolder)
+        )
+      })
 
+    })
+  }
 
-
-    protected browserTaksName(taskName: string, bc: BroswerCompilation) {
-        return `browser ${taskName} in ${path.basename(bc.compilationFolderPath)}`
+  startAndWatch(taskName?: string) {
+    if(this.compileOnce) {
+      console.log('Watch compilation single run')
+      this.start(taskName);
+      process.exit(0)
+      return
     }
-
-    protected backendTaskName(taskName) {
-        return `${taskName} in ${path.basename(this.backendCompilation.compilationFolderPath)}`
-    }
-
-    start(taskName?: string) {
-        this.backendCompilation.init(this.backendTaskName(taskName))
-        this.browserCompilations.forEach(bc => {
-            bc.init(this.browserTaksName(taskName, bc), () => {
-                HelpersBackend.tryCopyFrom(
-                    path.join(bc.cwd, bc.outFolder),
-                    path.join(bc.cwd, this.backendCompilation.outFolder, bc.outFolder)
-                )
-            })
-
-        })
-    }
-
-    startAndWatch(taskName?: string) {
-        this.backendCompilation.initAndWatch(this.backendTaskName(taskName))
-        this.browserCompilations.forEach(bc => {
-            bc.initAndWatch(this.browserTaksName(taskName, bc), () => {
-                HelpersBackend.tryCopyFrom(
-                    path.join(bc.cwd, bc.outFolder),
-                    path.join(bc.cwd, this.backendCompilation.outFolder, bc.outFolder)
-                )
-            })
-        })
-    }
+    this.backendCompilation.initAndWatch(this.backendTaskName(taskName))
+    this.browserCompilations.forEach(bc => {
+      bc.initAndWatch(this.browserTaksName(taskName, bc), () => {
+        HelpersBackend.tryCopyFrom(
+          path.join(bc.cwd, bc.outFolder),
+          path.join(bc.cwd, this.backendCompilation.outFolder, bc.outFolder)
+        )
+      })
+    })
+  }
 
 }
 
