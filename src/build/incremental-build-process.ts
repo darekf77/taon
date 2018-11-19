@@ -9,8 +9,8 @@ import { HelpersBackend } from '../helpers';
 
 export class IncrementalBuildProcess {
 
-    readonly backendCompilation: BackendCompilation;
-    readonly browserCompilations: BroswerCompilation[];
+    protected backendCompilation: BackendCompilation;
+    protected browserCompilations: BroswerCompilation[];
 
 
 
