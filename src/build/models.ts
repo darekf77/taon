@@ -1,4 +1,4 @@
-
+//#region @backend
 export type OutFolder = 'dist' | 'bundle' | 'browser'
 
 export type TsUsage = 'import' | 'export';
@@ -11,3 +11,4 @@ export interface ReplaceOptions {
 }
 
 
+//#endregion

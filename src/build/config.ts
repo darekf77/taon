@@ -1,16 +1,17 @@
 
-
+//#region @backend
 export const config = {
     folder: {
         bundle: 'bundle',
-        
+
         vendor: 'vendor',
         dist: 'dist',
         src: 'src',
-        
-        browser: 'browser',       
-        
+
+        browser: 'browser',
+
         node_modules: 'node_modules'
-        
+
     }
 }
+//#endregion
