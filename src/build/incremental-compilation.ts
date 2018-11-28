@@ -17,7 +17,7 @@ export abstract class IncrementalCompilation {
   public compilationFolderPath: string;
   protected filesAndFoldesRelativePathes: string[] = []
 
-  private readonly watchDir: string;
+  protected readonly watchDir: string;
 
   protected abstract syncAction(filesPathes: string[]): void;;
   protected abstract preAsyncAction(): void;
