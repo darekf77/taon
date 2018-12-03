@@ -74,8 +74,8 @@ export class BroswerCompilation extends BackendCompilation {
   prepareFiles() {
 
     // recreate dirst
-    // const outDistPath = path.join(this.cwd, this.outFolder);
-    // HelpersBackend.tryRemoveDir(outDistPath)
+    const outDistPath = path.join(this.cwd, this.backendOutFolder, this.outFolder);
+    HelpersBackend.tryRemoveDir(outDistPath)
     // fse.mkdirpSync(outDistPath);
 
     // tsconfig.browser.json
