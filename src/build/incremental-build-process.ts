@@ -1,10 +1,12 @@
 //#region @backend
 import * as path from 'path'
+import * as child from 'child_process';
 
-import { BackendCompilation, BroswerCompilation } from './compilations';
 import { OutFolder } from './models';
 import { config } from './config';
 import { HelpersBackend } from '../helpers';
+import { BroswerCompilation } from './compilation-browser';
+import { BackendCompilation } from './compilation-backend';
 
 
 export class IncrementalBuildProcess {
@@ -23,7 +25,8 @@ export class IncrementalBuildProcess {
       `tmp-src-${outFolder}-${browserOutFolder}`,
       browserOutFolder as any,
       relativeLocationToCwd,
-      cwd);
+      cwd,
+      outFolder);
     this.browserCompilations = [browser]
   }
 
@@ -37,6 +40,13 @@ export class IncrementalBuildProcess {
     return `${taskName} in ${path.basename(this.backendCompilation.compilationFolderPath)}`
   }
 
+  private recreateBrowserLinks(bc: BroswerCompilation) {
+    const outDistPath = path.join(bc.cwd, bc.outFolder);
+    HelpersBackend.tryRemoveDir(outDistPath)
+    const targetOut = path.join(bc.cwd, bc.backendOutFolder, bc.outFolder)
+    child.execSync(HelpersBackend.createLink(outDistPath, targetOut))
+  }
+
   start(taskName?: string) {
     if (!this.compileOnce) {
       this.compileOnce = true;
@@ -44,17 +54,14 @@ export class IncrementalBuildProcess {
     this.backendCompilation.init(this.backendTaskName(taskName))
     this.browserCompilations.forEach(bc => {
       bc.init(this.browserTaksName(taskName, bc), () => {
-        HelpersBackend.tryCopyFrom(
-          path.join(bc.cwd, bc.outFolder),
-          path.join(bc.cwd, this.backendCompilation.outFolder, bc.outFolder)
-        )
+        this.recreateBrowserLinks(bc)
       })
 
     })
   }
 
   startAndWatch(taskName?: string) {
-    if(this.compileOnce) {
+    if (this.compileOnce) {
       console.log('Watch compilation single run')
       this.start(taskName);
       process.exit(0)
@@ -63,10 +70,7 @@ export class IncrementalBuildProcess {
     this.backendCompilation.initAndWatch(this.backendTaskName(taskName))
     this.browserCompilations.forEach(bc => {
       bc.initAndWatch(this.browserTaksName(taskName, bc), () => {
-        HelpersBackend.tryCopyFrom(
-          path.join(bc.cwd, bc.outFolder),
-          path.join(bc.cwd, this.backendCompilation.outFolder, bc.outFolder)
-        )
+        this.recreateBrowserLinks(bc)
       })
     })
   }
