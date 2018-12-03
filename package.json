@@ -11,7 +11,7 @@
     "type": "isomorphic-lib"
   },
   "name": "morphi",
-  "version": "1.0.67",
+  "version": "1.0.68",
   "description": "Isomorphic solution for expressjs and angular5",
   "main": "index.js",
   "scripts": {
