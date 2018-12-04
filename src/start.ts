@@ -3,6 +3,8 @@ import * as _ from "lodash";
 import * as express from "express";
 import "reflect-metadata";
 
+declare const ENV: any;
+
 // import { init, getSingleton, isRealtimeEndpoint } from 'morphi';
 import { createConnections, useContainer, ConnectionOptions, Connection } from 'typeorm';
 export { Connection } from 'typeorm';
