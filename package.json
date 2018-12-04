@@ -8,7 +8,16 @@
       "logo.png",
       "files.png"
     ],
-    "type": "isomorphic-lib"
+    "type": "isomorphic-lib",
+    "overrided": {
+      "ignoreWhenStartWith": [
+        "@angular"
+      ],
+      "dependencies": {
+        "@ngx-formly/core": "*",
+        "rxjs": "*"
+      }
+    }
   },
   "name": "morphi",
   "version": "1.0.69",
@@ -35,55 +44,5 @@
   "bugs": {
     "url": "https://github.com/darekf77/morphi/issues"
   },
-  "homepage": "https://github.com/darekf77/morphi#readme",
-  "dependencies": {
-    "@ngx-formly/core": "*",
-    "@types/chokidar": "^1.7.5",
-    "@types/express-fileupload": "^0.1.1",
-    "@types/fs-extra": "^5.0.4",
-    "@types/glob": "^5.0.35",
-    "@types/lodash": "^4.14.85",
-    "@types/node": "^10.12.7",
-    "@types/rimraf": "^2.0.2",
-    "@types/socket.io": "^1.4.31",
-    "accepts": "^1.3.4",
-    "body-parser": "^1.18.2",
-    "chalk": "^2.3.2",
-    "check-node-version": "^3.2.0",
-    "chokidar": "^2.0.4",
-    "circular-json": "^0.5.1",
-    "command-exists": "^1.2.2",
-    "cookie-parser": "^1.4.3",
-    "cors": "^2.8.4",
-    "cpr": "^3.0.1",
-    "dateformat": "^3.0.3",
-    "errorhandler": "^1.5.0",
-    "express-fileupload": "^0.4.0",
-    "fs-extra": "^5.0.0",
-    "glob": "^7.1.2",
-    "json5": "^0.5.1",
-    "lodash": "^4.17.4",
-    "method-override": "^2.3.10",
-    "ng2-logger": "^2.0.35",
-    "ng2-rest": "9.1.13",
-    "ps-node": "^0.1.6",
-    "reflect-metadata": "^0.1.10",
-    "rimraf": "^2.6.2",
-    "rxjs": "^5.5.2",
-    "sleep": "^5.2.3",
-    "socket.io": "^2.0.4",
-    "tslib": "^1.8.1",
-    "typeorm": "^0.2.7"
-  },
-  "devDependencies": {
-    "@ngtools/webpack": "^1.9.3",
-    "@types/chai": "^4.1.7",
-    "@types/mocha": "^5.2.5",
-    "@types/socket.io-client": "^1.4.32",
-    "chai": "^4.2.0",
-    "mocha": "^5.2.0",
-    "ts-node": "^7.0.1",
-    "typescript": "2.6.2",
-    "webpack": "3.10.0"
-  }
+  "homepage": "https://github.com/darekf77/morphi#readme"
 }
