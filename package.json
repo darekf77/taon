@@ -15,7 +15,7 @@
       ],
       "dependencies": {
         "@ngx-formly/core": "*",
-        "rxjs": "*"
+        "rxjs": "^5.5.6"
       }
     }
   },
