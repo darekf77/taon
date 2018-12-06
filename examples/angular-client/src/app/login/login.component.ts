@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthController } from 'isomorphic-lib/browser/controllers/AuthController';
 
-import { Log } from "ng2-logger";
-const log = Log.create('Login component')
+import { Log } from 'ng2-logger';
+const log = Log.create('Login component');
 
 @Component({
   selector: 'app-login',
@@ -13,29 +13,29 @@ export class LoginComponent implements OnInit {
 
   constructor(private auth: AuthController) {
     this.auth.isLoggedIn.subscribe(d => {
-      log.i('data from auth observable !', d)
-    })
+      log.i('data from auth observable !', d);
+    });
   }
 
   model = {
-    username: '',
-    password: ''
-  }
-
-  login(data) {
-    this.auth.browser.login(data)
-  }
-
-  async info() {
-    console.log(await this.auth.info().received)
-  }
-
-  logout() {
-    this.auth.browser.logout()
-  }
+    username: 'admin',
+    password: 'admin'
+  };
 
   observable = {
     isLoggedIn: this.auth.isLoggedIn
+  };
+
+  login(data) {
+    this.auth.browser.login(data);
+  }
+
+  async info() {
+    console.log(await this.auth.info().received);
+  }
+
+  logout() {
+    this.auth.browser.logout();
   }
 
 

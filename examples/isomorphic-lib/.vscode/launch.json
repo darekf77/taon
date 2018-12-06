@@ -11,6 +11,7 @@
       "type": "node",
       "request": "launch",
       "remoteRoot": "${workspaceRoot}/dist",
+      "localRoot": "${workspaceRoot}/dist",
       "name": "Lanuch nodemon debugger",
       "runtimeExecutable": "npm-run",
       "runtimeArgs": [

@@ -3,8 +3,10 @@ import { PrimaryGeneratedColumn  } from "typeorm/decorator/columns/PrimaryGenera
 import { Entity } from "typeorm/decorator/entity/Entity";
 // local
 import { TestUser } from "./User";
+import { CLASSNAME } from 'morphi';
 
 @Entity(Author.name)
+@CLASSNAME('Author')
 export class Author {
     @PrimaryGeneratedColumn()
     id: number;
@@ -16,5 +18,3 @@ export class Author {
 
     friends: TestUser[];
 }
-
-export default Author;

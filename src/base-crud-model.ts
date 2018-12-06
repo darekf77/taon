@@ -34,14 +34,6 @@ export abstract class BaseCRUD<T>  {
 
   public entity: T;
 
-  public __model = {
-    getAll: () => this.getAll(),
-    getOneBy: (id: number) => this.getBy(id),
-    deleteById: (id: number) => this.deleteById(id),
-    updateById: (id: number, item: T) => this.updateById(id, item),
-    create: (item: T) => this.create(item)
-  }
-
   constructor() {
     this.init()
   }

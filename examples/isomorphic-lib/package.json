@@ -10,6 +10,7 @@
     ]
   },
   "scripts": {
-    "build:watch": "npm-run watch \"morphi build\" src"
+    "build:watch": "npm-run morphi build:watch",
+    "build": "npm-run morphi build"
   }
 }

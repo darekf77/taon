@@ -4,8 +4,10 @@ import { Entity } from "typeorm/decorator/entity/Entity";
 
 import { Author } from "./Author";
 import { Book } from "./Book";
+import { CLASSNAME } from 'morphi';
 
 @Entity(TestUser.name)
+@CLASSNAME('TestUser')
 export class TestUser {
     @PrimaryGeneratedColumn()
     id: number;
@@ -24,5 +26,3 @@ export class TestUser {
         return 'is amazing person'
     }
 }
-
-export default TestUser;

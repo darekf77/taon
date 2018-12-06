@@ -14,7 +14,7 @@ export class AppMainPageComponent implements OnInit {
   constructor(private modalService: BsModalService, public auth: AuthController) { }
 
   openModal(template: TemplateRef<any>) {
-    console.log('open!!!')
+    console.log('open!!!');
     this.modalRef = this.modalService.show(template);
   }
 
@@ -25,9 +25,9 @@ export class AppMainPageComponent implements OnInit {
   ngOnInit(): void {
     this.auth.isLoggedIn.subscribe(d => {
       if (this.modalRef) {
-        this.modalRef.hide()
+        this.modalRef.hide();
       }
-    })
+    });
   }
 
 }

@@ -1,10 +1,10 @@
-const controllers = {};
-const entities = {};
+const controllers = [];
+const entities = [];
 function addController(controller: Function) {
-    controllers[controller.name] = controller;
+  controllers.push(controller);
 }
 function addEntity(entity: Function) {
-    entities[entity.name] = entity;
+  entities.push(entity);
 }
 
 import { UsersController } from './controllers/examples/UsersController';
@@ -30,6 +30,10 @@ addController(ChildClass);
 import { ChildClass2 } from './controllers/examples/Child2Controller';
 export { ChildClass2 } from './controllers/examples/Child2Controller';
 addController(ChildClass2);
+
+import { ChildBaseCRUD } from './controllers/examples/ChildBaseCRUD';
+export { ChildBaseCRUD } from './controllers/examples/ChildBaseCRUD';
+addController(ChildBaseCRUD);
 
 import { AuthController } from './controllers/AuthController';
 export { AuthController } from './controllers/AuthController';

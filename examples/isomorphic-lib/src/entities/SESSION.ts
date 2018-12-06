@@ -20,7 +20,7 @@ import { verify, generate } from "password-hash";
 
 // local
 import { Log, Level } from "ng2-logger";
-import { Resource } from "ng2-rest";
+import { Resource, CLASSNAME } from "ng2-rest";
 const log = Log.create(__filename);
 
 import { USER } from './USER';
@@ -29,6 +29,7 @@ import { __ } from '../helpers';
 
 
 @Entity(__(SESSION))
+@CLASSNAME('SESSION')
 export class SESSION {
 
     private static get const() {
@@ -168,5 +169,3 @@ export class SESSION {
 
 }
 
-
-export default SESSION;

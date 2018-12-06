@@ -1,4 +1,4 @@
-import { RouterModule, Route, PreloadAllModules } from "@angular/router";
+import { RouterModule, Route, PreloadAllModules } from '@angular/router';
 
 export const routes: Route[] = [
   {

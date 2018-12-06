@@ -31,5 +31,5 @@
     120
   ],
   "tslint.autoFixOnSave": true,
-  "tslint.enable": true
+  "tslint.enable": false
 }

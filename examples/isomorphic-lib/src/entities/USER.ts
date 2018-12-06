@@ -20,6 +20,7 @@ import { SESSION } from "./SESSION";
 import { EMAIL } from "./EMAIL";
 import { EMAIL_TYPE_NAME } from "./EMAIL_TYPE";
 import { __ } from '../helpers';
+import { CLASSNAME } from 'morphi';
 
 export interface IUSER {
     email?: string;
@@ -32,6 +33,7 @@ export interface IUSER {
 
 
 @Entity(__(USER))
+@CLASSNAME('USER')
 export class USER implements IUSER {
 
     @PrimaryGeneratedColumn()
@@ -46,10 +48,9 @@ export class USER implements IUSER {
     @Column({ nullable: true }) email?: string;
 
     @OneToMany(type => EMAIL, email => email.user, {
-        cascadeUpdate: false,
-        cascadeInsert: false
+        cascade: false
     })
-    emails: EMAIL[] = [];
+    emails: EMAIL[];
 
     public static async byUsername(username: string, repo: Repository<USER>) {
         //#region @backendFunc
@@ -76,5 +77,3 @@ export class USER implements IUSER {
     }
 }
 
-
-export default USER;

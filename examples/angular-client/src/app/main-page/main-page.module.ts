@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AppMainPageComponent } from './main-page.component';
 import { FormsModule } from '@angular/forms';
-import { AccordionModule, ModalModule } from "ngx-bootstrap";
+import { AccordionModule, ModalModule } from 'ngx-bootstrap';
 
 import { Routes, RouterModule } from '@angular/router';
 import { LoginComponent } from '../login/login.component';

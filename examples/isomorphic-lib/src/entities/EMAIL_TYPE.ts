@@ -18,11 +18,13 @@ import { Entity } from "typeorm/decorator/entity/Entity";
 
 import { EMAIL } from "./EMAIL";
 import { __ } from '../helpers';
+import { CLASSNAME } from 'morphi';
 
 export type EMAIL_TYPE_NAME = 'normal_auth' | 'facebook' | 'google_plus' | 'twitter';
 
 
 @Entity(__(EMAIL_TYPE))
+@CLASSNAME('EMAIL_TYPE')
 export class EMAIL_TYPE {
 
     private constructor() {
@@ -38,10 +40,9 @@ export class EMAIL_TYPE {
 
 
     @ManyToMany(type => EMAIL, email => email.types, {
-        cascadeInsert: false,
-        cascadeUpdate: false
+        cascade: false
     })
-    emails: EMAIL[] = [];
+    emails: EMAIL[];
 
     public static async getBy(name: EMAIL_TYPE_NAME, repo: Repository<EMAIL_TYPE>) {
         //#region @backendFunc
@@ -74,5 +75,3 @@ export class EMAIL_TYPE {
     }
 
 }
-
-export default EMAIL_TYPE;
