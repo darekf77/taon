@@ -20,7 +20,7 @@
     }
   },
   "name": "morphi",
-  "version": "1.0.76",
+  "version": "1.0.77",
   "description": "Isomorphic solution for expressjs and angular5",
   "main": "index.js",
   "scripts": {
