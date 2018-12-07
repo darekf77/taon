@@ -15,7 +15,7 @@ import { ChildClass } from './Child1Controller';
 export class ChildClass2 extends ChildClass {
 
   @GET('/saySomething')
-  saySomething2(): Response<any> {
+  get(): Response<any> {
     //#region @backendFunc
     const base = super.get();
     return async (req, res) => {

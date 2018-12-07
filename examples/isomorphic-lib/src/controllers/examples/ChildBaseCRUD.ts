@@ -4,7 +4,7 @@ import {
   ENDPOINT, GET, POST, PUT, DELETE, isNode,
   PathParam, QueryParam, CookieParam, HeaderParam, BodyParam,
   Response, BaseCRUDEntity, OrmConnection, CLASSNAME,
-  SYMBOL, ModelDataConfig
+  SYMBOL, ModelDataConfig, HelpersBackend
 } from 'morphi';
 
 import { Connection } from "typeorm/connection/Connection";
@@ -43,11 +43,14 @@ export class ChildBaseCRUD extends TestController {
   getAll(@QueryParam('config') config?: ModelDataConfig) {
     //#region @backendFunc
     console.log('here')
-    return async () => {
+    return async (req, res) => {
+      const s = super.getAll(config)
+      const books = await HelpersBackend.getResponseValue(s, req, res)
       const build = new Book();
+      build.title = 'overirded!'
       return [
         build
-      ] as any;
+      ].concat(books as any) as any
     }
     //#endregion
   }
