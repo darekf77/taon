@@ -37,19 +37,22 @@ export class ChildBaseCRUD extends TestController {
     book2.title = 'overririiriri1'
     this.repository.save([book1, book2] as any)
   }
+  //#endregion
 
   @GET(`/${SYMBOL.CRUD_TABLE_MODEL}`)
-  getAll(config?: ModelDataConfig) {
+  getAll(@QueryParam('config') config?: ModelDataConfig) {
+    //#region @backendFunc
     console.log('here')
     return async () => {
       const build = new Book();
-      return [{
+      return [
         build
-      }] as any;
+      ] as any;
     }
+    //#endregion
   }
 
 
 
-  //#endregion
+
 }

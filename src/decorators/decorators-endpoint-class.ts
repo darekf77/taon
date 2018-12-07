@@ -118,7 +118,14 @@ export function ENDPOINT(options?: {
         const checkAuthFn = (auth && typeof auth === 'function');
 
         _.slice(configs, 1).forEach(bc => {
-          _.merge(classConfig.methods, _.cloneDeep(bc.methods))
+          const alreadyIs = classConfig.methods;
+          const toMerge = _.cloneDeep(bc.methods)
+          for (const key in toMerge) {
+            if (toMerge.hasOwnProperty(key) && !alreadyIs[key]) {
+              const element = toMerge[key];
+              alreadyIs[key] = element;
+            }
+          }
         })
 
         //#endregion
