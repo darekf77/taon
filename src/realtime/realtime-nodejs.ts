@@ -40,15 +40,15 @@ export class RealtimeNodejs {
     Global.vars.socketNamespace.BE_REALTIME = nspRealtime;
 
     nspRealtime.on('connection', (clientSocket) => {
-      console.log('client conected to namespace', clientSocket.nsp.name)
+      // console.log('client conected to namespace', clientSocket.nsp.name)
 
       clientSocket.on(SYMBOL.REALTIME.ROOM.SUBSCRIBE_ENTITY_EVENTS, room => {
-        console.log(`Joining room ${room} in namespace ${nspRealtime.name} `)
+        // console.log(`Joining room ${room} in namespace ${nspRealtime.name} `)
         clientSocket.join(room);
       })
 
       clientSocket.on(SYMBOL.REALTIME.ROOM.UNSUBSCRIBE_ENTITY_EVENTS, room => {
-        console.log(`Leaving room ${room} in namespace ${nspRealtime.name} `)
+        // console.log(`Leaving room ${room} in namespace ${nspRealtime.name} `)
         clientSocket.leave(room);
       })
 
