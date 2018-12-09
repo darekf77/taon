@@ -9,11 +9,10 @@ import {
 
 
 @ENDPOINT()
-@CLASSNAME('TestController')
 class TestController {
 
 
-  @GET('/hello')
+  @GET()
   hello(): Response<string> {
     //#region @backendFunc
     return async () => {
@@ -31,39 +30,35 @@ const controllers = [TestController];
 (async () => {
 
   //#region @backend
-  if (isNode) {
-    const connection = await createConnection({
-      type: "sqlite",
-      database: 'tmp-db.sqlite',
-      synchronize: true,
-      dropSchema: true,
-      logging: false
-    })
-
-    init({
-      host,
-      controllers
-    }).expressApp(connection)
-  }
+  const connection= await createConnection({
+    type: "sqlite",
+    database: 'tmp-db.sqlite',
+    synchronize: true,
+    dropSchema: true,
+    logging: false
+  }) as any;
   //#endregion
+
+  init({
+    host,
+    controllers,
+    //#region @backend
+    connection
+    //#endregion
+  })
 
   if (isBrowser) {
 
-    init({
-      host,
-      controllers
-    }).angularProviders()
-
     const body: HTMLElement = document.getElementsByTagName('body')[0];
-
-
     let test = new TestController()
     test.hello().received.observable.subscribe(dataFromBackend => {
-      body.innerHTML = `<h1>${dataFromBackend.body.text.replace(/\"/g, '')}</h1>`;
+      body.innerHTML = `<h1>${dataFromBackend.body.text}</h1>`;
     });
 
-  }
+    const helloData = await test.hello().received
+    console.log('Realtime hsould not be inited', helloData.body.text)
 
+  }
 
 })()
 

@@ -161,13 +161,19 @@ export function init(config: {
   allowedHosts?: string[],
   controllers?: Function[], entities?: Function[]
   productionMode?: Boolean;
+  //#region @backend
+  connection?: Connection
+  //#endregion
 }) {
   const {
     ngZone,
     controllers = [],
     entities = [],
     productionMode = false,
-    allowedHosts = []
+    allowedHosts = [],
+    //#region @backend
+    connection
+    //#endregion
   } = config;
 
   if (isBrowser && _.isUndefined(ngZone) && !!window['ng']) {
@@ -177,10 +183,6 @@ export function init(config: {
 
   Global.vars.entities = config.entities;
   Global.vars.controllers = config.controllers;
-
-  if (!_.isString(config.hostSocket)) {
-    config.hostSocket = config.host;
-  }
 
   Global.vars.__core_controllers.forEach(bctrl => controllers.push(bctrl));
   config.controllers = _.sortedUniq(controllers);
@@ -200,7 +202,10 @@ export function init(config: {
   //   searchParams: URLSearchParams {},
   //   hash: '' }
 
-
+  if (config.hostSocket) {
+    const uriSocket = new URL(config.hostSocket);
+    Global.vars.urlSocket = uriSocket;
+  }
 
   //#region @backend
   if (isNode) {
@@ -210,8 +215,7 @@ export function init(config: {
     }
     const { URL } = require('url');
     const uri = new URL(config.host);
-    const uriSocket = new URL(config.hostSocket);
-    Global.vars.urlSocket = uriSocket;
+
     // console.log('backend URI', uri);
     Global.vars.url = uri;
 
@@ -221,7 +225,9 @@ export function init(config: {
     //   Global.vars.app.set('base', uri.pathname)
     // }
     const h = new http.Server(Global.vars.app); //TODO is this working ?
-    Realtime.nodejs.init(h)
+    if (config.hostSocket) {
+      Realtime.nodejs.init(h)
+    }
 
     h.listen(uri.port, function () {
       console.log(`Server listening on port: ${uri.port}, hostname: ${uri.pathname},
@@ -230,81 +236,80 @@ export function init(config: {
     });
   }
   //#endregion
+
   if (isBrowser) {
     const uri = new URL(config.host);
     Global.vars.url = uri;
-    const uriSocket = new URL(config.hostSocket);
-    Global.vars.urlSocket = uriSocket;
+
     if (Array.isArray(allowedHosts)) {
       Global.vars.allowedHosts = allowedHosts.map(h => new URL(h))
     }
-    Realtime.browser.init()
+    if (config.hostSocket) {
+      Realtime.browser.init()
+    }
+
   }
 
-  return {
-    expressApp: (connection: Connection) => {
-      //#region @backendFunc
 
-      Global.vars.connection = connection;
+  //#region @backend
+  if (isNode) {
+    Global.vars.connection = connection;
 
-      Global.vars.initFunc.filter(e => {
-        const currentCtrl = controllers.find(ctrl => ctrl === e.target);
-        if (currentCtrl) {
-          e.initFN();
+    Global.vars.initFunc.filter(e => {
+      const currentCtrl = controllers.find(ctrl => ctrl === e.target);
+      if (currentCtrl) {
+        e.initFN();
 
-          (function (controller: Function) {
-            const configs = getClassConfig(currentCtrl);
-            const c: ClassConfig = configs[0];
-            for (let p in c.singleton) {
-              if (c.singleton.hasOwnProperty(p)) {
-                controller.prototype[p] = c.singleton[p];
-              }
+        (function (controller: Function) {
+          const configs = getClassConfig(currentCtrl);
+          const c: ClassConfig = configs[0];
+          for (let p in c.singleton) {
+            if (c.singleton.hasOwnProperty(p)) {
+              controller.prototype[p] = c.singleton[p];
             }
-            c.injections.forEach(inj => {
-              Object.defineProperty(controller.prototype, inj.propertyName, { get: inj.getter as any });
-            });
-            if (!(c.singleton instanceof controller)) {
-              const singleton = new (controller as any)();
-              const oldSingleton = c.singleton;
-              c.singleton = singleton;
-              Object.keys(oldSingleton).forEach(key => {
-                c.singleton[key] = oldSingleton[key];
-              })
-            }
-          })(currentCtrl);
-
-        }
-      });
-      return Global.vars.app;
-      //#endregion
-    },
-    angularProviders: () => {
-
-      const notFound: Function[] = [];
-      const providers = controllers.filter(ctrl => {
-
-        const e = Global.vars.initFunc.find(e => ctrl === e.target);
-        if (e) {
-          // console.log('current controller ', currentCtrl)
-          e.initFN();
-          return true;
-        } else {
-          const context: ContextENDPOINT = ctrl.prototype[SYMBOL.CLASS_DECORATOR_CONTEXT];
-          if (!context) {
-            notFound.push(ctrl);
-            return false;
-          } else {
-            context.initFN();
-            return true;
           }
+          c.injections.forEach(inj => {
+            Object.defineProperty(controller.prototype, inj.propertyName, { get: inj.getter as any });
+          });
+          if (!(c.singleton instanceof controller)) {
+            const singleton = new (controller as any)();
+            const oldSingleton = c.singleton;
+            c.singleton = singleton;
+            Object.keys(oldSingleton).forEach(key => {
+              c.singleton[key] = oldSingleton[key];
+            })
+          }
+        })(currentCtrl);
+
+      }
+    });
+  }
+  //#endregion
+
+  if (isBrowser) {
+    const notFound: Function[] = [];
+    const providers = controllers.filter(ctrl => {
+
+      const e = Global.vars.initFunc.find(e => ctrl === e.target);
+      if (e) {
+        // console.log('current controller ', currentCtrl)
+        e.initFN();
+        return true;
+      } else {
+        const context: ContextENDPOINT = ctrl.prototype[SYMBOL.CLASS_DECORATOR_CONTEXT];
+        if (!context) {
+          notFound.push(ctrl);
+          return false;
+        } else {
+          context.initFN();
+          return true;
         }
-      })
-      notFound.forEach(ctrl => {
-        throw `Decorator "@ENDPOINT(..)" is missing on class ${getClassName(ctrl)}`;
-      });
-      providers.forEach(p => AngularProviders.push(p))
-      return providers;
-    }
+      }
+    })
+    notFound.forEach(ctrl => {
+      throw `Decorator "@ENDPOINT(..)" is missing on class ${getClassName(ctrl)}`;
+    });
+    providers.forEach(p => AngularProviders.push(p))
   }
 }
 

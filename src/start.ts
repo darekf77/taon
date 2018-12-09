@@ -6,11 +6,12 @@ import "reflect-metadata";
 declare const ENV: any;
 
 // import { init, getSingleton, isRealtimeEndpoint } from 'morphi';
-import { createConnections, useContainer, ConnectionOptions, Connection } from 'typeorm';
+import { createConnection, useContainer, ConnectionOptions, Connection } from 'typeorm';
 export { Connection } from 'typeorm';
 import { META } from "./meta-info";
 import { isRealtimeEndpoint, init } from './decorators/decorators-endpoint-class';
 import { HelpersBackend, Helpers } from './helpers';
+import { Global } from './global-config';
 
 export interface IConnectionOptions {
   database: string;
@@ -36,17 +37,20 @@ export async function start(options: StartOptions) {
   config['entities'] = Entities as any;
   // config['subscribers'] = subscribers.concat(_.values(Controllers).filter(a => isRealtimeEndpoint(a as any)))
   //   .concat([META.BASE_CONTROLLER as any]) as any;
-  const connection = await createConnections([config] as any);
-  const firstConnection = connection[0];
+  const connection = await createConnection(config as any);
 
-  const app = init({
+
+  init({
     host,
     hostSocket,
     controllers: Controllers as any[],
-    entities: Entities as any[]
-  }).expressApp(firstConnection as any)
+    entities: Entities as any[],
+    connection
+  })
 
   const rootPathStaticFiles = ENV.pathes.backup.assets;
+
+  const app = Global.vars.app;
 
   app.use(publicFilesFolder, express.static(rootPathStaticFiles))
 
@@ -64,12 +68,6 @@ export async function start(options: StartOptions) {
     }
   });
   await Promise.all(promises);
-
-  return {
-    connection: firstConnection,
-    config,
-    entities: Entities
-  };
 }
 
 //#endregion

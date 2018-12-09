@@ -32,7 +32,7 @@ export class RealtimeNodejs {
 
     const nsp = Global.vars.socketNamespace.BE;
     nsp.on('connection', (clientSocket) => {
-      console.log('client conected to namespace', clientSocket.nsp.name)
+      // console.log('client conected to namespace', clientSocket.nsp.name)
     })
 
     const nspRealtime = nsp.of(SYMBOL.REALTIME.NAMESPACE);
