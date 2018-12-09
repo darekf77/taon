@@ -2,7 +2,7 @@
   "files.exclude": {
     "node_modules": true,
     "tmp*": true,
-    "dist*": true,
+    // "dist*": true,
     "bundle*": true,
     "browser": true,
     "browser*": true,

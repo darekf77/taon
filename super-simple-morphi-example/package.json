@@ -1,0 +1,35 @@
+{
+  "tnp": {
+    "type": "workspace"
+  },
+  "scripts": {
+    "start": "npm-run webpack-dev-server --port 9000 --inline --progress --profile --colors --watch --content-base tmp-src-dist-browser/  --mode development",
+    "build": "npm-run webpack --config webpack.config.js --mode production",
+    "build.prod": "npm-run webpack --config webpack.config.js -p",
+    "test": "npm-run karma start karma.config.js"
+  },
+  "name": "super-simple-morphi-example",
+  "dependencies": {
+    "@types/jasmine": "2.8.7",
+    "@types/node": "7.0.0",
+    "awesome-typescript-loader": "5.2.0",
+    "jasmine-core": "3.1.0",
+    "karma": "2.0.4",
+    "karma-jasmine": "1.1.2",
+    "karma-phantomjs-launcher": "1.0.4",
+    "karma-webpack": "3.0.0",
+    "source-map-loader": "0.2.3",
+    "tslint": "5.10.0",
+    "tslint-loader": "3.6.0",
+    "typescript": "2.8.3",
+    "webpack": "4.12.0",
+    "webpack-cli": "3.0.8",
+    "webpack-dev-server": "3.1.4",
+    "morphi": "^1.0.78"
+  },
+  "engines": {
+    "node": ">=9.2.0",
+    "npm": ">=5.6.0"
+  },
+  "license": "UNLICENSED"
+}
