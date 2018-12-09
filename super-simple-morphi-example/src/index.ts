@@ -1,13 +1,11 @@
 import {
   GET, CLASSNAME, isBrowser, isNode, init, ENDPOINT,
   Response,
+  //#region @backend
+  createConnection,
+  //#endregion
   AngularProviders
 } from 'morphi'
-//#region @backend
-import { createConnection } from 'typeorm'
-//#endregion
-
-const host = 'http://localhost:3000'
 
 
 @ENDPOINT()
@@ -15,16 +13,19 @@ const host = 'http://localhost:3000'
 class TestController {
 
 
-  @GET()
+  @GET('/hello')
   hello(): Response<string> {
     //#region @backendFunc
     return async () => {
-      return 'this is amazing haha !'
+      return 'this is cool haha !'
     }
     //#endregion
   }
 
 }
+
+const host = 'http://localhost:3000'
+const controllers = [TestController];
 
 
 (async () => {
@@ -41,7 +42,7 @@ class TestController {
 
     init({
       host,
-      controllers: [TestController]
+      controllers
     }).expressApp(connection)
   }
   //#endregion
@@ -50,16 +51,15 @@ class TestController {
 
     init({
       host,
-      controllers: [TestController]
+      controllers
     }).angularProviders()
 
-    const appDiv: HTMLElement = document.getElementById('app');
+    const body: HTMLElement = document.getElementsByTagName('body')[0];
 
 
     let test = new TestController()
-    test.hello().received.observable.subscribe(hello => {
-      console.log('message from backend !', hello.body.text );
-      appDiv.innerHTML = hello.body.text;
+    test.hello().received.observable.subscribe(dataFromBackend => {
+      body.innerHTML = `<h1>${dataFromBackend.body.text.replace(/\"/g, '')}</h1>`;
     });
 
   }
