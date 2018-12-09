@@ -1,9 +1,9 @@
 
-import { SYMBOL } from "./symbols";
+import { SYMBOL } from "../symbols";
 import { FormlyFormOptions, FormlyFieldConfig } from '@ngx-formly/core';
 import * as _ from 'lodash';
 import { getModelsMapping, describeClassProperites } from 'ng2-rest';
-import { FormlyFromType } from './models';
+import { FormlyFromType } from '../models';
 
 
 function getFromlyConfigFor(target: Function, parentKeyPath?: string,

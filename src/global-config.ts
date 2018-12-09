@@ -6,6 +6,7 @@ import { Socket } from 'socket.io'
 import { Server, Namespace } from 'socket.io'
 import { Connection } from 'typeorm';
 import { Application } from "express";
+import { Morphi } from '.';
 
 //#endregion
 
@@ -55,6 +56,22 @@ export class Global {
     }
   }
   public expressPath: string;
+
+  private _isProductionModeAlreadySet = false;
+  private _isProductionMode = false;
+  public get isProductionMode() {
+    return this._isProductionMode;
+  }
+
+  public set isProductionMode(v: boolean) {
+    if (!this._isProductionModeAlreadySet) {
+      this._isProductionModeAlreadySet = true;
+    } else {
+      throw `[Morphi] production mode already set`
+    }
+    this._isProductionMode = v;
+  }
+
   public url: URL;
   public urlSocket: URL;
   public productionMode = false;

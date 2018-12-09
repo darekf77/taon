@@ -11,10 +11,7 @@ export type ContextENDPOINT = { target: Function; initFN: Function; };
 
 export type FormlyFromType = 'material' | 'bootstrap';
 
-export function getExpressPath(c: ClassConfig, pathOrClassConfig: MethodConfig | string) {
-  if (typeof pathOrClassConfig === 'string') return `${c.calculatedPath}${pathOrClassConfig}`.replace(/\/$/, '')
-  return `${c.calculatedPath}${pathOrClassConfig.path}`.replace(/\/$/, '')
-}
+
 
 
 

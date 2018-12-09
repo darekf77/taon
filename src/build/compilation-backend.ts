@@ -7,7 +7,7 @@ import * as glob from 'glob';
 import * as _ from 'lodash';
 import { IncrementalCompilation } from './incremental-compilation';
 import { OutFolder } from './models';
-import { HelpersBackend } from '../helpers';
+import { Helpers } from '../helpers';
 import { CodeCut } from './browser-code-cut';
 import { config } from './config';
 
@@ -31,9 +31,9 @@ export class BackendCompilation extends IncrementalCompilation {
     const commandDts = `${tsExe}  ${params.join(' ')}`
 
     if (watch) {
-      HelpersBackend.log(child.exec(commandJsAndMaps, { cwd }));
+      Helpers.log(child.exec(commandJsAndMaps, { cwd }));
       if (generateDeclarations) {
-        HelpersBackend.log(child.exec(commandDts, { cwd }));
+        Helpers.log(child.exec(commandDts, { cwd }));
       }
     } else {
       child.execSync(commandJsAndMaps, {
@@ -60,7 +60,7 @@ export class BackendCompilation extends IncrementalCompilation {
 
     // recreate dist
     const outDistPath = path.join(this.cwd, this.outFolder);
-    HelpersBackend.tryRemoveDir(outDistPath)
+    Helpers.tryRemoveDir(outDistPath)
     fse.mkdirpSync(outDistPath);
   }
 

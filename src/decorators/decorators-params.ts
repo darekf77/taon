@@ -15,31 +15,31 @@ function metaParam(param: ParamType, name: string, expire: number, defaultValue 
   p.expireInSeconds = expire;
 }
 
-export function PathParam(name: string) {
+export function Path(name: string) {
   return function (...args: any[]) {
     metaParam('Path', name, undefined, {}, ...args)
   };
 }
 
-export function QueryParam(name?: string) {
+export function Query(name?: string) {
   return function (...args: any[]) {
     metaParam('Query', name, undefined, {}, ...args)
   };
 }
 
-export function CookieParam(name: string, expireInSecond: number = 3600) {
+export function Cookie(name: string, expireInSecond: number = 3600) {
   return function (...args: any[]) {
     metaParam('Cookie', name, expireInSecond, {}, ...args)
   };
 }
 
-export function HeaderParam(name?: string) {
+export function Header(name?: string) {
   return function (...args: any[]) {
     metaParam('Header', name, undefined, {}, ...args)
   };
 }
 
-export function BodyParam(name?: string) {
+export function Body(name?: string) {
   return function (...args: any[]) {
     metaParam('Body', name, undefined, {}, ...args)
   };

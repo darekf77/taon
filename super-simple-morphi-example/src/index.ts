@@ -1,19 +1,11 @@
-import {
-  GET, CLASSNAME, isBrowser, isNode, init, ENDPOINT,
-  Response,
-  //#region @backend
-  createConnection,
-  //#endregion
-  AngularProviders
-} from 'morphi'
+import { Morphi } from 'morphi'
 
 
-@ENDPOINT()
-class TestController {
+@Morphi.Controller()
+class TestController{
 
-
-  @GET()
-  hello(): Response<string> {
+  @Morphi.Http.GET()
+  hello(): Morphi.Response<string> {
     //#region @backendFunc
     return async () => {
       return 'this is cool haha !'
@@ -24,30 +16,30 @@ class TestController {
 }
 
 const host = 'http://localhost:3000'
-const controllers = [TestController];
+const controllers: Morphi.Base.Controller<any>[] = [TestController as any];
 
 
 (async () => {
 
   //#region @backend
-  const connection= await createConnection({
+  const config = {
     type: "sqlite",
     database: 'tmp-db.sqlite',
     synchronize: true,
     dropSchema: true,
     logging: false
-  }) as any;
+  } as any;
   //#endregion
 
-  init({
+  Morphi.init({
     host,
     controllers,
     //#region @backend
-    connection
+    config
     //#endregion
   })
 
-  if (isBrowser) {
+  if (Morphi.IsBrowser) {
 
     const body: HTMLElement = document.getElementsByTagName('body')[0];
     let test = new TestController()

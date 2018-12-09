@@ -1,5 +1,4 @@
 import {
-  getExpressPath,
   ContextENDPOINT,
   //#region @backend
   AuthCallBack
@@ -12,8 +11,7 @@ import {
   getClassName,
   HttpMethod
 } from "ng2-rest";
-import { initMethodBrowser } from "../init-method-browser";
-import { initMethodNodejs, initMidleware } from "../init-method-node";
+import { initMethodBrowser, initMethodNodejs, initMidleware } from "../init-method";
 export { CLASSNAME } from 'ng2-rest';
 import { Connection } from "typeorm";
 import * as _ from "lodash";
@@ -132,7 +130,7 @@ export function ENDPOINT(options?: {
         Object.keys(classConfig.methods).forEach(methodName => {
           const methodConfig: MethodConfig = classConfig.methods[methodName];
           const type: HttpMethod = methodConfig.type;
-          const expressPath = getExpressPath(classConfig, methodConfig);
+          const expressPath = Helpers.getExpressPath(classConfig, methodConfig);
           // console.log('initfn expressPath', expressPath)
           if (isNode) {
             //#region @backend

@@ -20,7 +20,7 @@ import {
   Response, __Response, AsyncResponse,
   SyncResponse
 } from "./models";
-import { getClassConfig } from "ng2-rest";
+import { getClassConfig, ClassConfig, MethodConfig } from "ng2-rest";
 //#region @backend
 import { Response as ExpressResponse, Request as ExpressRequest } from "express";
 //#endregion
@@ -51,6 +51,11 @@ export namespace Helpers {
       }
     }
     return param;
+  }
+
+  export function getExpressPath(c: ClassConfig, pathOrClassConfig: MethodConfig | string) {
+    if (typeof pathOrClassConfig === 'string') return `${c.calculatedPath}${pathOrClassConfig}`.replace(/\/$/, '')
+    return `${c.calculatedPath}${pathOrClassConfig.path}`.replace(/\/$/, '')
   }
 
   export function defaultType(value) {
@@ -109,22 +114,11 @@ export namespace Helpers {
   }
 
 
-}
 
 
+  //#region @backend
 
 
-
-
-
-
-
-
-
-
-//#region @backend
-
-export namespace HelpersBackend {
 
 
   export function getResponseValue<T>(response: Response<T>, req: ExpressRequest, res: ExpressResponse): Promise<SyncResponse<T>> {
@@ -353,7 +347,17 @@ export namespace HelpersBackend {
     return files;
   }
 
+  //#endregion
+
+
+
 }
 
 
-//#endregion
+
+
+
+
+
+
+

@@ -1,0 +1,1 @@
+import { Morphi } from './index'

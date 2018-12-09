@@ -6,7 +6,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 const ps = require('ps-node');
 
-import { HelpersBackend as Helpers } from '../helpers';
+import {  Helpers } from '../helpers';
 import { copyExampleTo } from './new';
 import { IncrementalBuildProcess } from '../build/incremental-build-process';
 import { BrowserCodeCut } from '../build/browser-code-cut';

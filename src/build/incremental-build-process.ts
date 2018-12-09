@@ -4,7 +4,7 @@ import * as child from 'child_process';
 
 import { OutFolder } from './models';
 import { config } from './config';
-import { HelpersBackend } from '../helpers';
+import { Helpers } from '../helpers';
 import { BroswerCompilation } from './compilation-browser';
 import { BackendCompilation } from './compilation-backend';
 
@@ -42,9 +42,9 @@ export class IncrementalBuildProcess {
 
   private recreateBrowserLinks(bc: BroswerCompilation) {
     const outDistPath = path.join(bc.cwd, bc.outFolder);
-    HelpersBackend.tryRemoveDir(outDistPath)
+    Helpers.tryRemoveDir(outDistPath)
     const targetOut = path.join(bc.cwd, bc.backendOutFolder, bc.outFolder)
-    child.execSync(HelpersBackend.createLink(outDistPath, targetOut))
+    child.execSync(Helpers.createLink(outDistPath, targetOut))
   }
 
   start(taskName?: string) {

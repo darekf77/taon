@@ -1,6 +1,6 @@
 import {
   Response, Errors
-} from "./models";
+} from "../models";
 import {
   ClassConfig,
   MethodConfig,
@@ -11,13 +11,12 @@ import {
   encode
   //#endregion
 } from "ng2-rest";
-import { Helpers } from "./helpers";
-import { Global } from './global-config';
-import { Realtime } from './realtime';
-import { SYMBOL } from './symbols';
+import { Helpers } from "../helpers";
+import { Global } from '../global-config';
+import { Realtime } from '../realtime';
+import { SYMBOL } from '../symbols';
 
 //#region @backend
-import {  HelpersBackend } from "./helpers";
 import * as  cors from 'cors';
 import * as bodyParser from 'body-parser';
 import * as errorHandler from 'errorhandler';
@@ -149,7 +148,7 @@ export function initMethodNodejs(
       const response: Response<any> = methodConfig.descriptor.value.apply(classConfig.singleton, resolvedParams)
       // console.log('response.send', response.send)
 
-      const result = await HelpersBackend.getResponseValue(response, req, res);
+      const result = await Helpers.getResponseValue(response, req, res);
       // const result = typeof response.send === 'function' ? response.send.call(req, res) : response.send;
       const entity = decode(result, { productionMode });
       res.set(SYMBOL.MAPPING_CONFIG_HEADER, JSON.stringify(entity));

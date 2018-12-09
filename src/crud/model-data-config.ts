@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 // import { Subject } from 'rxjs/Subject'; // TODO use rxjs to detec change
 // import { Observable } from 'rxjs/Observable';
-import { Helpers } from './helpers';
+import { Helpers } from '../helpers';
 import { CLASSNAME, DefaultModelWithMapping } from 'ng2-rest';
 
 const MAX_DATA_LENGTH_SENT_TO_CLIENT = 10000;

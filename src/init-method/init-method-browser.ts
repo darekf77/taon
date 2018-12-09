@@ -2,8 +2,8 @@
 import {
   HttpMethod, MethodConfig, ParamConfig, Resource, decode
 } from "ng2-rest";
-import { Global } from './global-config';
-import { SYMBOL } from './symbols';
+import { Global } from '../global-config';
+import { SYMBOL } from '../symbols';
 import * as _ from 'lodash';
 
 

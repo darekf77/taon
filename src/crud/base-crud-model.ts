@@ -1,24 +1,21 @@
-import {
-  __ENDPOINT,
-  GET, PUT, POST, DELETE,
-  Response,
-  PathParam,
-  BodyParam,
-  QueryParam,
-  //#region @backend
-  OrmConnection,
-  getRepository,
-  META
-  //#endregion
-} from "./index";
 
 import * as _ from 'lodash';
 import { CLASSNAME, getClassFromObject } from 'ng2-rest';
-import { Repository, Connection } from "typeorm";
+
 import { Observable } from "rxjs/Observable";
 import { isNode } from 'ng2-logger';
-import { SYMBOL } from './symbols';
+import { SYMBOL } from '../symbols';
 import { ModelDataConfig } from './model-data-config';
+import { __ENDPOINT } from '../decorators/decorators-endpoint-class';
+import { GET, PUT, DELETE, POST } from '../decorators/decorators-methods';
+import { Query, Path, Body } from '../decorators/decorators-params';
+import { Response } from '../models';
+
+//#region @backend
+import { Repository, Connection, getRepository } from "typeorm";
+import { tableNameFrom } from '../framework/framework-helpers';
+import { OrmConnection } from '../decorators/decorators-endpoint-class';
+//#endregion
 
 @__ENDPOINT(BaseCRUD)
 @CLASSNAME('BaseCRUD')
@@ -48,7 +45,7 @@ export abstract class BaseCRUD<T>  {
   }
 
   @GET(`/${SYMBOL.CRUD_TABLE_MODEL}`)
-  getAll(@QueryParam() config?: ModelDataConfig): Response<T[]> {
+  getAll(@Query() config?: ModelDataConfig): Response<T[]> {
     //#region @backendFunc
     return async (request, response) => {
 
@@ -68,7 +65,7 @@ export abstract class BaseCRUD<T>  {
   }
 
   @GET(`/${SYMBOL.CRUD_TABLE_MODEL}/:id`)
-  getBy(@PathParam(`id`) id: number, @QueryParam() config?: ModelDataConfig): Response<T> {
+  getBy(@Path(`id`) id: number, @Query() config?: ModelDataConfig): Response<T> {
     //#region @backendFunc
     return async () => {
 
@@ -91,14 +88,14 @@ export abstract class BaseCRUD<T>  {
 
 
   @PUT(`/${SYMBOL.CRUD_TABLE_MODEL}/:id`)
-  updateById(@PathParam(`id`) id: number, @BodyParam() item: T, @QueryParam() config?: ModelDataConfig): Response<T> {
+  updateById(@Path(`id`) id: number, @Body() item: T, @Query() config?: ModelDataConfig): Response<T> {
     //#region @backendFunc
 
     return async () => {
 
       for (const key in item) {
         if (item.hasOwnProperty(key) && typeof item[key] !== 'object') {
-          await this.repo.query(`UPDATE "${META.tableNameFrom(this.entity as any)}" SET "${key}"="${item[key]}" WHERE "id"="${id}"`)
+          await this.repo.query(`UPDATE "${tableNameFrom(this.entity as any)}" SET "${key}"="${item[key]}" WHERE "id"="${id}"`)
         }
       }
       // console.log('update ok!')
@@ -116,7 +113,7 @@ export abstract class BaseCRUD<T>  {
   }
 
   @DELETE(`/${SYMBOL.CRUD_TABLE_MODEL}/:id`)
-  deleteById(@PathParam(`id`) id: number): Response<T> {
+  deleteById(@Path(`id`) id: number): Response<T> {
     //#region @backendFunc
     return async () => {
       const deletedEntity = await this.repo.findOne(id)
@@ -128,7 +125,7 @@ export abstract class BaseCRUD<T>  {
 
 
   @POST(`/${SYMBOL.CRUD_TABLE_MODEL}/`)
-  create(@BodyParam() item: T, @QueryParam() config?: ModelDataConfig): Response<T> {
+  create(@Body() item: T, @Query() config?: ModelDataConfig): Response<T> {
     //#region @backendFunc
     return async () => {
 

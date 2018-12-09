@@ -5,14 +5,13 @@ import { Global } from '../global-config';
 import { Http2Server } from 'http2';
 import * as io from 'socket.io';
 import { Response, Request } from "express";
-import { getExpressPath } from '../models';
 import { SYMBOL } from '../symbols';
 //#endregion
 
 import { Log, Level } from 'ng2-logger';
 import { getClassFromObject } from 'ng2-rest/helpers';
 import { getClassName } from 'ng2-rest/classname';
-import { META } from '../meta-info';
+import { BASE_ENTITY } from '../framework/framework-entity';
 const log = Log.create('RealtimeNodejs', Level.__NOTHING)
 
 export class RealtimeNodejs {
@@ -58,7 +57,7 @@ export class RealtimeNodejs {
   }
 
 
-  public static populate(event: { entity: META.BASE_ENTITY<any> }) {
+  public static populate(event: { entity: BASE_ENTITY<any> }) {
     log.d('event afer update', event);
     // console.log('controller', self)
     const entity = event.entity

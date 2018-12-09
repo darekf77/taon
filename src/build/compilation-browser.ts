@@ -7,7 +7,7 @@ import * as glob from 'glob';
 import * as _ from 'lodash';
 import { IncrementalCompilation } from './incremental-compilation';
 import { OutFolder } from './models';
-import { HelpersBackend } from '../helpers';
+import { Helpers } from '../helpers';
 import { CodeCut } from './browser-code-cut';
 import { config } from './config';
 import { BackendCompilation } from './compilation-backend';
@@ -49,7 +49,7 @@ export class BroswerCompilation extends BackendCompilation {
     }
     fse.mkdirpSync(this.compilationFolderPath)
 
-    HelpersBackend.tryCopyFrom(`${path.join(this.cwd, this.location)}/`, this.compilationFolderPath)
+    Helpers.tryCopyFrom(`${path.join(this.cwd, this.location)}/`, this.compilationFolderPath)
 
     this.filesAndFoldesRelativePathes = glob.sync(this.globPattern, { cwd: this.compilationFolderPath });
     // console.log('browser', this.filesAndFoldesRelativePathes.slice(0, 5))
@@ -75,7 +75,7 @@ export class BroswerCompilation extends BackendCompilation {
 
     // recreate dirst
     const outDistPath = path.join(this.cwd, this.backendOutFolder, this.outFolder);
-    HelpersBackend.tryRemoveDir(outDistPath)
+    Helpers.tryRemoveDir(outDistPath)
     // fse.mkdirpSync(outDistPath);
 
     // tsconfig.browser.json
