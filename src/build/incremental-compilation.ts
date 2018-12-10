@@ -15,7 +15,7 @@ import { FileEvent } from './models';
 export abstract class IncrementalCompilation {
 
   public compilationFolderPath: string;
-  protected filesAndFoldesRelativePathes: string[] = []
+  public filesAndFoldesRelativePathes: string[] = []
 
   protected readonly watchDir: string;
 
