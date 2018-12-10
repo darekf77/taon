@@ -2,10 +2,10 @@ import { Morphi } from 'morphi'
 
 
 @Morphi.Controller()
-class TestController{
+class TestController {
 
   @Morphi.Http.GET()
-  hello(): Morphi.Response<string> {
+  hello(@Morphi.Http.Param.Query('config') config?: any): Morphi.Response<string> {
     //#region @backendFunc
     return async () => {
       return 'this is cool haha !'
@@ -43,7 +43,7 @@ const controllers: Morphi.Base.Controller<any>[] = [TestController as any];
 
     const body: HTMLElement = document.getElementsByTagName('body')[0];
     let test = new TestController()
-    test.hello().received.observable.subscribe(dataFromBackend => {
+    test.hello({ siema: 'siema' }).received.observable.subscribe(dataFromBackend => {
       body.innerHTML = `<h1>${dataFromBackend.body.text}</h1>`;
     });
 

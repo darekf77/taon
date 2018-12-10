@@ -22,3 +22,4 @@
 /.vscode/launch.json
 /tsconfig.json
 /tsconfig.browser.json
+/webpack.config.js
