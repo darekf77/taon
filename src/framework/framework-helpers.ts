@@ -1,4 +1,6 @@
-
+//#region @backend
+import "reflect-metadata";
+//#endregion
 import * as _ from 'lodash';
 import { describeClassProperites } from 'ng2-rest';
 import { Global } from '../global-config';
@@ -12,9 +14,9 @@ import {
   Repository
 } from 'typeorm';
 import { Connection } from "typeorm/connection/Connection";
-import { createConnection } from 'typeorm';
+import { createConnection, createConnections } from 'typeorm';
 import * as express from "express";
-import "reflect-metadata";
+
 export { Connection } from 'typeorm';
 import { Helpers } from '../helpers';
 
@@ -31,7 +33,11 @@ export function tableNameFrom(entityClass: Function | BASE_ENTITY<any>) {
 
 //#region @backend
 export function repositoryFrom<E, R=Repository<E>>(connection: Connection, entity: Function, repository?: Function): R {
-
+  if (!connection) {
+    console.error(`[Morphi][repositoryFrom] no connection!
+Please check your Morphi.Repository(...) decorators `, entity, repository)
+    process.exit(0)
+  }
   let repo: Repository<any>;
   if (repository) {
     repo = connection.getCustomRepository(repository);
@@ -108,14 +114,19 @@ export async function start(options: StartOptions) {
     publicAssets = [],
     //#endregion
   } = options;
-
+  // console.log(options)
 
   //#region @backend
   config['entities'] = entities as any;
   // config['subscribers'] = subscribers.concat(_.values(Controllers).filter(a => isRealtimeEndpoint(a as any)))
   //   .concat([META.BASE_CONTROLLER as any]) as any;
-  const connection = await createConnection(config as any);
+
+  const connections = await createConnections([config] as any);
+  // console.log('init connections', connections)
+  const connection = connections[0]
+  // console.log('init connection', connection)
   //#endregion
+
 
 
   init({

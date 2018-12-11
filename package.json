@@ -10,11 +10,12 @@
     ],
     "type": "isomorphic-lib",
     "overrided": {
-      "ignoreWhenStartWith": [
-        "@angular"
+      "ignoreDepsPattern": [
+        "@angular.*"
       ],
       "dependencies": {
         "@ngx-formly/core": "*",
+        "@angular/core": "5",
         "rxjs": "^5.5.6"
       }
     }

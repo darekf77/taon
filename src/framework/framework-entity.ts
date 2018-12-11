@@ -34,6 +34,12 @@ export function Entity<T = {}>(options: {
   createTable?: boolean;
   //#endregion
 }) {
+  if (!options) {
+    options = {}
+  }
+  if (!options.formly) {
+    options.formly = {}
+  }
   const {
     genereateFormly = true,
     defaultModelValues,
@@ -47,7 +53,7 @@ export function Entity<T = {}>(options: {
     //#region @backend
     createTable = true,
     //#endregion
-  } = options || { formly: {} } as any;
+  } = options;
   return function (target: any) {
 
     //#region @backend
@@ -56,7 +62,7 @@ export function Entity<T = {}>(options: {
     }
     //#endregion
     if (genereateFormly) {
-      FormlyForm<T>(transformFn, exclude, include)
+      FormlyForm<T>(transformFn, exclude, include)(target)
     }
     DefaultModelWithMapping<T>(defaultModelValues, mapping)(target)
     CLASSNAME(className)(target)

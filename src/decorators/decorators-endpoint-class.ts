@@ -174,6 +174,12 @@ export function init(config: {
     //#endregion
   } = config;
 
+  //#region @backend
+  if (isNode) {
+    var { URL } = require('url');
+  }
+  //#endregion
+
   if (isBrowser && _.isUndefined(ngZone) && !!window['ng']) {
     console.warn(`Please probide ngZone instance in angular apps`)
   }
@@ -211,7 +217,7 @@ export function init(config: {
       Global.vars.app = express()
       initMidleware();
     }
-    const { URL } = require('url');
+
     const uri = new URL(config.host);
 
     // console.log('backend URI', uri);
@@ -307,8 +313,8 @@ export function init(config: {
     notFound.forEach(ctrl => {
       throw `Decorator "@ENDPOINT(..)" is missing on class ${getClassName(ctrl)}`;
     });
-    providers.forEach(p => AngularProviders.push(p))
+    providers.forEach(p => Providers.push(p))
   }
 }
 
-export const AngularProviders = [];
+export const Providers = [];

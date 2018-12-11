@@ -5,9 +5,9 @@ import {
 import * as _ from 'lodash';
 import { RealtimeNodejs } from '../realtime/realtime-nodejs';
 
-export function Repository() {
+export function Repository(entity: Function) {
   return function (target: any) {
-    EntityRepository(target)(target)
+    EntityRepository(entity)(target)
   }
 }
 
