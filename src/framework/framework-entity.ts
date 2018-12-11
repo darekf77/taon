@@ -1,6 +1,6 @@
 
 import * as _ from 'lodash';
-import { Log } from 'ng2-logger';
+import { Log, isBrowser } from 'ng2-logger';
 import {
   getClassName, getClassFromObject,
   DefaultModelWithMapping,
@@ -55,17 +55,16 @@ export function Entity<T = {}>(options: {
     //#endregion
   } = options;
   return function (target: any) {
-
+    CLASSNAME(className)(target)
+    DefaultModelWithMapping<T>(defaultModelValues, mapping)(target)
+    if (isBrowser && genereateFormly) {
+      FormlyForm<T>(transformFn, exclude, include)(target)
+    }
     //#region @backend
     if (createTable) {
       TypeormEntity(tableNameFrom(target))(target)
     }
     //#endregion
-    if (genereateFormly) {
-      FormlyForm<T>(transformFn, exclude, include)(target)
-    }
-    DefaultModelWithMapping<T>(defaultModelValues, mapping)(target)
-    CLASSNAME(className)(target)
   }
 
 }

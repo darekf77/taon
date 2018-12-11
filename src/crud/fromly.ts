@@ -4,21 +4,23 @@ import { FormlyFormOptions, FormlyFieldConfig } from '@ngx-formly/core';
 import * as _ from 'lodash';
 import { getModelsMapping, describeClassProperites } from 'ng2-rest';
 import { FormlyFromType } from '../models';
-
+import { Log, Level } from 'ng2-logger';
+const log = Log.create('[morphi] formly')
 
 function getFromlyConfigFor(target: Function, parentKeyPath?: string,
   keysPathesToExclude?: string[],
   keysPathesToInclude?: string[]
 ): FormlyFieldConfig[] {
-
+  // log.onlyWhen(target.name === 'CATEGORY')
   const mapping = getModelsMapping(target);
 
-  // console.log(`mapping from ${target.name}`, mapping)
+  // log.i(`mapping from ${target.name}`, mapping)
 
   const checkExclude = (_.isArray(keysPathesToExclude) && keysPathesToExclude.length > 0);
   const checkInclude = (_.isArray(keysPathesToInclude) && keysPathesToInclude.length > 0);
 
-
+  // log.i('keysPathesToExclude', keysPathesToExclude)
+  // log.i('checkInclude', checkInclude)
 
   if (!target[SYMBOL.FORMLY_METADATA_ARRAY]) {
     target[SYMBOL.FORMLY_METADATA_ARRAY] = [];
@@ -29,7 +31,7 @@ function getFromlyConfigFor(target: Function, parentKeyPath?: string,
   }
 
   const fieldNames = describeClassProperites(target);
-  // console.log('DescribeByDefaultModel field names', fieldNames)
+  log.i(`describeClassProperites for ${target.name}`, fieldNames)
   let additionalConfig = [];
 
   const result = fieldNames.map(key => {
