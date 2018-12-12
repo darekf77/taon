@@ -44,9 +44,8 @@ export function Controller(options?: {
           ...
         }
       `
-    } else {
-      CLASSNAME(className)(target)
     }
+    CLASSNAME(className)(target)
     ENDPOINT(options)(target)
   }
 }
