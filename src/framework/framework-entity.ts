@@ -13,7 +13,7 @@ import { FormlyForm, FormlyArrayTransformFn } from '../crud/fromly';
 //#region @backend
 import {
   InsertEvent, UpdateEvent, RemoveEvent,
-  Entity as TypeormEntity
+  Entity as TypeormEntity, Tree
 } from 'typeorm';
 import { tableNameFrom } from './framework-helpers';
 //#endregion
@@ -25,6 +25,7 @@ export function Entity<T = {}>(options: {
   defaultModelValues?: ModelValue<T>,
   mapping?: Mapping<T>
   genereateFormly?: boolean;
+  tree?: 'closure-table';
   formly?: {
     transformFn?: FormlyArrayTransformFn,
     include?: (keyof T)[],
@@ -35,7 +36,7 @@ export function Entity<T = {}>(options: {
   //#endregion
 }) {
   if (!options) {
-    options = {}
+    options = { formly: {} };
   }
   if (!options.formly) {
     options.formly = {}
@@ -43,6 +44,7 @@ export function Entity<T = {}>(options: {
   const {
     genereateFormly = true,
     defaultModelValues,
+    tree,
     mapping,
     className,
     formly: {
@@ -63,6 +65,9 @@ export function Entity<T = {}>(options: {
     //#region @backend
     if (createTable) {
       TypeormEntity(tableNameFrom(target))(target)
+    }
+    if (_.isString(tree)) {
+      Tree("closure-table")(target)
     }
     //#endregion
   }

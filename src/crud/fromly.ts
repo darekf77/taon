@@ -31,7 +31,7 @@ function getFromlyConfigFor(target: Function, parentKeyPath?: string,
   }
 
   const fieldNames = describeClassProperites(target);
-  log.i(`describeClassProperites for ${target.name}`, fieldNames)
+  // log.i(`describeClassProperites for ${target.name}`, fieldNames)
   let additionalConfig = [];
 
   const result = fieldNames.map(key => {

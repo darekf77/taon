@@ -72,6 +72,10 @@ export namespace Morphi {
     export import InjectConnection = decoratorsMorphi.OrmConnection;
     export import Connection = tsorm.Connection;
     export import CreateConnection = tsorm.createConnection;
+    export namespace Tree {
+      export import Children = tsorm.TreeChildren;
+      export import Parent = tsorm.TreeParent;
+    }
     export namespace Column {
       export import Generated = tsorm.PrimaryGeneratedColumn;
       export import Primary = tsorm.PrimaryColumn;
