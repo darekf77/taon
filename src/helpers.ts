@@ -20,12 +20,23 @@ import {
   Response, __Response, AsyncResponse,
   SyncResponse
 } from "./models";
-import { getClassConfig, ClassConfig, MethodConfig } from "ng2-rest";
+import { getClassConfig, ClassConfig, MethodConfig, getClassName } from "ng2-rest";
 //#region @backend
 import { Response as ExpressResponse, Request as ExpressRequest } from "express";
 //#endregion
 
 export namespace Helpers {
+
+  export function hasParentClassWithName(target: Function, name: string): boolean {
+    if(!target) {
+      return false;
+    }
+    let targetProto = target['__proto__'] as Function;
+    if (targetProto && getClassName(targetProto) === name) {
+      return true;
+    }
+    return hasParentClassWithName(targetProto, name);
+  }
 
   export function isAsync(fn) {
     return fn && fn.constructor && fn.constructor.name === 'AsyncFunction';

@@ -2,10 +2,11 @@ import * as _ from 'lodash';
 import { isBrowser, Log } from 'ng2-logger';
 import { CLASSNAME } from 'ng2-rest';
 import { RealtimeNodejs } from '../realtime/realtime-nodejs';
-import { ENDPOINT } from '../decorators/decorators-endpoint-class';
+import { ENDPOINT, __ENDPOINT } from '../decorators/decorators-endpoint-class';
 import { BaseCRUD } from '../crud/base-crud-model';
 import { Global } from '../global-config';
 import { classNameVlidation } from './framework-helpers';
+import { SYMBOL } from '../symbols';
 
 //#region @backend
 import {
@@ -19,12 +20,15 @@ import { AuthCallBack } from '../models';
 export function Controller(options?: {
   className?: string;
   realtime?: boolean,
+  entity?: Function,
   path?: string,
+  autoinit?: boolean,
   //#region @backend
   auth?: AuthCallBack
   //#endregion
 }) {
-  let { className, realtime } = options || {} as any;
+  let { className, realtime, autoinit = false } = options || {} as any;
+
   return function (target: Function) {
     //#region @backend
     if (realtime) {
@@ -34,12 +38,19 @@ export function Controller(options?: {
 
     className = classNameVlidation(className, target);
     CLASSNAME(className)(target)
-    ENDPOINT(options)(target)
+
+    if (autoinit) {
+      __ENDPOINT(target)(target)
+    } else {
+      ENDPOINT(options)(target)
+    }
+
   }
 }
 
 @Controller({
-  className: 'BASE_CONTROLLER'
+  className: 'BASE_CONTROLLER',
+  autoinit: true
 })
 export abstract class BASE_CONTROLLER<T> extends BaseCRUD<T>
   //#region @backend
@@ -49,9 +60,9 @@ export abstract class BASE_CONTROLLER<T> extends BaseCRUD<T>
 
   constructor
     (
-    //#region @backend
-    private entityEvents: EntityEvents<T> = {}
-    //#endregion
+      //#region @backend
+      private entityEvents: EntityEvents<T> = {}
+      //#endregion
     ) {
     super();
 

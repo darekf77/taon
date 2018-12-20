@@ -43,24 +43,6 @@ export function OrmConnection(target: Object, propertyName: string) {
 }
 
 
-export function BaseCRUDEntity(entity: Function) {
-  return function BaseCRUDEntity(target: Object, propertyName: string) {
-    if (propertyName !== 'entity') {
-      throw `Please use for @BaseCRUDEntity() "entity" property instead of "${propertyName}"`
-    }
-    const configs = getClassConfig(target.constructor);
-    configs.forEach(c => {
-      const classReference = c.classReference;
-      const prototype = classReference.prototype;
-      prototype[propertyName] = entity;
-    })
-    // getSingletons(target.constructor).forEach(s => {
-    //   s[propertyName] = entity;
-    // });
-
-  }
-}
-
 export function __ENDPOINT(baseEntity?: Function): (...args: any[]) => any {
   if (baseEntity) Global.vars.__core_controllers.push(baseEntity);
   return ENDPOINT();
@@ -75,9 +57,38 @@ export function isRealtimeEndpoint(target: Function) {
   return target && target.prototype && target.prototype[SYMBOL.IS_ENPOINT_REALTIME];
 }
 
+
+
+const abstractClasses = ['BASE_CONTROLLER']
+
+function activateBaseCrud(target: Function, entity: Function) {
+
+  if (Helpers.hasParentClassWithName(target, 'BaseCRUD') &&
+    !abstractClasses.includes(getClassName(target))) {
+    if (!entity) {
+      throw `Please provide "entity" property
+@Morphi.Controller({
+  ...
+  entity: <YOUR ENTITY CLASS HERE>
+  ...
+})
+class ${getClassName(target)} extends  ...
+      `
+    } else {
+      // console.log(`Traget ${target.name} has parent BaseCrud`)
+      target.prototype['entity'] = entity;
+    }
+  } else {
+    // console.log(`Traget ${target.name} don't have parent BaseCrud`)
+  }
+
+
+}
+
 export function ENDPOINT(options?: {
   // realtime?: boolean,
   path?: string,
+  entity?: Function,
   auth?
   //#region @backend
   : AuthCallBack
@@ -85,12 +96,14 @@ export function ENDPOINT(options?: {
 }) {
   return function (target: Function) {
 
-    const { path, auth, realtime = false } = options ? options : {} as any;
+    const { path, auth, realtime = false, entity } = options ? options : {} as any;
+
     target.prototype[SYMBOL.IS_ENPOINT_REALTIME] = realtime;
 
     const initFN = (function (target, path, auth) {
       return function () {
         // console.log(`INITING ${target.name}`)
+        activateBaseCrud(target, entity)
         //#region  access decorator config
         const configs = getClassConfig(target);
         const classConfig: ClassConfig = configs[0];

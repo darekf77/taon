@@ -43,7 +43,6 @@ export namespace Morphi {
   }
 
   export namespace Base {
-    export import InjectCRUDEntity = decoratorsMorphi.BaseCRUDEntity
     export import Controller = framework.BASE_CONTROLLER;
     export import Entity = framework.BASE_ENTITY;
     export import Service = framework.BASE_SERVICE;
