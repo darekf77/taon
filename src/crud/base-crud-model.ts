@@ -11,6 +11,7 @@ import { GET, PUT, DELETE, POST } from '../decorators/decorators-methods';
 import { Query, Path, Body } from '../decorators/decorators-params';
 import { Response } from '../models';
 
+
 //#region @backend
 import { Repository, Connection, getRepository } from "typeorm";
 import { tableNameFrom } from '../framework/framework-helpers';
@@ -29,7 +30,7 @@ export abstract class BaseCRUD<T>  {
   private repo: Repository<any>;
   //#endregion
 
-  public entity: T;
+  public entity: any;
 
   constructor() {
     this.init()

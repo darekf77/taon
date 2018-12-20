@@ -64,7 +64,9 @@ export class BroswerCompilation extends BackendCompilation {
   initCodeCut() {
     this.codecut = new CodeCut(this.compilationFolderPath, this.filesAndFoldesRelativePathes, {
       replacements: [
-        ["@backendFunc", `return undefined;`],
+        ["@backendFunc",
+          `return undefined;
+`],
         "@backend"
       ]
     })

@@ -31,6 +31,27 @@ export function tableNameFrom(entityClass: Function | BASE_ENTITY<any>) {
 }
 //#endregion
 
+export function classNameVlidation(className, target: Function) {
+  if (_.isUndefined(className)) {
+    if (Global.vars.isProductionMode) {
+      throw `[Morphi] Please provide "className" property for each Controller and Entity:
+
+      @Morphi.Controller({ className: 'MyExampleCtrl'  })
+      class MyExampleCtrl {
+        ...
+      }
+
+      @Morphi.Entity({ className: 'MyExampleEntity'  })
+      class MyExampleEntity {
+        ...
+      }
+    `
+    }
+    className = target.name;
+  }
+  return className
+}
+
 //#region @backend
 export function repositoryFrom<E, R=Repository<E>>(connection: Connection, entity: Function, repository?: Function): R {
   if (!connection) {

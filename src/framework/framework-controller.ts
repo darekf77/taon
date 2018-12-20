@@ -5,6 +5,7 @@ import { RealtimeNodejs } from '../realtime/realtime-nodejs';
 import { ENDPOINT } from '../decorators/decorators-endpoint-class';
 import { BaseCRUD } from '../crud/base-crud-model';
 import { Global } from '../global-config';
+import { classNameVlidation } from './framework-helpers';
 
 //#region @backend
 import {
@@ -23,7 +24,7 @@ export function Controller(options?: {
   auth?: AuthCallBack
   //#endregion
 }) {
-  const { className, realtime } = options || {} as any;
+  let { className, realtime } = options || {} as any;
   return function (target: Function) {
     //#region @backend
     if (realtime) {
@@ -31,20 +32,7 @@ export function Controller(options?: {
     }
     //#endregion
 
-    if (!className && Global.vars.isProductionMode) {
-      throw `[Morphi] Please provide "className" property for each Controller and Entity:
-
-        @Morphi.Controller({ className: 'MyExampleCtrl'  })
-        class MyExampleCtrl {
-          ...
-        }
-
-        @Morphi.Entity({ className: 'MyExampleEntity'  })
-        class MyExampleEntity {
-          ...
-        }
-      `
-    }
+    className = classNameVlidation(className, target);
     CLASSNAME(className)(target)
     ENDPOINT(options)(target)
   }
@@ -66,6 +54,7 @@ export abstract class BASE_CONTROLLER<T> extends BaseCRUD<T>
     //#endregion
     ) {
     super();
+
     if (isBrowser) {
       // log.i('BASE_CONTROLLER, constructor', this)
     }

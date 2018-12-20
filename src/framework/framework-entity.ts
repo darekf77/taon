@@ -9,6 +9,7 @@ import {
 import { Global } from '../global-config';
 import { SYMBOL } from '../symbols';
 import { FormlyForm, FormlyArrayTransformFn } from '../crud/fromly';
+import { classNameVlidation } from './framework-helpers';
 
 //#region @backend
 import {
@@ -20,7 +21,7 @@ import { tableNameFrom } from './framework-helpers';
 
 const log = Log.create('Framework entity')
 
-export function Entity<T = {}>(options: {
+export function Entity<T = {}>(options?: {
   className?: string;
   defaultModelValues?: ModelValue<T>,
   mapping?: Mapping<T>
@@ -41,7 +42,7 @@ export function Entity<T = {}>(options: {
   if (!options.formly) {
     options.formly = {}
   }
-  const {
+  let {
     genereateFormly = true,
     defaultModelValues,
     tree,
@@ -57,6 +58,10 @@ export function Entity<T = {}>(options: {
     //#endregion
   } = options;
   return function (target: any) {
+
+
+    className = classNameVlidation(className, target);
+
     CLASSNAME(className)(target)
     DefaultModelWithMapping<T>(defaultModelValues, mapping)(target)
     if (isBrowser && genereateFormly) {
