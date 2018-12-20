@@ -87,7 +87,9 @@ export abstract class BASE_ENTITY<T, TRAW=T> {
     return _.merge(Object.create(prototype), obj);
   }
 
-  abstract fromRaw(obj: TRAW | T): T;
+  fromRaw(obj: TRAW | T): T {
+    return _.merge(new (getClassFromObject(this)), obj);
+  }
 
 
 

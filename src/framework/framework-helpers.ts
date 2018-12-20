@@ -7,7 +7,7 @@ import { Global } from '../global-config';
 import { BASE_ENTITY } from './framework-entity';
 import { BASE_REPOSITORY } from './framework-repository';
 import { BASE_CONTROLLER } from './framework-controller';
-import { init } from '../decorators/decorators-endpoint-class';
+import { init } from '../init';
 
 //#region @backend
 import {

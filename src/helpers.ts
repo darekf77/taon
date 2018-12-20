@@ -21,21 +21,35 @@ import {
   SyncResponse
 } from "./models";
 import { getClassConfig, ClassConfig, MethodConfig, getClassName } from "ng2-rest";
+import { SYMBOL } from './symbols';
+
 //#region @backend
 import { Response as ExpressResponse, Request as ExpressRequest } from "express";
 //#endregion
 
 export namespace Helpers {
 
-  export function hasParentClassWithName(target: Function, name: string): boolean {
-    if(!target) {
+  export function isGoodPath(p: string) {
+    return p && typeof p === 'string' && p.trim() !== ''
+  }
+
+  export function isRealtimeEndpoint(target: Function) {
+    return target && target.prototype && target.prototype[SYMBOL.IS_ENPOINT_REALTIME];
+  }
+
+
+  export function hasParentClassWithName(target: Function, name: string, targets = []): boolean {
+    if (!target) {
+      // console.log(`false "${_.first(targets).name}" for ${targets.map(d => d.name).join(',')}`)
       return false;
     }
+    targets.push(target)
     let targetProto = target['__proto__'] as Function;
     if (targetProto && getClassName(targetProto) === name) {
+      // console.log(`true  "${_.first(targets).name}" for ${targets.map(d => d.name).join(',')}`)
       return true;
     }
-    return hasParentClassWithName(targetProto, name);
+    return hasParentClassWithName(targetProto, name, targets);
   }
 
   export function isAsync(fn) {

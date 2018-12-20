@@ -7,6 +7,7 @@ import * as framework from './framework';
 import * as global from './global-config';
 import * as models from './models';
 import * as sym from './symbols';
+import * as initDeco from './init';
 
 export * from './helpers';
 
@@ -23,7 +24,7 @@ export namespace Morphi {
   export import IsBrowser = ng2Logger.isBrowser;
   export const Config = global.Global.vars;
   export const Platform = IsNode ? 'node' : 'browser';
-  export const Providers: Function[] = decoratorsMorphi.Providers as any;
+  export const Providers: Function[] = initDeco.Providers as any;
 
   export import Response = models.Response;
   export import Service = framework.Service;

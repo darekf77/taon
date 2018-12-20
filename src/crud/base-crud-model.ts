@@ -15,7 +15,7 @@ import { Response } from '../models';
 //#region @backend
 import { Repository, Connection, getRepository } from "typeorm";
 import { tableNameFrom } from '../framework/framework-helpers';
-import { OrmConnection } from '../decorators/decorators-endpoint-class';
+import { OrmConnection } from '../decorators/orm-connection';
 //#endregion
 
 @__ENDPOINT(BaseCRUD)
