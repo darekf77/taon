@@ -23,14 +23,14 @@ const log = Log.create('Framework entity')
 
 export function Entity<T = {}>(options?: {
   className?: string;
-  defaultModelValues?: ModelValue<T>,
-  mapping?: Mapping<T>
+  defaultModelValues?: ModelValue<T>;
+  mapping?: Mapping<T>;
   genereateFormly?: boolean;
   tree?: 'closure-table';
   formly?: {
-    transformFn?: FormlyArrayTransformFn,
-    include?: (keyof T)[],
-    exclude?: (keyof T)[]
+    transformFn?: FormlyArrayTransformFn;
+    include?: (keyof T)[];
+    exclude?: (keyof T)[];
   },
   //#region @backend
   createTable?: boolean;
@@ -91,7 +91,9 @@ export abstract class BASE_ENTITY<T, TRAW=T> {
     return _.merge(new (getClassFromObject(this)), obj);
   }
 
-
+  browserVer() {
+    return this;
+  }
 
   private static realtimeEntityListener: { [className: string]: { [entitiesIds: number]: any[]; } } = {} as any;
   private static realtimeEntitySockets: { [className: string]: { [entitiesIds: number]: any } } = {} as any;
