@@ -3,6 +3,7 @@
     "resources": [
       "README.md",
       "examples",
+      "super-simple-morphi-example",
       "bin",
       "logo_github.png",
       "logo.png",
