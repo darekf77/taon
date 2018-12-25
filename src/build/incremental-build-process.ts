@@ -42,7 +42,7 @@ export class IncrementalBuildProcess {
 
   private recreateBrowserLinks(bc: BroswerCompilation) {
     const outDistPath = path.join(bc.cwd, bc.outFolder);
-    Helpers.tryRemoveDir(outDistPath)
+    Helpers.System.Operations.tryRemoveDir(outDistPath)
     const targetOut = path.join(bc.cwd, bc.backendOutFolder, bc.outFolder)
     child.execSync(Helpers.createLink(outDistPath, targetOut))
   }

@@ -1,4 +1,4 @@
-import { getClassName } from 'ng2-rest';
+
 import { Helpers } from '../helpers';
 
 
@@ -7,9 +7,9 @@ const abstractClasses = ['BASE_CONTROLLER']
 export function activateBaseCrud(target: Function, entity: Function) {
 
   if (Helpers.hasParentClassWithName(target, 'BaseCRUD') &&
-    !abstractClasses.includes(getClassName(target))) {
+    !abstractClasses.includes(Helpers.Class.getName(target))) {
     if (!entity) {
-      if (getClassName(target) === getClassName(target['__proto__'])) {
+      if (Helpers.Class.getName(target) === Helpers.Class.getName(target['__proto__'])) {
         // console.log(`Site class override curd for ${getClassName(target)}`)
         return;
       }
@@ -20,7 +20,7 @@ export function activateBaseCrud(target: Function, entity: Function) {
   entity: <YOUR ENTITY CLASS HERE>
   ...
 })
-class ${getClassName(target)} extends  ...
+class ${Helpers.Class.getName(target)} extends  ...
       `
     } else {
       // console.log(`Traget ${target.name} has parent BaseCrud`)

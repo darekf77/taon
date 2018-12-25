@@ -49,7 +49,7 @@ export class BroswerCompilation extends BackendCompilation {
     }
     fse.mkdirpSync(this.compilationFolderPath)
 
-    Helpers.tryCopyFrom(`${path.join(this.cwd, this.location)}/`, this.compilationFolderPath)
+    Helpers.System.Operations.tryCopyFrom(`${path.join(this.cwd, this.location)}/`, this.compilationFolderPath)
 
     this.filesAndFoldesRelativePathes = glob.sync(this.globPattern, { cwd: this.compilationFolderPath });
     // console.log('browser', this.filesAndFoldesRelativePathes.slice(0, 5))
@@ -77,7 +77,7 @@ export class BroswerCompilation extends BackendCompilation {
 
     // recreate dirst
     const outDistPath = path.join(this.cwd, this.backendOutFolder, this.outFolder);
-    Helpers.tryRemoveDir(outDistPath)
+    Helpers.System.Operations.tryRemoveDir(outDistPath)
     // fse.mkdirpSync(outDistPath);
 
     // tsconfig.browser.json

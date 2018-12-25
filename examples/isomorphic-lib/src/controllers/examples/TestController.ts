@@ -1,30 +1,25 @@
 
 
-import {
-  ENDPOINT, GET, POST, PUT, DELETE, isNode,
-  PathParam, QueryParam, CookieParam, HeaderParam, BodyParam,
-  Response, BaseCRUD, BaseCRUDEntity, OrmConnection, CLASSNAME
-} from 'morphi';
+import { Morphi } from 'morphi';
 
-import { Connection } from "typeorm/connection/Connection";
-import { Repository } from "typeorm/repository/Repository";
 
 // local
 import { Book } from '../../entities/examples/Book';
 
 
-@ENDPOINT()
-@CLASSNAME('TestController')
-export class TestController extends BaseCRUD<Book> {
-  @BaseCRUDEntity(Book) public entity: Book;
-  constructor() {
-    super();
-    //#region @backend
-    if (isNode) {
-      this.createBooks()
-    }
-    //#endregion
+@Morphi.Controller({
+  className: 'TestController',
+  entity: Book
+})
+export class TestController extends Morphi.Base.Controller<Book> {
+
+  //#region @backend
+  async initExampleDbData() {
+    await this.createBooks()
+    // throw new Error("Method not implemented.");
   }
+  //#endregion
+
 
   //#region @backend
   async createBooks() {

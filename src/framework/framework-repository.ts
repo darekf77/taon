@@ -13,14 +13,11 @@ export function Repository(entity: Function) {
 
 
 // TODO fix it whe typescipt stable
-export abstract class BASE_REPOSITORY<Entity, GlobalAliases> extends TypeormRepository<Entity> {
+export abstract class BASE_REPOSITORY<Entity, GlobalAliases={}> extends TypeormRepository<Entity> {
 
 
   //#region @backend
 
-  constructor() {
-    super()
-  }
 
   // async update(criteria: string | string[] | number | number[] | Date | Date[] | ObjectID | ObjectID[] | FindConditions<Entity>,
   //   partialEntity: DeepPartial<Entity>, options?: SaveOptions): Promise<UpdateResult> {

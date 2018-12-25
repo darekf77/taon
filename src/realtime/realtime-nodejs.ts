@@ -9,9 +9,8 @@ import { SYMBOL } from '../symbols';
 //#endregion
 
 import { Log, Level } from 'ng2-logger';
-import { getClassFromObject } from 'ng2-rest/helpers';
-import { getClassName } from 'ng2-rest/classname';
 import { BASE_ENTITY } from '../framework/framework-entity';
+import { Helpers } from '../helpers';
 const log = Log.create('RealtimeNodejs', Level.__NOTHING)
 
 export class RealtimeNodejs {
@@ -70,12 +69,12 @@ export class RealtimeNodejs {
     const id = entity['id'];
     // Global.vars.socket.BE.sockets.in()\
 
-    const constructFn = getClassFromObject(event.entity);
+    const constructFn = Helpers.Class.getFromObject(event.entity);
     // console.log('construcFN', constructFn)
     if (!constructFn) {
       log.d('not found class function from', event.entity)
     } else {
-      const className = getClassName(constructFn);
+      const className = Helpers.Class.getName(constructFn);
 
       const modelSocketRoomPath = SYMBOL.REALTIME.ROOM_NAME(className, id);
       console.log(`Push entity to room with path: ${modelSocketRoomPath}`)

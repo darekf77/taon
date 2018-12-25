@@ -1,28 +1,31 @@
-import { Column  } from "typeorm/decorator/columns/Column";
-import { PrimaryGeneratedColumn  } from "typeorm/decorator/columns/PrimaryGeneratedColumn";
-import { Entity } from "typeorm/decorator/entity/Entity";
-
 import { Author } from "./Author";
 import { Book } from "./Book";
-import { CLASSNAME } from 'morphi';
+import { Morphi } from 'morphi';
 
-@Entity(TestUser.name)
-@CLASSNAME('TestUser')
+@Morphi.Entity()
 export class TestUser {
-    @PrimaryGeneratedColumn()
-    id: number;
 
-    @Column({ nullable: true })
-    name: string;
+  //#region @backend
+  @Morphi.Orm.Column.Generated()
+  //#endregion
+  id: number;
 
-    @Column({ nullable: true })
-    username: string;
+  //#region @backend
+  @Morphi.Orm.Column.Custom({ nullable: true })
+  //#endregion
+  name: string;
 
-    friend: Author;
 
-    books: Book[];
+  //#region @backend
+  @Morphi.Orm.Column.Custom({ nullable: true })
+  //#endregion
+  username: string;
 
-    public isAmazing() {
-        return 'is amazing person'
-    }
+  friend: Author;
+
+  books: Book[];
+
+  public isAmazing() {
+    return 'and super hero'
+  }
 }

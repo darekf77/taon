@@ -1,16 +1,5 @@
-import {
-  Response, Errors
-} from "../models";
-import {
-  ClassConfig,
-  MethodConfig,
-  ParamConfig,
-  HttpMethod,
-  //#region @backend
-  decode,
-  encode
-  //#endregion
-} from "ng2-rest";
+import { Models } from "../models";
+
 import { Helpers } from "../helpers";
 import { Global } from '../global-config';
 import { Realtime } from '../realtime';
@@ -58,9 +47,9 @@ export function initMidleware() {
 
 
 export function initMethodNodejs(
-  type: HttpMethod,
-  methodConfig: MethodConfig,
-  classConfig: ClassConfig,
+  type: Models.Rest.HttpMethod,
+  methodConfig: Models.Rest.MethodConfig,
+  classConfig: Models.Rest.ClassConfig,
   expressPath
 ) {
 
@@ -89,13 +78,13 @@ export function initMethodNodejs(
     if (req.headers[SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS]) {
       try {
         const entity = JSON.parse(req.headers[SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS]);
-        tBody = encode(tBody, entity);
+        tBody = Helpers.Mapping.encode(tBody, entity);
       } catch (e) { }
     } else {
       Object.keys(tBody).forEach(paramName => {
         try {
           const entityForParam = JSON.parse(req.headers[`${SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS}${paramName}`]);
-          tBody[paramName] = encode(tBody[paramName], entityForParam);
+          tBody[paramName] = Helpers.Mapping.encode(tBody[paramName], entityForParam);
         } catch (e) { }
       })
     }
@@ -105,19 +94,19 @@ export function initMethodNodejs(
     if (req.headers[SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS]) {
       try {
         const entity = JSON.parse(req.headers[SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS]);
-        tQuery = Helpers.parseJSONwithStringJSONs(encode(tQuery, entity));
+        tQuery = Helpers.parseJSONwithStringJSONs(Helpers.Mapping.encode(tQuery, entity));
       } catch (e) { }
     } else {
       Object.keys(tQuery).forEach(queryParamName => {
         try {
           const entityForParam = JSON.parse(req.headers[`${SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${queryParamName}`]);
-          tQuery[queryParamName] = Helpers.parseJSONwithStringJSONs(encode(tQuery[queryParamName], entityForParam));
+          tQuery[queryParamName] = Helpers.parseJSONwithStringJSONs(Helpers.Mapping.encode(tQuery[queryParamName], entityForParam));
         } catch (e) { }
       });
     }
 
     Object.keys(methodConfig.parameters).forEach(paramName => {
-      let p: ParamConfig = methodConfig.parameters[paramName];
+      let p: Models.Rest.ParamConfig = methodConfig.parameters[paramName];
       if (p.paramType === 'Path' && tParams) {
         args.push(tParams[p.paramName])
       }
@@ -145,12 +134,12 @@ export function initMethodNodejs(
     })
     const resolvedParams = args.reverse().map(v => Helpers.tryTransformParam(v));
     try {
-      const response: Response<any> = methodConfig.descriptor.value.apply(classConfig.singleton, resolvedParams)
+      const response: Models.Response<any> = methodConfig.descriptor.value.apply(classConfig.singleton, resolvedParams)
       // console.log('response.send', response.send)
 
       const result = await Helpers.getResponseValue(response, req, res);
       // const result = typeof response.send === 'function' ? response.send.call(req, res) : response.send;
-      const entity = decode(result, { productionMode });
+      const entity = Helpers.Mapping.decode(result, { productionMode });
       res.set(SYMBOL.MAPPING_CONFIG_HEADER, JSON.stringify(entity));
 
       if (typeof result === 'object') {
@@ -158,8 +147,8 @@ export function initMethodNodejs(
       }
       else res.send(result)
     } catch (error) {
-      if (error instanceof Errors) {
-        const err: Errors = error;
+      if (error instanceof Models.Errors) {
+        const err: Models.Errors = error;
         res.status(400).send(error)
       } if (error instanceof Error) {
         const err: Error = error;

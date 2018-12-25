@@ -1,22 +1,20 @@
-import * as _ from 'lodash';
-import { isBrowser, Log } from 'ng2-logger';
-import { CLASSNAME, getClassFromObject, getClassName } from 'ng2-rest';
-import { RealtimeNodejs } from '../realtime/realtime-nodejs';
-import { ENDPOINT, __ENDPOINT } from '../decorators/decorators-endpoint-class';
-import { BaseCRUD } from '../crud/base-crud-model';
-import { Global } from '../global-config';
-import { classNameVlidation } from './framework-helpers';
-import { SYMBOL } from '../symbols';
-
 //#region @backend
 import {
   Repository, EventSubscriber, EntitySubscriberInterface,
   InsertEvent, UpdateEvent, RemoveEvent
 } from 'typeorm';
 import { EntityEvents } from './framework-entity';
-import { AuthCallBack } from '../models';
-import { Helpers } from '../helpers';
 //#endregion
+
+import * as _ from 'lodash';
+import { RealtimeNodejs } from '../realtime/realtime-nodejs';
+import { ENDPOINT, __ENDPOINT, CLASSNAME } from '../decorators/decorators-endpoint-class';
+import { BaseCRUD } from '../crud/base-crud-model';
+import { classNameVlidation } from './framework-helpers';
+import { Models } from '../models';
+import { Helpers } from '../helpers';
+
+
 
 export function Controller(options?: {
   className?: string;
@@ -25,7 +23,7 @@ export function Controller(options?: {
   path?: string,
   autoinit?: boolean,
   //#region @backend
-  auth?: AuthCallBack
+  auth?: Models.AuthCallBack
   //#endregion
 }) {
   let { className, realtime, autoinit = false } = options || {} as any;
@@ -38,7 +36,7 @@ export function Controller(options?: {
     //#endregion
 
     className = classNameVlidation(className, target);
-    CLASSNAME(className)(target)
+    CLASSNAME.CLASSNAME(className)(target)
     // debugger
     if (autoinit) {
       // console.log(`AUTOINTI!!!!! Options for ${target.name}, partnt ${target['__proto__'].name}`, options)
@@ -69,7 +67,7 @@ export abstract class BASE_CONTROLLER<T> extends BaseCRUD<T>
     ) {
     super();
 
-    if (isBrowser) {
+    if (Helpers.isBrowser) {
       // log.i('BASE_CONTROLLER, constructor', this)
     }
 
@@ -148,13 +146,15 @@ export abstract class BASE_CONTROLLER<T> extends BaseCRUD<T>
 
 
   get db(): { [entities: string]: Repository<any> } {
-    throw `db method not implemented ${getClassName(getClassFromObject(this))}`
+    throw `db method not implemented ${Helpers.Class.getNameFromObject(this)}`
   }
   get ctrl(): { [controller: string]: BASE_CONTROLLER<any> } {
-    throw `ctrl method not implemented ${getClassName(getClassFromObject(this))}`
+    throw `ctrl method not implemented ${Helpers.Class.getNameFromObject(this)}`
   }
 
-  abstract async initExampleDbData();
+  async initExampleDbData() {
+
+  }
 
   //#endregion
 

@@ -1,12 +1,7 @@
 
-import {
-  ENDPOINT, GET, POST, PUT, DELETE, isNode,
-  PathParam, QueryParam, CookieParam, HeaderParam, BodyParam,
-  Response, OrmConnection, Errors, isBrowser
-} from 'morphi';
+import { Morphi } from 'morphi';
 import * as _ from 'lodash';
-import { Connection } from "typeorm/connection/Connection";
-console.log('tes')
+
 //#region @backend
 import { authenticate, use } from 'passport';
 import { Strategy, IStrategyOptions } from 'passport-http-bearer';
@@ -18,8 +13,7 @@ import * as bcrypt from 'bcrypt';
 import * as graph from 'fbgraph';
 //#endregion
 
-import { Resource, HttpResponse, HttpResponseError, CLASSNAME } from "ng2-rest";
-export { HttpResponse } from "ng2-rest";
+
 import { Log, Level } from 'ng2-logger';
 import { Observable } from "rxjs/Observable";
 import { Subject } from "rxjs/Subject";
@@ -29,14 +23,15 @@ import { USER, IUSER } from '../entities/USER';
 import { SESSION } from '../entities/SESSION';
 import { EMAIL } from '../entities/EMAIL';
 import { EMAIL_TYPE, EMAIL_TYPE_NAME } from '../entities/EMAIL_TYPE';
-import { __ } from '../helpers';
 
+//#region @backend
 const entity = {
-  USER: __(USER),
-  EMAIL: __(EMAIL),
-  SESSION: __(SESSION),
-  EMAIL_TYPE: __(EMAIL_TYPE),
+  USER: Morphi.Orm.TableNameFrom(USER),
+  EMAIL: Morphi.Orm.TableNameFrom(EMAIL),
+  SESSION: Morphi.Orm.TableNameFrom(SESSION),
+  EMAIL_TYPE: Morphi.Orm.TableNameFrom(EMAIL_TYPE),
 };
+//#endregion
 
 
 export interface IHelloJS {
@@ -68,9 +63,10 @@ export interface IFacebook {
 }
 
 
-@ENDPOINT({
+@Morphi.Controller({
+  //#region @backend
   auth: (method) => {
-    //#region @backendFunc
+
     if (method === AuthController.prototype.login) {
       return;
     }
@@ -78,20 +74,14 @@ export interface IFacebook {
       return;
     }
     return authenticate('bearer', { session: false });
-    //#endregion
-  }
+
+  },
+  //#endregion
+  className: 'UsersController',
+  entity: SESSION
 })
-@CLASSNAME('UsersController')
-export class AuthController {
+export class AuthController extends Morphi.Base.Controller<SESSION> {
 
-  @OrmConnection connection: Connection;
-
-  constructor() {
-    this.browser.init()
-    //#region @backend
-    this.__init();
-    //#endregion
-  }
 
   private _subIsLggedIn = new Subject<boolean>();
   isLoggedIn = this._subIsLggedIn.asObservable();
@@ -100,7 +90,7 @@ export class AuthController {
     const self = this;
     return {
       async init() {
-        if (isNode) {
+        if (Morphi.IsNode) {
           return;
         }
         const session = SESSION.fromLocalStorage()
@@ -135,7 +125,7 @@ export class AuthController {
           log.i('info', info)
           self._subIsLggedIn.next(true)
         } catch (error) {
-          const err: HttpResponseError = error;
+          const err: Morphi.Http.Resopnse.Error = error;
           log.er(error)
           if (err.statusCode === 401) {
             self.browser.logout(session);
@@ -159,8 +149,8 @@ export class AuthController {
   }
 
 
-  @GET('/')
-  info(): Response<USER> {
+  @Morphi.Http.GET('/')
+  info(): Morphi.Response<USER> {
     //#region @backendFunc
     const self = this;
     return async (req, res) => {
@@ -173,13 +163,13 @@ export class AuthController {
         User.session = await SESSION.getByUser(User, req.ip, repo.session);
         return User;
       }
-      throw Errors.entityNotFound(USER);
+      throw Morphi.Orm.Errors.entityNotFound(USER);
     };
     //#endregion
   }
 
-  @GET('/check/exist/:username_or_email')
-  checkExist(@PathParam('username_or_email') param: string): Response<Boolean> {
+  @Morphi.Http.GET('/check/exist/:username_or_email')
+  checkExist(@Morphi.Http.Param.Path('username_or_email') param: string): Morphi.Response<Boolean> {
     //#region @backendFunc
     const self = this;
     return async (req, res) => {
@@ -207,8 +197,8 @@ export class AuthController {
     //#endregion
   }
 
-  @POST('/logout')
-  logout(): Response<boolean> {
+  @Morphi.Http.POST('/logout')
+  logout(): Morphi.Response<boolean> {
     //#region @backendFunc
     const self = this;
     return async (req, res) => {
@@ -233,8 +223,8 @@ export class AuthController {
     //#endregion
   }
 
-  @POST('/login')
-  login(@BodyParam() body: IHelloJS & IUSER): Response<SESSION> {
+  @Morphi.Http.POST('/login')
+  login(@Morphi.Http.Param.Body() body: IHelloJS & IUSER): Morphi.Response<SESSION> {
     //#region @backendFunc
     const self = this;
     return async (req) => {
@@ -287,7 +277,7 @@ export class AuthController {
             if (user && bcrypt.compareSync(form.password, user.password)) {
               return user;
             }
-            throw new Error('Bad password or user!');
+            throw new Error('Bad password or user! :' + JSON.stringify(form));
           }
           function checkUserName(username: string) {
 
@@ -447,10 +437,11 @@ export class AuthController {
 
   private async __repos() {
     //#region @backendFunc
-    const session = await this.connection.getRepository(SESSION);
-    const user = await this.connection.getRepository(USER);
-    const email = await this.connection.getRepository(EMAIL);
-    const emailType = await this.connection.getRepository(EMAIL_TYPE);
+    const connection = Morphi.Orm.getConnection();
+    const session = await connection.getRepository(SESSION);
+    const user = await connection.getRepository(USER);
+    const email = await connection.getRepository(EMAIL);
+    const emailType = await connection.getRepository(EMAIL_TYPE);
     return {
       session, user, email, emailType
     };
@@ -518,7 +509,7 @@ export class AuthController {
     User.username = formData.username;
     const salt = bcrypt.genSaltSync(5);
     User.password = bcrypt.hashSync(formData.password ? formData.password : 'ddd', salt);
-    if(!_.isArray(User.emails)) {
+    if (!_.isArray(User.emails)) {
       User.emails = []
     }
     User.emails.push(Email);
@@ -540,13 +531,13 @@ export class AuthController {
     }, 'normal_auth');
     await this.__createUser({
       username: 'postman',
-      email: 'postman@postman.pl',
+      email: 'postman@Morphi.Http.POSTman.pl',
       password: 'postman'
     }, 'normal_auth');
     //#endregion
   }
 
-  private async __init() {
+  async initExampleDbData() {
     //#region @backendFunc
     const repo = await this.__repos();
     const types = await EMAIL_TYPE.init(repo.emailType);

@@ -1,16 +1,16 @@
 import * as _ from 'lodash';
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
-import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
+import { IonicApp, IonicErrorHandler, IonicModule, NavController } from 'ionic-angular';
 
-import { init, replay, AngularProviders } from 'morphi/browser';
+import { Morphi } from 'morphi/browser';
 import { Controllers, Entities } from 'isomorphic-lib/browser';
 
-init('http://localhost:4000')
-  .angularProviders({
-    controllers: _.values(Controllers),
-    entities: _.values(Entities)
-  })
+Morphi.init({
+  host: 'http://localhost:4000',
+  controllers: Controllers,
+  entities: Entities
+})
 
 
 import { MyApp } from './app.component';
@@ -43,7 +43,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
   providers: [
     StatusBar,
     SplashScreen,
-    AngularProviders,
+    Morphi.Providers,
     { provide: ErrorHandler, useClass: IonicErrorHandler }
   ]
 })

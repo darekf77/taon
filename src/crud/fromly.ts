@@ -2,9 +2,11 @@
 import { SYMBOL } from "../symbols";
 import { FormlyFormOptions, FormlyFieldConfig } from '@ngx-formly/core';
 import * as _ from 'lodash';
-import { getModelsMapping, describeClassProperites } from 'ng2-rest';
-import { FormlyFromType } from '../models';
 import { Log, Level } from 'ng2-logger';
+import { Helpers } from '../helpers';
+import { Mapping } from 'ng2-rest';
+import { Models } from '../models';
+
 const log = Log.create('[morphi] formly')
 
 function getFromlyConfigFor(target: Function, parentKeyPath?: string,
@@ -12,7 +14,7 @@ function getFromlyConfigFor(target: Function, parentKeyPath?: string,
   keysPathesToInclude?: string[]
 ): FormlyFieldConfig[] {
   // log.onlyWhen(target.name === 'CATEGORY')
-  const mapping = getModelsMapping(target);
+  const mapping = Mapping.getModelsMapping(target);
 
   // log.i(`mapping from ${target.name}`, mapping)
 
@@ -30,7 +32,7 @@ function getFromlyConfigFor(target: Function, parentKeyPath?: string,
     }
   }
 
-  const fieldNames = describeClassProperites(target);
+  const fieldNames = Helpers.Class.describeProperites(target);
   // log.i(`describeClassProperites for ${target.name}`, fieldNames)
   let additionalConfig = [];
 
@@ -57,7 +59,7 @@ function getFromlyConfigFor(target: Function, parentKeyPath?: string,
     if (mapping[key] === Boolean || _.isBoolean(prototypeDefaultValue)) {
       isSimpleJStype = true;
       // console.log(`is boolean: ${key}`)
-      type = ((formType: FormlyFromType) => {
+      type = ((formType: Models.FormlyFromType) => {
         if (formType === 'material') {
           return 'toggle'
         }
@@ -66,7 +68,7 @@ function getFromlyConfigFor(target: Function, parentKeyPath?: string,
 
     if (mapping[key] === Date || _.isDate(prototypeDefaultValue)) {
       isSimpleJStype = true;
-      type = ((formType: FormlyFromType) => {
+      type = ((formType: Models.FormlyFromType) => {
         if (formType === 'material') {
           return 'datepicker'
         }
@@ -139,7 +141,7 @@ export function FormlyForm<T=Object>(
 }
 
 export interface AutoFromlyFormOptions {
-  formType?: FormlyFromType;
+  formType?: Models.FormlyFromType;
 }
 
 

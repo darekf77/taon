@@ -1,13 +1,13 @@
 
-import {
-  HttpMethod, MethodConfig, ParamConfig, Resource, decode
-} from "ng2-rest";
 import { Global } from '../global-config';
 import { SYMBOL } from '../symbols';
 import * as _ from 'lodash';
+import { Models } from '../models';
+import { Resource } from 'ng2-rest';
+import { Helpers } from '../helpers';
 
 
-export function initMethodBrowser(target, type: HttpMethod, methodConfig: MethodConfig, expressPath) {
+export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodConfig: Models.Rest.MethodConfig, expressPath) {
 
   // console.log(`FRONTEND ${target.name} method on ${expressPath}`)
 
@@ -33,7 +33,7 @@ export function initMethodBrowser(target, type: HttpMethod, methodConfig: Method
     let queryParams = {};
     let item = {};
     args.forEach((param, i) => {
-      let currentParam: ParamConfig;
+      let currentParam: Models.Rest.ParamConfig;
       //#region find param
       for (let pp in methodConfig.parameters) {
         let v = methodConfig.parameters[pp];
@@ -49,7 +49,7 @@ export function initMethodBrowser(target, type: HttpMethod, methodConfig: Method
       }
       if (currentParam.paramType === 'Query') {
         if (currentParam.paramName) {
-          const mapping = decode(param, { fromDecorator: true, productionMode });
+          const mapping = Helpers.Mapping.decode(param, { fromDecorator: true, productionMode });
           if (mapping) {
             Resource.Headers.request.set(
               `${SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${currentParam.paramName}`,
@@ -57,7 +57,7 @@ export function initMethodBrowser(target, type: HttpMethod, methodConfig: Method
           }
           queryParams[currentParam.paramName] = param;
         } else {
-          const mapping = decode(param, { fromDecorator: true, productionMode });
+          const mapping = Helpers.Mapping.decode(param, { fromDecorator: true, productionMode });
           if (mapping) {
             Resource.Headers.request.set(
               SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS,
@@ -80,7 +80,7 @@ export function initMethodBrowser(target, type: HttpMethod, methodConfig: Method
       }
       if (currentParam.paramType === 'Body') {
         if (currentParam.paramName) {
-          const mapping = decode(param, { fromDecorator: true, productionMode });
+          const mapping = Helpers.Mapping.decode(param, { fromDecorator: true, productionMode });
           if (mapping) {
             Resource.Headers.request.set(
               `${SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS}${currentParam.paramName}`,
@@ -88,7 +88,7 @@ export function initMethodBrowser(target, type: HttpMethod, methodConfig: Method
           }
           item[currentParam.paramName] = param;
         } else {
-          const mapping = decode(param, { fromDecorator: true, productionMode });
+          const mapping = Helpers.Mapping.decode(param, { fromDecorator: true, productionMode });
           if (mapping) {
             Resource.Headers.request.set(
               SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS,

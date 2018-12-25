@@ -1,14 +1,16 @@
 
 import * as _ from 'lodash';
-import { HttpMethod, getClassConfig, MethodConfig, } from "ng2-rest";
+import { Helpers } from '../helpers';
+import { Models } from '../models';
+
 
 function metaReq(
-  method: HttpMethod, path: string,
+  method: Models.Rest.HttpMethod, path: string,
   target: any, propertyKey: string,
   descriptor: PropertyDescriptor, realtimeUpdate = false) {
-  const configs = getClassConfig(target.constructor);
+  const configs = Helpers.Class.getConfig(target.constructor);
   const c = configs[0];
-  const m: MethodConfig = c.methods[propertyKey] = (!c.methods[propertyKey] ? new MethodConfig() : c.methods[propertyKey]);
+  const m: Models.Rest.MethodConfig = c.methods[propertyKey] = (!c.methods[propertyKey] ? new Models.Rest.MethodConfig() : c.methods[propertyKey]);
   m.methodName = propertyKey;
   m.type = method;
   // debugger
@@ -33,24 +35,37 @@ function metaReq(
 }
 export function GET(path?: string, realtimeUpdate = false) {
   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    metaReq('GET', path, target, propertyKey, descriptor, realtimeUpdate);
+    metaReq('get', path, target, propertyKey, descriptor, realtimeUpdate);
   }
 }
+
+export function HEAD(path?: string, realtimeUpdate = false) {
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+    metaReq('head', path, target, propertyKey, descriptor, realtimeUpdate);
+  }
+}
+
 export function POST(path?: string) {
   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    metaReq('POST', path, target, propertyKey, descriptor);
+    metaReq('post', path, target, propertyKey, descriptor);
   }
 }
 
 export function PUT(path?: string) {
   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    metaReq('PUT', path, target, propertyKey, descriptor);
+    metaReq('put', path, target, propertyKey, descriptor);
+  }
+}
+
+export function PATCH(path?: string) {
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+    metaReq('patch', path, target, propertyKey, descriptor);
   }
 }
 
 export function DELETE(path?: string) {
   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    metaReq('DELETE', path, target, propertyKey, descriptor);
+    metaReq('delete', path, target, propertyKey, descriptor);
   }
 }
 

@@ -1,28 +1,24 @@
 
 
-import {
-    ENDPOINT, GET, POST, PUT, DELETE,
-    PathParam, QueryParam, CookieParam, HeaderParam, BodyParam,
-    Response, BaseCRUD, BaseCRUDEntity, Connection, OrmConnection, CLASSNAME
-} from 'morphi';
-import { Repository } from "typeorm";
+import { Morphi } from 'morphi';
 // local
 import { TestUser } from '../../entities/examples/User';
 
 
-@ENDPOINT()
-@CLASSNAME('UsersController')
-export class UsersController extends BaseCRUD<TestUser>
+@Morphi.Controller({
+  className: 'UsersController',
+  entity: TestUser
+})
+export class UsersController extends Morphi.Base.Controller<TestUser>
 {
 
-    @OrmConnection connection: Connection;
-    @BaseCRUDEntity(TestUser) public entity: TestUser;
-    private reposiotry: Repository<TestUser>;
-
-    constructor() {
-        super();
-
-    }
-
+  //#region @backend
+  async initExampleDbData() {
+    const user = new TestUser();
+    user.name = 'Dariusz';
+    user.username = 'darekf77';
+    await this.repository.save(user);
+  }
+  //#endregion
 
 }

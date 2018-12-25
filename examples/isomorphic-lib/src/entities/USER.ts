@@ -1,15 +1,3 @@
-import { Connection } from "typeorm/connection/Connection";
-import { Repository } from "typeorm/repository/Repository";
-import { AfterInsert } from "typeorm/decorator/listeners/AfterInsert";
-import { AfterUpdate } from "typeorm/decorator/listeners/AfterUpdate";
-import { BeforeUpdate } from "typeorm/decorator/listeners/BeforeUpdate";
-import { OneToMany } from "typeorm/decorator/relations/OneToMany";
-import { ManyToMany } from "typeorm/decorator/relations/ManyToMany";
-import { JoinTable } from "typeorm/decorator/relations/JoinTable";
-import { Column } from "typeorm/decorator/columns/Column";
-import { PrimaryColumn } from "typeorm/decorator/columns/PrimaryColumn";
-import { PrimaryGeneratedColumn } from "typeorm/decorator/columns/PrimaryGeneratedColumn";
-import { Entity } from "typeorm/decorator/entity/Entity";
 
 //#region @backend
 import { Router, Request, Response } from 'express';
@@ -18,62 +6,85 @@ import { authenticate } from "passport";
 
 import { SESSION } from "./SESSION";
 import { EMAIL } from "./EMAIL";
-import { EMAIL_TYPE_NAME } from "./EMAIL_TYPE";
-import { __ } from '../helpers';
-import { CLASSNAME } from 'morphi';
+import { Morphi } from 'morphi';
+
 
 export interface IUSER {
-    email?: string;
-    username: string;
-    password: string;
-    firstname?: string;
-    lastname?: string;
-    city?: string;
+  email?: string;
+  username: string;
+  password: string;
+  firstname?: string;
+  lastname?: string;
+  city?: string;
 }
 
 
-@Entity(__(USER))
-@CLASSNAME('USER')
+@Morphi.Entity()
 export class USER implements IUSER {
 
-    @PrimaryGeneratedColumn()
-    id: number;
+  //#region @backend
+  @Morphi.Orm.Column.Generated()
+  //#endregion
+  id: number;
 
-    session: SESSION;
+  session: SESSION;
 
-    @Column() username: string;
-    @Column() password: string;
-    @Column({ nullable: true }) firstname: string;
-    @Column({ nullable: true }) lastname: string;
-    @Column({ nullable: true }) email?: string;
+  //#region @backend
+  @Morphi.Orm.Column.Custom()
+  //#endregion
+  username: string;
 
-    @OneToMany(type => EMAIL, email => email.user, {
-        cascade: false
-    })
-    emails: EMAIL[];
+  //#region @backend
+  @Morphi.Orm.Column.Custom()
+  //#endregion
+  password: string;
 
-    public static async byUsername(username: string, repo: Repository<USER>) {
-        //#region @backendFunc
-        const User = await repo
-            .createQueryBuilder(__(USER))
-            .innerJoinAndSelect(`${__(USER)}.emails`, 'emails')
-            .where(`${__(USER)}.username = :username`)
-            .setParameter('username', username)
-            .getOne()
-        return User;
-        //#endregion
-    }
 
-    public static async byId(id: number, repo: Repository<USER>) {
-        //#region @backendFunc
-        const User = await repo
-            .createQueryBuilder(__(USER))
-            .innerJoinAndSelect(`${__(USER)}.emails`, 'emails')
-            .where(`${__(USER)}.id = :id`)
-            .setParameter('id', id)
-            .getOne()
-        return User;
-        //#endregion
-    }
+  //#region @backend
+  @Morphi.Orm.Column.Custom({ nullable: true })
+  //#endregion
+  firstname: string;
+
+
+  //#region @backend
+  @Morphi.Orm.Column.Custom({ nullable: true })
+  //#endregion
+  lastname: string;
+
+  //#region @backend
+  @Morphi.Orm.Column.Custom({ nullable: true })
+  //#endregion
+  email?: string;
+
+  //#region @backend
+  @Morphi.Orm.Relation.OneToMany(type => EMAIL, email => email.user, {
+    cascade: false
+  })
+  //#endregion
+  emails: EMAIL[];
+
+  public static async byUsername(username: string, repo: Morphi.Orm.Repository<USER>) {
+    //#region @backendFunc
+    const User = await repo
+      .createQueryBuilder(Morphi.Orm.TableNameFrom(USER))
+      .innerJoinAndSelect(`${Morphi.Orm.TableNameFrom(USER)}.emails`, 'emails')
+      .where(`${Morphi.Orm.TableNameFrom(USER)}.username = :username`)
+      .setParameter('username', username)
+      .getOne()
+    return User;
+    //#endregion
+  }
+
+  public static async byId(id: number, repo: Morphi.Orm.Repository<USER>) {
+    //#region @backendFunc
+    const User = await repo
+      .createQueryBuilder(Morphi.Orm.TableNameFrom(USER))
+      .innerJoinAndSelect(`${Morphi.Orm.TableNameFrom(USER)}.emails`, 'emails')
+      .where(`${Morphi.Orm.TableNameFrom(USER)}.id = :id`)
+      .setParameter('id', id)
+      .getOne()
+    return User;
+    //#endregion
+  }
 }
 

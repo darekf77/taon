@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 // import { Subject } from 'rxjs/Subject'; // TODO use rxjs to detec change
 // import { Observable } from 'rxjs/Observable';
 import { Helpers } from '../helpers';
-import { CLASSNAME, DefaultModelWithMapping } from 'ng2-rest';
+import { CLASSNAME, Mapping } from 'ng2-rest';
 
 const MAX_DATA_LENGTH_SENT_TO_CLIENT = 10000;
 
@@ -44,8 +44,8 @@ export interface IModelDataConfig {
 
 }
 
-@CLASSNAME('ModelDataConfig')
-@DefaultModelWithMapping<ModelDataConfig>({})
+@CLASSNAME.CLASSNAME('ModelDataConfig')
+@Mapping.DefaultModelWithMapping<ModelDataConfig>({})
 export class ModelDataConfig {
 
   // protected _modelConfigChanged = new Subject();

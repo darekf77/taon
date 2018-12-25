@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { Nav, Platform } from 'ionic-angular';
+import { Nav, Platform, NavController, App } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
@@ -16,12 +16,14 @@ export class MyApp {
 
   rootPage: any = LoginPage;
   loginPage: any = LoginPage;
+  homePage: any = HomePage;
 
   pages: Array<{ title: string, component: any }>;
 
   constructor(public platform: Platform,
     public statusBar: StatusBar,
     public splashScreen: SplashScreen,
+    public app: App,
     public auth: AuthController
   ) {
     this.initializeApp();
@@ -53,9 +55,21 @@ export class MyApp {
   }
 
   ngOnInit() {
+
     this.auth.isLoggedIn.subscribe(d => {
-      this.pages = this.pages.filter(({ component }) => component != this.loginPage);
+      if (d) {
+        // this.navCtrl.setRoot(HomePage)
+        this.pages = this.pages.filter(({ component }) => component != this.loginPage);
+        this.app.getActiveNav().setRoot(this.homePage);
+      } else {
+        if (!this.pages.includes(this.loginPage)) {
+          this.pages.push(this.loginPage)
+        }
+        this.app.getActiveNav().setRoot(this.loginPage);
+      }
+
     })
+    this.auth.browser.init()
   }
 
 }

@@ -6,7 +6,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 const ps = require('ps-node');
 
-import {  Helpers } from '../helpers';
+import { Helpers } from '../helpers';
 import { copyExampleTo } from './new';
 import { IncrementalBuildProcess } from '../build/incremental-build-process';
 import { BrowserCodeCut } from '../build/browser-code-cut';
@@ -63,6 +63,14 @@ export function run(argsv: string[], morphiEnvironmentCheck = true) {
       child.execSync(Helpers.createLink(target, link))
       process.exit(0)
     } else if (commandName === 'new') {
+      if (!Array.isArray(argsv) || argsv.length < 4) {
+        console.log(`To few arguments.. try: morphi new myAppName`);
+        process.exit(0)
+      }
+      const name = argsv[3]
+      copyExampleTo(name)
+      process.exit(0)
+    } else if (commandName === 'new:simple') {
       if (!Array.isArray(argsv) || argsv.length < 4) {
         console.log(`To few arguments.. try: morphi new myAppName`);
         process.exit(0)

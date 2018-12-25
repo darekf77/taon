@@ -16,48 +16,80 @@ import * as JSON5 from 'json5';
 import * as _ from 'lodash';
 
 
-import {
-  Response, __Response, AsyncResponse,
-  SyncResponse
-} from "./models";
-import { getClassConfig, ClassConfig, MethodConfig, getClassName } from "ng2-rest";
+import { Helpers as HelpersNg2Rest } from "ng2-rest";
 import { SYMBOL } from './symbols';
+import { Models } from './models';
 
 //#region @backend
 import { Response as ExpressResponse, Request as ExpressRequest } from "express";
 //#endregion
 
-export namespace Helpers {
+export class Helpers extends HelpersNg2Rest {
 
-  export function isGoodPath(p: string) {
+  //#region @backend
+  static get System() {
+
+    return {
+      get Operations() {
+        return {
+          tryRemoveDir(dirpath) {
+            try {
+              rimraf.sync(dirpath)
+            } catch (e) {
+              console.log(`Trying to remove directory: ${dirpath}`)
+              sleep(1);
+              this.tryRemoveDir(dirpath);
+            }
+          },
+
+          tryCopyFrom(source, destination) {
+            // console.log(`Trying to copy from hahah: ${source} to ${destination}`)
+            try {
+              fse.copySync(source, destination, {
+                overwrite: true,
+                recursive: true
+              })
+            } catch (e) {
+              console.log(e)
+              sleep(1);
+              this.tryCopyFrom(source, destination)
+            }
+          }
+        }
+      }
+    }
+  }
+  //#endregion
+
+  static isGoodPath(p: string) {
     return p && typeof p === 'string' && p.trim() !== ''
   }
 
-  export function isRealtimeEndpoint(target: Function) {
+  static isRealtimeEndpoint(target: Function) {
     return target && target.prototype && target.prototype[SYMBOL.IS_ENPOINT_REALTIME];
   }
 
 
-  export function hasParentClassWithName(target: Function, name: string, targets = []): boolean {
+  static hasParentClassWithName(target: Function, name: string, targets = []): boolean {
     if (!target) {
       // console.log(`false "${_.first(targets).name}" for ${targets.map(d => d.name).join(',')}`)
       return false;
     }
     targets.push(target)
     let targetProto = target['__proto__'] as Function;
-    if (targetProto && getClassName(targetProto) === name) {
+    if (targetProto && this.Class.getName(targetProto) === name) {
       // console.log(`true  "${_.first(targets).name}" for ${targets.map(d => d.name).join(',')}`)
       return true;
     }
-    return hasParentClassWithName(targetProto, name, targets);
+    return this.hasParentClassWithName(targetProto, name, targets);
   }
 
-  export function isAsync(fn) {
+  static isAsync(fn) {
     return fn && fn.constructor && fn.constructor.name === 'AsyncFunction';
   }
 
 
-  export function tryTransformParam(param) {
+  static tryTransformParam(param) {
     if (typeof param === 'string') {
       let n = Number(param);
       if (!isNaN(n)) return n;
@@ -78,12 +110,12 @@ export namespace Helpers {
     return param;
   }
 
-  export function getExpressPath(c: ClassConfig, pathOrClassConfig: MethodConfig | string) {
+  static getExpressPath(c: Models.Rest.ClassConfig, pathOrClassConfig: Models.Rest.MethodConfig | string) {
     if (typeof pathOrClassConfig === 'string') return `${c.calculatedPath}${pathOrClassConfig}`.replace(/\/$/, '')
     return `${c.calculatedPath}${pathOrClassConfig.path}`.replace(/\/$/, '')
   }
 
-  export function defaultType(value) {
+  static defaultType(value) {
     if (typeof value === 'string') return '';
     if (typeof value === 'boolean') return false;
     if (Array.isArray(value)) return {};
@@ -92,26 +124,26 @@ export namespace Helpers {
 
 
 
-  export function getSingleton<T=Object>(target: Function): T {
-    const configs = getClassConfig(target)
+  static getSingleton<T=Object>(target: Function): T {
+    const configs = Helpers.Class.getConfig(target)
     return ((Array.isArray(configs) && configs.length >= 1) ? configs[0].singleton : undefined) as any;
   }
 
 
-  export function getSingletons<T=Object>(target: Function): T[] {
-    const configs = getClassConfig(target)
+  static getSingletons<T=Object>(target: Function): T[] {
+    const configs = Helpers.Class.getConfig(target)
     return configs.map(c => c.singleton as T);
   }
 
 
 
-  export function parseJSONwithStringJSONs(object: Object, waring = true): Object {
+  static parseJSONwithStringJSONs(object: Object, waring = false): Object {
     // console.log('checking object', object)
     if (!_.isObject(object)) {
       if (waring) {
         console.error(`
         parseJSONwithStringJSONs(...)
-        Parameter should be a object
+        Parameter should be a object, but is ${typeof object}
         `, object)
       }
 
@@ -131,7 +163,7 @@ export namespace Helpers {
       }
       // console.log(`key ${key} is json `, isJson)
       if (isJson) {
-        res[key] = parseJSONwithStringJSONs(res[key], false)
+        res[key] = this.parseJSONwithStringJSONs(res[key], false)
       }
     });
 
@@ -146,16 +178,16 @@ export namespace Helpers {
 
 
 
-  export function getResponseValue<T>(response: Response<T>, req: ExpressRequest, res: ExpressResponse): Promise<SyncResponse<T>> {
+  static getResponseValue<T>(response: Models.Response<T>, req: ExpressRequest, res: ExpressResponse): Promise<Models.SyncResponse<T>> {
     //#region @backendFunc
-    return new Promise<SyncResponse<T>>(async (resolve, reject) => {
-      const resp: __Response<T> = response;
+    return new Promise<Models.SyncResponse<T>>(async (resolve, reject) => {
+      const resp: Models.__Response<T> = response;
       if (!response && response.send === undefined) {
         console.error('Bad response value for function');
         resolve(undefined);
       }
       else if (typeof response === 'function') {
-        const asyncResponse: AsyncResponse<T> = response as any;
+        const asyncResponse: Models.AsyncResponse<T> = response as any;
         try {
           const result = await asyncResponse(req, res);
           resolve(result);
@@ -183,45 +215,13 @@ export namespace Helpers {
     //#endregion
   }
 
-  export interface GlobalNpmDependency {
-    name: string; installName?: string; version?: string | number;
-  }
-
-  export interface GlobalCommandLineProgramDependency {
-    name: string; website: string; version?: string;
-  }
-  export interface GlobalDependencies {
-    npm?: GlobalNpmDependency[];
-    programs?: GlobalCommandLineProgramDependency[];
-  }
 
 
-  export function tryRemoveDir(dirpath) {
-    try {
-      rimraf.sync(dirpath)
-    } catch (e) {
-      console.log(`Trying to remove directory: ${dirpath}`)
-      sleep(1);
-      tryRemoveDir(dirpath);
-    }
-  }
-
-  export function tryCopyFrom(source, destination) {
-    // console.log(`Trying to copy from hahah: ${source} to ${destination}`)
-    try {
-      fse.copySync(source, destination, {
-        overwrite: true,
-        recursive: true
-      })
-    } catch (e) {
-      console.log(e)
-      sleep(1);
-      tryCopyFrom(source, destination)
-    }
-  }
 
 
-  export const MorphiGlobalDependencies: GlobalDependencies = {
+
+
+  static MorphiGlobalDependencies: Models.GlobalDependencies = {
     npm: [
       { name: 'rimraf' },
       { name: 'npm-run' },
@@ -238,10 +238,10 @@ export namespace Helpers {
 
 
 
-  export function checkEnvironment(globalDependencies: GlobalDependencies = MorphiGlobalDependencies) {
+  static checkEnvironment(globalDependencies: Models.GlobalDependencies = this.MorphiGlobalDependencies) {
 
 
-    const missingNpm: GlobalNpmDependency[] = [];
+    const missingNpm: Models.GlobalNpmDependency[] = [];
     globalDependencies.npm.forEach(pkg => {
       if (!commandExistsSync(pkg.name)) {
         missingNpm.push(pkg)
@@ -279,11 +279,11 @@ export namespace Helpers {
 
   }
 
-  export function isPlainFileOrFolder(filePath) {
+  static isPlainFileOrFolder(filePath) {
     return /^([a-zA-Z]|\-|\_|\@|\#|\$|\!|\^|\&|\*|\(|\))+$/.test(filePath);
   }
 
-  export function log(proc: child.ChildProcess) {
+  static log(proc: child.ChildProcess) {
     // processes.push(proc);
 
 
@@ -309,8 +309,8 @@ export namespace Helpers {
     })
   }
 
-  export function createLink(target: string, link: string) {
-    if (isPlainFileOrFolder(link)) {
+  static createLink(target: string, link: string) {
+    if (this.isPlainFileOrFolder(link)) {
       link = path.join(process.cwd(), link);
     }
 
@@ -356,13 +356,13 @@ export namespace Helpers {
   }
 
 
-  export function getRecrusiveFilesFrom(dir): string[] {
+  static getRecrusiveFilesFrom(dir): string[] {
     let files = [];
     const readed = fs.readdirSync(dir).map(f => {
       const fullPath = path.join(dir, f);
       // console.log(`is direcotry ${fs.lstatSync(fullPath).isDirectory()} `, fullPath)
       if (fs.lstatSync(fullPath).isDirectory()) {
-        getRecrusiveFilesFrom(fullPath).forEach(aa => files.push(aa))
+        this.getRecrusiveFilesFrom(fullPath).forEach(aa => files.push(aa))
       }
       return fullPath;
     })

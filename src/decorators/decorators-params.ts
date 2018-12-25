@@ -1,13 +1,15 @@
-import { ClassConfig, MethodConfig, ParamConfig, ParamType, HttpMethod, getClassConfig } from "ng2-rest";
+import { Helpers } from 'ng2-rest';
+import { Models } from '../models';
 
-function metaParam(param: ParamType, name: string, expire: number, defaultValue = undefined, ...args: any[]) {
+
+function metaParam(param: Models.Rest.ParamType, name: string, expire: number, defaultValue = undefined, ...args: any[]) {
   const methodName = args[1];
-  const configs = getClassConfig(args[0].constructor);
+  const configs = Helpers.Class.getConfig(args[0].constructor);
   let c = configs[0];
-  const m = c.methods[methodName] = (!c.methods[methodName] ? new MethodConfig() : c.methods[methodName]);
+  const m = c.methods[methodName] = (!c.methods[methodName] ? new Models.Rest.MethodConfig() : c.methods[methodName]);
 
-  const nameKey = name ? name: param;
-  const p = m.parameters[nameKey] = (!m.parameters[nameKey] ? new ParamConfig() : m.parameters[nameKey]);
+  const nameKey = name ? name : param;
+  const p = m.parameters[nameKey] = (!m.parameters[nameKey] ? new Models.Rest.ParamConfig() : m.parameters[nameKey]);
   p.index = args[2];
   p.paramName = name;
   p.paramType = param;

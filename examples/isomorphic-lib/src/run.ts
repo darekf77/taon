@@ -1,11 +1,8 @@
-
+//#region @backend
 import { Controllers, Entities } from "./index";
-import MockData from "./db-mocks";
+import { Morphi } from 'morphi';
 
-//#region backend
-import { start } from './helpers';
-
-start({
+Morphi.init({
   config: {
     database: 'tmp/db.sqlite3',
     type: 'sqlite',
@@ -14,8 +11,7 @@ start({
     logging: false
   },
   host: 'http://localhost:4000',
-  Controllers: Controllers,
-  Entities: Entities,
-  MockData
+  controllers: Controllers,
+  entities: Entities
 });
 //#endregion

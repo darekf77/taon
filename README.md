@@ -3,7 +3,7 @@
 ![MorphiJSlogo](logo_github.png)
 
 
-  <h1>Morphi</h1>
+  <h1>Morphi (BETA)</h1>
   <p>
     Iso<b>morphi</b>c framework in TypeScript for NodeJS back-end and browser (web/mobile) front-end. 
     <br><br><br>
@@ -24,6 +24,9 @@
         create backend tables and also inside frontend-angular templates with type checking.        
       </li>
        <li style="margin-top:20px">- <strong>Change business logic in the fastest possible way!</strong>
+        <br>- generate  <a style="color:red;"  href="https://ng2.angular-formly.com/">formly</a> objects from entites
+        <br>- have typescript typechecking from entity in db to html template!
+        <br>- set default values to entities
        </li>
       <li  style="margin-top:20px;font-size:90%" >Support project to develop only amazing, creative things
       in the future... 
@@ -39,9 +42,6 @@
         - extended authentication based on isomorphic decorators metadata and db roles (in progress) <br>
         - isomoprhic unit tests (with inheritance) in mocha/jasmine  <br>
         - vscode extension to support @backend, @backendFunc #regions <br>
-        - optimized isomorphic build <br>
-        - extended global cli tool <br>
-        - patch, head methods rest api <br>
       </li>
     </ul>
   <p>
@@ -74,7 +74,7 @@ npm install && npm run link
 ```
 to install and link *node_module* folder for each subproject.
 ### Build and run sub-projects with auto-reload
-- isomorphic-lib: `npm run build:watch` + F5 to run server
+- isomorphic-lib: `npm run build:watch #or morphi:watch  ` + F5 to run server
 - angular-client: `npm run build:watch` + open browser [http:\\\\localhost:4200](http:%5C%5Clocalhost:4200)
 - ionic-client: `npm run build:watch` + open browser [http:\\\\localhost:8100](http:%5C%5Clocalhost:8100)
 
@@ -85,66 +85,100 @@ and press: **ctrl(cmd) + shift + b**.
 ## Isomorphic TypeScript Classes
 
 The main reason why this framework has huge potential is that you can use your backend code 
-( usualy ExpressJS, REST controllers ) as Anguar 2+ services, to access your RESTfull backend.
+( usualy ExpressJS, REST controllers ) as Anguar 2+ (or any other js framework)
+services, to access your RESTfull backend without dealing with backend patches and unessery source code.
 
 This will allow you to change business login very quickly, without confusion and keep
 no separation between your frontend/backend application.
 
-**Morphi CLI tool** is responsible for magic behing stripping of backend code for browser version ( web app or ionic mobile app).
+## Morphi CLI tool
+ Is responsible for magic behing stripping of backend code for browser version ( web app or ionic mobile app).
 
-#### Example Isomorphic (ExpressJS controller) class with morphi *@backend,@backendFunc* regions
+## Regions *@backend,@backendFunc*
 The difference between @backend and @backendFunc is that @backendFunc will replace code with 'return undefined' (it is needed for typescript compilation) and @backend
 will precisely delete all lines between.
 
-## BACKEND VERSION 
-
-- Typeorm isomorphic ENTITY in NodeJS backend:
+# HOW IT WORKS: 
+## + Isomorphi initilization
+ 
+ Initialization for backend and frontend
 ```ts
-import { Entity } from 'morphi'; // or "import { Entity } from 'typeorm';"
+import { Morphi } from 'morphi';
 
-@Entity('user_table')
+
+@Morphi.init({
+  controllers: [ /* Your controllers clases here */ UserController  ],
+  entites: [ /* Your entites clases here */  User ],
+  host: 'http://localhost:4000' // host for backend and frontend,
+  //#region @backend
+  config: { /* Your db config clases here */  }
+  //#endregion
+})
+
+```
+ 
+To inject providers you can use
+```ts
+import { Morphi } from 'morphi';
+
+...
+  providers: [  ...Morphi.Providers  ]
+...
+
+```
+
+## + Isomorphi backend 
+
+
+Typeorm isomorphic ENTITY in NodeJS backend:
+```ts
+import { Morphi } from 'morphi';
+
+@Morphi.Entity()
 export class User {
 
-    @PrimaryGeneratedColumn()
+    //#region @backend
+    @Morphi.Orm.Column.Primary()
+    //#endregion
     id: number;
 
-    @Column()
+    //#region @backend
+    @Morphi.Orm.Column.Custom()
+    //#endregion
     name: string;
 
-    @Column()
+    //#region @backend
+    @Morphi.Orm.Column.Custom()
+    //#endregion
     surname: string;
 
     fullName() {
       return `${this.name} ${this.surname}`
     }
     
-    #region @backend  // backend code invisible for frontend
+    //#region @backend 
     password: string
-    #endregion
+    //#endregion
 
 }
 ```
 
-- Morphi isomorphic CONTROLLER in NodeJS backend:
-```ts
-import { Endpoint, GET } from 'morphi'
 
-@Endpoint('/users')  // or "@Endpoint()" to use class name as part of endpoint path
+Morphi isomorphic CONTROLLER in NodeJS backend:
+```ts
+import { Morphi } from 'morphi'
+
+@Morphi.Controller() 
 class UserController {
-	
-	#region @backend // backend code invisible for frontend
-	private @OrmConnection  connection:  Connection;
-	private  repository:  Repository<User>;
-	#endregion
-	
-	@GET('/all')
+		
+	@Morphi.Http.GET()
 	getAllUser() {
-		#region @backendFunc // backend code invisible for frontend
-		this.repository  =  this.connection.getRepository(User) as  any;
+		//#region @backendFunc 
+		const  repository  =  this.connection.getRepository(User) as  any;
 		return  async (req, res) => {
 			return await  this.repository.findAll();
 		}
-		#endregion
+		//#endregion
 	}	
 }
 
@@ -153,25 +187,28 @@ After **isomorphic compilation** by morphi;
 ```
 morphi build
 ```
+or (incremental watch build)
+```
+morphi build:watch
+```
+will be generated browser version.
 
-## BROWSER VERSION 
+
+## + Generated borwser version
 
 The result for browser client will be like below:
 
-- Typeorm isomorphic ENTITY in browser version:
+Typeorm isomorphic ENTITY in browser version:
 ```ts
-import { Entity } from 'morphi/browser'; // or "import { Entity } from 'typeorm/browser';"
+import { Morphi } from 'morphi/browser';
 
-@Entity('user_table') // you can you "@Entity(User.name)"
+@Morphi.Entity()
 export class User {
 
-    @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
     name: string;
 
-    @Column()
     surname: string;
 
     fullName() {
@@ -179,25 +216,33 @@ export class User {
     }
 }
 ```
-- Morphi isomorphic CONTROLLER in browser version:
-```ts
-import { Endpoint, GET } from 'morphi/browser'
 
-@Endpoint('/users')  // or "@Endpoint()" to use class name as part of endpoint path
+ Morphi isomorphic CONTROLLER in browser version:
+```ts
+import { Morphi } from 'morphi/browser'
+
+@Morphi.Controller()
 class UserController {
 	 // 'return undefined' is for purpose on the browser side
 	 // The function body will be replaced through decorate
-	 // to access REST endpoint '/users/all'
-	@GET('/all')
-	getAllUser() { return undefined; }	
+	 // to access REST endpoint
+	@Morphi.Http.GET()
+	getAllUser() { 
+    return undefined; 
+    }	
 }
 ```
-In reality you can keep above examples (BACKEND/BROWSER VERSION) in one *.ts file. 
+
+# Single file backend/frontend in typescript
+In reality you can keep above examples backend/browser version in one *.ts file. 
+Check **super-simple-morphi-example** in this repository.
 
 
-# Backend classes as browser RESTfull services
+# Angular 2+ services
 
-And that kind of class you can use as **Angular 2+ service**:
+Morphi.Controller(s) you can use as **Angular 2+ services**. If you
+used Morphi.Entity your browser <-> backend REST communication will
+keep entity type and automaticly reproduce it.
 ```ts
 @Component({
 	selector:  'app-test',
@@ -208,22 +253,20 @@ class  AppTestComponent  implements  OnInit {
 	// Inject isomorphic class as service into component
 	constructor(public users: UserController) { } 
 	
-	ngOnInit() {
-		this.users.getAllUsers().received.observable.subscribe( users => {
-        console.log(users) 
-        // USERS FROM BACKEND as CLASS OBJECTS - not just plain objects ....
-        // thanks to the framework you can use class objects to really
-        // make you backend/frontend code tight
-		}) 
+	async ngOnInit() {
+          const data = await this.users.getAllUsers().received;
+          const users = data.body.json;
+          const firstUser = users[0]
+          console.log( firstUser instanceOf User ) // true
 	}
 }
 ```
+
+## Directly in html template
 To simplify object receiving from backend you can use **async** pipes (available with Angular4+) 
 and really make you MVVM amazing.
 
 Morphi and Angular4+ lets you use backend functions in html frontend template.
-
-This gives huge possibility of **UNIVERSAL BACKEND/FRONTEND VALIDATORS**.
 
 **app-test.html**  
 ```html
@@ -245,137 +288,4 @@ Users:
 
 Of course Angular services can be used inside Angular web and Ionic mobile apps. 
 
-
-# REST API
-
-With morphi you can have amzing types hints thanks to strong relation between backend
-end frontend. 
-
-
-Avaliable REST methods: **PUT, GET, POST, DELETE**.
-
-If you find any problems with REST API please check my another, responsible for it project - 
-[ng2-rest](https://github.com/darekf77/ng2-rest).
-
-
-- backend version
-```ts
-  import { Endpoint, Entity, PUT, Response } from 'morphi'
-
-  @Entity(Book.name)
-  class User {
-      id:number;
-      name:string;
-  }
-
-
-  @Endpoint('/books')  // or "@Endpoint()" to use class name as part of endpoint path
-  class BooksController {
-    
-    @PUT()
-    save(user:User):Response<User>
-    {
-      //#region @backendFund
-      ...
-      //#endregion
-    }	
-  }
-
-```
-
-
-- frontend version ( after automatic, in background, isomorphic build )
-```ts
-  import { Endpoint, Entity, PUT, Response } from 'morphi/browser'
-
-  @Entity(Book.name)
-  class User {
-      id:number;
-      name:string;
-  }
-
-
-  @Endpoint('/books')  // or "@Endpoint()" to use class name as part of endpoint path
-  class BooksController {
-    
-    @PUT()
-    save(user:User):Response<User> { return undefined; }	
-  }
-
-```
-- frontend, angular component
-
-```ts
-  @Component({
-	  selector:  'books-test',
-    template: '...'
-  })
-  class  BooksComponent  implements  OnInit {
-
-    // Inject isomorphic class as service into component
-    constructor(public books: BooksController) { } 
-    
-    async save(book:Book) {
-      await this.books.save(book).received
-
-      // you can also use observable if you want
-      // await this.books.save(book).received.observable
-    }
-  }
-
-```
-
-
-# Inheritance of entities and controllers
-## Fast CRUD
-
-With morphi there is very nice possiblity of writing CRUD (Create,Read,Update,Delete).
-
-Again... do not repeat yourself writing controllers and entities - inherit classes as you want.
-
-```ts
-
-  import { Entity, Endpoint, BaseCRUD, BaseCRUDEntity } from 'morphi'
-  
-  @Entity(BaseEntity.name)
-  abstract class BaseEntity {
-    id:string;
-  }
-
-
-  @Entity(Email.name)
-  class Email extends BaseEntity {  // ENTITIES INHERITANCE
-    address:string;
-  }
-
-  @Endpoint(EmailsController.name)
-  class EmailsController extends BaseCRUD<Email> { // CONTROLLERS INHERITANCE
-    @BaseCRUDEntity(Email) public entity: Email;
-
-    constructor() {
-      super()
-      this.methodsTest()
-    }
-
-
-    // frontend method
-    async methodsTest() {
-
-      // __model as object for public universal api
-
-      await this.__model.getAll().received //  as emails from db 
-
-      await this.__model.getBy(1).received //  get one email by id
-
-      await this.__model.deleteById(2).received //  delete email by id
-
-      const email = await this.__model.create(new Email()).received // create email
-      email.address = 'test@test.pl'
-
-      await  this.__model.updateById(12,email).received // update email
-    }
-
-  }
-
-```
 

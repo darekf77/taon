@@ -1,20 +1,21 @@
-import { Column  } from "typeorm/decorator/columns/Column";
-import { PrimaryGeneratedColumn  } from "typeorm/decorator/columns/PrimaryGeneratedColumn";
-import { Entity } from "typeorm/decorator/entity/Entity";
-// local
+
 import { TestUser } from "./User";
-import { CLASSNAME } from 'morphi';
+import { Morphi } from 'morphi';
 
-@Entity(Author.name)
-@CLASSNAME('Author')
+@Morphi.Entity()
 export class Author {
-    @PrimaryGeneratedColumn()
-    id: number;
 
-    @Column("int", { nullable: true })
-    age: number;
+  //#region @backend
+  @Morphi.Orm.Column.Generated()
+  //#endregion
+  id: number;
 
-    user: TestUser;
+  //#region @backend
+  @Morphi.Orm.Column.Custom("int", { nullable: true })
+  //#endregion
+  age: number;
 
-    friends: TestUser[];
+  user: TestUser;
+
+  friends: TestUser[];
 }

@@ -1,15 +1,12 @@
 
 import * as _ from 'lodash';
-import { Log, isBrowser } from 'ng2-logger';
-import {
-  getClassName, getClassFromObject,
-  DefaultModelWithMapping,
-  Mapping, ModelValue, CLASSNAME
-} from 'ng2-rest';
+import { Log } from 'ng2-logger';
 import { Global } from '../global-config';
 import { SYMBOL } from '../symbols';
 import { FormlyForm, FormlyArrayTransformFn } from '../crud/fromly';
 import { classNameVlidation } from './framework-helpers';
+import { Mapping, CLASSNAME, Helpers } from 'ng2-rest';
+import { Models } from '../models';
 
 //#region @backend
 import {
@@ -17,14 +14,16 @@ import {
   Entity as TypeormEntity, Tree
 } from 'typeorm';
 import { tableNameFrom } from './framework-helpers';
+
+
 //#endregion
 
 const log = Log.create('Framework entity')
 
 export function Entity<T = {}>(options?: {
   className?: string;
-  defaultModelValues?: ModelValue<T>;
-  mapping?: Mapping<T>;
+  defaultModelValues?: Mapping.ModelValue<T>;
+  mapping?: Mapping.Mapping<T>;
   genereateFormly?: boolean;
   tree?: 'closure-table';
   formly?: {
@@ -62,9 +61,9 @@ export function Entity<T = {}>(options?: {
 
     className = classNameVlidation(className, target);
 
-    CLASSNAME(className)(target)
-    DefaultModelWithMapping<T>(defaultModelValues, mapping)(target)
-    if (isBrowser && genereateFormly) {
+    CLASSNAME.CLASSNAME(className)(target)
+    Mapping.DefaultModelWithMapping<T>(defaultModelValues, mapping)(target)
+    if (Helpers.isBrowser && genereateFormly) {
       FormlyForm<T>(transformFn, exclude, include)(target)
     }
     //#region @backend
@@ -88,7 +87,7 @@ export abstract class BASE_ENTITY<T, TRAW=T> {
   }
 
   fromRaw(obj: TRAW | T): T {
-    return _.merge(new (getClassFromObject(this)), obj);
+    return _.merge(new (Helpers.Class.getFromObject(this)), obj);
   }
 
   browserVer() {
@@ -104,14 +103,14 @@ export abstract class BASE_ENTITY<T, TRAW=T> {
     return {
       subscribe(changesListener: () => void) {
         // log.i('realtime entity this', self)
-        const constructFn = getClassFromObject(self)
+        const constructFn = Helpers.Class.getFromObject(self)
 
         if (!constructFn) {
           log.er(`Activate: Cannot retrive Class function from object`, self)
           return
         }
 
-        const className = getClassName(constructFn);
+        const className = Helpers.Class.getName(constructFn);
 
         if (!BASE_ENTITY.realtimeEntitySockets[className]) {
           BASE_ENTITY.realtimeEntitySockets[className] = {};
@@ -182,13 +181,13 @@ export abstract class BASE_ENTITY<T, TRAW=T> {
       },
       unsubscribe() {
 
-        const constructFn = getClassFromObject(self)
+        const constructFn = Helpers.Class.getFromObject(self)
         if (!constructFn) {
           log.er(`Deactivate: Cannot retrive Class function from object`, self)
           return
         }
 
-        const className = getClassName(constructFn);
+        const className = Helpers.Class.getName(constructFn);
         const roomName = SYMBOL.REALTIME.ROOM_NAME(className, self.id);
 
         const sub = BASE_ENTITY.realtimeEntitySockets[className] && BASE_ENTITY.realtimeEntitySockets[className][self.id];

@@ -1,27 +1,26 @@
 {
   "version": "0.2.0",
   "configurations": [
-    // {
-    //   "type": "node",
-    //   "request": "launch",
-    //   "name": "Launch Program",
-    //   "program": "${workspaceFolder}/dist/run.js"
-    // },
     {
       "type": "node",
       "request": "launch",
-      "remoteRoot": "${workspaceRoot}/dist",
-      "localRoot": "${workspaceRoot}/dist",
-      "name": "Lanuch nodemon debugger",
-      "runtimeExecutable": "npm-run",
-      "runtimeArgs": [
-        "nodemon"
-      ],
+      "name": "Launch Program",
+      "program": "${workspaceFolder}/dist/run.js",
+      "useWSL": true
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "remoteRoot": "${workspaceRoot}",
+      "localRoot":  "${workspaceRoot}",
+      "name": "Nodemon server",
+      "runtimeExecutable": "nodemon",
       "program": "${workspaceFolder}/dist/run.js",
       "restart": true,
       "sourceMaps": true,
       "console": "internalConsole",
-      "internalConsoleOptions": "neverOpen"
-    }
+      "internalConsoleOptions": "neverOpen",
+      "useWSL": true
+    },
   ]
 }

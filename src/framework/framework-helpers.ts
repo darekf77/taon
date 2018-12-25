@@ -2,7 +2,6 @@
 import "reflect-metadata";
 //#endregion
 import * as _ from 'lodash';
-import { describeClassProperites } from 'ng2-rest';
 import { Global } from '../global-config';
 import { BASE_ENTITY } from './framework-entity';
 import { BASE_REPOSITORY } from './framework-repository';
@@ -75,14 +74,14 @@ Please check your Morphi.Repository(...) decorators `, entity, repository)
     compolexProperties.forEach(alias => {
       repo['__'][alias] = {};
 
-      const describedProps = describeClassProperites(entity)
+      const describedProps = Helpers.Class.describeProperites(entity)
       // console.log(`describedProps  "${describedProps}" for ${entity.name}`)
 
       describedProps.concat(compolexProperties as any).forEach(prop => {
         repo['__'][alias][prop] = `${alias as any}.${prop}`; // TODO temp solution
       })
 
-      const props = describeClassProperites(entity)
+      const props = Helpers.Class.describeProperites(entity)
       // console.log(`props  "${props}" for ${entity.name}`)
       props.forEach(prop => {
         repo['__'][alias][prop] = `${alias as any}.${prop}`; // TODO ideal solution
@@ -123,72 +122,79 @@ export interface StartOptions {
 
 }
 
-export async function start(options: StartOptions) {
-  const {
-    host,
-    hostSocket,
-    controllers,
-    entities,
-    //#region @backend
-    config,
-    InitDataPriority,
-    publicAssets = [],
-    //#endregion
-  } = options;
-  // console.log(options)
-
+export function start(options: StartOptions) {
   //#region @backend
-  config['entities'] = entities as any;
-  // config['subscribers'] = subscribers.concat(_.values(Controllers).filter(a => isRealtimeEndpoint(a as any)))
-  //   .concat([META.BASE_CONTROLLER as any]) as any;
-
-  const connections = await createConnections([config] as any);
-  // console.log('init connections', connections)
-  const connection = connections[0]
-  // console.log('init connection', connection)
-  //#endregion
-
-
-
-  init({
-    host,
-    hostSocket,
-    controllers: controllers as any[],
-    entities: entities as any[],
-    //#region @backend
-    connection
+  return new Promise(async (resolve, reject) => {
     //#endregion
-  })
+    const {
+      host,
+      hostSocket,
+      controllers,
+      entities,
+      //#region @backend
+      config,
+      InitDataPriority,
+      publicAssets = [],
+      //#endregion
+    } = options;
+    // console.log(options)
 
-  //#region @backend
+    //#region @backend
+    config['entities'] = entities as any;
+    // config['subscribers'] = subscribers.concat(_.values(Controllers).filter(a => isRealtimeEndpoint(a as any)))
+    //   .concat([META.BASE_CONTROLLER as any]) as any;
+
+    const connections = await createConnections([config] as any);
+    // console.log('init connections', connections)
+    const connection = connections[0]
+    // console.log('init connection', connection)
+    //#endregion
+
+    init({
+      host,
+      hostSocket,
+      controllers: controllers as any[],
+      entities: entities as any[],
+      //#region @backend
+      connection
+      //#endregion
+    })
+
+    //#region @backend
 
 
-  const app = Global.vars.app;
+    const app = Global.vars.app;
 
-  publicAssets.forEach(asset => {
-    app.use(asset.path, express.static(asset.location))
-  })
-
-
-  let ctrls: BASE_CONTROLLER<any>[] = controllers as any;
-
-  if (InitDataPriority) {
-    ctrls = [
-      ...(InitDataPriority ? InitDataPriority : []),
-      ...(ctrls.filter(f => !(InitDataPriority as BASE_CONTROLLER<any>[]).includes(f)))
-    ] as any;
-  }
+    publicAssets.forEach(asset => {
+      app.use(asset.path, express.static(asset.location))
+    })
 
 
-  const promises: Promise<any>[] = []
-  ctrls.forEach(ctrl => {
-    ctrl = Helpers.getSingleton(ctrl as any);
-    if (ctrl && _.isFunction(ctrl.initExampleDbData)) {
-      promises.push((ctrl.initExampleDbData()));
+    let ctrls: BASE_CONTROLLER<any>[] = controllers as any;
+
+    if (InitDataPriority) {
+      ctrls = [
+        ...(InitDataPriority ? InitDataPriority : []),
+        ...(ctrls.filter(f => !(InitDataPriority as BASE_CONTROLLER<any>[]).includes(f)))
+      ] as any;
     }
-  });
-  await Promise.all(promises);
+
+
+    const promises: Promise<any>[] = []
+    ctrls.forEach(ctrl => {
+      ctrl = Helpers.getSingleton(ctrl as any);
+      if (ctrl && _.isFunction(ctrl.initExampleDbData)) {
+        promises.push((ctrl.initExampleDbData()));
+      }
+    });
+    await Promise.all(promises);
+    //#endregion
+
+    //#region @backend
+    resolve()
+  })
   //#endregion
+
 }
 
 

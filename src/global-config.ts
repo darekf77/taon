@@ -1,6 +1,6 @@
 
-import { isBrowser, isNode } from "ng2-logger";
 import { Socket } from 'socket.io'
+import { Helpers } from './helpers';
 
 //#region @backend
 import { Server, Namespace } from 'socket.io'
@@ -16,7 +16,7 @@ export class Global {
     const self = this;
     return {
       set FE(v) {
-        if (!isBrowser) {
+        if (!Helpers.isBrowser) {
           //#region @backend
           console.trace(`CANNOT USE frontend socket on backend side.`)
           process.exit(1)
@@ -28,7 +28,7 @@ export class Global {
         return self.socketFrontEnd;
       },
       set FE_REALTIME(v) {
-        if (!isBrowser) {
+        if (!Helpers.isBrowser) {
           //#region @backend
           console.trace(`CANNOT USE frontend socket on backend side.`)
           process.exit(1)
@@ -101,22 +101,22 @@ export class Global {
   private get(key) {
 
     //#region @backend
-    if (isNode) {
+    if (Helpers.isNode) {
       return global[key];
     }
     //#endregion
-    if (isBrowser) {
+    if (Helpers.isBrowser) {
       return window[key];
     }
   }
 
   private set(value, key) {
     //#region @backend
-    if (isNode) {
+    if (Helpers.isNode) {
       global[key] = value;
     }
     //#endregion
-    if (isBrowser) {
+    if (Helpers.isBrowser) {
       window[key] = value;
     }
   }

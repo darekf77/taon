@@ -26,9 +26,7 @@ export class LoginPage {
     console.log(await this.auth.info().received)
   }
 
-  logout() {
-    this.auth.browser.logout()
-  }
+
 
   observable = {
     isLoggedIn: this.auth.isLoggedIn
@@ -36,9 +34,7 @@ export class LoginPage {
 
 
   ngOnInit() {
-    this.auth.isLoggedIn.subscribe(d => {
-      this.navCtrl.setRoot(HomePage)
-    })
+
   }
 
 }

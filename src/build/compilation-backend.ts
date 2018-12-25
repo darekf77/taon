@@ -60,7 +60,7 @@ export class BackendCompilation extends IncrementalCompilation {
 
     // recreate dist
     const outDistPath = path.join(this.cwd, this.outFolder);
-    Helpers.tryRemoveDir(outDistPath)
+    Helpers.System.Operations.tryRemoveDir(outDistPath)
     fse.mkdirpSync(outDistPath);
   }
 

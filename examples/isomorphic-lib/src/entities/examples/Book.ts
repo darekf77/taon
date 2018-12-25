@@ -1,19 +1,19 @@
-import { Column  } from "typeorm/decorator/columns/Column";
-import { PrimaryGeneratedColumn  } from "typeorm/decorator/columns/PrimaryGeneratedColumn";
-import { Entity } from "typeorm/decorator/entity/Entity";
-
 import { Author } from "./Author";
-import { CLASSNAME } from 'morphi';
+import { Morphi } from 'morphi';
 
-@Entity(Book.name)
-@CLASSNAME('Book')
+@Morphi.Entity()
 export class Book {
 
-    @PrimaryGeneratedColumn()
-    id: number;
+  //#region @backend
+  @Morphi.Orm.Column.Generated()
+  //#endregion
+  id: number;
 
-    @Column()
-    title: string;
 
-    author: Author;
+  //#region @backend
+  @Morphi.Orm.Column.Custom()
+  //#endregion
+  title: string;
+
+  author: Author;
 }

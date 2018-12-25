@@ -1,33 +1,19 @@
-import {
-  ContextENDPOINT,
-  //#region @backend
-  AuthCallBack
-  //#endregion
-} from "../models";
-import {
-  getClassConfig,
-  ClassConfig,
-  MethodConfig,
-  getClassName,
-  HttpMethod
-} from "ng2-rest";
-import { initMethodBrowser, initMethodNodejs, initMidleware } from "../init-method";
-export { CLASSNAME } from 'ng2-rest';
-import { Connection } from "typeorm";
-import * as _ from "lodash";
-import "reflect-metadata";
-import { Global } from '../global-config';
-import { isNode, isBrowser } from 'ng2-logger';
-import { SYMBOL } from '../symbols';
-import { Realtime } from '../realtime';
-import { Helpers } from '../helpers';
-import { activateBaseCrud } from '../crud/activate-base-crud';
 //#region @backend
 import * as express from "express";
 import * as http from "http";
 //#endregion
 
+import { initMethodBrowser, initMethodNodejs, initMidleware } from "../init-method";
+export { CLASSNAME } from 'ng2-rest';
+import { Connection } from "typeorm";
+import * as _ from "lodash";
 
+import { Global } from '../global-config';
+import { SYMBOL } from '../symbols';
+import { Realtime } from '../realtime';
+import { Helpers } from '../helpers';
+import { activateBaseCrud } from '../crud/activate-base-crud';
+import { Models } from '../models';
 export { Connection } from "typeorm";
 
 
@@ -43,7 +29,7 @@ export function ENDPOINT(options?: {
   entity?: Function,
   auth?
   //#region @backend
-  : AuthCallBack
+  : Models.AuthCallBack
   //#endregion
 }) {
   return function (target: Function) {
@@ -58,8 +44,8 @@ export function ENDPOINT(options?: {
         // console.log(`INITING ${target.name} , parent ${target['__proto__'].name} `)
         activateBaseCrud(target, entity)
         //#region  access decorator config
-        const configs = getClassConfig(target);
-        const classConfig: ClassConfig = configs[0];
+        const configs = Helpers.Class.getConfig(target);
+        const classConfig: Models.Rest.ClassConfig = configs[0];
         classConfig.path = path;
         const parentscalculatedPath = _
           .slice(configs, 1)
@@ -68,13 +54,13 @@ export function ENDPOINT(options?: {
             if (Helpers.isGoodPath(bc.path)) {
               return bc.path
             }
-            return getClassName(bc.classReference);
+            return Helpers.Class.getName(bc.classReference);
           }).join('/')
 
         if (Helpers.isGoodPath(path)) {
           classConfig.calculatedPath = path;
         } else {
-          classConfig.calculatedPath = `/${parentscalculatedPath}/${getClassName(target)}`
+          classConfig.calculatedPath = `/${parentscalculatedPath}/${Helpers.Class.getName(target)}`
             .replace(/\/\//g, '/');
         }
 
@@ -94,11 +80,11 @@ export function ENDPOINT(options?: {
 
         //#endregion
         Object.keys(classConfig.methods).forEach(methodName => {
-          const methodConfig: MethodConfig = classConfig.methods[methodName];
-          const type: HttpMethod = methodConfig.type;
+          const methodConfig: Models.Rest.MethodConfig = classConfig.methods[methodName];
+          const type: Models.Rest.HttpMethod = methodConfig.type;
           const expressPath = Helpers.getExpressPath(classConfig, methodConfig);
           // console.log('initfn expressPath', expressPath)
-          if (isNode) {
+          if (Helpers.isNode) {
             //#region @backend
             if (checkAuthFn) {
               methodConfig.requestHandler = auth(methodConfig.descriptor.value);
@@ -106,7 +92,7 @@ export function ENDPOINT(options?: {
             initMethodNodejs(type, methodConfig, classConfig, expressPath);
             //#endregion
           }
-          if (isBrowser) {
+          if (Helpers.isBrowser) {
             initMethodBrowser(target, type, methodConfig, expressPath)
           }
         });

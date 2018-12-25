@@ -1,19 +1,18 @@
+//#region @backend
+import * as express from "express";
+import * as http from "http";
+//#endregion
+
 import * as _ from 'lodash';
 import { Connection } from 'typeorm';
-import { isNode, isBrowser } from 'ng2-logger';
 import { Global } from './global-config';
 import { initMethodBrowser, initMethodNodejs, initMidleware } from "./init-method";
 
 export { Connection } from "typeorm";
 import { Realtime } from './realtime';
-import { getClassConfig, ClassConfig, getClassName } from 'ng2-rest';
-import { ContextENDPOINT } from './models';
+import { Models } from './models';
 import { SYMBOL } from './symbols';
-
-//#region @backend
-import * as express from "express";
-import * as http from "http";
-//#endregion
+import { Helpers } from './helpers';
 
 export function init(config: {
   host: string,
@@ -38,12 +37,12 @@ export function init(config: {
   } = config;
 
   //#region @backend
-  if (isNode) {
+  if (Helpers.isNode) {
     var { URL } = require('url');
   }
   //#endregion
 
-  if (isBrowser && _.isUndefined(ngZone) && !!window['ng']) {
+  if (Helpers.isBrowser && _.isUndefined(ngZone) && !!window['ng']) {
     console.warn(`Please probide ngZone instance in angular apps`)
   }
   Global.vars.ngZone = ngZone;
@@ -75,7 +74,7 @@ export function init(config: {
   }
 
   //#region @backend
-  if (isNode) {
+  if (Helpers.isNode) {
     if (!Global.vars.app) {
       Global.vars.app = express()
       initMidleware();
@@ -104,7 +103,7 @@ export function init(config: {
   }
   //#endregion
 
-  if (isBrowser) {
+  if (Helpers.isBrowser) {
     const uri = new URL(config.host);
     Global.vars.url = uri;
 
@@ -119,7 +118,7 @@ export function init(config: {
 
 
   //#region @backend
-  if (isNode) {
+  if (Helpers.isNode) {
     Global.vars.connection = connection;
 
     Global.vars.initFunc.filter(e => {
@@ -128,8 +127,8 @@ export function init(config: {
         e.initFN();
 
         (function (controller: Function) {
-          const configs = getClassConfig(currentCtrl);
-          const c: ClassConfig = configs[0];
+          const configs = Helpers.Class.getConfig(currentCtrl);
+          const c: Models.Rest.ClassConfig = configs[0];
           for (let p in c.singleton) {
             if (c.singleton.hasOwnProperty(p)) {
               controller.prototype[p] = c.singleton[p];
@@ -153,7 +152,7 @@ export function init(config: {
   }
   //#endregion
 
-  if (isBrowser) {
+  if (Helpers.isBrowser) {
     const notFound: Function[] = [];
     const providers = controllers.filter(ctrl => {
 
@@ -163,7 +162,7 @@ export function init(config: {
         e.initFN();
         return true;
       } else {
-        const context: ContextENDPOINT = ctrl.prototype[SYMBOL.CLASS_DECORATOR_CONTEXT];
+        const context: Models.ContextENDPOINT = ctrl.prototype[SYMBOL.CLASS_DECORATOR_CONTEXT];
         if (!context) {
           notFound.push(ctrl);
           return false;
@@ -174,7 +173,7 @@ export function init(config: {
       }
     })
     notFound.forEach(ctrl => {
-      throw `Decorator "@ENDPOINT(..)" is missing on class ${getClassName(ctrl)}`;
+      throw `Decorator "@ENDPOINT(..)" is missing on class ${ Helpers.Class.getName(ctrl)}`;
     });
     providers.forEach(p => Providers.push(p))
   }
