@@ -10,6 +10,7 @@ import { Helpers } from '../helpers';
 import { copyExampleTo } from './new';
 import { IncrementalBuildProcess } from '../build/incremental-build-process';
 import { BrowserCodeCut } from '../build/browser-code-cut';
+import chalk from 'chalk';
 
 export * from '../helpers';
 
@@ -18,7 +19,7 @@ export function run(argsv: string[], morphiEnvironmentCheck = true) {
     Helpers.checkEnvironment()
   }
   if (argsv.length >= 3) {
-    const commandName: 'build' | 'build:watch' | 'ln' | 'new' | 'process-info' | '-v' | '-h' | '--help' | '-help' = argsv[2] as any;
+    const commandName: 'build' | 'build:watch' | 'ln' | 'new:simple' | 'new:workspace' | 'process-info' | '-v' | '-h' | '--help' | '-help' = argsv[2] as any;
 
 
     if (commandName === 'build') {
@@ -49,6 +50,7 @@ export function run(argsv: string[], morphiEnvironmentCheck = true) {
         }
       });
     } else if (commandName === '-h' || commandName === '-help' || commandName === '--help') {
+      console.log('HELP  - WORK IN PROGRESS')
       console.log('Usage: morphi build <lib1> <lib2> ... ')
       console.log('Where lib(n) is name of included in node_modules isomorphic lib')
       console.log('Example isomorphic libs are: typeorm, ng2-rest, morphi...');
@@ -62,31 +64,51 @@ export function run(argsv: string[], morphiEnvironmentCheck = true) {
       let target = argsv[4]
       child.execSync(Helpers.createLink(target, link))
       process.exit(0)
-    } else if (commandName === 'new') {
-      if (!Array.isArray(argsv) || argsv.length < 4) {
-        console.log(`To few arguments.. try: morphi new myAppName`);
-        process.exit(0)
-      }
-      const name = argsv[3]
-      copyExampleTo(name)
-      process.exit(0)
-    } else if (commandName === 'new:simple') {
-      if (!Array.isArray(argsv) || argsv.length < 4) {
-        console.log(`To few arguments.. try: morphi new myAppName`);
-        process.exit(0)
-      }
-      const name = argsv[3]
-      copyExampleTo(name)
-      process.exit(0)
     } else if (commandName === '-v') {
       console.log(JSON.parse(fs.readFileSync(path.join(__dirname, '../..', 'package.json').toString(), 'utf8').toString()).version)
       process.exit(0)
+    } else if (commandName === 'new:workspace') {
+      if (!Array.isArray(argsv) || argsv.length < 4) {
+        errorNew()
+      }
+      const name = argsv[3]
+      copyExampleTo(name, 'examples')
+      process.exit(0)
+    } else if (commandName === 'new:simple') {
+      if (!Array.isArray(argsv) || argsv.length < 4) {
+        errorNew()
+      }
+      const name = argsv[3]
+      copyExampleTo(name, 'super-simple-morphi-example')
+      process.exit(0)
+    } else {
+      errorAll()
+      process.exit(0)
     }
-
 
   }
 
 }
 
+function errorAll() {
+  console.log(`Bad arguments..try one of the command below:
+- ${chalk.bold('morphi new:workspace myAppName')}
+- ${chalk.bold('morphi new:simple myAppName')}
+- ${chalk.bold('morphi build')}
+- ${chalk.bold('morphi build:watch')}
+- ${chalk.bold('morphi -v')}
+- ${chalk.bold('morphi -h')}          `);
+  process.exit(0)
+}
+
+
+function errorNew() {
+  console.log(`Bad arguments..try:
+${ chalk.bold('morphi new:workspace myAppName')}
+or
+${ chalk.bold('morphi new:simple myAppName')}
+          `);
+  process.exit(0)
+}
 
 //#endregion

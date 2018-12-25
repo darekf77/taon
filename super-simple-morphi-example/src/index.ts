@@ -1,5 +1,4 @@
 import { Morphi } from 'morphi'
-import * as fs from 'fs';
 
 @Morphi.Entity()
 export class USER {

@@ -7,7 +7,7 @@ import chalk from 'chalk';
 import * as child from 'child_process';
 const commandExistsSync = require('command-exists').sync;
 
-export function copyExampleTo(folder: string) {
+export function copyExampleTo(folder: string, exampleType: 'examples' | 'super-simple-morphi-example') {
   const options: fse.CopyOptionsSync = {
     overwrite: true,
     recursive: true,
@@ -17,8 +17,8 @@ export function copyExampleTo(folder: string) {
     }
   };
   let example = {
-    dist: path.join(__dirname, '..', '..', 'examples'),
-    bundle: path.join(__dirname, '..', 'examples')
+    dist: path.join(__dirname, '..', '..', exampleType),
+    bundle: path.join(__dirname, '..', exampleType)
   }
   let destinationPath = path.join(process.cwd(), folder)
   const distMode = fs.existsSync(example.dist)

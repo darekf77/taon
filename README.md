@@ -3,7 +3,7 @@
 ![MorphiJSlogo](logo_github.png)
 
 
-  <h1>Morphi (BETA)</h1>
+  <h1>Morphi v2 (BETA)</h1>
   <p>
     Iso<b>morphi</b>c framework in TypeScript for NodeJS back-end and browser (web/mobile) front-end. 
     <br><br><br>
@@ -54,15 +54,22 @@ First install global tool:
 ```
 npm install -g morphi
 ```
-### Create new isomorphic project ( mobile, web, server + sqlite db + basic rest authentication ) 
+### Create new **Isomorphic Workspace** project ( mobile, web, server + sqlite db + basic rest authentication ) 
 ```
-morphi new myAwesomeIsomrphicApp
+morphi new:workspace myAwesomeIsomrphicApp
+```
+### OR create **Isomorphic Single File**  backend/frontend project
+```
+morphi new:simple myAwesomeIsomrphicApp
 ```
 ### Visual Studio Code (recommended editor)
 Open your project in *VSCode* to get the maximum of development experience.
 ```
 code myAwesomeIsomrphicApp
 ```
+
+# Installation - Isomorphi Workspace
+
 ### Link one version of node_modules
 Once you have your app opened... 
 
@@ -70,7 +77,8 @@ Once you have your app opened...
 
 run:
 ```
-npm install && npm run link
+npm install
+npm run link
 ```
 to install and link *node_module* folder for each subproject.
 ### Build and run sub-projects with auto-reload
@@ -80,6 +88,25 @@ to install and link *node_module* folder for each subproject.
 
 Instead of `npm run build:watch` you can also open each sub-project in separated vscode window `code <sub-project-name>`
 and press: **ctrl(cmd) + shift + b**.
+
+# Installation - Isomorphi Single File
+### Install dependencies
+Once you have your app opened... run:
+```
+npm install
+```
+
+### Run isomorphic build 
+```
+morphi build:watch
+```
+
+### Run frontend client
+```
+npm run build:watch
+```
+
+
 
 # Backend controllers, entities directly in the frontend
 ## Isomorphic TypeScript Classes
@@ -232,11 +259,6 @@ class UserController {
     }	
 }
 ```
-
-# Single file backend/frontend in typescript
-In reality you can keep above examples backend/browser version in one *.ts file. 
-Check **super-simple-morphi-example** in this repository.
-
 
 # Angular 2+ services
 
