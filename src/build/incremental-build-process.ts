@@ -47,32 +47,35 @@ export class IncrementalBuildProcess {
     child.execSync(Helpers.createLink(outDistPath, targetOut))
   }
 
-  start(taskName?: string) {
+  async start(taskName?: string) {
     if (!this.compileOnce) {
       this.compileOnce = true;
     }
-    this.backendCompilation.init(this.backendTaskName(taskName))
-    this.browserCompilations.forEach(bc => {
-      bc.init(this.browserTaksName(taskName, bc), () => {
+    await this.backendCompilation.init(this.backendTaskName(taskName))
+
+    for (let index = 0; index < this.browserCompilations.length; index++) {
+      const bc = this.browserCompilations[index];
+      await bc.init(this.browserTaksName(taskName, bc), () => {
         this.recreateBrowserLinks(bc)
       })
-
-    })
+    }
   }
 
-  startAndWatch(taskName?: string) {
+  async startAndWatch(taskName?: string) {
     if (this.compileOnce) {
       console.log('Watch compilation single run')
-      this.start(taskName);
+      await this.start(taskName);
       process.exit(0)
       return
     }
-    this.backendCompilation.initAndWatch(this.backendTaskName(taskName))
-    this.browserCompilations.forEach(bc => {
-      bc.initAndWatch(this.browserTaksName(taskName, bc), () => {
+    await this.backendCompilation.initAndWatch(this.backendTaskName(taskName))
+
+    for (let index = 0; index < this.browserCompilations.length; index++) {
+      const bc = this.browserCompilations[index];
+      await bc.initAndWatch(this.browserTaksName(taskName, bc), () => {
         this.recreateBrowserLinks(bc)
       })
-    })
+    }
   }
 
 }

@@ -14,7 +14,7 @@ import chalk from 'chalk';
 
 export * from '../helpers';
 
-export function run(argsv: string[], morphiEnvironmentCheck = true) {
+export async function run(argsv: string[], morphiEnvironmentCheck = true) {
   if (morphiEnvironmentCheck) {
     Helpers.checkEnvironment()
   }
@@ -24,11 +24,11 @@ export function run(argsv: string[], morphiEnvironmentCheck = true) {
 
     if (commandName === 'build') {
       BrowserCodeCut.resolveAndAddIsomorphicLibs(argsv.slice(4))
-      new IncrementalBuildProcess().start('isomprphic build')
+      await (new IncrementalBuildProcess()).start('isomprphic build')
       process.exit(0)
     } else if (commandName === 'build:watch') {
       BrowserCodeCut.resolveAndAddIsomorphicLibs(argsv.slice(4))
-      new IncrementalBuildProcess().startAndWatch('isomorphic build (watch)');
+      await (new IncrementalBuildProcess()).startAndWatch('isomorphic build (watch)');
       process.stdin.resume();
     } else if (commandName === 'process-info') {
       // A simple pid lookup

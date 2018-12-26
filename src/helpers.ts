@@ -8,6 +8,7 @@ import * as fse from 'fs-extra';
 import chalk from 'chalk';
 import * as rimraf from 'rimraf';
 import { sleep } from 'sleep';
+import * as dateformat from "dateformat";
 import check from 'check-node-version';
 const commandExistsSync = require('command-exists').sync;
 //#endregion
@@ -84,9 +85,40 @@ export class Helpers extends HelpersNg2Rest {
     return this.hasParentClassWithName(targetProto, name, targets);
   }
 
-  static isAsync(fn) {
-    return fn && fn.constructor && fn.constructor.name === 'AsyncFunction';
+  //#region @backend
+  static async compilationWrapper(fn: () => void, taskName: string = 'Task', executionType: 'Compilation' | 'Code execution' = 'Compilation') {
+    function currentDate() {
+      return `[${dateformat(new Date(), 'HH:MM:ss')}]`;
+    }
+    if (!fn || !_.isFunction(fn)) {
+      console.error(`${executionType} wrapper: "${fs}" is not a function.`)
+      process.exit(1)
+    }
+
+    try {
+      console.log(chalk.gray(`${currentDate()} ${executionType} of "${chalk.bold(taskName)}" started...`))
+      await Helpers.runSyncOrAsync(fn)
+      console.log(chalk.green(`${currentDate()} ${executionType} of "${chalk.bold(taskName)}" finish OK...`))
+    } catch (error) {
+      console.log(chalk.red(error));
+      console.log(`${currentDate()} ${executionType} of ${taskName} ERROR`)
+    }
+
   }
+  //#endregion
+
+
+  static runSyncOrAsync(fn: Function) {
+    // let wasPromise = false;
+    let promisOrValue = fn()
+    if (promisOrValue instanceof Promise) {
+      // wasPromise = true;
+      promisOrValue = Promise.resolve(promisOrValue)
+    }
+    // console.log('was promis ', wasPromise)
+    return promisOrValue;
+  }
+
 
 
   static tryTransformParam(param) {
