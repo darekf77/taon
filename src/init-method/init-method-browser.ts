@@ -20,7 +20,8 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
     const endpoints = window[SYMBOL.ENDPOINT_META_CONFIG];
     let rest;
     if (!endpoints[uri.href][expressPath]) {
-      rest = Resource.create(uri.href, expressPath, SYMBOL.MAPPING_CONFIG_HEADER as any);
+      rest = Resource.create(uri.href, expressPath, SYMBOL.MAPPING_CONFIG_HEADER as any,
+        SYMBOL.CIRCURAL_OBJECTS_MAP_BODY as any);
       endpoints[uri.href][expressPath] = rest;
     } else {
       rest = endpoints[uri.href][expressPath];
@@ -99,6 +100,20 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
       }
     });
     // debugger;
+    if (typeof item === 'object') {
+      item = Helpers.JSON.parse(Helpers.JSON.stringify(item))
+      Resource.Headers.request.set(
+        SYMBOL.CIRCURAL_OBJECTS_MAP_BODY,
+        JSON.stringify(Helpers.JSON.circural))
+    }
+
+    if (typeof queryParams === 'object') {
+      queryParams = Helpers.JSON.parse(Helpers.JSON.stringify(queryParams))
+      Resource.Headers.request.set(
+        SYMBOL.CIRCURAL_OBJECTS_MAP_QUERY_PARAM,
+        JSON.stringify(Helpers.JSON.circural))
+    }
+
     return {
       received: isWithBody ? rest.model(pathPrams)[method](item, [queryParams]) : rest.model(pathPrams)[method]([queryParams])
     }

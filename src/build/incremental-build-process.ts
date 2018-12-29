@@ -1,6 +1,7 @@
 //#region @backend
 import * as path from 'path'
 import * as child from 'child_process';
+import * as _ from 'lodash'
 
 import { OutFolder } from './models';
 import { config } from './config';
@@ -17,17 +18,21 @@ export class IncrementalBuildProcess {
 
   constructor(outFolder: OutFolder = 'dist', relativeLocationToCwd = 'src', cwd = process.cwd()) {
 
-    this.backendCompilation = new BackendCompilation(outFolder, relativeLocationToCwd, cwd)
+    if (_.isString(outFolder) && _.isString(relativeLocationToCwd) && _.isString(cwd)) {
 
-    let browserOutFolder = config.folder.browser;
 
-    const browser = new BroswerCompilation(
-      `tmp-src-${outFolder}-${browserOutFolder}`,
-      browserOutFolder as any,
-      relativeLocationToCwd,
-      cwd,
-      outFolder);
-    this.browserCompilations = [browser]
+      this.backendCompilation = new BackendCompilation(outFolder, relativeLocationToCwd, cwd)
+
+      let browserOutFolder = config.folder.browser;
+
+      const browser = new BroswerCompilation(
+        `tmp-src-${outFolder}-${browserOutFolder}`,
+        browserOutFolder as any,
+        relativeLocationToCwd,
+        cwd,
+        outFolder);
+      this.browserCompilations = [browser]
+    }
   }
 
 

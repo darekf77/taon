@@ -1,5 +1,6 @@
-import { Models } from "../models";
+import * as _ from 'lodash';
 
+import { Models } from "../models";
 import { Helpers } from "../helpers";
 import { Global } from '../global-config';
 import { Realtime } from '../realtime';
@@ -36,7 +37,9 @@ export function initMidleware() {
           'Authorization',
           'X-Requested-With',
           SYMBOL.X_TOTAL_COUNT,
-          SYMBOL.MAPPING_CONFIG_HEADER
+          SYMBOL.MAPPING_CONFIG_HEADER,
+          SYMBOL.CIRCURAL_OBJECTS_MAP_BODY,
+          SYMBOL.CIRCURAL_OBJECTS_MAP_QUERY_PARAM
         ].join(', '))
       next();
     });
@@ -72,6 +75,18 @@ export function initMethodNodejs(
     let tBody = req.body;
     let tParams = req.params;
     let tQuery = req.query;
+
+    if (req.headers[SYMBOL.CIRCURAL_OBJECTS_MAP_BODY]) {
+      try {
+        tBody = Helpers.JSON.parse(JSON.stringify(tBody), JSON.parse(req.headers[SYMBOL.CIRCURAL_OBJECTS_MAP_BODY]));
+      } catch (e) { }
+    }
+
+    if (req.headers[SYMBOL.CIRCURAL_OBJECTS_MAP_QUERY_PARAM]) {
+      try {
+        tQuery = Helpers.JSON.parse(JSON.stringify(tQuery), JSON.parse(req.headers[SYMBOL.CIRCURAL_OBJECTS_MAP_QUERY_PARAM]));
+      } catch (e) { }
+    }
 
     // make class instance from body
     // console.log('req.headers', req.headers)
@@ -137,25 +152,43 @@ export function initMethodNodejs(
       const response: Models.Response<any> = methodConfig.descriptor.value.apply(classConfig.singleton, resolvedParams)
       // console.log('response.send', response.send)
 
-      const result = await Helpers.getResponseValue(response, req, res);
+      let result = await Helpers.getResponseValue(response, req, res);
+      console.log('result', result)
+
+      if (_.isObject(result)) {
+        const cleanedResult = Helpers.JSON.cleaned(result)
+        console.log(cleanedResult)
+        const entity = Helpers.Mapping.decode(cleanedResult, { productionMode });
+        res.set(SYMBOL.MAPPING_CONFIG_HEADER, JSON.stringify(entity));
+      } else {
+        console.log('is not a object?', result)
+      }
+
       // const result = typeof response.send === 'function' ? response.send.call(req, res) : response.send;
-      const entity = Helpers.Mapping.decode(result, { productionMode });
-      res.set(SYMBOL.MAPPING_CONFIG_HEADER, JSON.stringify(entity));
 
       if (typeof result === 'object') {
+        const s = Helpers.JSON.stringify(result)
+        result = Helpers.JSON.parse(s);
+        res.set(SYMBOL.CIRCURAL_OBJECTS_MAP_BODY, JSON.stringify(Helpers.JSON.circural));
         res.json(result);
       }
       else res.send(result)
     } catch (error) {
       if (error instanceof Models.Errors) {
         const err: Models.Errors = error;
-        res.status(400).send(error)
+        console.log('aaaaaaaaaaaaa', err)
+        res.status(400).send(Helpers.JSON.stringify(err))
       } if (error instanceof Error) {
         const err: Error = error;
-        res.status(400).send(err.message)
+        console.error(err.name)
+        console.error(err.stack)
+        res.status(400).send(Helpers.JSON.stringify({
+          stack: err.stack,
+          message: err.message
+        }))
       } else {
         console.log(`Bad result isomorphic method: ${error}`)
-        res.status(400).send(error)
+        res.status(400).send(Helpers.JSON.stringify(error))
       }
     }
 

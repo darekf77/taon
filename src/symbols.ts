@@ -21,6 +21,8 @@ export const SYMBOL = {
   },
   X_TOTAL_COUNT: 'x-total-count',
   CRUD_TABLE_MODEL: 'model',
+  CIRCURAL_OBJECTS_MAP_BODY: 'circuralmapbody',
+  CIRCURAL_OBJECTS_MAP_QUERY_PARAM: 'circuralmapbody',
   MAPPING_CONFIG_HEADER: 'mappingheader',
   MAPPING_CONFIG_HEADER_BODY_PARAMS: 'mhbodyparams',
   MAPPING_CONFIG_HEADER_QUERY_PARAMS: 'mhqueryparams',

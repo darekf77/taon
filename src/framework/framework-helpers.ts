@@ -13,7 +13,7 @@ import {
   Repository
 } from 'typeorm';
 import { Connection } from "typeorm/connection/Connection";
-import { createConnection, createConnections } from 'typeorm';
+import { createConnection, createConnections, getConnection } from 'typeorm';
 import * as express from "express";
 
 export { Connection } from 'typeorm';
@@ -112,10 +112,10 @@ export interface StartOptions {
 
   host: string;
   hostSocket?: string;
-  controllers: BASE_CONTROLLER<any>[] | Function[];
+  controllers?: BASE_CONTROLLER<any>[] | Function[];
   entities?: BASE_ENTITY<any>[] | Function[];
   //#region @backend
-  config: IConnectionOptions;
+  config?: IConnectionOptions;
   publicAssets?: { path: string; location: string }[];
   InitDataPriority?: BASE_CONTROLLER<any>[] | Function[];
   //#endregion
@@ -126,11 +126,11 @@ export function start(options: StartOptions) {
   //#region @backend
   return new Promise(async (resolve, reject) => {
     //#endregion
-    const {
+    let {
       host,
       hostSocket,
-      controllers,
-      entities,
+      controllers = [],
+      entities = [],
       //#region @backend
       config,
       InitDataPriority,
@@ -140,9 +140,36 @@ export function start(options: StartOptions) {
     // console.log(options)
 
     //#region @backend
+    if (!config) {
+      config = {} as any;
+      console.error(`
+
+        Missing config for backend:
+
+
+        Morphi.init({
+          ...
+          config: <YOUR DB CONFIG HERE>
+          ...
+        })
+
+      `)
+    }
     config['entities'] = entities as any;
     // config['subscribers'] = subscribers.concat(_.values(Controllers).filter(a => isRealtimeEndpoint(a as any)))
     //   .concat([META.BASE_CONTROLLER as any]) as any;
+
+    try {
+      const connectionExists = !!(await getConnection());
+      if (connectionExists) {
+        console.log('Connection exists')
+        return
+      }
+    } catch (error) {
+
+    }
+
+
 
     const connections = await createConnections([config] as any);
     // console.log('init connections', connections)

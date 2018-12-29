@@ -33,8 +33,9 @@ export abstract class IncrementalCompilation {
 
     public cwd: string = process.cwd(),
   ) {
-
-    this.watchDir = path.join(cwd, location, globPattern)
+    if (_.isString(globPattern) && _.isString(location) && _.isString(cwd)) {
+      this.watchDir = path.join(cwd, location, globPattern)
+    }
   }
 
   public async init(taskName?: string, afterInitCallBack?: () => void) {
@@ -60,7 +61,7 @@ export abstract class IncrementalCompilation {
     }
     if (_.isFunction(this.asyncAction)) {
       this.watchFilesAndFolders((f, event) => {
-        if(!this.firstTimeFix[f]) {
+        if (!this.firstTimeFix[f]) {
           this.firstTimeFix[f] = true;
           return
         }
