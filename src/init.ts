@@ -6,7 +6,7 @@ import * as http from "http";
 import * as _ from 'lodash';
 import { Connection } from 'typeorm';
 import { Global } from './global-config';
-import { initMethodBrowser, initMethodNodejs, initMidleware } from "./init-method";
+import { initMidleware } from "./init-method";
 
 export { Connection } from "typeorm";
 import { Realtime } from './realtime';

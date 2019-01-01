@@ -48,7 +48,7 @@ export function initMidleware() {
 
 }
 
-
+//#region @backend
 export function initMethodNodejs(
   type: Models.Rest.HttpMethod,
   methodConfig: Models.Rest.MethodConfig,
@@ -56,7 +56,7 @@ export function initMethodNodejs(
   expressPath
 ) {
 
-  //#region @backendFunc
+
   const requestHandler = (methodConfig.requestHandler && typeof methodConfig.requestHandler === 'function')
     ? methodConfig.requestHandler : (req, res, next) => { next() };
 
@@ -153,15 +153,15 @@ export function initMethodNodejs(
       // console.log('response.send', response.send)
 
       let result = await Helpers.getResponseValue(response, req, res);
-      console.log('result', result)
+      // console.log('result', result)
 
       if (_.isObject(result)) {
         const cleanedResult = Helpers.JSON.cleaned(result)
-        console.log(cleanedResult)
+        // console.log(cleanedResult)
         const entity = Helpers.Mapping.decode(cleanedResult, { productionMode });
         res.set(SYMBOL.MAPPING_CONFIG_HEADER, JSON.stringify(entity));
       } else {
-        console.log('is not a object?', result)
+        // console.log('is not a object?', result)
       }
 
       // const result = typeof response.send === 'function' ? response.send.call(req, res) : response.send;
@@ -170,9 +170,9 @@ export function initMethodNodejs(
         const s = Helpers.JSON.stringify(result)
         result = Helpers.JSON.parse(s);
         res.set(SYMBOL.CIRCURAL_OBJECTS_MAP_BODY, JSON.stringify(Helpers.JSON.circural));
-        res.json(result);
+        res.json(transformToBrowserVersion(result));
       }
-      else res.send(result)
+      else res.send(transformToBrowserVersion(result))
     } catch (error) {
       if (error instanceof Models.Errors) {
         const err: Models.Errors = error;
@@ -180,8 +180,7 @@ export function initMethodNodejs(
         res.status(400).send(Helpers.JSON.stringify(err))
       } if (error instanceof Error) {
         const err: Error = error;
-        console.error(err.name)
-        console.error(err.stack)
+        betterError(err)
         res.status(400).send(Helpers.JSON.stringify({
           stack: err.stack,
           message: err.message
@@ -193,5 +192,58 @@ export function initMethodNodejs(
     }
 
   })
-  //#endregion
+
 }
+//#endregion
+
+//#region @backend
+function betterError(error) {
+  require('callsite-record')({
+    forError: error
+  }).renderSync({
+    stackFilter(frame) {
+      return !frame.getFileName().includes('node_modules');
+    }
+  });
+}
+//#endregion
+
+//#region @backend
+
+export function getTransformFunction(target: Function) {
+  if (!target) {
+    return;
+  }
+  const configs = Helpers.Class.getConfig(target);
+  // console.log(`CONFIGS TO CHECK`, configs)
+  const functions = configs
+    .map(c => {
+      if (_.isFunction(c.browserTransformFn)) {
+        return c.browserTransformFn;
+      }
+    })
+    .filter(f => !!f);
+  return _.first(functions);
+}
+
+export function transformToBrowserVersion(value: any) {
+  if (!_.isObject(value)) {
+    return value;
+  }
+  Helpers.walkObject(value, (lodashPath) => {
+    let v = _.get(value, lodashPath);
+    let target = Helpers.Class.getFromObject(v);
+    let browserTransformFn = getTransformFunction(target);
+    if (Helpers.Class.getName(target) === 'Array') {
+      console.log('BAD!!!!!!', target)
+    }
+    // console.log(`for ${lodashPath} , target ${target}`)
+    if (browserTransformFn) {
+      console.log('transform function works !', browserTransformFn)
+      _.set(v, lodashPath, browserTransformFn(v));
+    }
+  })
+  // console.log('AFTER TRANSFORM', value)
+  return value;
+}
+//#endregion

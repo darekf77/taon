@@ -3,7 +3,12 @@ import * as express from "express";
 import * as http from "http";
 //#endregion
 
-import { initMethodBrowser, initMethodNodejs, initMidleware } from "../init-method";
+import {
+  initMethodBrowser,
+  //#region @backend
+  initMethodNodejs
+  //#endregion
+} from "../init-method";
 export { CLASSNAME } from 'ng2-rest';
 import { Connection } from "typeorm";
 import * as _ from "lodash";
@@ -45,6 +50,7 @@ export function ENDPOINT(options?: {
         activateBaseCrud(target, entity)
         //#region  access decorator config
         const configs = Helpers.Class.getConfig(target);
+        // console.log(`Class config for ${Helpers.Class.getName(target)}`, configs)
         const classConfig: Models.Rest.ClassConfig = configs[0];
         classConfig.path = path;
         const parentscalculatedPath = _

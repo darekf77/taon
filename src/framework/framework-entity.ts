@@ -33,6 +33,7 @@ export function Entity<T = {}>(options?: {
   },
   //#region @backend
   createTable?: boolean;
+  browserTransformFn?: (entity: T) => T
   //#endregion
 }) {
   if (!options) {
@@ -53,6 +54,7 @@ export function Entity<T = {}>(options?: {
       exclude = undefined
     },
     //#region @backend
+    browserTransformFn,
     createTable = true,
     //#endregion
   } = options;
@@ -67,6 +69,13 @@ export function Entity<T = {}>(options?: {
       FormlyForm<T>(transformFn, exclude, include)(target)
     }
     //#region @backend
+    if (_.isFunction(browserTransformFn)) {
+      const configs = Helpers.Class.getConfig(target)
+      const config = _.first(configs);
+      config.browserTransformFn = browserTransformFn;
+      // console.log('BROWSER TRANSFORM FUNCTION ADDED TO CONFIGS', configs)
+    }
+
     if (createTable) {
       TypeormEntity(tableNameFrom(target))(target)
     }
