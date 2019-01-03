@@ -5,6 +5,9 @@ import { Helpers } from "../helpers";
 import { Global } from '../global-config';
 import { Realtime } from '../realtime';
 import { SYMBOL } from '../symbols';
+//#region @backend
+import { walk } from 'lodash-walk-object';
+//#endregion
 
 //#region @backend
 import * as  cors from 'cors';
@@ -150,33 +153,35 @@ export function initMethodNodejs(
     const resolvedParams = args.reverse().map(v => Helpers.tryTransformParam(v));
     try {
       const response: Models.Response<any> = methodConfig.descriptor.value.apply(classConfig.singleton, resolvedParams)
-      // console.log('response.send', response.send)
-
-      let result = await Helpers.getResponseValue(response, req, res);
+      const result = await Helpers.getResponseValue(response, req, res);
       // console.log('result', result)
-
       if (_.isObject(result)) {
-        const cleanedResult = Helpers.JSON.cleaned(result)
-        // console.log(cleanedResult)
+        let cleanedResult = Helpers.JSON.cleaned(result)
+        let circural = _.cloneDeep(Helpers.JSON.circural);
+
+        while (true) {
+          cleanedResult = transformToBrowserVersion(cleanedResult)
+          cleanedResult = Helpers.JSON.cleaned(cleanedResult)
+          circural = circural.concat(Helpers.JSON.circural);
+          if(Helpers.JSON.circural.length === 0) {
+            break;
+          }
+        }
+
+        console.log('cleaned result', cleanedResult)
+        console.log('circural', circural)
         const entity = Helpers.Mapping.decode(cleanedResult, { productionMode });
         res.set(SYMBOL.MAPPING_CONFIG_HEADER, JSON.stringify(entity));
-      } else {
-        // console.log('is not a object?', result)
+        res.set(SYMBOL.CIRCURAL_OBJECTS_MAP_BODY, JSON.stringify(circural));
+        res.json(cleanedResult);
       }
-
-      // const result = typeof response.send === 'function' ? response.send.call(req, res) : response.send;
-
-      if (typeof result === 'object') {
-        const s = Helpers.JSON.stringify(result)
-        result = Helpers.JSON.parse(s);
-        res.set(SYMBOL.CIRCURAL_OBJECTS_MAP_BODY, JSON.stringify(Helpers.JSON.circural));
-        res.json(transformToBrowserVersion(result));
+      else {
+        res.send(result)
       }
-      else res.send(transformToBrowserVersion(result))
     } catch (error) {
       if (error instanceof Models.Errors) {
+        console.log('Morphi Error', error)
         const err: Models.Errors = error;
-        console.log('aaaaaaaaaaaaa', err)
         res.status(400).send(Helpers.JSON.stringify(err))
       } if (error instanceof Error) {
         const err: Error = error;
@@ -198,6 +203,7 @@ export function initMethodNodejs(
 
 //#region @backend
 function betterError(error) {
+  console.log('callsite record !')
   require('callsite-record')({
     forError: error
   }).renderSync({
@@ -226,24 +232,30 @@ export function getTransformFunction(target: Function) {
   return _.first(functions);
 }
 
-export function transformToBrowserVersion(value: any) {
-  if (!_.isObject(value)) {
-    return value;
+
+
+export function transformToBrowserVersion(json: any) {
+  if (!_.isObject(json)) {
+    return json;
   }
-  Helpers.walkObject(value, (lodashPath) => {
-    let v = _.get(value, lodashPath);
-    let target = Helpers.Class.getFromObject(v);
+
+  const toReplace: { value: any, changeValue: (newValue) => any }[] = []
+
+  walk.Object(json, (value, lodashPath, changeValue) => {
+
+  })
+
+
+  toReplace.forEach(({ value, changeValue }) => {
+    let target = Helpers.Class.getFromObject(value);
     let browserTransformFn = getTransformFunction(target);
-    if (Helpers.Class.getName(target) === 'Array') {
-      console.log('BAD!!!!!!', target)
-    }
-    // console.log(`for ${lodashPath} , target ${target}`)
     if (browserTransformFn) {
-      console.log('transform function works !', browserTransformFn)
-      _.set(v, lodashPath, browserTransformFn(v));
+      const newValue = browserTransformFn(value)
+      changeValue(newValue)
     }
   })
+
   // console.log('AFTER TRANSFORM', value)
-  return value;
+  return json;
 }
 //#endregion
