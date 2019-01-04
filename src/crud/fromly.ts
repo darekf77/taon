@@ -9,100 +9,187 @@ import { Models } from '../models';
 
 const log = Log.create('[morphi] formly')
 
-type FormlyInputType = 'input' | 'toogle' | 'datepicker' | 'repeat'
+type FormlyInputType = 'input' | 'switch' | 'datepicker' | 'repeat' | 'group'
 export function getFromlyConfigFor(
   target: Function,
-  formType: 'material' | 'bootstrap' = 'material',
-  keysPathesToInclude: string[] = [],
-  keysPathesToExclude: string[] = [],
-  parentKeyPath?: string
+  options: {
+    formType?: 'material' | 'bootstrap';
+    keysPathesToInclude?: string[];
+    keysPathesToExclude?: string[];
+    parentModel?: string;
+    relativePath?: string;
+    level?: number;
+    maxLevel?: number;
+  } = {}
 ) {
+  const { formType = 'material', keysPathesToExclude = [], keysPathesToInclude = [],
+    parentModel, relativePath = '', level = 0, maxLevel = 4,
+  } = options;
 
   if (Helpers.Class.getName(target) === 'Project') {
     return [];
   }
 
+  if (level === maxLevel) {
+    return [];
+  }
+
   const mapping: Mapping.Mapping = Mapping.getModelsMapping(target);
+  // console.log('mapping', mapping)
   const fieldNames = Helpers.Class.describeProperites(target);
   const checkExclude = (_.isArray(keysPathesToExclude) && keysPathesToExclude.length > 0);
   const checkInclude = (_.isArray(keysPathesToInclude) && keysPathesToInclude.length > 0);
-
-  function fields(override?: FormlyFieldConfig[]): FormlyFieldConfig[] {
-    if (!_.isUndefined(override)) {
-      target[SYMBOL.FORMLY_METADATA_ARRAY] = override;
-    }
-    if (!target[SYMBOL.FORMLY_METADATA_ARRAY]) {
-      target[SYMBOL.FORMLY_METADATA_ARRAY] = [];
-    }
-    return target[SYMBOL.FORMLY_METADATA_ARRAY]
+  if (checkExclude && checkInclude) {
+    throw `In morphi function getFromlyConfigFor(...) please use keysPathesToInclude or keysPathesToExclude, `
   }
+  // if (checkInclude) {
+  //   console.log('check include', keysPathesToExclude)
+  // }
+
+  // if (checkExclude) {
+  //   console.log('check exclude', keysPathesToExclude)
+  // }
+
+  let fields: FormlyFieldConfig[] = [];
 
 
-
-  function inputToPush(key: string, type: FormlyInputType, targetChild?: Function) {
+  function inputToPush(key: string, type: FormlyInputType, model: string, targetChild?: Function) {
+    // console.log(`key(${key}) type: ${type} | model: ${model} targetChild: ${targetChild && targetChild.name}`)
     let res: FormlyFieldConfig;
     if (type === 'repeat') {
-      res = {
-        key,
-        type,
-        fieldArray: {
+      const fieldGroup = getFromlyConfigFor(targetChild,
+        {
+          formType, keysPathesToInclude, keysPathesToExclude,
+          relativePath: `${relativePath}.${key}`,
+          level: (level + 1), maxLevel
+        })
+      if (fieldGroup.length > 0) {
+        res = {
+          key,
+          type,
+          defaultValue: [],
+          fieldArray: {
+            fieldGroupClassName: 'row',
+            templateOptions: {
+              label: `Add new ${_.startCase(key)}`
+            },
+            fieldGroup
+          }
+        }
+      }
+
+    } else if (type === 'group') {
+      const fieldGroup = getFromlyConfigFor(targetChild,
+        {
+          formType, keysPathesToInclude, keysPathesToExclude, parentModel: model,
+          relativePath: `${relativePath}.${key}`,
+          level: (level + 1), maxLevel
+        })
+      if (fieldGroup.length > 0) {
+        res = {
           fieldGroupClassName: 'row',
           templateOptions: {
-            btnText: _.upperCase(key),
+            label: `${_.startCase(key)}`
           },
-          fieldGroup: getFromlyConfigFor(targetChild, formType, keysPathesToInclude, keysPathesToExclude, `${parentKeyPath}${key}`)
+          wrappers: ['groupwrap'],
+          fieldGroup
         }
       }
     } else {
       res = {
         key,
+        model,
         type,
         defaultValue: !_.isUndefined(target.prototype[key]) ? target.prototype[key] : undefined,
         templateOptions: {
-          label: _.isString(parentKeyPath) ? `${parentKeyPath.split('.').map(l => _.startCase(l)).join(' / ')} / ${_.startCase(key)}`
+          label: _.isString(model) ? `${model.split('.').map(l => _.startCase(l)).join(' / ')} / ${_.startCase(key)}`
             : _.startCase(key)
         }
       }
     }
+    if (res) {
+      Object.keys(res).forEach(key => res[key] === undefined ? delete res[key] : '');
+    }
     return res;
   }
 
+  function isAlowedPath(key: string) {
+    let isAlowed = true;
+    const matchPath = relativePath === '' ? key : `${relativePath}:${key}`
+    if (checkExclude) {
+      if (keysPathesToExclude.includes(matchPath)) {
+        // console.log(`Not allowed key: ${key}`)
+        isAlowed = false;
+      } else {
+        isAlowed = true;
+      }
+    } else if (checkInclude) {
+      if (keysPathesToInclude.includes(matchPath)) {
+        // console.log(`Allowed key: ${key}`)
+        isAlowed = true;
+      } else {
+        isAlowed = false;
+      }
+    }
+    // console.log(`Is allowed;${matchPath} `, isAlowed)
+    return isAlowed;
+  }
+
+  const simpleResolved = []
+
   function resolveSimpleTypes() {
+
     for (const key in target.prototype) {
-      if (target.prototype.hasOwnProperty(key)) {
+      if (target.prototype.hasOwnProperty(key) && !_.isFunction(target.prototype[key])) {
+
+        if (!isAlowedPath(key)) {
+          continue;
+        }
+
+        if (!_.isUndefined(mapping[key])) {
+          continue;
+        }
+
         const element = target.prototype[key];
         let type: FormlyInputType = 'input';
         if (_.isBoolean(element)) {
-          type = 'toogle'
+          type = 'switch'
         } else if (_.isDate(element)) {
           type = 'datepicker'
         }
-        fields().push(inputToPush(key, type))
+        fields.push(inputToPush(key, type, parentModel))
+        simpleResolved.push(key)
       }
     }
   }
 
   function resolveComplexTypes() {
 
-    fieldNames.forEach(key => {
+    fieldNames
+      .filter(key => !simpleResolved.includes(key))
+      .forEach(key => {
 
-      if (!_.isUndefined(mapping[key])) {
-        let className = mapping[key]
-        const isArray = _.isArray(className)
-        className = isArray ? _.first(className) : className;
-        const targetChild = Helpers.Class.getBy(className);
+        if (isAlowedPath(key) && !_.isUndefined(mapping[key])) {
+          let className = mapping[key]
+          const isArray = _.isArray(className)
+          className = isArray ? _.first(className) : className;
 
-        if (targetChild) {
-          if (isArray) {
-            fields().push(inputToPush(key, 'repeat', targetChild))
+          if (className === 'Date') {
+            fields.push(inputToPush(key, 'datepicker', parentModel))
           } else {
-            const fieldsFromChild = getFromlyConfigFor(targetChild, formType, keysPathesToInclude, keysPathesToExclude, `${parentKeyPath}${key}`)
-            fields(fields().concat(fieldsFromChild))
-          }
-        }
+            const targetChild = Helpers.Class.getBy(className);
 
-      }
-    })
+            if (targetChild) {
+              if (isArray) {
+                fields = fields.concat(inputToPush(key, 'repeat', key, targetChild))
+              } else {
+                fields = fields.concat(inputToPush(key, 'group', key, targetChild))
+              }
+            }
+          }
+
+        }
+      })
   }
 
   function generate() {
@@ -111,113 +198,9 @@ export function getFromlyConfigFor(
   }
 
   generate()
-  return fields()
+  return fields.filter(f => !!f);
 }
 
-// function getFromlyConfigFor(target: Function, parentKeyPath?: string,
-//   keysPathesToExclude?: string[],
-//   keysPathesToInclude?: string[]
-// ): FormlyFieldConfig[] {
-//   // log.onlyWhen(target.name === 'CATEGORY')
-//   if(target.name === 'Project') {
-//     return [];
-//   }
-//   const mapping = Mapping.getModelsMapping(target);
-//   console.log(`mapping from ${target.name}`, mapping)
-//   // log.i(`mapping from ${target.name}`, mapping)
-
-//   const checkExclude = (_.isArray(keysPathesToExclude) && keysPathesToExclude.length > 0);
-//   const checkInclude = (_.isArray(keysPathesToInclude) && keysPathesToInclude.length > 0);
-
-//   // log.i('keysPathesToExclude', keysPathesToExclude)
-//   // log.i('checkInclude', checkInclude)
-
-//   if (!target[SYMBOL.FORMLY_METADATA_ARRAY]) {
-//     target[SYMBOL.FORMLY_METADATA_ARRAY] = [];
-//   } else {
-//     if (_.isUndefined(parentKeyPath)) { // TODO try to make this more efficeien  ???
-//       return target[SYMBOL.FORMLY_METADATA_ARRAY];
-//     }
-//   }
-
-//   const fieldNames = Helpers.Class.describeProperites(target);
-//   log.i(`describeClassProperites for ${target.name}`, fieldNames)
-//   let additionalConfig = [];
-
-//   const result = fieldNames.map(key => {
-//     if (key === '') {
-//       return
-//     }
-//     let type = 'input';
-//     let keyPath = key;
-//     if (parentKeyPath) {
-//       keyPath = `${parentKeyPath}.${key}`
-//     }
-//     // console.log(`key: ${keyPath}, parentkeyPath: ${parentKeyPath} for ${target.name}`)
-
-//     if (checkExclude && keysPathesToExclude.includes(key)) {
-//       return;
-//     }
-
-//     const prototypeDefaultValue = target.prototype[key];
-//     console.log('DEFAULT VALUE: ', prototypeDefaultValue)
-//     let isSimpleJStype = false;
-
-//     // console.log(`Prototype value for "${propKey}" is "${prototypeDefaultValue}"`)
-//     if (mapping[key] === Boolean || _.isBoolean(prototypeDefaultValue)) {
-//       isSimpleJStype = true;
-//       // console.log(`is boolean: ${key}`)
-//       type = ((formType: Models.FormlyFromType) => {
-//         if (formType === 'material') {
-//           return 'toggle'
-//         }
-//       }) as any;
-//     }
-
-//     if (mapping[key] === Date || _.isDate(prototypeDefaultValue)) {
-//       isSimpleJStype = true;
-//       type = ((formType: Models.FormlyFromType) => {
-//         if (formType === 'material') {
-//           return 'datepicker'
-//         }
-//       }) as any;
-//     }
-
-//     if (!isSimpleJStype && _.isFunction(mapping[key] && checkInclude && keysPathesToInclude.includes(key))) {
-//       // console.log('contact this object ', (mapping[key] as Function).name)
-//       additionalConfig = additionalConfig.concat(
-//         getFromlyConfigFor(mapping[key] as Function,
-//           keyPath,
-//           keysPathesToExclude,
-//           keysPathesToInclude)
-//       );
-//       return;
-//     }
-
-//     if (_.isFunction(target.prototype[key])) {
-//       return;
-//     }
-//     if (_.isArray(target.prototype[key])) {
-//       return;
-//     }
-
-//     // const camelCaseKey = _.camelCase(key.split('.').join('_'));
-
-//     const res: FormlyFieldConfig = {
-//       key: keyPath,
-//       // model: _.isString(parentKey) ? parentKey : void 0,
-//       type,
-//       defaultValue: target.prototype[key],
-//       templateOptions: {
-//         label: _.isString(parentKeyPath) ? `${parentKeyPath.split('.').map(l => _.startCase(l)).join(' / ')} / ${_.startCase(key)}`
-//           : _.startCase(key)
-//       }
-//     };
-//     return res;
-//   }).filter(f => !!f);
-
-//   return result.concat(additionalConfig);
-// }
 
 export type FormlyArrayTransformFn =
   (fieldsArray: FormlyFieldConfig[],
@@ -225,58 +208,4 @@ export type FormlyArrayTransformFn =
     => FormlyFieldConfig[]
 
 
-
-export function FormlyForm<T=Object>(
-  fromFn?: FormlyArrayTransformFn,
-  keyPathesToExclude?: (keyof T)[],
-  /**
-   * TODO
-   */
-  keyPathesToInclude?: (keyof T)[]
-) {
-  return function (target: Function) {
-
-    const config = getFromlyConfigFor(target, undefined, keyPathesToExclude as any, keyPathesToInclude as any);
-
-    //#region user override
-    if (typeof fromFn === 'function') {
-      target[SYMBOL.FORMLY_METADATA_ARRAY] = fromFn(config);
-    } else {
-      // console.log('just add to class config', config)
-      target[SYMBOL.FORMLY_METADATA_ARRAY] = config;
-    }
-    //#endregion
-  }
-}
-
-export interface AutoFromlyFormOptions {
-  formType?: Models.FormlyFromType;
-}
-
-
-export function getFormlyFrom(entity: Function, options: AutoFromlyFormOptions = { formType: 'material' }): FormlyFieldConfig[] {
-  const { formType = 'material' } = options;
-  if (!entity) {
-    return;
-  }
-  // console.log('entity[SYMBOL.FORMLY_METADATA_ARRAY]', entity[SYMBOL.FORMLY_METADATA_ARRAY])
-  if (_.isArray(entity[SYMBOL.FORMLY_METADATA_ARRAY])) {
-    return (entity[SYMBOL.FORMLY_METADATA_ARRAY] as Array<FormlyFieldConfig>)
-      .map(field => {
-        if (_.isFunction(field.type)) {
-          field.type = field.type(formType);
-        }
-        return field;
-      })
-  }
-}
-
-
-export function checkSyncValidators(entity: Function) {
-  const fomrmlyConfig = getFormlyFrom(entity);
-  let validators: Function[] = [];
-  fomrmlyConfig.forEach(c => {
-    validators = validators.concat(Object.keys(c.validators) as any)
-  })
-}
 

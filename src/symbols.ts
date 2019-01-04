@@ -2,7 +2,6 @@ import * as _ from 'lodash';
 
 
 export const SYMBOL = {
-  FORMLY_METADATA_ARRAY: Symbol(),
   IS_ENPOINT_REALTIME: Symbol(),
   REALTIME: {
     NAMESPACE: 'morphirealtime',

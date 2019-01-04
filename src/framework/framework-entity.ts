@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { Log } from 'ng2-logger';
 import { Global } from '../global-config';
 import { SYMBOL } from '../symbols';
-import { FormlyForm, FormlyArrayTransformFn } from '../crud/fromly';
+import { FormlyArrayTransformFn } from '../crud/fromly';
 import { classNameVlidation } from './framework-helpers';
 import { Mapping, CLASSNAME, Helpers } from 'ng2-rest';
 import { Models } from '../models';
@@ -24,7 +24,6 @@ export function Entity<T = {}>(options?: {
   className?: string;
   defaultModelValues?: Mapping.ModelValue<T>;
   mapping?: Mapping.Mapping<T>;
-  genereateFormly?: boolean;
   tree?: 'closure-table';
   formly?: {
     transformFn?: FormlyArrayTransformFn;
@@ -43,7 +42,6 @@ export function Entity<T = {}>(options?: {
     options.formly = {}
   }
   let {
-    genereateFormly = true,
     defaultModelValues,
     tree,
     mapping,
@@ -65,9 +63,7 @@ export function Entity<T = {}>(options?: {
 
     CLASSNAME.CLASSNAME(className)(target)
     Mapping.DefaultModelWithMapping<T>(defaultModelValues, mapping)(target)
-    if (genereateFormly) {
-      FormlyForm<T>(transformFn, exclude, include)(target)
-    }
+
     //#region @backend
     if (_.isFunction(browserTransformFn)) {
       const configs = Helpers.Class.getConfig(target)

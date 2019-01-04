@@ -45,7 +45,7 @@ export namespace Morphi {
   export namespace CRUD {
     export import ModelDataConfig = crudMorph.ModelDataConfig;
     export import Base = crudMorph.BaseCRUD
-    export import getFormlyFrom = crudMorph.getFormlyFrom;
+    export import getFormlyFrom = crudMorph.getFromlyConfigFor;
   }
 
   export namespace Base {
