@@ -28,6 +28,7 @@ export function __ENDPOINT(baseEntity?: Function): (...args: any[]) => any {
 }
 
 
+
 export function ENDPOINT(options?: {
   // realtime?: boolean,
   path?: string,
@@ -95,7 +96,11 @@ export function ENDPOINT(options?: {
             if (checkAuthFn) {
               methodConfig.requestHandler = auth(methodConfig.descriptor.value);
             }
-            initMethodNodejs(type, methodConfig, classConfig, expressPath);
+            const { routePath,  method } = initMethodNodejs(type, methodConfig, classConfig, expressPath);
+            Global.vars.activeRoutes.push({
+              routePath,
+              method
+            });
             //#endregion
           }
           if (Helpers.isBrowser) {

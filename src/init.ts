@@ -149,6 +149,8 @@ export function init(config: {
 
       }
     });
+
+     Global.vars.writeActiveRoutes()
   }
   //#endregion
 

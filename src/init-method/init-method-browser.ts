@@ -50,7 +50,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
       }
       if (currentParam.paramType === 'Query') {
         if (currentParam.paramName) {
-          const mapping = Helpers.Mapping.decode(param, { fromDecorator: true, productionMode });
+          const mapping = Helpers.Mapping.decode(param, !Global.vars.isProductionMode);
           if (mapping) {
             Resource.Headers.request.set(
               `${SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${currentParam.paramName}`,
@@ -58,7 +58,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
           }
           queryParams[currentParam.paramName] = param;
         } else {
-          const mapping = Helpers.Mapping.decode(param, { fromDecorator: true, productionMode });
+          const mapping = Helpers.Mapping.decode(param, !Global.vars.isProductionMode);
           if (mapping) {
             Resource.Headers.request.set(
               SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS,
@@ -81,7 +81,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
       }
       if (currentParam.paramType === 'Body') {
         if (currentParam.paramName) {
-          const mapping = Helpers.Mapping.decode(param, { fromDecorator: true, productionMode });
+          const mapping = Helpers.Mapping.decode(param, !Global.vars.isProductionMode);
           if (mapping) {
             Resource.Headers.request.set(
               `${SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS}${currentParam.paramName}`,
@@ -89,7 +89,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
           }
           item[currentParam.paramName] = param;
         } else {
-          const mapping = Helpers.Mapping.decode(param, { fromDecorator: true, productionMode });
+          const mapping = Helpers.Mapping.decode(param, !Global.vars.isProductionMode);
           if (mapping) {
             Resource.Headers.request.set(
               SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS,

@@ -65,7 +65,7 @@ export function Entity<T = {}>(options?: {
 
     CLASSNAME.CLASSNAME(className)(target)
     Mapping.DefaultModelWithMapping<T>(defaultModelValues, mapping)(target)
-    if (Helpers.isBrowser && genereateFormly) {
+    if (genereateFormly) {
       FormlyForm<T>(transformFn, exclude, include)(target)
     }
     //#region @backend

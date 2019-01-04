@@ -159,18 +159,21 @@ export function initMethodNodejs(
         let cleanedResult = Helpers.JSON.cleaned(result)
         let circural = _.cloneDeep(Helpers.JSON.circural);
 
+        // let i = 0;
+        cleanedResult = transformToBrowserVersion(cleanedResult)
         while (true) {
-          cleanedResult = transformToBrowserVersion(cleanedResult)
           cleanedResult = Helpers.JSON.cleaned(cleanedResult)
-          circural = circural.concat(Helpers.JSON.circural);
-          if(Helpers.JSON.circural.length === 0) {
+          const nextCircs = _.cloneDeep(Helpers.JSON.circural);
+          // console.log(`circs(${++i})`, nextCircs)
+          circural = circural.concat(nextCircs);
+          if (Helpers.JSON.circural.length === 0) {
             break;
           }
         }
 
-        console.log('cleaned result', cleanedResult)
-        console.log('circural', circural)
-        const entity = Helpers.Mapping.decode(cleanedResult, { productionMode });
+        // console.log('cleaned result', cleanedResult)
+        // console.log('circural', circural)
+        const entity = Helpers.Mapping.decode(cleanedResult, !Global.vars.isProductionMode);
         res.set(SYMBOL.MAPPING_CONFIG_HEADER, JSON.stringify(entity));
         res.set(SYMBOL.CIRCURAL_OBJECTS_MAP_BODY, JSON.stringify(circural));
         res.json(cleanedResult);
@@ -197,7 +200,10 @@ export function initMethodNodejs(
     }
 
   })
-
+  return {
+    routePath: expressPath,
+    method: methodConfig.type
+  }
 }
 //#endregion
 
@@ -242,7 +248,7 @@ export function transformToBrowserVersion(json: any) {
   const toReplace: { value: any, changeValue: (newValue) => any }[] = []
 
   walk.Object(json, (value, lodashPath, changeValue) => {
-
+    toReplace.push({ value, changeValue })
   })
 
 

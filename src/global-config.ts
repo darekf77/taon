@@ -1,13 +1,14 @@
 
 import { Socket } from 'socket.io'
 import { Helpers } from './helpers';
+import { Models } from 'typescript-class-helpers/models';
 
 //#region @backend
+import * as path from 'path';
+import * as fse from 'fs-extra';
 import { Server, Namespace } from 'socket.io'
 import { Connection } from 'typeorm';
 import { Application } from "express";
-import { Morphi } from '.';
-
 //#endregion
 
 export class Global {
@@ -87,6 +88,17 @@ export class Global {
   public allowedHosts: URL[] = [];
 
   //#region @backend
+  public activeRoutes: { routePath: string; method: Models.HttpMethod }[] = []
+
+  public writeActiveRoutes() {
+    const routes = this.activeRoutes.map(({ method, routePath }) => {
+      return `${method.toUpperCase()}:    ${routePath}`
+    })
+    fse.writeJSONSync(path.join(process.cwd(), 'tmp-routes.json'), routes, {
+      spaces: 2,
+      encoding: 'utf8'
+    })
+  }
   private socketNamespaceBE: Server;
   private socketNamespaceBERealtime: Namespace;
   public clientsSockets: Map<string, Socket>;
