@@ -24,6 +24,7 @@ export function Entity<T = {}>(options?: {
   className?: string;
   defaultModelValues?: Mapping.ModelValue<T>;
   mapping?: Mapping.Mapping<T>;
+  additionalMapping?: { [lodashPathes: string]: string | [string]; }
   tree?: 'closure-table';
   formly?: {
     transformFn?: FormlyArrayTransformFn;
@@ -45,6 +46,7 @@ export function Entity<T = {}>(options?: {
     defaultModelValues,
     tree,
     mapping,
+    additionalMapping = {},
     className,
     formly: {
       transformFn = undefined,
@@ -62,7 +64,7 @@ export function Entity<T = {}>(options?: {
     className = classNameVlidation(className, target);
 
     CLASSNAME.CLASSNAME(className)(target)
-    Mapping.DefaultModelWithMapping<T>(defaultModelValues, mapping)(target)
+    Mapping.DefaultModelWithMapping<T>(defaultModelValues, _.merge(mapping, additionalMapping))(target)
 
     //#region @backend
     if (_.isFunction(browserTransformFn)) {
