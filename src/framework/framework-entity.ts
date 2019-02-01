@@ -85,9 +85,14 @@ export function Entity<T = {}>(options?: {
 
 }
 
-export abstract class BASE_ENTITY<T, TRAW=T> {
+export abstract class BASE_ENTITY<T, TRAW=T, CTRL = {}> {
 
   abstract id: number;
+
+  /**
+   * injected controller for entity for easy coding
+   */
+  public ctrl: CTRL;
 
   public static fromRaw(obj: any, prototype: Object): any {
     return _.merge(Object.create(prototype), obj);

@@ -97,6 +97,8 @@ export namespace Morphi {
     export import Connection = tsorm.Connection;
     export import CreateConnection = tsorm.createConnection;
     export import TableNameFrom = framework.tableNameFrom;
+    export import RepositoryFrom = framework.repositoryFrom
+
     export namespace Tree {
       export import Children = tsorm.TreeChildren;
       export import Parent = tsorm.TreeParent;
