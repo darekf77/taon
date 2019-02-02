@@ -19,7 +19,8 @@ export function init(config: {
   hostSocket?: string,
   ngZone?: any,
   allowedHosts?: string[],
-  controllers?: Function[], entities?: Function[]
+  controllers?: Function[],
+  entities?: Function[]
   productionMode?: Boolean;
   //#region @backend
   connection?: Connection
@@ -35,6 +36,24 @@ export function init(config: {
     connection
     //#endregion
   } = config;
+
+  if (_.isArray(controllers) && controllers.filter(f => !_.isFunction(f)).length > 0) {
+    console.error('controllers', controllers)
+    throw `
+
+Incorect value for property "controllers" inside Morphi.Init(...)
+
+`
+  }
+
+  if (_.isArray(entities) && entities.filter(f => !_.isFunction(f)).length > 0) {
+    console.error('entites', entities)
+    throw `
+
+Incorect value for property "entities" inside Morphi.Init(...)
+
+`
+  }
 
   //#region @backend
   if (Helpers.isNode) {
@@ -150,7 +169,7 @@ export function init(config: {
       }
     });
 
-     Global.vars.writeActiveRoutes()
+    Global.vars.writeActiveRoutes()
   }
   //#endregion
 
@@ -175,7 +194,7 @@ export function init(config: {
       }
     })
     notFound.forEach(ctrl => {
-      throw `Decorator "@ENDPOINT(..)" is missing on class ${ Helpers.Class.getName(ctrl)}`;
+      throw `Decorator "@ENDPOINT(..)" is missing on class ${Helpers.Class.getName(ctrl)}`;
     });
     providers.forEach(p => Providers.push(p))
   }
