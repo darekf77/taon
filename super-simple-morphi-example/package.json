@@ -1,5 +1,6 @@
 {
   "tnp": {
+    "resources": [],
     "type": "isomorphic-lib",
     "overrided": {
       "dependencies": {
@@ -125,5 +126,10 @@
     "validator": "^9.2.0",
     "webpack-dev-server": "~2.9.3",
     "zone.js": "0.8.20"
+  },
+  "husky": {
+    "hooks": {
+      "pre-push": "tnp deps:show:if:standalone"
+    }
   }
 }

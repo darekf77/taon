@@ -2,7 +2,7 @@
   "files.exclude": {
     "node_modules": true,
     "tnp-system-path.txt": true,
-    "tmp*": true,
+    // "tmp*": true,
     "dist*": true,
     "bundle*": true,
     "browser": true,

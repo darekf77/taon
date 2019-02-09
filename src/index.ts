@@ -44,8 +44,15 @@ export namespace Morphi {
 
   export namespace CRUD {
     export import ModelDataConfig = crudMorph.ModelDataConfig;
-    export import Base = crudMorph.BaseCRUD
-    export import getFormlyFrom = crudMorph.getFromlyConfigFor;
+    export import Base = crudMorph.BaseCRUD;
+  }
+
+  export namespace Formly {
+    export import getFrom = crudMorph.getFromlyConfigFor;
+    export import typeFrom = crudMorph.typeFromEntity;
+    export import typeNameFrom = crudMorph.formlyComponentNameFrom;
+    export import RegisterComponentAsType = crudMorph.RegisterComponentType;
+    export import getAllRegisterdTypes = crudMorph.getRegisteredComponents;
   }
 
   export namespace Base {
