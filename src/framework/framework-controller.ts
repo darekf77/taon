@@ -69,6 +69,7 @@ export abstract class BASE_CONTROLLER<T> extends BaseCRUD<T>
 
     if(_.isFunction(this.entity)) {
       this.entity.prototype['ctrl'] = this;
+      this.entity['ctrl'] = this;
     }
 
     if (Helpers.isBrowser) {

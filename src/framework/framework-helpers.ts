@@ -18,6 +18,7 @@ import * as express from "express";
 
 export { Connection } from 'typeorm';
 import { Helpers } from '../helpers';
+import { SYMBOL } from '../symbols';
 
 
 
@@ -58,6 +59,10 @@ export function repositoryFrom<E, R=Repository<E>>(connection: Connection, entit
 Please check your Morphi.Repository(...) decorators `, entity, repository)
     process.exit(0)
   }
+  if (!!entity && !entity[SYMBOL.HAS_TABLE_IN_DB]) {
+    return;
+  }
+
   let repo: Repository<any>;
   if (repository) {
     repo = connection.getCustomRepository(repository);

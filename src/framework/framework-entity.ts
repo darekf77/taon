@@ -77,6 +77,8 @@ export function Entity<T = {}>(options?: {
     if (createTable) {
       TypeormEntity(tableNameFrom(target))(target)
     }
+    target[SYMBOL.HAS_TABLE_IN_DB] = createTable;
+
     if (_.isString(tree)) {
       Tree("closure-table")(target)
     }
@@ -93,6 +95,7 @@ export abstract class BASE_ENTITY<T, TRAW=T, CTRL = {}> {
    * injected controller for entity for easy coding
    */
   public ctrl: CTRL;
+  public static ctrl: any;
 
   public static fromRaw(obj: any, prototype: Object): any {
     return _.merge(Object.create(prototype), obj);

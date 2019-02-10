@@ -38,7 +38,7 @@ export abstract class BaseCRUD<T>  {
 
   private init() {
     //#region @backend
-    if (Helpers.isNode && this.entity && this.connection) {
+    if (Helpers.isNode && this.entity && this.connection && this.entity[SYMBOL.HAS_TABLE_IN_DB]) {
       this.repo = this.connection.getRepository(this.entity as any)
       //  console.log(`Base CRUD inited for: ${(this.entity as any).name}`)
     }
@@ -161,7 +161,7 @@ function forObjectPropertiesOf(item) {
         const partialItem = item[propertyName];
         if (_.isObject(partialItem) && !_.isArray(partialItem)) {
           const entityClass = Helpers.Class.getFromObject(partialItem);
-          const repo = entityClass && getRepository(entityClass);
+          const repo = entityClass && entityClass[SYMBOL.HAS_TABLE_IN_DB] && getRepository(entityClass);
           if (repo) {
             objectPropertiesToUpdate.push(action(repo, partialItem, entityClass))
           }
