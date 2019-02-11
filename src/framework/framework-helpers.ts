@@ -19,6 +19,7 @@ import * as express from "express";
 export { Connection } from 'typeorm';
 import { Helpers } from '../helpers';
 import { SYMBOL } from '../symbols';
+import { CLASS } from 'typescript-class-helpers';
 
 
 
@@ -60,6 +61,16 @@ Please check your Morphi.Repository(...) decorators `, entity, repository)
     process.exit(0)
   }
   if (!!entity && !entity[SYMBOL.HAS_TABLE_IN_DB]) {
+    if (_.isFunction(repository)) {
+      if (!repositoryFrom.prototype.singletons) {
+        repositoryFrom.prototype.singletons = {}
+      }
+      const className = CLASS.getName(repository);
+      if(!repositoryFrom.prototype.singletons[className]) {
+        repositoryFrom.prototype.singletons[className] = new (repository as any)();
+      }
+      return repositoryFrom.prototype.singletons[className];
+    }
     return;
   }
 
