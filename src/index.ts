@@ -52,7 +52,10 @@ export namespace Morphi {
     export import typeFrom = crudMorph.typeFromEntity;
     export import typeNameFrom = crudMorph.formlyComponentNameFrom;
     export import RegisterComponentAsType = crudMorph.RegisterComponentType;
+    export import RegisterComponentForEntity = crudMorph.RegisterComponentTypeForEntity;
     export import getAllRegisterdTypes = crudMorph.getRegisteredComponents;
+    export import FormlyEntityType = crudMorph.FormlyEntityType;
+    export import FindTypeForEntity = crudMorph.findTypeForEntity;
   }
 
   export namespace Base {

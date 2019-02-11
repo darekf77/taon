@@ -6,6 +6,7 @@ import { Log, Level } from 'ng2-logger';
 import { Helpers } from '../helpers';
 import { Mapping } from 'ng2-rest';
 import { Models } from '../models';
+import { getRegisteredComponents, findTypeForEntity } from './type-from-entity';
 
 const log = Log.create('[morphi] formly')
 
@@ -180,11 +181,20 @@ export function getFromlyConfigFor(
             const targetChild = Helpers.Class.getBy(className);
 
             if (targetChild) {
-              if (isArray) {
-                fields = fields.concat(inputToPush(key, 'repeat', key, targetChild))
+
+
+              const ftype = findTypeForEntity(targetChild, isArray);
+
+              if (ftype) {
+                fields = fields.concat(inputToPush(key, ftype.name as any, key))
               } else {
-                fields = fields.concat(inputToPush(key, 'group', key, targetChild))
+                if (isArray) {
+                  fields = fields.concat(inputToPush(key, 'repeat', key, targetChild))
+                } else {
+                  fields = fields.concat(inputToPush(key, 'group', key, targetChild))
+                }
               }
+
             }
           }
 
