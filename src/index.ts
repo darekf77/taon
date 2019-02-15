@@ -2,6 +2,7 @@ import * as crudMorph from './crud';
 export { ModelDataConfig } from './crud/model-data-config';
 import * as decoratorsMorphi from './decorators';
 import * as framework from './framework';
+import * as realtime from './realtime';
 import * as global from './global-config';
 import * as models from './models';
 import * as sym from './symbols';
@@ -41,6 +42,13 @@ export namespace Morphi {
   //#endregion
   export import init = framework.start;
   export import SYMBOL = sym.SYMBOL;
+
+  export namespace Realtime {
+    export import Browser = realtime.RealtimeBrowser;
+    //#region @backend
+    export import Server = realtime.RealtimeNodejs;
+    //#endregion
+  }
 
   export namespace CRUD {
     export import ModelDataConfig = crudMorph.ModelDataConfig;

@@ -56,17 +56,17 @@ export class RealtimeNodejs {
   }
 
 
-  public static populate(event: { entity: BASE_ENTITY<any> }) {
+  public static populate(event: { entity: BASE_ENTITY<any> }, keyPropertyName = 'id') {
     log.d('event afer update', event);
     // console.log('controller', self)
     const entity = event.entity
 
-    if (!entity || !entity['id']) {
+    if (!entity || !entity[keyPropertyName]) {
       console.error(`Entity without iD !!!! from event`, event)
       return
     }
 
-    const id = entity['id'];
+    const id = entity[keyPropertyName];
     // Global.vars.socket.BE.sockets.in()\
 
     const constructFn = Helpers.Class.getFromObject(event.entity);
