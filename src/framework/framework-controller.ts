@@ -3,7 +3,6 @@ import {
   Repository, EventSubscriber, EntitySubscriberInterface,
   InsertEvent, UpdateEvent, RemoveEvent
 } from 'typeorm';
-import { EntityEvents } from './framework-entity';
 //#endregion
 
 import * as _ from 'lodash';
@@ -54,20 +53,12 @@ export function Controller(options?: {
   autoinit: true
 })
 export abstract class BASE_CONTROLLER<T> extends BaseCRUD<T>
-  //#region @backend
-  implements EntitySubscriberInterface<T>
-//#endregion
 {
 
-  constructor
-    (
-      //#region @backend
-      private entityEvents: EntityEvents<T> = {}
-      //#endregion
-    ) {
+  constructor() {
     super();
 
-    if(_.isFunction(this.entity)) {
+    if (_.isFunction(this.entity)) {
       this.entity.prototype['ctrl'] = this;
       this.entity['ctrl'] = this;
     }
@@ -75,80 +66,10 @@ export abstract class BASE_CONTROLLER<T> extends BaseCRUD<T>
     if (Helpers.isBrowser) {
       // log.i('BASE_CONTROLLER, constructor', this)
     }
-
-    //#region @backend
-
-    this.realtimeEvents = {}
-    this.realtimeEvents.afterUpdate = (event) => {
-
-      RealtimeNodejs.populate(event as any);
-
-    }
-
-    //#endregion
   }
 
 
   //#region @backend
-  private realtimeEvents: EntityEvents<T>;
-
-  protected __realitmeUpdate(model: T) {
-    this.realtimeEvents.afterUpdate({ entity: model } as any)
-  }
-
-  listenTo() {
-    // console.log('listen to ', this.entity)
-    return this.entity as any;
-  }
-
-
-  beforeInsert(event: InsertEvent<T>) {
-    if (this.entityEvents && _.isFunction(this.entityEvents.beforeInsert)) {
-      this.entityEvents.beforeInsert.call(this, event)
-    }
-  }
-
-  beforeUpdate(event: UpdateEvent<T>) {
-    if (this.entityEvents && _.isFunction(this.entityEvents.beforeUpdate)) {
-      this.entityEvents.beforeUpdate.call(this, event)
-    }
-  }
-
-
-  beforeRemove(event: RemoveEvent<T>) {
-    if (this.entityEvents && _.isFunction(this.entityEvents.beforeRemove)) {
-      this.entityEvents.beforeRemove.call(this, event)
-    }
-  }
-
-
-  afterInsert(event: InsertEvent<T>) {
-    if (this.entityEvents && _.isFunction(this.entityEvents.afterInsert)) {
-      this.entityEvents.afterInsert.call(this, event)
-    }
-  }
-
-
-  afterUpdate(event: UpdateEvent<T>) {
-    if (this.entityEvents && _.isFunction(this.entityEvents.afterUpdate)) {
-      this.entityEvents.afterUpdate.call(this, event)
-    }
-  }
-
-
-  afterRemove(event: RemoveEvent<T>) {
-    if (this.entityEvents && _.isFunction(this.entityEvents.afterRemove)) {
-      this.entityEvents.afterRemove.call(this, event)
-    }
-  }
-
-
-  afterLoad(entity: T) {
-    if (this.entityEvents && _.isFunction(this.entityEvents.afterLoad)) {
-      this.entityEvents.afterLoad.call(this, entity)
-    }
-  }
-
 
   get db(): { [entities: string]: Repository<any> } {
     throw `db method not implemented ${Helpers.Class.getNameFromObject(this)}`

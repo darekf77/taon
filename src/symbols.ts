@@ -7,16 +7,30 @@ export const SYMBOL = {
   REALTIME: {
     NAMESPACE: 'morphirealtime',
     ROOM: {
-      SUBSCRIBE_ENTITY_EVENTS: 'subscribeEntityEvents',
-      UNSUBSCRIBE_ENTITY_EVENTS: 'unsubscribeEntityEvents'
-    },
-    EVENT: {
-      ENTITY_UPDATE_BY_ID(className, entityId) {
-        return `entityupdatebyid${_.camelCase(className)}${entityId}`.toLowerCase();
+      SUBSCRIBE: {
+        ENTITY_UPDATE_EVENTS: 'subscribeEntityEvents',
+        ENTITY_PROPERTY_UPDATE_EVENTS: 'subscribeEntityPropertyEvents',
+      },
+      UNSUBSCRIBE: {
+        ENTITY_UPDATE_EVENTS: 'unsubscribeEntityEvents',
+        ENTITY_PROPERTY_UPDATE_EVENTS: 'unsubscribeEntityPropertyEvents',
       }
     },
-    ROOM_NAME(className, entityId) {
-      return `room${_.camelCase(className)}${entityId}`.toLowerCase();
+    EVENT: {
+      ENTITY_UPDATE_BY_ID(className: string, entityId: number) {
+        return `entityupdatebyid${_.camelCase(className)}${entityId}`.toLowerCase();
+      },
+      ENTITY_PROPTERY_UPDATE_BY_ID(className: string, property: string, entityId: number) {
+        return `entityupdatebyid${_.camelCase(className)}${_.camelCase(property)}${entityId}`.toLowerCase();
+      }
+    },
+    ROOM_NAME: {
+      UPDATE_ENTITY(className: string, entityId: number) {
+        return `room${_.camelCase(className)}${entityId}`.toLowerCase();
+      },
+      UPDATE_ENTITY_PROPERTY(className: string, property: string, entityId: number) {
+        return `room${_.camelCase(className)}${_.camelCase(property)}${entityId}`.toLowerCase();
+      }
     }
   },
   X_TOTAL_COUNT: 'x-total-count',

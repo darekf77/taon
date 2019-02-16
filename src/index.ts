@@ -44,9 +44,21 @@ export namespace Morphi {
   export import SYMBOL = sym.SYMBOL;
 
   export namespace Realtime {
-    export import Browser = realtime.RealtimeBrowser;
+    export namespace Browser {
+      export import Class = realtime.RealtimeBrowser;
+      export const SubscribeEntityChanges = realtime.RealtimeBrowser.SubscribeEntityChanges;
+      export const SubscribeEntityPropertyChanges = realtime.RealtimeBrowser.SubscribeEntityPropertyChanges;
+      export const UnsubscribeEverything = realtime.RealtimeBrowser.UnsubscribeEverything;
+      export const UnsubscribeEntityChanges = realtime.RealtimeBrowser.UnsubscribeEntityChanges;
+      export const UnsubscribeEntityPropertyChanges = realtime.RealtimeBrowser.UnsubscribeEntityPropertyChanges;
+    }
+
     //#region @backend
-    export import Server = realtime.RealtimeNodejs;
+    export namespace Server {
+      export import Class = realtime.RealtimeNodejs;
+      export const TrigggerEntityChanges = realtime.RealtimeNodejs.TrigggerEntityChanges;
+      export const TrigggerEntityPropertyChanges = realtime.RealtimeNodejs.TrigggerEntityPropertyChanges;
+    }
     //#endregion
   }
 
@@ -144,3 +156,4 @@ export namespace Morphi {
 
 
 }
+

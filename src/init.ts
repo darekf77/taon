@@ -117,7 +117,7 @@ Incorect value for property "entities" inside Morphi.Init(...)
     h.listen(uri.port, function () {
       console.log(`Server listening on port: ${uri.port}, hostname: ${uri.pathname},
         env: ${Global.vars.app.settings.env}
-      `);
+        `);
     });
   }
   //#endregion
