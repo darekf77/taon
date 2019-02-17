@@ -245,7 +245,24 @@ export function transformToBrowserVersion(json: any) {
     return json;
   }
 
+  if (_.isArray(json)) {
+    return json.map(c => {
+      return transformToBrowserVersion(c)
+    })
+  }
+
   const toReplace: { value: any, changeValue: (newValue) => any }[] = []
+
+  let ptarget = Helpers.Class.getFromObject(json);
+  let pbrowserTransformFn = getTransformFunction(ptarget);
+  if (pbrowserTransformFn) {
+    const newValue = pbrowserTransformFn(json)
+    if (!_.isObject(newValue)) {
+      console.error(`Please return object in transform function for class: ${Helpers.Class.getNameFromObject(json)}`)
+    } else {
+      json = newValue;
+    }
+  }
 
   walk.Object(json, (value, lodashPath, changeValue) => {
     toReplace.push({ value, changeValue })
