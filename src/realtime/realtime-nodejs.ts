@@ -12,7 +12,7 @@ import { SYMBOL } from '../symbols';
 import { Log, Level } from 'ng2-logger';
 import { BASE_ENTITY } from '../framework/framework-entity';
 import { Helpers } from '../helpers';
-const log = Log.create('RealtimeNodejs', Level.__NOTHING)
+const log = Log.create('RealtimeNodejs')
 
 export class RealtimeNodejs {
   //#region @backend
@@ -31,7 +31,7 @@ export class RealtimeNodejs {
 
     const nsp = Global.vars.socketNamespace.BE;
     nsp.on('connection', (clientSocket) => {
-      // console.log('client conected to namespace', clientSocket.nsp.name)
+      log.i('client conected to namespace', clientSocket.nsp.name)
     })
 
     const nspRealtime = nsp.of(SYMBOL.REALTIME.NAMESPACE);
@@ -39,25 +39,25 @@ export class RealtimeNodejs {
     Global.vars.socketNamespace.BE_REALTIME = nspRealtime;
 
     nspRealtime.on('connection', (clientSocket) => {
-      // console.log('client conected to namespace', clientSocket.nsp.name)
+      log.i('client conected to namespace', clientSocket.nsp.name)
 
       clientSocket.on(SYMBOL.REALTIME.ROOM.SUBSCRIBE.ENTITY_UPDATE_EVENTS, room => {
-        // console.log(`Joining room ${room} in namespace ${nspRealtime.name} `)
+        log.i(`Joining room ${room} in namespace ${nspRealtime.name} `)
         clientSocket.join(room);
       })
 
       clientSocket.on(SYMBOL.REALTIME.ROOM.SUBSCRIBE.ENTITY_PROPERTY_UPDATE_EVENTS, room => {
-        // console.log(`Joining room ${room} in namespace ${nspRealtime.name} `)
+        log.i(`Joining room ${room} in namespace ${nspRealtime.name} `)
         clientSocket.join(room);
       })
 
       clientSocket.on(SYMBOL.REALTIME.ROOM.UNSUBSCRIBE.ENTITY_UPDATE_EVENTS, room => {
-        // console.log(`Leaving room ${room} in namespace ${nspRealtime.name} `)
+        log.i(`Leaving room ${room} in namespace ${nspRealtime.name} `)
         clientSocket.leave(room);
       })
 
       clientSocket.on(SYMBOL.REALTIME.ROOM.UNSUBSCRIBE.ENTITY_PROPERTY_UPDATE_EVENTS, room => {
-        // console.log(`Leaving room ${room} in namespace ${nspRealtime.name} `)
+        log.i(`Leaving room ${room} in namespace ${nspRealtime.name} `)
         clientSocket.leave(room);
       })
 
@@ -66,21 +66,14 @@ export class RealtimeNodejs {
 
   }
 
-
-  public static TrigggerEntityPropertyChanges(entity: BASE_ENTITY<any>, property: string) {
-    return this.__TrigggerEntityChanges(entity, property)
-  }
-
-  public static TrigggerEntityChanges(entity: BASE_ENTITY<any>) {
-    return this.__TrigggerEntityChanges(entity)
-  }
+  private static jobs = {};
 
   public static __TrigggerEntityChanges(entity: BASE_ENTITY<any>, property?: string) {
     const keyPropertyName = 'id'
-    log.d('event afer update', event);
+
 
     if (!entity || !entity[keyPropertyName]) {
-      console.error(`Entity without iD !!!! from event`, event)
+      console.error(`Entity without iD !!!! `, entity)
       return
     }
 
@@ -98,19 +91,43 @@ export class RealtimeNodejs {
         SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY_PROPERTY(className, property, entity.id) :
         SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY(className, id);
 
-      console.log(`Push entity${_.isString(property) ? ('.' + property) : ''} to room with path: ${modelSocketRoomPath}`)
+      // console.log(`Push entity${_.isString(property) ? ('.' + property) : ''} to room with path: ${modelSocketRoomPath}`)
 
-      if (_.isString(property)) {
-        console.log('populate entity property change to ', SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(className, id))
-        Global.vars.socketNamespace.BE_REALTIME.in(modelSocketRoomPath)
-          .emit(SYMBOL.REALTIME.EVENT.ENTITY_PROPTERY_UPDATE_BY_ID(className, property, id), '')
-      } else {
-        console.log('populate entity change to ', SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(className, id))
-        Global.vars.socketNamespace.BE_REALTIME.in(modelSocketRoomPath)
-          .emit(SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(className, id), '')
+      const eventName = _.isString(property) ?
+        SYMBOL.REALTIME.EVENT.ENTITY_PROPTERY_UPDATE_BY_ID(className, property, id) :
+        SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(className, id);
+
+      const job = () => {
+        if (_.isString(property)) {
+          // console.log('populate entity property change to ', SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(className, id))
+          Global.vars.socketNamespace.BE_REALTIME.in(modelSocketRoomPath)
+            .emit(eventName, '')
+        } else {
+          log.i('populate entity change to ', SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(className, id))
+          Global.vars.socketNamespace.BE_REALTIME.in(modelSocketRoomPath)
+            .emit(eventName, '')
+        }
       }
 
+      if (!_.isFunction(RealtimeNodejs.jobs[eventName])) {
+        log.i('CREATE FUNCTION DEBOUNCE')
+        RealtimeNodejs.jobs[eventName] = _.debounce(() => {
+          job()
+        }, 500);
+      }
+
+      RealtimeNodejs.jobs[eventName]()
+
     }
+  }
+
+
+  public static TrigggerEntityPropertyChanges(entity: BASE_ENTITY<any>, property: string) {
+    return RealtimeNodejs.__TrigggerEntityChanges(entity, property)
+  }
+
+  public static TrigggerEntityChanges(entity: BASE_ENTITY<any>) {
+    return RealtimeNodejs.__TrigggerEntityChanges(entity)
   }
 
   request(req: Request, res: Response) {

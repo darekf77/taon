@@ -8,7 +8,7 @@ import { Log, Level } from 'ng2-logger';
 import { Helpers } from '../helpers';
 import { BASE_ENTITY } from '../framework/framework-entity';
 import { CLASS } from 'typescript-class-helpers';
-const log = Log.create('RealtimeBrowser', Level.__NOTHING)
+const log = Log.create('RealtimeBrowser')
 
 export type AliasChangeListenerType = (unsubscribe: () => void) => void;
 export type AliasEntityType = Partial<BASE_ENTITY<any>>;
@@ -55,21 +55,12 @@ export class RealtimeBrowser {
   private static realtimeEntityPropertySockets: { [className: string]: { [propertyInEntityIds: string]: any } } = {} as any;
 
 
-
-  public static SubscribeEntityChanges(entity: AliasEntityType, changesListener: AliasChangeListenerType) {
-    return this.__SubscribeEntityChanges(entity, changesListener);
-  }
-
-  public static SubscribeEntityPropertyChanges(entity: AliasEntityType, property: string, changesListener: AliasChangeListenerType) {
-    return this.__SubscribeEntityChanges(entity, changesListener, property);
-  }
-
   public static __SubscribeEntityChanges(entity: AliasEntityType, changesListener: AliasChangeListenerType, property?: string) {
 
     const { id } = entity;
     const propertyInEntityKey = `${entity.id}${property}`;
 
-    if (_.isNumber(id)) {
+    if (!_.isNumber(id)) {
       console.error(entity)
       throw `[Morphi.Realtime.Browser.Subscribe] bad id = "${id}" for entity.`
     }
@@ -119,13 +110,20 @@ export class RealtimeBrowser {
           }
 
           if (_.isString(property)) {
-            RealtimeBrowser.realtimeEntityPropertyListener[className][propertyInEntityKey].forEach(changeListenerFromArray => {
-              changeListenerFromArray(unsub)
-            })
+            const arr = RealtimeBrowser.realtimeEntityPropertyListener[className][propertyInEntityKey];
+            if (_.isArray(arr)) {
+              arr.forEach(changeListenerFromArray => {
+                changeListenerFromArray(unsub)
+              })
+            }
+
           } else {
-            RealtimeBrowser.realtimeEntityListener[className][entity.id].forEach(changeListenerFromArray => {
-              changeListenerFromArray(unsub)
-            })
+            const arr = RealtimeBrowser.realtimeEntityListener[className][entity.id];
+            if(_.isArray(arr)) {
+              arr.forEach(changeListenerFromArray => {
+                changeListenerFromArray(unsub)
+              })
+            }
           }
 
         } else {
@@ -162,6 +160,14 @@ export class RealtimeBrowser {
     }
   }
 
+
+  public static SubscribeEntityChanges(entity: AliasEntityType, changesListener: AliasChangeListenerType) {
+    return RealtimeBrowser.__SubscribeEntityChanges(entity, changesListener);
+  }
+
+  public static SubscribeEntityPropertyChanges(entity: AliasEntityType, property: string, changesListener: AliasChangeListenerType) {
+    return RealtimeBrowser.__SubscribeEntityChanges(entity, changesListener, property);
+  }
 
   private static checkObjects(className: string, entity: Partial<BASE_ENTITY<any>>, property: string, changesListener) {
 
@@ -222,23 +228,6 @@ export class RealtimeBrowser {
     return true;
   }
 
-  public static UnsubscribeEverything() {
-    Object.keys(this.realtimeEntitySockets).forEach(className => {
-      Object.keys(this.realtimeEntitySockets[className]).forEach(entityId => {
-        this.__UnsubscribeEntityChanges({ id: entityId } as any, undefined, true, CLASS.getBy(className));
-      })
-    });
-  }
-
-  public static UnsubscribeEntityChanges(entity: AliasEntityType, includePropertyChanges = false) {
-    return this.__UnsubscribeEntityChanges(entity, undefined, includePropertyChanges);
-
-  }
-
-  public static UnsubscribeEntityPropertyChanges(entity: AliasEntityType, property: string) {
-    return this.__UnsubscribeEntityChanges(entity, property)
-  }
-
 
   private static __UnsubscribeEntityChanges(entity: AliasEntityType, property?: string, includePropertyChanges = false, classFN?: Function) {
 
@@ -249,7 +238,7 @@ export class RealtimeBrowser {
     }
 
     const { id } = entity;
-    if (_.isNumber(id)) {
+    if (!_.isNumber(id)) {
       console.error(entity)
       throw `[Morphi.Realtime.Browser.Unsubscribe] bad id = "${id}" for entity.`
     }
@@ -304,6 +293,22 @@ export class RealtimeBrowser {
 
   }
 
+  public static UnsubscribeEverything() {
+    Object.keys(this.realtimeEntitySockets).forEach(className => {
+      Object.keys(this.realtimeEntitySockets[className]).forEach(entityId => {
+        this.__UnsubscribeEntityChanges({ id: entityId } as any, undefined, true, CLASS.getBy(className));
+      })
+    });
+  }
+
+  public static UnsubscribeEntityChanges(entity: AliasEntityType, includePropertyChanges = false) {
+    return RealtimeBrowser.__UnsubscribeEntityChanges(entity, undefined, includePropertyChanges);
+
+  }
+
+  public static UnsubscribeEntityPropertyChanges(entity: AliasEntityType, property: string) {
+    return RealtimeBrowser.__UnsubscribeEntityChanges(entity, property)
+  }
 
 
 }
