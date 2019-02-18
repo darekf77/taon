@@ -74,9 +74,7 @@ export class RealtimeBrowser {
 
     const className = Helpers.Class.getName(constructFn);
 
-    if (!this.checkObjects(className, entity, property, changesListener)) {
-      return;
-    }
+    this.checkObjects(className, entity, property, changesListener);
 
     const roomName = _.isString(property) ?
       SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY_PROPERTY(className, property, entity.id) :
@@ -91,10 +89,10 @@ export class RealtimeBrowser {
     //   console.log(`conented to namespace ${realtime.nsp && realtime.nsp.name}`)
     if (_.isString(property)) {
       realtime.emit(SYMBOL.REALTIME.ROOM.SUBSCRIBE.ENTITY_PROPERTY_UPDATE_EVENTS, roomName)
-      console.log('SUBSCRIBE TO ' + SYMBOL.REALTIME.EVENT.ENTITY_PROPTERY_UPDATE_BY_ID(className, property, entity.id))
+      log.i('SUBSCRIBE TO ' + SYMBOL.REALTIME.EVENT.ENTITY_PROPTERY_UPDATE_BY_ID(className, property, entity.id))
     } else {
       realtime.emit(SYMBOL.REALTIME.ROOM.SUBSCRIBE.ENTITY_UPDATE_EVENTS, roomName)
-      console.log('SUBSCRIBE TO ' + SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(className, entity.id))
+      log.i('SUBSCRIBE TO ' + SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(className, entity.id))
     }
 
     const callback = (data) => {
@@ -119,7 +117,7 @@ export class RealtimeBrowser {
 
           } else {
             const arr = RealtimeBrowser.realtimeEntityListener[className][entity.id];
-            if(_.isArray(arr)) {
+            if (_.isArray(arr)) {
               arr.forEach(changeListenerFromArray => {
                 changeListenerFromArray(unsub)
               })
