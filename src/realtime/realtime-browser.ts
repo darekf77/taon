@@ -158,7 +158,18 @@ export class RealtimeBrowser {
     }
   }
 
-
+  public static addDupicateRealtimeEntityListener(entity: AliasEntityType, changesListener: AliasChangeListenerType, property?: string) {
+    const className = CLASS.getNameFromObject(entity);
+    if (_.isUndefined(RealtimeBrowser.realtimeEntityPropertyListener[className])) {
+      RealtimeBrowser.realtimeEntityPropertyListener[className] = {};
+    }
+    const propertyInEntityKey = `${entity.id}${property}`;
+    if (_.isString(property)) {
+      RealtimeBrowser.realtimeEntityPropertyListener[className][propertyInEntityKey].push(changesListener);
+    } else {
+      RealtimeBrowser.realtimeEntityListener[className][entity.id].push(changesListener);
+    }
+  }
   public static SubscribeEntityChanges(entity: AliasEntityType, changesListener: AliasChangeListenerType) {
     return RealtimeBrowser.__SubscribeEntityChanges(entity, changesListener);
   }
@@ -171,11 +182,11 @@ export class RealtimeBrowser {
 
     if (_.isString(property)) {
 
-      if (!RealtimeBrowser.realtimeEntityPropertySockets[className]) {
+      if (_.isUndefined(RealtimeBrowser.realtimeEntityPropertySockets[className])) {
         RealtimeBrowser.realtimeEntityPropertySockets[className] = {};
       }
 
-      if (!RealtimeBrowser.realtimeEntityPropertyListener[className]) {
+      if (_.isUndefined(RealtimeBrowser.realtimeEntityPropertyListener[className])) {
         RealtimeBrowser.realtimeEntityPropertyListener[className] = {};
       }
 
@@ -199,11 +210,11 @@ export class RealtimeBrowser {
 
 
     } else {
-      if (!RealtimeBrowser.realtimeEntitySockets[className]) {
+      if (_.isUndefined(RealtimeBrowser.realtimeEntitySockets[className])) {
         RealtimeBrowser.realtimeEntitySockets[className] = {};
       }
 
-      if (!RealtimeBrowser.realtimeEntityListener[className]) {
+      if (_.isUndefined(RealtimeBrowser.realtimeEntityListener[className])) {
         RealtimeBrowser.realtimeEntityListener[className] = {};
       }
 

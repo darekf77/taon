@@ -4,7 +4,7 @@ import { Log } from 'ng2-logger';
 import { SYMBOL } from '../symbols';
 import { FormlyArrayTransformFn } from '../crud/fromly';
 import { classNameVlidation } from './framework-helpers';
-import { Mapping, CLASSNAME, Helpers } from 'ng2-rest';
+import { Mapping, CLASSNAME, Helpers, Models } from 'ng2-rest';
 
 
 //#region @backend
@@ -13,15 +13,17 @@ import {
   Entity as TypeormEntity, Tree
 } from 'typeorm';
 import { tableNameFrom } from './framework-helpers';
-
-
 //#endregion
+import { RealtimeBrowser } from '../realtime';
+import { BaseCRUD, ModelDataConfig } from '../crud'
 
 const log = Log.create('Framework entity')
 
 export interface IBASE_ENTITY extends BASE_ENTITY<any> {
 
 }
+
+const IS_RELATIME = Symbol()
 
 export function Entity<T = {}>(options?: {
   className?: string;
@@ -90,7 +92,7 @@ export function Entity<T = {}>(options?: {
 
 }
 
-export abstract class BASE_ENTITY<T, TRAW=T, CTRL = {}> {
+export abstract class BASE_ENTITY<T, TRAW=T, CTRL extends BaseCRUD<T> = any> {
 
   abstract id: number;
 
@@ -104,6 +106,58 @@ export abstract class BASE_ENTITY<T, TRAW=T, CTRL = {}> {
    * keep backend data here for getters, function etc
    */
   browser: IBASE_ENTITY;
+
+  get isListeningToRealtimeChanges() {
+    return !!this[IS_RELATIME];
+  }
+  unsubscribeRealtimeUpdates() {
+    this[IS_RELATIME] = false;
+    RealtimeBrowser.UnsubscribeEntityChanges(this);
+  }
+  subscribeRealtimeUpdates(options: {
+    modelDataConfig?: ModelDataConfig,
+    /**
+     * Only listen realtime update when condition function  true
+     */
+    condition?: (entity: T) => boolean,
+    /**
+     * Trigers when realtime update new data.
+     * This function helpse merging new entity changes.
+     */
+    mergeCallback?: (response: Models.HttpResponse<T>) => T | void
+  } = {} as any) {
+    const { modelDataConfig, mergeCallback, condition } = options;
+
+
+    const changesListener = (entityToUpdate: BASE_ENTITY<any>) => {
+      return async () => {
+        // console.log('entity should be updated !')
+        const data = await this.ctrl.getBy(entityToUpdate.id, modelDataConfig).received;
+        let newData = data.body.json;
+        if (_.isFunction(mergeCallback)) {
+          const newDataCallaback = mergeCallback(data)
+          if (!_.isUndefined(newDataCallaback)) {
+            newData = newDataCallaback as any;
+          }
+        }
+        _.merge(entityToUpdate, newData);
+        if (_.isFunction(condition)) {
+          const listenChanges = condition(entityToUpdate as any)
+          if (!listenChanges) {
+            this.unsubscribeRealtimeUpdates()
+          }
+        }
+      }
+    }
+
+    if (this.isListeningToRealtimeChanges) {
+      console.warn('Alread listen to this entiy ', this)
+      RealtimeBrowser.addDupicateRealtimeEntityListener(this, changesListener(this))
+      return;
+    }
+    this[IS_RELATIME] = true;
+    RealtimeBrowser.SubscribeEntityChanges(this, changesListener(this))
+  }
 
 
 }
