@@ -16,6 +16,7 @@ import { tableNameFrom } from './framework-helpers';
 //#endregion
 import { RealtimeBrowser } from '../realtime';
 import { BaseCRUD, ModelDataConfig } from '../crud'
+import { CLASS } from 'typescript-class-helpers';
 
 const log = Log.create('Framework entity')
 
@@ -24,6 +25,14 @@ export interface IBASE_ENTITY extends BASE_ENTITY<any> {
 }
 
 const IS_RELATIME = Symbol()
+const IS_RELATIME_PROPERTY = Symbol()
+
+function getRealtimeIsRealtime(entity, property: string) {
+  if (!_.isObject(entity[IS_RELATIME_PROPERTY])) {
+    entity[IS_RELATIME_PROPERTY] = {};
+  }
+  return entity[IS_RELATIME_PROPERTY][property]
+}
 
 export function Entity<T = {}>(options?: {
   className?: string;
@@ -107,59 +116,103 @@ export abstract class BASE_ENTITY<T, TRAW=T, CTRL extends BaseCRUD<T> = any> {
    */
   browser: IBASE_ENTITY;
 
-  get isListeningToRealtimeChanges() {
-    return !!this[IS_RELATIME];
+  isListeningToRealtimeChanges(property?: (keyof T)) {
+    if (_.isString(property)) {
+      return !!getRealtimeIsRealtime(this, property)
+    } else {
+      return !!this[IS_RELATIME];
+    }
+
   }
-  unsubscribeRealtimeUpdates() {
-    this[IS_RELATIME] = false;
-    RealtimeBrowser.UnsubscribeEntityChanges(this);
+
+  unsubscribeRealtimeUpdatesOfProperties() {
+    if (_.isObject(this[IS_RELATIME_PROPERTY])) {
+      Object.keys(this[IS_RELATIME_PROPERTY]).forEach(property => {
+        this.unsubscribeRealtimeUpdates(property as any)
+      })
+    }
   }
-  subscribeRealtimeUpdates(options: {
+  unsubscribeRealtimeUpdates(property?: (keyof T)) {
+    if (_.isString(property)) {
+      RealtimeBrowser.UnsubscribeEntityPropertyChanges(this, property)
+      this[IS_RELATIME_PROPERTY][property] = void 0;
+    } else {
+      this[IS_RELATIME] = false;
+      RealtimeBrowser.UnsubscribeEntityChanges(this);
+    }
+  }
+  subscribeRealtimeUpdates<CALLBACK = T>(options: {
     modelDataConfig?: ModelDataConfig,
     /**
      * Only listen realtime update when condition function  true
      */
     condition?: (entity: T) => boolean,
     /**
+     * Listen for realtime listening
+     */
+    property?: (keyof T),
+    /**
+     * Custom update function to get new value of entity of entity property
+     */
+    update?: (any?) => Promise<Models.HttpResponse<CALLBACK>>
+    /**
      * Trigers when realtime update new data.
      * This function helpse merging new entity changes.
      */
-    mergeCallback?: (response: Models.HttpResponse<T>) => T | void
+    callback?: (response: Models.HttpResponse<CALLBACK>) => CALLBACK | void
   } = {} as any) {
-    const { modelDataConfig, mergeCallback, condition } = options;
+    let { modelDataConfig, callback, condition, property, update } = options;
+    const that = this;
+    if (!_.isObject(this[IS_RELATIME_PROPERTY])) {
+      this[IS_RELATIME_PROPERTY] = {};
+    }
 
+    if (_.isUndefined(update)) {
+      update = () => that.ctrl.getBy(that.id, modelDataConfig).received as any;
+    }
 
     const changesListener = (entityToUpdate: BASE_ENTITY<any>) => {
       return async () => {
         // console.log('entity should be updated !')
-        const data = await this.ctrl.getBy(entityToUpdate.id, modelDataConfig).received;
+        const data = await update()
         let newData = data.body.json;
-        if (_.isFunction(mergeCallback)) {
-          const newDataCallaback = mergeCallback(data)
+        if (_.isFunction(callback)) {
+          const newDataCallaback = callback(data as any)
           if (!_.isUndefined(newDataCallaback)) {
             newData = newDataCallaback as any;
           }
         }
-        _.merge(entityToUpdate, newData);
+        if (_.isString(property)) {
+          entityToUpdate[property as any] = newData as any;
+        } else {
+          _.merge(entityToUpdate, newData);
+        }
+
         if (_.isFunction(condition)) {
           const listenChanges = condition(entityToUpdate as any)
           if (!listenChanges) {
-            this.unsubscribeRealtimeUpdates()
+            this.unsubscribeRealtimeUpdates(property)
           }
         }
       }
     }
 
-    if (this.isListeningToRealtimeChanges) {
-      console.warn('Alread listen to this entiy ', this)
-      RealtimeBrowser.addDupicateRealtimeEntityListener(this, changesListener(this))
+
+    if (this.isListeningToRealtimeChanges(property)) {
+      console.warn(`Alread listen to this ${
+        _.isString(property) ? ('property: ' + property + ' of entity: ' + CLASS.getNameFromObject(this))
+          : ('entity: ' + CLASS.getNameFromObject(this))
+        } `, this)
+      RealtimeBrowser.addDupicateRealtimeEntityListener(this, changesListener(this), property as any)
       return;
     }
-    this[IS_RELATIME] = true;
-    RealtimeBrowser.SubscribeEntityChanges(this, changesListener(this))
+    if (_.isString(property)) {
+      this[IS_RELATIME_PROPERTY][property] = true;
+      RealtimeBrowser.SubscribeEntityPropertyChanges(this, property, changesListener(this))
+    } else {
+      this[IS_RELATIME] = true;
+      RealtimeBrowser.SubscribeEntityChanges(this, changesListener(this))
+    }
   }
 
-
 }
-
-
