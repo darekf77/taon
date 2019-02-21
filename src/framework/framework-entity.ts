@@ -132,7 +132,13 @@ export abstract class BASE_ENTITY<T, TRAW=T, CTRL extends BaseCRUD<T> = any> {
       })
     }
   }
-  unsubscribeRealtimeUpdates(property?: (keyof T)) {
+  unsubscribeRealtimeUpdates(property?: (keyof T) | (keyof T)[]) {
+    if (_.isArray(property)) {
+      property.forEach(p => {
+        this.unsubscribeRealtimeUpdates(p)
+      })
+      return;
+    }
     if (_.isString(property)) {
       RealtimeBrowser.UnsubscribeEntityPropertyChanges(this, property)
       this[IS_RELATIME_PROPERTY][property] = void 0;
@@ -191,7 +197,7 @@ export abstract class BASE_ENTITY<T, TRAW=T, CTRL extends BaseCRUD<T> = any> {
         if (_.isFunction(condition)) {
           const listenChanges = condition(entityToUpdate as any)
           if (!listenChanges) {
-            this.unsubscribeRealtimeUpdates(property)
+            this.unsubscribeRealtimeUpdates(property as any)
           }
         }
       }

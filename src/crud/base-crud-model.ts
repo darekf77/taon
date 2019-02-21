@@ -60,6 +60,7 @@ export abstract class BaseCRUD<T>  {
         }
       );
       response.setHeader(SYMBOL.X_TOTAL_COUNT, totalCount)
+      config.prepare(models)
       return models;
     }
     //#endregion
@@ -72,19 +73,14 @@ export abstract class BaseCRUD<T>  {
 
       const model = await this.repo.findOne({
         where: _.merge({ id }, config && config.db && config.db.where),
-        join: config && config.db && config.db.join
+        join: config && config.db && config.db.join,
       })
 
       preventUndefinedModel(model, config, id)
-
+      config.prepare(model)
       return model;
     }
     //#endregion
-  }
-
-
-  protected __realitmeUpdate(model: T) {
-
   }
 
 
@@ -104,9 +100,10 @@ export abstract class BaseCRUD<T>  {
         where: _.merge({ id }, config && config.db && config.db.where),
         join: config && config.db && config.db.join
       })
-      preventUndefinedModel(model, config, id)
 
-      this.__realitmeUpdate(model)
+      preventUndefinedModel(model, config, id)
+      config.prepare(model)
+
       return model;
 
     }
@@ -114,11 +111,12 @@ export abstract class BaseCRUD<T>  {
   }
 
   @DELETE(`/${SYMBOL.CRUD_TABLE_MODEL}/:id`)
-  deleteById(@Path(`id`) id: number): Models.Response<T> {
+  deleteById(@Path(`id`) id: number, @Query() config?: ModelDataConfig): Models.Response<T> {
     //#region @backendFunc
     return async () => {
       const deletedEntity = await this.repo.findOne(id)
       await this.repo.remove(id);
+      config.prepare(deletedEntity);
       return deletedEntity;
     }
     //#endregion
@@ -138,6 +136,8 @@ export abstract class BaseCRUD<T>  {
         where: _.merge({ id }, config && config.db && config.db.where),
         join: config && config.db && config.db.join
       })
+
+      config.prepare(model);
       return model;
     }
     //#endregion

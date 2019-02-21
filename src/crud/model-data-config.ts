@@ -41,6 +41,11 @@ export interface IModelDataConfig {
    */
   where?: string[];
 
+  /**
+   * Properties to exclude from entity/entities
+   */
+  exclude?: string[];
+
 
 }
 
@@ -57,10 +62,10 @@ export class ModelDataConfig {
 
     if (config && _.isString(config['config'])) {
       // console.log('from nested config')
-      this.config = Helpers.parseJSONwithStringJSONs(JSON.parse(config['config']));
+      this.config = Helpers.parseJSONwithStringJSONs(JSON.parse(config['config'])) as any;
     } else if (config) {
       // console.log('from normal interface config')
-      this.config = Helpers.parseJSONwithStringJSONs(config);
+      this.config = Helpers.parseJSONwithStringJSONs(config) as any;
     } else {
       // console.log('from default config')
       this.config = this.defaultConfig;
@@ -109,7 +114,7 @@ export class ModelDataConfig {
         rowsDisplayed: MAX_DATA_LENGTH_SENT_TO_CLIENT,
         totalElements: MAX_DATA_LENGTH_SENT_TO_CLIENT
       }
-    }
+    } as any
   }
 
   //#region @backend
@@ -285,6 +290,27 @@ export class ModelDataConfig {
 
     return this.config.where
   }
+
+  get exclude() {
+
+    return this.config.exclude
+  }
+
+  prepare(entity: any | any[]) {
+    if (_.isArray(entity)) {
+      return entity.map(e => {
+        return this.prepare(entity)
+      })
+    }
+    if (_.isArray(this.exclude) && this.exclude.length > 0) {
+      this.exclude.forEach(ex => {
+        entity[ex] = void 0;
+      });
+    }
+    return entity;
+  }
+
+
   //#endregion
 
 }

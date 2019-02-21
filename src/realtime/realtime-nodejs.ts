@@ -122,12 +122,18 @@ export class RealtimeNodejs {
   }
 
 
-  public static TrigggerEntityPropertyChanges(entity: BASE_ENTITY<any>, property: string) {
-    return RealtimeNodejs.__TrigggerEntityChanges(entity, property)
+  public static TrigggerEntityPropertyChanges<ENTITY=any>(entity: BASE_ENTITY<any>, property: (keyof ENTITY) | (keyof ENTITY)[]) {
+    if (_.isArray(property)) {
+      property.forEach(p => {
+        RealtimeNodejs.__TrigggerEntityChanges(entity, p as any)
+      })
+      return
+    }
+    RealtimeNodejs.__TrigggerEntityChanges(entity, property as any)
   }
 
   public static TrigggerEntityChanges(entity: BASE_ENTITY<any>) {
-    return RealtimeNodejs.__TrigggerEntityChanges(entity)
+    RealtimeNodejs.__TrigggerEntityChanges(entity)
   }
 
   request(req: Request, res: Response) {
