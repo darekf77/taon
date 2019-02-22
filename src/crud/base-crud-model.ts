@@ -60,7 +60,7 @@ export abstract class BaseCRUD<T>  {
         }
       );
       response.setHeader(SYMBOL.X_TOTAL_COUNT, totalCount)
-      config.prepare(models)
+      !!config && config.prepare(models)
       return models;
     }
     //#endregion
@@ -77,7 +77,7 @@ export abstract class BaseCRUD<T>  {
       })
 
       preventUndefinedModel(model, config, id)
-      config.prepare(model)
+      !!config && config.prepare(model)
       return model;
     }
     //#endregion
@@ -102,7 +102,7 @@ export abstract class BaseCRUD<T>  {
       })
 
       preventUndefinedModel(model, config, id)
-      config.prepare(model)
+      !!config && config.prepare(model)
 
       return model;
 
@@ -116,7 +116,7 @@ export abstract class BaseCRUD<T>  {
     return async () => {
       const deletedEntity = await this.repo.findOne(id)
       await this.repo.remove(id);
-      config.prepare(deletedEntity);
+      !!config && config.prepare(deletedEntity);
       return deletedEntity;
     }
     //#endregion
@@ -137,7 +137,7 @@ export abstract class BaseCRUD<T>  {
         join: config && config.db && config.db.join
       })
 
-      config.prepare(model);
+      !!config && config.prepare(model);
       return model;
     }
     //#endregion
