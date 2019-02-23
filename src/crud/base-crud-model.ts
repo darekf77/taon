@@ -45,6 +45,31 @@ export abstract class BaseCRUD<T>  {
     //#endregion
   }
 
+  @GET(`/${SYMBOL.CRUD_TABLE_MODEL}/:id/property/:property`)
+  bufforedChanges(
+    @Path(`id`) id: number,
+    @Path(`property`) property: string,
+    @Query('alreadyLength') alreadyLength?: number,
+    @Query('config') config?: ModelDataConfig
+  ): Models.Response<string | any[]> {
+    //#region @backendFunc
+    return async (request, response) => {
+
+      const model = await this.repo.findOne({
+        where: _.merge({ id }, config && config.db && config.db.where),
+        join: config && config.db && config.db.join,
+      })
+
+      preventUndefinedModel(model, config, id)
+      let value = model[property];
+      if (_.isString(value) || _.isArray(value)) {
+        let result = (value as string).slice(alreadyLength);
+        return result;
+      }
+    }
+    //#endregion
+  }
+
   @GET(`/${SYMBOL.CRUD_TABLE_MODEL}`)
   getAll(@Query() config?: ModelDataConfig): Models.Response<T[]> {
     //#region @backendFunc
@@ -60,7 +85,7 @@ export abstract class BaseCRUD<T>  {
         }
       );
       response.setHeader(SYMBOL.X_TOTAL_COUNT, totalCount)
-      !!config && config.prepare(models)
+      !!config && (config instanceof ModelDataConfig) && config.prepare(models)
       return models;
     }
     //#endregion
@@ -77,7 +102,7 @@ export abstract class BaseCRUD<T>  {
       })
 
       preventUndefinedModel(model, config, id)
-      !!config && config.prepare(model)
+      !!config && (config instanceof ModelDataConfig) && config.prepare(model)
       return model;
     }
     //#endregion
@@ -102,7 +127,7 @@ export abstract class BaseCRUD<T>  {
       })
 
       preventUndefinedModel(model, config, id)
-      !!config && config.prepare(model)
+      !!config && (config instanceof ModelDataConfig) && config.prepare(model)
 
       return model;
 
@@ -137,7 +162,7 @@ export abstract class BaseCRUD<T>  {
         join: config && config.db && config.db.join
       })
 
-      !!config && config.prepare(model);
+      !!config && (config instanceof ModelDataConfig) && config.prepare(model);
       return model;
     }
     //#endregion

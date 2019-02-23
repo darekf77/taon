@@ -148,6 +148,7 @@ export abstract class BASE_ENTITY<T, TRAW=T, CTRL extends BaseCRUD<T> = any> {
       RealtimeBrowser.UnsubscribeEntityChanges(this);
     }
   }
+
   subscribeRealtimeUpdates<CALLBACK = T>(options: {
     modelDataConfig?: ModelDataConfig,
     /**
@@ -159,6 +160,11 @@ export abstract class BASE_ENTITY<T, TRAW=T, CTRL extends BaseCRUD<T> = any> {
      */
     property?: (keyof T),
     /**
+     * Only for listening and autoupdate of buffored property changes
+     * Perfect for logs
+     */
+    isBufforedProperty?: boolean;
+    /**
      * Custom update function to get new value of entity of entity property
      */
     update?: (any?) => Promise<Models.HttpResponse<CALLBACK>>
@@ -168,8 +174,21 @@ export abstract class BASE_ENTITY<T, TRAW=T, CTRL extends BaseCRUD<T> = any> {
      */
     callback?: (response: Models.HttpResponse<CALLBACK>) => CALLBACK | void
   } = {} as any) {
-    let { modelDataConfig, callback, condition, property, update } = options;
+    let { modelDataConfig, callback, condition, property, update, isBufforedProperty = false } = options;
     const that = this;
+
+    if (_.isFunction(update)) {
+      console.warn('Are you sure ? With option "isBufforedProperty" update property is automaticly assigned.');
+    }
+
+    if (isBufforedProperty) {
+      let alreadyLength = !!this[property as any] && this[property as any].length;
+      if (!_.isNumber(alreadyLength)) {
+        alreadyLength = 0;
+      }
+      update = () => that.ctrl.bufforedChanges(that.id, property as any, alreadyLength, modelDataConfig).received as any
+    }
+
     if (!_.isObject(this[IS_RELATIME_PROPERTY])) {
       this[IS_RELATIME_PROPERTY] = {};
     }

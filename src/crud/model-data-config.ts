@@ -299,12 +299,12 @@ export class ModelDataConfig {
   prepare(entity: any | any[]) {
     if (_.isArray(entity)) {
       return entity.map(e => {
-        return this.prepare(entity)
+        return this.prepare(e)
       })
     }
     if (_.isArray(this.exclude) && this.exclude.length > 0) {
       this.exclude.forEach(ex => {
-        entity[ex] = void 0;
+        _.set(entity,ex,void 0);
       });
     }
     return entity;
