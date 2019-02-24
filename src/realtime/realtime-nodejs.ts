@@ -12,7 +12,7 @@ import { SYMBOL } from '../symbols';
 import { Log, Level } from 'ng2-logger';
 import { BASE_ENTITY } from '../framework/framework-entity';
 import { Helpers } from '../helpers';
-const log = Log.create('RealtimeNodejs')
+const log = Log.create('RealtimeNodejs', Level.__NOTHING)
 
 export class RealtimeNodejs {
   //#region @backend

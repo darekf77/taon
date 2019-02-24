@@ -163,7 +163,7 @@ export abstract class BASE_ENTITY<T, TRAW=T, CTRL extends BaseCRUD<T> = any> {
      * Only for listening and autoupdate of buffored property changes
      * Perfect for logs
      */
-    isBufforedProperty?: boolean;
+    bufforProperty?: (keyof T);
     /**
      * Custom update function to get new value of entity of entity property
      */
@@ -174,17 +174,20 @@ export abstract class BASE_ENTITY<T, TRAW=T, CTRL extends BaseCRUD<T> = any> {
      */
     callback?: (response: Models.HttpResponse<CALLBACK>) => CALLBACK | void
   } = {} as any) {
-    let { modelDataConfig, callback, condition, property, update, isBufforedProperty = false } = options;
+    let { modelDataConfig, callback, condition, property, update, bufforProperty } = options;
     const that = this;
 
     if (_.isFunction(update)) {
       console.warn('Are you sure ? With option "isBufforedProperty" update property is automaticly assigned.');
     }
 
-    if (isBufforedProperty) {
-      let alreadyLength = !!this[property as any] && this[property as any].length;
-      if (!_.isNumber(alreadyLength)) {
-        alreadyLength = 0;
+    if (_.isString(bufforProperty)) {
+      let alreadyLength = 0;
+      if (!_.isUndefined(this[bufforProperty as any]) &&
+        (_.isString(this[bufforProperty as any]) || _.isArray(this[bufforProperty as any]))) {
+        alreadyLength = (this[bufforProperty as any] as any[]).length;
+      } else {
+        console.log(`without defined ${bufforProperty}`,this)
       }
       update = () => that.ctrl.bufforedChanges(that.id, property as any, alreadyLength, modelDataConfig).received as any
     }
@@ -209,7 +212,11 @@ export abstract class BASE_ENTITY<T, TRAW=T, CTRL extends BaseCRUD<T> = any> {
           }
         }
         if (_.isString(property)) {
-          entityToUpdate[property as any] = newData as any;
+          if (_.isString(bufforProperty)) {
+            entityToUpdate[bufforProperty as any] = newData as any;
+          } else {
+            entityToUpdate[property as any] = newData as any;
+          }
         } else {
           _.merge(entityToUpdate, newData);
         }
@@ -217,7 +224,7 @@ export abstract class BASE_ENTITY<T, TRAW=T, CTRL extends BaseCRUD<T> = any> {
         if (_.isFunction(condition)) {
           const listenChanges = condition(entityToUpdate as any)
           if (!listenChanges) {
-            this.unsubscribeRealtimeUpdates(property as any)
+            that.unsubscribeRealtimeUpdates(property as any)
           }
         }
       }

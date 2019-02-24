@@ -55,10 +55,7 @@ export abstract class BaseCRUD<T>  {
     //#region @backendFunc
     return async (request, response) => {
 
-      const model = await this.repo.findOne({
-        where: _.merge({ id }, config && config.db && config.db.where),
-        join: config && config.db && config.db.join,
-      })
+      const model = await getModel(id, config, this.repo);
 
       preventUndefinedModel(model, config, id)
       let value = model[property];
@@ -70,22 +67,16 @@ export abstract class BaseCRUD<T>  {
     //#endregion
   }
 
+
   @GET(`/${SYMBOL.CRUD_TABLE_MODEL}`)
   getAll(@Query() config?: ModelDataConfig): Models.Response<T[]> {
     //#region @backendFunc
     return async (request, response) => {
 
       const totalCount = await this.repo.count();
-      const models = await this.repo.find(
-        {
-          where: config && config.db && config.db.where,
-          join: config && config.db && config.db.join,
-          skip: config && config.db && config.db.skip,
-          take: config && config.db && config.db.take
-        }
-      );
+      const models = await getModels(config, this.repo);
       response.setHeader(SYMBOL.X_TOTAL_COUNT, totalCount)
-      !!config && (config instanceof ModelDataConfig) && config.prepare(models)
+      prepareData(models, config)
       return models;
     }
     //#endregion
@@ -96,13 +87,8 @@ export abstract class BaseCRUD<T>  {
     //#region @backendFunc
     return async () => {
 
-      const model = await this.repo.findOne({
-        where: _.merge({ id }, config && config.db && config.db.where),
-        join: config && config.db && config.db.join,
-      })
-
-      preventUndefinedModel(model, config, id)
-      !!config && (config instanceof ModelDataConfig) && config.prepare(model)
+      const model = await getModel(id, config, this.repo);
+      prepareData(model, config, id)
       return model;
     }
     //#endregion
@@ -121,14 +107,9 @@ export abstract class BaseCRUD<T>  {
         }
       }
       // console.log('update ok!')
-      let model = await this.repo.findOne({
-        where: _.merge({ id }, config && config.db && config.db.where),
-        join: config && config.db && config.db.join
-      })
+      let model = await getModel(id, config, this.repo);
 
-      preventUndefinedModel(model, config, id)
-      !!config && (config instanceof ModelDataConfig) && config.prepare(model)
-
+      prepareData(model, config, id)
       return model;
 
     }
@@ -139,9 +120,9 @@ export abstract class BaseCRUD<T>  {
   deleteById(@Path(`id`) id: number, @Query() config?: ModelDataConfig): Models.Response<T> {
     //#region @backendFunc
     return async () => {
-      const deletedEntity = await this.repo.findOne(id)
+      const deletedEntity = await getModel(id, config, this.repo);
       await this.repo.remove(id);
-      !!config && config.prepare(deletedEntity);
+      prepareData(deletedEntity, config, id)
       return deletedEntity;
     }
     //#endregion
@@ -157,12 +138,9 @@ export abstract class BaseCRUD<T>  {
       model = await this.repo.save(model);
       const { id } = model;
 
-      model = await this.repo.findOne({
-        where: _.merge({ id }, config && config.db && config.db.where),
-        join: config && config.db && config.db.join
-      })
+      model = await getModel(id, config, this.repo);
 
-      !!config && (config instanceof ModelDataConfig) && config.prepare(model);
+      prepareData(model, config, id)
       return model;
     }
     //#endregion
@@ -171,6 +149,37 @@ export abstract class BaseCRUD<T>  {
 }
 
 //#region @backend
+
+async function getModels(config: ModelDataConfig, repo: any) {
+  let res = await repo.find(
+    {
+      where: config && config.db && config.db.where,
+      join: config && config.db && config.db.join,
+      skip: config && config.db && config.db.skip,
+      take: config && config.db && config.db.take
+    }
+  );
+  return res;
+}
+
+async function getModel(id: number, config: ModelDataConfig, repo: any) {
+  let res = await repo.findOne({
+    where: _.merge({ id }, config && config.db && config.db.where),
+    join: config && config.db && config.db.join
+  })
+  return res;
+}
+
+function prepareData(data: any, config: ModelDataConfig, id?: number) {
+  preventUndefinedModel(data, config, id);
+  if (_.isObject(config)) {
+    if (!(config instanceof ModelDataConfig)) {
+      throw `Config not instance of ModelDataConfig`
+    }
+    config.prepare(data);
+  }
+}
+
 function preventUndefinedModel(model, config, id) {
   if (_.isUndefined(model)) {
     console.error(config)

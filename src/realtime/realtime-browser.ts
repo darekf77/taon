@@ -8,7 +8,7 @@ import { Log, Level } from 'ng2-logger';
 import { Helpers } from '../helpers';
 import { BASE_ENTITY } from '../framework/framework-entity';
 import { CLASS } from 'typescript-class-helpers';
-const log = Log.create('RealtimeBrowser')
+const log = Log.create('RealtimeBrowser', Level.__NOTHING)
 
 export type AliasChangeListenerType = (unsubscribe: () => void) => void;
 export type AliasEntityType = Partial<BASE_ENTITY<any>>;
