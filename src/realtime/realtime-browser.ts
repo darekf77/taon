@@ -14,7 +14,7 @@ export type AliasChangeListenerType = (unsubscribe: () => void) => void;
 export type AliasEntityType = Partial<BASE_ENTITY<any>>;
 
 export class RealtimeBrowser {
-  init() {
+  static init() {
     let uri: URL = Global.vars.urlSocket;
     if (!uri) {
       log.warn(`
@@ -58,7 +58,7 @@ export class RealtimeBrowser {
   public static __SubscribeEntityChanges(entity: AliasEntityType, changesListener: AliasChangeListenerType, property?: string) {
 
     const { id } = entity;
-    const propertyInEntityKey = `${entity.id}${property}`;
+    const propertyInEntityKey = propertyInEntityKeyFn(entity, property);
 
     if (!_.isNumber(id)) {
       console.error(entity)
@@ -163,8 +163,8 @@ export class RealtimeBrowser {
     if (_.isUndefined(RealtimeBrowser.realtimeEntityPropertyListener[className])) {
       RealtimeBrowser.realtimeEntityPropertyListener[className] = {};
     }
-    const propertyInEntityKey = `${entity.id}${property}`;
     if (_.isString(property)) {
+      const propertyInEntityKey = propertyInEntityKeyFn(entity, property)
       RealtimeBrowser.realtimeEntityPropertyListener[className][propertyInEntityKey].push(changesListener);
     } else {
       RealtimeBrowser.realtimeEntityListener[className][entity.id].push(changesListener);
@@ -190,7 +190,7 @@ export class RealtimeBrowser {
         RealtimeBrowser.realtimeEntityPropertyListener[className] = {};
       }
 
-      const propertyInEntityKey = `${entity.id}${property}`;
+      const propertyInEntityKey = propertyInEntityKeyFn(entity, property);
 
 
       if (!_.isArray(RealtimeBrowser.realtimeEntityPropertyListener[className][propertyInEntityKey])) {
@@ -259,46 +259,39 @@ export class RealtimeBrowser {
     }
 
     const className = Helpers.Class.getName(constructFn);
+    const realtime = Global.vars.socketNamespace.FE_REALTIME;
 
     const roomName = _.isString(property) ?
       SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY_PROPERTY(className, property, entity.id) :
       SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY(className, entity.id)
 
+    let sub: any;
+    if (_.isString(property)) {
+      var propertyInEntityKey = propertyInEntityKeyFn(entity, property);
+      sub = RealtimeBrowser.realtimeEntityPropertySockets[className] && RealtimeBrowser.realtimeEntityPropertySockets[className][propertyInEntityKey]
+    } else {
+      sub = RealtimeBrowser.realtimeEntitySockets[className] && RealtimeBrowser.realtimeEntitySockets[className][entity.id]
+    }
+
+    if (sub) {
+      sub.removeAllListeners()
+
+      if (_.isString(property)) {
+        delete RealtimeBrowser.realtimeEntityPropertyListener[className][propertyInEntityKey]
+      } else {
+        delete RealtimeBrowser.realtimeEntityListener[className][entity.id]
+      }
+      console.info(`Unsubscribe OK from entit: ${className} - ${propertyInEntityKey ? propertyInEntityKey : entity.id}`)
+    } else {
+      console.info(`Unsubscribe not found from entity: ${className} - ${propertyInEntityKey ? propertyInEntityKey : entity.id}`)
+    }
 
     if (_.isString(property)) {
-      const propertyInEntityKey = `${entity.id}${property}`;
-
-      const sub = RealtimeBrowser.realtimeEntityPropertySockets[className] &&
-        RealtimeBrowser.realtimeEntityPropertySockets[className][propertyInEntityKey];
-      if (!sub) {
-        log.w(`No sunscribtion for property in entity: ${propertyInEntityKey}`)
-      } else {
-        sub.removeAllListeners()
-        RealtimeBrowser.realtimeEntityPropertyListener[propertyInEntityKey] = void 0;
-      }
-
-      RealtimeBrowser.realtimeEntityPropertyListener[className][propertyInEntityKey] = void 0;
-
-      const realtime = Global.vars.socketNamespace.FE_REALTIME;
       realtime.emit(SYMBOL.REALTIME.ROOM.UNSUBSCRIBE.ENTITY_PROPERTY_UPDATE_EVENTS, roomName)
-
-
     } else {
-
-      const sub = RealtimeBrowser.realtimeEntitySockets[className] &&
-        RealtimeBrowser.realtimeEntitySockets[className][entity.id];
-      if (!sub) {
-        log.w(`No sunscribtion for entity with id ${entity.id}`)
-      } else {
-        sub.removeAllListeners()
-        RealtimeBrowser.realtimeEntitySockets[entity.id] = void 0;
-      }
-
-      RealtimeBrowser.realtimeEntityListener[className][entity.id] = void 0;
-
-      const realtime = Global.vars.socketNamespace.FE_REALTIME;
       realtime.emit(SYMBOL.REALTIME.ROOM.UNSUBSCRIBE.ENTITY_UPDATE_EVENTS, roomName)
     }
+
 
   }
 
@@ -320,4 +313,9 @@ export class RealtimeBrowser {
   }
 
 
+}
+
+
+function propertyInEntityKeyFn(entity: AliasEntityType, property: string) {
+  return `${entity.id}${property}`
 }

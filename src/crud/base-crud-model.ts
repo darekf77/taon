@@ -174,7 +174,8 @@ function prepareData(data: any, config: ModelDataConfig, id?: number) {
   preventUndefinedModel(data, config, id);
   if (_.isObject(config)) {
     if (!(config instanceof ModelDataConfig)) {
-      throw `Config not instance of ModelDataConfig`
+      console.error(`Config not instance of ModelDataConfig`)
+      return
     }
     config.prepare(data);
   }

@@ -154,7 +154,7 @@ export abstract class BASE_ENTITY<T, TRAW=T, CTRL extends BaseCRUD<T> = any> {
     /**
      * Only listen realtime update when condition function  true
      */
-    condition?: (entity: T) => boolean,
+    afterMergeCallback?: (updatedData: T) => any,
     /**
      * Listen for realtime listening
      */
@@ -174,34 +174,32 @@ export abstract class BASE_ENTITY<T, TRAW=T, CTRL extends BaseCRUD<T> = any> {
      */
     callback?: (response: Models.HttpResponse<CALLBACK>) => CALLBACK | void
   } = {} as any) {
-    let { modelDataConfig, callback, condition, property, update, bufforProperty } = options;
+    let { modelDataConfig, callback, afterMergeCallback, property, update, bufforProperty } = options;
     const that = this;
-
-    if (_.isFunction(update)) {
-      console.warn('Are you sure ? With option "isBufforedProperty" update property is automaticly assigned.');
-    }
-
-    if (_.isString(bufforProperty)) {
-      let alreadyLength = 0;
-      if (!_.isUndefined(this[bufforProperty as any]) &&
-        (_.isString(this[bufforProperty as any]) || _.isArray(this[bufforProperty as any]))) {
-        alreadyLength = (this[bufforProperty as any] as any[]).length;
-      } else {
-        console.log(`without defined ${bufforProperty}`,this)
-      }
-      update = () => that.ctrl.bufforedChanges(that.id, property as any, alreadyLength, modelDataConfig).received as any
-    }
 
     if (!_.isObject(this[IS_RELATIME_PROPERTY])) {
       this[IS_RELATIME_PROPERTY] = {};
     }
 
-    if (_.isUndefined(update)) {
-      update = () => that.ctrl.getBy(that.id, modelDataConfig).received as any;
-    }
 
     const changesListener = (entityToUpdate: BASE_ENTITY<any>) => {
       return async () => {
+
+        if (_.isString(bufforProperty)) {
+          let alreadyLength = 0;
+          if (!_.isUndefined(that[bufforProperty as any]) &&
+            (_.isString(that[bufforProperty as any]) || _.isArray(that[bufforProperty as any]))) {
+            alreadyLength = (that[bufforProperty as any] as any[]).length;
+          } else {
+            console.log(`without defined ${bufforProperty}`, that)
+          }
+          update = () => that.ctrl.bufforedChanges(that.id, property as any, alreadyLength, modelDataConfig).received as any
+        }
+
+        if (_.isUndefined(update)) {
+          update = () => that.ctrl.getBy(that.id, modelDataConfig).received as any;
+        }
+
         // console.log('entity should be updated !')
         const data = await update()
         let newData = data.body.json;
@@ -221,11 +219,8 @@ export abstract class BASE_ENTITY<T, TRAW=T, CTRL extends BaseCRUD<T> = any> {
           _.merge(entityToUpdate, newData);
         }
 
-        if (_.isFunction(condition)) {
-          const listenChanges = condition(entityToUpdate as any)
-          if (!listenChanges) {
-            that.unsubscribeRealtimeUpdates(property as any)
-          }
+        if (_.isFunction(afterMergeCallback)) {
+          afterMergeCallback(entityToUpdate as any);
         }
       }
     }

@@ -9,7 +9,7 @@ import { Global } from './global-config';
 import { initMidleware } from "./init-method";
 
 export { Connection } from "typeorm";
-import { Realtime } from './realtime';
+import { RealtimeNodejs, RealtimeBrowser } from './realtime';
 import { Models } from './models';
 import { SYMBOL } from './symbols';
 import { Helpers } from './helpers';
@@ -111,7 +111,7 @@ Incorect value for property "entities" inside Morphi.Init(...)
     // }
     const h = new http.Server(Global.vars.app); //TODO is this working ?
     if (config.hostSocket) {
-      Realtime.nodejs.init(h)
+      RealtimeNodejs.init(h);
     }
 
     h.listen(uri.port, function () {
@@ -130,7 +130,7 @@ Incorect value for property "entities" inside Morphi.Init(...)
       Global.vars.allowedHosts = allowedHosts.map(h => new URL(h))
     }
     if (config.hostSocket) {
-      Realtime.browser.init()
+      RealtimeBrowser.init()
     }
 
   }

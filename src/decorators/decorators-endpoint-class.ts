@@ -15,7 +15,7 @@ import * as _ from "lodash";
 
 import { Global } from '../global-config';
 import { SYMBOL } from '../symbols';
-import { Realtime } from '../realtime';
+
 import { Helpers } from '../helpers';
 import { activateBaseCrud } from '../crud/activate-base-crud';
 import { Models } from '../models';

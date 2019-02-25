@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import { Models } from "../models";
 import { Helpers } from "../helpers";
 import { Global } from '../global-config';
-import { Realtime } from '../realtime';
+
 import { SYMBOL } from '../symbols';
 //#region @backend
 import { walk } from 'lodash-walk-object';
@@ -31,8 +31,6 @@ export function initMidleware() {
 
   (() => {
     app.use((req, res, next) => {
-
-      Realtime.nodejs.request(req, res);
 
       res.set('Access-Control-Expose-Headers',
         [
@@ -71,8 +69,6 @@ export function initMethodNodejs(
 
   Global.vars.app[type.toLowerCase()](expressPath, requestHandler, async (req, res) => {
 
-    res[SYMBOL.METHOD_DECORATOR] = methodConfig;
-    res[SYMBOL.CLASS_DECORATOR] = classConfig;
     const args: any[] = [];
 
     let tBody = req.body;

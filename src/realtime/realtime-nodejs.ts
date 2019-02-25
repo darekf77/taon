@@ -16,7 +16,7 @@ const log = Log.create('RealtimeNodejs', Level.__NOTHING)
 
 export class RealtimeNodejs {
   //#region @backend
-  init(http: Http2Server) {
+  static init(http: Http2Server) {
     const uri: URL = Global.vars.urlSocket;
     if (!uri) {
       console.warn(`
@@ -135,27 +135,6 @@ export class RealtimeNodejs {
   public static TrigggerEntityChanges(entity: BASE_ENTITY<any>) {
     RealtimeNodejs.__TrigggerEntityChanges(entity)
   }
-
-  request(req: Request, res: Response) {
-
-    // res.on('finish', () => {
-    //   // console.log(res.statusCode + ': 1' + req.method);
-    //   const statusCode = res.statusCode;
-    //   const method: HttpMethod = req.method as any;
-    //   if (method !== 'GET' && !isNaN(statusCode) && statusCode >= 200 && statusCode < 300) {
-    //     const m: MethodConfig = res[SYMBOL.METHOD_DECORATOR];
-    //     const c: ClassConfig = res[SYMBOL.CLASS_DECORATOR];
-    //     let pathes = Object.keys(c.methods)
-    //       .filter(k => c.methods[k].realtimeUpdate)
-    //       .map(k => getExpressPath(c, c.methods[k].path));
-    //     // socket.emit(SOCKET_MSG, {
-    //     //   method: 'GET',
-    //     //   pathes
-    //     // });
-    //   }
-    // });
-  }
-
 
   //#endregion
 }
