@@ -190,8 +190,6 @@ export abstract class BASE_ENTITY<T, TRAW=T, CTRL extends BaseCRUD<T> = any> {
           if (!_.isUndefined(that[bufforProperty as any]) &&
             (_.isString(that[bufforProperty as any]) || _.isArray(that[bufforProperty as any]))) {
             alreadyLength = (that[bufforProperty as any] as any[]).length;
-          } else {
-            console.log(`without defined ${bufforProperty}`, that)
           }
           update = () => that.ctrl.bufforedChanges(that.id, property as any, alreadyLength, modelDataConfig).received as any
         }
