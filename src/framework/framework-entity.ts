@@ -209,14 +209,25 @@ export abstract class BASE_ENTITY<T, TRAW=T, CTRL extends BaseCRUD<T> = any> {
             newData = newDataCallaback as any;
           }
         }
+        const newDataType: 'array' | 'string' = _.isArray(newData) ? 'array' : (_.isString(newData) ? 'string' : void 0);
+        if (_.isString(bufforProperty) && !newDataType) {
+          console.log(data);
+          console.warn('New data type is not string or array', newData)
+        }
         if (_.isString(property)) {
           if (_.isString(bufforProperty)) {
-            entityToUpdate[bufforProperty as any] = newData as any;
+
+            if (_.isUndefined(entityToUpdate[bufforProperty as any])) {
+              entityToUpdate[bufforProperty as any] = ((newDataType === 'array') ? [] : '');
+            }
+            entityToUpdate[bufforProperty as any] = entityToUpdate[bufforProperty as any].concat(newData as any);
+
           } else {
-            entityToUpdate[property as any] = newData as any;
+            entityToUpdate[property as string] = newData;
           }
         } else {
-          _.merge(entityToUpdate, newData);
+          mergeWhatImportant(entityToUpdate, newData);
+          // _.merge(entityToUpdate, newData);
         }
 
         if (_.isFunction(afterMergeCallback)) {
@@ -241,6 +252,24 @@ export abstract class BASE_ENTITY<T, TRAW=T, CTRL extends BaseCRUD<T> = any> {
       this[IS_RELATIME] = true;
       RealtimeBrowser.SubscribeEntityChanges(this, changesListener(this))
     }
+
+    if (_.isString(bufforProperty)) {
+      RealtimeBrowser.TriggerChange(this, property as any)
+    }
   }
 
 }
+
+function mergeWhatImportant(dest: Object, source: Object) {
+  if (_.isObject(source)) {
+    for (const key in source) {
+      if (source.hasOwnProperty(key)) {
+        const element = source[key];
+        if (!_.isUndefined(element)) {
+          dest[key] = source[key]
+        }
+      }
+    }
+  }
+}
+

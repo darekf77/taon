@@ -16,6 +16,7 @@ import { Repository, Connection, getRepository } from "typeorm";
 import { tableNameFrom } from '../framework/framework-helpers';
 import { OrmConnection } from '../decorators/orm-connection';
 import { Helpers } from '../helpers';
+import { IBASE_ENTITY } from '../framework/framework-entity';
 //#endregion
 
 @__ENDPOINT(BaseCRUD)
@@ -69,7 +70,7 @@ export abstract class BaseCRUD<T>  {
 
 
   @GET(`/${SYMBOL.CRUD_TABLE_MODEL}`)
-  getAll(@Query() config?: ModelDataConfig): Models.Response<T[]> {
+  getAll(@Query('config') config?: ModelDataConfig): Models.Response<T[]> {
     //#region @backendFunc
     return async (request, response) => {
 
@@ -83,7 +84,7 @@ export abstract class BaseCRUD<T>  {
   }
 
   @GET(`/${SYMBOL.CRUD_TABLE_MODEL}/:id`)
-  getBy(@Path(`id`) id: number, @Query() config?: ModelDataConfig): Models.Response<T> {
+  getBy(@Path(`id`) id: number, @Query('config') config?: ModelDataConfig): Models.Response<T> {
     //#region @backendFunc
     return async () => {
 
@@ -96,7 +97,7 @@ export abstract class BaseCRUD<T>  {
 
 
   @PUT(`/${SYMBOL.CRUD_TABLE_MODEL}/:id`)
-  updateById(@Path(`id`) id: number, @Body() item: T, @Query() config?: ModelDataConfig): Models.Response<T> {
+  updateById(@Path(`id`) id: number, @Body() item: T, @Query('config') config?: ModelDataConfig): Models.Response<T> {
     //#region @backendFunc
 
     return async () => {
@@ -117,7 +118,7 @@ export abstract class BaseCRUD<T>  {
   }
 
   @DELETE(`/${SYMBOL.CRUD_TABLE_MODEL}/:id`)
-  deleteById(@Path(`id`) id: number, @Query() config?: ModelDataConfig): Models.Response<T> {
+  deleteById(@Path(`id`) id: number, @Query('config') config?: ModelDataConfig): Models.Response<T> {
     //#region @backendFunc
     return async () => {
       const deletedEntity = await getModel(id, config, this.repo);
@@ -130,7 +131,7 @@ export abstract class BaseCRUD<T>  {
 
 
   @POST(`/${SYMBOL.CRUD_TABLE_MODEL}/`)
-  create(@Body() item: T, @Query() config?: ModelDataConfig): Models.Response<T> {
+  create(@Body() item: T, @Query('config') config?: ModelDataConfig): Models.Response<T> {
     //#region @backendFunc
     return async () => {
 
@@ -170,14 +171,18 @@ async function getModel(id: number, config: ModelDataConfig, repo: any) {
   return res;
 }
 
-function prepareData(data: any, config: ModelDataConfig, id?: number) {
+function prepareData(data: IBASE_ENTITY | IBASE_ENTITY[], config: ModelDataConfig, id?: number) {
   preventUndefinedModel(data, config, id);
   if (_.isObject(config)) {
     if (!(config instanceof ModelDataConfig)) {
       console.error(`Config not instance of ModelDataConfig`)
       return
     }
-    config.prepare(data);
+    if (_.isArray(data)) {
+      data.forEach(d => d.modelDataConfig = config)
+    } else if (_.isObject(data)) {
+      data.modelDataConfig = config;
+    }
   }
 }
 

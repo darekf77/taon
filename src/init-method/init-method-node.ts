@@ -106,6 +106,7 @@ export function initMethodNodejs(
     // make class instance from query params
     // console.log('req.headers', tQuery)
     if (req.headers[SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS]) {
+
       try {
         const entity = JSON.parse(req.headers[SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS]);
         tQuery = Helpers.parseJSONwithStringJSONs(Helpers.Mapping.encode(tQuery, entity));
@@ -114,7 +115,15 @@ export function initMethodNodejs(
       Object.keys(tQuery).forEach(queryParamName => {
         try {
           const entityForParam = JSON.parse(req.headers[`${SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${queryParamName}`]);
-          tQuery[queryParamName] = Helpers.parseJSONwithStringJSONs(Helpers.Mapping.encode(tQuery[queryParamName], entityForParam));
+          let beforeTransofrm = tQuery[queryParamName];
+          if (_.isString(beforeTransofrm)) {
+            try {
+              const paresed = Helpers.tryTransformParam(beforeTransofrm)
+              beforeTransofrm = paresed;
+            } catch (e) { }
+          }
+          const afterEncoding = Helpers.Mapping.encode(beforeTransofrm, entityForParam);
+          tQuery[queryParamName] = Helpers.parseJSONwithStringJSONs(afterEncoding);
         } catch (e) { }
       });
     }

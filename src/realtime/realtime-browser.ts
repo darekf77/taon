@@ -55,7 +55,46 @@ export class RealtimeBrowser {
   private static realtimeEntityPropertySockets: { [className: string]: { [propertyInEntityIds: string]: any } } = {} as any;
 
 
-  public static __SubscribeEntityChanges(entity: AliasEntityType, changesListener: AliasChangeListenerType, property?: string) {
+  public static TriggerChange(entity: AliasEntityType, property?: string) {
+
+    const constructFn = Helpers.Class.getFromObject(entity)
+
+    if (!constructFn) {
+      log.er(`Activate: Cannot retrive Class function from object`, entity)
+      return
+    }
+
+    const className = Helpers.Class.getName(constructFn);
+    const { id } = entity;
+
+    const unsub = () => {
+      if (_.isString(property)) {
+        this.UnsubscribeEntityPropertyChanges(entity, property);
+      } else {
+        this.UnsubscribeEntityChanges(entity);
+      }
+    }
+
+    if (_.isString(property)) {
+      const propertyInEntityKey = propertyInEntityKeyFn(entity, property);
+      const arr = RealtimeBrowser.realtimeEntityPropertyListener[className][propertyInEntityKey];
+      if (_.isArray(arr)) {
+        arr.forEach(changeListenerFromArray => {
+          changeListenerFromArray(unsub)
+        })
+      }
+
+    } else {
+      const arr = RealtimeBrowser.realtimeEntityListener[className][entity.id];
+      if (_.isArray(arr)) {
+        arr.forEach(changeListenerFromArray => {
+          changeListenerFromArray(unsub)
+        })
+      }
+    }
+  }
+
+  private static __SubscribeEntityChanges(entity: AliasEntityType, changesListener: AliasChangeListenerType, property?: string) {
 
     const { id } = entity;
     const propertyInEntityKey = propertyInEntityKeyFn(entity, property);

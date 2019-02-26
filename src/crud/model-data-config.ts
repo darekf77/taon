@@ -191,6 +191,20 @@ export class ModelDataConfig {
   get set() {
     const self = this;
     return {
+      exclude(entity: any | any[]) {
+        if (_.isArray(entity)) {
+          entity.forEach(e => {
+            self.set.exclude(e)
+          })
+          return
+        }
+        if (_.isArray(self.config.exclude) && self.config.exclude.length > 0) {
+          self.config.exclude.forEach(ex => {
+            _.set(entity, ex, void 0);
+          });
+        }
+
+      },
       where(command: string) {
         if (command === undefined) {
           return;
@@ -294,20 +308,6 @@ export class ModelDataConfig {
   get exclude() {
 
     return this.config.exclude
-  }
-
-  prepare(entity: any | any[]) {
-    if (_.isArray(entity)) {
-      return entity.map(e => {
-        return this.prepare(e)
-      })
-    }
-    if (_.isArray(this.exclude) && this.exclude.length > 0) {
-      this.exclude.forEach(ex => {
-        _.set(entity,ex,void 0);
-      });
-    }
-    return entity;
   }
 
 
