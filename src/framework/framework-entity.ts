@@ -209,7 +209,7 @@ export abstract class BASE_ENTITY<T, TRAW=T, CTRL extends BaseCRUD<T> = any> {
         }
         const newDataType: 'array' | 'string' = _.isArray(newData) ? 'array' : (_.isString(newData) ? 'string' : void 0);
         if (_.isString(bufforProperty) && !newDataType) {
-          console.log(data);
+          console.warn(data);
           console.warn('New data type is not string or array', newData)
         }
         if (_.isString(property)) {
