@@ -59,8 +59,7 @@ export abstract class BASE_CONTROLLER<T> extends BaseCRUD<T>
     super();
 
     if (_.isFunction(this.entity)) {
-      this.entity.prototype['ctrl'] = this;
-      this.entity['ctrl'] = this;
+      updateChain(this.entity, this as any);
     }
 
     if (Helpers.isBrowser) {
@@ -86,3 +85,15 @@ export abstract class BASE_CONTROLLER<T> extends BaseCRUD<T>
 
 }
 
+
+function updateChain(entity: Function, controllerContext: Object) {
+  if (!_.isFunction(entity) ||
+    entity.name === 'BASE_ENTITY' ||
+    entity.name === 'BaseCRUD'
+  ) {
+    return;
+  }
+  entity.prototype['ctrl'] = controllerContext;
+  entity['ctrl'] = controllerContext;
+  updateChain(entity['__proto__'], controllerContext); // TODO QUICK_FIX
+}

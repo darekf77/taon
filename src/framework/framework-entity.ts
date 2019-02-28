@@ -104,7 +104,7 @@ export function Entity<T = {}>(options?: {
 export abstract class BASE_ENTITY<T, TRAW=T, CTRL extends BaseCRUD<T> = any> {
 
   abstract id: number;
-  public modelDataConfig: ModelDataConfig;
+  public modelDataConfig?: ModelDataConfig;
 
   /**
    * injected controller for entity for easy coding
