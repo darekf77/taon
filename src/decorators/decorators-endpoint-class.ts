@@ -33,6 +33,7 @@ export function ENDPOINT(options?: {
   // realtime?: boolean,
   path?: string,
   entity?: Function,
+  additionalEntities?: Function[],
   auth?
   //#region @backend
   : Models.AuthCallBack
@@ -40,7 +41,7 @@ export function ENDPOINT(options?: {
 }) {
   return function (target: Function) {
 
-    const { path, auth, realtime = false, entity } = options ? options : {} as any;
+    let { path, auth, realtime = false, entity, additionalEntities } = options ? options : {} as any;
 
     target.prototype[SYMBOL.IS_ENPOINT_REALTIME] = realtime;
 
@@ -48,7 +49,7 @@ export function ENDPOINT(options?: {
       return function () {
         // debugger
         // console.log(`INITING ${target.name} , parent ${target['__proto__'].name} `)
-        activateBaseCrud(target, entity)
+        activateBaseCrud(target, entity, additionalEntities)
         //#region  access decorator config
         const configs = Helpers.Class.getConfig(target);
         // console.log(`Class config for ${Helpers.Class.getName(target)}`, configs)
@@ -96,7 +97,7 @@ export function ENDPOINT(options?: {
             if (checkAuthFn) {
               methodConfig.requestHandler = auth(methodConfig.descriptor.value);
             }
-            const { routePath,  method } = initMethodNodejs(type, methodConfig, classConfig, expressPath);
+            const { routePath, method } = initMethodNodejs(type, methodConfig, classConfig, expressPath);
             Global.vars.activeRoutes.push({
               routePath,
               method

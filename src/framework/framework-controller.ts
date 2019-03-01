@@ -19,6 +19,7 @@ export function Controller(options?: {
   className?: string;
   realtime?: boolean,
   entity?: Function,
+  additionalEntities?: Function[],
   path?: string,
   autoinit?: boolean,
   //#region @backend
@@ -54,12 +55,20 @@ export function Controller(options?: {
 })
 export abstract class BASE_CONTROLLER<T> extends BaseCRUD<T>
 {
+  /**
+   * Controller entites
+   */
+  entites: Function[];
 
   constructor() {
     super();
 
-    if (_.isFunction(this.entity)) {
-      updateChain(this.entity, this as any);
+    if (_.isArray(this.entites)) {
+      this.entites.forEach(c => {
+        updateChain(c, this)
+      })
+    } else if (_.isFunction(this.entity)) {
+      updateChain(this.entity, this);
     }
 
     if (Helpers.isBrowser) {
@@ -87,13 +96,6 @@ export abstract class BASE_CONTROLLER<T> extends BaseCRUD<T>
 
 
 function updateChain(entity: Function, controllerContext: Object) {
-  if (!_.isFunction(entity) ||
-    entity.name === 'BASE_ENTITY' ||
-    entity.name === 'BaseCRUD'
-  ) {
-    return;
-  }
   entity.prototype['ctrl'] = controllerContext;
   entity['ctrl'] = controllerContext;
-  updateChain(entity['__proto__'], controllerContext); // TODO QUICK_FIX
 }

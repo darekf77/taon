@@ -269,6 +269,8 @@ export function transformToBrowserVersion(json: any) {
     }
   }
 
+  json = Helpers.JSON.cleaned(json)
+
   walk.Object(json, (value, lodashPath, changeValue) => {
     toReplace.push({ value, changeValue })
   })
