@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 // import { Observable } from 'rxjs/Observable';
 import { Helpers } from '../helpers';
 import { CLASSNAME, Mapping } from 'ng2-rest';
+import { CLASS } from 'typescript-class-helpers';
 
 const MAX_DATA_LENGTH_SENT_TO_CLIENT = 10000;
 
@@ -46,6 +47,11 @@ export interface IModelDataConfig {
    */
   exclude?: string[];
 
+  /**
+   * Properties to inlude only in entity/entities
+   */
+  include?: string[];
+
 
 }
 
@@ -86,6 +92,14 @@ export class ModelDataConfig {
 
     if (_.isUndefined(this.config.where)) {
       this.config.where = this.defaultConfig.where;
+    }
+    if (Helpers.isNode) {
+      if (_.isUndefined(this.config.include)) {
+        this.config.include = [];
+      }
+      if (_.isUndefined(this.config.exclude)) {
+        this.config.exclude = [];
+      }
     }
     // console.log('config', config)
   }
@@ -191,6 +205,24 @@ export class ModelDataConfig {
   get set() {
     const self = this;
     return {
+      include(entity: any | any[]) {
+        if (_.isArray(entity)) {
+          entity.forEach(e => {
+            self.set.include(e)
+          })
+          return
+        }
+        if (_.isArray(self.config.include) && self.config.include.length > 0) {
+          if (_.isObject(entity)) {
+            Object.keys(entity).forEach(key => {
+              if (!self.config.include.includes(key)) {
+                _.set(entity, key, void 0);
+              }
+            })
+          }
+        }
+
+      },
       exclude(entity: any | any[]) {
         if (_.isArray(entity)) {
           entity.forEach(e => {
@@ -308,6 +340,11 @@ export class ModelDataConfig {
   get exclude() {
 
     return this.config.exclude
+  }
+
+  get include() {
+
+    return this.config.include
   }
 
 
