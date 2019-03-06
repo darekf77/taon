@@ -4,7 +4,7 @@ import { Log } from 'ng2-logger';
 import { SYMBOL } from '../symbols';
 import { FormlyArrayTransformFn } from '../crud/fromly';
 import { classNameVlidation } from './framework-helpers';
-import { Mapping, CLASSNAME, Helpers, Models } from 'ng2-rest';
+import { Mapping, Helpers, Models } from 'ng2-rest';
 
 
 //#region @backend
@@ -38,6 +38,8 @@ export function Entity<T = {}>(options?: {
   className?: string;
   defaultModelValues?: Mapping.ModelValue<T>;
   mapping?: Mapping.Mapping<T>;
+  uniqueKeyProp?: (keyof T);
+  classFamily?: string,
   additionalMapping?: { [lodashPathes: string]: string | [string]; }
   tree?: 'closure-table';
   formly?: {
@@ -61,6 +63,8 @@ export function Entity<T = {}>(options?: {
     tree,
     mapping,
     additionalMapping = {},
+    uniqueKeyProp = 'id',
+    classFamily,
     className,
     formly: {
       transformFn = undefined,
@@ -77,7 +81,7 @@ export function Entity<T = {}>(options?: {
 
     className = classNameVlidation(className, target);
 
-    CLASSNAME.CLASSNAME(className)(target)
+    CLASS.NAME(className, uniqueKeyProp as any, classFamily)(target)
     Mapping.DefaultModelWithMapping<T>(defaultModelValues, _.merge(mapping, additionalMapping))(target)
 
     //#region @backend

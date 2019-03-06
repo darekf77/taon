@@ -16,6 +16,7 @@ import * as errorHandler from 'errorhandler';
 import * as cookieParser from 'cookie-parser';
 import * as methodOverride from 'method-override';
 import * as fileUpload from 'express-fileupload';
+
 //#endregion
 
 
@@ -165,10 +166,17 @@ export function initMethodNodejs(
         let circural = _.cloneDeep(Helpers.JSON.circural);
 
         // let i = 0;
-        cleanedResult = transformToBrowserVersion(cleanedResult)
+
         while (true) {
+          let nextCircs = [];
+          cleanedResult = transformToBrowserVersion(cleanedResult, (modified) => {
+            let resCleanedResult = Helpers.JSON.cleaned(modified);
+            const circsToAdd = _.cloneDeep(Helpers.JSON.circural);
+            nextCircs = nextCircs.concat(circsToAdd);
+            return resCleanedResult;
+          })
           cleanedResult = Helpers.JSON.cleaned(cleanedResult)
-          const nextCircs = _.cloneDeep(Helpers.JSON.circural);
+          nextCircs = nextCircs.concat(_.cloneDeep(Helpers.JSON.circural));
           // console.log(`circs(${++i})`, nextCircs)
           circural = circural.concat(nextCircs);
           if (Helpers.JSON.circural.length === 0) {
@@ -243,20 +251,7 @@ export function getTransformFunction(target: Function) {
   return _.first(functions);
 }
 
-
-
-export function transformToBrowserVersion(json: any) {
-  if (!_.isObject(json)) {
-    return json;
-  }
-
-  if (_.isArray(json)) {
-    return json.map(c => {
-      return transformToBrowserVersion(c)
-    })
-  }
-
-  const toReplace: { value: any, changeValue: (newValue) => any }[] = []
+function singleTransform(json) {
 
   let ptarget = Helpers.Class.getFromObject(json);
   let pbrowserTransformFn = getTransformFunction(ptarget);
@@ -268,24 +263,41 @@ export function transformToBrowserVersion(json: any) {
       json = newValue;
     }
   }
-
-  json = Helpers.JSON.cleaned(json)
-
-  walk.Object(json, (value, lodashPath, changeValue) => {
-    toReplace.push({ value, changeValue })
-  })
+  return json;
+}
 
 
-  toReplace.forEach(({ value, changeValue }) => {
-    let target = Helpers.Class.getFromObject(value);
-    let browserTransformFn = getTransformFunction(target);
-    if (browserTransformFn) {
-      const newValue = browserTransformFn(value)
-      changeValue(newValue)
+export function transformToBrowserVersion(json: any, removeCirc: (json: any) => any) {
+
+  json = singleTransform(json)
+
+  json = removeCirc(json)
+
+  const alreadyRunnedFoR = [];
+  while (true) {
+    let isStable = true;
+    walk.Object(json, (value, lodashPath, changeValue, { exit }) => {
+      if (!alreadyRunnedFoR.includes(lodashPath) && !_.isArray(value) && _.isObject(value)) {
+        const before = Helpers.JSON.structureArray(json);
+        changeValue(singleTransform(value))
+        const j = removeCirc(json)
+        const after = Helpers.JSON.structureArray(j);
+        if (!_.isEqual(before, after)) {
+          isStable = false
+          json = j;
+          exit()
+        }
+        alreadyRunnedFoR.push(lodashPath)
+      }
+    })
+    if (isStable) {
+      break;
     }
-  })
+  }
 
-  // console.log('AFTER TRANSFORM', value)
+
+
+
   return json;
 }
 //#endregion
