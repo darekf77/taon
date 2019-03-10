@@ -20,6 +20,18 @@ import * as fileUpload from 'express-fileupload';
 //#endregion
 
 
+function mesureTime(func: (note: (info: string) => any) => any) {
+  let start = process.hrtime();
+
+  const elapsed_time = (note) => {
+    var precision = 3; // 3 decimal places
+    var elapsed = process.hrtime(start)[1] / 1000000; // divide by a million to get nano to milli
+    console.log(process.hrtime(start)[0] + " s, " + elapsed.toFixed(precision) + " ms - " + note); // print message + time
+    start = process.hrtime(); // reset the timer
+  }
+  func(elapsed_time as any)
+}
+
 export function initMidleware() {
   //#region @backend
   const app = Global.vars.app;
@@ -158,37 +170,52 @@ export function initMethodNodejs(
     })
     const resolvedParams = args.reverse().map(v => Helpers.tryTransformParam(v));
     try {
+
       const response: Models.Response<any> = methodConfig.descriptor.value.apply(classConfig.singleton, resolvedParams)
-      const result = await Helpers.getResponseValue(response, req, res);
+      let result = await Helpers.getResponseValue(response, req, res);
+      let useCircuralFinding = true;
+      if (_.isFunction(result)) {
+        useCircuralFinding = false;
+        result = result()
+      }
       // console.log('result', result)
       if (_.isObject(result)) {
-        let cleanedResult = Helpers.JSON.cleaned(result)
-        let circural = _.cloneDeep(Helpers.JSON.circural);
+        let cleanedResult = result;
+        if (useCircuralFinding) {
+          cleanedResult = Helpers.JSON.cleaned(result)
+          var circural = _.cloneDeep(Helpers.JSON.circural);
 
-        // let i = 0;
+          // let circsCount = 0;
 
-        while (true) {
-          let nextCircs = [];
-          cleanedResult = transformToBrowserVersion(cleanedResult, (modified) => {
-            let resCleanedResult = Helpers.JSON.cleaned(modified);
-            const circsToAdd = _.cloneDeep(Helpers.JSON.circural);
-            nextCircs = nextCircs.concat(circsToAdd);
-            return resCleanedResult;
-          })
-          cleanedResult = Helpers.JSON.cleaned(cleanedResult)
-          nextCircs = nextCircs.concat(_.cloneDeep(Helpers.JSON.circural));
-          // console.log(`circs(${++i})`, nextCircs)
-          circural = circural.concat(nextCircs);
-          if (Helpers.JSON.circural.length === 0) {
-            break;
+          while (true) {
+            let nextCircs = [];
+            cleanedResult = transformToBrowserVersion(cleanedResult, (modified) => {
+              let resCleanedResult = Helpers.JSON.cleaned(modified);
+              const circsToAdd = _.cloneDeep(Helpers.JSON.circural);
+              nextCircs = nextCircs.concat(circsToAdd);
+              return resCleanedResult;
+            })
+            cleanedResult = Helpers.JSON.cleaned(cleanedResult)
+            nextCircs = nextCircs.concat(_.cloneDeep(Helpers.JSON.circural));
+            circural = circural.concat(nextCircs);
+            // circsCount++;
+            if (Helpers.JSON.circural.length === 0) {
+              // console.log(`Exit circ count ${circsCount}`)
+              break;
+            }
           }
+
         }
 
         // console.log('cleaned result', cleanedResult)
         // console.log('circural', circural)
         const entity = Helpers.Mapping.decode(cleanedResult, !Global.vars.isProductionMode);
+
         res.set(SYMBOL.MAPPING_CONFIG_HEADER, JSON.stringify(entity));
-        res.set(SYMBOL.CIRCURAL_OBJECTS_MAP_BODY, JSON.stringify(circural));
+        if(useCircuralFinding) {
+          res.set(SYMBOL.CIRCURAL_OBJECTS_MAP_BODY, JSON.stringify(circural));
+        }
+
         res.json(cleanedResult);
       }
       else {
@@ -274,23 +301,31 @@ export function transformToBrowserVersion(json: any, removeCirc: (json: any) => 
   json = removeCirc(json)
 
   const alreadyRunnedFoR = [];
+  // let countStable = 0;
   while (true) {
+    // countStable++;
     let isStable = true;
     walk.Object(json, (value, lodashPath, changeValue, { exit }) => {
       if (!alreadyRunnedFoR.includes(lodashPath) && !_.isArray(value) && _.isObject(value)) {
-        const before = Helpers.JSON.structureArray(json);
+        // mesureTime((note) => {
+
+        const before = JSON.stringify(json); // Helpers.JSON.structureArray(jsonObject); //TODO second is slowe but more sure ??? or am wrong... I don't know
         changeValue(singleTransform(value))
         const j = removeCirc(json)
-        const after = Helpers.JSON.structureArray(j);
+        const after = JSON.stringify(j); // Helpers.JSON.structureArray(j);
         if (!_.isEqual(before, after)) {
           isStable = false
           json = j;
           exit()
         }
         alreadyRunnedFoR.push(lodashPath)
+        // note(`End for ${lodashPath}`)
+        // })
+
       }
     })
     if (isStable) {
+      // console.log(`Stable after ${countStable} `)
       break;
     }
   }

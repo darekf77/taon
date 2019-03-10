@@ -222,7 +222,7 @@ export class Helpers extends HelpersNg2Rest {
         const asyncResponse: Models.AsyncResponse<T> = response as any;
         try {
           const result = await asyncResponse(req, res);
-          resolve(result);
+          resolve(result as any);
         } catch (e) {
           if (e && e.stack) {
             console.log(e.stack)

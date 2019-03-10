@@ -21,6 +21,7 @@ export namespace Models {
   export type ExpressContext<T> = (req: ExpressRequest, res: ExpressResponse) => T;
 
   export type SyncResponse<T> = string | T;
+  export type SyncResponseFunc<T> = () => SyncResponse<T>;
   export type MixResponse<T> = SyncResponse<T> | ExpressContext<T>;
 
   export interface ClientAction<T> {
@@ -34,7 +35,7 @@ export namespace Models {
   }
 
   export interface AsyncResponse<T> {
-    (req?: ExpressRequest, res?: ExpressResponse): Promise<SyncResponse<T>>;
+    (req?: ExpressRequest, res?: ExpressResponse): Promise<SyncResponse<T> | SyncResponseFunc<T>>;
   }
 
   export type Response<T=string> = (__Response<T> | AsyncResponse<T>) & ClientAction<T> & __Response<T>;
