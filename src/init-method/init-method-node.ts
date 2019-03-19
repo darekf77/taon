@@ -15,21 +15,22 @@ import * as methodOverride from 'method-override';
 import * as fileUpload from 'express-fileupload';
 import { BASE_ENTITY } from '../framework';
 import { transformToBrowserVersion } from './transform-to-browser';
+import { EntityProcess } from './entity-process';
 
 //#endregion
 
 
-function mesureTime(func: (note: (info: string) => any) => any) {
-  let start = process.hrtime();
+// function mesureTime(func: (note: (info: string) => any) => any) {
+//   let start = process.hrtime();
 
-  const elapsed_time = (note) => {
-    var precision = 3; // 3 decimal places
-    var elapsed = process.hrtime(start)[1] / 1000000; // divide by a million to get nano to milli
-    console.log(process.hrtime(start)[0] + " s, " + elapsed.toFixed(precision) + " ms - " + note); // print message + time
-    start = process.hrtime(); // reset the timer
-  }
-  func(elapsed_time as any)
-}
+//   const elapsed_time = (note) => {
+//     var precision = 3; // 3 decimal places
+//     var elapsed = process.hrtime(start)[1] / 1000000; // divide by a million to get nano to milli
+//     console.log(process.hrtime(start)[0] + " s, " + elapsed.toFixed(precision) + " ms - " + note); // print message + time
+//     start = process.hrtime(); // reset the timer
+//   }
+//   func(elapsed_time as any)
+// }
 
 export function initMidleware() {
   //#region @backend
@@ -172,57 +173,8 @@ export function initMethodNodejs(
 
       const response: Models.Response<any> = methodConfig.descriptor.value.apply(classConfig.singleton, resolvedParams)
       let result = await Helpers.getResponseValue(response, req, res);
-      let useCircuralFinding = true;
-      if (_.isFunction(result)) {
-        useCircuralFinding = false;
-        result = result()
-      }
-      // console.log('result', result)
-      if (_.isObject(result)) {
-        let cleanedResult = result;
-        if (useCircuralFinding) {
-          var circural = [];
-          cleanedResult = Helpers.JSON.cleaned(result, circs => {
-            circural = circural.concat(_.cloneDeep(circs))
-          })
+      await EntityProcess.init(result, res);
 
-          // let circsCount = 0;
-
-          while (true) {
-            let nextCircs = [];
-            cleanedResult = transformToBrowserVersion(cleanedResult, (modified) => {
-              let resCleanedResult = Helpers.JSON.cleaned(modified);
-              const circsToAdd = _.cloneDeep(Helpers.JSON.circural);
-              nextCircs = nextCircs.concat(circsToAdd);
-              return resCleanedResult;
-            })
-            cleanedResult = Helpers.JSON.cleaned(cleanedResult)
-            nextCircs = nextCircs.concat(_.cloneDeep(Helpers.JSON.circural));
-            circural = circural.concat(nextCircs);
-            // circsCount++;
-            if (Helpers.JSON.circural.length === 0) {
-              // console.log(`Exit circ count ${circsCount}`)
-              break;
-            }
-          }
-
-        }
-
-        // console.log('cleaned result', cleanedResult)
-        // console.log('circural', circural)
-        const entity = Helpers.Mapping.decode(cleanedResult, !Global.vars.isProductionMode);
-
-        res.set(SYMBOL.MAPPING_CONFIG_HEADER, JSON.stringify(entity));
-        if (useCircuralFinding) {
-          res.set(SYMBOL.CIRCURAL_OBJECTS_MAP_BODY, JSON.stringify(circural));
-        }
-
-        res.json(cleanedResult);
-      }
-
-      else {
-        res.send(result)
-      }
     } catch (error) {
       if (error instanceof Models.Errors) {
         console.log('Morphi Error', error)

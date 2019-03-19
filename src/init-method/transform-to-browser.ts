@@ -3,7 +3,23 @@ import * as _ from 'lodash';
 import { Helpers } from "../helpers";
 import { walk } from 'lodash-walk-object';
 
+export function getPathesWithTransformFnEntites(result: any): (string | Object)[] {
+  const pathes = [];
 
+  let fun = getTransformFunction(result)
+  if (_.isFunction(fun)) {
+    pathes.push(result)
+  }
+
+  walk.Object(result, (value, lodashPath, changeValue, { isGetter }) => {
+    fun = getTransformFunction(result)
+    if (_.isFunction(fun)) {
+      pathes.push(lodashPath)
+    }
+  });
+
+  return pathes;
+}
 
 export function getTransformFunction(target: Function) {
   if (!target) {
