@@ -17,9 +17,7 @@ export interface IModelDataSorting {
   [entityPath: string]: 'ASC' | "DESC";
 }
 
-
 export interface IModelDataConfig {
-
 
   pagination?: IModelDataPagination;
 
@@ -58,6 +56,10 @@ export interface IModelDataConfig {
 @CLASS.NAME('ModelDataConfig')
 @Mapping.DefaultModelWithMapping<ModelDataConfig>({})
 export class ModelDataConfig {
+
+  public static create(config: IModelDataConfig) {
+    return new ModelDataConfig(config);
+  }
 
   // protected _modelConfigChanged = new Subject();
   // public onChange = this._modelConfigChanged.asObservable();
@@ -349,5 +351,9 @@ export class ModelDataConfig {
 
 
   //#endregion
+
+}
+
+export class MDC extends ModelDataConfig {
 
 }

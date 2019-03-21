@@ -1,11 +1,9 @@
-
 import { Global } from '../global-config';
 import { SYMBOL } from '../symbols';
 import * as _ from 'lodash';
 import { Models } from '../models';
 import { Resource } from 'ng2-rest';
 import { Helpers } from '../helpers';
-
 
 export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodConfig: Models.Rest.MethodConfig, expressPath) {
 
@@ -26,7 +24,6 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
     } else {
       rest = endpoints[uri.href][expressPath];
     }
-
 
     const method = type.toLowerCase();
     const isWithBody = (method === 'put' || method === 'post');
@@ -101,17 +98,24 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
     });
     // debugger;
     if (typeof item === 'object') {
-      item = Helpers.JSON.parse(Helpers.JSON.stringify(item))
+      let circuralFromItem = []
+      item = Helpers.JSON.parse(Helpers.JSON.stringify(item, void 0, void 0, circs => {
+        circuralFromItem = circs;
+      }))
       Resource.Headers.request.set(
         SYMBOL.CIRCURAL_OBJECTS_MAP_BODY,
-        JSON.stringify(Helpers.JSON.circural))
+        JSON.stringify(circuralFromItem)
+      )
     }
 
     if (typeof queryParams === 'object') {
-      queryParams = Helpers.JSON.parse(Helpers.JSON.stringify(queryParams))
+      let circuralFromQueryParams = []
+      queryParams = Helpers.JSON.parse(Helpers.JSON.stringify(queryParams,void 0,void 0,circs => {
+        circuralFromQueryParams = circs;
+      }))
       Resource.Headers.request.set(
         SYMBOL.CIRCURAL_OBJECTS_MAP_QUERY_PARAM,
-        JSON.stringify(Helpers.JSON.circural))
+        JSON.stringify(circuralFromQueryParams))
     }
 
     return {
@@ -119,5 +123,3 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
     }
   };
 }
-
-

@@ -1,5 +1,5 @@
 import * as crudMorph from './crud';
-export { ModelDataConfig } from './crud/model-data-config';
+export { ModelDataConfig, MDC } from './crud/model-data-config';
 import * as decoratorsMorphi from './decorators';
 import * as framework from './framework';
 import * as realtime from './realtime';

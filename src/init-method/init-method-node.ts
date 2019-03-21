@@ -13,8 +13,6 @@ import * as errorHandler from 'errorhandler';
 import * as cookieParser from 'cookie-parser';
 import * as methodOverride from 'method-override';
 import * as fileUpload from 'express-fileupload';
-import { BASE_ENTITY } from '../framework';
-import { transformToBrowserVersion } from './transform-to-browser';
 import { EntityProcess } from './entity-process';
 
 //#endregion
@@ -69,7 +67,6 @@ export function initMethodNodejs(
   classConfig: Models.Rest.ClassConfig,
   expressPath
 ) {
-
 
   const requestHandler = (methodConfig.requestHandler && typeof methodConfig.requestHandler === 'function')
     ? methodConfig.requestHandler : (req, res, next) => { next() };
@@ -203,14 +200,12 @@ export function initMethodNodejs(
 
 //#region @backend
 function betterError(error) {
-  console.log('callsite record !')
-  require('callsite-record')({
+  console.log(require('callsite-record')({
     forError: error
   }).renderSync({
-    stackFilter(frame) {
-      return !frame.getFileName().includes('node_modules');
-    }
-  });
+    // stackFilter(frame) {
+    //   return !frame.getFileName().includes('node_modules');
+    // }
+  }))
 }
 //#endregion
-
