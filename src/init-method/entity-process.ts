@@ -60,10 +60,6 @@ export class EntityProcess {
     if (this.advancedManipulation) {
 
       this.resolveModelDataConfig();
-
-      const { include, exclude } = this.mdc;
-      console.log(`BASE INCLUDE: ${include}`)
-      console.log(`BASE EXCLUDE: ${exclude}`)
       this.applayTransformFn()
     }
 
