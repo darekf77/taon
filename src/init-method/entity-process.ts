@@ -81,7 +81,7 @@ export class EntityProcess {
     if (_.isObject(this.data) && !_.isArray(this.data)) {
       this.data = singleTransform(this.data)
     }
-    const { include, exclude } = this.mdc;
+    const { include, exclude } = this.mdc || { exclude: [], include: [] };
     walk.Object(this.data, (value, lodashPath, changeValue, { skipObject, isCircural }) => {
       // console.log(`${isCircural ? 'CIR' : 'NOT'} : ${lodashPath}`)
       if (!isCircural) {
@@ -97,7 +97,7 @@ export class EntityProcess {
   }
 
   setHeaders() {
-    const { include, exclude } = this.mdc;
+    const { include, exclude } = this.mdc || { exclude: [], include: [] };
     const cleaned = Helpers.JSON.cleaned(this.data, void 0, { breadthWalk: true, include, exclude })
     this.entityMapping = Helpers.Mapping.decode(cleaned, !this.advancedManipulation);
 
@@ -124,7 +124,7 @@ export class EntityProcess {
         }
       }
 
-      const { include, exclude } = this.mdc;
+      const { include, exclude } = this.mdc || { exclude: [], include: [] };
 
       walk.Object(this.data, (value, lodashPath, changeVAlue, { isCircural, skipObject }) => {
         // console.log(`${isCircural ? 'CIR' : 'NOT'} ${lodashPath}`)
