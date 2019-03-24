@@ -85,14 +85,18 @@ export class EntityProcess {
     if (_.isObject(this.data) && !_.isArray(this.data)) {
       this.data = singleTransform(this.data)
     }
+    const { include, exclude } = this.mdc;
     walk.Object(this.data, (value, lodashPath, changeValue, { skipObject, isCircural }) => {
-
-      if (!_.isArray(value) && _.isObject(value) && !isCircural) {
-        changeValue(singleTransform(value))
+      // console.log(`${isCircural ? 'CIR' : 'NOT'} : ${lodashPath}`)
+      if (!isCircural) {
+        if (!_.isArray(value) && _.isObject(value)) {
+          changeValue(singleTransform(value))
+        }
       }
-    }, { checkCircural: true, breadthWalk: true })
 
-    const { circs } = walk.Object(this.data, void 0, { checkCircural: true, breadthWalk: true })
+    }, { checkCircural: true, breadthWalk: true, include, exclude })
+
+    const { circs } = walk.Object(this.data, void 0, { checkCircural: true, breadthWalk: true, include, exclude })
     this.circural = circs;
   }
 
@@ -126,18 +130,22 @@ export class EntityProcess {
 
       const { include, exclude } = this.mdc;
 
-      walk.Object(this.data, (value, lodashPath, changeVAlue, { isCircural }) => {
-        if (!isCircural) {
+      walk.Object(this.data, (value, lodashPath, changeVAlue, { isCircural, skipObject }) => {
+        // console.log(`${isCircural ? 'CIR' : 'NOT'} ${lodashPath}`)
+        if (isCircural) {
+          _.set(toSend, lodashPath, null);
+        } else {
           const fun = getTransformFunction(CLASS.getFromObject(value));
           if (_.isFunction(fun)) {
             _.set(toSend, `${lodashPath}.${browserKey}`, value[browserKey]);
+            // skipObject()
           } else {
             _.set(toSend, lodashPath, value);
           }
 
         }
       }, { checkCircural: true, breadthWalk: true, include, exclude })
-      toSend = Helpers.JSON.cleaned(toSend, void 0, { breadthWalk: true })
+      // toSend = Helpers.JSON.cleaned(toSend, void 0, { breadthWalk: true })
       this.response.json(toSend)
     } else {
       this.response.json(this.data)

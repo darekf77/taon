@@ -21,7 +21,12 @@ export namespace Models {
   export type ExpressContext<T> = (req: ExpressRequest, res: ExpressResponse) => T;
 
   export type SyncResponse<T> = string | T;
-  export type SyncResponseFunc<T> = () => SyncResponse<T>;
+
+  export type ResponseFuncOpt<T> = {
+    limitSize?: (enties: Function | Function[], include: string[], exclude: string[]) => void;
+  }
+
+  export type SyncResponseFunc<T> = (options?: ResponseFuncOpt<T>) => SyncResponse<T>;
   export type MixResponse<T> = SyncResponse<T> | ExpressContext<T>;
 
   export interface ClientAction<T> {
