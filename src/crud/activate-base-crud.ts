@@ -7,7 +7,7 @@ const abstractClasses = ['BASE_CONTROLLER']
 
 export function activateBaseCrud(target: Function, entity: Function, entites?: Function[]) {
 
-  if (Helpers.hasParentClassWithName(target, 'BaseCRUD') &&
+  if (_.isFunction(target) && Helpers.hasParentClassWithName(target, 'BaseCRUD') &&
     !abstractClasses.includes(Helpers.Class.getName(target))) {
     if (_.isUndefined(entity)) {
       if (Helpers.Class.getName(target) === Helpers.Class.getName(target['__proto__'])) {

@@ -36,6 +36,7 @@ function getRealtimeIsRealtime(entity, property: string) {
 
 export function Entity<T = {}>(options?: {
   className?: string;
+  classNameInBrowser?: string;
   defaultModelValues?: Mapping.ModelValue<T>;
   mapping?: Mapping.Mapping<T>;
   uniqueKeyProp?: (keyof T);
@@ -66,6 +67,7 @@ export function Entity<T = {}>(options?: {
     uniqueKeyProp = 'id',
     classFamily,
     className,
+    classNameInBrowser,
     formly: {
       transformFn = undefined,
       include = undefined,
@@ -81,7 +83,11 @@ export function Entity<T = {}>(options?: {
 
     className = classNameVlidation(className, target);
 
-    CLASS.NAME(className, uniqueKeyProp as any, classFamily)(target)
+    CLASS.NAME(className, {
+      uniqueKey: uniqueKeyProp,
+      classFamily,
+      classNameInBrowser
+    } as any)(target)
     Mapping.DefaultModelWithMapping<T>(defaultModelValues, _.merge(mapping, additionalMapping))(target)
 
     //#region @backend

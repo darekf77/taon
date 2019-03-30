@@ -78,7 +78,7 @@ export class Helpers extends HelpersNg2Rest {
     }
     targets.push(target)
     let targetProto = target['__proto__'] as Function;
-    if (targetProto && this.Class.getName(targetProto) === name) {
+    if (_.isFunction(targetProto) && this.Class.getName(targetProto) === name) {
       // console.log(`true  "${_.first(targets).name}" for ${targets.map(d => d.name).join(',')}`)
       return true;
     }
