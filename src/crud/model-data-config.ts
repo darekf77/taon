@@ -5,6 +5,11 @@ import { Helpers } from '../helpers';
 import { Mapping } from 'ng2-rest';
 import { CLASS } from 'typescript-class-helpers';
 
+//#region @backend
+import * as express from 'express';
+import { SYMBOL } from '../symbols';
+//#endregion
+
 const MAX_DATA_LENGTH_SENT_TO_CLIENT = 10000;
 
 export interface IModelDataPagination {
@@ -59,6 +64,22 @@ export class ModelDataConfig {
 
   public static create(config: IModelDataConfig) {
     return new ModelDataConfig(config);
+  }
+
+  //#region @backend
+  public static fromHeader(req: Express.Request): ModelDataConfig {
+    let config: ModelDataConfig;
+    try {
+      config = JSON.parse(decodeURIComponent((req as any).headers[SYMBOL.MDC_KEY]))
+    } catch (error) {
+      config = JSON.parse((req as any).headers[SYMBOL.MDC_KEY])
+    }
+    return !config ? void 0 : ModelDataConfig.create(!!config.config ? config.config : config);
+  }
+  //#endregion
+
+  toString() {
+    return JSON.stringify(this);
   }
 
   // protected _modelConfigChanged = new Subject();

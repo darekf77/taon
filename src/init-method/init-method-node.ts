@@ -14,6 +14,7 @@ import * as cookieParser from 'cookie-parser';
 import * as methodOverride from 'method-override';
 import * as fileUpload from 'express-fileupload';
 import { EntityProcess } from './entity-process';
+import { MDC } from '../crud';
 
 //#endregion
 
@@ -170,7 +171,10 @@ export function initMethodNodejs(
 
       const response: Models.Response<any> = methodConfig.descriptor.value.apply(classConfig.singleton, resolvedParams)
       let result = await Helpers.getResponseValue(response, req, res);
-      await EntityProcess.init(result, res);
+      // console.log(req.headers)
+      const mdc = MDC.fromHeader(req);
+      // console.log(mdc)
+      await EntityProcess.init(result, res, mdc);
 
     } catch (error) {
       if (error instanceof Models.Errors) {

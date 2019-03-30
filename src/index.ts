@@ -25,6 +25,11 @@ export namespace Morphi {
   export const IsNode = helpers.Helpers.isNode;
   export const IsBrowser = helpers.Helpers.isBrowser;
   export const Config = global.Global.vars;
+
+  /**
+   * Header name for model data config
+   */
+  export const MDC_KEY = sym.SYMBOL.MDC_KEY;
   export const Platform = IsNode ? 'node' : 'browser';
   export const Providers: Function[] = initDeco.Providers as any;
 

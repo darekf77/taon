@@ -3,8 +3,9 @@ import * as _ from 'lodash';
 import { Helpers } from "../helpers";
 import { CLASS } from 'typescript-class-helpers';
 import { Helpers as HelpersLog } from 'ng2-logger';
+import { ModelDataConfig } from '../crud';
 
-export function getTransformFunction(target: Function) {
+export function getTransformFunction(target: Function, mdc: ModelDataConfig) {
   if (!target) {
     return;
   }
@@ -26,20 +27,20 @@ export function getTransformFunction(target: Function) {
     })
     .filter(f => _.isFunction(f));
   // console.log(`funcitons for ${CLASS.getName(target)}`, functions)
-  return functions.length === 0 ? void 0 : function (entity) {
+  return (functions.length === 0) ? (void 0) : function (entity) {
 
     for (let index = functions.length - 1; index >= 0; index--) {
       const transformFun = functions[index];
-      entity = transformFun(entity)
+      transformFun(entity, mdc)
     }
     return entity;
   }
 }
 
-export function singleTransform(json) {
+export function singleTransform(json: any, mdc: ModelDataConfig) {
 
   let ptarget = Helpers.Class.getFromObject(json);
-  let pbrowserTransformFn = getTransformFunction(ptarget);
+  let pbrowserTransformFn = getTransformFunction(ptarget, mdc);
   if (pbrowserTransformFn) {
     const newValue = pbrowserTransformFn(json)
     if (!_.isObject(newValue)) {

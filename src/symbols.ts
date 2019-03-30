@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 export const SYMBOL = {
   HAS_TABLE_IN_DB: Symbol(),
   IS_ENPOINT_REALTIME: Symbol(),
+  MDC_KEY: 'modeldataconfig',
   REALTIME: {
     NAMESPACE: 'morphirealtime',
     ROOM: {

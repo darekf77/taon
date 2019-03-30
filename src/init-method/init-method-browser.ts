@@ -66,7 +66,11 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
       }
       if (currentParam.paramType === 'Header') {
         if (currentParam.paramName) {
-          Resource.Headers.request.set(currentParam.paramName, param)
+          if (currentParam.paramName === SYMBOL.MDC_KEY) { // parese MDC
+            Resource.Headers.request.set(currentParam.paramName, encodeURIComponent(JSON.stringify(param)))
+          } else {
+            Resource.Headers.request.set(currentParam.paramName, param)
+          }
         } else {
           for (let header in param) {
             Resource.Headers.request.set(header, param[header])
@@ -110,7 +114,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
 
     if (typeof queryParams === 'object') {
       let circuralFromQueryParams = []
-      queryParams = Helpers.JSON.parse(Helpers.JSON.stringify(queryParams,void 0,void 0,circs => {
+      queryParams = Helpers.JSON.parse(Helpers.JSON.stringify(queryParams, void 0, void 0, circs => {
         circuralFromQueryParams = circs;
       }))
       Resource.Headers.request.set(

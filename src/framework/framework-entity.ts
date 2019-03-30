@@ -50,7 +50,7 @@ export function Entity<T = {}>(options?: {
   },
   //#region @backend
   createTable?: boolean;
-  browserTransformFn?: (entity: T) => T
+  browserTransformFn?: (entity: T, mdc?: ModelDataConfig) => void
   //#endregion
 }) {
   if (!options) {

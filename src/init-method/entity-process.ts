@@ -13,8 +13,8 @@ import { ModelDataConfig } from '../crud';
 
 export class EntityProcess {
 
-  static async init(result: any, response: express.Response) {
-    return await (new EntityProcess(result, response).run());
+  static async init(result: any, response: express.Response, mdc: ModelDataConfig) {
+    return await (new EntityProcess(result, response).run(mdc));
   }
 
   /**
@@ -49,9 +49,10 @@ export class EntityProcess {
   private circural = [];
   private mdc: ModelDataConfig;
 
-  public async run() {
+  public async run(mdc: ModelDataConfig) {
     this.checkAdvancedManiupulation()
     this.data = this.result;
+    this.mdc = mdc;
 
     if (!_.isObject(this.result)) {
       return;
@@ -68,37 +69,44 @@ export class EntityProcess {
   }
 
   resolveModelDataConfig() {
-    this.mdc = ((_.isArray(this.data) ? _.first(this.data) : this.data) as BASE_ENTITY<any>).modelDataConfig
-    if (_.isObject(this.mdc) && _.isArray(this.mdc.include) && this.mdc.include.length > 0) {
 
-      const toAdd = this.mdc.include.map(c => `browser.${c}`);
-      this.mdc.include.push('browser')
-      toAdd.forEach(c => this.mdc.include.push(c))
+    if (_.isObject(this.mdc)) {
+      if (_.isArray(this.mdc.include) && this.mdc.include.length > 0) {
+
+        const toAdd = this.mdc.include.map(c => `browser.${c}`);
+        this.mdc.include.push('browser')
+        toAdd.forEach(c => this.mdc.include.push(c))
+      } else if (_.isArray(this.mdc.exclude) && this.mdc.exclude.length > 0) {
+        const toAdd = this.mdc.exclude.map(c => `browser.${c}`);
+        // this.mdc.exclude.push('browser')
+        toAdd.forEach(c => this.mdc.exclude.push(c))
+      }
     }
+
   }
 
   applayTransformFn() {
     if (_.isObject(this.data) && !_.isArray(this.data)) {
-      this.data = singleTransform(this.data)
+      this.data = singleTransform(this.data, this.mdc)
     }
-    const { include, exclude } = this.mdc || { exclude: [], include: [] };
+    const { include } = this.mdc || { include: [] };
     walk.Object(this.data, (value, lodashPath, changeValue, { skipObject, isCircural }) => {
       // console.log(`${isCircural ? 'CIR' : 'NOT'} : ${lodashPath}`)
       if (!isCircural) {
         if (!_.isArray(value) && _.isObject(value)) {
-          changeValue(singleTransform(value))
+          changeValue(singleTransform(value, this.mdc))
         }
       }
 
-    }, { checkCircural: true, breadthWalk: true, include, exclude })
+    }, { checkCircural: true, breadthWalk: true, include })
 
-    const { circs } = walk.Object(this.data, void 0, { checkCircural: true, breadthWalk: true, include, exclude })
+    const { circs } = walk.Object(this.data, void 0, { checkCircural: true, breadthWalk: true, include })
     this.circural = circs;
   }
 
   setHeaders() {
-    const { include, exclude } = this.mdc || { exclude: [], include: [] };
-    const cleaned = Helpers.JSON.cleaned(this.data, void 0, { breadthWalk: true, include, exclude })
+    const { include } = this.mdc || { include: [] };
+    const cleaned = Helpers.JSON.cleaned(this.data, void 0, { breadthWalk: true, include })
     this.entityMapping = Helpers.Mapping.decode(cleaned, !this.advancedManipulation);
 
     this.response.set(SYMBOL.MAPPING_CONFIG_HEADER, JSON.stringify(this.entityMapping));
@@ -117,21 +125,17 @@ export class EntityProcess {
 
       const browserKey = 'browser';
       let toSend = _.isArray(this.data) ? [] : {};
-      if (!_.isArray(this.data)) {
-        let funParent = getTransformFunction(CLASS.getFromObject(this.data));
-        if (_.isFunction(funParent)) {
-          toSend[browserKey] = this.data[browserKey];
-        }
-      }
 
-      const { include, exclude } = this.mdc || { exclude: [], include: [] };
+
+      const { include } = this.mdc || { include: [] };
 
       walk.Object(this.data, (value, lodashPath, changeVAlue, { isCircural, skipObject }) => {
         // console.log(`${isCircural ? 'CIR' : 'NOT'} ${lodashPath}`)
         if (isCircural) {
           _.set(toSend, lodashPath, null);
         } else {
-          const fun = getTransformFunction(CLASS.getFromObject(value));
+          const fun = getTransformFunction(CLASS.getFromObject(value), this.mdc);
+
           if (_.isFunction(fun)) {
             _.set(toSend, `${lodashPath}.${browserKey}`, value[browserKey]);
             // skipObject()
@@ -140,7 +144,34 @@ export class EntityProcess {
           }
 
         }
-      }, { checkCircural: true, breadthWalk: true, include, exclude })
+      }, { checkCircural: true, breadthWalk: true, include })
+
+      if (!_.isArray(this.data)) {
+        let funParent = getTransformFunction(CLASS.getFromObject(this.data), this.mdc);
+        // if (this.mdc && this.mdc.exclude && this.mdc.exclude.length > 0) {
+        //   console.log(`funParent !!! have fun? ${!!funParent} `)
+        // }
+        if (_.isFunction(funParent)) {
+          toSend = {
+            [browserKey]: toSend[browserKey]
+          };
+        }
+        Object.keys(this.data).forEach(prop => {
+          if (prop !== browserKey) {
+            const v = this.data[prop];
+            if (!_.isArray(v) && _.isObject(v) && _.isFunction(getTransformFunction(CLASS.getFromObject(v), this.mdc))) {
+              toSend[prop] = {
+                [browserKey]: v[browserKey]
+              }
+            }
+          }
+
+        })
+
+      }
+
+
+
       // toSend = Helpers.JSON.cleaned(toSend, void 0, { breadthWalk: true })
       this.response.json(toSend)
     } else {
