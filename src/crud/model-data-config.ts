@@ -71,8 +71,10 @@ export class ModelDataConfig {
     let config: ModelDataConfig;
     try {
       config = JSON.parse(decodeURIComponent((req as any).headers[SYMBOL.MDC_KEY]))
-    } catch (error) {
-      config = JSON.parse((req as any).headers[SYMBOL.MDC_KEY])
+    } catch (e1) {
+      try {
+        config = JSON.parse((req as any).headers[SYMBOL.MDC_KEY])
+      } catch (e2) {   }
     }
     return !config ? void 0 : ModelDataConfig.create(!!config.config ? config.config : config);
   }

@@ -127,7 +127,7 @@ export class EntityProcess {
       let toSend = _.isArray(this.data) ? [] : {};
 
 
-      const { include } = this.mdc || { include: [] };
+      const { include = [], exclude = [] } = this.mdc || { include: [], exclude: [] };
 
       walk.Object(this.data, (value, lodashPath, changeVAlue, { isCircural, skipObject }) => {
         // console.log(`${isCircural ? 'CIR' : 'NOT'} ${lodashPath}`)
@@ -159,14 +159,21 @@ export class EntityProcess {
         Object.keys(this.data).forEach(prop => {
           if (prop !== browserKey) {
             const v = this.data[prop];
-            if (!_.isArray(v) && _.isObject(v) && _.isFunction(getTransformFunction(CLASS.getFromObject(v), this.mdc))) {
-              toSend[prop] = {
-                [browserKey]: v[browserKey]
+            if (!(
+              ((include.length > 0) && !include.includes(prop)) ||
+              ((exclude.length > 0) && exclude.includes(prop))
+            )) {
+              if (CLASS.OBJECT(v).isClassObject &&
+                _.isFunction(getTransformFunction(CLASS.getFromObject(v), this.mdc))) {
+                toSend[prop] = {
+                  [browserKey]: v[browserKey]
+                }
+              } else {
+                toSend[prop] = v;
               }
             }
           }
-
-        })
+        });
 
       }
 
