@@ -138,6 +138,8 @@ export class EntityProcess {
 
           if (_.isFunction(fun)) {
             _.set(toSend, `${lodashPath}.${browserKey}`, value[browserKey]);
+            const indexProp = CLASS.OBJECT(value).indexProperty;
+            _.set(toSend, `${lodashPath}.${indexProp}`, value[indexProp]);
             // skipObject()
           } else {
             _.set(toSend, lodashPath, value);
@@ -168,6 +170,8 @@ export class EntityProcess {
                 toSend[prop] = {
                   [browserKey]: v[browserKey]
                 }
+                const indexProp = CLASS.OBJECT(v).indexProperty;
+                toSend[prop][indexProp] =   this.data[prop][indexProp]
               } else {
                 toSend[prop] = v;
               }
