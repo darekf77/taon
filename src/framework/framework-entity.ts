@@ -18,7 +18,16 @@ import { RealtimeBrowser } from '../realtime';
 import { BaseCRUD, ModelDataConfig } from '../crud'
 import { CLASS } from 'typescript-class-helpers';
 
+
 const log = Log.create('Framework entity')
+
+const updatesInProgress = {};
+
+function getUpdateID(id, entityName, propterty, config) {
+  return `${_.kebabCase(id)}-${_.kebabCase(entityName)}-${_.kebabCase(propterty)}-${
+    _.isObject(config) ? _.kebabCase(JSON.stringify(config)) : ''
+    }`
+}
 
 export interface IBASE_ENTITY extends BASE_ENTITY<any> {
 
@@ -207,7 +216,13 @@ export abstract class BASE_ENTITY<T, TRAW=T, CTRL extends BaseCRUD<T> = any> {
         if (_.isUndefined(update)) {
           update = () => that.ctrl.getBy(that.id, modelDataConfig).received as any;
         }
+        const updateID = getUpdateID(that.id, CLASS.getNameFromObject(that), property, modelDataConfig);
 
+        if (updatesInProgress[updateID]) {
+          // console.log(`ANOTHER UPDATE IN PROGRESS FOR UPDATEID: "${updateID}"`)
+          return
+        }
+        updatesInProgress[updateID] = true;
         // console.log('entity should be updated !')
         const data = await update()
         let newData = data.body.json;
@@ -241,6 +256,7 @@ export abstract class BASE_ENTITY<T, TRAW=T, CTRL extends BaseCRUD<T> = any> {
         if (_.isFunction(afterMergeCallback)) {
           afterMergeCallback(entityToUpdate as any);
         }
+        updatesInProgress[updateID] = false;
       }
     }
 
