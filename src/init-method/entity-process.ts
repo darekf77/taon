@@ -54,17 +54,15 @@ export class EntityProcess {
     this.data = this.result;
     this.mdc = mdc;
 
-    if (!_.isObject(this.result)) {
-      return;
+    if (_.isObject(this.result)) {
+      if (this.advancedManipulation) {
+
+        this.resolveModelDataConfig();
+        this.applayTransformFn()
+      }
+
+      this.setHeaders()
     }
-
-    if (this.advancedManipulation) {
-
-      this.resolveModelDataConfig();
-      this.applayTransformFn()
-    }
-
-    this.setHeaders()
     this.send()
   }
 

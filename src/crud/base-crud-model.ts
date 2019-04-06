@@ -60,10 +60,14 @@ export abstract class BaseCRUD<T>  {
 
       preventUndefinedModel(model, config, id)
       let value = model[property];
+      let result: any;
       if (_.isString(value) || _.isArray(value)) {
-        let result = (value as string).slice(alreadyLength);
-        return result;
+        result = (value as string).slice(alreadyLength);
+
       }
+      // console.log(`result for id:${id}, prop: ${property}, alredylength: ${alreadyLength}`, result)
+
+      return result;
     }
     //#endregion
   }
