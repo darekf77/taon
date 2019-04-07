@@ -10,6 +10,7 @@ import { walk } from 'lodash-walk-object';
 import { CLASS } from 'typescript-class-helpers';
 import { BASE_ENTITY } from '../framework';
 import { ModelDataConfig } from '../crud';
+import { config } from '../build/config';
 
 export class EntityProcess {
 
@@ -121,7 +122,7 @@ export class EntityProcess {
     }
     if (this.advancedManipulation) {
 
-      const browserKey = 'browser';
+      const browserKey = config.folder.browser;
       let toSend = _.isArray(this.data) ? [] : {};
 
 
@@ -169,7 +170,21 @@ export class EntityProcess {
                   [browserKey]: v[browserKey]
                 }
                 const indexProp = CLASS.OBJECT(v).indexProperty;
-                toSend[prop][indexProp] =   this.data[prop][indexProp]
+                toSend[prop][indexProp] = this.data[prop][indexProp]
+                for (const key in v) {
+                  if (v.hasOwnProperty(key) &&
+                    ![indexProp, config.folder.browser].includes(key) &&
+                    (
+                      _.isString(v[key]) ||
+                      _.isNumber(v[key]) ||
+                      _.isDate(v[key]) ||
+                      _.isNull(v[key]) ||
+                      _.isBoolean(v[key])
+                    )
+                  ) {
+                    toSend[prop][key] = v[key];
+                  }
+                }
               } else {
                 toSend[prop] = v;
               }
