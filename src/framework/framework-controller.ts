@@ -13,7 +13,13 @@ import { classNameVlidation } from './framework-helpers';
 import { Models } from '../models';
 import { Helpers } from '../helpers';
 
-
+function updateChain(entity: Function, controllerContext: Object) {
+  if (!_.isFunction(entity)) {
+    return
+  }
+  entity.prototype['ctrl'] = controllerContext;
+  entity['ctrl'] = controllerContext;
+}
 
 export function Controller(options?: {
   className?: string;
@@ -26,7 +32,7 @@ export function Controller(options?: {
   auth?: Models.AuthCallBack
   //#endregion
 }) {
-  let { className, realtime, autoinit = false } = options || {} as any;
+  let { className, realtime, autoinit = false, entity, additionalEntities } = options || {} as any;
 
   return function (target: Function) {
     //#region @backend
@@ -37,6 +43,11 @@ export function Controller(options?: {
 
     className = classNameVlidation(className, target);
     CLASSNAME.CLASSNAME(className)(target)
+
+
+
+
+
     // debugger
     if (autoinit) {
       // console.log(`AUTOINTI!!!!! Options for ${target.name}, partnt ${target['__proto__'].name}`, options)
@@ -44,6 +55,15 @@ export function Controller(options?: {
     } else {
       // console.log(`Options for ${target.name}, partnt ${target['__proto__'].name}`, options)
       ENDPOINT(options)(target)
+    }
+
+    if (_.isArray(additionalEntities)) {
+      additionalEntities.forEach(c => {
+        updateChain(c, Helpers.getSingleton(target))
+      })
+    }
+    if (_.isFunction(entity)) {
+      updateChain(entity, Helpers.getSingleton(target));
     }
 
   }
@@ -62,14 +82,6 @@ export abstract class BASE_CONTROLLER<T> extends BaseCRUD<T>
 
   constructor() {
     super();
-
-    if (_.isArray(this.entites)) {
-      this.entites.forEach(c => {
-        updateChain(c, this)
-      })
-    } else if (_.isFunction(this.entity)) {
-      updateChain(this.entity, this);
-    }
 
     if (Helpers.isBrowser) {
       // log.i('BASE_CONTROLLER, constructor', this)
@@ -95,7 +107,4 @@ export abstract class BASE_CONTROLLER<T> extends BaseCRUD<T>
 }
 
 
-function updateChain(entity: Function, controllerContext: Object) {
-  entity.prototype['ctrl'] = controllerContext;
-  entity['ctrl'] = controllerContext;
-}
+

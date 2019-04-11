@@ -3,15 +3,12 @@ import { expect } from 'chai';
 import * as fse from 'fs-extra'
 import * as path from 'path';
 import * as _ from 'lodash';
-// import { hello } from '../hello';
-
-// if you used the '@types/mocha' method to install mocha type definitions, uncomment the following line
-// import 'mocha';
 
 import { Morphi } from '../index';
 import { Log } from 'ng2-logger';
 import { walk } from 'lodash-walk-object';
 const log = Log.create('formly')
+
 
 
 @Morphi.Entity<Article>({
@@ -25,7 +22,8 @@ const log = Log.create('formly')
   }
 })
 class Article {
-
+  @Morphi.Orm.Column.Generated()
+  id: number;
   title: string;
   owner: Person;
   readedBy: Person[];
@@ -50,13 +48,35 @@ class Person {
 
 }
 
-describe('Formly forml generator - circural ref', () => {
+@Morphi.Controller({
+  className: 'ArticlesController',
+  entity: Article
+})
+class ArticlesController {
 
-  it('Should handle circural references', () => {
+}
 
-    let config = Morphi.Formly.getFrom(Person);
+describe('Inject ctrl', () => {
 
-    expect(config.length).to.be.gt(0)
+  it('Should inject controller to entity', async () => {
+
+
+    // await Morphi.init({
+    //   host: 'http://localhost:8888',
+    //   controllers: [ArticlesController],
+    //   entities: [Article],
+    //   config: {
+    //     type: 'sqlite',
+    //     database: 'mysql',
+    //     dropSchema: true,
+    //     synchronize: false,
+    //     logging: false
+    //   }
+    // })
+    new ArticlesController()
+    let p = new Article()
+
+    expect(p['ctrl']).to.be.instanceOf(ArticlesController)
 
   });
 

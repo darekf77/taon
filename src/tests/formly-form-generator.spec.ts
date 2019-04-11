@@ -60,7 +60,7 @@ describe('Formly forml generator', () => {
 
   it('Should return nice full formly form config', () => {
 
-    let config = Morphi.CRUD.getFormlyFrom(User);
+    let config = Morphi.Formly.getFrom(User);
     // console.log('')
     // log.i('config', config)
     fse.writeJSONSync(path.join(__dirname, '..', '..', 'tmp-test-json1.json'), config, {
@@ -73,7 +73,7 @@ describe('Formly forml generator', () => {
 
   it('Should exclude fields', () => {
 
-    let config = Morphi.CRUD.getFormlyFrom(User, {
+    let config = Morphi.Formly.getFrom(User, {
       keysPathesToExclude: ['name']
     });
     // console.log('config', config)
@@ -84,7 +84,7 @@ describe('Formly forml generator', () => {
 
   it('Should inlcude only fields', () => {
 
-    let config = Morphi.CRUD.getFormlyFrom(User, {
+    let config = Morphi.Formly.getFrom(User, {
       keysPathesToInclude: ['name']
     });
     // console.log('config', config)
@@ -134,6 +134,12 @@ function jsonData() {
     },
     {
       "fieldGroupClassName": "row",
+      templateOptions: {
+        label: 'Favorite Book'
+      },
+      wrappers: [
+        'groupwrap'
+      ],
       "fieldGroup": [
         {
           "key": "id",
