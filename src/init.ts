@@ -13,6 +13,7 @@ import { RealtimeNodejs, RealtimeBrowser } from './realtime';
 import { Models } from './models';
 import { SYMBOL } from './symbols';
 import { Helpers } from './helpers';
+import { CLASS } from 'typescript-class-helpers';
 
 export function init(config: {
   host: string,
@@ -21,9 +22,10 @@ export function init(config: {
   allowedHosts?: string[],
   controllers?: Function[],
   entities?: Function[]
-  productionMode?: Boolean;
+  productionMode?: Boolean,
   //#region @backend
-  connection?: Connection
+  connection?: Connection,
+  testMode?: boolean,
   //#endregion
 }) {
   const {
@@ -33,6 +35,7 @@ export function init(config: {
     productionMode = false,
     allowedHosts = [],
     //#region @backend
+    testMode = false,
     connection
     //#endregion
   } = config;
@@ -113,12 +116,14 @@ Incorect value for property "entities" inside Morphi.Init(...)
     if (config.hostSocket) {
       RealtimeNodejs.init(h);
     }
+    if (!testMode) {
+      h.listen(uri.port, function () {
+        console.log(`Server listening on port: ${uri.port}, hostname: ${uri.pathname},
+          env: ${Global.vars.app.settings.env}
+          `);
+      });
+    }
 
-    h.listen(uri.port, function () {
-      console.log(`Server listening on port: ${uri.port}, hostname: ${uri.pathname},
-        env: ${Global.vars.app.settings.env}
-        `);
-    });
   }
   //#endregion
 
@@ -164,6 +169,7 @@ Incorect value for property "entities" inside Morphi.Init(...)
               c.singleton[key] = oldSingleton[key];
             })
           }
+          CLASS.setSingletonObj(controller, c.singleton);
         })(currentCtrl);
 
       }

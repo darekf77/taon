@@ -132,6 +132,7 @@ export interface StartOptions {
   entities?: BASE_ENTITY<any>[] | Function[];
   //#region @backend
   config?: IConnectionOptions;
+  testMode?: boolean;
   publicAssets?: { path: string; location: string }[];
   InitDataPriority?: BASE_CONTROLLER<any>[] | Function[];
   //#endregion
@@ -151,8 +152,9 @@ export function start(options: StartOptions) {
       config,
       InitDataPriority,
       publicAssets = [],
+      testMode = false,
       //#endregion
-    } = options;
+    } = options as any;
     // console.log(options)
 
     //#region @backend
@@ -176,10 +178,12 @@ export function start(options: StartOptions) {
     //   .concat([META.BASE_CONTROLLER as any]) as any;
 
     try {
-      const connectionExists = !!(await getConnection());
+      const con = await getConnection();
+
+      const connectionExists = !!(con);
       if (connectionExists) {
         console.log('Connection exists')
-        return
+        await con.close()
       }
     } catch (error) {
 
@@ -199,7 +203,8 @@ export function start(options: StartOptions) {
       controllers: controllers as any[],
       entities: entities as any[],
       //#region @backend
-      connection
+      connection,
+      testMode,
       //#endregion
     })
 

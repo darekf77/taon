@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 
 import { Morphi } from '../index';
 import { Log } from 'ng2-logger';
-import { walk } from 'lodash-walk-object';
+
 const log = Log.create('formly')
 
 
@@ -61,23 +61,25 @@ describe('Inject ctrl', () => {
   it('Should inject controller to entity', async () => {
 
 
-    // await Morphi.init({
-    //   host: 'http://localhost:8888',
-    //   controllers: [ArticlesController],
-    //   entities: [Article],
-    //   config: {
-    //     type: 'sqlite',
-    //     database: 'mysql',
-    //     dropSchema: true,
-    //     synchronize: false,
-    //     logging: false
-    //   }
-    // })
-    new ArticlesController()
+
+    // let i = new ArticlesController()
     let p = new Article()
-
+    await Morphi.init({
+      host: 'http://localhost:8888',
+      controllers: [ArticlesController],
+      entities: [Article],
+      config: {
+        "database": "tmp/test-inject.sqlite3",
+        "type": "sqlite",
+        "synchronize": true,
+        "dropSchema": true,
+        "logging": false
+      },
+      testMode: true
+    })
+    // console.log('CLASS.getSingleton(ArticlesController)',CLASS.getSingleton(ArticlesController))
     expect(p['ctrl']).to.be.instanceOf(ArticlesController)
-
+    expect(Article['ctrl']).to.be.instanceOf(ArticlesController)
   });
 
 });

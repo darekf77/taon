@@ -12,13 +12,54 @@ import { BaseCRUD } from '../crud/base-crud-model';
 import { classNameVlidation } from './framework-helpers';
 import { Models } from '../models';
 import { Helpers } from '../helpers';
+import { CLASS } from 'typescript-class-helpers';
 
-function updateChain(entity: Function, controllerContext: Object) {
+const updatedWithCtrl = {};
+const updatedStaticWithCtrl = {};
+function updateChain(entity: Function, target: Function) {
   if (!_.isFunction(entity)) {
     return
   }
-  entity.prototype['ctrl'] = controllerContext;
-  entity['ctrl'] = controllerContext;
+  const className = CLASS.getName(entity);
+  // console.log(`Entity ${entity.name} shoudl have controler singleton ${target.name}`)
+
+
+  if (updatedWithCtrl[className]) {
+    console.warn(`[morphi] Property 'ctrl' already exist for ${className}`);
+    try {
+      Object.defineProperty(entity.prototype, 'ctrl', {
+        get: function () {
+          return CLASS.getSingleton(target);
+        }
+      })
+    } catch (error) { }
+  } else {
+    updatedWithCtrl[className] = true;
+    Object.defineProperty(entity.prototype, 'ctrl', {
+      get: function () {
+        return CLASS.getSingleton(target);
+      }
+    })
+  }
+  if (updatedStaticWithCtrl[className]) {
+    console.warn(`[morphi] Static property 'ctrl' already exist for ${className}`);
+    try {
+      Object.defineProperty(entity, 'ctrl', {
+        get: function () {
+          return CLASS.getSingleton(target);
+        }
+      })
+    } catch (error) { }
+  } else {
+    updatedStaticWithCtrl[className] = true;
+    Object.defineProperty(entity, 'ctrl', {
+      get: function () {
+        return CLASS.getSingleton(target);
+      }
+    })
+  }
+
+
 }
 
 export function Controller(options?: {
@@ -42,10 +83,14 @@ export function Controller(options?: {
     //#endregion
 
     className = classNameVlidation(className, target);
-    CLASSNAME.CLASSNAME(className)(target)
+    CLASSNAME.CLASSNAME(className, {
+      singleton: Helpers.isBrowser,
+      autoinstance: Helpers.isBrowser,
+    })(target);
 
-
-
+    // if (Helpers.isBrowser && _.isFunction(rep)) {
+    //   target = rep;
+    // }
 
 
     // debugger
@@ -59,13 +104,13 @@ export function Controller(options?: {
 
     if (_.isArray(additionalEntities)) {
       additionalEntities.forEach(c => {
-        updateChain(c, Helpers.getSingleton(target))
+        updateChain(c, target)
       })
     }
     if (_.isFunction(entity)) {
-      updateChain(entity, Helpers.getSingleton(target));
+      updateChain(entity, target);
     }
-
+    return target as any;
   }
 }
 
@@ -80,13 +125,16 @@ export abstract class BASE_CONTROLLER<T> extends BaseCRUD<T>
    */
   entites: Function[];
 
-  constructor() {
-    super();
+  // constructor() {
+  //   super();
 
-    if (Helpers.isBrowser) {
-      // log.i('BASE_CONTROLLER, constructor', this)
-    }
-  }
+  //   if (Helpers.isBrowser) {
+  //     // log.i('BASE_CONTROLLER, constructor', this)
+  //     const Class = CLASS.getFromObject(this);
+  //     console.log(`Set singleton for ${CLASS.getName(Class)}`)
+  //     CLASS.setSingletonObj(Class, this)
+  //   }
+  // }
 
 
   //#region @backend
