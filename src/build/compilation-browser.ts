@@ -28,6 +28,7 @@ export class BroswerCompilation extends BackendCompilation {
     location: string,
     cwd: string,
     public backendOutFolder: string,
+    private customCompiler?: string
   ) {
     super(outFolder, location, cwd)
     this.compilationFolderPath = path.join(this.cwd, this.sourceOutBrowser);
@@ -58,7 +59,9 @@ export class BroswerCompilation extends BackendCompilation {
   }
 
   compile(watch = false) {
-    this.tscCompilation(this.compilationFolderPath, watch, `../${this.backendOutFolder}/${this.outFolder}` as any, true)
+    this.tscCompilation(this.compilationFolderPath, watch, `../${this.backendOutFolder}/${this.outFolder}` as any, true,
+    this.customCompiler ? this.customCompiler: void 0
+    )
   }
 
   initCodeCut() {
