@@ -66,6 +66,9 @@ export class BrowserCodeCut {
 
 
   public flatTypescriptImportExport(usage: TsUsage) {
+    if (!this.absoluteFilePath.endsWith('.ts')) {
+      return this;
+    }
     const fileContent: string = this.rawContent;
     const regexParialUsage = new RegExp(`${usage}\\s+{`)
     const regexFrom = new RegExp(`from\\s+(\\'|\\").+(\\'|\\")`)
@@ -183,6 +186,9 @@ export class BrowserCodeCut {
 
 
   replaceRegionsFromTsImportExport(usage: TsUsage) {
+    if (!this.absoluteFilePath.endsWith('.ts')) {
+      return this;
+    }
     if (!_.isString(this.rawContent)) return;
     const importRegex = new RegExp(`${usage}.+from\\s+(\\'|\\").+(\\'|\\")`, 'g')
     let imports = this.rawContent.match(importRegex)
@@ -201,6 +207,9 @@ export class BrowserCodeCut {
   }
 
   replaceRegionsFromJSrequire() {
+    if (!this.absoluteFilePath.endsWith('.ts')) {
+      return this;
+    }
     if (!_.isString(this.rawContent)) return;
     // fileContent = IsomorphicRegions.flattenRequiresForContent(fileContent, usage)
     const importRegex = new RegExp(`require\\((\\'|\\").+(\\'|\\")\\)`, 'g')
@@ -224,7 +233,9 @@ export class BrowserCodeCut {
   replaceRegionsForIsomorphicLib(options: ReplaceOptions) {
 
     // console.log('options.replacements', options.replacements)
-    this.rawContent = this.replaceRegionsWith(this.rawContent, options.replacements)
+    if (this.absoluteFilePath.endsWith('.ts')) {
+      this.rawContent = this.replaceRegionsWith(this.rawContent, options.replacements)
+    }
     this.rawContent = this.afterRegionsReplacement(this.rawContent)
     return this;
   }
