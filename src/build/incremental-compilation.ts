@@ -49,7 +49,7 @@ export abstract class IncrementalCompilation {
     }
   }
 
-  private firstTimeFix = {};
+  protected firstTimeFix = {};
 
   public async initAndWatch(taskName?: string, afterInitCallBack?: () => void) {
     await this.init(taskName, afterInitCallBack)
@@ -74,7 +74,7 @@ export abstract class IncrementalCompilation {
   }
 
 
-  private watchFilesAndFolders<WatchData=Object>(filesEventCallback: (absolutePath: string, event: FileEvent) => any) {
+  protected watchFilesAndFolders<WatchData=Object>(filesEventCallback: (absolutePath: string, event: FileEvent) => any) {
 
     const self = this;
     function callBackWithRelativePath(event: FileEvent) {

@@ -110,7 +110,7 @@ export class BackendCompilation extends IncrementalCompilation {
      */
     cwd?: string
   ) {
-    super('**/*.ts', location, cwd)
+    super('**/*.+(ts|css|scss|sass|html)', location, cwd)
     if (_.isString(location) && _.isString(cwd) && !_.isUndefined(config)) {
 
       this.compilationFolderPath = path.join(cwd, config.folder.src);

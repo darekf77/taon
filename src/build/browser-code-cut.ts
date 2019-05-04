@@ -225,7 +225,12 @@ export class BrowserCodeCut {
 
     // console.log('options.replacements', options.replacements)
     this.rawContent = this.replaceRegionsWith(this.rawContent, options.replacements)
+    this.rawContent = this.afterRegionsReplacement(this.rawContent)
     return this;
+  }
+
+  protected afterRegionsReplacement(content: string) {
+    return content;
   }
 
   saveOrDelete() {
