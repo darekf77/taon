@@ -21,6 +21,11 @@ export function typeFromEntity(component: Function, entity?: Function | Function
   return res;
 }
 
+export function typeFromName(component: Function, name: string) {
+  let res = { name, component };
+  return res;
+}
+
 export function formlyComponentNameFrom(entityOrComponent: Function) {
   let name = (CLASS.getName(entityOrComponent) as string).toLowerCase();
   if (name.endsWith('component')) {
@@ -38,20 +43,23 @@ export function RegisterComponentTypeForEntity(entity: Function) {
   } as any;
 }
 
-export function RegisterComponentType(className: string) {
+export function RegisterComponentType(className: string, ...optionslNames: string[]) {
   if (!_.isArray(RegisterComponentType.prototype.types)) {
     RegisterComponentType.prototype.types = []
   }
   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
     CLASS.NAME(className)(target)
     RegisterComponentType.prototype.types.push(typeFromEntity(target))
+    optionslNames.forEach(name => {
+      RegisterComponentType.prototype.types.push(typeFromName(target, name))
+    })
   } as any;
 }
 // RegisterComponentType.prototype.types = []
 
 export function getRegisteredComponents() {
   let registered = RegisterComponentType.prototype.types as FormlyEntityType[];
-  if(!Array.isArray(registered)) {
+  if (!Array.isArray(registered)) {
     return []
   }
   // console.log(registered)
