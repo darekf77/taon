@@ -47,9 +47,13 @@ export function RegisterComponentType(className: string) {
     RegisterComponentType.prototype.types.push(typeFromEntity(target))
   } as any;
 }
+// RegisterComponentType.prototype.types = []
 
 export function getRegisteredComponents() {
   let registered = RegisterComponentType.prototype.types as FormlyEntityType[];
+  if(!Array.isArray(registered)) {
+    return []
+  }
   // console.log(registered)
   return registered;
 }
