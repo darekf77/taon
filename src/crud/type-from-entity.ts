@@ -15,7 +15,7 @@ export function typeFromEntity(component: Function, entity?: Function | Function
   if (isArray) {
     entity = _.first(entity as any);
   }
-  let name = formlyComponentNameFrom(_.isFunction(entity) ? entity : component)
+  let name = CLASS.getName(component)
   let res = { name, component, entity, isArray };
   // console.log(res);
   return res;
@@ -26,15 +26,7 @@ export function typeFromName(component: Function, name: string) {
   return res;
 }
 
-export function formlyComponentNameFrom(entityOrComponent: Function) {
-  let name = (CLASS.getName(entityOrComponent) as string).toLowerCase();
-  if (name.endsWith('component')) {
-    name = name.replace('component', '');
-  }
-  return `${name}formly`;
-}
-
-export function RegisterComponentTypeForEntity(entity: Function) {
+export function RegisterComponentTypeForEntity(entity: Function | Function[]) {
   if (!_.isArray(RegisterComponentType.prototype.types)) {
     RegisterComponentType.prototype.types = []
   }
