@@ -55,7 +55,16 @@ export class BrowserCodeCut {
   get isEmpty() {
     return this.rawContent.replace(/\s/g, '').trim() === '';
   }
-  private static IsomorphicLibs = ['ng2-rest', 'typeorm', 'ng2-logger', 'morphi', 'tnp-bundle'];
+  private static IsomorphicLibs = [
+    'ng2-rest',
+    'typeorm',
+    'ng2-logger',
+    'morphi',
+    'tnp-bundle',
+    'typescript-class-helpers',
+    'lodash-walk-object',
+    'json10',
+  ];
   public static resolveAndAddIsomorphicLibs(libsNames: string[]) {
     this.IsomorphicLibs = this.IsomorphicLibs.concat(libsNames);
   }
