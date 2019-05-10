@@ -82,6 +82,7 @@
     "@types/lockfile": "^1.0.0",
     "@types/lodash": "4.14.92",
     "@types/lowdb": "^1.0.6",
+    "@types/mocha": "^5.2.5",
     "@types/node": "9.3.0",
     "@types/node-notifier": "0.0.28",
     "@types/oauth2orize": "^1.8.0",
