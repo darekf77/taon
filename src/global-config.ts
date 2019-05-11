@@ -74,7 +74,6 @@ export class Global {
   }
 
   public url: URL;
-  public urlSocket: URL;
   public productionMode = false;
   public ngZone: any;
   public ApplicationRef: any;

@@ -17,16 +17,11 @@ const log = Log.create('RealtimeNodejs', Level.__NOTHING)
 export class RealtimeNodejs {
   //#region @backend
   static init(http: Http2Server) {
-    const uri: URL = Global.vars.urlSocket;
-    if (!uri) {
-      console.warn(`
-        MORPHI: Please use { hostSocket } in morphi init(..)
-        function to make socket works
-      `)
-      return
-    }
+    const uri: URL = Global.vars.url;
 
-    Global.vars.socketNamespace.BE = io(http);
+    Global.vars.socketNamespace.BE = io(http, {
+      path: `/socketnodejs${uri.pathname !== '/' ? uri.pathname : ''}`
+    });
 
 
     const nsp = Global.vars.socketNamespace.BE;
@@ -122,7 +117,7 @@ export class RealtimeNodejs {
   }
 
 
-  public static TrigggerEntityPropertyChanges<ENTITY=any>(entity: BASE_ENTITY<any>, property: (keyof ENTITY) | (keyof ENTITY)[]) {
+  public static TrigggerEntityPropertyChanges<ENTITY = any>(entity: BASE_ENTITY<any>, property: (keyof ENTITY) | (keyof ENTITY)[]) {
     if (_.isArray(property)) {
       property.forEach(p => {
         RealtimeNodejs.__TrigggerEntityChanges(entity, p as any)

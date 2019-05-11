@@ -17,7 +17,6 @@ import { CLASS } from 'typescript-class-helpers';
 
 export function init(config: {
   host: string,
-  hostSocket?: string,
   ngZone?: any,
   allowedHosts?: string[],
   controllers?: Function[],
@@ -90,11 +89,6 @@ Incorect value for property "entities" inside Morphi.Init(...)
   //   searchParams: URLSearchParams {},
   //   hash: '' }
 
-  if (config.hostSocket) {
-    const uriSocket = new URL(config.hostSocket);
-    Global.vars.urlSocket = uriSocket;
-  }
-
   //#region @backend
   if (Helpers.isNode) {
     if (!Global.vars.app) {
@@ -113,9 +107,9 @@ Incorect value for property "entities" inside Morphi.Init(...)
     //   Global.vars.app.set('base', uri.pathname)
     // }
     const h = new http.Server(Global.vars.app); //TODO is this working ?
-    if (config.hostSocket) {
-      RealtimeNodejs.init(h);
-    }
+
+    RealtimeNodejs.init(h);
+
     if (!testMode) {
       h.listen(uri.port, function () {
         console.log(`Server listening on port: ${uri.port}, hostname: ${uri.pathname},
@@ -134,9 +128,9 @@ Incorect value for property "entities" inside Morphi.Init(...)
     if (Array.isArray(allowedHosts)) {
       Global.vars.allowedHosts = allowedHosts.map(h => new URL(h))
     }
-    if (config.hostSocket) {
-      RealtimeBrowser.init()
-    }
+
+    RealtimeBrowser.init()
+
 
   }
 

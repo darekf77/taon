@@ -127,7 +127,6 @@ export interface IConnectionOptions {
 export interface StartOptions {
 
   host: string;
-  hostSocket?: string;
   controllers?: BASE_CONTROLLER<any>[] | Function[];
   entities?: BASE_ENTITY<any>[] | Function[];
   //#region @backend
@@ -145,7 +144,6 @@ export function start(options: StartOptions) {
     //#endregion
     let {
       host,
-      hostSocket,
       controllers = [],
       entities = [],
       //#region @backend
@@ -199,7 +197,6 @@ export function start(options: StartOptions) {
 
     init({
       host,
-      hostSocket,
       controllers: controllers as any[],
       entities: entities as any[],
       //#region @backend

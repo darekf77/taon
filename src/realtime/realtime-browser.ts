@@ -15,17 +15,12 @@ export type AliasEntityType = Partial<BASE_ENTITY<any>>;
 
 export class RealtimeBrowser {
   static init() {
-    let uri: URL = Global.vars.urlSocket;
-    if (!uri) {
-      log.warn(`
-        MORPHI: Please use { hostSocket } in morphi init(..)
-        function to make socket works
-      `)
-      return
-    }
+    let uri: URL = Global.vars.url;
 
-    const global = io(uri.href, {
-      path: uri.pathname !== '/' ? uri.pathname : undefined
+    const uriSocket = new URL(`${uri.origin}/socketnodejs${uri.pathname !== '/' ? uri.pathname : ''}`)
+
+    const global = io(uri.origin, {
+      path: uriSocket.pathname
     });
     Global.vars.socketNamespace.FE = global as any;
 
@@ -33,12 +28,10 @@ export class RealtimeBrowser {
       log.i(`conented to namespace ${global.nsp}`)
     });
 
-    const realtimeNamespaceHref = `${uri.href}${SYMBOL.REALTIME.NAMESPACE}`
+    const realtimeNamespaceHref = `${uriSocket.pathname}/${SYMBOL.REALTIME.NAMESPACE}`
     log.i('realtimeNamespaceHref', realtimeNamespaceHref)
 
-    const realtime = io(realtimeNamespaceHref, {
-      path: uri.pathname !== '/' ? uri.pathname : undefined
-    }) as any;
+    const realtime = io(realtimeNamespaceHref) as any;
     Global.vars.socketNamespace.FE_REALTIME = realtime;
 
     realtime.on('connect', () => {
