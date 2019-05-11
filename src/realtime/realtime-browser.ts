@@ -8,35 +8,51 @@ import { Log, Level } from 'ng2-logger';
 import { Helpers } from '../helpers';
 import { BASE_ENTITY } from '../framework/framework-entity';
 import { CLASS } from 'typescript-class-helpers';
-const log = Log.create('RealtimeBrowser', Level.__NOTHING)
+import { RealtimeHelper } from './realtime-helper';
+const log = Log.create('RealtimeBrowser')
 
 export type AliasChangeListenerType = (unsubscribe: () => void) => void;
 export type AliasEntityType = Partial<BASE_ENTITY<any>>;
 
 export class RealtimeBrowser {
+  private static connected = false;
   static init() {
-    let uri: URL = Global.vars.url;
+    // if(RealtimeBrowser.connected) {
+    //   log.warn('BROWSER ALREADY CONNECTED!')
+    //   return
+    // }
+    // RealtimeBrowser.connected = true;
+    // RealtimeHelper.pathFor(SYMBOL.REALTIME.NAMESPACE).hostname
+    const nspPath = {
+      global: RealtimeHelper.pathFor(),
+      realtime: RealtimeHelper.pathFor(SYMBOL.REALTIME.NAMESPACE)
+    };
 
-    const uriSocket = new URL(`${uri.origin}/socketnodejs${uri.pathname !== '/' ? uri.pathname : ''}`)
+    log.i('NAMESPACE GLOBAL', nspPath.global.href)
+    log.i('NAMESPACE REALTIME', nspPath.realtime.href)
 
-    const global = io(uri.origin, {
-      path: uriSocket.pathname
+    const global = io(nspPath.global.origin, {
+      path: nspPath.global.pathname
     });
     Global.vars.socketNamespace.FE = global as any;
 
     global.on('connect', () => {
-      log.i(`conented to namespace ${global.nsp}`)
+      log.i(`conented to GLOBAL namespace ${global.nsp}`)
     });
+    log.i('IT SHOULD CONNECT TO GLOBAL')
 
-    const realtimeNamespaceHref = `${uriSocket.pathname}/${SYMBOL.REALTIME.NAMESPACE}`
-    log.i('realtimeNamespaceHref', realtimeNamespaceHref)
 
-    const realtime = io(realtimeNamespaceHref) as any;
+    const realtime = io(nspPath.realtime.origin, {
+      path: nspPath.realtime.pathname
+    }) as any;
+
     Global.vars.socketNamespace.FE_REALTIME = realtime;
 
     realtime.on('connect', () => {
-      log.i(`conented to namespace ${realtime.nsp}`)
+      log.i(`conented to REALTIME namespace ${realtime.nsp}`)
     });
+
+    log.i('IT SHOULD CONNECT TO REALTIME')
 
   }
 

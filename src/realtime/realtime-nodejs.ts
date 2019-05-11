@@ -12,47 +12,60 @@ import { SYMBOL } from '../symbols';
 import { Log, Level } from 'ng2-logger';
 import { BASE_ENTITY } from '../framework/framework-entity';
 import { Helpers } from '../helpers';
-const log = Log.create('RealtimeNodejs', Level.__NOTHING)
+import { RealtimeHelper } from './realtime-helper';
+const log = Log.create('RealtimeNodejs')
 
 export class RealtimeNodejs {
   //#region @backend
   static init(http: Http2Server) {
-    const uri: URL = Global.vars.url;
+
+    const nspPath = {
+      global: RealtimeHelper.pathFor(),
+      realtime: RealtimeHelper.pathFor(SYMBOL.REALTIME.NAMESPACE)
+    };
+
 
     Global.vars.socketNamespace.BE = io(http, {
-      path: `/socketnodejs${uri.pathname !== '/' ? uri.pathname : ''}`
+      path: nspPath.global.pathname
     });
 
 
-    const nsp = Global.vars.socketNamespace.BE;
-    nsp.on('connection', (clientSocket) => {
+    const ioGlobalNsp = Global.vars.socketNamespace.BE;
+
+    ioGlobalNsp.on('connection', (clientSocket) => {
       log.i('client conected to namespace', clientSocket.nsp.name)
     })
 
-    const nspRealtime = nsp.of(SYMBOL.REALTIME.NAMESPACE);
+    log.i(`CREATE GLOBAL NAMESPACE: '${ioGlobalNsp.path()}' , path: '${nspPath.global.pathname}'`)
 
-    Global.vars.socketNamespace.BE_REALTIME = nspRealtime;
+    const ioRealtimeNsp =  io(http, {
+      path: nspPath.realtime.pathname
+    });
 
-    nspRealtime.on('connection', (clientSocket) => {
+    log.i(`CREATE REALTIME NAMESPACE: '${ioRealtimeNsp.path()}' , path: '${nspPath.realtime.pathname}' `)
+
+    Global.vars.socketNamespace.BE_REALTIME = ioRealtimeNsp as any;
+
+    ioRealtimeNsp.on('connection', (clientSocket) => {
       log.i('client conected to namespace', clientSocket.nsp.name)
 
       clientSocket.on(SYMBOL.REALTIME.ROOM.SUBSCRIBE.ENTITY_UPDATE_EVENTS, room => {
-        log.i(`Joining room ${room} in namespace ${nspRealtime.name} `)
+        log.i(`Joining room ${room} in namespace  REALTIME`)
         clientSocket.join(room);
       })
 
       clientSocket.on(SYMBOL.REALTIME.ROOM.SUBSCRIBE.ENTITY_PROPERTY_UPDATE_EVENTS, room => {
-        log.i(`Joining room ${room} in namespace ${nspRealtime.name} `)
+        log.i(`Joining room ${room} in namespace REALTIME `)
         clientSocket.join(room);
       })
 
       clientSocket.on(SYMBOL.REALTIME.ROOM.UNSUBSCRIBE.ENTITY_UPDATE_EVENTS, room => {
-        log.i(`Leaving room ${room} in namespace ${nspRealtime.name} `)
+        log.i(`Leaving room ${room} in namespace REALTIME `)
         clientSocket.leave(room);
       })
 
       clientSocket.on(SYMBOL.REALTIME.ROOM.UNSUBSCRIBE.ENTITY_PROPERTY_UPDATE_EVENTS, room => {
-        log.i(`Leaving room ${room} in namespace ${nspRealtime.name} `)
+        log.i(`Leaving room ${room} in namespace REALTIME `)
         clientSocket.leave(room);
       })
 
