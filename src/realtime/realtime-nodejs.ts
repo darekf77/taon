@@ -13,7 +13,7 @@ import { Log, Level } from 'ng2-logger';
 import { BASE_ENTITY } from '../framework/framework-entity';
 import { Helpers } from '../helpers';
 import { RealtimeHelper } from './realtime-helper';
-const log = Log.create('RealtimeNodejs')
+const log = Log.create('RealtimeNodejs', Level.__NOTHING)
 
 export class RealtimeNodejs {
   //#region @backend
@@ -38,7 +38,7 @@ export class RealtimeNodejs {
 
     log.i(`CREATE GLOBAL NAMESPACE: '${ioGlobalNsp.path()}' , path: '${nspPath.global.pathname}'`)
 
-    const ioRealtimeNsp =  io(http, {
+    const ioRealtimeNsp = io(http, {
       path: nspPath.realtime.pathname
     });
 
