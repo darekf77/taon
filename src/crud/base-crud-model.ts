@@ -1,6 +1,6 @@
 
 import * as _ from 'lodash';
-import { CLASSNAME } from 'ng2-rest';
+import { CLASS } from 'typescript-class-helpers';
 
 import { Observable } from "rxjs/Observable";
 import { SYMBOL } from '../symbols';
@@ -20,7 +20,7 @@ import { IBASE_ENTITY } from '../framework/framework-entity';
 //#endregion
 
 @__ENDPOINT(BaseCRUD)
-@CLASSNAME.CLASSNAME('BaseCRUD')
+@CLASS.NAME('BaseCRUD')
 export abstract class BaseCRUD<T>  {
 
   //#region @backend

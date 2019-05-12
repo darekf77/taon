@@ -164,6 +164,7 @@ Incorect value for property "entities" inside Morphi.Init(...)
             })
           }
           CLASS.setSingletonObj(controller, c.singleton);
+          // Helpers.isBrowser && console.log(`[morphi] Singleton cleated for "${controller && controller.name}"`, CLASS.getSingleton(controller))
         })(currentCtrl);
 
       }

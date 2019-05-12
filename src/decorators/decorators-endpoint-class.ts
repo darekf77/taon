@@ -9,7 +9,7 @@ import {
   initMethodNodejs
   //#endregion
 } from "../init-method";
-export { CLASSNAME } from 'ng2-rest';
+export { CLASS } from 'typescript-class-helpers';
 import { Connection } from "typeorm";
 import * as _ from "lodash";
 

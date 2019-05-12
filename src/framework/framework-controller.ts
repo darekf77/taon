@@ -7,7 +7,7 @@ import {
 
 import * as _ from 'lodash';
 import { RealtimeNodejs } from '../realtime/realtime-nodejs';
-import { ENDPOINT, __ENDPOINT, CLASSNAME } from '../decorators/decorators-endpoint-class';
+import { ENDPOINT, __ENDPOINT } from '../decorators/decorators-endpoint-class';
 import { BaseCRUD } from '../crud/base-crud-model';
 import { classNameVlidation } from './framework-helpers';
 import { Models } from '../models';
@@ -83,7 +83,7 @@ export function Controller(options?: {
     //#endregion
 
     className = classNameVlidation(className, target);
-    CLASSNAME.CLASSNAME(className, {
+    CLASS.NAME(className, {
       singleton: Helpers.isBrowser,
       autoinstance: Helpers.isBrowser,
     })(target);
