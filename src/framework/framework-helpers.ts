@@ -54,7 +54,7 @@ export function classNameVlidation(className, target: Function) {
 }
 
 //#region @backend
-export function repositoryFrom<E, R=Repository<E>>(connection: Connection, entity: Function, repository?: Function): R {
+export function repositoryFrom<E, R = Repository<E>>(connection: Connection, entity: Function, repository?: Function): R {
   if (!connection) {
     console.error(`[Morphi][repositoryFrom] no connection!
 Please check your Morphi.Repository(...) decorators `, entity, repository)
@@ -66,7 +66,7 @@ Please check your Morphi.Repository(...) decorators `, entity, repository)
         repositoryFrom.prototype.singletons = {}
       }
       const className = CLASS.getName(repository);
-      if(!repositoryFrom.prototype.singletons[className]) {
+      if (!repositoryFrom.prototype.singletons[className]) {
         repositoryFrom.prototype.singletons[className] = new (repository as any)();
       }
       return repositoryFrom.prototype.singletons[className];
@@ -215,21 +215,22 @@ export function start(options: StartOptions) {
     })
 
 
-    let ctrls: BASE_CONTROLLER<any>[] = controllers as any;
+    let ctrls: Function[] = controllers as any;
 
     if (InitDataPriority) {
       ctrls = [
         ...(InitDataPriority ? InitDataPriority : []),
-        ...(ctrls.filter(f => !(InitDataPriority as BASE_CONTROLLER<any>[]).includes(f)))
+        ...(ctrls.filter(f => !(InitDataPriority as Function[]).includes(f)))
       ] as any;
     }
-
+    ctrls = ctrls.filter(ctrl => !['BASE_CONTROLLER', 'BaseCRUD' ].includes(ctrl.name));
 
     const promises: Promise<any>[] = []
+    // console.log('ctrls', ctrls)
     ctrls.forEach(ctrl => {
       ctrl = Helpers.getSingleton(ctrl as any);
-      if (ctrl && _.isFunction(ctrl.initExampleDbData)) {
-        promises.push((ctrl.initExampleDbData()));
+      if (ctrl && _.isFunction((ctrl as any).initExampleDbData)) {
+        promises.push(((ctrl as any).initExampleDbData()));
       }
     });
     await Promise.all(promises);
