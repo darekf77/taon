@@ -43,17 +43,17 @@ export class Helpers extends HelpersNg2Rest {
             }
           },
 
-          tryCopyFrom(source, destination) {
+          tryCopyFrom(source, destination, options = {}) {
             // console.log(`Trying to copy from hahah: ${source} to ${destination}`)
             try {
-              fse.copySync(source, destination, {
+              fse.copySync(source, destination, _.merge({
                 overwrite: true,
                 recursive: true
-              })
+              }, options))
             } catch (e) {
               console.log(e)
               sleep(1);
-              this.tryCopyFrom(source, destination)
+              this.tryCopyFrom(source, destination, options)
             }
           }
         }
@@ -156,13 +156,13 @@ export class Helpers extends HelpersNg2Rest {
 
 
 
-  static getSingleton<T=Object>(target: Function): T {
+  static getSingleton<T = Object>(target: Function): T {
     const configs = Helpers.Class.getConfig(target)
     return ((Array.isArray(configs) && configs.length >= 1) ? configs[0].singleton : undefined) as any;
   }
 
 
-  static getSingletons<T=Object>(target: Function): T[] {
+  static getSingletons<T = Object>(target: Function): T[] {
     const configs = Helpers.Class.getConfig(target)
     return configs.map(c => c.singleton as T);
   }

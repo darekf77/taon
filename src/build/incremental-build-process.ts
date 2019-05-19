@@ -59,9 +59,9 @@ export class IncrementalBuildProcess {
     await this.backendCompilation.init(this.backendTaskName(taskName))
 
     for (let index = 0; index < this.browserCompilations.length; index++) {
-      const bc = this.browserCompilations[index];
-      await bc.init(this.browserTaksName(taskName, bc), () => {
-        this.recreateBrowserLinks(bc)
+      const browserCompilation = this.browserCompilations[index];
+      await browserCompilation.init(this.browserTaksName(taskName, browserCompilation), () => {
+        this.recreateBrowserLinks(browserCompilation)
       })
     }
   }
@@ -76,9 +76,9 @@ export class IncrementalBuildProcess {
     await this.backendCompilation.initAndWatch(this.backendTaskName(taskName))
 
     for (let index = 0; index < this.browserCompilations.length; index++) {
-      const bc = this.browserCompilations[index];
-      await bc.initAndWatch(this.browserTaksName(taskName, bc), () => {
-        this.recreateBrowserLinks(bc)
+      const browserCompilation = this.browserCompilations[index];
+      await browserCompilation.initAndWatch(this.browserTaksName(taskName, browserCompilation), () => {
+        this.recreateBrowserLinks(browserCompilation)
       })
     }
   }

@@ -39,8 +39,10 @@ export class BroswerCompilation extends BackendCompilation {
     // noting here for backend
     const relativeFilePath = filePath.replace(path.join(this.cwd, this.location), '');
     const dest = path.join(this.cwd, this.sourceOutBrowser, relativeFilePath);
-    fse.copyFileSync(filePath, dest);
-    this.codecut.file(dest)
+    if (!filePath.endsWith('.backend.ts')) {
+      fse.copyFileSync(filePath, dest);
+      this.codecut.file(dest)
+    }
   }
 
   private initBrowser() {
@@ -50,7 +52,11 @@ export class BroswerCompilation extends BackendCompilation {
     }
     fse.mkdirpSync(this.compilationFolderPath)
 
-    Helpers.System.Operations.tryCopyFrom(`${path.join(this.cwd, this.location)}/`, this.compilationFolderPath)
+    Helpers.System.Operations.tryCopyFrom(`${path.join(this.cwd, this.location)}/`, this.compilationFolderPath,{
+      filter: (src: string, dest: string) => {
+        return !src.endsWith('.backend.ts')
+      }
+    })
 
     this.filesAndFoldesRelativePathes = glob.sync(this.globPattern, { cwd: this.compilationFolderPath });
     // console.log('browser', this.filesAndFoldesRelativePathes.slice(0, 5))
@@ -60,7 +66,7 @@ export class BroswerCompilation extends BackendCompilation {
 
   compile(watch = false) {
     this.tscCompilation(this.compilationFolderPath, watch, `../${this.backendOutFolder}/${this.outFolder}` as any, true,
-    this.customCompiler ? this.customCompiler: void 0
+      this.customCompiler ? this.customCompiler : void 0
     )
   }
 
