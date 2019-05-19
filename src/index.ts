@@ -35,8 +35,6 @@ export namespace Morphi {
 
   export import Response = models.Models.Response;
 
-
-  export import Service = framework.Service;
   export import Controller = framework.Controller;
   export import Entity = framework.Entity;
   //#region @backend
@@ -80,7 +78,6 @@ export namespace Morphi {
   export namespace Base {
     export import Controller = framework.BASE_CONTROLLER;
     export import Entity = framework.BASE_ENTITY;
-    export import Service = framework.BASE_SERVICE;
     //#region @backend
     export import Repository = framework.BASE_REPOSITORY;
     //#endregion

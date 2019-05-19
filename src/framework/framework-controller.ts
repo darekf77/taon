@@ -13,23 +13,31 @@ import { classNameVlidation } from './framework-helpers';
 import { Models } from '../models';
 import { Helpers } from '../helpers';
 import { CLASS } from 'typescript-class-helpers';
+import { Helpers as HelpersLog } from 'ng2-logger';
 
 const updatedWithCtrl = {};
 const updatedStaticWithCtrl = {};
+
+function getSing(target) {
+  const res =  CLASS.getSingleton(target);;
+  if(!res) {
+    debugger
+  }
+  return res;
+}
+
 function updateChain(entity: Function, target: Function) {
   if (!_.isFunction(entity)) {
     return
   }
   const className = CLASS.getName(entity);
-  // console.log(`Entity ${entity.name} shoudl have controler singleton ${target.name}`)
-
 
   if (updatedWithCtrl[className]) {
     console.warn(`[morphi] Property 'ctrl' already exist for ${className}`);
     try {
       Object.defineProperty(entity.prototype, 'ctrl', {
         get: function () {
-          return CLASS.getSingleton(target);
+          return getSing(target);
         }
       })
     } catch (error) { }
@@ -37,7 +45,7 @@ function updateChain(entity: Function, target: Function) {
     updatedWithCtrl[className] = true;
     Object.defineProperty(entity.prototype, 'ctrl', {
       get: function () {
-        return CLASS.getSingleton(target);
+        return getSing(target);
       }
     })
   }
@@ -46,7 +54,7 @@ function updateChain(entity: Function, target: Function) {
     try {
       Object.defineProperty(entity, 'ctrl', {
         get: function () {
-          return CLASS.getSingleton(target);
+          return getSing(target);
         }
       })
     } catch (error) { }
@@ -54,7 +62,7 @@ function updateChain(entity: Function, target: Function) {
     updatedStaticWithCtrl[className] = true;
     Object.defineProperty(entity, 'ctrl', {
       get: function () {
-        return CLASS.getSingleton(target);
+        return getSing(target);
       }
     })
   }
@@ -84,8 +92,7 @@ export function Controller(options?: {
 
     className = classNameVlidation(className, target);
     CLASS.NAME(className, {
-      singleton: Helpers.isBrowser,
-      autoinstance: Helpers.isBrowser,
+      singleton: HelpersLog.isBrowser ? 'autoinstance': 'last-instance'
     })(target);
 
     // if (Helpers.isBrowser && _.isFunction(rep)) {
@@ -124,17 +131,6 @@ export abstract class BASE_CONTROLLER<T> extends BaseCRUD<T>
    * Controller entites
    */
   entites: Function[];
-
-  // constructor() {
-  //   super();
-
-  //   if (Helpers.isBrowser) {
-  //     // log.i('BASE_CONTROLLER, constructor', this)
-  //     const Class = CLASS.getFromObject(this);
-  //     console.log(`Set singleton for ${CLASS.getName(Class)}`)
-  //     CLASS.setSingletonObj(Class, this)
-  //   }
-  // }
 
 
   //#region @backend

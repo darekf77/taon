@@ -145,25 +145,13 @@ Incorect value for property "entities" inside Morphi.Init(...)
         e.initFN();
 
         (function (controller: Function) {
-          const configs = Helpers.Class.getConfig(currentCtrl);
-          const c: Models.Rest.ClassConfig = configs[0];
-          for (let p in c.singleton) {
-            if (c.singleton.hasOwnProperty(p)) {
-              controller.prototype[p] = c.singleton[p];
-            }
-          }
+          const c = Helpers.Class.getConfig(currentCtrl)[0];
+
           c.injections.forEach(inj => {
             Object.defineProperty(controller.prototype, inj.propertyName, { get: inj.getter as any });
           });
-          if (!(c.singleton instanceof controller)) {
-            const singleton = new (controller as any)();
-            const oldSingleton = c.singleton;
-            c.singleton = singleton;
-            Object.keys(oldSingleton).forEach(key => {
-              c.singleton[key] = oldSingleton[key];
-            })
-          }
-          CLASS.setSingletonObj(controller, c.singleton);
+          CLASS.setSingletonObj(controller, new (controller as any)());
+
           // Helpers.isBrowser && console.log(`[morphi] Singleton cleated for "${controller && controller.name}"`, CLASS.getSingleton(controller))
         })(currentCtrl);
 

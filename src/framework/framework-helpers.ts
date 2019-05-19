@@ -54,31 +54,35 @@ export function classNameVlidation(className, target: Function) {
 }
 
 //#region @backend
-export function repositoryFrom<E, R = Repository<E>>(connection: Connection, entity: Function, repository?: Function): R {
+export function repositoryFrom<E, R = Repository<E>>(connection: Connection, entityFN: Function, repoFn?: Function): R {
   if (!connection) {
     console.error(`[Morphi][repositoryFrom] no connection!
-Please check your Morphi.Repository(...) decorators `, entity, repository)
-    process.exit(0)
+Please check your Morphi.Repository(...) decorators `, entityFN, repoFn)
+    return
   }
-  if (!!entity && !entity[SYMBOL.HAS_TABLE_IN_DB]) {
-    if (_.isFunction(repository)) {
-      if (!repositoryFrom.prototype.singletons) {
-        repositoryFrom.prototype.singletons = {}
+  let repo: Repository<any>;
+  if (!!entityFN && !entityFN[SYMBOL.HAS_TABLE_IN_DB]) {
+    if (_.isFunction(repoFn)) {
+      let repo = CLASS.getSingleton(repoFn)
+      if (!repo) {
+        CLASS.setSingletonObj(repoFn, new (repoFn as any)())
       }
-      const className = CLASS.getName(repository);
-      if (!repositoryFrom.prototype.singletons[className]) {
-        repositoryFrom.prototype.singletons[className] = new (repository as any)();
-      }
-      return repositoryFrom.prototype.singletons[className];
+      repo = CLASS.getSingleton(repoFn)
+      return repo;
     }
+    console.warn(`Repository function not abailable for ${CLASS.getName(entityFN)}`)
     return;
   }
 
-  let repo: Repository<any>;
-  if (repository) {
-    repo = connection.getCustomRepository(repository);
+  if (repoFn) {
+    repo = connection.getCustomRepository(repoFn);
+    let existedRepo = CLASS.getSingleton(repoFn)
+    if(!existedRepo) {
+      CLASS.setSingletonObj(repoFn, repo);
+    }
+
   } else {
-    repo = connection.getRepository(entity) as any;
+    repo = connection.getRepository(entityFN) as any;
   }
   repo['_'] = {};
   repo['__'] = {};
@@ -90,14 +94,14 @@ Please check your Morphi.Repository(...) decorators `, entity, repository)
     compolexProperties.forEach(alias => {
       repo['__'][alias] = {};
 
-      const describedProps = Helpers.Class.describeProperites(entity)
+      const describedProps = Helpers.Class.describeProperites(entityFN)
       // console.log(`describedProps  "${describedProps}" for ${entity.name}`)
 
       describedProps.concat(compolexProperties as any).forEach(prop => {
         repo['__'][alias][prop] = `${alias as any}.${prop}`; // TODO temp solution
       })
 
-      const props = Helpers.Class.describeProperites(entity)
+      const props = Helpers.Class.describeProperites(entityFN)
       // console.log(`props  "${props}" for ${entity.name}`)
       props.forEach(prop => {
         repo['__'][alias][prop] = `${alias as any}.${prop}`; // TODO ideal solution
@@ -223,7 +227,7 @@ export function start(options: StartOptions) {
         ...(ctrls.filter(f => !(InitDataPriority as Function[]).includes(f)))
       ] as any;
     }
-    ctrls = ctrls.filter(ctrl => !['BASE_CONTROLLER', 'BaseCRUD' ].includes(ctrl.name));
+    ctrls = ctrls.filter(ctrl => !['BASE_CONTROLLER', 'BaseCRUD'].includes(ctrl.name));
 
     const promises: Promise<any>[] = []
     // console.log('ctrls', ctrls)

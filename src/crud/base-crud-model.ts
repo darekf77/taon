@@ -41,7 +41,9 @@ export abstract class BaseCRUD<T>  {
     //#region @backend
     if (Helpers.isNode && this.entity && this.connection && this.entity[SYMBOL.HAS_TABLE_IN_DB]) {
       this.repo = this.connection.getRepository(this.entity as any)
-      //  console.log(`Base CRUD inited for: ${(this.entity as any).name}`)
+       console.log(`Base CRUD inited for: ${(this.entity as any).name}`)
+    } else {
+      console.log(`Base CRUD NOT inited for: ${this.entity && (this.entity as any).name}`)
     }
     //#endregion
   }
