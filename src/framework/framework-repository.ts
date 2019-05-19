@@ -6,9 +6,7 @@ import { CLASS } from 'typescript-class-helpers';
 
 export function Repository(entity: Function) {
   return function (target: any) {
-    CLASS.NAME(entity.name, {
-      singleton: 'last-instance'
-    })(target)
+
     EntityRepository(entity)(target)
   }
 }
