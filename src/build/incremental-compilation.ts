@@ -38,9 +38,11 @@ export abstract class IncrementalCompilation {
     }
   }
 
+  protected CompilationWrapper = Helpers.compilationWrapper;
+
   public async init(taskName?: string, afterInitCallBack?: () => void) {
     if (_.isFunction(this.syncAction)) {
-      await Helpers.compilationWrapper(() => {
+      await this.CompilationWrapper(() => {
         this.syncAction(this.filesAndFoldesRelativePathes);
       }, taskName)
     }
