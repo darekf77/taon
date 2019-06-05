@@ -16,7 +16,9 @@ export class IncrementalBuildProcess {
   protected browserCompilations: BroswerCompilation[];
   protected compileOnce = false;
 
-  constructor(outFolder: OutFolder = 'dist', relativeLocationToCwd = 'src', cwd = process.cwd()) {
+
+  constructor(outFolder: OutFolder = 'dist', relativeLocationToCwd = 'src', cwd = process.cwd(),
+    addStandaloneBrowserCompilation = true) {
 
     if (_.isString(outFolder) && _.isString(relativeLocationToCwd) && _.isString(cwd)) {
 
@@ -25,13 +27,17 @@ export class IncrementalBuildProcess {
 
       let browserOutFolder = config.folder.browser;
 
-      const browser = new BroswerCompilation(
-        `tmp-src-${outFolder}-${browserOutFolder}`,
-        browserOutFolder as any,
-        relativeLocationToCwd,
-        cwd,
-        outFolder);
-      this.browserCompilations = [browser]
+      this.browserCompilations = []
+      if (addStandaloneBrowserCompilation) {
+        const browser = new BroswerCompilation(
+          `tmp-src-${outFolder}-${browserOutFolder}`,
+          browserOutFolder as any,
+          relativeLocationToCwd,
+          cwd,
+          outFolder);
+        this.browserCompilations.push(browser)
+      }
+
     }
   }
 
