@@ -15,7 +15,7 @@ import { BackendCompilation } from './compilation-backend';
 
 
 export class BroswerCompilation extends BackendCompilation {
-
+  compilerName = 'Browser standard compiler'
 
   public codecut: CodeCut;
   constructor(

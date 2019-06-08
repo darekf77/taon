@@ -62,7 +62,11 @@ export class IncrementalBuildProcess {
     if (!this.compileOnce) {
       this.compileOnce = true;
     }
-    await this.backendCompilation.init(this.backendTaskName(taskName))
+
+    if (this.backendCompilation) {
+      await this.backendCompilation.init(this.backendTaskName(taskName))
+    }
+
 
     for (let index = 0; index < this.browserCompilations.length; index++) {
       const browserCompilation = this.browserCompilations[index];
@@ -79,7 +83,11 @@ export class IncrementalBuildProcess {
       process.exit(0)
       return
     }
-    await this.backendCompilation.initAndWatch(this.backendTaskName(taskName))
+
+    if (this.backendCompilation) {
+      await this.backendCompilation.initAndWatch(this.backendTaskName(taskName))
+    }
+
 
     for (let index = 0; index < this.browserCompilations.length; index++) {
       const browserCompilation = this.browserCompilations[index];

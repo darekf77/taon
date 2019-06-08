@@ -30,6 +30,11 @@ export class BackendCompilation extends IncrementalCompilation {
     const commandJsAndMaps = `${tsExe} -d false  ${params.join(' ')}`
     const commandDts = `${tsExe}  ${params.join(' ')}`
 
+    // console.log(`(${this.compilerName}) Execute first command : ${commandJsAndMaps}
+    // # inside: ${cwd}`)
+    // console.log(`(${this.compilerName}) Execute second command : ${commandDts}
+    // # inside: ${cwd}`)
+
     if (watch) {
       Helpers.log(child.exec(commandJsAndMaps, { cwd }));
       if (generateDeclarations) {
@@ -66,7 +71,7 @@ export class BackendCompilation extends IncrementalCompilation {
     }
   }
 
-
+  protected compilerName = 'Backend Compiler';
   compile(watch = false) {
     this.tscCompilation(this.compilationFolderPath, watch, `../${this.outFolder}` as any, true)
   }
