@@ -44,7 +44,7 @@ export class CodeCut {
 
 export class BrowserCodeCut {
 
-  private static IsomorphicLibs = [
+  public static IsomorphicLibs = [
     'ng2-rest',
     'typeorm',
     'ng2-logger',

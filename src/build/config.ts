@@ -1,17 +1,23 @@
 
 //#region @backend
 export const config = {
-    folder: {
-        bundle: 'bundle',
+  file: {
+    package_json: 'package.json',
+  },
+  array: {
+    isomorphicPackages: 'isomorphicPackages'
+  },
+  folder: {
+    bundle: 'bundle',
 
-        vendor: 'vendor',
-        dist: 'dist',
-        src: 'src',
+    vendor: 'vendor',
+    dist: 'dist',
+    src: 'src',
 
-        browser: 'browser',
+    browser: 'browser',
 
-        node_modules: 'node_modules'
+    node_modules: 'node_modules'
 
-    }
+  }
 }
 //#endregion

@@ -4,6 +4,7 @@ import * as child from 'child_process';
 import * as path from 'path';
 
 import * as fs from 'fs';
+import * as fse from 'fs-extra';
 const ps = require('ps-node');
 
 import { Helpers } from '../helpers';
@@ -11,6 +12,7 @@ import { copyExampleTo } from './new';
 import { IncrementalBuildProcess } from '../build/incremental-build-process';
 import { BrowserCodeCut } from '../build/browser-code-cut';
 import chalk from 'chalk';
+import { PackagesRecognition } from '../build/packages-recognition';
 
 export * from '../helpers';
 
@@ -18,15 +20,24 @@ export async function run(argsv: string[], morphiEnvironmentCheck = true) {
   if (morphiEnvironmentCheck) {
     Helpers.checkEnvironment()
   }
+
   if (argsv.length >= 3) {
-    const commandName: 'build' | 'build:watch' | 'ln' | 'new:simple' | 'new:workspace' | 'process-info' | '-v' | '-h' | '--help' | '-help' = argsv[2] as any;
-
-
+    const commandName: 'build' | 'build:watch' | 'ln' | 'new:simple' | 'new:workspace' | 'process-info'
+      | '-v' | '-h' | '--help' | '-help' | 'update:isomorphic' | 'install' = argsv[2] as any;
     if (commandName === 'build') {
+      PackagesRecognition.From(process.cwd()).start()
       BrowserCodeCut.resolveAndAddIsomorphicLibs(argsv.slice(4))
       await (new IncrementalBuildProcess()).start('isomprphic build')
       process.exit(0)
+    } else if (commandName === 'install') {
+      PackagesRecognition.From(process.cwd()).start(true)
+      child.execSync(`npm i ${argsv.slice(3)}`, { cwd: process.cwd(), stdio: [0, 1, 2] });
+      process.exit(0)
+    } else if (commandName === 'update:isomorphic') {
+      PackagesRecognition.From(process.cwd()).start(true)
+      process.exit(0)
     } else if (commandName === 'build:watch') {
+      PackagesRecognition.From(process.cwd()).start()
       BrowserCodeCut.resolveAndAddIsomorphicLibs(argsv.slice(4))
       await (new IncrementalBuildProcess()).startAndWatch('isomorphic build (watch)');
       process.stdin.resume();
