@@ -43,7 +43,7 @@ export namespace Models {
     (req?: ExpressRequest, res?: ExpressResponse): Promise<SyncResponse<T> | SyncResponseFunc<T>>;
   }
 
-  export type Response<T=string> = (__Response<T> | AsyncResponse<T>) & ClientAction<T> & __Response<T>;
+  export type Response<T = string> = (__Response<T> | AsyncResponse<T>) & ClientAction<T> & __Response<T>;
 
   export class Errors {
 
@@ -86,6 +86,12 @@ export namespace Models {
   export interface AuthCallBack {
     (methodReference: Function): RequestHandler;
   }
+
+  export type InlinePkg = {
+    isIsomorphic: boolean;
+    realName: string;
+  }
+
   //#endregion
 
 }

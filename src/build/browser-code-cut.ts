@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as fse from 'fs-extra';
 import { TsUsage, ReplaceOptions } from './models';
+import { Models } from '../models';
 
 
 export class CodeCut {
@@ -43,18 +44,6 @@ export class CodeCut {
 
 export class BrowserCodeCut {
 
-  debug(fileName: string) {
-    // console.log('path.basename(this.absoluteFilePath)',path.basename(this.absoluteFilePath))
-    this.isDebuggingFile = (path.basename(this.absoluteFilePath) === fileName);
-  }
-
-  protected isDebuggingFile = false;
-
-  protected rawContent: string;
-
-  get isEmpty() {
-    return this.rawContent.replace(/\s/g, '').trim() === '';
-  }
   private static IsomorphicLibs = [
     'ng2-rest',
     'typeorm',
@@ -69,10 +58,26 @@ export class BrowserCodeCut {
     this.IsomorphicLibs = this.IsomorphicLibs.concat(libsNames);
   }
 
+
+  protected browserString = 'browser';
+
+  protected isDebuggingFile = false;
+
+  protected rawContent: string;
+
+  get isEmpty() {
+    return this.rawContent.replace(/\s/g, '').trim() === '';
+  }
+
   constructor(protected absoluteFilePath: string) {
     this.rawContent = fs.readFileSync(absoluteFilePath, 'utf8').toString();
   }
 
+
+  debug(fileName: string) {
+    // console.log('path.basename(this.absoluteFilePath)',path.basename(this.absoluteFilePath))
+    this.isDebuggingFile = (path.basename(this.absoluteFilePath) === fileName);
+  }
 
   public flatTypescriptImportExport(usage: TsUsage) {
     if (!this.absoluteFilePath.endsWith('.ts')) {
@@ -143,7 +148,7 @@ export class BrowserCodeCut {
     * Check if package of isomorphic-lib type
     * @param packageName
     */
-  private isIsomorphic(packageName: string) {
+  protected getInlinePackage(packageName: string): Models.InlinePkg {
 
     // console.log('MORPHI this.isomorphicLibs', this.isomorphicLibs)
     let realName = packageName;
@@ -193,6 +198,13 @@ export class BrowserCodeCut {
     return this.replaceRegionsWith(stringContent, words);
   }
 
+  protected replaceFromLine(pkgName: string, imp: string) {
+    const p = this.getInlinePackage(pkgName)
+    if (p.isIsomorphic) {
+      const replacedImp = imp.replace(p.realName, `${p.realName}/${this.browserString}`);
+      this.rawContent = this.rawContent.replace(imp, replacedImp);
+    }
+  }
 
   replaceRegionsFromTsImportExport(usage: TsUsage) {
     if (!this.absoluteFilePath.endsWith('.ts')) {
@@ -204,12 +216,7 @@ export class BrowserCodeCut {
     if (_.isArray(imports)) {
       imports.forEach(imp => {
         const pkgName = this.resolvePackageNameFrom.TSimportExport(imp, usage);
-
-        const p = this.isIsomorphic(pkgName)
-        if (p.isIsomorphic) {
-          const replacedImp = imp.replace(p.realName, `${p.realName}/browser`);
-          this.rawContent = this.rawContent.replace(imp, replacedImp);
-        }
+        this.replaceFromLine(pkgName, imp);
       })
     }
     return this;
@@ -227,13 +234,7 @@ export class BrowserCodeCut {
     if (_.isArray(imports)) {
       imports.forEach(imp => {
         const pkgName = this.resolvePackageNameFrom.JSrequired(imp);
-
-        const p = this.isIsomorphic(pkgName)
-        if (p.isIsomorphic) {
-          // console.log('isomorphic: ', pkgName)
-          const replacedImp = imp.replace(p.realName, `${p.realName}/browser`);
-          this.rawContent = this.rawContent.replace(imp, replacedImp);
-        }
+        this.replaceFromLine(pkgName, imp)
       })
     }
     return this;
