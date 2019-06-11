@@ -26,6 +26,10 @@ export class PackagesRecognition {
 
   }
 
+  get count() {
+    return _.isArray(this.recognizedPackages) ? this.recognizedPackages.length : 0;
+  }
+
   start(force = false) {
     if (!force) {
       try {
