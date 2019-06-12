@@ -121,7 +121,8 @@ export class BrowserCodeCut {
         rawImport = rawImport.replace(new RegExp(`require\\((\\'|\\")`), '')
         rawImport = rawImport.replace(new RegExp(`(\\'|\\")\\)`), '')
         rawImport = rawImport.trim()
-        if (rawImport.startsWith(`./`)) return null;
+        if (rawImport.startsWith(`./`)) return void 0;
+        if (rawImport.startsWith(`../`)) return void 0;
         const fisrtName = rawImport.match(new RegExp(`[a-zA-z]+\\/`))
         let res: string = (_.isArray(fisrtName) && fisrtName.length > 0) ? fisrtName[0] : rawImport;
         if (res.endsWith('/') && res.length > 1) {
@@ -133,7 +134,8 @@ export class BrowserCodeCut {
       TSimportExport(rawImport, usage: TsUsage) {
         rawImport = rawImport.replace(new RegExp(`${usage}.+from\\s+`), '')
         rawImport = rawImport.replace(new RegExp(`(\'|\")`, 'g'), '').trim()
-        if (rawImport.startsWith(`./`)) return null;
+        if (rawImport.startsWith(`./`)) return void 0;
+        if (rawImport.startsWith(`../`)) return void 0;
         const fisrtName = rawImport.match(new RegExp(`([a-zA-z]|\-)+\\/`))
         let res: string = (_.isArray(fisrtName) && fisrtName.length > 0) ? fisrtName[0] : rawImport;
         if (res.endsWith('/') && res.length > 1) {
@@ -153,7 +155,7 @@ export class BrowserCodeCut {
     // console.log('MORPHI this.isomorphicLibs', this.isomorphicLibs)
     let realName = packageName;
     let isIsomorphic = false;
-    if (packageName !== null) {
+    if (packageName !== void 0) {
       isIsomorphic = !!BrowserCodeCut.IsomorphicLibs
         .find(p => {
           if (p === packageName) {
@@ -216,7 +218,9 @@ export class BrowserCodeCut {
     if (_.isArray(imports)) {
       imports.forEach(imp => {
         const pkgName = this.resolvePackageNameFrom.TSimportExport(imp, usage);
-        this.replaceFromLine(pkgName, imp);
+        if (pkgName) {
+          this.replaceFromLine(pkgName, imp);
+        }
       })
     }
     return this;
@@ -234,7 +238,9 @@ export class BrowserCodeCut {
     if (_.isArray(imports)) {
       imports.forEach(imp => {
         const pkgName = this.resolvePackageNameFrom.JSrequired(imp);
-        this.replaceFromLine(pkgName, imp)
+        if (pkgName) {
+          this.replaceFromLine(pkgName, imp);
+        }
       })
     }
     return this;

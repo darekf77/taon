@@ -40,6 +40,7 @@ export class PackagesRecognition {
         if (_.isArray(pj[config.array.isomorphicPackages])) {
           this.recognizedPackages = pj[config.array.isomorphicPackages];
           BrowserCodeCut.IsomorphicLibs = _.cloneDeep(this.recognizedPackages);
+          // console.log("RECOGNIZEDDDDD in ", pjPath)
           return;
         }
       } catch (error) {
@@ -61,6 +62,7 @@ export class PackagesRecognition {
   }
 
   protected updateCurrentPackageJson() {
+    // console.log('updateCurrentPackageJsonupdateCurrentPackageJsonupdateCurrentPackageJson')
     try {
       const pjPath = path.join(this.cwd, config.file.package_json);
       const pj = fse.readJSONSync(pjPath, {
