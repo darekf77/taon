@@ -40,8 +40,10 @@ export class BroswerCompilation extends BackendCompilation {
     const relativeFilePath = filePath.replace(path.join(this.cwd, this.location), '');
     const dest = path.join(this.cwd, this.sourceOutBrowser, relativeFilePath);
     if (!filePath.endsWith('.backend.ts')) {
-      fse.copyFileSync(filePath, dest);
-      this.codecut.file(dest)
+      if (fse.existsSync(filePath)) {
+        fse.copyFileSync(filePath, dest);
+        this.codecut.file(dest)
+      }
     }
   }
 
@@ -52,7 +54,7 @@ export class BroswerCompilation extends BackendCompilation {
     }
     fse.mkdirpSync(this.compilationFolderPath)
 
-    Helpers.System.Operations.tryCopyFrom(`${path.join(this.cwd, this.location)}/`, this.compilationFolderPath,{
+    Helpers.System.Operations.tryCopyFrom(`${path.join(this.cwd, this.location)}/`, this.compilationFolderPath, {
       filter: (src: string, dest: string) => {
         return !src.endsWith('.backend.ts')
       }
