@@ -12,6 +12,7 @@ import { Helpers } from '../helpers';
 import { CodeCut, BrowserCodeCut } from './browser-code-cut';
 import { config } from './config';
 
+export const FILE_NAME_ISOMORPHIC_PACKAGES = 'tmp-isomorphic-packages.json';
 
 export class PackagesRecognition {
 
@@ -22,7 +23,7 @@ export class PackagesRecognition {
 
   private recognizedPackages: string[];
 
-  constructor(private cwd: string) {
+  constructor(protected cwd: string) {
 
   }
 
@@ -31,9 +32,12 @@ export class PackagesRecognition {
   }
 
   start(force = false) {
+    const pjPath = path.join(this.cwd, FILE_NAME_ISOMORPHIC_PACKAGES);
+    if (!fse.existsSync(pjPath)) {
+      fse.writeJSONSync(pjPath, {}, { encoding: 'utf8' });
+    }
     if (!force) {
       try {
-        const pjPath = path.join(this.cwd, config.file.package_json);
         const pj = fse.readJSONSync(pjPath, {
           encoding: 'utf8'
         });
@@ -64,7 +68,10 @@ export class PackagesRecognition {
   protected updateCurrentPackageJson() {
     // console.log('updateCurrentPackageJsonupdateCurrentPackageJsonupdateCurrentPackageJson')
     try {
-      const pjPath = path.join(this.cwd, config.file.package_json);
+      const pjPath = path.join(this.cwd, FILE_NAME_ISOMORPHIC_PACKAGES);
+      if (!fse.existsSync(pjPath)) {
+        fse.writeJSONSync(pjPath, {}, { encoding: 'utf8' });
+      }
       const pj = fse.readJSONSync(pjPath, {
         encoding: 'utf8'
       });

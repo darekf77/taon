@@ -9,8 +9,6 @@ import { Helpers } from '../helpers';
 import { FileEvent } from './models';
 
 
-
-
 export abstract class IncrementalCompilation {
 
   public compilationFolderPath: string;
@@ -18,9 +16,9 @@ export abstract class IncrementalCompilation {
 
   protected readonly watchDir: string;
 
-  protected abstract syncAction(filesPathes: string[]): void;;
-  protected abstract preAsyncAction(): void;
-  protected abstract asyncAction(filePath: string); void;
+  public abstract syncAction(filesPathes: string[]): void;;
+  public abstract preAsyncAction(): void;
+  public abstract asyncAction(filePath: string, event?: FileEvent); void;
 
 
   constructor(
@@ -61,6 +59,11 @@ export abstract class IncrementalCompilation {
       this.preAsyncAction()
       // }, `pre-async action for ${taskName}`)
     }
+    if (!_.isString(this.watchDir)) {
+      console.log(`[morphi][incrementalcompilation][initwatch] Watch dir is not a string: ${this.watchDir}`)
+      return;
+    }
+
     if (_.isFunction(this.asyncAction)) {
       this.watchFilesAndFolders((f, event) => {
         if (!this.firstTimeFix[f]) {
@@ -69,14 +72,14 @@ export abstract class IncrementalCompilation {
         }
         // console.log(`File "${event}" : ${f}`)
         if (event !== 'removed') {
-          this.asyncAction(f);
+          this.asyncAction(f, event);
         }
       })
     }
   }
 
 
-  protected watchFilesAndFolders<WatchData=Object>(filesEventCallback: (absolutePath: string, event: FileEvent) => any) {
+  protected watchFilesAndFolders<WatchData = Object>(filesEventCallback: (absolutePath: string, event: FileEvent) => any) {
 
     const self = this;
     function callBackWithRelativePath(event: FileEvent) {
@@ -85,15 +88,17 @@ export abstract class IncrementalCompilation {
       }
     }
 
-
-    watch(this.watchDir, {
-      followSymlinks: false,
-    })
-      .on('change', callBackWithRelativePath('changed'))
-      .on('change', callBackWithRelativePath('rename'))
-      .on('add', callBackWithRelativePath('created'))
-      .on('unlink', callBackWithRelativePath('removed'))
-
+    if (_.isString(this.watchDir)) {
+      watch(this.watchDir, {
+        followSymlinks: false,
+      })
+        .on('change', callBackWithRelativePath('changed'))
+        .on('change', callBackWithRelativePath('rename'))
+        .on('add', callBackWithRelativePath('created'))
+        .on('unlink', callBackWithRelativePath('removed'))
+    } else {
+      console.log(`[morphi][incrementalcompilation] Watch dir is not a string: ${this.watchDir}`)
+    }
 
   }
 
