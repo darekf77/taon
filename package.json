@@ -191,14 +191,5 @@
     "webpack-dev-server": "~2.9.3",
     "zone.js": "0.8.20"
   },
-  "license": "MIT",
-  "isomorphicPackages": [
-    "browserify-sign",
-    "json10",
-    "lodash-walk-object",
-    "ng2-logger",
-    "ng2-rest",
-    "typeorm",
-    "typescript-class-helpers"
-  ]
+  "license": "MIT"
 }
