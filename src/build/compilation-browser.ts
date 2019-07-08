@@ -40,10 +40,28 @@ export class BroswerCompilation extends BackendCompilation {
     const relativeFilePath = filePath.replace(path.join(this.cwd, this.location), '');
     const dest = path.join(this.cwd, this.sourceOutBrowser, relativeFilePath);
     if (!filePath.endsWith('.backend.ts')) {
-      if (fse.existsSync(filePath)) {
-        fse.copyFileSync(filePath, dest);
-        this.codecut.file(dest)
-      }
+      const tryCopy = (pFilePath, pDest, count = 0) => {
+        if (!fse.existsSync(pFilePath)) {
+          if (count === 4) {
+            return;
+          }
+          setTimeout(() => {
+            tryCopy(pFilePath, pDest, ++count);
+          }, 1000)
+          return;
+        }
+        try {
+          fse.copyFileSync(pFilePath, pDest);
+        } catch (error) {
+          setTimeout(() => {
+            tryCopy(pFilePath, pDest, ++count);
+          }, 1000)
+          return;
+        }
+        this.codecut.file(pDest)
+      };
+      tryCopy(filePath, dest);
+
     }
   }
 
