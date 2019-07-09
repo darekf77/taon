@@ -5,7 +5,6 @@ import * as rimraf from 'rimraf';
 import * as path from 'path';
 import * as glob from 'glob';
 import * as _ from 'lodash';
-import { IncrementalCompilation } from './incremental-compilation';
 import { OutFolder } from './models';
 import { Helpers } from '../helpers';
 import { CodeCut } from './browser-code-cut';
