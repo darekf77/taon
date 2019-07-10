@@ -19,7 +19,10 @@
         "@angular/core": "5",
         "rxjs": "^5.5.6",
         "flatted": "^2.0.0",
-        "@types/json-stringify-safe": "^5.0.0"
+        "@types/json-stringify-safe": "^5.0.0",
+        "@types/passport": "^0.3.3",
+        "@types/passport-http-bearer": "^1.0.30",
+        "@types/validator": "^6.2.2"
       }
     }
   },
@@ -172,6 +175,7 @@
     "randomcolor": "^0.5.3",
     "redbird": "^0.7.0",
     "rimraf": "^2.6.2",
+    "robotjs": "0.5.1",
     "rxjs": "^5.5.6",
     "simple-git": "^1.96.0",
     "sleep": "^5.2.3",
