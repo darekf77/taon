@@ -177,7 +177,16 @@ export function initMethodNodejs(
       await EntityProcess.init(result, res, mdc);
 
     } catch (error) {
-      if (error instanceof Models.Errors) {
+      if (_.isString(error)) {
+        res.status(400).send(Helpers.JSON.stringify({
+          message: `
+Error inside: ${req.path}
+
+${error}
+
+`
+        }))
+      } else if (error instanceof Models.Errors) {
         console.log('Morphi Error', error)
         const err: Models.Errors = error;
         res.status(400).send(Helpers.JSON.stringify(err))
