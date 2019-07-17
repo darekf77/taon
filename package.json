@@ -156,7 +156,7 @@
     "mocha": "^5.2.0",
     "moment": "^2.22.2",
     "ng2-logger": "2.0.48",
-    "ng2-rest": "9.2.20",
+    "ng2-rest": "9.2.26",
     "node-notifier": "^5.3.0",
     "nodemon": "^1.14.11",
     "npm-get-dependents": "^1.0.1",
