@@ -2,8 +2,7 @@
   "tnp": {
     "resources": [
       "README.md",
-      "examples",
-      "super-simple-morphi-example",
+      "projects",
       "bin",
       "logo_github.png",
       "logo.png",
