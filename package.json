@@ -12,7 +12,14 @@
     "overrided": {
       "ignoreDepsPattern": [
         "@angular.*"
-      ]
+      ],
+      "dependencies": {
+        "@ngx-formly/core": "*",
+        "@angular/core": "5",
+        "rxjs": "^5.5.6",
+        "flatted": "^2.0.0",
+        "@types/json-stringify-safe": "^5.0.0"
+      }
     }
   },
   "name": "morphi",
@@ -56,6 +63,8 @@
     "webpack": "3.10.0"
   },
   "dependencies": {
+    "@angular/core": "5",
+    "@ngx-formly/core": "*",
     "@types/chai": "^4.1.2",
     "@types/chokidar": "2.1.3",
     "@types/dateformat": "^1.0.1",
@@ -116,6 +125,7 @@
     "express-fileupload": "^0.4.0",
     "fbgraph": "^1.4.1",
     "fkill": "6.1.0",
+    "flatted": "^2.0.0",
     "fs-extra": "^5.0.0",
     "fuzzy": "^0.1.3",
     "glob": "^7.1.2",
@@ -157,7 +167,7 @@
     "randomcolor": "^0.5.3",
     "redbird": "^0.7.0",
     "rimraf": "^2.6.2",
-    "rxjs": "5.5.6",
+    "rxjs": "^5.5.6",
     "simple-git": "^1.96.0",
     "sleep": "^5.2.3",
     "sloc": "^0.2.0",
