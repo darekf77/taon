@@ -190,7 +190,7 @@ ${error}
         console.log('Morphi Error', error)
         const err: Models.Errors = error;
         res.status(400).send(Helpers.JSON.stringify(err))
-      } if (error instanceof Error) {
+      } else if (error instanceof Error) {
         const err: Error = error;
         console.log('Code Error', error)
         betterError(err)
