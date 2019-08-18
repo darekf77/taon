@@ -19,14 +19,14 @@
         "rxjs": "^5.5.6",
         "flatted": "^2.0.0",
         "@types/json-stringify-safe": "^5.0.0",
-        "morphi": "2.0.60"
+        "morphi": "2.0.62"
       },
       "includeAsDev": [],
       "includeOnly": []
     }
   },
   "name": "morphi",
-  "version": "2.0.59",
+  "version": "2.0.61",
   "description": "Isomorphic solution for expressjs and angular5",
   "main": "index.js",
   "scripts": {
