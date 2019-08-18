@@ -18,7 +18,8 @@
         "@angular/core": "5",
         "rxjs": "^5.5.6",
         "flatted": "^2.0.0",
-        "@types/json-stringify-safe": "^5.0.0"
+        "@types/json-stringify-safe": "^5.0.0",
+        "morphi": "2.0.60"
       },
       "includeAsDev": [],
       "includeOnly": []
