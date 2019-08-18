@@ -30,10 +30,8 @@ export class BackendCompilation extends IncrementalCompilation {
     const commandJsAndMaps = `${tsExe} -d false  ${params.join(' ')}`
     const commandDts = `${tsExe}  ${params.join(' ')}`
 
-    // console.log(`(${this.compilerName}) Execute first command : ${commandJsAndMaps}
-    // # inside: ${cwd}`)
-    // console.log(`(${this.compilerName}) Execute second command : ${commandDts}
-    // # inside: ${cwd}`)
+    // console.log(`(${this.compilerName}) Execute first command : ${commandJsAndMaps}    # inside: ${cwd}`)
+    // console.log(`(${this.compilerName}) Execute second command : ${commandDts}    # inside: ${cwd}`)
 
     if (watch) {
       Helpers.log(child.exec(commandJsAndMaps, { cwd }));
@@ -41,16 +39,28 @@ export class BackendCompilation extends IncrementalCompilation {
         Helpers.log(child.exec(commandDts, { cwd }));
       }
     } else {
-      child.execSync(commandJsAndMaps, {
-        cwd,
-        stdio: [0, 1, 2]
-      })
-
-      if (generateDeclarations) {
-        child.execSync(commandDts, {
+      try {
+        child.execSync(commandJsAndMaps, {
           cwd,
           stdio: [0, 1, 2]
         })
+      } catch (e) {
+        console.error(`Compilation error: ${e}`)
+        process.exit(1)
+      }
+
+
+      if (generateDeclarations) {
+        try {
+          child.execSync(commandDts, {
+            cwd,
+            stdio: [0, 1, 2]
+          })
+        } catch (e) {
+          console.error(`Compilation error: ${e}`)
+          process.exit(1)
+        }
+
       }
     }
 
