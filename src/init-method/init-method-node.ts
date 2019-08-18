@@ -192,6 +192,7 @@ ${error}
         res.status(400).send(Helpers.JSON.stringify(err))
       } if (error instanceof Error) {
         const err: Error = error;
+        console.log('Code Error', error)
         betterError(err)
         res.status(400).send(Helpers.JSON.stringify({
           stack: err.stack,
