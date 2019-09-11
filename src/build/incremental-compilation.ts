@@ -4,7 +4,7 @@ import * as path from 'path';
 import chalk from 'chalk';
 import { watch } from 'chokidar'
 import * as glob from 'glob';
-import * as _ from "lodash";
+import * as _ from 'lodash';
 import { Helpers } from '../helpers';
 import { FileEvent } from './models';
 

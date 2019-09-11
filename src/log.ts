@@ -1,2 +1,1 @@
-
-export { Log, Level } from 'ng2-logger/browser';
+export { Log, Level } from 'ng2-logger';

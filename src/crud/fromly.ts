@@ -1,5 +1,4 @@
-
-import { SYMBOL } from "../symbols";
+import { SYMBOL } from '../symbols';
 import { FormlyFormOptions, FormlyFieldConfig } from '@ngx-formly/core';
 import * as _ from 'lodash';
 import { Log, Level } from 'ng2-logger';
@@ -216,6 +215,3 @@ export type FormlyArrayTransformFn =
   (fieldsArray: FormlyFieldConfig[],
     fieldObject?: { [propKey: string]: FormlyFieldConfig })
     => FormlyFieldConfig[]
-
-
-

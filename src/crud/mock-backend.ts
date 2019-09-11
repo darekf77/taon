@@ -4,7 +4,7 @@
 // // import { Helpers } from './helpers';
 
 // import { Log, Level } from 'ng2-logger';
-// // import { RestHeaders } from "./rest-headers";
+// // import { RestHeaders } from './rest-headers';
 // const log = Log.create('eureka', Level.__NOTHING)
 
 
@@ -228,4 +228,3 @@
 //     export type SortType = 'ASC' | 'DESC';
 
 // }
-

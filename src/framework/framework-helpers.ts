@@ -1,5 +1,5 @@
 //#region @backend
-import "reflect-metadata";
+import 'reflect-metadata';
 //#endregion
 import * as _ from 'lodash';
 import { Global } from '../global-config';
@@ -12,9 +12,9 @@ import { init } from '../init';
 import {
   Repository
 } from 'typeorm';
-import { Connection } from "typeorm/connection/Connection";
+import { Connection } from 'typeorm/connection/Connection';
 import { createConnection, createConnections, getConnection } from 'typeorm';
-import * as express from "express";
+import * as express from 'express';
 
 export { Connection } from 'typeorm';
 import { Helpers } from '../helpers';
@@ -246,5 +246,3 @@ export function start(options: StartOptions) {
   //#endregion
 
 }
-
-

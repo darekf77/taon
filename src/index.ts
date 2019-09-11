@@ -9,7 +9,7 @@ import * as sym from './symbols';
 import * as helpers from './helpers';
 import * as initDeco from './init';
 import * as isom from './isomorphic-replacements';
-import { generate } from "password-hash";
+import { generate } from 'password-hash';
 
 
 //#region @backend
@@ -152,4 +152,3 @@ export namespace Morphi {
 
 
 }
-

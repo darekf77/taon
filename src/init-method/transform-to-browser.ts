@@ -1,6 +1,6 @@
 //#region @backend
 import * as _ from 'lodash';
-import { Helpers } from "../helpers";
+import { Helpers } from '../helpers';
 import { CLASS } from 'typescript-class-helpers';
 import { Helpers as HelpersLog } from 'ng2-logger';
 import { ModelDataConfig } from '../crud';

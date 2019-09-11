@@ -1,14 +1,14 @@
 //#region @backend
-import * as express from "express";
-import * as http from "http";
+import * as express from 'express';
+import * as http from 'http';
 //#endregion
 
 import * as _ from 'lodash';
 import { Connection } from 'typeorm';
 import { Global } from './global-config';
-import { initMidleware } from "./init-method";
+import { initMidleware } from './init-method';
 
-export { Connection } from "typeorm";
+export { Connection } from 'typeorm';
 import { RealtimeNodejs, RealtimeBrowser } from './realtime';
 import { Models } from './models';
 import { SYMBOL } from './symbols';

@@ -1,8 +1,7 @@
-
-import { Response, RequestHandler } from "express";
-import { Response as ExpressResponse, Request as ExpressRequest } from "express";
-import { Helpers } from "ng2-rest";
-import { Models as ModelsNg2Rest } from "ng2-rest";
+import { Response, RequestHandler } from 'express';
+import { Response as ExpressResponse, Request as ExpressRequest } from 'express';
+import { Helpers } from 'ng2-rest';
+import { Models as ModelsNg2Rest } from 'ng2-rest';
 
 
 
@@ -95,4 +94,3 @@ export namespace Models {
   //#endregion
 
 }
-

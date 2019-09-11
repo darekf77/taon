@@ -1,6 +1,6 @@
 //#region @backend
 import * as path from 'path';
-import * as fse from "fs-extra";
+import * as fse from 'fs-extra';
 import * as fs from 'fs';
 import * as os from 'os';
 import chalk from 'chalk';

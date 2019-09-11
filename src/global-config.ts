@@ -1,4 +1,3 @@
-
 import { Socket } from 'socket.io'
 import { Helpers } from './helpers';
 import { Models } from 'typescript-class-helpers/models';
@@ -8,7 +7,7 @@ import * as path from 'path';
 import * as fse from 'fs-extra';
 import { Server, Namespace } from 'socket.io'
 import { Connection } from 'typeorm';
-import { Application } from "express";
+import { Application } from 'express';
 //#endregion
 
 export class Global {

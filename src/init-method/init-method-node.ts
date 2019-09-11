@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 
-import { Models } from "../models";
-import { Helpers } from "../helpers";
+import { Models } from '../models';
+import { Helpers } from '../helpers';
 import { Global } from '../global-config';
 
 import { SYMBOL } from '../symbols';

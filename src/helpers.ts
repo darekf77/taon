@@ -1,4 +1,3 @@
-
 //#region @backend
 import * as path from 'path';
 import * as child from 'child_process';
@@ -8,7 +7,7 @@ import * as fse from 'fs-extra';
 import chalk from 'chalk';
 import * as rimraf from 'rimraf';
 import { sleep } from 'sleep';
-import * as dateformat from "dateformat";
+import * as dateformat from 'dateformat';
 import check from 'check-node-version';
 const commandExistsSync = require('command-exists').sync;
 //#endregion
@@ -17,12 +16,12 @@ import * as JSON5 from 'json5';
 import * as _ from 'lodash';
 
 
-import { Helpers as HelpersNg2Rest } from "ng2-rest";
+import { Helpers as HelpersNg2Rest } from 'ng2-rest';
 import { SYMBOL } from './symbols';
 import { Models } from './models';
 
 //#region @backend
-import { Response as ExpressResponse, Request as ExpressRequest } from "express";
+import { Response as ExpressResponse, Request as ExpressRequest } from 'express';
 //#endregion
 
 export class Helpers extends HelpersNg2Rest {
@@ -409,12 +408,3 @@ export class Helpers extends HelpersNg2Rest {
 
 
 }
-
-
-
-
-
-
-
-
-

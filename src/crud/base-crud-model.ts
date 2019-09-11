@@ -1,8 +1,7 @@
-
 import * as _ from 'lodash';
 import { CLASS } from 'typescript-class-helpers';
 
-import { Observable } from "rxjs/Observable";
+import { Observable } from 'rxjs/Observable';
 import { SYMBOL } from '../symbols';
 import { ModelDataConfig } from './model-data-config';
 import { __ENDPOINT } from '../decorators/decorators-endpoint-class';
@@ -12,7 +11,7 @@ import { Models } from '../models';
 
 
 //#region @backend
-import { Repository, Connection, getRepository } from "typeorm";
+import { Repository, Connection, getRepository } from 'typeorm';
 import { tableNameFrom } from '../framework/framework-helpers';
 import { OrmConnection } from '../decorators/orm-connection';
 import { Helpers } from '../helpers';

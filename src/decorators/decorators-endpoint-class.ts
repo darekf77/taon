@@ -1,6 +1,6 @@
 //#region @backend
-import * as express from "express";
-import * as http from "http";
+import * as express from 'express';
+import * as http from 'http';
 //#endregion
 
 import {
@@ -8,10 +8,10 @@ import {
   //#region @backend
   initMethodNodejs
   //#endregion
-} from "../init-method";
+} from '../init-method';
 export { CLASS } from 'typescript-class-helpers';
-import { Connection } from "typeorm";
-import * as _ from "lodash";
+import { Connection } from 'typeorm';
+import * as _ from 'lodash';
 
 import { Global } from '../global-config';
 import { SYMBOL } from '../symbols';
@@ -19,7 +19,7 @@ import { SYMBOL } from '../symbols';
 import { Helpers } from '../helpers';
 import { activateBaseCrud } from '../crud/activate-base-crud';
 import { Models } from '../models';
-export { Connection } from "typeorm";
+export { Connection } from 'typeorm';
 
 
 export function __ENDPOINT(baseEntity?: Function): (...args: any[]) => any {

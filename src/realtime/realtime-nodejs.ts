@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 //#region @backend
 import { Http2Server } from 'http2';
 import * as io from 'socket.io';
-import { Response, Request } from "express";
+import { Response, Request } from 'express';
 import { SYMBOL } from '../symbols';
 //#endregion
 
