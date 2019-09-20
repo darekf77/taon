@@ -1,4 +1,3 @@
-
 import * as _ from 'lodash';
 import { Helpers } from '../helpers';
 import { Models } from '../models';
@@ -68,4 +67,3 @@ export function DELETE(path?: string) {
     metaReq('delete', path, target, propertyKey, descriptor);
   }
 }
-

@@ -65,4 +65,3 @@ export class RepeatTypeComponent extends FieldArrayType {
     super(builder);
   }
 }
-

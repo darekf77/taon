@@ -1,4 +1,3 @@
-
 import * as _ from 'lodash';
 import { Log } from 'ng2-logger';
 import { SYMBOL } from '../symbols';
@@ -296,4 +295,3 @@ function mergeWhatImportant(dest: Object, source: Object) {
     }
   }
 }
-

@@ -46,4 +46,3 @@ export function Body(name?: string) {
     metaParam('Body', name, undefined, {}, ...args)
   };
 }
-
