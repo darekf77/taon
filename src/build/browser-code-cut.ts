@@ -28,7 +28,6 @@ export class CodeCut {
   }
 
   file(absolutePathToFile) {
-
     // console.log('options here ', options)
     return new (this.browserCodeCut)(absolutePathToFile)
       .flatTypescriptImportExport('import')
@@ -70,7 +69,9 @@ export class BrowserCodeCut {
   }
 
   constructor(protected absoluteFilePath: string) {
-    this.rawContent = fs.readFileSync(absoluteFilePath, 'utf8').toString();
+    this.rawContent = fs.existsSync(absoluteFilePath) ?
+      fs.readFileSync(absoluteFilePath, 'utf8').toString()
+      : '';
   }
 
 
@@ -262,15 +263,19 @@ export class BrowserCodeCut {
 
   saveOrDelete() {
     // console.log('saving ismoprhic file', this.absoluteFilePath)
-    if (this.isEmpty) {
-      const deletePath = this.absoluteFilePath;
+    if (this.isEmpty && ['.ts', '.js'].includes(path.extname(this.absoluteFilePath))) {
+      if (fse.existsSync(this.absoluteFilePath)) {
+        fse.unlinkSync(this.absoluteFilePath)
+      }
       // console.log(`Delete empty: ${deletePath}`)
-      fse.unlinkSync(deletePath)
     } else {
-      // console.log(`Not empty: ${this.filePath}`)
+      // console.log(`Not empty: ${this.absoluteFilePath}`)
+      if (!fse.existsSync(path.dirname(this.absoluteFilePath))) {
+        fse.mkdirpSync(path.dirname(this.absoluteFilePath));
+      }
       fs.writeFileSync(this.absoluteFilePath, this.rawContent, 'utf8');
     }
-
+    // }
   }
 
 

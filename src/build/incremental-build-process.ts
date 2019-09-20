@@ -64,13 +64,13 @@ export class IncrementalBuildProcess {
     }
 
     if (this.backendCompilation) {
-      await this.backendCompilation.init(this.backendTaskName(taskName))
+      await this.backendCompilation.start(this.backendTaskName(taskName))
     }
 
 
     for (let index = 0; index < this.browserCompilations.length; index++) {
       const browserCompilation = this.browserCompilations[index];
-      await browserCompilation.init(this.browserTaksName(taskName, browserCompilation), () => {
+      await browserCompilation.start(this.browserTaksName(taskName, browserCompilation), () => {
         this.recreateBrowserLinks(browserCompilation)
       })
     }
@@ -85,13 +85,13 @@ export class IncrementalBuildProcess {
     }
 
     if (this.backendCompilation) {
-      await this.backendCompilation.initAndWatch(this.backendTaskName(taskName))
+      await this.backendCompilation.startAndWatch(this.backendTaskName(taskName))
     }
 
 
     for (let index = 0; index < this.browserCompilations.length; index++) {
       const browserCompilation = this.browserCompilations[index];
-      await browserCompilation.initAndWatch(this.browserTaksName(taskName, browserCompilation), () => {
+      await browserCompilation.startAndWatch(this.browserTaksName(taskName, browserCompilation), () => {
         this.recreateBrowserLinks(browserCompilation)
       })
     }

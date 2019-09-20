@@ -43,6 +43,7 @@
     "browser",
     "module",
     "tests",
+    "tmp-src",
     "src/tests",
     "src/**/*.spec.ts",
     "tmp-site-src",

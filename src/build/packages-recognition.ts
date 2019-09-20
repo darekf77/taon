@@ -4,7 +4,6 @@ import * as child from 'child_process';
 import * as fse from 'fs-extra';
 import * as rimraf from 'rimraf';
 import * as path from 'path';
-import * as glob from 'glob';
 import * as _ from 'lodash';
 
 import { CodeCut, BrowserCodeCut } from './browser-code-cut';

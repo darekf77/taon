@@ -3,20 +3,26 @@ import * as child from 'child_process';
 import * as fse from 'fs-extra';
 import * as rimraf from 'rimraf';
 import * as path from 'path';
-import * as glob from 'glob';
 import * as _ from 'lodash';
-import { IncrementalCompilation } from './incremental-compilation';
+import { IncCompiler } from 'incremental-compiler';
 import { OutFolder } from './models';
 import { Helpers } from '../helpers';
 import { CodeCut } from './browser-code-cut';
 import { config } from './config';
 
 
-export class BackendCompilation extends IncrementalCompilation {
+@IncCompiler.Class({ className: 'BackendCompilation' })
+export class BackendCompilation extends IncCompiler.Base {
 
+  public get compilationFolderPath() {
+    if (_.isString(this.location) && _.isString(this.cwd)) {
+      return path.join(this.cwd, this.location);
+    }
+  }
   public isEnableCompilation = true;
 
-  tscCompilation(cwd: string, watch = false, outDir?: string, generateDeclarations = false, tsExe = 'tsc') {
+  tscCompilation(cwd: string, watch = false, outDir?: string, generateDeclarations = false, tsExe = 'tsc',
+    diagnostics = false) {
     if (!this.isEnableCompilation) {
       console.log(`Compilation disabled for ${_.startCase(BackendCompilation.name)}`)
       return;
@@ -24,7 +30,8 @@ export class BackendCompilation extends IncrementalCompilation {
     const params = [
       watch ? '-w' : '',
       outDir ? `--outDir ${outDir}` : '',
-      !watch ? '--noEmitOnError true' : ''
+      !watch ? '--noEmitOnError true' : '',
+      diagnostics ? ' --extendedDiagnostics' : '',
     ]
 
     const commandJsAndMaps = `${tsExe} -d false  ${params.join(' ')}`
@@ -66,39 +73,23 @@ export class BackendCompilation extends IncrementalCompilation {
 
   }
 
-
-  prepareFiles() {
-
-    // init fiels
-    this.filesAndFoldesRelativePathes = glob.sync(this.globPattern, { cwd: this.compilationFolderPath });
-    // console.log('backend', this.filesAndFoldesRelativePathes.slice(0, 5))
-
-    // recreate dist
-    const outDistPath = path.join(this.cwd, this.outFolder);
-    // Helpers.System.Operations.tryRemoveDir(outDistPath)
-    if (!fse.existsSync(outDistPath)) {
-      fse.mkdirpSync(outDistPath);
-    }
-  }
-
   protected compilerName = 'Backend Compiler';
   compile(watch = false) {
     this.tscCompilation(this.compilationFolderPath, watch, `../${this.outFolder}` as any, true)
   }
 
-  syncAction(filesPathes: string[]) {
-    this.prepareFiles();
+  async syncAction(filesPathes: string[]) {
+    const outDistPath = path.join(this.cwd, this.outFolder);
+    // Helpers.System.Operations.tryRemoveDir(outDistPath)
+    if (!fse.existsSync(outDistPath)) {
+      fse.mkdirpSync(outDistPath);
+    }
     this.compile()
   }
 
-  preAsyncAction() {
+  async preAsyncAction() {
     this.compile(true)
   }
-  asyncAction(filePath: string) {
-    // noting here for backend
-
-  }
-
 
   get tsConfigName() {
     return 'tsconfig.json'
@@ -115,21 +106,20 @@ export class BackendCompilation extends IncrementalCompilation {
     public outFolder: OutFolder,
     /**
      * Source location
-     * Ex. src
+     * Ex. src | components
      */
-    location?: string,
+    public location: string,
     /**
      * Current cwd same for browser and backend
      * but browser project has own compilation folder
      * Ex. /home/username/project/myproject
      */
-    cwd?: string
+    public cwd?: string
   ) {
-    super('**/*.+(ts|css|scss|sass|html)', location, cwd)
-    if (_.isString(location) && _.isString(cwd) && !_.isUndefined(config)) {
-
-      this.compilationFolderPath = path.join(cwd, config.folder.src);
-    }
+    super({
+      folderPath: [path.join(cwd, location)],
+      notifyOnFileUnlink: true,
+    });
   }
 
 
