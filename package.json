@@ -26,7 +26,7 @@
     }
   },
   "name": "morphi",
-  "version": "2.0.61",
+  "version": "2.0.62",
   "description": "Isomorphic solution for expressjs and angular5",
   "main": "index.js",
   "scripts": {
@@ -136,7 +136,7 @@
     "http-proxy": "^1.16.2",
     "http-proxy-middleware": "0.19.1",
     "http-server": "0.11.1",
-    "incremental-compiler": "0.0.9",
+    "incremental-compiler": "0.0.10",
     "inquirer": "^5.2.0",
     "inquirer-autocomplete-prompt": "^1.0.1",
     "json-stringify-safe": "^5.0.1",
