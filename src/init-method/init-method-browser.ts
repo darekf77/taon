@@ -3,6 +3,7 @@ import { SYMBOL } from '../symbols';
 import * as _ from 'lodash';
 import { Models } from '../models';
 import { Resource } from 'ng2-rest';
+import { Models as Ng2RestModels } from 'ng2-rest/models';
 import { Helpers } from '../helpers';
 
 export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodConfig: Models.Rest.MethodConfig, expressPath) {
@@ -16,13 +17,13 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
     if (!window[SYMBOL.ENDPOINT_META_CONFIG]) window[SYMBOL.ENDPOINT_META_CONFIG] = {};
     if (!window[SYMBOL.ENDPOINT_META_CONFIG][uri.href]) window[SYMBOL.ENDPOINT_META_CONFIG][uri.href] = {};
     const endpoints = window[SYMBOL.ENDPOINT_META_CONFIG];
-    let rest;
+    let rest: Ng2RestModels.ResourceModel<any, any>;
     if (!endpoints[uri.href][expressPath]) {
       rest = Resource.create(uri.href, expressPath, SYMBOL.MAPPING_CONFIG_HEADER as any,
-        SYMBOL.CIRCURAL_OBJECTS_MAP_BODY as any);
+        SYMBOL.CIRCURAL_OBJECTS_MAP_BODY as any) as any;
       endpoints[uri.href][expressPath] = rest;
     } else {
-      rest = endpoints[uri.href][expressPath];
+      rest = endpoints[uri.href][expressPath] as any;
     }
 
     const method = type.toLowerCase();
@@ -49,7 +50,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
         if (currentParam.paramName) {
           const mapping = Helpers.Mapping.decode(param, !Global.vars.isProductionMode);
           if (mapping) {
-            Resource.Headers.request.set(
+            rest.headers.set(
               `${SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${currentParam.paramName}`,
               JSON.stringify(mapping))
           }
@@ -57,7 +58,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
         } else {
           const mapping = Helpers.Mapping.decode(param, !Global.vars.isProductionMode);
           if (mapping) {
-            Resource.Headers.request.set(
+            rest.headers.set(
               SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS,
               JSON.stringify(mapping))
           }
@@ -67,13 +68,13 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
       if (currentParam.paramType === 'Header') {
         if (currentParam.paramName) {
           if (currentParam.paramName === SYMBOL.MDC_KEY) { // parese MDC
-            Resource.Headers.request.set(currentParam.paramName, encodeURIComponent(JSON.stringify(param)))
+            rest.headers.set(currentParam.paramName, encodeURIComponent(JSON.stringify(param)))
           } else {
-            Resource.Headers.request.set(currentParam.paramName, param)
+            rest.headers.set(currentParam.paramName, param)
           }
         } else {
           for (let header in param) {
-            Resource.Headers.request.set(header, param[header])
+            rest.headers.set(header, param[header])
           }
         }
       }
@@ -84,7 +85,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
         if (currentParam.paramName) {
           const mapping = Helpers.Mapping.decode(param, !Global.vars.isProductionMode);
           if (mapping) {
-            Resource.Headers.request.set(
+            rest.headers.set(
               `${SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS}${currentParam.paramName}`,
               JSON.stringify(mapping))
           }
@@ -92,7 +93,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
         } else {
           const mapping = Helpers.Mapping.decode(param, !Global.vars.isProductionMode);
           if (mapping) {
-            Resource.Headers.request.set(
+            rest.headers.set(
               SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS,
               JSON.stringify(mapping))
           }
@@ -106,7 +107,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
       item = Helpers.JSON.parse(Helpers.JSON.stringify(item, void 0, void 0, circs => {
         circuralFromItem = circs;
       }))
-      Resource.Headers.request.set(
+      rest.headers.set(
         SYMBOL.CIRCURAL_OBJECTS_MAP_BODY,
         JSON.stringify(circuralFromItem)
       )
@@ -117,7 +118,8 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
       queryParams = Helpers.JSON.parse(Helpers.JSON.stringify(queryParams, void 0, void 0, circs => {
         circuralFromQueryParams = circs;
       }))
-      Resource.Headers.request.set(
+
+      rest.headers.set(
         SYMBOL.CIRCURAL_OBJECTS_MAP_QUERY_PARAM,
         JSON.stringify(circuralFromQueryParams))
     }
