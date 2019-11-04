@@ -25,7 +25,7 @@
     }
   },
   "name": "morphi",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Isomorphic solution for expressjs and angular5",
   "main": "index.js",
   "scripts": {
@@ -151,7 +151,7 @@
     "mocha": "^5.2.0",
     "moment": "^2.22.2",
     "ng2-logger": "2.0.48",
-    "ng2-rest": "9.2.26",
+    "ng2-rest": "9.3.1",
     "node-notifier": "^5.3.0",
     "nodemon": "^1.14.11",
     "npm-get-dependents": "^1.0.1",
