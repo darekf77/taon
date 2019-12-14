@@ -183,6 +183,7 @@
     "tsickle": "^0.26.0",
     "typeorm": "0.2.7",
     "typescript-class-helpers": "0.0.25",
+    "typescript-formatter": "7.2.2",
     "underscore": "^1.9.1",
     "validator": "^9.2.0",
     "watch": "~1.0.2",

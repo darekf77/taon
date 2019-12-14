@@ -37,8 +37,8 @@ export class BackendCompilation extends IncCompiler.Base {
     const commandJsAndMaps = `${tsExe} -d false  ${params.join(' ')}`
     const commandDts = `${tsExe}  ${params.join(' ')}`
 
-    // console.log(`(${this.compilerName}) Execute first command : ${commandJsAndMaps}    # inside: ${cwd}`)
-    // console.log(`(${this.compilerName}) Execute second command : ${commandDts}    # inside: ${cwd}`)
+    console.log(`(${this.compilerName}) Execute first command : ${commandJsAndMaps}    # inside: ${cwd}`)
+    console.log(`(${this.compilerName}) Execute second command : ${commandDts}    # inside: ${cwd}`)
 
     if (watch) {
       Helpers.log(child.exec(commandJsAndMaps, { cwd }));
