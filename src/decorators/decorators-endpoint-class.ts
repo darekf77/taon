@@ -51,7 +51,7 @@ export function ENDPOINT(options?: {
         // console.log(`INITING ${target.name} , parent ${target['__proto__'].name} `)
         activateBaseCrud(target, entity, additionalEntities)
         //#region  access decorator config
-        const configs = Helpers.Class.getConfig(target);
+        const configs = Helpers.Class.getConfig(target) as any[];
         // console.log(`Class config for ${Helpers.Class.getName(target)}`, configs)
         const classConfig: Models.Rest.ClassConfig = configs[0];
         classConfig.path = path;
