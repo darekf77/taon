@@ -32,6 +32,7 @@ export class BackendCompilation extends IncCompiler.Base {
       outDir ? `--outDir ${outDir}` : '',
       !watch ? '--noEmitOnError true' : '',
       diagnostics ? ' --extendedDiagnostics' : '',
+      `--preserveWatchOutput`
     ]
 
     const commandJsAndMaps = `${tsExe} -d false  ${params.join(' ')}`
