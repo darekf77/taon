@@ -10,6 +10,7 @@ import {
   //#endregion
 } from '../init-method';
 export { CLASS } from 'typescript-class-helpers';
+import { CLASS } from 'typescript-class-helpers';
 import { Connection } from 'typeorm';
 import * as _ from 'lodash';
 
@@ -19,6 +20,7 @@ import { SYMBOL } from '../symbols';
 import { Helpers } from '../helpers';
 import { activateBaseCrud } from '../crud/activate-base-crud';
 import { Models } from '../models';
+
 export { Connection } from 'typeorm';
 
 
@@ -51,8 +53,8 @@ export function ENDPOINT(options?: {
         // console.log(`INITING ${target.name} , parent ${target['__proto__'].name} `)
         activateBaseCrud(target, entity, additionalEntities)
         //#region  access decorator config
-        const configs = Helpers.Class.getConfig(target) as any[];
-        // console.log(`Class config for ${Helpers.Class.getName(target)}`, configs)
+        const configs = CLASS.getConfig(target) as any[];
+        // console.log(`Class config for ${CLASS.getName(target)}`, configs)
         const classConfig: Models.Rest.ClassConfig = configs[0];
         classConfig.path = path;
         const parentscalculatedPath = _
@@ -62,13 +64,13 @@ export function ENDPOINT(options?: {
             if (Helpers.isGoodPath(bc.path)) {
               return bc.path
             }
-            return Helpers.Class.getName(bc.classReference);
+            return CLASS.getName(bc.classReference);
           }).join('/')
 
         if (Helpers.isGoodPath(path)) {
           classConfig.calculatedPath = path;
         } else {
-          classConfig.calculatedPath = `/${parentscalculatedPath}/${Helpers.Class.getName(target)}`
+          classConfig.calculatedPath = `/${parentscalculatedPath}/${CLASS.getName(target)}`
             .replace(/\/\//g, '/');
         }
 

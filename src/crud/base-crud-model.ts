@@ -205,7 +205,7 @@ function forObjectPropertiesOf(item) {
       Object.keys(item).forEach(propertyName => {
         const partialItem = item[propertyName];
         if (_.isObject(partialItem) && !_.isArray(partialItem)) {
-          const entityClass = Helpers.Class.getFromObject(partialItem);
+          const entityClass = CLASS.getFromObject(partialItem);
           const repo = entityClass && entityClass[SYMBOL.HAS_TABLE_IN_DB] && getRepository(entityClass);
           if (repo) {
             objectPropertiesToUpdate.push(action(repo, partialItem, entityClass))

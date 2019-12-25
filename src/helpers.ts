@@ -23,6 +23,7 @@ import { Models } from './models';
 //#region @backend
 import { Response as ExpressResponse, Request as ExpressRequest } from 'express';
 //#endregion
+import { CLASS } from 'typescript-class-helpers';
 
 export class Helpers extends HelpersNg2Rest {
 
@@ -77,7 +78,7 @@ export class Helpers extends HelpersNg2Rest {
     }
     targets.push(target)
     let targetProto = target['__proto__'] as Function;
-    if (_.isFunction(targetProto) && this.Class.getName(targetProto) === name) {
+    if (_.isFunction(targetProto) && CLASS.getName(targetProto) === name) {
       // console.log(`true  "${_.first(targets).name}" for ${targets.map(d => d.name).join(',')}`)
       return true;
     }
@@ -156,13 +157,13 @@ export class Helpers extends HelpersNg2Rest {
 
 
   static getSingleton<T = Object>(target: Function): T {
-    const configs = Helpers.Class.getConfig(target)
+    const configs = CLASS.getConfig(target)
     return ((Array.isArray(configs) && configs.length >= 1) ? configs[0].singleton : undefined) as any;
   }
 
 
   static getSingletons<T = Object>(target: Function): T[] {
-    const configs = Helpers.Class.getConfig(target)
+    const configs = CLASS.getConfig(target)
     return configs.map(c => c.singleton as T);
   }
 

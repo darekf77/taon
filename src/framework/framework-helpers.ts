@@ -87,14 +87,14 @@ Please check your Morphi.Repository(...) decorators `, entityFN, repoFn)
     compolexProperties.forEach(alias => {
       repo['__'][alias] = {};
 
-      const describedProps = Helpers.Class.describeProperites(entityFN)
+      const describedProps = CLASS.describeProperites(entityFN)
       // console.log(`describedProps  "${describedProps}" for ${entity.name}`)
 
       describedProps.concat(compolexProperties as any).forEach(prop => {
         repo['__'][alias][prop] = `${alias as any}.${prop}`; // TODO temp solution
       })
 
-      const props = Helpers.Class.describeProperites(entityFN)
+      const props = CLASS.describeProperites(entityFN)
       // console.log(`props  "${props}" for ${entity.name}`)
       props.forEach(prop => {
         repo['__'][alias][prop] = `${alias as any}.${prop}`; // TODO ideal solution

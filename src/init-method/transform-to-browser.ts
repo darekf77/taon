@@ -17,7 +17,7 @@ export function getTransformFunction(target: Function, mdc: ModelDataConfig) {
   if (!target) {
     return void 0;
   }
-  const configs = Helpers.Class.getConfig(target);
+  const configs = CLASS.getConfig(target);
   // console.log(`CONFIGS TO CHECK`, configs)
   const functions = configs
     .map(c => {
@@ -39,12 +39,12 @@ export function getTransformFunction(target: Function, mdc: ModelDataConfig) {
 
 export function singleTransform(json: any, mdc: ModelDataConfig) {
 
-  let ptarget = Helpers.Class.getFromObject(json);
+  let ptarget = CLASS.getFromObject(json);
   let pbrowserTransformFn = getTransformFunction(ptarget, mdc);
   if (pbrowserTransformFn) {
     const newValue = pbrowserTransformFn(json)
     if (!_.isObject(newValue)) {
-      console.error(`Please return object in transform function for class: ${Helpers.Class.getNameFromObject(json)}`)
+      console.error(`Please return object in transform function for class: ${CLASS.getNameFromObject(json)}`)
     } else {
       json = newValue;
     }

@@ -1,15 +1,15 @@
 import * as _ from 'lodash';
 import { Helpers } from '../helpers';
-
+import { CLASS } from 'typescript-class-helpers';
 
 const abstractClasses = ['BASE_CONTROLLER']
 
 export function activateBaseCrud(target: Function, entity: Function, entites?: Function[]) {
 
   if (_.isFunction(target) && Helpers.hasParentClassWithName(target, 'BaseCRUD') &&
-    !abstractClasses.includes(Helpers.Class.getName(target))) {
+    !abstractClasses.includes(CLASS.getName(target))) {
     if (_.isUndefined(entity)) {
-      if (Helpers.Class.getName(target) === Helpers.Class.getName(target['__proto__'])) {
+      if (CLASS.getName(target) === CLASS.getName(target['__proto__'])) {
         // console.log(`Site class override curd for ${getClassName(target)}`)
         return;
       }
@@ -20,7 +20,7 @@ export function activateBaseCrud(target: Function, entity: Function, entites?: F
   entity: <YOUR ENTITY CLASS HERE>
   ...
 })
-class ${Helpers.Class.getName(target)} extends  ...
+class ${CLASS.getName(target)} extends  ...
       `
     } else {
       // console.log(`Traget ${target.name} has parent BaseCrud`)

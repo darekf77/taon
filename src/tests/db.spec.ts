@@ -107,14 +107,14 @@
 //     if (!_.isObject(classObject)) {
 //       return;
 //     }
-//     // console.log(`\n\n${++this.step} Step classObject(${Helpers.Class.getNameFromObject(classObject)}.id=${this.getKeyFromObject(classObject)}) context(${context ? `${Helpers.Class.getNameFromObject(context)}.id=${this.getKeyFromObject(context)}` : ''}.${insidePath})`)
+//     // console.log(`\n\n${++this.step} Step classObject(${CLASS.getNameFromObject(classObject)}.id=${this.getKeyFromObject(classObject)}) context(${context ? `${CLASS.getNameFromObject(context)}.id=${this.getKeyFromObject(context)}` : ''}.${insidePath})`)
 //     // console.log(this.toString())
 
 //     if (!_.isUndefined(arrayId)) {
 //       insidePath = `${insidePath}[${arrayId}]`
 //     }
 
-//     const alreadyExisted = this.getBy(Helpers.Class.getFromObject(classObject), this.getKeyFromObject(classObject));
+//     const alreadyExisted = this.getBy(CLASS.getFromObject(classObject), this.getKeyFromObject(classObject));
 //     if (alreadyExisted) {
 //       if (context) {
 //         _.set(context, insidePath, this.merge(alreadyExisted, classObject));
@@ -125,31 +125,31 @@
 //       // console.log('insidePath ref',insidePath)
 //       // classObject[REF].push({ context, key: propertyKey, id: arrayId })
 
-//       // console.log(`set already existed ${Helpers.Class.getNameFromObject(alreadyExisted)}.id=${this.getKeyFromObject(alreadyExisted)}`)
+//       // console.log(`set already existed ${CLASS.getNameFromObject(alreadyExisted)}.id=${this.getKeyFromObject(alreadyExisted)}`)
 //       return alreadyExisted;
 //     }
 
-//     if (_.isUndefined(this.db[Helpers.Class.getNameFromObject(classObject)])) {
-//       this.db[Helpers.Class.getNameFromObject(classObject)] = {}
-//       this.db[Helpers.Class.getNameFromObject(classObject)][this.getKeyFromObject(classObject)] = classObject;
+//     if (_.isUndefined(this.db[CLASS.getNameFromObject(classObject)])) {
+//       this.db[CLASS.getNameFromObject(classObject)] = {}
+//       this.db[CLASS.getNameFromObject(classObject)][this.getKeyFromObject(classObject)] = classObject;
 //     } else {
-//       if (_.isUndefined(this.db[Helpers.Class.getNameFromObject(classObject)])) {
-//         this.db[Helpers.Class.getNameFromObject(classObject)] = {}
+//       if (_.isUndefined(this.db[CLASS.getNameFromObject(classObject)])) {
+//         this.db[CLASS.getNameFromObject(classObject)] = {}
 //       }
-//       const existed = this.db[Helpers.Class.getNameFromObject(classObject)][this.getKeyFromObject(classObject)];
+//       const existed = this.db[CLASS.getNameFromObject(classObject)][this.getKeyFromObject(classObject)];
 //       if (_.isUndefined(existed)) {
-//         this.db[Helpers.Class.getNameFromObject(classObject)][this.getKeyFromObject(classObject)] = classObject;
+//         this.db[CLASS.getNameFromObject(classObject)][this.getKeyFromObject(classObject)] = classObject;
 //       } else {
-//         this.db[Helpers.Class.getNameFromObject(classObject)][this.getKeyFromObject(classObject)] = this.merge(existed, classObject)
+//         this.db[CLASS.getNameFromObject(classObject)][this.getKeyFromObject(classObject)] = this.merge(existed, classObject)
 //       }
 //     }
 
-//     let res = this.getBy(Helpers.Class.getFromObject(classObject), this.getKeyFromObject(classObject));
+//     let res = this.getBy(CLASS.getFromObject(classObject), this.getKeyFromObject(classObject));
 //     if (context) {
 //       // const aa = _.get(context, insidePath);
 //       _.set(context, insidePath, res);
-//       // console.log(`set insted for ${Helpers.Class.getNameFromObject(aa)}.${insidePath} = ${aa.id}`)
-//       // console.log(`set to context(${Helpers.Class.getNameFromObject(context)}.${insidePath} = (${Helpers.Class.getNameFromObject(res)}.id=${this.getKeyFromObject(res)})`)
+//       // console.log(`set insted for ${CLASS.getNameFromObject(aa)}.${insidePath} = ${aa.id}`)
+//       // console.log(`set to context(${CLASS.getNameFromObject(context)}.${insidePath} = (${CLASS.getNameFromObject(res)}.id=${this.getKeyFromObject(res)})`)
 //     }
 
 
@@ -169,7 +169,7 @@
 
 //   // delete(nameOrFunction: string | Function, idOrKey: any) {
 //   //   if (_.isFunction(nameOrFunction)) {
-//   //     nameOrFunction = Helpers.Class.getName(nameOrFunction)
+//   //     nameOrFunction = CLASS.getName(nameOrFunction)
 //   //   }
 //   //   nameOrFunction = nameOrFunction as string;
 //   //   if (this.db[nameOrFunction]) {
@@ -192,7 +192,7 @@
 
 //   getBy<T>(nameOrFunction: string | Function, idOrKey: any): T {
 //     if (_.isFunction(nameOrFunction)) {
-//       nameOrFunction = Helpers.Class.getName(nameOrFunction)
+//       nameOrFunction = CLASS.getName(nameOrFunction)
 //     }
 //     nameOrFunction = nameOrFunction as string;
 //     if (this.db[nameOrFunction]) {
@@ -202,7 +202,7 @@
 
 //   getAll<T>(nameOrFunction: string | Function): T[] {
 //     if (_.isFunction(nameOrFunction)) {
-//       nameOrFunction = Helpers.Class.getName(nameOrFunction)
+//       nameOrFunction = CLASS.getName(nameOrFunction)
 //     }
 //     nameOrFunction = nameOrFunction as string;
 //     if (_.isUndefined(this.db[nameOrFunction])) {

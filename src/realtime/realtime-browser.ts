@@ -66,14 +66,14 @@ export class RealtimeBrowser {
 
   public static TriggerChange(entity: AliasEntityType, property?: string) {
 
-    const constructFn = Helpers.Class.getFromObject(entity)
+    const constructFn = CLASS.getFromObject(entity)
 
     if (!constructFn) {
       log.er(`Activate: Cannot retrive Class function from object`, entity)
       return
     }
 
-    const className = Helpers.Class.getName(constructFn);
+    const className = CLASS.getName(constructFn);
     const { id } = entity;
 
     const unsub = () => {
@@ -113,14 +113,14 @@ export class RealtimeBrowser {
       throw `[Morphi.Realtime.Browser.Subscribe] bad id = "${id}" for entity.`
     }
 
-    const constructFn = Helpers.Class.getFromObject(entity)
+    const constructFn = CLASS.getFromObject(entity)
 
     if (!constructFn) {
       log.er(`Activate: Cannot retrive Class function from object`, entity)
       return
     }
 
-    const className = Helpers.Class.getName(constructFn);
+    const className = CLASS.getName(constructFn);
 
     this.checkObjects(className, entity, property, changesListener);
 
@@ -300,13 +300,13 @@ export class RealtimeBrowser {
       throw `[Morphi.Realtime.Browser.Unsubscribe] bad id = "${id}" for entity.`
     }
 
-    const constructFn = _.isFunction(classFN) ? classFN : Helpers.Class.getFromObject(entity)
+    const constructFn = _.isFunction(classFN) ? classFN : CLASS.getFromObject(entity)
     if (!constructFn) {
       log.er(`Deactivate: Cannot retrive Class function from object`, entity)
       return
     }
 
-    const className = Helpers.Class.getName(constructFn);
+    const className = CLASS.getName(constructFn);
     const realtime = Global.vars.socketNamespace.FE_REALTIME;
 
     const roomName = _.isString(property) ?

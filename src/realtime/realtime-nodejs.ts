@@ -13,6 +13,7 @@ import { Log, Level } from 'ng2-logger';
 import { BASE_ENTITY } from '../framework/framework-entity';
 import { Helpers } from '../helpers';
 import { RealtimeHelper } from './realtime-helper';
+import { CLASS } from 'typescript-class-helpers';
 const log = Log.create('RealtimeNodejs', Level.__NOTHING)
 
 export class RealtimeNodejs {
@@ -88,12 +89,12 @@ export class RealtimeNodejs {
     const id = entity[keyPropertyName];
     // Global.vars.socket.BE.sockets.in()\
 
-    const constructFn = Helpers.Class.getFromObject(entity);
+    const constructFn = CLASS.getFromObject(entity);
     // console.log('construcFN', constructFn)
     if (!constructFn) {
       log.d('not found class function from', entity)
     } else {
-      const className = Helpers.Class.getName(constructFn);
+      const className = CLASS.getName(constructFn);
 
       const modelSocketRoomPath = _.isString(property) ?
         SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY_PROPERTY(className, property, entity.id) :

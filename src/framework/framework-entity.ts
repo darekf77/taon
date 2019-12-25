@@ -100,7 +100,7 @@ export function Entity<T = {}>(options?: {
 
     //#region @backend
     if (_.isFunction(browserTransformFn)) {
-      const configs = Helpers.Class.getConfig(target) as any[];
+      const configs = CLASS.getConfig(target) as any[];
       const config = _.first(configs);
       config.browserTransformFn = browserTransformFn;
       // console.log('BROWSER TRANSFORM FUNCTION ADDED TO CONFIGS', configs)

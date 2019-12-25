@@ -145,7 +145,7 @@ Incorect value for property "entities" inside Morphi.Init(...)
         e.initFN();
 
         (function (controller: Function) {
-          const c = Helpers.Class.getConfig(currentCtrl)[0];
+          const c = CLASS.getConfig(currentCtrl)[0];
 
           c.injections.forEach(inj => {
             Object.defineProperty(controller.prototype, inj.propertyName, { get: inj.getter as any });
@@ -183,7 +183,7 @@ Incorect value for property "entities" inside Morphi.Init(...)
       }
     })
     notFound.forEach(ctrl => {
-      throw `Decorator "@ENDPOINT(..)" is missing on class ${Helpers.Class.getName(ctrl)}`;
+      throw `Decorator "@ENDPOINT(..)" is missing on class ${CLASS.getName(ctrl)}`;
     });
     providers.forEach(p => Providers.push(p))
   }

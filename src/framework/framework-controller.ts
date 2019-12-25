@@ -136,10 +136,10 @@ export abstract class BASE_CONTROLLER<T> extends BaseCRUD<T>
   //#region @backend
 
   get db(): { [entities: string]: Repository<any> } {
-    throw `db method not implemented ${Helpers.Class.getNameFromObject(this)}`
+    throw `db method not implemented ${CLASS.getNameFromObject(this)}`
   }
   get ctrl(): { [controller: string]: BASE_CONTROLLER<any> } {
-    throw `ctrl method not implemented ${Helpers.Class.getNameFromObject(this)}`
+    throw `ctrl method not implemented ${CLASS.getNameFromObject(this)}`
   }
 
   async initExampleDbData() {

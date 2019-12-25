@@ -6,8 +6,8 @@ import { Helpers } from '../helpers';
 import { Mapping } from 'ng2-rest';
 import { Models } from '../models';
 import { getRegisteredComponents, findTypeForEntity } from './type-from-entity';
+import { CLASS } from 'typescript-class-helpers';
 
-const log = Log.create('[morphi] formly')
 
 type FormlyInputType = 'input' | 'switch' | 'datepicker' | 'repeat' | 'group'
 export function getFromlyConfigFor(
@@ -26,7 +26,7 @@ export function getFromlyConfigFor(
     parentModel, relativePath = '', level = 0, maxLevel = 4,
   } = options;
 
-  if (Helpers.Class.getName(target) === 'Project') {
+  if (CLASS.getName(target) === 'Project') {
     return [];
   }
 
@@ -36,7 +36,7 @@ export function getFromlyConfigFor(
 
   const mapping: Mapping.Mapping = Mapping.getModelsMapping(target);
   // console.log('mapping', mapping)
-  const fieldNames = Helpers.Class.describeProperites(target);
+  const fieldNames = CLASS.describeProperites(target);
   const checkExclude = (_.isArray(keysPathesToExclude) && keysPathesToExclude.length > 0);
   const checkInclude = (_.isArray(keysPathesToInclude) && keysPathesToInclude.length > 0);
   if (checkExclude && checkInclude) {
@@ -177,7 +177,7 @@ export function getFromlyConfigFor(
           if (className === 'Date') {
             fields.push(inputToPush(key, 'datepicker', parentModel))
           } else {
-            const targetChild = Helpers.Class.getBy(className);
+            const targetChild = CLASS.getBy(className);
 
             if (targetChild) {
 

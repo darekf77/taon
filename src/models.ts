@@ -1,11 +1,11 @@
 import { Response, RequestHandler } from 'express';
 import { Response as ExpressResponse, Request as ExpressRequest } from 'express';
-import { Helpers } from 'ng2-rest';
 import { Models as ModelsNg2Rest } from 'ng2-rest';
 
 
 
 import 'rxjs/add/operator/map'
+import { CLASS } from 'typescript-class-helpers';
 
 
 export namespace Models {
@@ -59,7 +59,7 @@ export namespace Models {
     }
 
     public static entityNotFound(entity?: Function) {
-      return Errors.create(`Entity ${Helpers.Class.getName(entity)} not found`);
+      return Errors.create(`Entity ${CLASS.getName(entity)} not found`);
     }
 
     public static custom(message: string, code: ModelsNg2Rest.HttpCode = 400) {
