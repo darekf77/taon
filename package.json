@@ -18,7 +18,7 @@
     }
   },
   "name": "morphi",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Isomorphic solution for expressjs and angular5",
   "main": "index.js",
   "scripts": {
@@ -181,7 +181,7 @@
     "ng-packagr": "^5.7.1",
     "ng2-file-upload": "^1.3.0",
     "ng2-logger": "3.0.11",
-    "ng2-rest": "10.0.1",
+    "ng2-rest": "10.0.2",
     "ngx-bootstrap": "^5.2.0",
     "ngx-breadcrumbs": "0.0.3",
     "ngx-editor": "^4.1.0",
@@ -225,7 +225,7 @@
     "tslib": "^1.10.0",
     "tslint": "~5.18.0",
     "typeorm": "0.2.7",
-    "typescript": "3.7.4",
+    "typescript": "3.6.4",
     "typescript-class-helpers": "1.0.1",
     "typescript-formatter": "7.2.2",
     "underscore": "^1.9.1",
