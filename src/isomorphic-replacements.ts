@@ -1,5 +1,5 @@
 //#region @backend
-import { Repository } from 'typeorm/repository/Repository';
+import { Repository } from 'typeorm';
 //#endregion
 
 export class TypeormRepository<T>

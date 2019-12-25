@@ -3,7 +3,7 @@ import { SYMBOL } from '../symbols';
 import * as _ from 'lodash';
 import { Models } from '../models';
 import { Resource } from 'ng2-rest';
-import { Models as Ng2RestModels } from 'ng2-rest/models';
+import { Models as Ng2RestModels } from 'ng2-rest';
 import { Helpers } from '../helpers';
 
 export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodConfig: Models.Rest.MethodConfig, expressPath) {

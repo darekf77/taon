@@ -1,5 +1,10 @@
-import * as crudMorph from './crud';
+
 export { ModelDataConfig, MDC } from './crud/model-data-config';
+export { Helpers } from './helpers';
+export { RepeatTypeComponent } from './crud/formly-repeat-component';
+export { FormlyHorizontalWrapper } from './crud/formly-group-wrapper-component';
+
+import * as crudMorph from './crud';
 import * as decoratorsMorphi from './decorators';
 import * as framework from './framework';
 import * as realtime from './realtime';

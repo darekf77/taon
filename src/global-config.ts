@@ -1,6 +1,6 @@
 import { Socket } from 'socket.io'
 import { Helpers } from './helpers';
-import { Models } from 'typescript-class-helpers/models';
+import { Models } from 'typescript-class-helpers';
 
 //#region @backend
 import * as path from 'path';

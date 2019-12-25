@@ -1,7 +1,7 @@
 //#region @backend
 import 'reflect-metadata';
-import { Repository } from 'typeorm/repository/Repository';
-import { Connection } from 'typeorm/connection/Connection';
+import { Repository } from 'typeorm';
+import { Connection } from 'typeorm';
 import { createConnection, createConnections, getConnection } from 'typeorm';
 import * as express from 'express';
 
@@ -110,4 +110,3 @@ Please check your Morphi.Repository(...) decorators `, entityFN, repoFn)
   return repo as any;
 }
 //#endregion
-
