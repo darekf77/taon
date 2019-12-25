@@ -1,6 +1,7 @@
 
 export { ModelDataConfig, MDC } from './crud/model-data-config';
 export { Helpers } from './helpers';
+export { Models } from './models';
 export { RepeatTypeComponent } from './crud/formly-repeat-component';
 export { FormlyHorizontalWrapper } from './crud/formly-group-wrapper-component';
 
