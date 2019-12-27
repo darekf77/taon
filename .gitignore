@@ -45,5 +45,5 @@ Thumbs.db
 /run.js
 /tsconfig.json.filetemplate
 
-!*.filetemplate
+*.filetemplate
 
