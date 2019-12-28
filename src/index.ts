@@ -1,3 +1,12 @@
+//#region @backend
+export { config } from './build/config';
+export { FILE_NAME_ISOMORPHIC_PACKAGES } from './build/packages-recognition';
+export {
+  CodeCut, BrowserCodeCut, TsUsage, IncrementalBuildProcess, PackagesRecognition,
+  BroswerCompilation, OutFolder, BackendCompilation
+} from './build';
+
+//#endregion
 
 export { ModelDataConfig, MDC } from './crud/model-data-config';
 export { Helpers } from './helpers';
