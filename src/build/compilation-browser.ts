@@ -45,9 +45,12 @@ export class BroswerCompilation extends BackendCompilation {
       rimraf.sync(this.compilationFolderPath)
     }
     fse.mkdirpSync(this.compilationFolderPath)
+    const dereference = true; // Copy symlinks as normal files
+    // console.log(`copying ${path.join(this.cwd, this.location)}/ to  ${this.compilationFolderPath} dereference: ${dereference},`)
 
     // TODO this may be replaced by filesPathes
     Helpers.System.Operations.tryCopyFrom(`${path.join(this.cwd, this.location)}/`, this.compilationFolderPath, {
+      dereference,
       filter: (src: string, dest: string) => {
         return copyToBrowserSrcCodition(src);
       }
