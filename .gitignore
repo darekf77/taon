@@ -33,6 +33,7 @@ Thumbs.db
 /.sass-cache
 /.sourcemaps
 /tsconfig.json
+/tsconfig.isomorphic.json
 /.npmrc
 /tslint.json
 /.editorconfig
@@ -45,6 +46,6 @@ Thumbs.db
 /webpack.config.js
 /run.js
 /tsconfig.json.filetemplate
+/tsconfig.isomorphic.json.filetemplate
 
 *.filetemplate
-
