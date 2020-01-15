@@ -48,8 +48,7 @@ Thumbs.db
 /tsconfig.json.filetemplate
 /tsconfig.isomorphic.json.filetemplate
 /tsconfig.browser.json.filetemplate
-/webpack.backend-bundle-build.js
+
+
 
 *.filetemplate
-
-/webpack.backend-bundle-build.js
