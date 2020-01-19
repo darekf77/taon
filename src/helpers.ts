@@ -6,7 +6,6 @@ import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import chalk from 'chalk';
 import * as rimraf from 'rimraf';
-import { sleep } from 'sleep';
 import * as dateformat from 'dateformat';
 import check from 'check-node-version';
 const commandExistsSync = require('command-exists').sync;
@@ -34,27 +33,15 @@ export class Helpers extends HelpersNg2Rest {
       get Operations() {
         return {
           tryRemoveDir(dirpath) {
-            try {
-              rimraf.sync(dirpath)
-            } catch (e) {
-              console.log(`Trying to remove directory: ${dirpath}`)
-              sleep(1);
-              this.tryRemoveDir(dirpath);
-            }
+            rimraf.sync(dirpath);
           },
 
           tryCopyFrom(source, destination, options = {}) {
             // console.log(`Trying to copy from hahah: ${source} to ${destination}`)
-            try {
-              fse.copySync(source, destination, _.merge({
-                overwrite: true,
-                recursive: true
-              }, options))
-            } catch (e) {
-              console.log(e)
-              sleep(1);
-              this.tryCopyFrom(source, destination, options)
-            }
+            fse.copySync(source, destination, _.merge({
+              overwrite: true,
+              recursive: true
+            }, options));
           }
         }
       }
