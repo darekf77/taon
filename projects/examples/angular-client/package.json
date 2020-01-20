@@ -1,13 +1,23 @@
 {
+  "tnp": {
+    "resources": [],
+    "type": "angular-client",
+    "overrided": {
+      "ignoreDepsPattern": [],
+      "includeAsDev": [],
+      "includeOnly": [],
+      "dependencies": {}
+    },
+    "linkedProjects": []
+  },
   "name": "angular-client",
   "version": "0.0.0",
   "license": "MIT",
-  "tnp": {
-    "type": "angular-client"
-  },
   "scripts": {
     "build:watch": "npm-run webpack-dev-server --port=4200",
     "build": "npm-run rimraf dist-app && npm-run webpack --config=webpack.config.build.js",
     "build:aot": "npm-run rimraf dist-app && npm-run webpack --config=webpack.config.build.aot.js"
-  }
+  },
+  "dependencies": {},
+  "devDependencies": {}
 }

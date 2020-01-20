@@ -1,4 +1,15 @@
 {
+  "tnp": {
+    "resources": [],
+    "type": "ionic-client",
+    "overrided": {
+      "ignoreDepsPattern": [],
+      "includeAsDev": [],
+      "includeOnly": [],
+      "dependencies": {}
+    },
+    "linkedProjects": []
+  },
   "name": "ionic-client",
   "version": "0.0.1",
   "author": "Ionic Framework",
@@ -13,7 +24,6 @@
     "build:watch": "npm-run ionic serve --no-open"
   },
   "description": "An Ionic project",
-  "tnp": {
-    "type": "ionic-client"
-  }
+  "dependencies": {},
+  "devDependencies": {}
 }

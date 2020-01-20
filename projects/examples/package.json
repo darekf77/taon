@@ -7,8 +7,12 @@
     "overrided": {
       "dependencies": {
         "ts-sinon": "1.0.12"
-      }
-    }
+      },
+      "ignoreDepsPattern": [],
+      "includeAsDev": [],
+      "includeOnly": []
+    },
+    "linkedProjects": []
   },
   "name": "workspace",
   "version": "0.0.0",
@@ -252,5 +256,6 @@
     "webpack": "3.10.0",
     "webpack-dev-server": "~2.9.3",
     "zone.js": "0.8.20"
-  }
+  },
+  "devDependencies": {}
 }

@@ -17,13 +17,19 @@
     "npm-debug.log*": true,
     ".sass-cache": true,
     ".sourcemaps": true,
+    ".npmrc": true,
     "tslint.json": true,
     ".editorconfig": true,
     "environment.d.ts": true,
     ".gitignore": true,
     ".npmignore": true,
-    ".npmrc": true,
-    ".babelrc": true
+    ".babelrc": true,
+    "docs": true,
+    "logo.svg": true,
+    "angular-client": true,
+    "ionic-client": true,
+    "isomorphic-lib": true,
+    "bin/db.json": false
   },
   "workbench.colorCustomizations": {
     "activityBar.background": "#ce9243",
