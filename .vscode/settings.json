@@ -27,7 +27,6 @@
     "index.js": true,
     "index.d.ts": true,
     "index.js.map": true,
-    ".vscode/tasks.json": true,
     ".vscode/launch.json": true,
     "webpack.config.js": true,
     "run.js": true,

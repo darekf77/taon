@@ -41,7 +41,6 @@ Thumbs.db
 /index.js
 /index.d.ts
 /index.js.map
-/.vscode/tasks.json
 /.vscode/launch.json
 /webpack.config.js
 /run.js
@@ -51,4 +50,6 @@ Thumbs.db
 
 
 
+
+# =====================
 *.filetemplate
