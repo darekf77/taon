@@ -40,7 +40,7 @@ export class BroswerCompilation extends BackendCompilation {
   }
 
   async syncAction(files: string[]) {
-    // console.log(files)
+    // console.log('[morphi] syncAction', files)
     if (fse.existsSync(this.compilationFolderPath)) {
       rimraf.sync(this.compilationFolderPath)
     }
