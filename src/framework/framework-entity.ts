@@ -239,7 +239,7 @@ export abstract class BASE_ENTITY<T, TRAW=T, CTRL extends BaseCRUD<T> = any> {
         if (_.isString(property)) {
           if (_.isString(bufforProperty)) {
 
-            if (_.isUndefined(entityToUpdate[bufforProperty as any])) {
+            if (_.isNil(entityToUpdate[bufforProperty as any])) {
               entityToUpdate[bufforProperty as any] = ((newDataType === 'array') ? [] : '');
             }
             entityToUpdate[bufforProperty as any] = entityToUpdate[bufforProperty as any].concat(newData as any);
