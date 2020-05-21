@@ -1,13 +1,15 @@
 //#region @backend
-import * as path from 'path'
+import * as path from 'path';
 import * as child from 'child_process';
-import * as _ from 'lodash'
+import * as _ from 'lodash';
+import chalk from 'chalk';
 
 import { OutFolder } from './models';
 import { config } from './config';
 import { Helpers } from '../helpers';
 import { BroswerCompilation } from './compilation-browser';
 import { BackendCompilation } from './compilation-backend';
+import { IncCompiler } from 'incremental-compiler';
 
 
 export class IncrementalBuildProcess {
@@ -58,7 +60,7 @@ export class IncrementalBuildProcess {
     child.execSync(Helpers.createLink(outDistPath, targetOut))
   }
 
-  async start(taskName?: string) {
+  async start(taskName?: string, afterInitCallBack?: () => void) {
     if (!this.compileOnce) {
       this.compileOnce = true;
     }
@@ -74,26 +76,49 @@ export class IncrementalBuildProcess {
         this.recreateBrowserLinks(browserCompilation)
       })
     }
+    if (_.isFunction(afterInitCallBack)) {
+      await Helpers.runSyncOrAsync(afterInitCallBack);
+    }
   }
 
-  async startAndWatch(taskName?: string) {
+  async startAndWatch(taskName?: string, options?: IncCompiler.Models.StartAndWatchOptions) {
+    const { watchOnly, afterInitCallBack } = options || {};
+    if (this.compileOnce && watchOnly) {
+      console.error(`[morphi] Dont use "compileOnce" and "watchOnly" options together.`);
+      process.exit(0)
+    }
     if (this.compileOnce) {
       console.log('Watch compilation single run')
-      await this.start(taskName);
-      process.exit(0)
-      return
+      await this.start(taskName, afterInitCallBack);
+      process.exit(0);
+    }
+    if (watchOnly) {
+      console.log(chalk.gray(
+        `Watch mode only for "${taskName}"` +
+        ` -- morphi only starts starAndWatch anyway --`
+        ));
+    } else {
+      // THIS IS NOT APPLIED FOR TSC
+      // await this.start(taskName, afterInitCallBack);
     }
 
     if (this.backendCompilation) {
-      await this.backendCompilation.startAndWatch(this.backendTaskName(taskName))
+      await this.backendCompilation.startAndWatch(this.backendTaskName(taskName), { watchOnly })
     }
 
 
     for (let index = 0; index < this.browserCompilations.length; index++) {
       const browserCompilation = this.browserCompilations[index];
-      await browserCompilation.startAndWatch(this.browserTaksName(taskName, browserCompilation), () => {
-        this.recreateBrowserLinks(browserCompilation)
-      })
+      await browserCompilation.startAndWatch(
+        this.browserTaksName(taskName, browserCompilation), {
+        afterInitCallBack: () => {
+          this.recreateBrowserLinks(browserCompilation)
+        },
+        watchOnly
+      });
+    }
+    if (_.isFunction(afterInitCallBack)) {
+      await Helpers.runSyncOrAsync(afterInitCallBack);
     }
   }
 

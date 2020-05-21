@@ -21,7 +21,7 @@ export class BackendCompilation extends IncCompiler.Base {
   }
   public isEnableCompilation = true;
 
-  tscCompilation(cwd: string, watch = false, outDir?: string, generateDeclarations = false, tsExe = 'tsc',
+  async tscCompilation(cwd: string, watch = false, outDir?: string, generateDeclarations = false, tsExe = 'tsc',
     diagnostics = false) {
     if (!this.isEnableCompilation) {
       console.log(`Compilation disabled for ${_.startCase(BackendCompilation.name)}`)
@@ -42,9 +42,9 @@ export class BackendCompilation extends IncCompiler.Base {
     // console.log(`(${this.compilerName}) Execute second command : ${commandDts}    # inside: ${cwd}`)
 
     if (watch) {
-      Helpers.log(child.exec(commandJsAndMaps, { cwd }));
+      await Helpers.log(child.exec(commandJsAndMaps, { cwd }), ['Watching for file changes.']);
       if (generateDeclarations) {
-        Helpers.log(child.exec(commandDts, { cwd }));
+        await Helpers.log(child.exec(commandDts, { cwd }), ['Watching for file changes.']);
       }
     } else {
       try {
@@ -75,8 +75,8 @@ export class BackendCompilation extends IncCompiler.Base {
   }
 
   protected compilerName = 'Backend Compiler';
-  compile(watch = false) {
-    this.tscCompilation(this.compilationFolderPath, watch, `../${this.outFolder}` as any, true)
+  async compile(watch = false) {
+    await this.tscCompilation(this.compilationFolderPath, watch, `../${this.outFolder}` as any, true)
   }
 
   async syncAction(filesPathes: string[]) {
@@ -85,11 +85,11 @@ export class BackendCompilation extends IncCompiler.Base {
     if (!fse.existsSync(outDistPath)) {
       fse.mkdirpSync(outDistPath);
     }
-    this.compile()
+    await this.compile();
   }
 
   async preAsyncAction() {
-    this.compile(true)
+    await this.compile(true)
   }
 
   get tsConfigName() {

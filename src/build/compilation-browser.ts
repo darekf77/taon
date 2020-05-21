@@ -64,7 +64,7 @@ export class BroswerCompilation extends BackendCompilation {
 
     fse.copyFileSync(source, dest)
     this.codecut.files();
-    this.compile();
+    await this.compile();
   }
 
   initCodeCut(filesPathes: string[]) {
@@ -123,8 +123,8 @@ export class BroswerCompilation extends BackendCompilation {
     }
   }
 
-  compile(watch = false) {
-    this.tscCompilation(this.compilationFolderPath, watch, `../${this.backendOutFolder}/${this.outFolder}` as any, true,
+  async compile(watch = false) {
+    await this.tscCompilation(this.compilationFolderPath, watch, `../${this.backendOutFolder}/${this.outFolder}` as any, true,
       this.customCompiler ? this.customCompiler : void 0
     )
   }

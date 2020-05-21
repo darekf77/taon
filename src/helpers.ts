@@ -302,30 +302,81 @@ export class Helpers extends HelpersNg2Rest {
     return /^([a-zA-Z]|\-|\_|\@|\#|\$|\!|\^|\&|\*|\(|\))+$/.test(filePath);
   }
 
-  static log(proc: child.ChildProcess) {
+  static log(proc: child.ChildProcess, stdoutMsg?: string | string[], stderMsg?: string | string[]) {
     // processes.push(proc);
+    let isResolved = false;
 
+    if (_.isString(stdoutMsg)) {
+      stdoutMsg = [stdoutMsg];
+    }
+    if (_.isString(stderMsg)) {
+      stderMsg = [stderMsg];
+    }
 
-    // let stdio = [0,1,2]
-    proc.stdout.on('data', (data) => {
-      process.stdout.write(data)
-      // console.log(data.toString());
-    })
+    return new Promise((resolve, reject) => {
 
-    proc.stdout.on('error', (data) => {
-      process.stdout.write(JSON.stringify(data))
-      // console.log(data);
-    })
+      // let stdio = [0,1,2]
+      proc.stdout.on('data', (message) => {
+        process.stdout.write(message);
+        const data: string = message.toString().trim();
 
-    proc.stderr.on('data', (data) => {
-      process.stderr.write(data);
-      // console.log(data.toString());
-    })
+        if (!isResolved && _.isArray(stdoutMsg)) {
+          for (let index = 0; index < stdoutMsg.length; index++) {
+            const m = stdoutMsg[index];
+            if ((data.search(m) !== -1)) {
+              // Helpers.info(`[unitlOutputContains] Move to next step...`)
+              isResolved = true;
+              resolve();
+              break;
+            }
+          }
+        }
+        if (!isResolved && _.isArray(stderMsg)) {
+          for (let index = 0; index < stderMsg.length; index++) {
+            const rejectm = stderMsg[index];
+            if ((data.search(rejectm) !== -1)) {
+              // Helpers.info(`[unitlOutputContains] Rejected move to next step...`);
+              isResolved = true;
+              reject();
+              proc.kill('SIGINT');
+              break;
+            }
+          }
+        }
 
-    proc.stderr.on('error', (data) => {
-      process.stderr.write(JSON.stringify(data))
-      // console.log(data);
-    })
+        // console.log(data.toString());
+      })
+
+      proc.stdout.on('error', (data) => {
+        process.stdout.write(JSON.stringify(data))
+        // console.log(data);
+      })
+
+      proc.stderr.on('data', (message) => {
+        process.stderr.write(message);
+        // console.log(data.toString());
+        const data: string = message.toString().trim();
+        if (!isResolved && _.isArray(stderMsg)) {
+          for (let index = 0; index < stderMsg.length; index++) {
+            const rejectm = stderMsg[index];
+            if ((data.search(rejectm) !== -1)) {
+              // Helpers.info(`[unitlOutputContains] Rejected move to next step...`);
+              isResolved = true;
+              reject();
+              proc.kill('SIGINT');
+              break;
+            }
+          }
+        }
+
+      })
+
+      proc.stderr.on('error', (data) => {
+        process.stderr.write(JSON.stringify(data))
+        // console.log(data);
+      });
+    });
+
   }
 
   static createLink(target: string, link: string) {
