@@ -19,7 +19,7 @@
     "linkedProjects": []
   },
   "name": "morphi",
-  "version": "3.1.2",
+  "version": "3.1.1",
   "description": "Isomorphic solution for expressjs and angular5",
   "main": "index.js",
   "scripts": {
