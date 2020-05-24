@@ -19,7 +19,10 @@ import { init } from '../init';
 
 export function start(options: StartOptions) {
   //#region @backend
-  return new Promise<Connection>(async (resolve, reject) => {
+  return new Promise<{
+    connection: Connection;
+    app: express.Application;
+  }>(async (resolve, reject) => {
     //#endregion
     let {
       host,
@@ -116,7 +119,7 @@ export function start(options: StartOptions) {
     //#endregion
 
     //#region @backend
-    resolve(connection)
+    resolve({ connection, app })
   })
   //#endregion
 
