@@ -32,7 +32,8 @@
     "test:watch": "mocha  -r ts-node/register --watch  src/**/*.spec.ts --watch-extensions ts"
   },
   "bin": {
-    "morphi": "bin/morphi"
+    "morphi": "bin/morphi",
+    "morphi-debug": "bin/morphi-debug"
   },
   "repository": {
     "type": "git",
