@@ -22,6 +22,7 @@ export function start(options: StartOptions) {
   return new Promise<{
     connection: Connection;
     app: express.Application;
+    controllers: BASE_CONTROLLER<any>[],
   }>(async (resolve, reject) => {
     //#endregion
     let {
@@ -109,9 +110,12 @@ export function start(options: StartOptions) {
 
     const promises: Promise<any>[] = []
     // console.log('ctrls', ctrls)
+    const controllerSingletons = [];
+
     ctrls.forEach(ctrl => {
       ctrl = Helpers.getSingleton(ctrl as any);
       if (ctrl && _.isFunction((ctrl as any).initExampleDbData)) {
+        controllerSingletons.push(ctrl);
         promises.push(((ctrl as any).initExampleDbData()));
       }
     });
@@ -119,7 +123,7 @@ export function start(options: StartOptions) {
     //#endregion
 
     //#region @backend
-    resolve({ connection, app })
+    resolve({ connection, app, controllers: controllerSingletons  })
   })
   //#endregion
 
@@ -132,6 +136,7 @@ export interface StartOptions {
   controllers?: BASE_CONTROLLER<any>[] | Function[];
   entities?: BASE_ENTITY<any>[] | Function[];
   //#region @backend
+  onlyForBackendRemoteServerAccess?: boolean;
   config?: IConnectionOptions;
   testMode?: boolean;
   publicAssets?: { path: string; location: string }[];
