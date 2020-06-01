@@ -1,6 +1,7 @@
 import { Socket } from 'socket.io'
 import { Helpers } from './helpers';
 import { Models } from 'typescript-class-helpers';
+import { StartOptions } from './framework/framework-start';
 
 //#region @backend
 import * as path from 'path';
@@ -101,7 +102,9 @@ export class Global {
   private socketNamespaceBERealtime: Namespace;
   public clientsSockets: Map<string, Socket>;
   public app: Application;
+  public onlyForBackendRemoteServerAccess = false;
   public connection: Connection;
+  public startOptions: StartOptions;
   //#endregion
 
 

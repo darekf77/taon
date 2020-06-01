@@ -23,6 +23,7 @@ export function init(config: {
   entities?: Function[]
   productionMode?: Boolean,
   //#region @backend
+  onlyForBackendRemoteServerAccess?: boolean,
   connection?: Connection,
   testMode?: boolean,
   //#endregion
@@ -35,7 +36,8 @@ export function init(config: {
     allowedHosts = [],
     //#region @backend
     testMode = false,
-    connection
+    connection,
+    onlyForBackendRemoteServerAccess = false
     //#endregion
   } = config;
 
@@ -91,9 +93,13 @@ Incorect value for property "entities" inside Morphi.Init(...)
 
   //#region @backend
   if (Helpers.isNode) {
-    if (!Global.vars.app) {
-      Global.vars.app = express()
-      initMidleware();
+    if (Global.vars.onlyForBackendRemoteServerAccess) {
+      Global.vars.app = {} as any;
+    } else {
+      if (!Global.vars.app) {
+        Global.vars.app = express()
+        initMidleware();
+      }
     }
 
     const uri = new URL(config.host);
@@ -106,18 +112,19 @@ Incorect value for property "entities" inside Morphi.Init(...)
     //   console.log('INT EXPRESS BASE')
     //   Global.vars.app.set('base', uri.pathname)
     // }
-    const h = new http.Server(Global.vars.app); //TODO is this working ?
+    if (!Global.vars.onlyForBackendRemoteServerAccess) {
+      const h = new http.Server(Global.vars.app); //TODO is this working ?
 
-    RealtimeNodejs.init(h);
+      RealtimeNodejs.init(h);
 
-    if (!testMode) {
-      h.listen(uri.port, function () {
-        console.log(`Server listening on port: ${uri.port}, hostname: ${uri.pathname},
-          env: ${Global.vars.app.settings.env}
-          `);
-      });
+      if (!testMode) {
+        h.listen(uri.port, function () {
+          console.log(`Server listening on port: ${uri.port}, hostname: ${uri.pathname},
+            env: ${Global.vars.app.settings.env}
+            `);
+        });
+      }
     }
-
   }
   //#endregion
 
@@ -157,8 +164,9 @@ Incorect value for property "entities" inside Morphi.Init(...)
 
       }
     });
-
-    Global.vars.writeActiveRoutes()
+    if (!onlyForBackendRemoteServerAccess) {
+      Global.vars.writeActiveRoutes()
+    }
   }
   //#endregion
 

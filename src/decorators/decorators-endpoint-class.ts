@@ -99,14 +99,22 @@ export function ENDPOINT(options?: {
             if (checkAuthFn) {
               methodConfig.requestHandler = auth(methodConfig.descriptor.value);
             }
+
             const { routePath, method } = initMethodNodejs(type, methodConfig, classConfig, expressPath);
-            Global.vars.activeRoutes.push({
-              routePath,
-              method
-            });
+            if (!Global.vars.onlyForBackendRemoteServerAccess) {
+              Global.vars.activeRoutes.push({
+                routePath,
+                method
+              });
+            }
+
             //#endregion
           }
-          if (Helpers.isBrowser) {
+          if (Helpers.isBrowser
+            //#region @backend
+            || Global.vars.onlyForBackendRemoteServerAccess
+            //#endregion
+          ) {
             initMethodBrowser(target, type, methodConfig, expressPath)
           }
         });

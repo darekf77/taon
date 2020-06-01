@@ -12,7 +12,6 @@ import { CLASS } from 'typescript-class-helpers';
 import * as _ from 'lodash';
 import { Global } from '../global-config';
 import { BASE_ENTITY } from './framework-entity';
-import { BASE_REPOSITORY } from './framework-repository';
 import { BASE_CONTROLLER } from './framework-controller';
 import { init } from '../init';
 
@@ -20,9 +19,9 @@ import { init } from '../init';
 export function start(options: StartOptions) {
   //#region @backend
   return new Promise<{
-    connection: Connection;
-    app: express.Application;
-    controllers: BASE_CONTROLLER<any>[],
+    connection?: Connection;
+    app?: express.Application;
+    controllers?: BASE_CONTROLLER<any>[],
   }>(async (resolve, reject) => {
     //#endregion
     let {
@@ -34,48 +33,49 @@ export function start(options: StartOptions) {
       InitDataPriority,
       publicAssets = [],
       testMode = false,
+      onlyForBackendRemoteServerAccess = false
       //#endregion
     } = options as any;
     // console.log(options)
 
     //#region @backend
-    if (!config) {
+    if (onlyForBackendRemoteServerAccess) {
+      Global.vars.startOptions = options;
+      Global.vars.onlyForBackendRemoteServerAccess = true;
+    }
+    if (!onlyForBackendRemoteServerAccess && !config) {
       config = {} as any;
       console.error(`
 
-        Missing config for backend:
+    Missing config for backend:
 
 
-        Morphi.init({
-          ...
-          config: <YOUR DB CONFIG HERE>
-          ...
-        })
+    Morphi.init({
+      ...
+      config: <YOUR DB CONFIG HERE>
+      ...
+    })
 
-      `)
-    }
-    config['entities'] = entities as any;
-    // config['subscribers'] = subscribers.concat(_.values(Controllers).filter(a => isRealtimeEndpoint(a as any)))
-    //   .concat([META.BASE_CONTROLLER as any]) as any;
-
-    try {
-      const con = await getConnection();
-
-      const connectionExists = !!(con);
-      if (connectionExists) {
-        console.log('Connection exists')
-        await con.close()
-      }
-    } catch (error) {
-
+  `)
+      config['entities'] = entities as any;
     }
 
+    if (!onlyForBackendRemoteServerAccess) {
+      try {
+        const con = await getConnection();
+
+        const connectionExists = !!(con);
+        if (connectionExists) {
+          console.log('Connection exists')
+          await con.close()
+        }
+      } catch (error) { }
 
 
-    const connections = await createConnections([config] as any);
-    // console.log('init connections', connections)
-    const connection = connections[0]
-    // console.log('init connection', connection)
+      const connections = await createConnections([config] as any);
+      var connection = connections[0]
+
+    }
     //#endregion
 
     init({
@@ -83,21 +83,22 @@ export function start(options: StartOptions) {
       controllers: controllers as any[],
       entities: entities as any[],
       //#region @backend
+      onlyForBackendRemoteServerAccess,
       connection,
       testMode,
       //#endregion
     })
+    //#region @backend
+    if (!onlyForBackendRemoteServerAccess) {
+      var app = Global.vars.app;
+
+      publicAssets.forEach(asset => {
+        app.use(asset.path, express.static(asset.location))
+      })
+    }
+    //#endregion
 
     //#region @backend
-
-
-    const app = Global.vars.app;
-
-    publicAssets.forEach(asset => {
-      app.use(asset.path, express.static(asset.location))
-    })
-
-
     let ctrls: Function[] = controllers as any;
 
     if (InitDataPriority) {
@@ -114,16 +115,24 @@ export function start(options: StartOptions) {
 
     ctrls.forEach(ctrl => {
       ctrl = Helpers.getSingleton(ctrl as any);
-      if (ctrl && _.isFunction((ctrl as any).initExampleDbData)) {
+      if (ctrl) {
         controllerSingletons.push(ctrl);
-        promises.push(((ctrl as any).initExampleDbData()));
+      }
+      if (ctrl && _.isFunction((ctrl as any).initExampleDbData)) {
+        if (!onlyForBackendRemoteServerAccess) {
+          promises.push(((ctrl as any).initExampleDbData()));
+        }
       }
     });
     await Promise.all(promises);
     //#endregion
 
     //#region @backend
-    resolve({ connection, app, controllers: controllerSingletons  })
+    if (onlyForBackendRemoteServerAccess) {
+      resolve({ controllers: controllerSingletons })
+    } else {
+      resolve({ connection, app, controllers: controllerSingletons })
+    }
   })
   //#endregion
 

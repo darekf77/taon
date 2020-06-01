@@ -8,15 +8,26 @@ import { Helpers } from '../helpers';
 
 export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodConfig: Models.Rest.MethodConfig, expressPath) {
 
+  let storage: any;
+  if (Helpers.isBrowser) {
+    storage = window;
+  }
+  //#region @backend
+  if (Helpers.isNode) {
+    storage = global;
+  }
+  //#endregion
+
+
   // console.log(`FRONTEND ${target.name} method on ${expressPath}`)
 
   target.prototype[methodConfig.methodName] = function (...args) {
     // console.log('FRONTEND expressPath', expressPath)
     const productionMode = Global.vars.productionMode;
     const uri: URL = Global.vars.url;
-    if (!window[SYMBOL.ENDPOINT_META_CONFIG]) window[SYMBOL.ENDPOINT_META_CONFIG] = {};
-    if (!window[SYMBOL.ENDPOINT_META_CONFIG][uri.href]) window[SYMBOL.ENDPOINT_META_CONFIG][uri.href] = {};
-    const endpoints = window[SYMBOL.ENDPOINT_META_CONFIG];
+    if (!storage[SYMBOL.ENDPOINT_META_CONFIG]) storage[SYMBOL.ENDPOINT_META_CONFIG] = {};
+    if (!storage[SYMBOL.ENDPOINT_META_CONFIG][uri.href]) storage[SYMBOL.ENDPOINT_META_CONFIG][uri.href] = {};
+    const endpoints = storage[SYMBOL.ENDPOINT_META_CONFIG];
     let rest: Ng2RestModels.ResourceModel<any, any>;
     if (!endpoints[uri.href][expressPath]) {
       rest = Resource.create(uri.href, expressPath, SYMBOL.MAPPING_CONFIG_HEADER as any,
