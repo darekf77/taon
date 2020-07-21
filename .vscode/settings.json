@@ -40,8 +40,7 @@
     ".npmignore": true,
     ".babelrc": true,
     "docs": true,
-    "logo.svg": true,
-    "bin/db.json": false
+    "logo.svg": true
   },
   "workbench.colorCustomizations": {
     "activityBar.background": "#8b31d4"
