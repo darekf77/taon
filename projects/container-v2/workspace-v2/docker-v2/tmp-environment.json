@@ -1,0 +1,106 @@
+{
+  "workspace": {
+    "workspace": {
+      "name": "workspace-v2",
+      "port": 5000,
+      "host": "http://localhost:5000"
+    },
+    "projects": [
+      {
+        "baseUrl": "/angular-lib-v2",
+        "name": "angular-lib-v2",
+        "port": 6001,
+        "host": "http://localhost:6001"
+      },
+      {
+        "baseUrl": "/docker-v2",
+        "name": "docker-v2",
+        "port": 6003,
+        "host": "http://localhost:6003"
+      },
+      {
+        "baseUrl": "/api-isomorphic-lib-v2",
+        "name": "isomorphic-lib-v2",
+        "$db": {
+          "database": "tmp/db-for-isomorphic-lib-v2.sqlite3",
+          "type": "sqlite",
+          "synchronize": true,
+          "dropSchema": true,
+          "logging": false
+        },
+        "port": 6002,
+        "host": "http://localhost:6002"
+      }
+    ],
+    "build": {
+      "browser": {
+        "aot": false,
+        "minify": false,
+        "production": false
+      },
+      "server": {
+        "minify": false,
+        "production": false
+      }
+    }
+  },
+  "name": "local",
+  "isCoreProject": true,
+  "ip": "localhost",
+  "packageJSON": {
+    "tnp": {
+      "resources": [
+        "README.md"
+      ],
+      "isCoreProject": true,
+      "type": "workspace",
+      "version": "v2",
+      "overrided": {
+        "ignoreDepsPattern": [],
+        "includeAsDev": [],
+        "includeOnly": [],
+        "dependencies": {},
+        "linkedFolders": []
+      },
+      "linkedProjects": [],
+      "libReleaseOptions": {
+        "nodts": false,
+        "obscure": false,
+        "ugly": false
+      }
+    },
+    "name": "workspace-v2",
+    "version": "0.0.0",
+    "license": "UNLICENSED",
+    "engines": {
+      "node": ">=9.2.0",
+      "npm": ">=5.6.0"
+    },
+    "dependencies": {},
+    "devDependencies": {},
+    "private": true
+  },
+  "build": {
+    "number": 645,
+    "date": "2020-08-13T20:46:01.000Z",
+    "hash": "501d2132571c181271a276c04dd678cde5480536",
+    "options": {}
+  },
+  "currentProjectName": "docker-v2",
+  "currentProjectPort": 6003,
+  "currentProjectLaunchConfiguration": "{\"version\":\"0.2.0\",\"configurations\":[],\"compounds\":[]}",
+  "currentProjectTasksConfiguration": "{\"version\":\"2.0.0\",\"tasks\":[{\"label\":\"terminateall\",\"command\":\"echo ${input:terminate}\",\"type\":\"shell\",\"problemMatcher\":[]}],\"inputs\":[{\"id\":\"terminate\",\"type\":\"command\",\"command\":\"workbench.action.tasks.terminate\",\"args\":\"terminateAll\"}]}",
+  "currentProjectType": "docker",
+  "currentFrameworkVersion": "0.0.45",
+  "currentProjectLocation": "/Users/dfilipiak/projects/npm/morphi/projects/container-v2/workspace-v2/docker-v2",
+  "currentProjectIsStrictSite": false,
+  "currentProjectIsDependencySite": false,
+  "currentProjectIsStatic": false,
+  "isStandaloneProject": false,
+  "frameworks": [
+    "bootstrap",
+    "ionic",
+    "material"
+  ],
+  "currentProjectComponentsFolder": "browser-for-angular-lib-v2"
+}
