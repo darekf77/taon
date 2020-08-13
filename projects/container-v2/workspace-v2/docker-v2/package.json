@@ -18,7 +18,7 @@
       "ugly": false
     }
   },
-  "name": "docker",
+  "name": "docker-v2",
   "version": "0.0.0",
   "dependencies": {},
   "devDependencies": {}
