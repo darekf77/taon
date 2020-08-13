@@ -1,0 +1,27 @@
+{
+  "tnp": {
+    "resources": [
+      "README.md"
+    ],
+    "isCoreProject": true,
+    "type": "angular-lib",
+    "overrided": {
+      "ignoreDepsPattern": [],
+      "includeAsDev": [],
+      "includeOnly": [],
+      "dependencies": {}
+    },
+    "linkedProjects": [],
+    "libReleaseOptions": {
+      "nodts": false,
+      "obscure": false,
+      "ugly": false
+    }
+  },
+  "name": "angular-lib",
+  "version": "0.0.0",
+  "license": "UNLICENSED",
+  "dependencies": {},
+  "devDependencies": {},
+  "private": true
+}

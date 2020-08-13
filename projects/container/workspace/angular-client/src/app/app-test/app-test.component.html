@@ -1,0 +1,13 @@
+<ng-template #loader> loading user... </ng-template>
+
+<div *ngIf="model.user | async;else loader; let user">
+  <h1 *ngIf="user" >User name: {{user.username}} {{user.isAmazing()}} </h1>
+</div>
+<hr>
+
+<input [(ngModel)]="data.username"
+       type="text">
+<button (click)="submit()"> Submit </button>
+<hr>
+
+<!-- <my-foo></my-foo> -->

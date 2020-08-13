@@ -1,0 +1,44 @@
+# profiling files
+chrome-profiler-events*.json
+speed-measure-plugin*.json
+
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+yarn-error.log
+testem.log
+/typings
+
+# System Files
+.DS_Store
+Thumbs.db
+/node_modules
+/tnp-system-path.txt
+/tmp*
+/dist*
+/bundle*
+/browser
+/browser*
+/module*
+/backup
+/module
+/www
+/Thumbs.db
+/.DS_Store
+/**/.DS_Store
+/npm-debug.log*
+/.sass-cache
+/.sourcemaps
+/tsconfig.isomorphic.json
+/tsconfig.json
+/src/tsconfig.app.json
+/.angular-cli.json
+/src/tsconfig.app.json
+/src/assets/angular-lib
+/src/assets/second-angular-lib
+
+!*.filetemplate
+

@@ -1,0 +1,33 @@
+{
+  "tnp": {
+    "resources": [],
+    "isCoreProject": true,
+    "type": "angular-client",
+    "frameworks": [
+      "material",
+      "bootstrap"
+    ],
+    "overrided": {
+      "ignoreDepsPattern": [],
+      "includeAsDev": [],
+      "includeOnly": [],
+      "dependencies": {}
+    },
+    "linkedProjects": [],
+    "libReleaseOptions": {
+      "nodts": false,
+      "obscure": false,
+      "ugly": false
+    }
+  },
+  "name": "angular-client",
+  "version": "0.0.0",
+  "license": "UNLICENSED",
+  "scripts": {
+    "build": "tnp rimraf dist-app && tnp npm-run webpack --config=webpack.config.build.js",
+    "build:aot": "tnp rimraf dist-app && tnp npm-run webpack --config=webpack.config.build.aot.js"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "private": true
+}

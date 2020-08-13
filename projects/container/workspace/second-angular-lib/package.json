@@ -1,0 +1,39 @@
+{
+  "tnp": {
+    "resources": [
+      "README.md"
+    ],
+    "type": "angular-lib",
+    "overrided": {
+      "ignoreDepsPattern": [],
+      "includeAsDev": [],
+      "includeOnly": [],
+      "dependencies": {}
+    },
+    "linkedProjects": [],
+    "libReleaseOptions": {
+      "nodts": false,
+      "obscure": false,
+      "ugly": false
+    }
+  },
+  "name": "second-angular-lib",
+  "version": "0.0.0",
+  "isomorphicPackages": [
+    "browserify-sign",
+    "json10",
+    "lodash-walk-object",
+    "morphi",
+    "ng2-logger",
+    "ng2-rest",
+    "static-columns",
+    "timespan",
+    "tnp-bundle",
+    "typeorm",
+    "typescript-class-helpers"
+  ],
+  "dependencies": {},
+  "devDependencies": {},
+  "license": "UNLICENSED",
+  "private": true
+}

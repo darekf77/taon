@@ -1,0 +1,37 @@
+{
+  "files.exclude": {
+    "node_modules": true,
+    "tnp-system-path.txt": true,
+    "tmp*": true,
+    "dist*": true,
+    "bundle*": true,
+    "browser": true,
+    "browser*": true,
+    "module*": true,
+    "backup": true,
+    "module": true,
+    "www": true,
+    "Thumbs.db": true,
+    ".DS_Store": true,
+    "**/.DS_Store": true,
+    "npm-debug.log*": true,
+    ".sass-cache": true,
+    ".sourcemaps": true,
+    ".gitignore": true,
+    ".npmignore": true,
+    ".npmrc": true,
+    ".babelrc": true
+  },
+  "workbench.colorCustomizations": {
+    "activityBar.background": "#26d30f",
+    "activityBar.foreground": "#313129"
+  },
+  "editor.rulers": [
+    100,
+    120
+  ],
+  "html.format.wrapAttributes": "force-aligned",
+  "workbench.colorTheme": "Default Light+",
+  "tslint.autoFixOnSave": true,
+  "tslint.enable": true
+}
