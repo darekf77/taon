@@ -81,6 +81,7 @@ export class IncrementalBuildProcess {
     }
   }
 
+  // @ts-ignore
   async startAndWatch(taskName?: string, options?: IncCompiler.Models.StartAndWatchOptions) {
     const { watchOnly, afterInitCallBack } = options || {};
     if (this.compileOnce && watchOnly) {
@@ -96,13 +97,14 @@ export class IncrementalBuildProcess {
       console.log(chalk.gray(
         `Watch mode only for "${taskName}"` +
         ` -- morphi only starts starAndWatch anyway --`
-        ));
+      ));
     } else {
       // THIS IS NOT APPLIED FOR TSC
       // await this.start(taskName, afterInitCallBack);
     }
 
     if (this.backendCompilation) {
+      // @ts-ignore
       await this.backendCompilation.startAndWatch(this.backendTaskName(taskName), { watchOnly })
     }
 
@@ -111,6 +113,7 @@ export class IncrementalBuildProcess {
       const browserCompilation = this.browserCompilations[index];
       await browserCompilation.startAndWatch(
         this.browserTaksName(taskName, browserCompilation), {
+        // @ts-ignore
         afterInitCallBack: () => {
           this.recreateBrowserLinks(browserCompilation)
         },
