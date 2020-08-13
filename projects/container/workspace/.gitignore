@@ -31,8 +31,6 @@ Thumbs.db
 /npm-debug.log*
 /.sass-cache
 /.sourcemaps
-/.vscode/launch.json
-/.vscode/tasks.json
 /src-for-stanalone
 /components-for-stanalone
 
