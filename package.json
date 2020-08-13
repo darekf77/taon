@@ -217,7 +217,7 @@
     }
   },
   "name": "morphi",
-  "version": "3.1.12",
+  "version": "3.1.13",
   "description": "Isomorphic solution for expressjs and angular5",
   "main": "index.js",
   "scripts": {
@@ -248,7 +248,7 @@
     }
   },
   "devDependencies": {
-    "morphi": "3.1.11",
+    "morphi": "3.1.12",
     "tnp-db": "0.0.7",
     "tnp-helpers": "0.0.5",
     "tnp-models": "0.0.5"
