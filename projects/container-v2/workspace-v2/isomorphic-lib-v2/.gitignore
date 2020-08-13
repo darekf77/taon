@@ -16,7 +16,6 @@ testem.log
 .DS_Store
 Thumbs.db
 /node_modules
-/tnp-system-path.txt
 /tmp*
 /dist*
 /bundle*
@@ -40,15 +39,6 @@ Thumbs.db
 /src-for-stanalone
 /components-for-stanalone
 /src/assets/angular-lib-v2
-/src/entities.ts
-/src/controllers.ts
-/index.js
-/index.d.ts
-/index.js.map
-/webpack.config.js
-/webpack.backend-bundle-build.js
-/run.js
-/src/typings.d.ts
 
 
 
