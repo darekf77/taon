@@ -302,9 +302,9 @@
     "private": true
   },
   "build": {
-    "number": 641,
-    "date": "2020-08-13T05:59:39.000Z",
-    "hash": "18d47be1d89d1079ff67d847c6ae2a81e054f3b9",
+    "number": 642,
+    "date": "2020-08-13T19:22:55.000Z",
+    "hash": "310698afb496ecdf1166f8a1a6932de48435d9f1",
     "options": {}
   },
   "currentProjectName": "docker",
