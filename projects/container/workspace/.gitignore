@@ -16,7 +16,6 @@ testem.log
 .DS_Store
 Thumbs.db
 /node_modules
-/tnp-system-path.txt
 /tmp*
 /dist*
 /bundle*
@@ -34,6 +33,8 @@ Thumbs.db
 /.sourcemaps
 /.vscode/launch.json
 /.vscode/tasks.json
+/src-for-stanalone
+/components-for-stanalone
 
 
 

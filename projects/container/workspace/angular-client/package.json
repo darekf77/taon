@@ -11,7 +11,8 @@
       "ignoreDepsPattern": [],
       "includeAsDev": [],
       "includeOnly": [],
-      "dependencies": {}
+      "dependencies": {},
+      "linkedFolders": []
     },
     "linkedProjects": [],
     "libReleaseOptions": {

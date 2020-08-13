@@ -16,7 +16,6 @@ testem.log
 .DS_Store
 Thumbs.db
 /node_modules
-/tnp-system-path.txt
 /tmp*
 /dist*
 /bundle*
@@ -33,19 +32,10 @@ Thumbs.db
 /.sass-cache
 /.sourcemaps
 /tsconfig.json
+/src-for-stanalone
+/components-for-stanalone
 /src/assets/angular-lib
 /src/assets/second-angular-lib
-/src/entities.ts
-/src/controllers.ts
-/index.js
-/index.d.ts
-/index.js.map
-/.vscode/launch.json
-/tsconfig.browser.json
-/webpack.config.js
-/webpack.backend-bundle-build.js
-/run.js
-/src/typings.d.ts
 
 
 
