@@ -244,7 +244,7 @@
     "wait.for": "0.6.6",
     "watch": "~1.0.2",
     "webpack": "3.10.0",
-    "webpack-dev-server": "~2.9.3",
+    "webpack-dev-server": "~3.11.0",
     "zone.js": "0.8.20"
   },
   "devDependencies": {},
