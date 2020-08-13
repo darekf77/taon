@@ -18,6 +18,11 @@ config = {
         "port": 6001
       },
       {
+        "baseUrl": "/docker-v2",
+        "name": "docker-v2",
+        "port": 6003
+      },
+      {
         "baseUrl": "/api-isomorphic-lib-v2",
         "name": "isomorphic-lib-v2",
         "$db": {
