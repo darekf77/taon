@@ -2,7 +2,6 @@
   "tnp": {
     "resources": [
       "README.md",
-      "projects",
       "bin",
       "logo_github.png",
       "logo.png",
@@ -218,7 +217,7 @@
     }
   },
   "name": "morphi",
-  "version": "3.1.11",
+  "version": "3.1.12",
   "description": "Isomorphic solution for expressjs and angular5",
   "main": "index.js",
   "scripts": {
@@ -249,7 +248,7 @@
     }
   },
   "devDependencies": {
-    "morphi": "3.1.9",
+    "morphi": "3.1.11",
     "tnp-db": "0.0.7",
     "tnp-helpers": "0.0.5",
     "tnp-models": "0.0.5"
