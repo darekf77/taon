@@ -11,6 +11,7 @@
     "type": "isomorphic-lib",
     "version": "v2",
     "overrided": {
+      "linkedFolders": [],
       "includeAsDev": [],
       "includeOnly": [
         "@angular-devkit/build-angular",
@@ -248,7 +249,7 @@
     }
   },
   "devDependencies": {
-    "morphi": "3.1.5",
+    "morphi": "3.1.9",
     "tnp-db": "0.0.7",
     "tnp-helpers": "0.0.5",
     "tnp-models": "0.0.5"
