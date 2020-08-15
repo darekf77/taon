@@ -248,10 +248,10 @@
     }
   },
   "devDependencies": {
-    "morphi": "3.1.12",
-    "tnp-db": "0.0.7",
-    "tnp-helpers": "0.0.5",
-    "tnp-models": "0.0.5"
+    "morphi": "3.1.13",
+    "tnp-db": "0.0.8",
+    "tnp-helpers": "0.0.6",
+    "tnp-models": "0.0.6"
   },
   "dependencies": {
     "@angular-devkit/build-angular": "~0.901.3",
