@@ -23,7 +23,7 @@ function assignENV() {
     console.warn('ENV will be not available... tmp-environment.json missing... ')
   }
 
-  let { ENVoverride } = require('minimist')(process.argv);
+  let { ENVoverride, RELATIVEPATHoverride } = require('minimist')(process.argv);
   if (ENVoverride) {
     ENVoverride = JSON.parse(decodeURIComponent(ENVoverride));
     ENV = JSON.parse(ENV);
@@ -65,9 +65,20 @@ if (messageWasShown) {
 
 assignENV();
 
+let relativePath = './dist/app';
+if (RELATIVEPATHoverride) {
+  relativePath = RELATIVEPATHoverride.replace(/\.js$/, '')
+}
+if (relativePath.startsWith('/')) {
+  relativePath = `.${relativePath}`;
+}
+if (!relativePath.startsWith('./')) {
+  relativePath = `./${relativePath}`;
+}
+
 const script = new vm.Script(`
 global["ENV"] = JSON.parse(ENV);
-var app = require("./dist/app").default;
+var app = require("${relativePath}").default;
 app(${port});
 `);
 
