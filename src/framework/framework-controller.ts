@@ -19,8 +19,8 @@ const updatedWithCtrl = {};
 const updatedStaticWithCtrl = {};
 
 function getSing(target) {
-  const res =  CLASS.getSingleton(target);;
-  if(!res) {
+  const res = CLASS.getSingleton(target);;
+  if (!res) {
     debugger
   }
   return res;
@@ -92,7 +92,7 @@ export function Controller(options?: {
 
     className = classNameVlidation(className, target);
     CLASS.NAME(className, {
-      singleton: HelpersLog.isBrowser ? 'autoinstance': 'last-instance'
+      singleton: HelpersLog.isBrowser ? 'autoinstance' : 'last-instance'
     })(target);
 
     // if (Helpers.isBrowser && _.isFunction(rep)) {
@@ -121,11 +121,21 @@ export function Controller(options?: {
   }
 }
 
+//#region @backend
+export interface BASE_CONTROLLER_INIT {
+
+  initExampleDbData(): Promise<any>;
+}
+//#endregion
+
 @Controller({
   className: 'BASE_CONTROLLER',
   autoinit: true
 })
 export abstract class BASE_CONTROLLER<T> extends BaseCRUD<T>
+  //#region @backend
+  implements BASE_CONTROLLER_INIT
+//#endregion
 {
   /**
    * Controller entites

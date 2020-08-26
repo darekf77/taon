@@ -53,6 +53,7 @@ export namespace Morphi {
   export import Controller = framework.Controller;
   export import Entity = framework.Entity;
   //#region @backend
+  export import BASE_CONTROLLER_INIT = framework.BASE_CONTROLLER_INIT;
   export import Repository = framework.Repository;
   export const getResponseValue = helpers.Helpers.getResponseValue;
 

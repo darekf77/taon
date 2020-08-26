@@ -21,7 +21,8 @@ export function init(config: {
   allowedHosts?: string[],
   controllers?: Function[],
   entities?: Function[]
-  productionMode?: Boolean,
+  productionMode?: boolean,
+  withoutBackend?: boolean,
   //#region @backend
   onlyForBackendRemoteServerAccess?: boolean,
   connection?: Connection,
@@ -33,6 +34,7 @@ export function init(config: {
     controllers = [],
     entities = [],
     productionMode = false,
+    withoutBackend = false,
     allowedHosts = [],
     //#region @backend
     testMode = false,
@@ -165,7 +167,7 @@ Incorect value for property "entities" inside Morphi.Init(...)
       }
     });
     if (!onlyForBackendRemoteServerAccess) {
-      Global.vars.writeActiveRoutes()
+      Global.vars.writeActiveRoutes(withoutBackend)
     }
   }
   //#endregion

@@ -4,6 +4,7 @@ const path = require('path');
 
 const fse = require('fs-extra');
 
+const { RELATIVEPATHoverride } = require('minimist')(process.argv);
 const pathToTmpEnv = path.join(process.cwd(), 'tmp-environment.json');
 const pathToDist = path.join(process.cwd(), 'dist');
 const pathToDistApp = path.join(pathToDist, 'app.js');
@@ -23,7 +24,7 @@ function assignENV() {
     console.warn('ENV will be not available... tmp-environment.json missing... ')
   }
 
-  let { ENVoverride, RELATIVEPATHoverride } = require('minimist')(process.argv);
+  let { ENVoverride } = require('minimist')(process.argv);
   if (ENVoverride) {
     ENVoverride = JSON.parse(decodeURIComponent(ENVoverride));
     ENV = JSON.parse(ENV);

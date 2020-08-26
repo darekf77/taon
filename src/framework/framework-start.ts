@@ -29,38 +29,66 @@ export function start(options: StartOptions) {
       controllers = [],
       entities = [],
       //#region @backend
+      mode,
       config,
       InitDataPriority,
       publicAssets = [],
-      testMode = false,
-      onlyForBackendRemoteServerAccess = false
       //#endregion
-    } = options as any;
+    } = options as StartOptions;
     // console.log(options)
 
     //#region @backend
+    let withoutBackend = false;
+    let testMode = false;
+    let onlyForBackendRemoteServerAccess = false;
+    switch (mode) {
+      case 'backend-only':
+        withoutBackend = true;
+        break;
+
+      case 'remote-backend':
+        onlyForBackendRemoteServerAccess = true;
+        break;
+
+      case 'tests':
+        testMode = true;
+        break;
+
+      default:
+        break;
+    }
+
+    if (withoutBackend) {
+      Global.vars.withoutBackend = true;
+    }
+
     if (onlyForBackendRemoteServerAccess) {
       Global.vars.startOptions = options;
       Global.vars.onlyForBackendRemoteServerAccess = true;
     }
-    if (!onlyForBackendRemoteServerAccess && !config) {
+
+    if (!config) {
       config = {} as any;
-      console.error(`
 
-    Missing config for backend:
+      if (mode === 'backend/frontend') {
+        console.error(`
+
+        Missing config for backend:
 
 
-    Morphi.init({
-      ...
-      config: <YOUR DB CONFIG HERE>
-      ...
-    })
+        Morphi.init({
+          ...
+          config: <YOUR DB CONFIG HERE>
+          ...
+        })
 
-  `)
+      `);
+      }
+
       config['entities'] = entities as any;
     }
 
-    if (!onlyForBackendRemoteServerAccess) {
+    if (mode === 'backend/frontend' || mode === 'tests') {
       try {
         const con = await getConnection();
 
@@ -85,6 +113,7 @@ export function start(options: StartOptions) {
       //#region @backend
       onlyForBackendRemoteServerAccess,
       connection,
+      withoutBackend,
       testMode,
       //#endregion
     })
@@ -119,7 +148,7 @@ export function start(options: StartOptions) {
         controllerSingletons.push(ctrl);
       }
       if (ctrl && _.isFunction((ctrl as any).initExampleDbData)) {
-        if (!onlyForBackendRemoteServerAccess) {
+        if (!onlyForBackendRemoteServerAccess && !withoutBackend) {
           promises.push(((ctrl as any).initExampleDbData()));
         }
       }
@@ -144,10 +173,13 @@ export interface StartOptions {
   host: string;
   controllers?: BASE_CONTROLLER<any>[] | Function[];
   entities?: BASE_ENTITY<any>[] | Function[];
+
   //#region @backend
-  onlyForBackendRemoteServerAccess?: boolean;
+  mode?: 'backend/frontend' | 'remote-backend' | 'tests' | 'backend-only';
+  // onlyForBackendRemoteServerAccess?: boolean;
+  // testMode?: boolean;
+  // withoutBackend?: boolean;
   config?: IConnectionOptions;
-  testMode?: boolean;
   publicAssets?: { path: string; location: string }[];
   InitDataPriority?: BASE_CONTROLLER<any>[] | Function[];
   //#endregion

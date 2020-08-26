@@ -6,6 +6,7 @@ import { StartOptions } from './framework/framework-start';
 //#region @backend
 import * as path from 'path';
 import * as fse from 'fs-extra';
+import * as _ from 'lodash';
 import { Server, Namespace } from 'socket.io'
 import { Connection } from 'typeorm';
 import { Application } from 'express';
@@ -85,15 +86,20 @@ export class Global {
   private socketFrontEnd: Socket;
   private socketFrontEndRealtime: Socket;
   public allowedHosts: URL[] = [];
+  public withoutBackend = false;
 
   //#region @backend
   public activeRoutes: { routePath: string; method: Models.HttpMethod }[] = []
 
-  public writeActiveRoutes() {
+  public writeActiveRoutes(isWorker = false) {
     const routes = this.activeRoutes.map(({ method, routePath }) => {
-      return `${method.toUpperCase()}:    ${routePath}`
-    })
-    fse.writeJSONSync(path.join(process.cwd(), 'tmp-routes.json'), routes, {
+      return `${method.toUpperCase()}:    ${Global.vars.url.href.replace(/\/$/, '')}${routePath}`
+    });
+    const singletonClass = _.first(Global.vars.controllers) as any;
+    const singleton = singletonClass && Helpers.getSingleton(singletonClass as any) as any;
+    fse.writeJSONSync(path.join(process.cwd(), `tmp-routes${isWorker ? '--worker--'
+      + path.basename(singleton.filename).replace(/\.js$/, '')
+      : ''}.json`), routes, {
       spaces: 2,
       encoding: 'utf8'
     })
