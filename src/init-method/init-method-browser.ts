@@ -24,7 +24,12 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
   target.prototype[methodConfig.methodName] = function (...args) {
     // console.log('FRONTEND expressPath', expressPath)
     const productionMode = GlobalConfig.vars.productionMode;
-    const uri: URL = GlobalConfig.vars.url;
+    let uri: URL = GlobalConfig.vars.url;
+    //#region @backend
+    if (GlobalConfig.vars.onlyForBackendRemoteServerAccess) {
+      uri = this.host; // TODO QUICK_FIX for backgroud-worker-process
+    }
+    //#endregion
     if (!storage[SYMBOL.ENDPOINT_META_CONFIG]) storage[SYMBOL.ENDPOINT_META_CONFIG] = {};
     if (!storage[SYMBOL.ENDPOINT_META_CONFIG][uri.href]) storage[SYMBOL.ENDPOINT_META_CONFIG][uri.href] = {};
     const endpoints = storage[SYMBOL.ENDPOINT_META_CONFIG];

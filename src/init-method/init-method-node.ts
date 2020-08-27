@@ -73,7 +73,7 @@ export function initMethodNodejs(
     ? methodConfig.requestHandler : (req, res, next) => { next() };
 
   const productionMode = GlobalConfig.vars.productionMode;
-  GlobalConfig.vars.url.pathname = GlobalConfig.vars.url.pathname.replace(/\/$/, "");
+  GlobalConfig.vars.url.pathname = GlobalConfig.vars.url.pathname.replace(/\/$/, '');
   expressPath = GlobalConfig.vars.url.pathname.startsWith('/') ? `${GlobalConfig.vars.url.pathname}${expressPath}` : expressPath;
   expressPath = expressPath.replace(/\/\//g, '/')
   // console.log(`BACKEND: expressPath: ${expressPath}`)
