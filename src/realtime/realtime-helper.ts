@@ -1,5 +1,5 @@
 import { SYMBOL } from '../symbols';
-import { Global } from '../global-config';
+import { GlobalConfig } from '../global-config';
 import { Helpers } from '../helpers';
 
 //#region @backend
@@ -11,7 +11,7 @@ if (Helpers.isNode) {
 export class RealtimeHelper {
 
   public static pathFor(namespace?: string) {
-    const uri: URL = Global.vars.url;
+    const uri: URL = GlobalConfig.vars.url;
     const nsp = namespace ? namespace : '';
     const pathname = uri.pathname !== '/' ? uri.pathname : '';
     const morphiPrefix = `socketnodejs`;

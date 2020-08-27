@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import * as io from 'socket.io-client';
 
-import { Global } from '../global-config';
+import { GlobalConfig } from '../global-config';
 import { SYMBOL } from '../symbols';
 
 import { Log, Level } from 'ng2-logger';
@@ -34,7 +34,7 @@ export class RealtimeBrowser {
     const global = io(nspPath.global.origin, {
       path: nspPath.global.pathname
     });
-    Global.vars.socketNamespace.FE = global as any;
+    GlobalConfig.vars.socketNamespace.FE = global as any;
 
     global.on('connect', () => {
       log.i(`conented to GLOBAL namespace ${global.nsp}`)
@@ -46,7 +46,7 @@ export class RealtimeBrowser {
       path: nspPath.realtime.pathname
     }) as any;
 
-    Global.vars.socketNamespace.FE_REALTIME = realtime;
+    GlobalConfig.vars.socketNamespace.FE_REALTIME = realtime;
 
     realtime.on('connect', () => {
       log.i(`conented to REALTIME namespace ${realtime.nsp}`)
@@ -128,8 +128,8 @@ export class RealtimeBrowser {
       SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY_PROPERTY(className, property, entity.id) :
       SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY(className, entity.id)
 
-    const realtime = Global.vars.socketNamespace.FE_REALTIME;
-    const ngZone = Global.vars.ngZone;
+    const realtime = GlobalConfig.vars.socketNamespace.FE_REALTIME;
+    const ngZone = GlobalConfig.vars.ngZone;
 
 
 
@@ -307,7 +307,7 @@ export class RealtimeBrowser {
     }
 
     const className = CLASS.getName(constructFn);
-    const realtime = Global.vars.socketNamespace.FE_REALTIME;
+    const realtime = GlobalConfig.vars.socketNamespace.FE_REALTIME;
 
     const roomName = _.isString(property) ?
       SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY_PROPERTY(className, property, entity.id) :

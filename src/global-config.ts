@@ -12,7 +12,7 @@ import { Connection } from 'typeorm';
 import { Application } from 'express';
 //#endregion
 
-export class Global {
+export class GlobalConfig {
 
   public get socketNamespace() {
     const self = this;
@@ -93,9 +93,9 @@ export class Global {
 
   public writeActiveRoutes(isWorker = false) {
     const routes = this.activeRoutes.map(({ method, routePath }) => {
-      return `${method.toUpperCase()}:    ${Global.vars.url.href.replace(/\/$/, '')}${routePath}`
+      return `${method.toUpperCase()}:    ${GlobalConfig.vars.url.href.replace(/\/$/, '')}${routePath}`
     });
-    const singletonClass = _.first(Global.vars.controllers) as any;
+    const singletonClass = _.first(GlobalConfig.vars.controllers) as any;
     const singleton = singletonClass && Helpers.getSingleton(singletonClass as any) as any;
     fse.writeJSONSync(path.join(process.cwd(), `tmp-routes${isWorker ? '--worker--'
       + path.basename(singleton.filename).replace(/\.js$/, '')
@@ -114,7 +114,7 @@ export class Global {
   //#endregion
 
 
-  public static vars = new Global();
+  public static vars = new GlobalConfig();
 
 
   private get(key) {

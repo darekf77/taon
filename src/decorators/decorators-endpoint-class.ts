@@ -14,7 +14,7 @@ import { CLASS } from 'typescript-class-helpers';
 import { Connection } from 'typeorm';
 import * as _ from 'lodash';
 
-import { Global } from '../global-config';
+import { GlobalConfig } from '../global-config';
 import { SYMBOL } from '../symbols';
 
 import { Helpers } from '../helpers';
@@ -25,7 +25,7 @@ export { Connection } from 'typeorm';
 
 
 export function __ENDPOINT(baseEntity?: Function): (...args: any[]) => any {
-  if (baseEntity) Global.vars.__core_controllers.push(baseEntity);
+  if (baseEntity) GlobalConfig.vars.__core_controllers.push(baseEntity);
   return ENDPOINT();
 }
 
@@ -101,8 +101,8 @@ export function ENDPOINT(options?: {
             }
 
             const { routePath, method } = initMethodNodejs(type, methodConfig, classConfig, expressPath);
-            if (!Global.vars.onlyForBackendRemoteServerAccess) {
-              Global.vars.activeRoutes.push({
+            if (!GlobalConfig.vars.onlyForBackendRemoteServerAccess) {
+              GlobalConfig.vars.activeRoutes.push({
                 routePath,
                 method
               });
@@ -112,7 +112,7 @@ export function ENDPOINT(options?: {
           }
           if (Helpers.isBrowser
             //#region @backend
-            || Global.vars.onlyForBackendRemoteServerAccess
+            || GlobalConfig.vars.onlyForBackendRemoteServerAccess
             //#endregion
           ) {
             initMethodBrowser(target, type, methodConfig, expressPath)
@@ -121,7 +121,7 @@ export function ENDPOINT(options?: {
       }
     })(target, path, auth);
     target.prototype[SYMBOL.CLASS_DECORATOR_CONTEXT] = { initFN, target };
-    Global.vars.initFunc.push({ initFN, target });
+    GlobalConfig.vars.initFunc.push({ initFN, target });
   } as any;
 }
 

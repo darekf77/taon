@@ -2,7 +2,7 @@ import * as _ from 'lodash';
 
 import { Models } from '../models';
 import { Helpers } from '../helpers';
-import { Global } from '../global-config';
+import { GlobalConfig } from '../global-config';
 
 import { SYMBOL } from '../symbols';
 
@@ -33,7 +33,7 @@ import { MDC } from '../crud';
 
 export function initMidleware() {
   //#region @backend
-  const app = Global.vars.app;
+  const app = GlobalConfig.vars.app;
   app.use(fileUpload())
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
@@ -72,13 +72,13 @@ export function initMethodNodejs(
   const requestHandler = (methodConfig.requestHandler && typeof methodConfig.requestHandler === 'function')
     ? methodConfig.requestHandler : (req, res, next) => { next() };
 
-  const productionMode = Global.vars.productionMode;
-  Global.vars.url.pathname = Global.vars.url.pathname.replace(/\/$/, "");
-  expressPath = Global.vars.url.pathname.startsWith('/') ? `${Global.vars.url.pathname}${expressPath}` : expressPath;
+  const productionMode = GlobalConfig.vars.productionMode;
+  GlobalConfig.vars.url.pathname = GlobalConfig.vars.url.pathname.replace(/\/$/, "");
+  expressPath = GlobalConfig.vars.url.pathname.startsWith('/') ? `${GlobalConfig.vars.url.pathname}${expressPath}` : expressPath;
   expressPath = expressPath.replace(/\/\//g, '/')
   // console.log(`BACKEND: expressPath: ${expressPath}`)
-  if (!Global.vars.onlyForBackendRemoteServerAccess) {
-    Global.vars.app[type.toLowerCase()](expressPath, requestHandler, async (req, res) => {
+  if (!GlobalConfig.vars.onlyForBackendRemoteServerAccess) {
+    GlobalConfig.vars.app[type.toLowerCase()](expressPath, requestHandler, async (req, res) => {
 
       const args: any[] = [];
 

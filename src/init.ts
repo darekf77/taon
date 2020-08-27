@@ -5,7 +5,7 @@ import * as http from 'http';
 
 import * as _ from 'lodash';
 import { Connection } from 'typeorm';
-import { Global } from './global-config';
+import { GlobalConfig } from './global-config';
 import { initMidleware } from './init-method';
 
 export { Connection } from 'typeorm';
@@ -70,14 +70,14 @@ Incorect value for property "entities" inside Morphi.Init(...)
   if (Helpers.isBrowser && _.isUndefined(ngZone) && !!window['ng']) {
     console.warn(`Please probide ngZone instance in angular apps`)
   }
-  Global.vars.ngZone = ngZone;
+  GlobalConfig.vars.ngZone = ngZone;
 
-  Global.vars.entities = config.entities;
-  Global.vars.controllers = config.controllers;
+  GlobalConfig.vars.entities = config.entities;
+  GlobalConfig.vars.controllers = config.controllers;
 
-  Global.vars.__core_controllers.forEach(bctrl => controllers.push(bctrl));
+  GlobalConfig.vars.__core_controllers.forEach(bctrl => controllers.push(bctrl));
   config.controllers = _.sortedUniq(controllers);
-  Global.vars.productionMode = !!config.productionMode;
+  GlobalConfig.vars.productionMode = !!config.productionMode;
 
   // backend URI URL {
   //   href: 'http://localhost:4000/api',
@@ -95,11 +95,11 @@ Incorect value for property "entities" inside Morphi.Init(...)
 
   //#region @backend
   if (Helpers.isNode) {
-    if (Global.vars.onlyForBackendRemoteServerAccess) {
-      Global.vars.app = {} as any;
+    if (GlobalConfig.vars.onlyForBackendRemoteServerAccess) {
+      GlobalConfig.vars.app = {} as any;
     } else {
-      if (!Global.vars.app) {
-        Global.vars.app = express()
+      if (!GlobalConfig.vars.app) {
+        GlobalConfig.vars.app = express()
         initMidleware();
       }
     }
@@ -107,22 +107,22 @@ Incorect value for property "entities" inside Morphi.Init(...)
     const uri = new URL(config.host);
 
     // console.log('backend URI', uri);
-    Global.vars.url = uri;
+    GlobalConfig.vars.url = uri;
 
 
     // if (uri.pathname !== '/') {
     //   console.log('INT EXPRESS BASE')
     //   Global.vars.app.set('base', uri.pathname)
     // }
-    if (!Global.vars.onlyForBackendRemoteServerAccess) {
-      const h = new http.Server(Global.vars.app); //TODO is this working ?
+    if (!GlobalConfig.vars.onlyForBackendRemoteServerAccess) {
+      const h = new http.Server(GlobalConfig.vars.app); //TODO is this working ?
 
       RealtimeNodejs.init(h);
 
       if (!testMode) {
         h.listen(uri.port, function () {
           console.log(`Server listening on port: ${uri.port}, hostname: ${uri.pathname},
-            env: ${Global.vars.app.settings.env}
+            env: ${GlobalConfig.vars.app.settings.env}
             `);
         });
       }
@@ -132,10 +132,10 @@ Incorect value for property "entities" inside Morphi.Init(...)
 
   if (Helpers.isBrowser) {
     const uri = new URL(config.host);
-    Global.vars.url = uri;
+    GlobalConfig.vars.url = uri;
 
     if (Array.isArray(allowedHosts)) {
-      Global.vars.allowedHosts = allowedHosts.map(h => new URL(h))
+      GlobalConfig.vars.allowedHosts = allowedHosts.map(h => new URL(h))
     }
 
     RealtimeBrowser.init()
@@ -146,9 +146,9 @@ Incorect value for property "entities" inside Morphi.Init(...)
 
   //#region @backend
   if (Helpers.isNode) {
-    Global.vars.connection = connection;
+    GlobalConfig.vars.connection = connection;
 
-    Global.vars.initFunc.filter(e => {
+    GlobalConfig.vars.initFunc.filter(e => {
       const currentCtrl = controllers.find(ctrl => ctrl === e.target);
       if (currentCtrl) {
         e.initFN();
@@ -167,7 +167,7 @@ Incorect value for property "entities" inside Morphi.Init(...)
       }
     });
     if (!onlyForBackendRemoteServerAccess) {
-      Global.vars.writeActiveRoutes(withoutBackend)
+      GlobalConfig.vars.writeActiveRoutes(withoutBackend)
     }
   }
   //#endregion
@@ -176,7 +176,7 @@ Incorect value for property "entities" inside Morphi.Init(...)
     const notFound: Function[] = [];
     const providers = controllers.filter(ctrl => {
 
-      const e = Global.vars.initFunc.find(e => ctrl === e.target);
+      const e = GlobalConfig.vars.initFunc.find(e => ctrl === e.target);
       if (e) {
         // console.log('current controller ', currentCtrl)
         e.initFN();

@@ -39,7 +39,7 @@ export * from './build-tool';
 export namespace Morphi {
   export const IsNode = helpers.Helpers.isNode;
   export const IsBrowser = helpers.Helpers.isBrowser;
-  export const Config = global.Global.vars;
+  export const Config = global.GlobalConfig.vars;
 
   /**
    * Header name for model data config

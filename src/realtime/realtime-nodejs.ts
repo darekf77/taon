@@ -1,4 +1,4 @@
-import { Global } from '../global-config';
+import { GlobalConfig } from '../global-config';
 import * as _ from 'lodash';
 // import { HttpMethod, MethodConfig, ClassConfig } from 'ng2-rest';
 
@@ -26,12 +26,12 @@ export class RealtimeNodejs {
     };
 
 
-    Global.vars.socketNamespace.BE = io(http, {
+    GlobalConfig.vars.socketNamespace.BE = io(http, {
       path: nspPath.global.pathname
     });
 
 
-    const ioGlobalNsp = Global.vars.socketNamespace.BE;
+    const ioGlobalNsp = GlobalConfig.vars.socketNamespace.BE;
 
     ioGlobalNsp.on('connection', (clientSocket) => {
       log.i('client conected to namespace', clientSocket.nsp.name)
@@ -45,7 +45,7 @@ export class RealtimeNodejs {
 
     log.i(`CREATE REALTIME NAMESPACE: '${ioRealtimeNsp.path()}' , path: '${nspPath.realtime.pathname}' `)
 
-    Global.vars.socketNamespace.BE_REALTIME = ioRealtimeNsp as any;
+    GlobalConfig.vars.socketNamespace.BE_REALTIME = ioRealtimeNsp as any;
 
     ioRealtimeNsp.on('connection', (clientSocket) => {
       log.i('client conected to namespace', clientSocket.nsp.name)
@@ -109,11 +109,11 @@ export class RealtimeNodejs {
       const job = () => {
         if (_.isString(property)) {
           // console.log('populate entity property change to ', SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(className, id))
-          Global.vars.socketNamespace.BE_REALTIME.in(modelSocketRoomPath)
+          GlobalConfig.vars.socketNamespace.BE_REALTIME.in(modelSocketRoomPath)
             .emit(eventName, '')
         } else {
           log.i('populate entity change to ', SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(className, id))
-          Global.vars.socketNamespace.BE_REALTIME.in(modelSocketRoomPath)
+          GlobalConfig.vars.socketNamespace.BE_REALTIME.in(modelSocketRoomPath)
             .emit(eventName, '')
         }
       }

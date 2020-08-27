@@ -12,7 +12,7 @@ import { CLASS } from 'typescript-class-helpers';
 
 //#endregion
 import * as _ from 'lodash';
-import { Global } from '../global-config';
+import { GlobalConfig } from '../global-config';
 import { BASE_ENTITY } from './framework-entity';
 import { BASE_REPOSITORY } from './framework-repository';
 import { BASE_CONTROLLER } from './framework-controller';
@@ -27,7 +27,7 @@ export function tableNameFrom(entityClass: Function | BASE_ENTITY<any>) {
 
 export function classNameVlidation(className, target: Function) {
   if (_.isUndefined(className)) {
-    if (Global.vars.isProductionMode) {
+    if (GlobalConfig.vars.isProductionMode) {
       throw `[Morphi] Please provide "className" property for each Controller and Entity:
 
       @Morphi.Controller({ className: 'MyExampleCtrl'  })

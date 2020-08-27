@@ -1,4 +1,4 @@
-import { Global } from '../global-config';
+import { GlobalConfig } from '../global-config';
 import { SYMBOL } from '../symbols';
 import * as _ from 'lodash';
 import { Models } from '../models';
@@ -23,8 +23,8 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
 
   target.prototype[methodConfig.methodName] = function (...args) {
     // console.log('FRONTEND expressPath', expressPath)
-    const productionMode = Global.vars.productionMode;
-    const uri: URL = Global.vars.url;
+    const productionMode = GlobalConfig.vars.productionMode;
+    const uri: URL = GlobalConfig.vars.url;
     if (!storage[SYMBOL.ENDPOINT_META_CONFIG]) storage[SYMBOL.ENDPOINT_META_CONFIG] = {};
     if (!storage[SYMBOL.ENDPOINT_META_CONFIG][uri.href]) storage[SYMBOL.ENDPOINT_META_CONFIG][uri.href] = {};
     const endpoints = storage[SYMBOL.ENDPOINT_META_CONFIG];
@@ -59,7 +59,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
       }
       if (currentParam.paramType === 'Query') {
         if (currentParam.paramName) {
-          const mapping = Helpers.Mapping.decode(param, !Global.vars.isProductionMode);
+          const mapping = Helpers.Mapping.decode(param, !GlobalConfig.vars.isProductionMode);
           if (mapping) {
             rest.headers.set(
               `${SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${currentParam.paramName}`,
@@ -67,7 +67,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
           }
           queryParams[currentParam.paramName] = param;
         } else {
-          const mapping = Helpers.Mapping.decode(param, !Global.vars.isProductionMode);
+          const mapping = Helpers.Mapping.decode(param, !GlobalConfig.vars.isProductionMode);
           if (mapping) {
             rest.headers.set(
               SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS,
@@ -94,7 +94,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
       }
       if (currentParam.paramType === 'Body') {
         if (currentParam.paramName) {
-          const mapping = Helpers.Mapping.decode(param, !Global.vars.isProductionMode);
+          const mapping = Helpers.Mapping.decode(param, !GlobalConfig.vars.isProductionMode);
           if (mapping) {
             rest.headers.set(
               `${SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS}${currentParam.paramName}`,
@@ -102,7 +102,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
           }
           item[currentParam.paramName] = param;
         } else {
-          const mapping = Helpers.Mapping.decode(param, !Global.vars.isProductionMode);
+          const mapping = Helpers.Mapping.decode(param, !GlobalConfig.vars.isProductionMode);
           if (mapping) {
             rest.headers.set(
               SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS,

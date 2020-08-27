@@ -10,7 +10,7 @@ import { SYMBOL } from '../symbols';
 import { CLASS } from 'typescript-class-helpers';
 //#endregion
 import * as _ from 'lodash';
-import { Global } from '../global-config';
+import { GlobalConfig } from '../global-config';
 import { BASE_ENTITY } from './framework-entity';
 import { BASE_CONTROLLER } from './framework-controller';
 import { init } from '../init';
@@ -59,12 +59,12 @@ export function start(options: StartOptions) {
     }
 
     if (withoutBackend) {
-      Global.vars.withoutBackend = true;
+      GlobalConfig.vars.withoutBackend = true;
     }
 
     if (onlyForBackendRemoteServerAccess) {
-      Global.vars.startOptions = options;
-      Global.vars.onlyForBackendRemoteServerAccess = true;
+      GlobalConfig.vars.startOptions = options;
+      GlobalConfig.vars.onlyForBackendRemoteServerAccess = true;
     }
 
     if (!config) {
@@ -119,7 +119,7 @@ export function start(options: StartOptions) {
     })
     //#region @backend
     if (!onlyForBackendRemoteServerAccess) {
-      var app = Global.vars.app;
+      var app = GlobalConfig.vars.app;
 
       publicAssets.forEach(asset => {
         app.use(asset.path, express.static(asset.location))
@@ -148,7 +148,7 @@ export function start(options: StartOptions) {
         controllerSingletons.push(ctrl);
       }
       if (ctrl && _.isFunction((ctrl as any).initExampleDbData)) {
-        if (!onlyForBackendRemoteServerAccess && !withoutBackend) {
+        if (!onlyForBackendRemoteServerAccess) {
           promises.push(((ctrl as any).initExampleDbData()));
         }
       }
