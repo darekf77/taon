@@ -49,19 +49,22 @@ function emptyDistFolder() {
   );
 }
 
-var messageWasShown = false;
-while (emptyDistFolder()) {
-  var seconds = 2;
-  if (!messageWasShown) {
-    messageWasShown = true;
-    console.log(`Waiting for build process...`);
+if (!RELATIVEPATHoverride || RELATIVEPATHoverride.trim().length === 0) {
+  var messageWasShown = false;
+  while (emptyDistFolder()) {
+    var seconds = 2;
+    if (!messageWasShown) {
+      messageWasShown = true;
+      console.log(`Waiting for build process...`);
+    }
+    var waitTill = new Date(new Date().getTime() + seconds * 1000);
+    while (waitTill > new Date()) { }
   }
-  var waitTill = new Date(new Date().getTime() + seconds * 1000);
-  while (waitTill > new Date()) { }
-}
-if (messageWasShown) {
-  var waitTill = new Date(new Date().getTime() + secondsWaitAfterDistDetected * 1000);
-  while (waitTill > new Date()) { }
+  if (messageWasShown) {
+    var waitTill = new Date(new Date().getTime() + secondsWaitAfterDistDetected * 1000);
+    while (waitTill > new Date()) { }
+  }
+
 }
 
 assignENV();

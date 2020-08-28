@@ -123,8 +123,7 @@ export function Controller(options?: {
 
 //#region @backend
 export interface BASE_CONTROLLER_INIT {
-
-  initExampleDbData(): Promise<any>;
+  initExampleDbData?: () => Promise<any>;
 }
 //#endregion
 
