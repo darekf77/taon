@@ -81,9 +81,9 @@
     "private": true
   },
   "build": {
-    "number": 653,
-    "date": "2020-08-18T00:54:57.000Z",
-    "hash": "014a0fc96ba26ac9a197477ce47951317ffa9c01",
+    "number": 660,
+    "date": "2020-08-28T14:53:37.000Z",
+    "hash": "79c587a2590af2c635b3cb36b6c0c031e3f8a6de",
     "options": {}
   },
   "currentProjectName": "docker-v2",

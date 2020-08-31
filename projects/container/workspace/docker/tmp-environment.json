@@ -302,9 +302,9 @@
     "private": true
   },
   "build": {
-    "number": 647,
-    "date": "2020-08-13T20:49:13.000Z",
-    "hash": "5dd27e3fed1ff59c3302bd10e91fd71f90096617",
+    "number": 660,
+    "date": "2020-08-28T14:53:37.000Z",
+    "hash": "79c587a2590af2c635b3cb36b6c0c031e3f8a6de",
     "options": {}
   },
   "currentProjectName": "docker",
@@ -312,8 +312,8 @@
   "currentProjectLaunchConfiguration": "{\"version\":\"0.2.0\",\"configurations\":[],\"compounds\":[]}",
   "currentProjectTasksConfiguration": "{\"version\":\"2.0.0\",\"tasks\":[{\"label\":\"terminateall\",\"command\":\"echo ${input:terminate}\",\"type\":\"shell\",\"problemMatcher\":[]}],\"inputs\":[{\"id\":\"terminate\",\"type\":\"command\",\"command\":\"workbench.action.tasks.terminate\",\"args\":\"terminateAll\"}]}",
   "currentProjectType": "docker",
-  "currentFrameworkVersion": "0.0.45",
-  "currentProjectLocation": "/Users/dfilipiak/projects/npm/morphi/projects/container/workspace/docker",
+  "currentFrameworkVersion": "0.0.62",
+  "currentProjectLocation": "/Users/darek/projects/npm/firedev-projects/container/workspace/docker",
   "currentProjectIsStrictSite": false,
   "currentProjectIsDependencySite": false,
   "currentProjectIsStatic": false,
