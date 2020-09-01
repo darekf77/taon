@@ -16,6 +16,11 @@ import { tableNameFrom } from '../framework/framework-helpers';
 import { OrmConnection } from '../decorators/orm-connection';
 import { Helpers } from '../helpers';
 import { IBASE_ENTITY } from '../framework/framework-entity';
+const jobIDkey = 'jobID';
+declare const global: any;
+if (!global['ENV']) {
+  global['ENV'] = {};
+}
 //#endregion
 
 @__ENDPOINT(BaseCRUD)
@@ -40,9 +45,9 @@ export abstract class BaseCRUD<T>  {
     //#region @backend
     if (Helpers.isNode && this.entity && this.connection && this.entity[SYMBOL.HAS_TABLE_IN_DB]) {
       this.repo = this.connection.getRepository(this.entity as any)
-       console.log(`Base CRUD inited for: ${(this.entity as any).name}`)
+      !global.hideLog && console.log(`Base CRUD inited for: ${(this.entity as any).name}`)
     } else {
-      console.log(`Base CRUD NOT inited for: ${this.entity && (this.entity as any).name}`)
+      !global.hideLog && console.log(`Base CRUD NOT inited for: ${this.entity && (this.entity as any).name}`)
     }
     //#endregion
   }
