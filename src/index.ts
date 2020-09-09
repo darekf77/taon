@@ -41,6 +41,10 @@ export namespace Morphi {
   export const IsBrowser = helpers.Helpers.isBrowser;
   export const Config = global.GlobalConfig.vars;
 
+  export function getHttpPathBy<T = Function>(classFn: new () => T, port: number, method: (keyof T)) {
+    return `http://localhost:${port}${helpers.Helpers.getPathFor(classFn as any)}/${method}`;
+  }
+
   /**
    * Header name for model data config
    */

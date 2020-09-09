@@ -3,7 +3,7 @@ import { Log } from 'ng2-logger';
 import { SYMBOL } from '../symbols';
 import { FormlyArrayTransformFn } from '../crud/fromly';
 import { classNameVlidation } from './framework-helpers';
-import { Mapping, Helpers, Models } from 'ng2-rest';
+import { Mapping, Models } from 'ng2-rest';
 
 
 //#region @backend
@@ -119,7 +119,7 @@ export function Entity<T = {}>(options?: {
 
 }
 
-export abstract class BASE_ENTITY<T, TRAW=T, CTRL extends BaseCRUD<T> = any> {
+export abstract class BASE_ENTITY<T, TRAW = T, CTRL extends BaseCRUD<T> = any> {
 
   abstract id: number;
   public modelDataConfig?: ModelDataConfig;
@@ -212,7 +212,7 @@ export abstract class BASE_ENTITY<T, TRAW=T, CTRL extends BaseCRUD<T> = any> {
           update = () => that.ctrl.bufforedChanges(that.id, property as any, alreadyLength, modelDataConfig).received as any
         }
 
-        if (_.isUndefined(update)) {
+        if (_.isUndefined(update) && that.ctrl) {
           update = () => that.ctrl.getBy(that.id, modelDataConfig).received as any;
         }
         const updateID = getUpdateID(that.id, CLASS.getNameFromObject(that), property, modelDataConfig);
@@ -223,7 +223,7 @@ export abstract class BASE_ENTITY<T, TRAW=T, CTRL extends BaseCRUD<T> = any> {
         }
         updatesInProgress[updateID] = true;
         // console.log('entity should be updated !')
-        const data = await update()
+        const data = update ? (await update()) : { body: { json: entityToUpdate } };
         let newData = data.body.json;
         if (_.isFunction(callback)) {
           const newDataCallaback = callback(data as any)

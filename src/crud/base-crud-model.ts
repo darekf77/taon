@@ -63,7 +63,9 @@ export abstract class BaseCRUD<T>  {
     return async (request, response) => {
 
       const model = await getModel(id, config, this.repo);
-
+      if (model === void 0) {
+        return;
+      }
       preventUndefinedModel(model, config, id)
       let value = model[property];
       let result: any;
@@ -174,6 +176,9 @@ async function getModels(config: ModelDataConfig, repo: any) {
 }
 
 async function getModel(id: number, config: ModelDataConfig, repo: any) {
+  if (!repo) {
+    return void 0;
+  }
   let res = await repo.findOne({
     where: _.merge({ id }, config && config.db && config.db.where),
     join: config && config.db && config.db.join
@@ -182,6 +187,9 @@ async function getModel(id: number, config: ModelDataConfig, repo: any) {
 }
 
 function prepareData(data: IBASE_ENTITY | IBASE_ENTITY[], config: ModelDataConfig, id?: number) {
+  if (data === void 0) {
+    return;
+  }
   preventUndefinedModel(data, config, id);
   if (_.isObject(config)) {
     if (!(config instanceof ModelDataConfig)) {

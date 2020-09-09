@@ -9,23 +9,29 @@ import { Helpers } from '../helpers';
 import { BASE_ENTITY } from '../framework/framework-entity';
 import { CLASS } from 'typescript-class-helpers';
 import { RealtimeHelper } from './realtime-helper';
-const log = Log.create('RealtimeBrowser', Level.__NOTHING)
+import { Morphi } from '..';
+const log = Log.create('RealtimeBrowser',
+  // Level.__NOTHING
+);
 
 export type AliasChangeListenerType = (unsubscribe: () => void) => void;
 export type AliasEntityType = Partial<BASE_ENTITY<any>>;
 
 export class RealtimeBrowser {
   private static connected = false;
-  static init() {
-    if (RealtimeBrowser.connected) {
-      log.warn('BROWSER ALREADY CONNECTED!')
-      return
+  static init(hostForRealtime: string) {
+    if (Morphi.IsBrowser) {
+      if (RealtimeBrowser.connected) {
+        log.warn('BROWSER ALREADY CONNECTED!')
+        return
+      }
+      RealtimeBrowser.connected = true;
     }
-    RealtimeBrowser.connected = true;
+
     // RealtimeHelper.pathFor(SYMBOL.REALTIME.NAMESPACE).hostname
     const nspPath = {
-      global: RealtimeHelper.pathFor(),
-      realtime: RealtimeHelper.pathFor(SYMBOL.REALTIME.NAMESPACE)
+      global: RealtimeHelper.pathFor(void 0, hostForRealtime),
+      realtime: RealtimeHelper.pathFor(SYMBOL.REALTIME.NAMESPACE, hostForRealtime)
     };
 
     log.i('NAMESPACE GLOBAL', nspPath.global.href)

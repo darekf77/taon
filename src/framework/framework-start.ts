@@ -28,6 +28,7 @@ export function start(options: StartOptions) {
       host,
       controllers = [],
       entities = [],
+      disabledRealtime = false,
       //#region @backend
       mode,
       config,
@@ -38,12 +39,12 @@ export function start(options: StartOptions) {
     // console.log(options)
 
     //#region @backend
-    let withoutBackend = false;
+    let workerMode = false;
     let testMode = false;
     let onlyForBackendRemoteServerAccess = false;
     switch (mode) {
-      case 'backend-only':
-        withoutBackend = true;
+      case 'backend/frontend-worker':
+        workerMode = true;
         break;
 
       case 'remote-backend':
@@ -58,8 +59,14 @@ export function start(options: StartOptions) {
         break;
     }
 
-    if (withoutBackend) {
-      GlobalConfig.vars.withoutBackend = true;
+    GlobalConfig.vars.disabledRealtime = disabledRealtime;
+
+    if (workerMode) {
+      GlobalConfig.vars.workerMode = true;
+    }
+
+    if (workerMode) {
+      GlobalConfig.vars.workerMode = true;
     }
 
     if (onlyForBackendRemoteServerAccess) {
@@ -113,7 +120,7 @@ export function start(options: StartOptions) {
       //#region @backend
       onlyForBackendRemoteServerAccess,
       connection,
-      withoutBackend,
+      workerMode,
       testMode,
       //#endregion
     })
@@ -149,7 +156,7 @@ export function start(options: StartOptions) {
       }
       if (ctrl && _.isFunction((ctrl as any).initExampleDbData)) {
         if (!onlyForBackendRemoteServerAccess) {
-          promises.push(((ctrl as any).initExampleDbData()));
+          promises.push(((ctrl as any).initExampleDbData(workerMode)));
         }
       }
     });
@@ -173,12 +180,10 @@ export interface StartOptions {
   host: string;
   controllers?: BASE_CONTROLLER<any>[] | Function[];
   entities?: BASE_ENTITY<any>[] | Function[];
+  disabledRealtime?: boolean;
 
   //#region @backend
-  mode?: 'backend/frontend' | 'remote-backend' | 'tests' | 'backend-only';
-  // onlyForBackendRemoteServerAccess?: boolean;
-  // testMode?: boolean;
-  // withoutBackend?: boolean;
+  mode?: 'backend/frontend' | 'remote-backend' | 'tests' | 'backend/frontend-worker';
   config?: IConnectionOptions;
   publicAssets?: { path: string; location: string }[];
   InitDataPriority?: BASE_CONTROLLER<any>[] | Function[];

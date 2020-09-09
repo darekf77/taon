@@ -18,24 +18,12 @@ export class GlobalConfig {
     const self = this;
     return {
       set FE(v) {
-        if (!Helpers.isBrowser) {
-          //#region @backend
-          console.trace(`CANNOT USE frontend socket on backend side.`)
-          process.exit(1)
-          //#endregion
-        }
         self.socketFrontEnd = v;
       },
       get FE() {
         return self.socketFrontEnd;
       },
       set FE_REALTIME(v) {
-        if (!Helpers.isBrowser) {
-          //#region @backend
-          console.trace(`CANNOT USE frontend socket on backend side.`)
-          process.exit(1)
-          //#endregion
-        }
         self.socketFrontEndRealtime = v;
       },
       get FE_REALTIME() {
@@ -86,7 +74,8 @@ export class GlobalConfig {
   private socketFrontEnd: Socket;
   private socketFrontEndRealtime: Socket;
   public allowedHosts: URL[] = [];
-  public withoutBackend = false;
+  public workerMode = false;
+  public disabledRealtime = false;
 
   //#region @backend
   public activeRoutes: { routePath: string; method: Models.HttpMethod }[] = []

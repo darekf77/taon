@@ -14,15 +14,17 @@ import { BASE_ENTITY } from '../framework/framework-entity';
 import { Helpers } from '../helpers';
 import { RealtimeHelper } from './realtime-helper';
 import { CLASS } from 'typescript-class-helpers';
-const log = Log.create('RealtimeNodejs', Level.__NOTHING)
+const log = Log.create('RealtimeNodejs',
+  // Level.__NOTHING
+);
 
 export class RealtimeNodejs {
   //#region @backend
-  static init(http: Http2Server) {
+  static init(http: Http2Server, hostForRealtime: string) {
 
     const nspPath = {
-      global: RealtimeHelper.pathFor(),
-      realtime: RealtimeHelper.pathFor(SYMBOL.REALTIME.NAMESPACE)
+      global: RealtimeHelper.pathFor(void 0, hostForRealtime),
+      realtime: RealtimeHelper.pathFor(SYMBOL.REALTIME.NAMESPACE, hostForRealtime)
     };
 
 

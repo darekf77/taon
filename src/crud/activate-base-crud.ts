@@ -2,7 +2,12 @@ import * as _ from 'lodash';
 import { Helpers } from '../helpers';
 import { CLASS } from 'typescript-class-helpers';
 
-const abstractClasses = ['BASE_CONTROLLER']
+declare const global: any;
+if (!global['ENV']) {
+  global['ENV'] = {};
+}
+
+const abstractClasses = ['BASE_CONTROLLER'];
 
 export function activateBaseCrud(target: Function, entity: Function, entites?: Function[]) {
 
@@ -14,14 +19,14 @@ export function activateBaseCrud(target: Function, entity: Function, entites?: F
         return;
       }
 
-      throw `Please provide "entity" property
+      !global.hideLog && console.warn(`Please provide "entity" property
 @Morphi.Controller({
   ...
   entity: <YOUR ENTITY CLASS HERE>
   ...
 })
 class ${CLASS.getName(target)} extends  ...
-      `
+      `)
     } else {
       // console.log(`Traget ${target.name} has parent BaseCrud`)
       target.prototype['entity'] = entity;

@@ -10,8 +10,18 @@ if (Helpers.isNode) {
 
 export class RealtimeHelper {
 
-  public static pathFor(namespace?: string) {
-    const uri: URL = GlobalConfig.vars.url;
+  public static pathFor(namespace: string, hostForRealtime: string) {
+    let uri: URL = GlobalConfig.vars.url;
+    //#region @backend
+    if (Helpers.isNode) {
+      var { URL } = require('url');
+    }
+    //#endregion
+    if (hostForRealtime) {
+      const uriOverride = new URL(hostForRealtime);
+      uri = uriOverride;
+    }
+
     const nsp = namespace ? namespace : '';
     const pathname = uri.pathname !== '/' ? uri.pathname : '';
     const morphiPrefix = `socketnodejs`;

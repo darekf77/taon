@@ -123,7 +123,7 @@ export function Controller(options?: {
 
 //#region @backend
 export interface BASE_CONTROLLER_INIT {
-  initExampleDbData?: () => Promise<any>;
+  initExampleDbData?: (isWoker?: boolean) => Promise<any>;
 }
 //#endregion
 
@@ -151,7 +151,7 @@ export abstract class BASE_CONTROLLER<T> extends BaseCRUD<T>
     throw `ctrl method not implemented ${CLASS.getNameFromObject(this)}`
   }
 
-  async initExampleDbData() {
+  async initExampleDbData(isWorker = false) {
 
   }
 

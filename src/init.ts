@@ -22,7 +22,7 @@ export function init(config: {
   controllers?: Function[],
   entities?: Function[]
   productionMode?: boolean,
-  withoutBackend?: boolean,
+  workerMode?: boolean,
   //#region @backend
   onlyForBackendRemoteServerAccess?: boolean,
   connection?: Connection,
@@ -30,11 +30,12 @@ export function init(config: {
   //#endregion
 }) {
   const {
+    host,
     ngZone,
     controllers = [],
     entities = [],
     productionMode = false,
-    withoutBackend = false,
+    workerMode = false,
     allowedHosts = [],
     //#region @backend
     testMode = false,
@@ -117,7 +118,10 @@ Incorect value for property "entities" inside Morphi.Init(...)
     if (!GlobalConfig.vars.onlyForBackendRemoteServerAccess) {
       const h = new http.Server(GlobalConfig.vars.app); //TODO is this working ?
 
-      RealtimeNodejs.init(h);
+      if (!GlobalConfig.vars.disabledRealtime) {
+        RealtimeNodejs.init(h, host);
+      }
+
 
       if (!testMode) {
         h.listen(uri.port, function () {
@@ -130,15 +134,20 @@ Incorect value for property "entities" inside Morphi.Init(...)
   }
   //#endregion
 
-  if (Helpers.isBrowser) {
+  if (Helpers.isBrowser
+    //#region @backend
+    || GlobalConfig.vars.onlyForBackendRemoteServerAccess
+    //#endregion
+  ) {
     const uri = new URL(config.host);
     GlobalConfig.vars.url = uri;
 
     if (Array.isArray(allowedHosts)) {
       GlobalConfig.vars.allowedHosts = allowedHosts.map(h => new URL(h))
     }
-
-    RealtimeBrowser.init()
+    if (!GlobalConfig.vars.disabledRealtime) {
+      RealtimeBrowser.init(host);
+    }
 
 
   }
@@ -167,7 +176,7 @@ Incorect value for property "entities" inside Morphi.Init(...)
       }
     });
     if (!onlyForBackendRemoteServerAccess) {
-      GlobalConfig.vars.writeActiveRoutes(withoutBackend)
+      GlobalConfig.vars.writeActiveRoutes(workerMode)
     }
   }
   //#endregion

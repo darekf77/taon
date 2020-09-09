@@ -47,7 +47,7 @@ export function ENDPOINT(options?: {
 
     target.prototype[SYMBOL.IS_ENPOINT_REALTIME] = realtime;
 
-    const initFN = (function (target, path, auth) {
+    const initFN = (function (target, targetPath, auth) {
       return function () {
         // debugger
         // console.log(`INITING ${target.name} , parent ${target['__proto__'].name} `)
@@ -56,7 +56,7 @@ export function ENDPOINT(options?: {
         const configs = CLASS.getConfig(target) as any[];
         // console.log(`Class config for ${CLASS.getName(target)}`, configs)
         const classConfig: Models.Rest.ClassConfig = configs[0];
-        classConfig.path = path;
+        classConfig.path = targetPath;
         const parentscalculatedPath = _
           .slice(configs, 1)
           .reverse()
@@ -67,8 +67,8 @@ export function ENDPOINT(options?: {
             return CLASS.getName(bc.classReference);
           }).join('/')
 
-        if (Helpers.isGoodPath(path)) {
-          classConfig.calculatedPath = path;
+        if (Helpers.isGoodPath(targetPath)) {
+          classConfig.calculatedPath = targetPath;
         } else {
           classConfig.calculatedPath = `/${parentscalculatedPath}/${CLASS.getName(target)}`
             .replace(/\/\//g, '/');

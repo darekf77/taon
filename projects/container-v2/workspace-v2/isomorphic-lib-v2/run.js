@@ -26,7 +26,8 @@ function assignENV() {
 
   let { ENVoverride } = require('minimist')(process.argv);
   if (ENVoverride) {
-    ENVoverride = JSON.parse(decodeURIComponent(ENVoverride));
+    const stringJson = decodeURIComponent(ENVoverride);
+    ENVoverride = JSON.parse(stringJson);
     ENV = JSON.parse(ENV);
     Object.assign(ENV, ENVoverride);
     ENV = JSON.stringify(ENV, null, 4);
@@ -83,7 +84,7 @@ if (!relativePath.startsWith('./')) {
 const script = new vm.Script(`
 global["ENV"] = JSON.parse(ENV);
 var app = require("${relativePath}").default;
-app(${port});
+app(${port},[${process.argv.slice(2).map(c => `"${c}"`).join(',')}]);
 `);
 
 const context = vm.createContext(sandbox);

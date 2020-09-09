@@ -53,6 +53,23 @@ export class Helpers extends HelpersNg2Rest {
     return p && typeof p === 'string' && p.trim() !== ''
   }
 
+  static getPathFor(target: Function) {
+    const configs = CLASS.getConfig(target) as any[];
+    // console.log(`Class config for ${CLASS.getName(target)}`, configs)
+    const classConfig: Models.Rest.ClassConfig = configs[0];
+    const parentscalculatedPath = _
+      .slice(configs, 1)
+      .reverse()
+      .map(bc => {
+        if (Helpers.isGoodPath(bc.path)) {
+          return bc.path
+        }
+        return CLASS.getName(bc.classReference);
+      }).join('/');
+
+    return `/${parentscalculatedPath}/${CLASS.getName(target)}`;
+  }
+
   static isRealtimeEndpoint(target: Function) {
     return target && target.prototype && target.prototype[SYMBOL.IS_ENPOINT_REALTIME];
   }
