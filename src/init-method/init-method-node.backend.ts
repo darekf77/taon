@@ -1,84 +1,32 @@
 import * as _ from 'lodash';
-
 import { Models } from '../models';
 import { Helpers } from '../helpers';
-import { GlobalConfig } from '../global-config';
-
 import { SYMBOL } from '../symbols';
-
-//#region @backend
-import * as  cors from 'cors';
-import * as bodyParser from 'body-parser';
-import * as errorHandler from 'errorhandler';
-import * as cookieParser from 'cookie-parser';
-import * as methodOverride from 'method-override';
-import * as fileUpload from 'express-fileupload';
 import { EntityProcess } from './entity-process';
 import { MDC } from '../crud';
+import { FrameworkContext } from '../framework/framework-context';
 
-//#endregion
-
-
-// function mesureTime(func: (note: (info: string) => any) => any) {
-//   let start = process.hrtime();
-
-//   const elapsed_time = (note) => {
-//     var precision = 3; // 3 decimal places
-//     var elapsed = process.hrtime(start)[1] / 1000000; // divide by a million to get nano to milli
-//     console.log(process.hrtime(start)[0] + " s, " + elapsed.toFixed(precision) + " ms - " + note); // print message + time
-//     start = process.hrtime(); // reset the timer
-//   }
-//   func(elapsed_time as any)
-// }
-
-export function initMidleware() {
-  //#region @backend
-  const app = GlobalConfig.vars.app;
-  app.use(fileUpload())
-  app.use(bodyParser.urlencoded({ extended: true }));
-  app.use(bodyParser.json());
-  app.use(methodOverride());
-  app.use(cookieParser());
-  app.use(cors());
-
-  (() => {
-    app.use((req, res, next) => {
-
-      res.set('Access-Control-Expose-Headers',
-        [
-          'Content-Type',
-          'Authorization',
-          'X-Requested-With',
-          SYMBOL.X_TOTAL_COUNT,
-          SYMBOL.MAPPING_CONFIG_HEADER,
-          SYMBOL.CIRCURAL_OBJECTS_MAP_BODY,
-          SYMBOL.CIRCURAL_OBJECTS_MAP_QUERY_PARAM
-        ].join(', '))
-      next();
-    });
-  })()
-  //#endregion
-
-}
-
-//#region @backend
 export function initMethodNodejs(
   type: Models.Rest.HttpMethod,
   methodConfig: Models.Rest.MethodConfig,
   classConfig: Models.Rest.ClassConfig,
-  expressPath
+  expressPath: string,
+  target: Function
 ) {
 
   const requestHandler = (methodConfig.requestHandler && typeof methodConfig.requestHandler === 'function')
     ? methodConfig.requestHandler : (req, res, next) => { next() };
 
-  const productionMode = GlobalConfig.vars.productionMode;
-  GlobalConfig.vars.url.pathname = GlobalConfig.vars.url.pathname.replace(/\/$/, '');
-  expressPath = GlobalConfig.vars.url.pathname.startsWith('/') ? `${GlobalConfig.vars.url.pathname}${expressPath}` : expressPath;
+  const productionMode = FrameworkContext.isProductionMode;
+  const context = FrameworkContext.findForTraget(target);
+  const url = context.uri;
+
+  url.pathname = url.pathname.replace(/\/$/, '');
+  expressPath = url.pathname.startsWith('/') ? `${url.pathname}${expressPath}` : expressPath;
   expressPath = expressPath.replace(/\/\//g, '/')
   // console.log(`BACKEND: expressPath: ${expressPath}`)
-  if (!GlobalConfig.vars.onlyForBackendRemoteServerAccess) {
-    GlobalConfig.vars.app[type.toLowerCase()](expressPath, requestHandler, async (req, res) => {
+  if (!context.onlyForBackendRemoteServerAccess) {
+    context.node.app[type.toLowerCase()](expressPath, requestHandler, async (req, res) => {
 
       const args: any[] = [];
 
@@ -212,9 +160,7 @@ export function initMethodNodejs(
     method: methodConfig.type
   }
 }
-//#endregion
 
-//#region @backend
 function betterError(error) {
   console.log(require('callsite-record')({
     forError: error
@@ -224,4 +170,3 @@ function betterError(error) {
     // }
   }))
 }
-//#endregion

@@ -1,10 +1,10 @@
-import { GlobalConfig } from '../global-config';
 import { SYMBOL } from '../symbols';
 import * as _ from 'lodash';
 import { Models } from '../models';
 import { Resource } from 'ng2-rest';
 import { Models as Ng2RestModels } from 'ng2-rest';
 import { Helpers } from '../helpers';
+import { FrameworkContext } from '../framework/framework-context';
 
 export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodConfig: Models.Rest.MethodConfig, expressPath) {
 
@@ -23,12 +23,9 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
 
   target.prototype[methodConfig.methodName] = function (...args) {
     // console.log('FRONTEND expressPath', expressPath)
-    const productionMode = GlobalConfig.vars.productionMode;
-    let uri: URL = GlobalConfig.vars.url;
-    //#region @backend
-    if (GlobalConfig.vars.onlyForBackendRemoteServerAccess) {
-      uri = this.host; // TODO QUICK_FIX for backgroud-worker-process
-    }
+    // const productionMode = FrameworkContext.isProductionMode;
+    const context = FrameworkContext.findForTraget(target);
+    let uri: URL = context.uri;
     //#endregion
     if (!storage[SYMBOL.ENDPOINT_META_CONFIG]) storage[SYMBOL.ENDPOINT_META_CONFIG] = {};
     if (!storage[SYMBOL.ENDPOINT_META_CONFIG][uri.href]) storage[SYMBOL.ENDPOINT_META_CONFIG][uri.href] = {};
@@ -64,7 +61,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
       }
       if (currentParam.paramType === 'Query') {
         if (currentParam.paramName) {
-          const mapping = Helpers.Mapping.decode(param, !GlobalConfig.vars.isProductionMode);
+          const mapping = Helpers.Mapping.decode(param, !FrameworkContext.isProductionMode);
           if (mapping) {
             rest.headers.set(
               `${SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${currentParam.paramName}`,
@@ -72,7 +69,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
           }
           queryParams[currentParam.paramName] = param;
         } else {
-          const mapping = Helpers.Mapping.decode(param, !GlobalConfig.vars.isProductionMode);
+          const mapping = Helpers.Mapping.decode(param, !FrameworkContext.isProductionMode);
           if (mapping) {
             rest.headers.set(
               SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS,
@@ -99,7 +96,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
       }
       if (currentParam.paramType === 'Body') {
         if (currentParam.paramName) {
-          const mapping = Helpers.Mapping.decode(param, !GlobalConfig.vars.isProductionMode);
+          const mapping = Helpers.Mapping.decode(param, !FrameworkContext.isProductionMode);
           if (mapping) {
             rest.headers.set(
               `${SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS}${currentParam.paramName}`,
@@ -107,7 +104,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
           }
           item[currentParam.paramName] = param;
         } else {
-          const mapping = Helpers.Mapping.decode(param, !GlobalConfig.vars.isProductionMode);
+          const mapping = Helpers.Mapping.decode(param, !FrameworkContext.isProductionMode);
           if (mapping) {
             rest.headers.set(
               SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS,

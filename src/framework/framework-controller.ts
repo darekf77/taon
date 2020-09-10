@@ -6,7 +6,6 @@ import {
 //#endregion
 
 import * as _ from 'lodash';
-import { RealtimeNodejs } from '../realtime/realtime-nodejs';
 import { ENDPOINT, __ENDPOINT } from '../decorators/decorators-endpoint-class';
 import { BaseCRUD } from '../crud/base-crud-model';
 import { classNameVlidation } from './framework-helpers';

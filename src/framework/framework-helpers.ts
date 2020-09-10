@@ -2,21 +2,15 @@
 import 'reflect-metadata';
 import { Repository } from 'typeorm';
 import { Connection } from 'typeorm';
-import { createConnection, createConnections, getConnection } from 'typeorm';
-import * as express from 'express';
-
 export { Connection } from 'typeorm';
-import { Helpers } from '../helpers';
 import { SYMBOL } from '../symbols';
 import { CLASS } from 'typescript-class-helpers';
-
 //#endregion
+
 import * as _ from 'lodash';
-import { GlobalConfig } from '../global-config';
 import { BASE_ENTITY } from './framework-entity';
 import { BASE_REPOSITORY } from './framework-repository';
-import { BASE_CONTROLLER } from './framework-controller';
-import { init } from '../init';
+import { FrameworkContext } from './framework-context';
 
 //#region @backend
 export function tableNameFrom(entityClass: Function | BASE_ENTITY<any>) {
@@ -27,7 +21,7 @@ export function tableNameFrom(entityClass: Function | BASE_ENTITY<any>) {
 
 export function classNameVlidation(className, target: Function) {
   if (_.isUndefined(className)) {
-    if (GlobalConfig.vars.isProductionMode) {
+    if (FrameworkContext.isProductionMode) {
       throw `[Morphi] Please provide "className" property for each Controller and Entity:
 
       @Morphi.Controller({ className: 'MyExampleCtrl'  })

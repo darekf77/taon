@@ -1,8 +1,3 @@
-//#region @backend
-import * as express from 'express';
-import * as http from 'http';
-//#endregion
-
 import {
   initMethodBrowser,
   //#region @backend
@@ -13,19 +8,17 @@ export { CLASS } from 'typescript-class-helpers';
 import { CLASS } from 'typescript-class-helpers';
 import { Connection } from 'typeorm';
 import * as _ from 'lodash';
-
-import { GlobalConfig } from '../global-config';
 import { SYMBOL } from '../symbols';
-
 import { Helpers } from '../helpers';
 import { activateBaseCrud } from '../crud/activate-base-crud';
 import { Models } from '../models';
-
+import { FrameworkContext } from '../framework/framework-context';
 export { Connection } from 'typeorm';
 
-
 export function __ENDPOINT(baseEntity?: Function): (...args: any[]) => any {
-  if (baseEntity) GlobalConfig.vars.__core_controllers.push(baseEntity);
+  if (baseEntity) {
+    FrameworkContext.__core_controllers.push(baseEntity);
+  }
   return ENDPOINT();
 }
 
@@ -49,7 +42,7 @@ export function ENDPOINT(options?: {
 
     const initFN = (function (target, targetPath, auth) {
       return function () {
-        // debugger
+        const context = FrameworkContext.findForTraget(target);
         // console.log(`INITING ${target.name} , parent ${target['__proto__'].name} `)
         activateBaseCrud(target, entity, additionalEntities)
         //#region  access decorator config
@@ -100,9 +93,9 @@ export function ENDPOINT(options?: {
               methodConfig.requestHandler = auth(methodConfig.descriptor.value);
             }
 
-            const { routePath, method } = initMethodNodejs(type, methodConfig, classConfig, expressPath);
-            if (!GlobalConfig.vars.onlyForBackendRemoteServerAccess) {
-              GlobalConfig.vars.activeRoutes.push({
+            const { routePath, method } = initMethodNodejs(type, methodConfig, classConfig, expressPath,target);
+            if (!context.onlyForBackendRemoteServerAccess) {
+              context.node.activeRoutes.push({
                 routePath,
                 method
               });
@@ -112,7 +105,7 @@ export function ENDPOINT(options?: {
           }
           if (Helpers.isBrowser
             //#region @backend
-            || GlobalConfig.vars.onlyForBackendRemoteServerAccess
+            || context.onlyForBackendRemoteServerAccess
             //#endregion
           ) {
             initMethodBrowser(target, type, methodConfig, expressPath)
@@ -121,7 +114,7 @@ export function ENDPOINT(options?: {
       }
     })(target, path, auth);
     target.prototype[SYMBOL.CLASS_DECORATOR_CONTEXT] = { initFN, target };
-    GlobalConfig.vars.initFunc.push({ initFN, target });
+    FrameworkContext.initFunc.push({ initFN, target });
   } as any;
 }
 

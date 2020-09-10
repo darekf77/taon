@@ -18,12 +18,11 @@ import * as crudMorph from './crud';
 import * as decoratorsMorphi from './decorators';
 import * as framework from './framework';
 import * as realtime from './realtime';
-import * as global from './global-config';
 import * as models from './models';
 import * as sym from './symbols';
 import * as helpers from './helpers';
-import * as initDeco from './init';
 import * as isom from './isomorphic-replacements';
+import * as context from './framework/framework-context';
 import { generate } from 'password-hash';
 
 
@@ -39,7 +38,6 @@ export * from './build-tool';
 export namespace Morphi {
   export const IsNode = helpers.Helpers.isNode;
   export const IsBrowser = helpers.Helpers.isBrowser;
-  export const Config = global.GlobalConfig.vars;
 
   export function getHttpPathBy<T = Function>(classFn: new () => T, port: number, method: (keyof T)) {
     return `http://localhost:${port}${helpers.Helpers.getPathFor(classFn as any)}/${method}`;
@@ -50,7 +48,7 @@ export namespace Morphi {
    */
   export const MDC_KEY = sym.SYMBOL.MDC_KEY;
   export const Platform = IsNode ? 'node' : 'browser';
-  export const Providers: Function[] = initDeco.Providers as any;
+  export const Providers: Function[] = context.FrameworkContext.Providers;
 
   export import Response = models.Models.Response;
 
@@ -68,7 +66,6 @@ export namespace Morphi {
 
   export namespace Realtime {
     export namespace Browser {
-      export import Class = realtime.RealtimeBrowser;
       export const SubscribeEntityChanges = realtime.RealtimeBrowser.SubscribeEntityChanges;
       export const SubscribeEntityPropertyChanges = realtime.RealtimeBrowser.SubscribeEntityPropertyChanges;
       export const UnsubscribeEverything = realtime.RealtimeBrowser.UnsubscribeEverything;
@@ -78,7 +75,6 @@ export namespace Morphi {
 
     //#region @backend
     export namespace Server {
-      export import Class = realtime.RealtimeNodejs;
       export const TrigggerEntityChanges = realtime.RealtimeNodejs.TrigggerEntityChanges;
       export const TrigggerEntityPropertyChanges = realtime.RealtimeNodejs.TrigggerEntityPropertyChanges;
     }

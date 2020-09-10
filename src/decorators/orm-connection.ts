@@ -1,8 +1,6 @@
-import { GlobalConfig } from '../global-config';
-import { Helpers } from '../helpers';
 import { Models } from '../models';
 import { CLASS } from 'typescript-class-helpers';
-
+import { FrameworkContext } from '../framework/framework-context';
 
 export function OrmConnection(target: Object, propertyName: string) {
   //#region @backend
@@ -11,7 +9,8 @@ export function OrmConnection(target: Object, propertyName: string) {
   c.injections.push({
     propertyName,
     getter: function () {
-      return GlobalConfig.vars.connection;
+      const context = FrameworkContext.findForTraget(target);
+      return context.node.connection;
     }
   });
   //#endregion

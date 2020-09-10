@@ -1,20 +1,13 @@
 //#region @backend
 import { Repository } from 'typeorm';
 import { Connection } from 'typeorm';
-import { createConnection, createConnections, getConnection } from 'typeorm';
 import * as express from 'express';
-import { IConnectionOptions } from './framework-models';
+import { StartOptions } from './framework-models';
 export { Connection } from 'typeorm';
-import { Helpers } from '../helpers';
-import { SYMBOL } from '../symbols';
-import { CLASS } from 'typescript-class-helpers';
 //#endregion
-import * as _ from 'lodash';
-import { GlobalConfig } from '../global-config';
-import { BASE_ENTITY } from './framework-entity';
+import * as _ from 'lodash';;
 import { BASE_CONTROLLER } from './framework-controller';
-import { init } from '../init';
-
+import { FrameworkContext } from './framework-context';
 
 export function start(options: StartOptions) {
   //#region @backend
@@ -29,6 +22,7 @@ export function start(options: StartOptions) {
       controllers = [],
       entities = [],
       disabledRealtime = false,
+      allowedHosts,
       //#region @backend
       mode,
       config,
@@ -36,157 +30,36 @@ export function start(options: StartOptions) {
       publicAssets = [],
       //#endregion
     } = options as StartOptions;
-    // console.log(options)
 
-    //#region @backend
-    let workerMode = false;
-    let testMode = false;
-    let onlyForBackendRemoteServerAccess = false;
-    switch (mode) {
-      case 'backend/frontend-worker':
-        workerMode = true;
-        break;
-
-      case 'remote-backend':
-        onlyForBackendRemoteServerAccess = true;
-        break;
-
-      case 'tests':
-        testMode = true;
-        break;
-
-      default:
-        break;
-    }
-
-    GlobalConfig.vars.disabledRealtime = disabledRealtime;
-
-    if (workerMode) {
-      GlobalConfig.vars.workerMode = true;
-    }
-
-    if (workerMode) {
-      GlobalConfig.vars.workerMode = true;
-    }
-
-    if (onlyForBackendRemoteServerAccess) {
-      GlobalConfig.vars.startOptions = options;
-      GlobalConfig.vars.onlyForBackendRemoteServerAccess = true;
-    }
-
-    if (!config) {
-      config = {} as any;
-
-      if (mode === 'backend/frontend') {
-        console.error(`
-
-        Missing config for backend:
-
-
-        Morphi.init({
-          ...
-          config: <YOUR DB CONFIG HERE>
-          ...
-        })
-
-      `);
-      }
-
-      config['entities'] = entities as any;
-    }
-
-    if (mode === 'backend/frontend' || mode === 'tests') {
-      try {
-        const con = await getConnection();
-
-        const connectionExists = !!(con);
-        if (connectionExists) {
-          console.log('Connection exists')
-          await con.close()
-        }
-      } catch (error) { }
-
-
-      const connections = await createConnections([config] as any);
-      var connection = connections[0]
-
-    }
-    //#endregion
-
-    init({
+    const context = new FrameworkContext({
       host,
-      controllers: controllers as any[],
-      entities: entities as any[],
-      //#region @backend
-      onlyForBackendRemoteServerAccess,
-      connection,
-      workerMode,
-      testMode,
-      //#endregion
-    })
-    //#region @backend
-    if (!onlyForBackendRemoteServerAccess) {
-      var app = GlobalConfig.vars.app;
+      controllers,
+      entities,
+      mode,
+      disabledRealtime,
+      InitDataPriority,
+      publicAssets,
+      config,
+      allowedHosts
+    });
 
-      publicAssets.forEach(asset => {
-        app.use(asset.path, express.static(asset.location))
+    //#region @backend
+    await context.initNode();
+    //#endregion
+    context.initBrowser();
+    //#region @backend
+    if (context.onlyForBackendRemoteServerAccess) {
+      resolve({
+        controllers: context.controllersSingletons as any
+      })
+    } else {
+      resolve({
+        connection: context.node.connection,
+        app: context.node.app,
+        controllers: context.controllersSingletons as any
       })
     }
-    //#endregion
-
-    //#region @backend
-    let ctrls: Function[] = controllers as any;
-
-    if (InitDataPriority) {
-      ctrls = [
-        ...(InitDataPriority ? InitDataPriority : []),
-        ...(ctrls.filter(f => !(InitDataPriority as Function[]).includes(f)))
-      ] as any;
-    }
-    ctrls = ctrls.filter(ctrl => !['BASE_CONTROLLER', 'BaseCRUD'].includes(ctrl.name));
-
-    const promises: Promise<any>[] = []
-    // console.log('ctrls', ctrls)
-    const controllerSingletons = [];
-
-    ctrls.forEach(ctrl => {
-      ctrl = Helpers.getSingleton(ctrl as any);
-      if (ctrl) {
-        controllerSingletons.push(ctrl);
-      }
-      if (ctrl && _.isFunction((ctrl as any).initExampleDbData)) {
-        if (!onlyForBackendRemoteServerAccess) {
-          promises.push(((ctrl as any).initExampleDbData(workerMode)));
-        }
-      }
-    });
-    await Promise.all(promises);
-    //#endregion
-
-    //#region @backend
-    if (onlyForBackendRemoteServerAccess) {
-      resolve({ controllers: controllerSingletons })
-    } else {
-      resolve({ connection, app, controllers: controllerSingletons })
-    }
   })
-  //#endregion
-
-}
-
-
-export interface StartOptions {
-
-  host: string;
-  controllers?: BASE_CONTROLLER<any>[] | Function[];
-  entities?: BASE_ENTITY<any>[] | Function[];
-  disabledRealtime?: boolean;
-
-  //#region @backend
-  mode?: 'backend/frontend' | 'remote-backend' | 'tests' | 'backend/frontend-worker';
-  config?: IConnectionOptions;
-  publicAssets?: { path: string; location: string }[];
-  InitDataPriority?: BASE_CONTROLLER<any>[] | Function[];
   //#endregion
 
 }

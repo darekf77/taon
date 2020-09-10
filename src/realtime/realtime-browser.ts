@@ -1,15 +1,12 @@
 import * as _ from 'lodash';
 import * as io from 'socket.io-client';
-
-import { GlobalConfig } from '../global-config';
 import { SYMBOL } from '../symbols';
-
 import { Log, Level } from 'ng2-logger';
 import { Helpers } from '../helpers';
 import { BASE_ENTITY } from '../framework/framework-entity';
 import { CLASS } from 'typescript-class-helpers';
-import { RealtimeHelper } from './realtime-helper';
-import { Morphi } from '..';
+import { RealtimeBase } from './realtime';
+import { FrameworkContext } from '../framework/framework-context';
 const log = Log.create('RealtimeBrowser',
   // Level.__NOTHING
 );
@@ -17,21 +14,20 @@ const log = Log.create('RealtimeBrowser',
 export type AliasChangeListenerType = (unsubscribe: () => void) => void;
 export type AliasEntityType = Partial<BASE_ENTITY<any>>;
 
-export class RealtimeBrowser {
-  private static connected = false;
-  static init(hostForRealtime: string) {
-    if (Morphi.IsBrowser) {
-      if (RealtimeBrowser.connected) {
-        log.warn('BROWSER ALREADY CONNECTED!')
-        return
-      }
-      RealtimeBrowser.connected = true;
-    }
+export class RealtimeBrowser extends RealtimeBase {
+  private static realtimeEntityListener: { [className: string]: { [entitiesIds: number]: any[]; } } = {} as any;
+  private static realtimeEntityPropertyListener: { [className: string]: { [propertyInEntityIds: string]: any[]; } } = {} as any;
 
-    // RealtimeHelper.pathFor(SYMBOL.REALTIME.NAMESPACE).hostname
+  private static realtimeEntitySockets: { [className: string]: { [entitiesIds: number]: any } } = {} as any;
+  private static realtimeEntityPropertySockets: { [className: string]: { [propertyInEntityIds: string]: any } } = {} as any;
+
+
+  constructor(context: FrameworkContext) {
+    super(context);
+
     const nspPath = {
-      global: RealtimeHelper.pathFor(void 0, hostForRealtime),
-      realtime: RealtimeHelper.pathFor(SYMBOL.REALTIME.NAMESPACE, hostForRealtime)
+      global: this.pathFor(),
+      realtime: this.pathFor(SYMBOL.REALTIME.NAMESPACE)
     };
 
     log.i('NAMESPACE GLOBAL', nspPath.global.href)
@@ -40,7 +36,7 @@ export class RealtimeBrowser {
     const global = io(nspPath.global.origin, {
       path: nspPath.global.pathname
     });
-    GlobalConfig.vars.socketNamespace.FE = global as any;
+    this.socketNamespace.FE = global as any;
 
     global.on('connect', () => {
       log.i(`conented to GLOBAL namespace ${global.nsp}`)
@@ -52,7 +48,7 @@ export class RealtimeBrowser {
       path: nspPath.realtime.pathname
     }) as any;
 
-    GlobalConfig.vars.socketNamespace.FE_REALTIME = realtime;
+    this.socketNamespace.FE_REALTIME = realtime;
 
     realtime.on('connect', () => {
       log.i(`conented to REALTIME namespace ${realtime.nsp}`)
@@ -62,15 +58,12 @@ export class RealtimeBrowser {
 
   }
 
-
-  private static realtimeEntityListener: { [className: string]: { [entitiesIds: number]: any[]; } } = {} as any;
-  private static realtimeEntityPropertyListener: { [className: string]: { [propertyInEntityIds: string]: any[]; } } = {} as any;
-
-  private static realtimeEntitySockets: { [className: string]: { [entitiesIds: number]: any } } = {} as any;
-  private static realtimeEntityPropertySockets: { [className: string]: { [propertyInEntityIds: string]: any } } = {} as any;
-
-
   public static TriggerChange(entity: AliasEntityType, property?: string) {
+    const context = FrameworkContext.findForTraget(entity);
+    return context.browser.realtime?.TriggerChange(entity, property);
+  }
+
+  public TriggerChange(entity: AliasEntityType, property?: string) {
 
     const constructFn = CLASS.getFromObject(entity)
 
@@ -109,7 +102,7 @@ export class RealtimeBrowser {
     }
   }
 
-  private static __SubscribeEntityChanges(entity: AliasEntityType, changesListener: AliasChangeListenerType, property?: string) {
+  private __SubscribeEntityChanges(entity: AliasEntityType, changesListener: AliasChangeListenerType, property?: string) {
 
     const { id } = entity;
     const propertyInEntityKey = propertyInEntityKeyFn(entity, property);
@@ -134,8 +127,8 @@ export class RealtimeBrowser {
       SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY_PROPERTY(className, property, entity.id) :
       SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY(className, entity.id)
 
-    const realtime = GlobalConfig.vars.socketNamespace.FE_REALTIME;
-    const ngZone = GlobalConfig.vars.ngZone;
+    const realtime = this.socketNamespace.FE_REALTIME;
+    const ngZone = this.context.ngZone;
 
 
 
@@ -213,6 +206,11 @@ export class RealtimeBrowser {
   }
 
   public static addDupicateRealtimeEntityListener(entity: AliasEntityType, changesListener: AliasChangeListenerType, property?: string) {
+    const context = FrameworkContext.findForTraget(entity);
+    return context.browser.realtime?.addDupicateRealtimeEntityListener(entity, changesListener, property);
+  }
+
+  public addDupicateRealtimeEntityListener(entity: AliasEntityType, changesListener: AliasChangeListenerType, property?: string) {
     const className = CLASS.getNameFromObject(entity);
     if (_.isUndefined(RealtimeBrowser.realtimeEntityPropertyListener[className])) {
       RealtimeBrowser.realtimeEntityPropertyListener[className] = {};
@@ -224,15 +222,24 @@ export class RealtimeBrowser {
       RealtimeBrowser.realtimeEntityListener[className][entity.id].push(changesListener);
     }
   }
-  public static SubscribeEntityChanges(entity: AliasEntityType, changesListener: AliasChangeListenerType) {
-    return RealtimeBrowser.__SubscribeEntityChanges(entity, changesListener);
+
+  static SubscribeEntityChanges(entity: AliasEntityType, changesListener: AliasChangeListenerType) {
+    const context = FrameworkContext.findForTraget(entity);
+    return context.browser.realtime.SubscribeEntityChanges(entity, changesListener);
+  }
+  public SubscribeEntityChanges(entity: AliasEntityType, changesListener: AliasChangeListenerType) {
+    return this.__SubscribeEntityChanges(entity, changesListener);
   }
 
   public static SubscribeEntityPropertyChanges(entity: AliasEntityType, property: string, changesListener: AliasChangeListenerType) {
-    return RealtimeBrowser.__SubscribeEntityChanges(entity, changesListener, property);
+    const context = FrameworkContext.findForTraget(entity);
+    return context.browser.realtime.SubscribeEntityPropertyChanges(entity, property, changesListener);
+  }
+  public SubscribeEntityPropertyChanges(entity: AliasEntityType, property: string, changesListener: AliasChangeListenerType) {
+    return this.__SubscribeEntityChanges(entity, changesListener, property);
   }
 
-  private static checkObjects(className: string, entity: Partial<BASE_ENTITY<any>>, property: string, changesListener) {
+  private checkObjects(className: string, entity: Partial<BASE_ENTITY<any>>, property: string, changesListener) {
 
     if (_.isString(property)) {
 
@@ -292,7 +299,7 @@ export class RealtimeBrowser {
   }
 
 
-  private static __UnsubscribeEntityChanges(entity: AliasEntityType, property?: string, includePropertyChanges = false, classFN?: Function) {
+  private __UnsubscribeEntityChanges(entity: AliasEntityType, property?: string, includePropertyChanges = false, classFN?: Function) {
 
     if (includePropertyChanges) {
       CLASS.describeProperites(CLASS.getFromObject(entity)).forEach(property => {
@@ -313,7 +320,7 @@ export class RealtimeBrowser {
     }
 
     const className = CLASS.getName(constructFn);
-    const realtime = GlobalConfig.vars.socketNamespace.FE_REALTIME;
+    const realtime = this.socketNamespace.FE_REALTIME;
 
     const roomName = _.isString(property) ?
       SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY_PROPERTY(className, property, entity.id) :
@@ -350,20 +357,38 @@ export class RealtimeBrowser {
   }
 
   public static UnsubscribeEverything() {
-    Object.keys(this.realtimeEntitySockets).forEach(className => {
-      Object.keys(this.realtimeEntitySockets[className]).forEach(entityId => {
+    const contexts = FrameworkContext.contexts;
+    for (let index = 0; index < contexts.length; index++) {
+      const c = contexts[index];
+      c.browser?.realtime?.UnsubscribeEverything();
+    }
+  }
+
+  public UnsubscribeEverything() {
+    Object.keys(RealtimeBrowser.realtimeEntitySockets).forEach(className => {
+      Object.keys(RealtimeBrowser.realtimeEntitySockets[className]).forEach(entityId => {
         this.__UnsubscribeEntityChanges({ id: entityId } as any, undefined, true, CLASS.getBy(className));
       })
     });
   }
 
   public static UnsubscribeEntityChanges(entity: AliasEntityType, includePropertyChanges = false) {
-    return RealtimeBrowser.__UnsubscribeEntityChanges(entity, undefined, includePropertyChanges);
+    const context = FrameworkContext.findForTraget(entity);
+    return context.browser?.realtime?.UnsubscribeEntityChanges(entity, includePropertyChanges);
+  }
+
+  public UnsubscribeEntityChanges(entity: AliasEntityType, includePropertyChanges = false) {
+    return this.__UnsubscribeEntityChanges(entity, undefined, includePropertyChanges);
 
   }
 
   public static UnsubscribeEntityPropertyChanges(entity: AliasEntityType, property: string) {
-    return RealtimeBrowser.__UnsubscribeEntityChanges(entity, property)
+    const context = FrameworkContext.findForTraget(entity);
+    return context.browser?.realtime?.UnsubscribeEntityPropertyChanges(entity, property);
+  }
+
+  public UnsubscribeEntityPropertyChanges(entity: AliasEntityType, property: string) {
+    return this.__UnsubscribeEntityChanges(entity, property)
   }
 
 

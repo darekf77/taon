@@ -2,11 +2,10 @@ import {
   Repository as TypeormRepository, EntityRepository
 } from 'typeorm';
 import * as _ from 'lodash';
-import { CLASS } from 'typescript-class-helpers';
+
 
 export function Repository(entity: Function) {
   return function (target: any) {
-
     EntityRepository(entity)(target)
   }
 }

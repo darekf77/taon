@@ -1,2 +1,4 @@
 export * from './init-method-browser';
-export * from './init-method-node';
+//#region @backend
+export * from './init-method-node.backend';
+//#endregion

@@ -1,39 +1,33 @@
-import { GlobalConfig } from '../global-config';
 import * as _ from 'lodash';
-// import { HttpMethod, MethodConfig, ClassConfig } from 'ng2-rest';
-
-//#region @backend
-import { Http2Server } from 'http2';
 import * as io from 'socket.io';
-import { Response, Request } from 'express';
 import { SYMBOL } from '../symbols';
-//#endregion
-
 import { Log, Level } from 'ng2-logger';
 import { BASE_ENTITY } from '../framework/framework-entity';
-import { Helpers } from '../helpers';
-import { RealtimeHelper } from './realtime-helper';
+import { RealtimeBase } from './realtime';
 import { CLASS } from 'typescript-class-helpers';
+import { FrameworkContext } from '../framework/framework-context';
 const log = Log.create('RealtimeNodejs',
   // Level.__NOTHING
 );
 
-export class RealtimeNodejs {
-  //#region @backend
-  static init(http: Http2Server, hostForRealtime: string) {
+export class RealtimeNodejs extends RealtimeBase {
+  private static jobs = {};
 
+  //#region @backend
+  constructor(context: FrameworkContext) {
+    super(context);
     const nspPath = {
-      global: RealtimeHelper.pathFor(void 0, hostForRealtime),
-      realtime: RealtimeHelper.pathFor(SYMBOL.REALTIME.NAMESPACE, hostForRealtime)
+      global: this.pathFor(),
+      realtime: this.pathFor(SYMBOL.REALTIME.NAMESPACE)
     };
 
 
-    GlobalConfig.vars.socketNamespace.BE = io(http, {
+    this.socketNamespace.BE = io(this.context.node.httpServer, {
       path: nspPath.global.pathname
     });
 
 
-    const ioGlobalNsp = GlobalConfig.vars.socketNamespace.BE;
+    const ioGlobalNsp = this.socketNamespace.BE;
 
     ioGlobalNsp.on('connection', (clientSocket) => {
       log.i('client conected to namespace', clientSocket.nsp.name)
@@ -41,13 +35,13 @@ export class RealtimeNodejs {
 
     log.i(`CREATE GLOBAL NAMESPACE: '${ioGlobalNsp.path()}' , path: '${nspPath.global.pathname}'`)
 
-    const ioRealtimeNsp = io(http, {
+    const ioRealtimeNsp = io(this.context.node.httpServer, {
       path: nspPath.realtime.pathname
     });
 
     log.i(`CREATE REALTIME NAMESPACE: '${ioRealtimeNsp.path()}' , path: '${nspPath.realtime.pathname}' `)
 
-    GlobalConfig.vars.socketNamespace.BE_REALTIME = ioRealtimeNsp as any;
+    this.socketNamespace.BE_REALTIME = ioRealtimeNsp as any;
 
     ioRealtimeNsp.on('connection', (clientSocket) => {
       log.i('client conected to namespace', clientSocket.nsp.name)
@@ -77,9 +71,9 @@ export class RealtimeNodejs {
 
   }
 
-  private static jobs = {};
 
-  public static __TrigggerEntityChanges(entity: BASE_ENTITY<any>, property?: string) {
+
+  public __TrigggerEntityChanges(entity: BASE_ENTITY<any>, property?: string) {
     const keyPropertyName = 'id'
 
 
@@ -111,11 +105,11 @@ export class RealtimeNodejs {
       const job = () => {
         if (_.isString(property)) {
           // console.log('populate entity property change to ', SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(className, id))
-          GlobalConfig.vars.socketNamespace.BE_REALTIME.in(modelSocketRoomPath)
+          this.socketNamespace.BE_REALTIME.in(modelSocketRoomPath)
             .emit(eventName, '')
         } else {
           log.i('populate entity change to ', SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(className, id))
-          GlobalConfig.vars.socketNamespace.BE_REALTIME.in(modelSocketRoomPath)
+          this.socketNamespace.BE_REALTIME.in(modelSocketRoomPath)
             .emit(eventName, '')
         }
       }
@@ -134,18 +128,28 @@ export class RealtimeNodejs {
 
 
   public static TrigggerEntityPropertyChanges<ENTITY = any>(entity: BASE_ENTITY<any>, property: (keyof ENTITY) | (keyof ENTITY)[]) {
+    const context = FrameworkContext.findForTraget(entity);
+    return context.node?.realtime?.TrigggerEntityPropertyChanges(entity, property);
+  }
+
+  public TrigggerEntityPropertyChanges<ENTITY = any>(entity: BASE_ENTITY<any>, property: (keyof ENTITY) | (keyof ENTITY)[]) {
     if (_.isArray(property)) {
       property.forEach(p => {
-        RealtimeNodejs.__TrigggerEntityChanges(entity, p as any)
+        this.__TrigggerEntityChanges(entity, p as any)
       })
       return
     }
-    RealtimeNodejs.__TrigggerEntityChanges(entity, property as any)
+    this.__TrigggerEntityChanges(entity, property as any)
   }
 
   public static TrigggerEntityChanges(entity: BASE_ENTITY<any>) {
-    RealtimeNodejs.__TrigggerEntityChanges(entity)
+    const context = FrameworkContext.findForTraget(entity);
+    return context.node?.realtime?.TrigggerEntityChanges(entity);
   }
 
-  //#endregion
+  public TrigggerEntityChanges(entity: BASE_ENTITY<any>) {
+    this.__TrigggerEntityChanges(entity)
+  }
+
+
 }
