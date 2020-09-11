@@ -25,7 +25,6 @@ export function __ENDPOINT(baseEntity?: Function): (...args: any[]) => any {
 
 
 export function ENDPOINT(options?: {
-  // realtime?: boolean,
   path?: string,
   entity?: Function,
   additionalEntities?: Function[],
@@ -37,8 +36,6 @@ export function ENDPOINT(options?: {
   return function (target: Function) {
 
     let { path, auth, realtime = false, entity, additionalEntities } = options ? options : {} as any;
-
-    target.prototype[SYMBOL.IS_ENPOINT_REALTIME] = realtime;
 
     const initFN = (function (target, targetPath, auth) {
       return function () {

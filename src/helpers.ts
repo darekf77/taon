@@ -70,11 +70,6 @@ export class Helpers extends HelpersNg2Rest {
     return `/${parentscalculatedPath}/${CLASS.getName(target)}`;
   }
 
-  static isRealtimeEndpoint(target: Function) {
-    return target && target.prototype && target.prototype[SYMBOL.IS_ENPOINT_REALTIME];
-  }
-
-
   static hasParentClassWithName(target: Function, name: string, targets = []): boolean {
     if (!target) {
       // console.log(`false "${_.first(targets).name}" for ${targets.map(d => d.name).join(',')}`)

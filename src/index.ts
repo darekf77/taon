@@ -13,6 +13,7 @@ export { Helpers } from './helpers';
 export { Models } from './models';
 export { RepeatTypeComponent } from './crud/formly-repeat-component';
 export { FormlyHorizontalWrapper } from './crud/formly-group-wrapper-component';
+export { Log, Level } from 'ng2-logger';
 
 import * as crudMorph from './crud';
 import * as decoratorsMorphi from './decorators';
@@ -21,7 +22,6 @@ import * as realtime from './realtime';
 import * as models from './models';
 import * as sym from './symbols';
 import * as helpers from './helpers';
-import * as isom from './isomorphic-replacements';
 import * as context from './framework/framework-context';
 import { generate } from 'password-hash';
 
@@ -33,6 +33,17 @@ import { Handler } from 'express'
 export * from './build-tool';
 //#endregion
 
+//#region @backend
+import { Repository } from 'typeorm';
+//#endregion
+
+export class TypeormRepository<T>
+  //#region @backend
+  extends Repository<T>
+//#endregion
+{
+
+}
 
 
 export namespace Morphi {
@@ -131,7 +142,7 @@ export namespace Morphi {
 
 
   export namespace Orm {
-    export import Repository = isom.TypeormRepository;
+    export const Repository = TypeormRepository;
     //#region @backend
     export import getConnection = tsorm.getConnection;
     export import Errors = models.Models.Errors;

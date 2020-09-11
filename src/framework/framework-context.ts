@@ -12,22 +12,6 @@ if (Helpers.isNode) {
 }
 //#endregion
 
-
-// example url:
-// backend URI URL {
-// href: 'http://localhost:4000/api',
-// origin: 'http://localhost:4000',
-// protocol: 'http:',
-// username: '',
-// password: '',
-// host: 'localhost:4000',
-// hostname: 'localhost',
-// port: '4000',
-// pathname: '/api',
-// search: '',
-// searchParams: URLSearchParams {},
-// hash: ''
-
 export class FrameworkContext extends FrameworkContextBase {
 
   public static readonly initFunc: { initFN: Function, target: Function }[] = [];
