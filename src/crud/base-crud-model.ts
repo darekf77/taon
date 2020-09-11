@@ -23,8 +23,8 @@ if (!global['ENV']) {
 }
 //#endregion
 
-@__ENDPOINT(BaseCRUD)
 @CLASS.NAME('BaseCRUD')
+@__ENDPOINT(BaseCRUD)
 export abstract class BaseCRUD<T>  {
 
   //#region @backend

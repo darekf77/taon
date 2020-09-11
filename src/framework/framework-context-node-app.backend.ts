@@ -28,42 +28,6 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
   public readonly connection: Connection;
   constructor(private context: FrameworkContext) {
     super();
-    if (context.onlyForBackendRemoteServerAccess) {
-      this.app = {} as any;
-    } else {
-      if (!this.app) {
-        this.app = express()
-        this.initMidleware();
-      }
-    }
-
-    // if (uri.pathname !== '/') {
-    //   console.log('INT EXPRESS BASE')
-    //   Global.vars.app.set('base', uri.pathname)
-    // }
-    if (!context.onlyForBackendRemoteServerAccess) {
-      const h = new http.Server(this.app); //TODO is this working ?
-      this.httpServer = h;
-
-      if (!context.testMode) {
-        h.listen(context.uri.port, function () {
-          console.log(`Server listening on port: ${context.uri.port}, hostname: ${context.uri.pathname},
-            env: ${this.app.settings.env}
-            `);
-        });
-      }
-    }
-    this.initDecoratorsFunctions();
-    if (!this.context.onlyForBackendRemoteServerAccess) {
-      this.writeActiveRoutes(this.context.workerMode);
-    }
-
-    if (!context.onlyForBackendRemoteServerAccess) {
-      this.context.publicAssets.forEach(asset => {
-        this.app.use(asset.path, express.static(asset.location))
-      });
-    }
-
   }
 
   private async initConnection() {
@@ -87,17 +51,43 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
   }
 
   async init() {
-    await this.initConnection();
-    if (!this.context.onlyForBackendRemoteServerAccess) {
-      return;
-    }
-    const singletons: BASE_CONTROLLER<any>[] = this.context
-      .controllersSingletons
-      .filter(f => _.isFunction((f as BASE_CONTROLLER<any>).initExampleDbData)) as any;
 
-    for (let index = 0; index < singletons.length; index++) {
-      const singleton = singletons[index];
-      await singleton.initExampleDbData(this.context.workerMode);
+    if (this.context.onlyForBackendRemoteServerAccess) {
+      // @ts-ignore
+      this.app = {} as any;
+    } else {
+      // @ts-ignore
+      this.app = express()
+      this.initMidleware();
+      const h = new http.Server(this.app);
+      // @ts-ignore
+      this.httpServer = h;
+
+      if (!this.context.testMode) {
+        h.listen(this.context.uri.port, () => {
+          console.log(`Server listening on port: ${this.context.uri.port}, hostname: ${this.context.uri.pathname},
+              env: ${this.app.settings.env}
+              `);
+        });
+      }
+
+      this.initDecoratorsFunctions();
+      this.writeActiveRoutes(this.context.workerMode);
+
+      this.context.publicAssets.forEach(asset => {
+        this.app.use(asset.path, express.static(asset.location))
+      });
+
+      await this.initConnection();
+
+      const instancesOfControllers: BASE_CONTROLLER<any>[] = this.context
+        .controllersInstances
+        .filter(f => _.isFunction((f as BASE_CONTROLLER<any>).initExampleDbData)) as any;
+
+      for (let index = 0; index < instancesOfControllers.length; index++) {
+        const controllerInstance = instancesOfControllers[index];
+        await controllerInstance.initExampleDbData(this.context.workerMode);
+      }
     }
   }
 
@@ -113,15 +103,17 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
       if (currentCtrl) {
         e.initFN();
 
-        (function (controller: Function) {
+        ((controller: Function) => {
+
+          const instance = this.context.getInstance(controller);
           const c = CLASS.getConfig(currentCtrl)[0];
 
           c.injections.forEach(inj => {
-            Object.defineProperty(controller.prototype, inj.propertyName, { get: inj.getter as any });
+            Object.defineProperty(instance.prototype, inj.propertyName, { get: inj.getter as any });
           });
-          CLASS.setSingletonObj(controller, new (controller as any)());
+          // CLASS.setSing letonObj(controller, new (controller as any)());
 
-          // Helpers.isBrowser && console.log(`[morphi] Singleton cleated for "${controller && controller.name}"`, CLASS.getSingleton(controller))
+          // Helpers.isBrowser && console.log(`[morphi] Sing leton cleated for "${controller && controller.name}"`, CLASS.getSing leton(controller))
         })(currentCtrl);
 
       }
@@ -135,10 +127,10 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
     const routes = this.activeRoutes.map(({ method, routePath }) => {
       return `${method.toUpperCase()}:    ${this.context.uri.href.replace(/\/$/, '')}${routePath}`
     });
-    const singletonClass = _.first(this.context.controllers) as any;
-    const singleton = singletonClass && Helpers.getSingleton(singletonClass as any) as any;
+    const instanceClass = _.first(this.context.controllers) as any;
+    const instance = instanceClass && this.context.getInstance(instanceClass as any) as any;
     fse.writeJSONSync(path.join(process.cwd(), `tmp-routes${isWorker ? '--worker--'
-      + path.basename(singleton.filename).replace(/\.js$/, '')
+      + path.basename(instance.filename).replace(/\.js$/, '')
       : ''}.json`), routes, {
       spaces: 2,
       encoding: 'utf8'

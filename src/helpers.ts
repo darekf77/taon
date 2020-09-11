@@ -158,21 +158,6 @@ export class Helpers extends HelpersNg2Rest {
     if (typeof value === 'object') return {};
   }
 
-
-
-  static getSingleton<T = Object>(target: Function): T {
-    const configs = CLASS.getConfig(target)
-    return ((Array.isArray(configs) && configs.length >= 1) ? configs[0].singleton : undefined) as any;
-  }
-
-
-  static getSingletons<T = Object>(target: Function): T[] {
-    const configs = CLASS.getConfig(target)
-    return configs.map(c => c.singleton as T);
-  }
-
-
-
   static parseJSONwithStringJSONs(object: Object, waring = false): Object {
     // console.log('checking object', object)
     if (!_.isObject(object)) {

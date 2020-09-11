@@ -13,12 +13,14 @@ import { Models } from '../models';
 import { Helpers } from '../helpers';
 import { CLASS } from 'typescript-class-helpers';
 import { Helpers as HelpersLog } from 'ng2-logger';
+import { FrameworkContext } from './framework-context';
 
 const updatedWithCtrl = {};
 const updatedStaticWithCtrl = {};
 
 function getSing(target) {
-  const res = CLASS.getSingleton(target);;
+  const context = FrameworkContext.findForTraget(target);
+  const res = context.getInstance(target);;
   if (!res) {
     debugger
   }
@@ -90,9 +92,7 @@ export function Controller(options?: {
     //#endregion
 
     className = classNameVlidation(className, target);
-    CLASS.NAME(className, {
-      singleton: HelpersLog.isBrowser ? 'autoinstance' : 'last-instance'
-    })(target);
+    CLASS.NAME(className)(target);
 
     // if (Helpers.isBrowser && _.isFunction(rep)) {
     //   target = rep;

@@ -11,13 +11,18 @@ export class FrameworkContextBrowserApp extends FrameworkContextBase {
   constructor(
     private context: FrameworkContext) {
     super();
+  }
 
-
-    if (Helpers.isBrowser) {
+  init() {
+    if (Helpers.isBrowser
+      //#region @backend
+      || this.context.onlyForBackendRemoteServerAccess
+      //#endregion
+    ) {
       const notFound: Function[] = [];
-      const providers = context.controllers.filter(ctrl => {
+      const providers = this.context.controllers.filter(ctrl => {
 
-        const e = context.initFunc.find(e => ctrl === e.target);
+        const e = this.context.initFunc.find(e => ctrl === e.target);
         if (e) {
           // console.log('current controller ', currentCtrl)
           e.initFN();
@@ -36,9 +41,8 @@ export class FrameworkContextBrowserApp extends FrameworkContextBase {
       notFound.forEach(ctrl => {
         throw `Decorator "@ENDPOINT(..)" is missing on class ${CLASS.getName(ctrl)}`;
       });
-      providers.forEach(p => context.Providers.push(p))
+      providers.forEach(p => this.context.Providers.push(p))
     }
-
   }
 
   readonly realtime: RealtimeBrowser;

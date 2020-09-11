@@ -117,7 +117,16 @@ export function initMethodNodejs(
       const resolvedParams = args.reverse().map(v => Helpers.tryTransformParam(v));
       try {
 
-        const response: Models.Response<any> = methodConfig.descriptor.value.apply(classConfig.singleton, resolvedParams)
+        const response: Models.Response<any> = methodConfig.descriptor.value.apply(
+          /**
+           * Context for method @GET,@PUT etc.
+           */
+          context.getInstance(target),
+          /**
+           * Params for metjod @GET, @PUT etc.
+           */
+          resolvedParams
+        );
         let result = await Helpers.getResponseValue(response, req, res);
         // console.log(req.headers)
         const mdc = MDC.fromHeader(req);

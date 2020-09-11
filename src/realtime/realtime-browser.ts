@@ -24,38 +24,40 @@ export class RealtimeBrowser extends RealtimeBase {
 
   constructor(context: FrameworkContext) {
     super(context);
-
-    const nspPath = {
-      global: this.pathFor(),
-      realtime: this.pathFor(SYMBOL.REALTIME.NAMESPACE)
-    };
-
-    log.i('NAMESPACE GLOBAL', nspPath.global.href)
-    log.i('NAMESPACE REALTIME', nspPath.realtime.href)
-
-    const global = io(nspPath.global.origin, {
-      path: nspPath.global.pathname
-    });
-    this.socketNamespace.FE = global as any;
-
-    global.on('connect', () => {
-      log.i(`conented to GLOBAL namespace ${global.nsp}`)
-    });
-    log.i('IT SHOULD CONNECT TO GLOBAL')
+    if (!context.disabledRealtime) {
 
 
-    const realtime = io(nspPath.realtime.origin, {
-      path: nspPath.realtime.pathname
-    }) as any;
+      const nspPath = {
+        global: this.pathFor(),
+        realtime: this.pathFor(SYMBOL.REALTIME.NAMESPACE)
+      };
 
-    this.socketNamespace.FE_REALTIME = realtime;
+      log.i('NAMESPACE GLOBAL', nspPath.global.href)
+      log.i('NAMESPACE REALTIME', nspPath.realtime.href)
 
-    realtime.on('connect', () => {
-      log.i(`conented to REALTIME namespace ${realtime.nsp}`)
-    });
+      const global = io(nspPath.global.origin, {
+        path: nspPath.global.pathname
+      });
+      this.socketNamespace.FE = global as any;
 
-    log.i('IT SHOULD CONNECT TO REALTIME')
+      global.on('connect', () => {
+        log.i(`conented to GLOBAL namespace ${global.nsp}`)
+      });
+      log.i('IT SHOULD CONNECT TO GLOBAL')
 
+
+      const realtime = io(nspPath.realtime.origin, {
+        path: nspPath.realtime.pathname
+      }) as any;
+
+      this.socketNamespace.FE_REALTIME = realtime;
+
+      realtime.on('connect', () => {
+        log.i(`conented to REALTIME namespace ${realtime.nsp}`)
+      });
+
+      log.i('IT SHOULD CONNECT TO REALTIME')
+    }
   }
 
   public static TriggerChange(entity: AliasEntityType, property?: string) {
@@ -64,7 +66,9 @@ export class RealtimeBrowser extends RealtimeBase {
   }
 
   public TriggerChange(entity: AliasEntityType, property?: string) {
-
+    if (this.context.disabledRealtime) {
+      return;
+    }
     const constructFn = CLASS.getFromObject(entity)
 
     if (!constructFn) {
@@ -103,7 +107,9 @@ export class RealtimeBrowser extends RealtimeBase {
   }
 
   private __SubscribeEntityChanges(entity: AliasEntityType, changesListener: AliasChangeListenerType, property?: string) {
-
+    if (this.context.disabledRealtime) {
+      return;
+    }
     const { id } = entity;
     const propertyInEntityKey = propertyInEntityKeyFn(entity, property);
 
@@ -211,6 +217,9 @@ export class RealtimeBrowser extends RealtimeBase {
   }
 
   public addDupicateRealtimeEntityListener(entity: AliasEntityType, changesListener: AliasChangeListenerType, property?: string) {
+    if (this.context.disabledRealtime) {
+      return;
+    }
     const className = CLASS.getNameFromObject(entity);
     if (_.isUndefined(RealtimeBrowser.realtimeEntityPropertyListener[className])) {
       RealtimeBrowser.realtimeEntityPropertyListener[className] = {};
@@ -228,6 +237,9 @@ export class RealtimeBrowser extends RealtimeBase {
     return context.browser.realtime.SubscribeEntityChanges(entity, changesListener);
   }
   public SubscribeEntityChanges(entity: AliasEntityType, changesListener: AliasChangeListenerType) {
+    if (this.context.disabledRealtime) {
+      return;
+    }
     return this.__SubscribeEntityChanges(entity, changesListener);
   }
 
@@ -236,11 +248,16 @@ export class RealtimeBrowser extends RealtimeBase {
     return context.browser.realtime.SubscribeEntityPropertyChanges(entity, property, changesListener);
   }
   public SubscribeEntityPropertyChanges(entity: AliasEntityType, property: string, changesListener: AliasChangeListenerType) {
+    if (this.context.disabledRealtime) {
+      return;
+    }
     return this.__SubscribeEntityChanges(entity, changesListener, property);
   }
 
   private checkObjects(className: string, entity: Partial<BASE_ENTITY<any>>, property: string, changesListener) {
-
+    if (this.context.disabledRealtime) {
+      return;
+    }
     if (_.isString(property)) {
 
       if (_.isUndefined(RealtimeBrowser.realtimeEntityPropertySockets[className])) {
@@ -300,7 +317,9 @@ export class RealtimeBrowser extends RealtimeBase {
 
 
   private __UnsubscribeEntityChanges(entity: AliasEntityType, property?: string, includePropertyChanges = false, classFN?: Function) {
-
+    if (this.context.disabledRealtime) {
+      return;
+    }
     if (includePropertyChanges) {
       CLASS.describeProperites(CLASS.getFromObject(entity)).forEach(property => {
         this.UnsubscribeEntityPropertyChanges(entity, property)
@@ -357,7 +376,8 @@ export class RealtimeBrowser extends RealtimeBase {
   }
 
   public static UnsubscribeEverything() {
-    const contexts = FrameworkContext.contexts;
+    const contexts = (FrameworkContext.contexts)
+      .filter(c => !c.disabledRealtime)
     for (let index = 0; index < contexts.length; index++) {
       const c = contexts[index];
       c.browser?.realtime?.UnsubscribeEverything();
@@ -365,6 +385,9 @@ export class RealtimeBrowser extends RealtimeBase {
   }
 
   public UnsubscribeEverything() {
+    if (this.context.disabledRealtime) {
+      return;
+    }
     Object.keys(RealtimeBrowser.realtimeEntitySockets).forEach(className => {
       Object.keys(RealtimeBrowser.realtimeEntitySockets[className]).forEach(entityId => {
         this.__UnsubscribeEntityChanges({ id: entityId } as any, undefined, true, CLASS.getBy(className));
@@ -378,8 +401,10 @@ export class RealtimeBrowser extends RealtimeBase {
   }
 
   public UnsubscribeEntityChanges(entity: AliasEntityType, includePropertyChanges = false) {
+    if (this.context.disabledRealtime) {
+      return;
+    }
     return this.__UnsubscribeEntityChanges(entity, undefined, includePropertyChanges);
-
   }
 
   public static UnsubscribeEntityPropertyChanges(entity: AliasEntityType, property: string) {
@@ -388,6 +413,9 @@ export class RealtimeBrowser extends RealtimeBase {
   }
 
   public UnsubscribeEntityPropertyChanges(entity: AliasEntityType, property: string) {
+    if (this.context.disabledRealtime) {
+      return;
+    }
     return this.__UnsubscribeEntityChanges(entity, property)
   }
 

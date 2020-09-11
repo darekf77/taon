@@ -16,64 +16,69 @@ export class RealtimeNodejs extends RealtimeBase {
   //#region @backend
   constructor(context: FrameworkContext) {
     super(context);
-    const nspPath = {
-      global: this.pathFor(),
-      realtime: this.pathFor(SYMBOL.REALTIME.NAMESPACE)
-    };
+    if (!context.disabledRealtime) {
+
+      const nspPath = {
+        global: this.pathFor(),
+        realtime: this.pathFor(SYMBOL.REALTIME.NAMESPACE)
+      };
 
 
-    this.socketNamespace.BE = io(this.context.node.httpServer, {
-      path: nspPath.global.pathname
-    });
+      this.socketNamespace.BE = io(this.context.node.httpServer, {
+        path: nspPath.global.pathname
+      });
 
 
-    const ioGlobalNsp = this.socketNamespace.BE;
+      const ioGlobalNsp = this.socketNamespace.BE;
 
-    ioGlobalNsp.on('connection', (clientSocket) => {
-      log.i('client conected to namespace', clientSocket.nsp.name)
-    })
-
-    log.i(`CREATE GLOBAL NAMESPACE: '${ioGlobalNsp.path()}' , path: '${nspPath.global.pathname}'`)
-
-    const ioRealtimeNsp = io(this.context.node.httpServer, {
-      path: nspPath.realtime.pathname
-    });
-
-    log.i(`CREATE REALTIME NAMESPACE: '${ioRealtimeNsp.path()}' , path: '${nspPath.realtime.pathname}' `)
-
-    this.socketNamespace.BE_REALTIME = ioRealtimeNsp as any;
-
-    ioRealtimeNsp.on('connection', (clientSocket) => {
-      log.i('client conected to namespace', clientSocket.nsp.name)
-
-      clientSocket.on(SYMBOL.REALTIME.ROOM.SUBSCRIBE.ENTITY_UPDATE_EVENTS, room => {
-        log.i(`Joining room ${room} in namespace  REALTIME`)
-        clientSocket.join(room);
+      ioGlobalNsp.on('connection', (clientSocket) => {
+        log.i('client conected to namespace', clientSocket.nsp.name)
       })
 
-      clientSocket.on(SYMBOL.REALTIME.ROOM.SUBSCRIBE.ENTITY_PROPERTY_UPDATE_EVENTS, room => {
-        log.i(`Joining room ${room} in namespace REALTIME `)
-        clientSocket.join(room);
+      log.i(`CREATE GLOBAL NAMESPACE: '${ioGlobalNsp.path()}' , path: '${nspPath.global.pathname}'`)
+
+      const ioRealtimeNsp = io(this.context.node.httpServer, {
+        path: nspPath.realtime.pathname
+      });
+
+      log.i(`CREATE REALTIME NAMESPACE: '${ioRealtimeNsp.path()}' , path: '${nspPath.realtime.pathname}' `)
+
+      this.socketNamespace.BE_REALTIME = ioRealtimeNsp as any;
+
+      ioRealtimeNsp.on('connection', (clientSocket) => {
+        log.i('client conected to namespace', clientSocket.nsp.name)
+
+        clientSocket.on(SYMBOL.REALTIME.ROOM.SUBSCRIBE.ENTITY_UPDATE_EVENTS, room => {
+          log.i(`Joining room ${room} in namespace  REALTIME`)
+          clientSocket.join(room);
+        })
+
+        clientSocket.on(SYMBOL.REALTIME.ROOM.SUBSCRIBE.ENTITY_PROPERTY_UPDATE_EVENTS, room => {
+          log.i(`Joining room ${room} in namespace REALTIME `)
+          clientSocket.join(room);
+        })
+
+        clientSocket.on(SYMBOL.REALTIME.ROOM.UNSUBSCRIBE.ENTITY_UPDATE_EVENTS, room => {
+          log.i(`Leaving room ${room} in namespace REALTIME `)
+          clientSocket.leave(room);
+        })
+
+        clientSocket.on(SYMBOL.REALTIME.ROOM.UNSUBSCRIBE.ENTITY_PROPERTY_UPDATE_EVENTS, room => {
+          log.i(`Leaving room ${room} in namespace REALTIME `)
+          clientSocket.leave(room);
+        })
+
       })
-
-      clientSocket.on(SYMBOL.REALTIME.ROOM.UNSUBSCRIBE.ENTITY_UPDATE_EVENTS, room => {
-        log.i(`Leaving room ${room} in namespace REALTIME `)
-        clientSocket.leave(room);
-      })
-
-      clientSocket.on(SYMBOL.REALTIME.ROOM.UNSUBSCRIBE.ENTITY_PROPERTY_UPDATE_EVENTS, room => {
-        log.i(`Leaving room ${room} in namespace REALTIME `)
-        clientSocket.leave(room);
-      })
-
-    })
-
+    }
 
   }
 
 
 
   public __TrigggerEntityChanges(entity: BASE_ENTITY<any>, property?: string) {
+    if (this.context.disabledRealtime) {
+      return;
+    }
     const keyPropertyName = 'id'
 
 
@@ -133,6 +138,9 @@ export class RealtimeNodejs extends RealtimeBase {
   }
 
   public TrigggerEntityPropertyChanges<ENTITY = any>(entity: BASE_ENTITY<any>, property: (keyof ENTITY) | (keyof ENTITY)[]) {
+    if (this.context.disabledRealtime) {
+      return;
+    }
     if (_.isArray(property)) {
       property.forEach(p => {
         this.__TrigggerEntityChanges(entity, p as any)
@@ -148,6 +156,9 @@ export class RealtimeNodejs extends RealtimeBase {
   }
 
   public TrigggerEntityChanges(entity: BASE_ENTITY<any>) {
+    if (this.context.disabledRealtime) {
+      return;
+    }
     this.__TrigggerEntityChanges(entity)
   }
 

@@ -1,7 +1,7 @@
 //#region @backend
 import * as _ from 'lodash';
 
-import { GlobalConfig } from '../global-config';
+
 import { Helpers } from '../helpers';
 import { getTransformFunction, singleTransform } from './transform-to-browser';
 import { SYMBOL } from '../symbols';

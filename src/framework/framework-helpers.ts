@@ -47,14 +47,11 @@ export function repositoryFrom<E, R = Repository<E>>(connection: Connection, ent
 Please check your Morphi.Repository(...) decorators `, entityFN, repoFn)
     return
   }
+  const context = FrameworkContext.findForTraget(entityFN);
   let repo: Repository<any>;
   if (!!entityFN && !entityFN[SYMBOL.HAS_TABLE_IN_DB]) {
     if (_.isFunction(repoFn)) {
-      let repo = CLASS.getSingleton(repoFn)
-      if (!repo) {
-        CLASS.setSingletonObj(repoFn, new (repoFn as any)())
-      }
-      repo = CLASS.getSingleton(repoFn)
+      let repo = context.getInstance(repoFn);
       return repo;
     }
     console.warn(`Repository function not abailable for ${CLASS.getName(entityFN)}`)
@@ -63,10 +60,7 @@ Please check your Morphi.Repository(...) decorators `, entityFN, repoFn)
 
   if (repoFn) {
     repo = connection.getCustomRepository(repoFn);
-    let existedRepo = CLASS.getSingleton(repoFn)
-    if (!existedRepo) {
-      CLASS.setSingletonObj(repoFn, repo);
-    }
+    let existedRepo = context.getInstance(repoFn);
 
   } else {
     repo = connection.getRepository(entityFN) as any;
@@ -85,19 +79,19 @@ Please check your Morphi.Repository(...) decorators `, entityFN, repoFn)
       // console.log(`describedProps  "${describedProps}" for ${entity.name}`)
 
       describedProps.concat(compolexProperties as any).forEach(prop => {
-        repo['__'][alias][prop] = `${alias as any}.${prop}`; // TODO temp solution
+        repo['__'][alias][prop] = `${alias as any}.${prop}`; // TODO_NOT_IMPORTANT temp solution
       })
 
       const props = CLASS.describeProperites(entityFN)
       // console.log(`props  "${props}" for ${entity.name}`)
       props.forEach(prop => {
-        repo['__'][alias][prop] = `${alias as any}.${prop}`; // TODO ideal solution
+        repo['__'][alias][prop] = `${alias as any}.${prop}`; // TODO_NOT_IMPORTANT ideal solution
       })
 
     })
 
     compolexProperties.forEach(alias => {
-      repo['_'][alias] = alias; // TODO make it getter with reference
+      repo['_'][alias] = alias; // TODO_NOT_IMPORTANT make it getter with reference
     })
   }
 

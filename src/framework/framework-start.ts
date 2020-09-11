@@ -2,10 +2,10 @@
 import { Repository } from 'typeorm';
 import { Connection } from 'typeorm';
 import * as express from 'express';
-import { StartOptions } from './framework-models';
 export { Connection } from 'typeorm';
 //#endregion
-import * as _ from 'lodash';;
+import * as _ from 'lodash';
+import { StartOptions } from './framework-models';
 import { BASE_CONTROLLER } from './framework-controller';
 import { FrameworkContext } from './framework-context';
 
@@ -35,12 +35,14 @@ export function start(options: StartOptions) {
       host,
       controllers,
       entities,
+      allowedHosts,
+      //#region @backend
       mode,
       disabledRealtime,
       InitDataPriority,
       publicAssets,
       config,
-      allowedHosts
+      //#endregion
     });
 
     //#region @backend
@@ -50,13 +52,13 @@ export function start(options: StartOptions) {
     //#region @backend
     if (context.onlyForBackendRemoteServerAccess) {
       resolve({
-        controllers: context.controllersSingletons as any
+        controllers: context.controllersInstances as any
       })
     } else {
       resolve({
         connection: context.node.connection,
         app: context.node.app,
-        controllers: context.controllersSingletons as any
+        controllers: context.controllersInstances as any
       })
     }
   })

@@ -173,7 +173,7 @@ export class ModelDataConfig {
           }
         };
 
-        // TODO commands sorting
+        // TODO_NOT_IMPORTANT commands sorting
 
         commands.forEach(c => {
           let split = c.split('.');

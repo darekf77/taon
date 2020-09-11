@@ -310,4 +310,10 @@ Users:
 
 Of course Angular services can be used inside Angular web and Ionic mobile apps. 
 
+# RULES
+
+### 1. Controlers, Entites classes names matters.
+### 2. Each new context onlyt with diffrent host allowed
+### 3. Each Controller or Entity only allowed to be inside one context.
+
 

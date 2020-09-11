@@ -2,11 +2,11 @@ import * as _ from 'lodash';
 import { Helpers } from '../helpers';
 import { StartOptions, FrameworkMode } from './framework-models';
 import { FrameworkContextBrowserApp } from './framework-context-browser-app';
-//#region @backend
-import { FrameworkContextNodeApp } from './framework-context-node-app.backend';
+import { CLASS } from 'typescript-class-helpers';
 import { IConnectionOptions } from './framework-models';
 import { FrameworkContextBase } from './framework-context-base';
-import { CLASS } from 'typescript-class-helpers';
+//#region @backend
+import { FrameworkContextNodeApp } from './framework-context-node-app.backend';
 if (Helpers.isNode) {
   var { URL } = require('url');
 }
@@ -29,7 +29,7 @@ if (Helpers.isNode) {
 // hash: ''
 
 export class FrameworkContext extends FrameworkContextBase {
-  public static readonly __core_controllers: Function[] = [];
+
   public static readonly initFunc: { initFN: Function, target: Function }[] = [];
   get initFunc() {
     return FrameworkContext.initFunc.filter(a => this.controllers.includes(a.target));
@@ -66,11 +66,9 @@ export class FrameworkContext extends FrameworkContextBase {
     }
     if (_.isFunction(target)) {
       className = CLASS.getName(target);
-    }
-    if (_.isObject(target)) {
+    } else if (_.isObject(target)) {
       className = CLASS.getNameFromObject(target);
-    }
-    if (_.isString(target)) {
+    } else if (_.isString(target)) {
       className = target;
     }
     if (!className) {
@@ -107,14 +105,54 @@ export class FrameworkContext extends FrameworkContextBase {
   public browser: FrameworkContextBrowserApp;
   //#region @backend
   public node: FrameworkContextNodeApp;
-
-
-
   //#endregion
 
-  //#region getters
+
   public get ngZone() {
     return FrameworkContext.ngZoneInstance;
+  }
+
+  public get host() {
+    return this.context.host;
+  }
+
+  public get controllers() {
+    return [
+
+      ...(this.context.controllers as any[]),
+    ]
+  }
+
+  public get controllersInstances() {
+    let ctrls: Function[] = this.context.controllers as any;
+    //#region @backend
+    if (this.context.InitDataPriority) {
+      ctrls = [
+        ...(this.context.InitDataPriority ? this.context.InitDataPriority : []),
+        ...(ctrls.filter(f => !(this.context.InitDataPriority as Function[]).includes(f)))
+      ] as any;
+    }
+    //#endregion
+    return ctrls.map(c => this.getInstance(c as any)).filter(f => !!f);
+  }
+
+  private instances = {};
+
+  public getInstance(f: Function) {
+    const className = CLASS.getName(f);
+    if (!this.instances[className]) {
+      this.instances[className] = new (f as any)();
+    }
+    return this.instances[className];
+  }
+
+  public get entities() {
+    return (this.context.entities as Function[]) || [];
+  }
+
+  //#region @backend
+  public get mode() {
+    return this.context.mode;
   }
 
   public get publicAssets() {
@@ -123,36 +161,6 @@ export class FrameworkContext extends FrameworkContextBase {
 
   public get InitDataPriority() {
     return this.context.InitDataPriority || [];
-  }
-  public get host() {
-    return this.context.host;
-  }
-
-  public get controllers() {
-    return FrameworkContext.__core_controllers
-      .concat(this.context.controllers as any[]) as Function[];
-  }
-
-  public get controllersSingletons() {
-    let ctrls: Function[] = this.context.controllers as any;
-
-    if (this.context.InitDataPriority) {
-      ctrls = [
-        ...(this.context.InitDataPriority ? this.context.InitDataPriority : []),
-        ...(ctrls.filter(f => !(this.context.InitDataPriority as Function[]).includes(f)))
-      ] as any;
-    }
-    ctrls = ctrls.filter(ctrl => !['BASE_CONTROLLER', 'BaseCRUD'].includes(ctrl.name));
-
-    return ctrls.map(c => Helpers.getSingleton(c as any)).filter(f => !!f);
-  }
-
-  public get entities() {
-    return (this.context.entities as Function[]) || [];
-  }
-
-  public get mode() {
-    return this.context.mode;
   }
 
   public get config() {
@@ -172,7 +180,6 @@ export class FrameworkContext extends FrameworkContextBase {
   }
   //#endregion
 
-
   constructor(context: StartOptions) {
     super();
     this.context = context;
@@ -188,14 +195,16 @@ export class FrameworkContext extends FrameworkContextBase {
       // @ts-ignore
       this.disabledRealtime = true;
     }
-    //#endregion @backend
+    //#region @backend
     validateConfigAndAssignEntites(context.config, this.mode, this.entities);
     //#endregion
     this.prepareEntities();
   }
 
   prepareEntities() {
+    //#region @backend
     this.context.config['entities'] = this.entities as any;
+    //#endregion
     this.entities
       .forEach(c => {
         const className = CLASS.getName(c);
@@ -259,15 +268,13 @@ class ${className}Extended extends ${className} {
 
 
     this.browser = new FrameworkContextBrowserApp(this);
+    this.browser.init();
   }
 
   initRealtime() {
-    if (this.context.disabledRealtime) {
-      return;
-    }
     //#region @backend
     this.node.initRealtime();
-    //#region
+    //#endregion
     this.browser.initRealtime();
   }
   private initUrl() {
@@ -279,7 +286,10 @@ class ${className}Extended extends ${className} {
 
   private checkContextIfExists() {
     if (FrameworkContext.contexts.includes(this)) {
-      console.error(`[framework-context] Context already exists`)
+      throw `[framework-context] Context already exists`;
+    }
+    if (FrameworkContext.contexts.find(c => c.host === this.host)) {
+      throw `[framework-context] Context with host ${this.host} already exists`;
     }
   }
 

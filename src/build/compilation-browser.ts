@@ -48,7 +48,7 @@ export class BroswerCompilation extends BackendCompilation {
     const dereference = true; // Copy symlinks as normal files
     // console.log(`copying ${path.join(this.cwd, this.location)}/ to  ${this.compilationFolderPath} dereference: ${dereference},`)
 
-    // TODO this may be replaced by filesPathes
+    // TODO_NOT_IMPORTANT this may be replaced by filesPathes
     Helpers.System.Operations.tryCopyFrom(`${path.join(this.cwd, this.location)}/`, this.compilationFolderPath, {
       dereference,
       filter: (src: string, dest: string) => {

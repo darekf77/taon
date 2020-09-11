@@ -75,9 +75,9 @@ describe('Inject ctrl', () => {
         "dropSchema": true,
         "logging": false
       },
-      testMode: true
+      mode: 'tests'
     })
-    // console.log('CLASS.getSingleton(ArticlesController)',CLASS.getSingleton(ArticlesController))
+
     expect(p['ctrl']).to.be.instanceOf(ArticlesController)
     expect(Article['ctrl']).to.be.instanceOf(ArticlesController)
   });

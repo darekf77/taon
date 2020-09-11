@@ -11,7 +11,7 @@ export function Repository(entity: Function) {
 }
 
 
-// TODO fix it whe typescipt stable
+// TODO_NOT_IMPORTANT fix it whe typescipt stable
 export abstract class BASE_REPOSITORY<Entity, GlobalAliases = {}> extends TypeormRepository<Entity> {
 
 
@@ -23,7 +23,7 @@ export abstract class BASE_REPOSITORY<Entity, GlobalAliases = {}> extends Typeor
   abstract globalAliases: (keyof GlobalAliases)[];
 
   pagination() {
-    // TODO
+    // TODO_NOT_IMPORTANT
   }
 
   //#endregion
