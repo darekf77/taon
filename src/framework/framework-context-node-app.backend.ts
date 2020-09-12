@@ -26,6 +26,7 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
   public readonly app: Application;
   public readonly httpServer: Http2Server;
   public readonly connection: Connection;
+  readonly realtime: RealtimeNodejs;
   constructor(private context: FrameworkContext) {
     super();
   }
@@ -51,7 +52,13 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
   }
 
   async init() {
+    // console.log(`
 
+    // INIT
+
+    // this.context.onlyForBackendRemoteServerAccess : ${this.context.onlyForBackendRemoteServerAccess}
+
+    // `)
     if (this.context.onlyForBackendRemoteServerAccess) {
       // @ts-ignore
       this.app = {} as any;
@@ -70,7 +77,7 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
               `);
         });
       }
-
+      await this.initConnection();
       this.initDecoratorsFunctions();
       this.writeActiveRoutes(this.context.workerMode);
 
@@ -78,7 +85,8 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
         this.app.use(asset.path, express.static(asset.location))
       });
 
-      await this.initConnection();
+      // @ts-ignore
+      this.realtime = new RealtimeNodejs(this.context);
 
       const instancesOfControllers: BASE_CONTROLLER<any>[] = this.context
         .controllers
@@ -89,12 +97,6 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
         await controllerInstance.initExampleDbData(this.context.workerMode);
       }
     }
-  }
-
-  readonly realtime: RealtimeNodejs;
-  initRealtime() {
-    // @ts-ignore
-    this.realtime = new RealtimeNodejs(this.context);
   }
 
   private initDecoratorsFunctions() {
@@ -109,7 +111,7 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
           const c = CLASS.getConfig(currentCtrl)[0];
 
           c.injections.forEach(inj => {
-            Object.defineProperty(instance.prototype, inj.propertyName, { get: inj.getter as any });
+            Object.defineProperty(instance, inj.propertyName, { get: inj.getter as any });
           });
           // CLASS.setSing letonObj(controller, new (controller as any)());
 

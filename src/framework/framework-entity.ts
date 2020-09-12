@@ -119,7 +119,7 @@ export function Entity<T = {}>(options?: {
 
 }
 
-export abstract class BASE_ENTITY<T, TRAW = T, CTRL extends BaseCRUD<T> = any> {
+export abstract class BASE_ENTITY<T = any, TRAW = T, CTRL extends BaseCRUD<T> = any> {
 
   abstract id: number;
   public modelDataConfig?: ModelDataConfig;
@@ -133,7 +133,7 @@ export abstract class BASE_ENTITY<T, TRAW = T, CTRL extends BaseCRUD<T> = any> {
   /**
    * keep backend data here for getters, function etc
    */
-  browser: IBASE_ENTITY;
+  browser: Partial<IBASE_ENTITY>;
 
   isListeningToRealtimeChanges(property?: (keyof T)) {
     if (_.isString(property)) {

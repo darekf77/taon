@@ -8,7 +8,7 @@ import { CLASS } from 'typescript-class-helpers';
 import { RealtimeBase } from './realtime';
 import { FrameworkContext } from '../framework/framework-context';
 const log = Log.create('RealtimeBrowser',
-  // Level.__NOTHING
+  Level.__NOTHING
 );
 
 export type AliasChangeListenerType = (unsubscribe: () => void) => void;
@@ -32,8 +32,8 @@ export class RealtimeBrowser extends RealtimeBase {
         realtime: this.pathFor(SYMBOL.REALTIME.NAMESPACE)
       };
 
-      log.i('NAMESPACE GLOBAL', nspPath.global.href)
-      log.i('NAMESPACE REALTIME', nspPath.realtime.href)
+      log.i('NAMESPACE GLOBAL ', nspPath.global.href + ` host: ${this.context.host}`)
+      log.i('NAMESPACE REALTIME', nspPath.realtime.href + ` host: ${this.context.host}`)
 
       const global = io(nspPath.global.origin, {
         path: nspPath.global.pathname
@@ -41,7 +41,7 @@ export class RealtimeBrowser extends RealtimeBase {
       this.socketNamespace.FE = global as any;
 
       global.on('connect', () => {
-        log.i(`conented to GLOBAL namespace ${global.nsp}`)
+        log.i(`conented to GLOBAL namespace ${global.nsp} of host: ${this.context.host}`)
       });
       log.i('IT SHOULD CONNECT TO GLOBAL')
 
@@ -53,7 +53,7 @@ export class RealtimeBrowser extends RealtimeBase {
       this.socketNamespace.FE_REALTIME = realtime;
 
       realtime.on('connect', () => {
-        log.i(`conented to REALTIME namespace ${realtime.nsp}`)
+        log.i(`conented to REALTIME namespace ${realtime.nsp} host: ${this.context.host}`)
       });
 
       log.i('IT SHOULD CONNECT TO REALTIME')
@@ -128,11 +128,14 @@ export class RealtimeBrowser extends RealtimeBase {
     const className = CLASS.getName(constructFn);
 
     this.checkObjects(className, entity, property, changesListener);
+    log.d(`[className][after check object] ${className} host: ${this.context.host} `)
 
     const roomName = _.isString(property) ?
       SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY_PROPERTY(className, property, entity.id) :
       SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY(className, entity.id)
 
+
+    log.d(`[className][roomName] ${roomName} host: ${this.context.host} `)
     const realtime = this.socketNamespace.FE_REALTIME;
     const ngZone = this.context.ngZone;
 
@@ -142,10 +145,14 @@ export class RealtimeBrowser extends RealtimeBase {
     //   console.log(`conented to namespace ${realtime.nsp && realtime.nsp.name}`)
     if (_.isString(property)) {
       realtime.emit(SYMBOL.REALTIME.ROOM.SUBSCRIBE.ENTITY_PROPERTY_UPDATE_EVENTS, roomName)
-      log.i('SUBSCRIBE TO ' + SYMBOL.REALTIME.EVENT.ENTITY_PROPTERY_UPDATE_BY_ID(className, property, entity.id))
+      log.i('SUBSCRIBE TO ' +
+        SYMBOL.REALTIME.EVENT.ENTITY_PROPTERY_UPDATE_BY_ID(className, property, entity.id)
+        + ` for host: ${this.context.host}`)
     } else {
       realtime.emit(SYMBOL.REALTIME.ROOM.SUBSCRIBE.ENTITY_UPDATE_EVENTS, roomName)
-      log.i('SUBSCRIBE TO ' + SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(className, entity.id))
+      log.i('SUBSCRIBE TO ' +
+        SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(className, entity.id)
+        + ` for host: ${this.context.host}`)
     }
 
     const callback = (data) => {

@@ -22,7 +22,8 @@ export function tableNameFrom(entityClass: Function | BASE_ENTITY<any>) {
 export function classNameVlidation(className, target: Function) {
   if (_.isUndefined(className)) {
     if (FrameworkContext.isProductionMode) {
-      throw `[Morphi] Please provide "className" property for each Controller and Entity:
+      throw `[Morphi]
+  Please provide "className" property for each Controller and Entity:
 
       @Morphi.Controller({ className: 'MyExampleCtrl'  })
       class MyExampleCtrl {
@@ -33,6 +34,10 @@ export function classNameVlidation(className, target: Function) {
       class MyExampleEntity {
         ...
       }
+
+Notice that minified javascript code does not preserve
+Functions/Classes names.
+
     `
     }
     className = target.name;

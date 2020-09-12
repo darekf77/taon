@@ -7,7 +7,7 @@ import { FrameworkContextBase } from './framework-context-base';
 import { RealtimeBrowser } from '../realtime';
 
 export class FrameworkContextBrowserApp extends FrameworkContextBase {
-
+  readonly realtime: RealtimeBrowser;
   constructor(
     private context: FrameworkContext) {
     super();
@@ -43,10 +43,7 @@ export class FrameworkContextBrowserApp extends FrameworkContextBase {
       });
       providers.forEach(p => this.context.Providers.push(p))
     }
-  }
 
-  readonly realtime: RealtimeBrowser;
-  initRealtime() {
     if (Helpers.isBrowser
       //#region @backend
       || this.context.onlyForBackendRemoteServerAccess

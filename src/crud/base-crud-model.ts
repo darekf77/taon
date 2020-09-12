@@ -1,7 +1,5 @@
 import * as _ from 'lodash';
 import { CLASS } from 'typescript-class-helpers';
-
-import { Observable } from 'rxjs/Observable';
 import { SYMBOL } from '../symbols';
 import { ModelDataConfig } from './model-data-config';
 import { __ENDPOINT } from '../decorators/decorators-endpoint-class';
@@ -9,14 +7,12 @@ import { GET, PUT, DELETE, POST } from '../decorators/decorators-methods';
 import { Query, Path, Body } from '../decorators/decorators-params';
 import { Models } from '../models';
 
-
 //#region @backend
 import { Repository, Connection, getRepository } from 'typeorm';
 import { tableNameFrom } from '../framework/framework-helpers';
-import { OrmConnection } from '../decorators/orm-connection';
 import { Helpers } from '../helpers';
 import { IBASE_ENTITY } from '../framework/framework-entity';
-const jobIDkey = 'jobID';
+import { FrameworkContext } from '../framework/framework-context';
 declare const global: any;
 if (!global['ENV']) {
   global['ENV'] = {};
@@ -28,7 +24,7 @@ if (!global['ENV']) {
 export abstract class BaseCRUD<T>  {
 
   //#region @backend
-  @OrmConnection connection: Connection;
+  connection: Connection;
   public get repository(): Repository<T> {
     return this.repo;
   }
@@ -43,6 +39,9 @@ export abstract class BaseCRUD<T>  {
 
   private init() {
     //#region @backend
+    const context = FrameworkContext.findForTraget(this);
+    this.connection = context.connection;
+
     if (Helpers.isNode && this.entity && this.connection && this.entity[SYMBOL.HAS_TABLE_IN_DB]) {
       this.repo = this.connection.getRepository(this.entity as any)
       !global.hideLog && console.log(`Base CRUD inited for: ${(this.entity as any).name}`)
@@ -129,6 +128,16 @@ export abstract class BaseCRUD<T>  {
     //#endregion
   }
 
+  @PUT(`/bulk/${SYMBOL.CRUD_TABLE_MODEL}`)
+  bulkUpdate(@Body() item: T[], @Query('config') config?: ModelDataConfig): Models.Response<T[]> {
+    //#region @backendFunc
+    return async () => {
+      // TODO NEEDS TO BE IMPLEMENTED
+      return [];
+    }
+    //#endregion
+  }
+
   @DELETE(`/${SYMBOL.CRUD_TABLE_MODEL}/:id`)
   deleteById(@Path(`id`) id: number, @Query('config') config?: ModelDataConfig): Models.Response<T> {
     //#region @backendFunc
@@ -137,6 +146,15 @@ export abstract class BaseCRUD<T>  {
       await this.repo.remove(id);
       prepareData(deletedEntity, config, id)
       return deletedEntity;
+    }
+    //#endregion
+  }
+
+  @DELETE(`/bulk/${SYMBOL.CRUD_TABLE_MODEL}/:id`)
+  bulkDelete(@Path(`id`) id: (number | string)[], @Query('config') config?: ModelDataConfig): Models.Response<(number | string)[]> {
+    //#region @backendFunc
+    return async () => {
+      return [];
     }
     //#endregion
   }
@@ -155,6 +173,16 @@ export abstract class BaseCRUD<T>  {
 
       prepareData(model, config, id)
       return model;
+    }
+    //#endregion
+  }
+
+  @POST(`/bulk/${SYMBOL.CRUD_TABLE_MODEL}/`)
+  bulkCreate(@Body() item: T, @Query('config') config?: ModelDataConfig): Models.Response<T[]> {
+    //#region @backendFunc
+    return async () => {
+      // TODO
+      return [];
     }
     //#endregion
   }

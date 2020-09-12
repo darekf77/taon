@@ -28,14 +28,22 @@ export class FrameworkContext extends FrameworkContextBase {
     }, []))
   }
   public readonly Providers: Function[] = [];
-  public static readonly contexts: FrameworkContext[] = [];
+
   private static readonly ngZoneInstance: any;
   public static initNGZone(ngZoneInstance: any) {
     // @ts-ignore
     FrameworkContext.ngZoneInstance = ngZoneInstance;
   }
-
   private static contextByClassName: { [className in string]: FrameworkContext; } = {};
+  public static get contexts(): FrameworkContext[] {
+
+    const res = _.sortedUniq(Object
+      .keys(FrameworkContext.contextByClassName)
+      .map(className => FrameworkContext.contextByClassName[className]));
+
+    return res;
+  }
+
 
   /**
    * Get global context for target
@@ -61,6 +69,14 @@ export class FrameworkContext extends FrameworkContextBase {
 
     const result = FrameworkContext.contextByClassName[className];
     if (!result) {
+      //#region @backend
+      if (FrameworkContext.contexts.length === 1 &&
+        _.first(FrameworkContext.contexts).mode === 'backend/frontend-worker') {
+        return _.first(FrameworkContext.contexts);
+      }
+      //#endregion
+      // console.log(`FrameworkContext.contexts.length: ${FrameworkContext.contexts.length}`)
+      // console.trace('-' + className + '- context length: ' + FrameworkContext.contexts.length)
       throw `[morphi][findForTarget] not able to find target by name: "${className}"`
     }
     return result;
@@ -138,6 +154,10 @@ export class FrameworkContext extends FrameworkContextBase {
     return this.context.mode;
   }
 
+  public get connection() {
+    return this.node?.connection;
+  }
+
   public get publicAssets() {
     return this.context.publicAssets || [];
   }
@@ -186,7 +206,9 @@ export class FrameworkContext extends FrameworkContextBase {
 
   prepareEntities() {
     //#region @backend
-    this.context.config['entities'] = this.entitiesClasses as any;
+    if (this.context.config) {
+      this.context.config['entities'] = this.entitiesClasses as any;
+    };
     //#endregion
     this.entitiesClasses
       .forEach(c => {
@@ -211,6 +233,7 @@ class ${className}Extended extends ${className} {
       });
   }
   prepareControllers() {
+    // console.log('PREPRARE CONTROLLERS !!!')
     this.context.controllers = _.sortedUniq(this.context.controllers as Function[]);
     this.context.controllers
       .forEach(c => {
@@ -254,12 +277,6 @@ class ${className}Extended extends ${className} {
     this.browser.init();
   }
 
-  initRealtime() {
-    //#region @backend
-    this.node.initRealtime();
-    //#endregion
-    this.browser.initRealtime();
-  }
   private initUrl() {
     // @ts-ignore
     this.uri = new URL(this.host);

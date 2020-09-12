@@ -8,7 +8,7 @@ function metaReq(
   method: Models.Rest.HttpMethod, path: string,
   target: any, propertyKey: string,
   descriptor: PropertyDescriptor, realtimeUpdate = false) {
-  const configs = CLASS.getConfig(target.constructor);
+  const configs = CLASS.getConfig(target.constructor as any);
   const c = configs[0];
   const m: Models.Rest.MethodConfig = c.methods[propertyKey] = (!c.methods[propertyKey] ? new Models.Rest.MethodConfig() : c.methods[propertyKey]);
   m.methodName = propertyKey;

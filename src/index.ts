@@ -23,10 +23,9 @@ import * as models from './models';
 import * as sym from './symbols';
 import * as helpers from './helpers';
 import * as context from './framework/framework-context';
-import { generate } from 'password-hash';
-
 
 //#region @backend
+import { generate } from 'password-hash';
 import * as pass from 'passport';
 import * as tsorm from 'typeorm'
 import { Handler } from 'express'
@@ -49,6 +48,9 @@ export class TypeormRepository<T>
 export namespace Morphi {
   export const IsNode = helpers.Helpers.isNode;
   export const IsBrowser = helpers.Helpers.isBrowser;
+
+  export const isNode = helpers.Helpers.isNode;
+  export const isBrowser = helpers.Helpers.isBrowser;
 
   export function getHttpPathBy<T = Function>(classFn: new () => T, port: number, method: (keyof T)) {
     return `http://localhost:${port}${helpers.Helpers.getPathFor(classFn as any)}/${method}`;
@@ -146,7 +148,6 @@ export namespace Morphi {
     //#region @backend
     export import getConnection = tsorm.getConnection;
     export import Errors = models.Models.Errors;
-    export import InjectConnection = decoratorsMorphi.OrmConnection;
     export import Connection = tsorm.Connection;
     export import CreateConnection = tsorm.createConnection;
     export import TableNameFrom = framework.tableNameFrom;

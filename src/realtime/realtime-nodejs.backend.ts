@@ -7,7 +7,7 @@ import { RealtimeBase } from './realtime';
 import { CLASS } from 'typescript-class-helpers';
 import { FrameworkContext } from '../framework/framework-context';
 const log = Log.create('RealtimeNodejs',
-  // Level.__NOTHING
+  Level.__NOTHING
 );
 
 export class RealtimeNodejs extends RealtimeBase {
@@ -32,7 +32,7 @@ export class RealtimeNodejs extends RealtimeBase {
       const ioGlobalNsp = this.socketNamespace.BE;
 
       ioGlobalNsp.on('connection', (clientSocket) => {
-        log.i('client conected to namespace', clientSocket.nsp.name)
+        log.i(`client conected to namespace "${clientSocket.nsp.name}",  host: ${this.context.host}`)
       })
 
       log.i(`CREATE GLOBAL NAMESPACE: '${ioGlobalNsp.path()}' , path: '${nspPath.global.pathname}'`)
@@ -46,25 +46,25 @@ export class RealtimeNodejs extends RealtimeBase {
       this.socketNamespace.BE_REALTIME = ioRealtimeNsp as any;
 
       ioRealtimeNsp.on('connection', (clientSocket) => {
-        log.i('client conected to namespace', clientSocket.nsp.name)
+        log.i(`client conected to namespace "${clientSocket.nsp.name}",  host: ${this.context.host}`)
 
         clientSocket.on(SYMBOL.REALTIME.ROOM.SUBSCRIBE.ENTITY_UPDATE_EVENTS, room => {
-          log.i(`Joining room ${room} in namespace  REALTIME`)
+          log.i(`Joining room ${room} in namespace  REALTIME` + ` host: ${this.context.host}`)
           clientSocket.join(room);
         })
 
         clientSocket.on(SYMBOL.REALTIME.ROOM.SUBSCRIBE.ENTITY_PROPERTY_UPDATE_EVENTS, room => {
-          log.i(`Joining room ${room} in namespace REALTIME `)
+          log.i(`Joining room ${room} in namespace REALTIME `+` host: ${this.context.host}`)
           clientSocket.join(room);
         })
 
         clientSocket.on(SYMBOL.REALTIME.ROOM.UNSUBSCRIBE.ENTITY_UPDATE_EVENTS, room => {
-          log.i(`Leaving room ${room} in namespace REALTIME `)
+          log.i(`Leaving room ${room} in namespace REALTIME `+` host: ${this.context.host}`)
           clientSocket.leave(room);
         })
 
         clientSocket.on(SYMBOL.REALTIME.ROOM.UNSUBSCRIBE.ENTITY_PROPERTY_UPDATE_EVENTS, room => {
-          log.i(`Leaving room ${room} in namespace REALTIME `)
+          log.i(`Leaving room ${room} in namespace REALTIME `+` host: ${this.context.host}`)
           clientSocket.leave(room);
         })
 
@@ -113,7 +113,10 @@ export class RealtimeNodejs extends RealtimeBase {
           this.socketNamespace.BE_REALTIME.in(modelSocketRoomPath)
             .emit(eventName, '')
         } else {
-          log.i('populate entity change to ', SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(className, id))
+          log.i('populate entity change to ',
+            SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(className, id)
+            + ` host: ${this.context.host}`
+          )
           this.socketNamespace.BE_REALTIME.in(modelSocketRoomPath)
             .emit(eventName, '')
         }

@@ -19,7 +19,9 @@ export function activateBaseCrud(target: Function, entity: Function, entites?: F
         return;
       }
 
-      !global.hideLog && console.warn(`Please provide "entity" property
+      !global.hideLog && console.warn(`
+You are extending BaseCRUD class.. CRUD functionality won't work
+unless you provide "entity" property for CRUD operations on db.
 @Morphi.Controller({
   ...
   entity: <YOUR ENTITY CLASS HERE>
