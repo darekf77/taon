@@ -1,21 +1,11 @@
-//#region @backend
-import { Repository } from 'typeorm';
-import { Connection } from 'typeorm';
-import * as express from 'express';
-export { Connection } from 'typeorm';
-//#endregion
 import * as _ from 'lodash';
 import { StartOptions } from './framework-models';
-import { BASE_CONTROLLER } from './framework-controller';
 import { FrameworkContext } from './framework-context';
+import { Helpers } from 'ng2-logger';
 
 export function start(options: StartOptions) {
   //#region @backend
-  return new Promise<{
-    connection?: Connection;
-    app?: express.Application;
-    controllers?: BASE_CONTROLLER<any>[],
-  }>(async (resolve, reject) => {
+  return new Promise<FrameworkContext>(async (resolve, reject) => {
     //#endregion
     let {
       host,
@@ -30,6 +20,11 @@ export function start(options: StartOptions) {
       publicAssets = [],
       //#endregion
     } = options as StartOptions;
+    //#region @backend
+    if (_.isUndefined(mode)) {
+      mode = 'backend/frontend';
+    }
+    //#endregion
 
     const context = new FrameworkContext({
       host,
@@ -49,18 +44,11 @@ export function start(options: StartOptions) {
     await context.initNode();
     //#endregion
     context.initBrowser();
-    //#region @backend
-    if (context.onlyForBackendRemoteServerAccess) {
-      resolve({
-        controllers: context.controllersInstances as any
-      })
-    } else {
-      resolve({
-        connection: context.node.connection,
-        app: context.node.app,
-        controllers: context.controllersInstances as any
-      })
+    if (Helpers.isBrowser) {
+      return context;
     }
+    //#region @backend
+    resolve(context);
   })
   //#endregion
 

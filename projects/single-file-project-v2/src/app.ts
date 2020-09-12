@@ -55,14 +55,15 @@ const start = async () => {
   } as any;
   //#endregion
 
-  Morphi.init({
+
+  const context = await Morphi.init({
     host,
     controllers,
     //#region @backend
     config
     //#endregion
-  })
-
+  });
+  console.log(context);
   if (Morphi.IsBrowser) {
 
     const body: HTMLElement = document.getElementsByTagName('body')[0];

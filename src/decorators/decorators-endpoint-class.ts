@@ -35,14 +35,14 @@ export function ENDPOINT(options?: {
 }) {
   return function (target: Function) {
 
-    let { path, auth, realtime = false, entity, additionalEntities } = options ? options : {} as any;
+    let { path, auth, entity, additionalEntities } = options ? options : {} as any;
 
     const initFN = (function (target, targetPath, auth) {
       return function () {
         const context = FrameworkContext.findForTraget(target);
-        // console.log(`INITING ${target.name} , parent ${target['__proto__'].name} `)
+
         activateBaseCrud(target, entity, additionalEntities)
-        //#region  access decorator config
+
         const configs = CLASS.getConfig(target) as any[];
         // console.log(`Class config for ${CLASS.getName(target)}`, configs)
         const classConfig: Models.Rest.ClassConfig = configs[0];
@@ -64,7 +64,7 @@ export function ENDPOINT(options?: {
             .replace(/\/\//g, '/');
         }
 
-        // console.log(`${classConfig.calculatedPath}, target ${target.name}`)
+
         const checkAuthFn = (auth && typeof auth === 'function');
 
         _.slice(configs, 1).forEach(bc => {
@@ -78,7 +78,7 @@ export function ENDPOINT(options?: {
           }
         })
 
-        //#endregion
+
         Object.keys(classConfig.methods).forEach(methodName => {
           const methodConfig: Models.Rest.MethodConfig = classConfig.methods[methodName];
           const type: Models.Rest.HttpMethod = methodConfig.type;
@@ -90,7 +90,7 @@ export function ENDPOINT(options?: {
               methodConfig.requestHandler = auth(methodConfig.descriptor.value);
             }
 
-            const { routePath, method } = initMethodNodejs(type, methodConfig, classConfig, expressPath,target);
+            const { routePath, method } = initMethodNodejs(type, methodConfig, classConfig, expressPath, target);
             if (!context.onlyForBackendRemoteServerAccess) {
               context.node.activeRoutes.push({
                 routePath,

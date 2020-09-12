@@ -16,7 +16,7 @@ export class FrameworkContext extends FrameworkContextBase {
 
   public static readonly initFunc: { initFN: Function, target: Function }[] = [];
   get initFunc() {
-    return FrameworkContext.initFunc.filter(a => this.controllers.includes(a.target));
+    return FrameworkContext.initFunc.filter(a => this.controllersClasses.includes(a.target));
   }
 
   /**
@@ -100,14 +100,13 @@ export class FrameworkContext extends FrameworkContextBase {
     return this.context.host;
   }
 
-  public get controllers() {
+  public get controllersClasses() {
     return [
-
       ...(this.context.controllers as any[]),
     ]
   }
 
-  public get controllersInstances() {
+  public get controllers() {
     let ctrls: Function[] = this.context.controllers as any;
     //#region @backend
     if (this.context.InitDataPriority) {
@@ -130,7 +129,7 @@ export class FrameworkContext extends FrameworkContextBase {
     return this.instances[className];
   }
 
-  public get entities() {
+  public get entitiesClasses() {
     return (this.context.entities as Function[]) || [];
   }
 
@@ -180,16 +179,16 @@ export class FrameworkContext extends FrameworkContextBase {
       this.disabledRealtime = true;
     }
     //#region @backend
-    validateConfigAndAssignEntites(context.config, this.mode, this.entities);
+    validateConfigAndAssignEntites(context.config, this.mode, this.entitiesClasses);
     //#endregion
     this.prepareEntities();
   }
 
   prepareEntities() {
     //#region @backend
-    this.context.config['entities'] = this.entities as any;
+    this.context.config['entities'] = this.entitiesClasses as any;
     //#endregion
-    this.entities
+    this.entitiesClasses
       .forEach(c => {
         const className = CLASS.getName(c);
         if (FrameworkContext.contextByClassName[className]) {

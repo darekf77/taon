@@ -20,7 +20,7 @@ export class FrameworkContextBrowserApp extends FrameworkContextBase {
       //#endregion
     ) {
       const notFound: Function[] = [];
-      const providers = this.context.controllers.filter(ctrl => {
+      const providers = this.context.controllersClasses.filter(ctrl => {
 
         const e = this.context.initFunc.find(e => ctrl === e.target);
         if (e) {

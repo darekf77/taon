@@ -81,7 +81,7 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
       await this.initConnection();
 
       const instancesOfControllers: BASE_CONTROLLER<any>[] = this.context
-        .controllersInstances
+        .controllers
         .filter(f => _.isFunction((f as BASE_CONTROLLER<any>).initExampleDbData)) as any;
 
       for (let index = 0; index < instancesOfControllers.length; index++) {
@@ -99,7 +99,7 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
 
   private initDecoratorsFunctions() {
     this.context.initFunc.filter(e => {
-      const currentCtrl = this.context.controllers.find(ctrl => ctrl === e.target);
+      const currentCtrl = this.context.controllersClasses.find(ctrl => ctrl === e.target);
       if (currentCtrl) {
         e.initFN();
 
@@ -127,7 +127,7 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
     const routes = this.activeRoutes.map(({ method, routePath }) => {
       return `${method.toUpperCase()}:    ${this.context.uri.href.replace(/\/$/, '')}${routePath}`
     });
-    const instanceClass = _.first(this.context.controllers) as any;
+    const instanceClass = _.first(this.context.controllersClasses) as any;
     const instance = instanceClass && this.context.getInstance(instanceClass as any) as any;
     fse.writeJSONSync(path.join(process.cwd(), `tmp-routes${isWorker ? '--worker--'
       + path.basename(instance.filename).replace(/\.js$/, '')
