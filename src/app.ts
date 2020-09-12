@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 //#region @backend
 import * as fse from 'fs-extra';
+import * as path from 'path';
 //#endregion
 import { Morphi } from './index';
 
@@ -50,7 +51,7 @@ const start = async function () {
     synchronize: true,
     dropSchema: true,
     logging: false
-  } as any;
+  };
   //#endregion
 
   const context = await Morphi.init({
@@ -58,7 +59,7 @@ const start = async function () {
     controllers: [BookCtrl],
     entities: [Book],
     //#region @backend
-    config
+    config: config as any
     //#endregion
   });
   console.log(context);
@@ -67,12 +68,40 @@ const start = async function () {
     const data = (await c.getAll().received).body.json as Book[];
     console.log(data);
     data.forEach(b => {
-      b.subscribeRealtimeUpdates();
+      b.subscribeRealtimeUpdates({
+        callback: () => {
+          console.log(`hello update: ${b.id} `)
+        }
+      });
     })
   }
   //#region @backend
   if (Morphi.isNode) {
+    const dbfile = path.join(process.cwd(), config.database);
+    console.log(`dbfile: ${dbfile}`)
+    // setTimeout(() => {
 
+    // }, 2000)
+    const db = await context.connection.getRepository(Book);
+    let oldData = await db.find();
+    fse.watchFile(dbfile, async (a, b) => {
+      console.log(`update entities`)
+      const newData = await db.find();
+      oldData.forEach(b => {
+        const newb = newData.find(d => d.id === b.id);
+        if (newb) {
+          if (!_.isEqual(newb.name, b.name)) {
+            Morphi.Realtime.Server.TrigggerEntityChanges('Book', b.id);
+          }
+        } else {
+          Morphi.Realtime.Server.TrigggerEntityChanges('Book', b.id);
+        }
+        oldData = newData;
+      })
+    });
+    // context.controllers.forEach(c => {
+
+    // })
   }
 
   //#endregion

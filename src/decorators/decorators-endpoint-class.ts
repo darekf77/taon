@@ -16,13 +16,8 @@ import { FrameworkContext } from '../framework/framework-context';
 export { Connection } from 'typeorm';
 
 export function __ENDPOINT(baseEntity?: Function): (...args: any[]) => any {
-  // if (baseEntity) {
-  //   FrameworkContext.__core_controllers.push(baseEntity);
-  // }
   return ENDPOINT();
 }
-
-
 
 export function ENDPOINT(options?: {
   path?: string,

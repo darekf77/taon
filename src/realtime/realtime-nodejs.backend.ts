@@ -54,17 +54,17 @@ export class RealtimeNodejs extends RealtimeBase {
         })
 
         clientSocket.on(SYMBOL.REALTIME.ROOM.SUBSCRIBE.ENTITY_PROPERTY_UPDATE_EVENTS, room => {
-          log.i(`Joining room ${room} in namespace REALTIME `+` host: ${this.context.host}`)
+          log.i(`Joining room ${room} in namespace REALTIME ` + ` host: ${this.context.host}`)
           clientSocket.join(room);
         })
 
         clientSocket.on(SYMBOL.REALTIME.ROOM.UNSUBSCRIBE.ENTITY_UPDATE_EVENTS, room => {
-          log.i(`Leaving room ${room} in namespace REALTIME `+` host: ${this.context.host}`)
+          log.i(`Leaving room ${room} in namespace REALTIME ` + ` host: ${this.context.host}`)
           clientSocket.leave(room);
         })
 
         clientSocket.on(SYMBOL.REALTIME.ROOM.UNSUBSCRIBE.ENTITY_PROPERTY_UPDATE_EVENTS, room => {
-          log.i(`Leaving room ${room} in namespace REALTIME `+` host: ${this.context.host}`)
+          log.i(`Leaving room ${room} in namespace REALTIME ` + ` host: ${this.context.host}`)
           clientSocket.leave(room);
         })
 
@@ -75,22 +75,28 @@ export class RealtimeNodejs extends RealtimeBase {
 
 
 
-  public __TrigggerEntityChanges(entity: BASE_ENTITY<any>, property?: string) {
+  public __TrigggerEntityChanges(
+    entity: BASE_ENTITY<any>,
+    property?: string,
+    idToTrigger?: number
+  ) {
     if (this.context.disabledRealtime) {
       return;
     }
     const keyPropertyName = 'id'
 
-
-    if (!entity || !entity[keyPropertyName]) {
-      console.error(`Entity without iD !!!! `, entity)
-      return
+    if (!idToTrigger) {
+      if (!entity || !entity[keyPropertyName]) {
+        console.error(`Entity without iD !!!! `, entity)
+        return
+      }
     }
 
-    const id = entity[keyPropertyName];
+
+    const id = idToTrigger ? idToTrigger : entity[keyPropertyName];
     // Global.vars.socket.BE.sockets.in()\
 
-    const constructFn = CLASS.getFromObject(entity);
+    const constructFn = _.isString(entity) ? CLASS.getBy(entity) : CLASS.getFromObject(entity);
     // console.log('construcFN', constructFn)
     if (!constructFn) {
       log.d('not found class function from', entity)
@@ -98,7 +104,7 @@ export class RealtimeNodejs extends RealtimeBase {
       const className = CLASS.getName(constructFn);
 
       const modelSocketRoomPath = _.isString(property) ?
-        SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY_PROPERTY(className, property, entity.id) :
+        SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY_PROPERTY(className, property, id) :
         SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY(className, id);
 
       // console.log(`Push entity${_.isString(property) ? ('.' + property) : ''} to room with path: ${modelSocketRoomPath}`)
@@ -140,29 +146,33 @@ export class RealtimeNodejs extends RealtimeBase {
     return context.node?.realtime?.TrigggerEntityPropertyChanges(entity, property);
   }
 
-  public TrigggerEntityPropertyChanges<ENTITY = any>(entity: BASE_ENTITY<any>, property: (keyof ENTITY) | (keyof ENTITY)[]) {
+  public TrigggerEntityPropertyChanges<ENTITY = any>(
+    entity: BASE_ENTITY<any>,
+    property: (keyof ENTITY) | (keyof ENTITY)[],
+    idToTrigger?: number
+  ) {
     if (this.context.disabledRealtime) {
       return;
     }
     if (_.isArray(property)) {
       property.forEach(p => {
-        this.__TrigggerEntityChanges(entity, p as any)
+        this.__TrigggerEntityChanges(entity, p as any, idToTrigger)
       })
       return
     }
-    this.__TrigggerEntityChanges(entity, property as any)
+    this.__TrigggerEntityChanges(entity, property as any, idToTrigger)
   }
 
-  public static TrigggerEntityChanges(entity: BASE_ENTITY<any>) {
+  public static TrigggerEntityChanges(entity: BASE_ENTITY<any> | string, idToTrigger?: number) {
     const context = FrameworkContext.findForTraget(entity);
-    return context.node?.realtime?.TrigggerEntityChanges(entity);
+    return context.node?.realtime?.TrigggerEntityChanges(entity as any, idToTrigger);
   }
 
-  public TrigggerEntityChanges(entity: BASE_ENTITY<any>) {
+  public TrigggerEntityChanges(entity: BASE_ENTITY<any>, idToTrigger?: number) {
     if (this.context.disabledRealtime) {
       return;
     }
-    this.__TrigggerEntityChanges(entity)
+    this.__TrigggerEntityChanges(entity, void 0, idToTrigger)
   }
 
 
