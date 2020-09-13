@@ -19,6 +19,7 @@ export class FrameworkContext extends FrameworkContextBase {
     return FrameworkContext.initFunc.filter(a => this.controllersClasses.includes(a.target));
   }
 
+
   /**
    * @deprecated
    */
@@ -44,6 +45,20 @@ export class FrameworkContext extends FrameworkContextBase {
     return res;
   }
 
+  static destroy(context: FrameworkContext) {
+    Object
+      .keys(FrameworkContext.contextByClassName)
+      .forEach(className => {
+        const c = FrameworkContext.contextByClassName[className];
+        if (c === context) {
+          delete FrameworkContext.contextByClassName[className];
+        }
+      });
+  }
+
+  destroy() {
+    FrameworkContext.destroy(this);
+  }
 
   /**
    * Get global context for target

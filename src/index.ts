@@ -22,7 +22,7 @@ import * as realtime from './realtime';
 import * as models from './models';
 import * as sym from './symbols';
 import * as helpers from './helpers';
-import * as context from './framework/framework-context';
+import { FrameworkContext } from './framework/framework-context';
 
 //#region @backend
 import { generate } from 'password-hash';
@@ -51,6 +51,9 @@ export namespace Morphi {
 
   export const isNode = helpers.Helpers.isNode;
   export const isBrowser = helpers.Helpers.isBrowser;
+  export function destroyContext(context: FrameworkContext) {
+    FrameworkContext.destroy(context)
+  }
 
   export function getHttpPathBy<T = Function>(classFn: new () => T, port: number, method: (keyof T)) {
     return `http://localhost:${port}${helpers.Helpers.getPathFor(classFn as any)}/${method}`;
@@ -61,7 +64,7 @@ export namespace Morphi {
    */
   export const MDC_KEY = sym.SYMBOL.MDC_KEY;
   export const Platform = IsNode ? 'node' : 'browser';
-  export const Providers: Function[] = context.FrameworkContext.Providers;
+  export const Providers: Function[] = FrameworkContext.Providers;
 
   export import Response = models.Models.Response;
 
