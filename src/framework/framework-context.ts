@@ -219,7 +219,7 @@ export class FrameworkContext extends FrameworkContextBase {
     this.prepareEntities();
   }
 
-  prepareEntities() {
+  private prepareEntities() {
     //#region @backend
     if (this.context.config) {
       this.context.config['entities'] = this.entitiesClasses as any;
@@ -247,7 +247,7 @@ class ${className}Extended extends ${className} {
         FrameworkContext.contextByClassName[className] = this;
       });
   }
-  prepareControllers() {
+  private prepareControllers() {
     // console.log('PREPRARE CONTROLLERS !!!')
     this.context.controllers = _.sortedUniq(this.context.controllers as Function[]);
     this.context.controllers

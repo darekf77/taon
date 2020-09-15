@@ -17,18 +17,18 @@ export const SYMBOL = {
       }
     },
     EVENT: {
-      ENTITY_UPDATE_BY_ID(className: string, entityId: number) {
+      ENTITY_UPDATE_BY_ID(className: string, entityId: number | string) {
         return `entityupdatebyid${_.camelCase(className)}${entityId}`.toLowerCase();
       },
-      ENTITY_PROPTERY_UPDATE_BY_ID(className: string, property: string, entityId: number) {
+      ENTITY_PROPTERY_UPDATE_BY_ID(className: string, property: string, entityId: number | string) {
         return `entityupdatebyid${_.camelCase(className)}${_.camelCase(property)}${entityId}`.toLowerCase();
       }
     },
     ROOM_NAME: {
-      UPDATE_ENTITY(className: string, entityId: number) {
+      UPDATE_ENTITY(className: string, entityId: number | string) {
         return `room${_.camelCase(className)}${entityId}`.toLowerCase();
       },
-      UPDATE_ENTITY_PROPERTY(className: string, property: string, entityId: number) {
+      UPDATE_ENTITY_PROPERTY(className: string, property: string, entityId: number | string) {
         return `room${_.camelCase(className)}${_.camelCase(property)}${entityId}`.toLowerCase();
       }
     }

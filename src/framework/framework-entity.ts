@@ -121,7 +121,7 @@ export function Entity<T = {}>(options?: {
 
 export abstract class BASE_ENTITY<T = any, TRAW = T, CTRL extends BaseCRUD<T> = any> {
 
-  abstract id: number;
+  abstract id: number | string;
   public modelDataConfig?: ModelDataConfig;
 
   /**

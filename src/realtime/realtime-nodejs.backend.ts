@@ -76,14 +76,21 @@ export class RealtimeNodejs extends RealtimeBase {
 
 
   public __TrigggerEntityChanges(
-    entity: BASE_ENTITY<any>,
+    entity: BASE_ENTITY<any> | string | Function,
     property?: string,
-    idToTrigger?: number
+    idToTrigger?: number | string
   ) {
     if (this.context.disabledRealtime) {
       return;
     }
-    const keyPropertyName = 'id'
+    if (_.isFunction(entity)) {
+      entity = CLASS.getName(entity);
+    }
+    if (_.isString(entity) && !(_.isString(idToTrigger) || _.isNumber(idToTrigger))) {
+      throw `[morphi][realtime-nodejs] `
+      + `Please provide id if you are trigerring realtime change for entity by name: "${entity}"`;
+    }
+    const keyPropertyName = 'id';
 
     if (!idToTrigger) {
       if (!entity || !entity[keyPropertyName]) {
@@ -93,7 +100,7 @@ export class RealtimeNodejs extends RealtimeBase {
     }
 
 
-    const id = idToTrigger ? idToTrigger : entity[keyPropertyName];
+    const id = (idToTrigger ? idToTrigger : entity[keyPropertyName]) as any;
     // Global.vars.socket.BE.sockets.in()\
 
     const constructFn = _.isString(entity) ? CLASS.getBy(entity) : CLASS.getFromObject(entity);
@@ -141,15 +148,19 @@ export class RealtimeNodejs extends RealtimeBase {
   }
 
 
-  public static TrigggerEntityPropertyChanges<ENTITY = any>(entity: BASE_ENTITY<any>, property: (keyof ENTITY) | (keyof ENTITY)[]) {
+  public static TrigggerEntityPropertyChanges<ENTITY = any>(
+    entity: BASE_ENTITY<any> | string | Function,
+    property: (keyof ENTITY) | (keyof ENTITY)[],
+    idToTrigger?: number | string,
+  ) {
     const context = FrameworkContext.findForTraget(entity);
-    return context.node?.realtime?.TrigggerEntityPropertyChanges(entity, property);
+    return context.node?.realtime?.TrigggerEntityPropertyChanges(entity, property, idToTrigger);
   }
 
   public TrigggerEntityPropertyChanges<ENTITY = any>(
-    entity: BASE_ENTITY<any>,
+    entity: BASE_ENTITY<any> | string | Function,
     property: (keyof ENTITY) | (keyof ENTITY)[],
-    idToTrigger?: number
+    idToTrigger?: number | string
   ) {
     if (this.context.disabledRealtime) {
       return;
@@ -163,12 +174,15 @@ export class RealtimeNodejs extends RealtimeBase {
     this.__TrigggerEntityChanges(entity, property as any, idToTrigger)
   }
 
-  public static TrigggerEntityChanges(entity: BASE_ENTITY<any> | string, idToTrigger?: number) {
+  public static TrigggerEntityChanges(entity: BASE_ENTITY<any> | string | Function, idToTrigger?: number | string) {
+    if (_.isFunction(entity)) {
+      entity = CLASS.getName(entity);
+    }
     const context = FrameworkContext.findForTraget(entity);
     return context.node?.realtime?.TrigggerEntityChanges(entity as any, idToTrigger);
   }
 
-  public TrigggerEntityChanges(entity: BASE_ENTITY<any>, idToTrigger?: number) {
+  public TrigggerEntityChanges(entity: BASE_ENTITY<any>, idToTrigger?: number | string) {
     if (this.context.disabledRealtime) {
       return;
     }

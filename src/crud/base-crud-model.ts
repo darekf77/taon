@@ -53,7 +53,7 @@ export abstract class BaseCRUD<T>  {
 
   @GET(`/${SYMBOL.CRUD_TABLE_MODEL}/:id/property/:property`)
   bufforedChanges(
-    @Path(`id`) id: number,
+    @Path(`id`) id: number | string,
     @Path(`property`) property: string,
     @Query('alreadyLength') alreadyLength?: number,
     @Query('config') config?: ModelDataConfig
@@ -95,7 +95,7 @@ export abstract class BaseCRUD<T>  {
   }
 
   @GET(`/${SYMBOL.CRUD_TABLE_MODEL}/:id`)
-  getBy(@Path(`id`) id: number, @Query('config') config?: ModelDataConfig): Models.Response<T> {
+  getBy(@Path(`id`) id: number | string, @Query('config') config?: ModelDataConfig): Models.Response<T> {
     //#region @backendFunc
     return async () => {
 
@@ -108,7 +108,7 @@ export abstract class BaseCRUD<T>  {
 
 
   @PUT(`/${SYMBOL.CRUD_TABLE_MODEL}/:id`)
-  updateById(@Path(`id`) id: number, @Body() item: T, @Query('config') config?: ModelDataConfig): Models.Response<T> {
+  updateById(@Path(`id`) id: number | string, @Body() item: T, @Query('config') config?: ModelDataConfig): Models.Response<T> {
     //#region @backendFunc
 
     return async () => {
@@ -203,7 +203,7 @@ async function getModels(config: ModelDataConfig, repo: any) {
   return res;
 }
 
-async function getModel(id: number, config: ModelDataConfig, repo: any) {
+async function getModel(id: number | string, config: ModelDataConfig, repo: any) {
   if (!repo) {
     return void 0;
   }
@@ -214,7 +214,7 @@ async function getModel(id: number, config: ModelDataConfig, repo: any) {
   return res;
 }
 
-function prepareData(data: IBASE_ENTITY | IBASE_ENTITY[], config: ModelDataConfig, id?: number) {
+function prepareData(data: IBASE_ENTITY | IBASE_ENTITY[], config: ModelDataConfig, id?: number | string) {
   if (data === void 0) {
     return;
   }

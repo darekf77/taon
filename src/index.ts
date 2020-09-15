@@ -23,6 +23,7 @@ import * as models from './models';
 import * as sym from './symbols';
 import * as helpers from './helpers';
 import { FrameworkContext } from './framework/framework-context';
+import * as context from './framework/framework-context';
 
 //#region @backend
 import { generate } from 'password-hash';
@@ -51,6 +52,7 @@ export namespace Morphi {
 
   export const isNode = helpers.Helpers.isNode;
   export const isBrowser = helpers.Helpers.isBrowser;
+  export import FrameworkContext = context.FrameworkContext;
   export function destroyContext(context: FrameworkContext) {
     FrameworkContext.destroy(context)
   }
@@ -64,9 +66,11 @@ export namespace Morphi {
    */
   export const MDC_KEY = sym.SYMBOL.MDC_KEY;
   export const Platform = IsNode ? 'node' : 'browser';
+
   export const Providers: Function[] = FrameworkContext.Providers;
 
   export import Response = models.Models.Response;
+
 
   export import Controller = framework.Controller;
   export import Entity = framework.Entity;
