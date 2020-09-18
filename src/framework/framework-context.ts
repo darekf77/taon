@@ -60,6 +60,11 @@ export class FrameworkContext extends FrameworkContextBase {
     FrameworkContext.destroy(this);
   }
 
+  public static findByHost(host: string) {
+    const uri = new URL(host);
+    return FrameworkContext.contexts.find(c => c.uri.host === uri.host);
+  }
+
   /**
    * Get global context for target
    * @param target class name or class function or class object

@@ -15,6 +15,7 @@ export { RepeatTypeComponent } from './crud/formly-repeat-component';
 export { FormlyHorizontalWrapper } from './crud/formly-group-wrapper-component';
 export { Log, Level } from 'ng2-logger';
 
+import * as _ from 'lodash';
 import * as crudMorph from './crud';
 import * as decoratorsMorphi from './decorators';
 import * as framework from './framework';
@@ -53,8 +54,17 @@ export namespace Morphi {
   export const isNode = helpers.Helpers.isNode;
   export const isBrowser = helpers.Helpers.isBrowser;
   export import FrameworkContext = context.FrameworkContext;
-  export function destroyContext(context: FrameworkContext) {
-    FrameworkContext.destroy(context)
+  export function destroyContext(contextOrHost: FrameworkContext | string) {
+    if (_.isString(contextOrHost)) {
+      console.log(`[morphi] Destroying context by host: ${contextOrHost}`)
+      const context = FrameworkContext.findByHost(contextOrHost);
+      if (!context) {
+        console.warn(`[morphi] no context to delete by host: "${contextOrHost}"`);
+        return;
+      }
+      contextOrHost = context;
+    }
+    FrameworkContext.destroy(contextOrHost);
   }
 
   export function getHttpPathBy<T = Function>(classFn: new () => T, port: number, method: (keyof T)) {
