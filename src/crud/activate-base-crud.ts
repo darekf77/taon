@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import { Helpers } from '../helpers';
 import { CLASS } from 'typescript-class-helpers';
+import type { FrameworkContext } from '../framework/framework-context';
 
 declare const global: any;
 if (!global['ENV']) {
@@ -9,7 +10,11 @@ if (!global['ENV']) {
 
 const abstractClasses = ['BASE_CONTROLLER'];
 
-export function activateBaseCrud(target: Function, entity: Function, entites?: Function[]) {
+export function activateBaseCrud(
+  target: Function,
+  entity: Function,
+  entites: Function[],
+  context: FrameworkContext) {
 
   if (_.isFunction(target) && Helpers.hasParentClassWithName(target, 'BaseCRUD') &&
     !abstractClasses.includes(CLASS.getName(target))) {
@@ -19,16 +24,23 @@ export function activateBaseCrud(target: Function, entity: Function, entites?: F
         return;
       }
 
-      !global.hideLog && console.warn(`
-You are extending BaseCRUD class.. CRUD functionality won't work
-unless you provide "entity" property for CRUD operations on db.
-@Morphi.Controller({
-  ...
-  entity: <YOUR ENTITY CLASS HERE>
-  ...
-})
-class ${CLASS.getName(target)} extends  ...
-      `)
+      //#region @backend
+      if (context.mode === 'backend/frontend') {
+        //#endregion
+        !global.hideLog && console.warn(`
+        You are extending BaseCRUD class.. CRUD functionality won't work
+        unless you provide "entity" property for CRUD operations on db.
+        @Morphi.Controller({
+          ...
+          entity: <YOUR ENTITY CLASS HERE>
+          ...
+        })
+        class ${CLASS.getName(target)} extends  ...
+              `)
+        //#region @backend
+      }
+      //#endregion
+
     } else {
       // console.log(`Traget ${target.name} has parent BaseCrud`)
       target.prototype['entity'] = entity;

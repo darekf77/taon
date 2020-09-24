@@ -36,7 +36,7 @@ export function ENDPOINT(options?: {
       return function () {
         const context = FrameworkContext.findForTraget(target);
 
-        activateBaseCrud(target, entity, additionalEntities)
+        activateBaseCrud(target, entity, additionalEntities, context)
 
         const configs = CLASS.getConfig(target) as any[];
         // console.log(`Class config for ${CLASS.getName(target)}`, configs)

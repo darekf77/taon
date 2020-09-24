@@ -106,6 +106,21 @@ export class RealtimeBrowser extends RealtimeBase {
     }
   }
 
+  private entityIdIsCorrect(id: string | number, entity: any,
+    action: 'Subscribe' | 'Unsubscribe') {
+    if (!(_.isNumber(id) || _.isString(id))) {
+      if (_.isFunction(entity)) {
+        entity = CLASS.getName(entity)
+      }
+      if (_.isObject(entity)) {
+        entity = CLASS.getNameFromObject(entity)
+      }
+
+      throw `[Morphi.Realtime.Browser.${action}] bad id "${id}" for entity "${entity}" `
+      + `. Should be number or string`;
+    }
+  }
+
   private __SubscribeEntityChanges(entity: AliasEntityType, changesListener: AliasChangeListenerType, property?: string) {
     if (this.context.disabledRealtime) {
       return;
@@ -113,10 +128,7 @@ export class RealtimeBrowser extends RealtimeBase {
     const { id } = entity;
     const propertyInEntityKey = propertyInEntityKeyFn(entity, property);
 
-    if (!_.isNumber(id)) {
-      console.error(entity)
-      throw `[Morphi.Realtime.Browser.Subscribe] bad id = "${id}" for entity.`
-    }
+    this.entityIdIsCorrect(id, entity, 'Subscribe');
 
     const constructFn = CLASS.getFromObject(entity)
 
@@ -128,6 +140,12 @@ export class RealtimeBrowser extends RealtimeBase {
     const className = CLASS.getName(constructFn);
 
     this.checkObjects(className, entity, property, changesListener);
+    if(property) {
+      log.d(`subsceibe entity property changes: "${className}/${property}"`)
+    } else {
+      log.d(`subsceibe entity changes: "${className}"`)
+    }
+
     log.d(`[className][after check object] ${className} host: ${this.context.host} `)
 
     const roomName = _.isString(property) ?
@@ -155,39 +173,46 @@ export class RealtimeBrowser extends RealtimeBase {
         + ` for host: ${this.context.host}`)
     }
 
-    const callback = (data) => {
-      const cb = _.debounce(() => {
-        if (_.isFunction(changesListener)) {
-          const self = this;
-          const unsub = () => {
-            if (_.isString(property)) {
-              this.UnsubscribeEntityPropertyChanges(entity, property);
-            } else {
-              this.UnsubscribeEntityChanges(entity);
-            }
-          }
-
+    const callBackDebouced = () => {
+      if (_.isFunction(changesListener)) {
+        const unsub = () => {
           if (_.isString(property)) {
-            const arr = RealtimeBrowser.realtimeEntityPropertyListener[className][propertyInEntityKey];
-            if (_.isArray(arr)) {
-              arr.forEach(changeListenerFromArray => {
-                changeListenerFromArray(unsub)
-              })
-            }
-
+            this.UnsubscribeEntityPropertyChanges(entity, property);
           } else {
-            const arr = RealtimeBrowser.realtimeEntityListener[className][entity.id];
-            if (_.isArray(arr)) {
-              arr.forEach(changeListenerFromArray => {
-                changeListenerFromArray(unsub)
-              })
-            }
+            this.UnsubscribeEntityChanges(entity);
+          }
+        }
+
+        if (_.isString(property)) {
+          const arr = RealtimeBrowser.realtimeEntityPropertyListener[className][propertyInEntityKey];
+          if (_.isArray(arr)) {
+            log.d(`changeListenerFromArray length: ${arr.length} , for ${className}/${propertyInEntityKey}`)
+            arr.forEach(changeListenerFromArray => {
+              changeListenerFromArray(unsub)
+            })
           }
 
         } else {
-          log.er('Please define changedEntity')
+          const arr = RealtimeBrowser.realtimeEntityListener[className][entity.id];
+          if (_.isArray(arr)) {
+            arr.forEach(changeListenerFromArray => {
+              changeListenerFromArray(unsub)
+            })
+          }
         }
-      }, 1000);
+
+      } else {
+        log.er('Please define changedEntity')
+      }
+    }
+
+    const cb = _.debounce(() => {
+      callBackDebouced();
+    }, 500);
+
+    const callbackForRealtimeChanges = (
+      data // NO need to know data
+    ) => {
 
       log.i('data from socket without preparation (ngzone,rjxjs,transform)', data)
       if (ngZone) {
@@ -208,11 +233,11 @@ export class RealtimeBrowser extends RealtimeBase {
     let sub;
 
     if (_.isString(property)) {
-      sub = realtime.on(SYMBOL.REALTIME.EVENT.ENTITY_PROPTERY_UPDATE_BY_ID(className, property, entity.id), callback)
+      sub = realtime.on(SYMBOL.REALTIME.EVENT.ENTITY_PROPTERY_UPDATE_BY_ID(className, property, entity.id), callbackForRealtimeChanges)
       RealtimeBrowser.realtimeEntityPropertySockets[className][propertyInEntityKey] = sub;
       RealtimeBrowser.realtimeEntityPropertyListener[className][propertyInEntityKey].push(changesListener);
     } else {
-      sub = realtime.on(SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(className, entity.id), callback)
+      sub = realtime.on(SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(className, entity.id), callbackForRealtimeChanges)
       RealtimeBrowser.realtimeEntitySockets[className][entity.id] = sub;
       RealtimeBrowser.realtimeEntityListener[className][entity.id].push(changesListener);
     }
@@ -334,10 +359,7 @@ export class RealtimeBrowser extends RealtimeBase {
     }
 
     const { id } = entity;
-    if (!_.isNumber(id)) {
-      console.error(entity)
-      throw `[Morphi.Realtime.Browser.Unsubscribe] bad id = "${id}" for entity.`
-    }
+    this.entityIdIsCorrect(id, entity, 'Unsubscribe');
 
     const constructFn = _.isFunction(classFN) ? classFN : CLASS.getFromObject(entity)
     if (!constructFn) {
