@@ -81,9 +81,9 @@
     "private": true
   },
   "build": {
-    "number": 676,
-    "date": "2020-09-18T11:18:21.000Z",
-    "hash": "1235002b354415779726569964beb1bbad4c4b59",
+    "number": 680,
+    "date": "2020-09-26T16:41:36.000Z",
+    "hash": "a3ffeda167ce58e0bd6765e2a10132e2e57bc0fb",
     "options": {}
   },
   "currentProjectName": "docker-v2",
@@ -91,7 +91,7 @@
   "currentProjectLaunchConfiguration": "{\"version\":\"0.2.0\",\"configurations\":[],\"compounds\":[]}",
   "currentProjectTasksConfiguration": "{\"version\":\"2.0.0\",\"tasks\":[{\"label\":\"terminateall\",\"command\":\"echo ${input:terminate}\",\"type\":\"shell\",\"problemMatcher\":[]}],\"inputs\":[{\"id\":\"terminate\",\"type\":\"command\",\"command\":\"workbench.action.tasks.terminate\",\"args\":\"terminateAll\"}]}",
   "currentProjectType": "docker",
-  "currentFrameworkVersion": "0.0.65",
+  "currentFrameworkVersion": "0.0.66",
   "currentProjectLocation": "/Users/darek/projects/npm/firedev-projects/container-v2/workspace-v2/docker-v2",
   "currentProjectIsStrictSite": false,
   "currentProjectIsDependencySite": false,
