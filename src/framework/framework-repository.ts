@@ -17,10 +17,10 @@ export abstract class BASE_REPOSITORY<Entity, GlobalAliases = {}> extends Typeor
 
   //#region @backend
 
-  __: { [prop in keyof GlobalAliases]: { [propertyName in keyof Entity]: string } };
-  _: GlobalAliases;
+  __?: { [prop in keyof GlobalAliases]: { [propertyName in keyof Entity]: string } };
+  _?: GlobalAliases;
 
-  abstract globalAliases: (keyof GlobalAliases)[];
+  globalAliases?: (keyof GlobalAliases)[];
 
   pagination() {
     // TODO_NOT_IMPORTANT
