@@ -14,9 +14,7 @@ import { Helpers } from '../helpers';
 import { IBASE_ENTITY } from '../framework/framework-entity';
 import { FrameworkContext } from '../framework/framework-context';
 declare const global: any;
-if (!global['ENV']) {
-  global['ENV'] = {};
-}
+
 //#endregion
 
 @CLASS.NAME('BaseCRUD')

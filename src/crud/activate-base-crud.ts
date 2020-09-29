@@ -4,9 +4,7 @@ import { CLASS } from 'typescript-class-helpers';
 import type { FrameworkContext } from '../framework/framework-context';
 
 declare const global: any;
-if (!global['ENV']) {
-  global['ENV'] = {};
-}
+
 
 const abstractClasses = ['BASE_CONTROLLER'];
 
