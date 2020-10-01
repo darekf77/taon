@@ -10,6 +10,16 @@ import { Helpers } from '../helpers';
 import { CodeCut } from './browser-code-cut';
 import { config } from './config';
 
+export type TscCompileOptions = {
+  cwd: string;
+  watch?: boolean;
+  outDir?: string;
+  generateDeclarations?: boolean;
+  tsExe?: string;
+  diagnostics?: boolean;
+  hideErrors?: boolean;
+  debug?: boolean;
+}
 
 @IncCompiler.Class({ className: 'BackendCompilation' })
 export class BackendCompilation extends IncCompiler.Base {
@@ -21,29 +31,49 @@ export class BackendCompilation extends IncCompiler.Base {
   }
   public isEnableCompilation = true;
 
-  async tscCompilation(cwd: string, watch = false, outDir?: string, generateDeclarations = false, tsExe = 'tsc',
-    diagnostics = false) {
+  async tscCompilation({
+    cwd,
+    watch = false,
+    outDir,
+    generateDeclarations = false,
+    tsExe = 'npm-run tsc',
+    diagnostics = false,
+    hideErrors = false,
+    debug = false
+  }: TscCompileOptions) {
     if (!this.isEnableCompilation) {
       console.log(`Compilation disabled for ${_.startCase(BackendCompilation.name)}`)
       return;
     }
+    if (hideErrors) {
+      diagnostics = false;
+      generateDeclarations = false;
+    }
+
     const params = [
-      watch ? '-w' : '',
-      outDir ? `--outDir ${outDir}` : '',
-      !watch ? '--noEmitOnError true' : '',
-      diagnostics ? ' --extendedDiagnostics' : '',
-      `--preserveWatchOutput`
+      watch ? ' -w ' : '',
+      outDir ? ` --outDir ${outDir} ` : '',
+      !watch ? ' --noEmitOnError true ' : '',
+      diagnostics ? ' --extendedDiagnostics ' : '',
+      ` --preserveWatchOutput `
+      // hideErrors ? '' : ` --preserveWatchOutput `,
+      // hideErrors ? ' --skipLibCheck true --noEmit true ' : '',
     ]
 
     const commandJsAndMaps = `${tsExe} -d false  ${params.join(' ')}`
     const commandDts = `${tsExe}  ${params.join(' ')}`
 
-    // console.log(`(${this.compilerName}) Execute first command : ${commandJsAndMaps}    # inside: ${cwd}`)
-    // console.log(`(${this.compilerName}) Execute second command : ${commandDts}    # inside: ${cwd}`)
+    debug && console.log(`(${this.compilerName}) Execute first command :
+
+    ${commandJsAndMaps}
+
+    # inside: ${cwd}`)
+
 
     if (watch) {
       await Helpers.log(child.exec(commandJsAndMaps, { cwd }), ['Watching for file changes.']);
       if (generateDeclarations) {
+        debug && console.log(`(${this.compilerName}) Execute second command : ${commandDts}    # inside: ${cwd}`)
         await Helpers.log(child.exec(commandDts, { cwd }), ['Watching for file changes.']);
       }
     } else {
@@ -59,6 +89,7 @@ export class BackendCompilation extends IncCompiler.Base {
 
 
       if (generateDeclarations) {
+        debug && console.log(`(${this.compilerName}) Execute second command : ${commandDts}    # inside: ${cwd}`)
         try {
           child.execSync(commandDts, {
             cwd,
@@ -76,7 +107,7 @@ export class BackendCompilation extends IncCompiler.Base {
 
   protected compilerName = 'Backend Compiler';
   async compile(watch = false) {
-    await this.tscCompilation(this.compilationFolderPath, watch, `../${this.outFolder}` as any, true)
+    await this.tscCompilation({ cwd: this.compilationFolderPath, watch, outDir: (`../${this.outFolder}` as any), generateDeclarations: true })
   }
 
   async syncAction(filesPathes: string[]) {

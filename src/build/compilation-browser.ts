@@ -124,9 +124,13 @@ export class BroswerCompilation extends BackendCompilation {
   }
 
   async compile(watch = false) {
-    await this.tscCompilation(this.compilationFolderPath, watch, `../${this.backendOutFolder}/${this.outFolder}` as any, true,
-      this.customCompiler ? this.customCompiler : void 0
-    )
+    await this.tscCompilation({
+      cwd: this.compilationFolderPath,
+      watch,
+      outDir: (`../${this.backendOutFolder}/${this.outFolder}` as any),
+      generateDeclarations: true,
+      tsExe: this.customCompiler ? this.customCompiler : void 0
+    })
   }
 
 }
