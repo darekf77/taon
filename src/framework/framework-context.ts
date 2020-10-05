@@ -20,14 +20,14 @@ export class FrameworkContext extends FrameworkContextBase {
   }
 
 
-  /**
-   * @deprecated
-   */
-  public static get Providers() {
-    return _.sortedUniq(FrameworkContext.contexts.reduce((a, b) => {
-      return a.concat(b.Providers);
-    }, []))
-  }
+  // /**
+  //  * @deprecated
+  //  */
+  // public static get Providers() {
+  //   return _.sortedUniq(FrameworkContext.contexts.reduce((a, b) => {
+  //     return a.concat(b.Providers);
+  //   }, []))
+  // }
   public readonly Providers: Function[] = [];
 
   private static readonly ngZoneInstance: any;

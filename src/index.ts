@@ -77,7 +77,7 @@ export namespace Morphi {
   export const MDC_KEY = sym.SYMBOL.MDC_KEY;
   export const Platform = IsNode ? 'node' : 'browser';
 
-  export const Providers: Function[] = FrameworkContext.Providers;
+  // export const Providers: Function[] = FrameworkContext.Providers;
 
   export import Response = models.Models.Response;
 
