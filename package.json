@@ -250,6 +250,7 @@
   "devDependencies": {
     "background-worker-process": "0.0.12",
     "morphi": "4.0.2",
+    "tnp-config": "0.0.3",
     "tnp-db": "0.0.10",
     "tnp-helpers": "0.0.8",
     "tnp-models": "0.0.9",
