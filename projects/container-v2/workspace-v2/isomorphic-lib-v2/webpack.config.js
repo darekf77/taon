@@ -60,6 +60,10 @@ module.exports = (env) => {
     },
     module: {
       rules: [
+        {
+          test: /\.css$/i,
+          use: ['style-loader', 'css-loader'],
+        },
         // {
         //   enforce: 'pre',
         //   test: /\.tsx?$/,
