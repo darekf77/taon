@@ -248,13 +248,13 @@
     }
   },
   "devDependencies": {
-    "background-worker-process": "0.0.12",
-    "morphi": "4.0.2",
+    "background-worker-process": "0.0.13",
+    "morphi": "4.0.3",
     "tnp-config": "0.0.4",
-    "tnp-db": "0.0.10",
-    "tnp-helpers": "0.0.8",
-    "tnp-models": "0.0.9",
-    "tnp-ui": "0.0.2"
+    "tnp-db": "0.0.11",
+    "tnp-helpers": "0.0.9",
+    "tnp-models": "0.0.10",
+    "tnp-ui": "0.0.6"
   },
   "dependencies": {
     "@angular-devkit/build-angular": "~0.901.3",
