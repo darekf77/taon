@@ -51,6 +51,12 @@ export namespace Morphi {
   export const IsNode = helpers.Helpers.isNode;
   export const IsBrowser = helpers.Helpers.isBrowser;
 
+  //#region @backend
+  export function setIsBackend() {
+    helpers.Helpers.setIsBackend();
+  }
+  //#endregion
+
   export const isNode = helpers.Helpers.isNode;
   export const isBrowser = helpers.Helpers.isBrowser;
   export import FrameworkContext = context.FrameworkContext;
