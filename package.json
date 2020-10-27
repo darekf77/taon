@@ -251,6 +251,7 @@
     "background-worker-process": "0.0.13",
     "morphi": "4.0.3",
     "ngx-store": "2.1.0",
+    "node-localstorage": "2.1.6",
     "tnp-config": "0.0.4",
     "tnp-db": "0.0.11",
     "tnp-helpers": "0.0.9",
