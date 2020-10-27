@@ -227,7 +227,7 @@
     "style-loader": "^0.13.1",
     "stylus-loader": "^3.0.1",
     "sw-toolbox": "^3.6.0",
-    "systeminformation": "^3.45.7",
+    "systeminformation": "^4.27.11",
     "task.js": "^0.1.5",
     "tnp-db": "0.0.8",
     "tnp-helpers": "0.0.6",
