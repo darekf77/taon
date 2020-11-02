@@ -13,12 +13,12 @@ export const FILE_NAME_ISOMORPHIC_PACKAGES = 'tmp-isomorphic-packages.json';
 
 export class PackagesRecognition {
 
-
+  static FILE_NAME_ISOMORPHIC_PACKAGES = FILE_NAME_ISOMORPHIC_PACKAGES;
   static From(cwd: string) {
     return new PackagesRecognition(cwd);
   }
 
-  private recognizedPackages: string[];
+  protected recognizedPackages: string[];
 
   constructor(protected cwd: string) {
 

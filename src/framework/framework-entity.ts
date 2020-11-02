@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { Log } from 'ng2-logger';
+import { Log, Helpers, Level } from 'ng2-logger';
 import { SYMBOL } from '../symbols';
 import { FormlyArrayTransformFn } from '../crud/fromly';
 import { classNameVlidation } from './framework-helpers';
@@ -17,10 +17,10 @@ import { RealtimeBrowser } from '../realtime';
 import { BaseCRUD, ModelDataConfig } from '../crud'
 import { CLASS } from 'typescript-class-helpers';
 
+const log = Log.create('Framework entity',
+  Level.__NOTHING
+)
 
-const log = Log.create('Framework entity')
-
-const updatesInProgress = {};
 
 function getUpdateID(id, entityName, propterty, config) {
   return `${_.kebabCase(id)}-${_.kebabCase(entityName)}-${_.kebabCase(propterty)}-${
@@ -121,6 +121,7 @@ export function Entity<T = {}>(options?: {
 
 export abstract class BASE_ENTITY<T = any, TRAW = T, CTRL extends BaseCRUD<T> = any> {
 
+  private static __updatesInProgress = {};
   abstract id: number | string;
   public modelDataConfig?: ModelDataConfig;
 
@@ -193,37 +194,53 @@ export abstract class BASE_ENTITY<T = any, TRAW = T, CTRL extends BaseCRUD<T> = 
     callback?: (response: Models.HttpResponse<CALLBACK>) => CALLBACK | void
   } = {} as any) {
     let { modelDataConfig, callback, afterMergeCallback, property, update, bufforProperty } = options;
-    const that = this;
 
     if (!_.isObject(this[IS_RELATIME_PROPERTY])) {
       this[IS_RELATIME_PROPERTY] = {};
     }
 
 
-    const changesListener = (entityToUpdate: BASE_ENTITY<any>) => {
+    const changesListener = (entityToUpdate: BASE_ENTITY<any>, info: string) => {
       return async () => {
-
+        const updateID = getUpdateID(entityToUpdate.id, CLASS.getNameFromObject(entityToUpdate), property, modelDataConfig);
+        // log.d(`info: ${info} UPDATE ID: ${updateID}`)
+        if (BASE_ENTITY.__updatesInProgress[updateID]) {
+          console.warn(`ANOTHER UPDATE IN PROGRESS FOR UPDATEID: "${updateID}"`)
+          return;
+        }
+        BASE_ENTITY.__updatesInProgress[updateID] = true;
+        // log.d(`hello ${info}`)
+        let alreadyLength = 0;
         if (_.isString(bufforProperty)) {
-          let alreadyLength = 0;
-          if (!_.isUndefined(that[bufforProperty as any]) &&
-            (_.isString(that[bufforProperty as any]) || _.isArray(that[bufforProperty as any]))) {
-            alreadyLength = (that[bufforProperty as any] as any[]).length;
+          if (!_.isUndefined(entityToUpdate[bufforProperty as any]) &&
+            (_.isString(entityToUpdate[bufforProperty as any]) || _.isArray(entityToUpdate[bufforProperty as any]))) {
+            alreadyLength = (entityToUpdate[bufforProperty as any] as any[]).length;
           }
-          update = () => that.ctrl.bufforedChanges(that.id, property as any, alreadyLength, modelDataConfig).received as any
         }
 
-        if (_.isUndefined(update) && that.ctrl) {
-          update = () => that.ctrl.getBy(that.id, modelDataConfig).received as any;
+        let data: Models.HttpResponse<any> = { body: { json: entityToUpdate } } as any;
+        if (!entityToUpdate.ctrl) {
+          log.w(`There is not ctrl (controller) for entity "${CLASS.getNameFromObject(entityToUpdate)}"`);
+          return;
         }
-        const updateID = getUpdateID(that.id, CLASS.getNameFromObject(that), property, modelDataConfig);
+        if (_.isFunction(update)) {
+          data = await update();
+        } else {
+          if (_.isString(bufforProperty)) {
+            data = await entityToUpdate.ctrl.bufforedChanges(entityToUpdate.id, property as any, alreadyLength, modelDataConfig).received;
+          } else {
+            data = await entityToUpdate.ctrl.getBy(entityToUpdate.id, modelDataConfig).received;
+          }
+        }
+        //#region only to track issue @REMOVE AFTER TESTS
+        // if (_.isString(property) && data.sourceRequest.url.search(property) === -1) {
+        //   console.error(`BADDD`);
+        //   debugger
+        //   return;
+        // }
+        //#endregion
 
-        if (updatesInProgress[updateID]) {
-          // console.log(`ANOTHER UPDATE IN PROGRESS FOR UPDATEID: "${updateID}"`)
-          return
-        }
-        updatesInProgress[updateID] = true;
-        // console.log('entity should be updated !')
-        const data = update ? (await update()) : { body: { json: entityToUpdate } };
+        // log.d(`data(${info}) url: ${data.sourceRequest.url} `, data);
         let newData = data.body.json;
         if (_.isFunction(callback)) {
           const newDataCallaback = callback(data as any)
@@ -255,7 +272,7 @@ export abstract class BASE_ENTITY<T = any, TRAW = T, CTRL extends BaseCRUD<T> = 
         if (_.isFunction(afterMergeCallback)) {
           afterMergeCallback(entityToUpdate as any);
         }
-        updatesInProgress[updateID] = false;
+        BASE_ENTITY.__updatesInProgress[updateID] = false;
       }
     }
 
@@ -265,15 +282,15 @@ export abstract class BASE_ENTITY<T = any, TRAW = T, CTRL extends BaseCRUD<T> = 
         _.isString(property) ? ('property: ' + property + ' of entity: ' + CLASS.getNameFromObject(this))
           : ('entity: ' + CLASS.getNameFromObject(this))
         } `, this)
-      RealtimeBrowser.addDupicateRealtimeEntityListener(this, changesListener(this), property as any)
+      RealtimeBrowser.addDupicateRealtimeEntityListener(this, changesListener(this, `duplicate property(${property})`), property as any)
       return;
     }
     if (_.isString(property)) {
       this[IS_RELATIME_PROPERTY][property] = true;
-      RealtimeBrowser.SubscribeEntityPropertyChanges(this, property, changesListener(this))
+      RealtimeBrowser.SubscribeEntityPropertyChanges(this, property, changesListener(this, `normal property(${property})`))
     } else {
       this[IS_RELATIME] = true;
-      RealtimeBrowser.SubscribeEntityChanges(this, changesListener(this))
+      RealtimeBrowser.SubscribeEntityChanges(this, changesListener(this, `model`))
     }
 
     if (_.isString(bufforProperty)) {

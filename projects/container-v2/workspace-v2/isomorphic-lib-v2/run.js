@@ -1,11 +1,12 @@
 const util = require('util');
 const vm = require('vm');
 const path = require('path');
-
+const _ = require('lodash');
 const fse = require('fs-extra');
 
 const { RELATIVEPATHoverride } = require('minimist')(process.argv);
 const pathToTmpEnv = path.join(process.cwd(), 'tmp-environment.json');
+const pathToPackageJson = path.join(process.cwd(), 'package.json');
 const pathToDist = path.join(process.cwd(), 'dist');
 const pathToDistApp = path.join(pathToDist, 'app.js');
 
@@ -33,10 +34,23 @@ function assignENV() {
     ENV = JSON.stringify(ENV, null, 4);
   }
   sandbox.ENV = ENV;
+  if (fse.existsSync(pathToPackageJson)) {
+    try {
+      ENV = JSON.parse(ENV)
+      var data = fse.readJSONSync(pathToPackageJson, { encoding: 'utf8' }) || {};
+    } catch (error) {
+      console.warn(`[run.js] not able to read package.json ${pathToPackageJson}`);
+      return;
+    }
+    const projects = _.get(ENV, 'workspace.projects', []);
+    const currentProj = projects.find(({ name }) => name === data.name);
+    const portFromWorkspaceSettings = currentProj && Number(currentProj.port);
+    return _.isNumber(portFromWorkspaceSettings) ? portFromWorkspaceSettings : void 0;
+  }
 }
 
 let { port } = require('minimist')(process.argv);
-port = !isNaN(Number(port)) ? Number(port) : 4000;
+port = !isNaN(Number(port)) ? Number(port) : void 0;
 
 const encoding = 'utf8';
 var secondsWaitAfterDistDetected = 5;
@@ -65,10 +79,12 @@ if (!RELATIVEPATHoverride || RELATIVEPATHoverride.trim().length === 0) {
     var waitTill = new Date(new Date().getTime() + secondsWaitAfterDistDetected * 1000);
     while (waitTill > new Date()) { }
   }
-
 }
 
-assignENV();
+const possiblePortFromWorkspace = assignENV();
+if (_.isNumber(possiblePortFromWorkspace) && !_.isNumber(port)) {
+  port = possiblePortFromWorkspace;
+}
 
 let relativePath = './dist/app';
 if (RELATIVEPATHoverride) {
@@ -79,6 +95,10 @@ if (relativePath.startsWith('/')) {
 }
 if (!relativePath.startsWith('./')) {
   relativePath = `./${relativePath}`;
+}
+
+if (isNaN(Number(port))) {
+  port = 4000;
 }
 
 const script = new vm.Script(`
