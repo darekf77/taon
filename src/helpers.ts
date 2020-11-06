@@ -240,7 +240,7 @@ export class Helpers extends HelpersNg2Rest {
   static MorphiGlobalDependencies: Models.GlobalDependencies = {
     npm: [
       { name: 'rimraf' },
-      { name: 'npm-run' },
+      { name: 'npm-run', version: '4.1.2' },
       { name: 'cpr' },
       { name: 'check-node-version' }
     ],
