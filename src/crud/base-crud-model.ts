@@ -190,14 +190,24 @@ export abstract class BaseCRUD<T>  {
 //#region @backend
 
 async function getModels(config: ModelDataConfig, repo: any) {
-  let res = await repo.find(
-    {
-      where: config && config.db && config.db.where,
-      join: config && config.db && config.db.join,
-      skip: config && config.db && config.db.skip,
-      take: config && config.db && config.db.take
+  const obj = {
+    where: config && config.db && config.db.where,
+    join: config && config.db && config.db.join,
+    skip: config && config.db && config.db.skip,
+    take: config && config.db && config.db.take
+  };
+  const toDelete = [];
+  Object.keys(obj).forEach(key => {
+    if (_.isNil(obj[key])) {
+      toDelete.push(key);
     }
-  );
+  });
+
+  toDelete.forEach(key => {
+    delete obj[key];
+  });
+
+  let res = await repo.find(obj);
   return res;
 }
 
