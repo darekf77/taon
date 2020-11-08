@@ -62,15 +62,15 @@ const start = async function () {
     config: config as any
     //#endregion
   });
-  console.log(context);
+  // console.log(context);
   if (Morphi.IsBrowser) {
     const c: BookCtrl = _.first(context.controllers);
     const data = (await c.getAll().received).body.json as Book[];
-    console.log(data);
+    // console.log(data);
     data.forEach(b => {
       b.subscribeRealtimeUpdates({
         callback: () => {
-          console.log(`hello update: ${b.id} `)
+          // console.log(`hello update: ${b.id} `)
         }
       });
     })
@@ -78,14 +78,14 @@ const start = async function () {
   //#region @backend
   if (Morphi.isNode) {
     const dbfile = path.join(process.cwd(), config.database);
-    console.log(`dbfile: ${dbfile}`)
+    // console.log(`dbfile: ${dbfile}`)
     // setTimeout(() => {
 
     // }, 2000)
     const db = await context.connection.getRepository(Book);
     let oldData = await db.find();
     fse.watchFile(dbfile, async (a, b) => {
-      console.log(`update entities`)
+      // console.log(`update entities`)
       const newData = await db.find();
       oldData.forEach(b => {
         const newb = newData.find(d => d.id === b.id);
