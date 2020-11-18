@@ -253,15 +253,15 @@
     "background-worker-process": "~0.0.16",
     "morphi": "~4.0.6",
     "ng-modal-lib": "0.0.6",
-    "ng4-icons": "~0.0.7",
-    "ng4-modal": "~0.0.11",
+    "ng4-icons": "~0.0.8",
+    "ng4-modal": "~0.0.12",
     "ngx-store": "2.1.0",
     "node-localstorage": "2.1.6",
     "tnp-config": "~0.0.25",
     "tnp-db": "~0.0.16",
     "tnp-helpers": "~0.0.12",
     "tnp-models": "~0.0.15",
-    "tnp-ui": "~0.0.12"
+    "tnp-ui": "~0.0.13"
   },
   "dependencies": {
     "@angular-devkit/build-angular": "~0.901.3",
