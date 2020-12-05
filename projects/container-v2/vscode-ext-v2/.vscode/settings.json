@@ -1,0 +1,14 @@
+{
+  "files.exclude": {},
+  "search.exclude": {
+    "out": true
+  },
+  "typescript.tsc.autoDetect": "off",
+  "html.format.wrapAttributes": "force-aligned",
+  "workbench.colorTheme": "Default Light+",
+  "workbench.colorCustomizations": {
+    "activityBar.background": "#25b6a3",
+    "statusBar.background": "#25b6a3",
+    "statusBar.debuggingBackground": "#25b6a3"
+  }
+}
