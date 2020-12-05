@@ -5,6 +5,9 @@ const group = 'Firedev CLI essentials';
 export const commands: CommandType[] = ([
   {
     title: 'hello'
+  },
+  {
+    title: 'siema'
   }
 ] as CommandType[]).map(c => {
   if (!c.command) {

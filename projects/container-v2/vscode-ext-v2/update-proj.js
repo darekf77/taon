@@ -2,42 +2,52 @@
 const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
-// import { CommandType } from './src/config';
-const { commands = [] } = require(path.join(__dirname, 'src/config'));
-const pkgjsonpath = path.join(__dirname, 'package.json');
-const pkgjson = JSON.parse(fs.readFileSync(pkgjsonpath, { encoding: 'utf8' }));
-// : {
-//   contributes: {
-//     commands: ({
-//       command?: string;
-//       title?: string;
-//     }[]);
-//     menus: {
-//       'explorer/context': {
-//         command?: string;
-//       }[],
-//       'editor/title/context': {
-//         command?: string;
-//         group?: string;
-//       }[]
-//     }
-//   }
-// }
+const dateformat = require('dateformat');
+const pathToConfig = path.join(__dirname, 'out/config');
 
-pkgjson.contributes.commands = commands.map(c => {
-  return { command: c.command, title: c.title };
-});
+const params = require('minimist')(process.argv);
 
-pkgjson.contributes.menus["explorer/context"] = commands
-  .filter(c => !c.hideContextMenu)
-  .map(c => {
-    return { command: c.command };
+if (params.watch) {
+  const chokidar = require('chokidar');
+
+  // One-liner for current directory
+  chokidar.watch([`${pathToConfig}.js`]).on('all', (event, path) => {
+    console.log(`${dateformat(new Date(), 'HH:MM:ss')} updating package.json`);
+    updatePackageJson();
+    console.log('Done');
+  });
+} else {
+  updatePackageJson();
+}
+
+function requireUncached(module) {
+  delete require.cache[require.resolve(module)];
+  return require(module);
+}
+
+function updatePackageJson() {
+  const { commands = [] } = requireUncached(pathToConfig);
+  console.log(commands.map(t => t.title))
+  const pkgjsonpath = path.join(__dirname, 'package.json');
+  const pkgjson = JSON.parse(fs.readFileSync(pkgjsonpath, { encoding: 'utf8' }));
+
+  pkgjson.contributes.commands = commands.map(c => {
+    return { command: c.command, title: c.title };
   });
 
-pkgjson.contributes.menus["editor/title/context"] = commands
-  .filter(c => !c.hideContextMenu)
-  .map(c => {
-    return { command: c.command, group: c.group };
-  });
+  pkgjson.contributes.menus["explorer/context"] = commands
+    .filter(c => !c.hideContextMenu)
+    .map(c => {
+      return { command: c.command };
+    });
 
-fs.writeFileSync(pkgjsonpath, JSON.stringify(pkgjson, null, 2), { encoding: 'utf8' });
+  pkgjson.contributes.menus["editor/title/context"] = commands
+    .filter(c => !c.hideContextMenu)
+    .map(c => {
+      return { command: c.command, group: c.group };
+    });
+
+  fs.writeFileSync(pkgjsonpath, JSON.stringify(pkgjson, null, 2), { encoding: 'utf8' });
+}
+
+

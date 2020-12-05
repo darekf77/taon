@@ -15,6 +15,7 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+/out
 /node_modules
 /tmp*
 /dist*

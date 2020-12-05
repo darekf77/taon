@@ -364,7 +364,11 @@ export function executeCommand(registerName: string, commandToExecute: string | 
               }
 
               var proc = child.exec(cmd, { cwd });
-
+              if (!proc) {
+                await window.showErrorMessage(`Incorrect execution of: ${cmd}`);
+                return;
+              }
+              // @ts-ignore
               proc.stdout.on('data', (message) => {
                 // tslint:disable-next-line: no-unused-expression
                 if (isDefaultBuildCommand) {
@@ -377,6 +381,8 @@ export function executeCommand(registerName: string, commandToExecute: string | 
                 }
 
               });
+
+              // @ts-ignore
               proc.stdout.on('error', (err) => {
                 // tslint:disable-next-line: no-unused-expression
                 if (isDefaultBuildCommand) {
@@ -387,6 +393,8 @@ export function executeCommand(registerName: string, commandToExecute: string | 
                 }
 
               });
+
+              // @ts-ignore
               proc.stderr.on('data', (message) => {
                 // tslint:disable-next-line: no-unused-expression
                 const msg = message.toString();
@@ -410,6 +418,8 @@ export function executeCommand(registerName: string, commandToExecute: string | 
                 }
 
               });
+
+              // @ts-ignore
               proc.stderr.on('error', (err) => {
                 // tslint:disable-next-line: no-unused-expression
                 if (isDefaultBuildCommand) {

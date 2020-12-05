@@ -59,258 +59,30 @@
   "contributes": {
     "commands": [
       {
-        "command": "extension.firedevtempfilesshow",
-        "title": "FIREDEV TEMP FILES - show"
+        "command": "extension.hello",
+        "title": "hello"
       },
       {
-        "command": "extension.firedevtempfileshide",
-        "title": "FIREDEV TEMP FILES - hide"
-      },
-      {
-        "command": "extension.firedevtempfilesallworkspacechildsshow",
-        "title": "FIREDEV TEMP FILES ALL WORKSPACE CHILDS - show"
-      },
-      {
-        "command": "extension.firedevtempfilesallworkspacechildshide",
-        "title": "FIREDEV TEMP FILES ALL WORKSPACE CHILDS - hide"
-      },
-      {
-        "command": "extension.firedevstaticbuild",
-        "title": "FIREDEV STATIC BUILD"
-      },
-      {
-        "command": "extension.firedevstaticbuildprod",
-        "title": "FIREDEV STATIC BUILD PROD"
-      },
-      {
-        "command": "extension.firedevpackagejsonhidedeps",
-        "title": "FIREDEV PACKAGE.JSON hide deps"
-      },
-      {
-        "command": "extension.firedevpackagejsonshowdeps",
-        "title": "FIREDEV PACKAGE.JSON show deps"
-      },
-      {
-        "command": "extension.firedevinitproject",
-        "title": "FIREDEV INIT project"
-      },
-      {
-        "command": "extension.firedevopenworkspace",
-        "title": "FIREDEV OPEN workspace"
-      },
-      {
-        "command": "extension.firedevopenallworkspacechilds",
-        "title": "FIREDEV OPEN ALL WORKSPACE CHILDS"
-      },
-      {
-        "command": "extension.firedevopenbaseline",
-        "title": "FIREDEV OPEN baseline"
-      },
-      {
-        "command": "extension.firedevopencoreproject",
-        "title": "FIREDEV OPEN core project"
-      },
-      {
-        "command": "extension.firedevreleaseproject",
-        "title": "FIREDEV RELEASE PROJECT"
-      },
-      {
-        "command": "extension.firedevresetproject",
-        "title": "FIREDEV RESET PROJECT"
-      },
-      {
-        "command": "extension.firedevcleanallandinit",
-        "title": "FIREDEV CLEAN ALL AND INIT"
-      },
-      {
-        "command": "extension.firedevnewlogicuimodule",
-        "title": "FIREDEV NEW LOGIC-UI MODULE"
-      },
-      {
-        "command": "extension.firedevnewuimodule",
-        "title": "FIREDEV NEW UI MODULE"
-      },
-      {
-        "command": "extension.firedevnewpreviewforuimodule",
-        "title": "FIREDEV NEW PREVIEW FOR UI MODULE"
-      },
-      {
-        "command": "extension.firedevquickgitcommitandpushupdate",
-        "title": "FIREDEV QUICK GIT commit and push update"
-      },
-      {
-        "command": "extension.firedevquickgitresethardandpull",
-        "title": "FIREDEV QUICK GIT reset hard and pull"
-      },
-      {
-        "command": "extension.firedevautoupdate",
-        "title": "FIREDEV AUTOUPDATE"
-      },
-      {
-        "command": "extension.firedevrundefaultbuild",
-        "title": "FIREDEV RUN DEFAULT BUILD"
-      },
-      {
-        "command": "extension.firedevstopdefaultbuild",
-        "title": "FIREDEV STOP DEFAULT BUILD"
+        "command": "extension.siema",
+        "title": "siema"
       }
     ],
     "menus": {
       "explorer/context": [
         {
-          "command": "extension.firedevtempfilesshow"
+          "command": "extension.hello"
         },
         {
-          "command": "extension.firedevtempfileshide"
-        },
-        {
-          "command": "extension.firedevtempfilesallworkspacechildsshow"
-        },
-        {
-          "command": "extension.firedevtempfilesallworkspacechildshide"
-        },
-        {
-          "command": "extension.firedevstaticbuild"
-        },
-        {
-          "command": "extension.firedevstaticbuildprod"
-        },
-        {
-          "command": "extension.firedevpackagejsonhidedeps"
-        },
-        {
-          "command": "extension.firedevpackagejsonshowdeps"
-        },
-        {
-          "command": "extension.firedevinitproject"
-        },
-        {
-          "command": "extension.firedevopenworkspace"
-        },
-        {
-          "command": "extension.firedevopenallworkspacechilds"
-        },
-        {
-          "command": "extension.firedevopenbaseline"
-        },
-        {
-          "command": "extension.firedevopencoreproject"
-        },
-        {
-          "command": "extension.firedevreleaseproject"
-        },
-        {
-          "command": "extension.firedevresetproject"
-        },
-        {
-          "command": "extension.firedevcleanallandinit"
-        },
-        {
-          "command": "extension.firedevnewlogicuimodule"
-        },
-        {
-          "command": "extension.firedevnewuimodule"
-        },
-        {
-          "command": "extension.firedevnewpreviewforuimodule"
-        },
-        {
-          "command": "extension.firedevquickgitcommitandpushupdate"
-        },
-        {
-          "command": "extension.firedevquickgitresethardandpull"
-        },
-        {
-          "command": "extension.firedevautoupdate"
+          "command": "extension.siema"
         }
       ],
       "editor/title/context": [
         {
-          "command": "extension.firedevtempfilesshow",
+          "command": "extension.hello",
           "group": "Firedev CLI essentials"
         },
         {
-          "command": "extension.firedevtempfileshide",
-          "group": "Firedev CLI essentials"
-        },
-        {
-          "command": "extension.firedevtempfilesallworkspacechildsshow",
-          "group": "Firedev CLI essentials"
-        },
-        {
-          "command": "extension.firedevtempfilesallworkspacechildshide",
-          "group": "Firedev CLI essentials"
-        },
-        {
-          "command": "extension.firedevstaticbuild",
-          "group": "Firedev CLI essentials"
-        },
-        {
-          "command": "extension.firedevstaticbuildprod",
-          "group": "Firedev CLI essentials"
-        },
-        {
-          "command": "extension.firedevpackagejsonhidedeps",
-          "group": "Firedev CLI essentials"
-        },
-        {
-          "command": "extension.firedevpackagejsonshowdeps",
-          "group": "Firedev CLI essentials"
-        },
-        {
-          "command": "extension.firedevinitproject",
-          "group": "Firedev CLI essentials"
-        },
-        {
-          "command": "extension.firedevopenworkspace",
-          "group": "Firedev CLI essentials"
-        },
-        {
-          "command": "extension.firedevopenallworkspacechilds",
-          "group": "Firedev CLI essentials"
-        },
-        {
-          "command": "extension.firedevopenbaseline",
-          "group": "Firedev CLI essentials"
-        },
-        {
-          "command": "extension.firedevopencoreproject",
-          "group": "Firedev CLI essentials"
-        },
-        {
-          "command": "extension.firedevreleaseproject",
-          "group": "Firedev CLI essentials"
-        },
-        {
-          "command": "extension.firedevresetproject",
-          "group": "Firedev CLI essentials"
-        },
-        {
-          "command": "extension.firedevcleanallandinit",
-          "group": "Firedev CLI essentials"
-        },
-        {
-          "command": "extension.firedevnewlogicuimodule",
-          "group": "Firedev CLI essentials"
-        },
-        {
-          "command": "extension.firedevnewuimodule",
-          "group": "Firedev CLI essentials"
-        },
-        {
-          "command": "extension.firedevnewpreviewforuimodule",
-          "group": "Firedev CLI essentials"
-        },
-        {
-          "command": "extension.firedevquickgitcommitandpushupdate",
-          "group": "Firedev CLI essentials"
-        },
-        {
-          "command": "extension.firedevquickgitresethardandpull",
-          "group": "Firedev CLI essentials"
-        },
-        {
-          "command": "extension.firedevautoupdate",
+          "command": "extension.siema",
           "group": "Firedev CLI essentials"
         }
       ]
