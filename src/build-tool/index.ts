@@ -12,13 +12,14 @@ import { copyExampleTo } from './new';
 import { IncrementalBuildProcess } from '../build/incremental-build-process';
 import { BrowserCodeCut } from '../build/browser-code-cut';
 import chalk from 'chalk';
+import { config } from 'tnp-config';
 import { PackagesRecognition } from '../build/packages-recognition';
 
 export * from '../helpers';
 
 export async function run(argsv: string[], morphiEnvironmentCheck = true) {
   if (morphiEnvironmentCheck) {
-    Helpers.checkEnvironment()
+    config.checkEnvironment();
   }
 
   if (argsv.length >= 3) {

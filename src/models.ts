@@ -69,17 +69,6 @@ export namespace Models {
   }
 
 
-  export interface GlobalNpmDependency {
-    name: string; installName?: string; version?: string | number;
-  }
-
-  export interface GlobalCommandLineProgramDependency {
-    name: string; website: string; version?: string;
-  }
-  export interface GlobalDependencies {
-    npm?: GlobalNpmDependency[];
-    programs?: GlobalCommandLineProgramDependency[];
-  }
 
   //#region @backend
   export interface AuthCallBack {

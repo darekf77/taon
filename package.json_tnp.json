@@ -213,5 +213,20 @@
     "nodts": false,
     "obscure": false,
     "ugly": false
-  }
+  },
+  "scripts": {
+    "release:patch": "npm version patch && tnp clear:bundle && tnp build:bundle && tnp --copy-resources && cd bundle && npm publish && cd .. && git push origin master && echo \"done\"",
+    "build:watch": "npm-run watch \"morphi build\" src",
+    "build": "./node_modules/.bin/ts-node ./node_modules/typescript-npm-project/index.ts",
+    "build:publish": "./node_modules/.bin/ts-node ./node_modules/typescript-npm-project/index.ts --publish",
+    "build:clean": "./node_modules/.bin/ts-node ./node_modules/typescript-npm-project/index.ts --clean",
+    "test": "mocha -r ts-node/register src/tests/**/*.ts",
+    "test:watch": "mocha  -r ts-node/register --watch  src/**/*.spec.ts --watch-extensions ts"
+  },
+  "description": "Isomorphic solution for expressjs and angular5",
+  "license": "MIT",
+  "private": false,
+  "author": "Dariusz Filipiak",
+  "homepage": "https://github.com/darekf77/morphi#readme",
+  "main": "index.js"
 }

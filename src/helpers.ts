@@ -7,8 +7,7 @@ import * as fse from 'fs-extra';
 import chalk from 'chalk';
 import * as rimraf from 'rimraf';
 import * as dateformat from 'dateformat';
-import check from 'check-node-version';
-const commandExistsSync = require('command-exists').sync;
+
 //#endregion
 
 import * as JSON5 from 'json5';
@@ -229,70 +228,6 @@ export class Helpers extends HelpersNg2Rest {
       } else reject(`Not recognized type of reposne ${response}`);
     });
     //#endregion
-  }
-
-
-
-
-
-
-
-  static MorphiGlobalDependencies: Models.GlobalDependencies = {
-    npm: [
-      { name: 'rimraf' },
-      { name: 'npm-run', version: '4.1.2' },
-      { name: 'cpr' },
-      { name: 'check-node-version' }
-    ],
-    programs: [
-      // {
-      //   name: 'code',
-      //   website: 'https://code.visualstudio.com/'
-      // }
-    ] as { name: string; website: string }[]
-  }
-
-
-
-  static checkEnvironment(globalDependencies: Models.GlobalDependencies = this.MorphiGlobalDependencies) {
-
-
-    const missingNpm: Models.GlobalNpmDependency[] = [];
-    globalDependencies.npm.forEach(pkg => {
-      if (!commandExistsSync(pkg.name)) {
-        missingNpm.push(pkg)
-      }
-    })
-
-    if (missingNpm.length > 0) {
-
-      const toInstall = missingNpm
-        .map(pkg => {
-          const n = pkg.installName ? pkg.installName : pkg.name
-          return pkg.version ? `${n}@${pkg.version}` : n
-        })
-        .join(' ');
-      console.log(chalk.red(`Missing npm dependencies.`))
-      const cmd = `npm install -g ${toInstall}`;
-      console.log(`Please run: ${chalk.green(cmd)}`)
-      process.exit(0)
-    }
-
-    globalDependencies.programs.forEach(p => {
-      if (!commandExistsSync(p.name)) {
-        console.log(chalk.red(`Missing command line tool "${p.name}".`))
-        console.log(`Please install it from: ${chalk.green(p.website)}`)
-        process.exit(0)
-      }
-    })
-
-
-    try {
-      child.execSync(`check-node-version --node ">= 9.2"`, { stdio: [0, 1, 2] })
-    } catch (error) {
-      process.exit(0)
-    }
-
   }
 
   static isPlainFileOrFolder(filePath) {
