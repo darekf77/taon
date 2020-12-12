@@ -258,7 +258,7 @@ export class Helpers extends HelpersNg2Rest {
             if ((data.search(m) !== -1)) {
               // Helpers.info(`[unitlOutputContains] Move to next step...`)
               isResolved = true;
-              resolve();
+              resolve(void 0);
               break;
             }
           }

@@ -9,7 +9,7 @@ import {
   fixJSONString, escapeStringForRegEx, deepClone
 } from './helpers';
 
-const log = Log.instance(`execute-command`, 'logmsg');
+const log = Log.instance(`execute-command`, 'logmsg', true);
 
 export function executeCommand(registerName: string, commandToExecute: string | string[],
   pOptions?: ProcesOptions, isDefaultBuildCommand?: boolean, context?: vscode.ExtensionContext) {
@@ -371,6 +371,7 @@ export function executeCommand(registerName: string, commandToExecute: string | 
               // @ts-ignore
               proc.stdout.on('data', (message) => {
                 // tslint:disable-next-line: no-unused-expression
+                log.data(message.toString());
                 if (isDefaultBuildCommand) {
                   outputChannel.appendLine(message.toString().trim());
                 } else {
@@ -398,6 +399,7 @@ export function executeCommand(registerName: string, commandToExecute: string | 
               proc.stderr.on('data', (message) => {
                 // tslint:disable-next-line: no-unused-expression
                 const msg = message.toString();
+
                 if (msg.search('UnhandledPromiseRejectionWarning: Error') !== -1) {
                   if (isDefaultBuildCommand) {
                     outputChannel.appendLine(msg.toString().trim());
