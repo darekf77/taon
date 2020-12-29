@@ -23,6 +23,11 @@ config = {
         "port": 6003
       },
       {
+        "baseUrl": "/electron-lib-v2",
+        "name": "electron-lib-v2",
+        "port": 6004
+      },
+      {
         "baseUrl": "/api-isomorphic-lib-v2",
         "name": "isomorphic-lib-v2",
         "$db": {

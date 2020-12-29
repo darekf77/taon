@@ -33,22 +33,6 @@ Thumbs.db
 /npm-debug.log*
 /.sass-cache
 /.sourcemaps
-/tsconfig.isomorphic.json
-/tsconfig.json
-/src/tsconfig.app.json
-/.vscode/launch.json
-/.vscode/tasks.json
-/angular.json
-/browserslist
-/ngsw-config.json
-/tsconfig.app.json
-/tsconfig.base.json
-/src/index.html
-/src/manifest.webmanifest
-/tsconfig.browser.json
-/tsconfig.isomorphic.json
-/components/tsconfig.json
-/src/tsconfig.app.json
 /src-for-stanalone
 /components-for-stanalone
 /src/assets/angular-lib-v2
@@ -58,6 +42,3 @@ Thumbs.db
 
 # =====================
 !*.filetemplate
-
-/tsconfig.browser.json.filetemplate
-/tsconfig.isomorphic.json.filetemplate

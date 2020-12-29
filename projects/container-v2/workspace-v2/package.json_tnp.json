@@ -17,5 +17,11 @@
     "nodts": false,
     "obscure": false,
     "ugly": false
+  },
+  "license": "UNLICENSED",
+  "private": true,
+  "engines": {
+    "node": ">=9.2.0",
+    "npm": ">=5.6.0"
   }
 }

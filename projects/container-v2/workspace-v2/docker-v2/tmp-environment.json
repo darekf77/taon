@@ -19,6 +19,12 @@
         "host": "http://localhost:6003"
       },
       {
+        "baseUrl": "/electron-lib-v2",
+        "name": "electron-lib-v2",
+        "port": 6004,
+        "host": "http://localhost:6004"
+      },
+      {
         "baseUrl": "/api-isomorphic-lib-v2",
         "name": "isomorphic-lib-v2",
         "$db": {
@@ -67,6 +73,12 @@
         "nodts": false,
         "obscure": false,
         "ugly": false
+      },
+      "license": "UNLICENSED",
+      "private": true,
+      "engines": {
+        "node": ">=9.2.0",
+        "npm": ">=5.6.0"
       }
     },
     "name": "workspace-v2",
@@ -81,9 +93,9 @@
     "private": true
   },
   "build": {
-    "number": 680,
-    "date": "2020-09-26T16:41:36.000Z",
-    "hash": "a3ffeda167ce58e0bd6765e2a10132e2e57bc0fb",
+    "number": 706,
+    "date": "2020-12-26T08:48:00.000Z",
+    "hash": "7420d84e3ad6a9b0dbb18773409c8ea091d77c10",
     "options": {}
   },
   "currentProjectName": "docker-v2",
@@ -91,8 +103,8 @@
   "currentProjectLaunchConfiguration": "{\"version\":\"0.2.0\",\"configurations\":[],\"compounds\":[]}",
   "currentProjectTasksConfiguration": "{\"version\":\"2.0.0\",\"tasks\":[{\"label\":\"terminateall\",\"command\":\"echo ${input:terminate}\",\"type\":\"shell\",\"problemMatcher\":[]}],\"inputs\":[{\"id\":\"terminate\",\"type\":\"command\",\"command\":\"workbench.action.tasks.terminate\",\"args\":\"terminateAll\"}]}",
   "currentProjectType": "docker",
-  "currentFrameworkVersion": "0.0.66",
-  "currentProjectLocation": "/Users/darek/projects/npm/firedev-projects/container-v2/workspace-v2/docker-v2",
+  "currentFrameworkVersion": "0.0.76",
+  "currentProjectLocation": "/Users/dfilipiak/projects/npm/firedev-projects/container-v2/workspace-v2/docker-v2",
   "currentProjectIsStrictSite": false,
   "currentProjectIsDependencySite": false,
   "currentProjectIsStatic": false,

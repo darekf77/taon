@@ -9,7 +9,7 @@ import {
   fixJSONString, escapeStringForRegEx, deepClone
 } from './helpers';
 
-const log = Log.instance(`execute-command`, 'logmsg', true);
+const log = Log.instance(`execute-command`, 'logmsg');
 
 export function executeCommand(registerName: string, commandToExecute: string | string[],
   pOptions?: ProcesOptions, isDefaultBuildCommand?: boolean, context?: vscode.ExtensionContext) {
