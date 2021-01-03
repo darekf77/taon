@@ -68,6 +68,12 @@
         "nodts": false,
         "obscure": false,
         "ugly": false
+      },
+      "license": "UNLICENSED",
+      "private": true,
+      "engines": {
+        "node": ">=9.2.0",
+        "npm": ">=5.6.0"
       }
     },
     "name": "workspace",
@@ -307,9 +313,9 @@
     "private": true
   },
   "build": {
-    "number": 676,
-    "date": "2020-09-18T11:18:21.000Z",
-    "hash": "1235002b354415779726569964beb1bbad4c4b59",
+    "number": 708,
+    "date": "2021-01-02T06:29:08.000Z",
+    "hash": "bead2949129bf9fdd020a5f1043b8882f39285d2",
     "options": {}
   },
   "currentProjectName": "docker",
@@ -317,8 +323,8 @@
   "currentProjectLaunchConfiguration": "{\"version\":\"0.2.0\",\"configurations\":[],\"compounds\":[]}",
   "currentProjectTasksConfiguration": "{\"version\":\"2.0.0\",\"tasks\":[{\"label\":\"terminateall\",\"command\":\"echo ${input:terminate}\",\"type\":\"shell\",\"problemMatcher\":[]}],\"inputs\":[{\"id\":\"terminate\",\"type\":\"command\",\"command\":\"workbench.action.tasks.terminate\",\"args\":\"terminateAll\"}]}",
   "currentProjectType": "docker",
-  "currentFrameworkVersion": "0.0.65",
-  "currentProjectLocation": "/Users/darek/projects/npm/firedev-projects/container/workspace/docker",
+  "currentFrameworkVersion": "0.0.76",
+  "currentProjectLocation": "/Users/dfilipiak/projects/npm/firedev-projects/container/workspace/docker",
   "currentProjectIsStrictSite": false,
   "currentProjectIsDependencySite": false,
   "currentProjectIsStatic": false,

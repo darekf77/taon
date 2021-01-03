@@ -19,12 +19,6 @@
         "host": "http://localhost:6003"
       },
       {
-        "baseUrl": "/electron-lib-v2",
-        "name": "electron-lib-v2",
-        "port": 6004,
-        "host": "http://localhost:6004"
-      },
-      {
         "baseUrl": "/api-isomorphic-lib-v2",
         "name": "isomorphic-lib-v2",
         "$db": {
@@ -93,9 +87,9 @@
     "private": true
   },
   "build": {
-    "number": 706,
-    "date": "2020-12-26T08:48:00.000Z",
-    "hash": "7420d84e3ad6a9b0dbb18773409c8ea091d77c10",
+    "number": 708,
+    "date": "2021-01-02T06:29:08.000Z",
+    "hash": "bead2949129bf9fdd020a5f1043b8882f39285d2",
     "options": {}
   },
   "currentProjectName": "docker-v2",
