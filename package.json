@@ -280,6 +280,7 @@
     "ngx-store": "2.1.0",
     "node-localstorage": "2.1.6",
     "open": "7.2.1",
+    "record-replay-req-res-scenario": "~0.0.3",
     "string-similarity": "~4.0.2",
     "talkback": "~2.4.0",
     "tnp-config": "~0.0.25",

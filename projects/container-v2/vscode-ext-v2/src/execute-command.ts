@@ -152,7 +152,7 @@ export function executeCommand(registerName: string, commandToExecute: string | 
                 const itemForQuicPick = item.optionsResolved.slice(0, 20);
                 if (item.exitWithMessgeWhenNoOptions && itemForQuicPick.length === 0) {
                   window.showInformationMessage(item.exitWithMessgeWhenNoOptions);
-                  resolve();
+                  resolve(void 0);
                   return;
                 } else {
                   const res = await window.showQuickPick(itemForQuicPick, {
@@ -199,7 +199,7 @@ export function executeCommand(registerName: string, commandToExecute: string | 
                   // @ts-ignore
                   child.execSync(`navi goto ${item.variableValue}`);
                 } catch (error) { }
-                resolve();
+                resolve(void 0);
                 return;
               }
               resolveVars.push(item);
@@ -219,7 +219,7 @@ export function executeCommand(registerName: string, commandToExecute: string | 
                 window.showInformationMessage(message);
               }
             }
-            resolve();
+            resolve(void 0);
           }
 
           function finishError(err: any, data?: string) {
@@ -230,7 +230,7 @@ export function executeCommand(registerName: string, commandToExecute: string | 
             `;
             log.error(message);
             window.showErrorMessage(message);
-            resolve();
+            resolve(void 0);
           }
           //#endregion
 
@@ -271,7 +271,7 @@ export function executeCommand(registerName: string, commandToExecute: string | 
                 log.data(`newCwd fixed: ${newCwd}`)
               } else {
                 window.showErrorMessage(`[vscode] Cwd not found: ${newCwd}`);
-                resolve();
+                resolve(void 0);
                 return;
               }
             }
@@ -434,7 +434,7 @@ export function executeCommand(registerName: string, commandToExecute: string | 
               proc.on('exit', (code) => {
                 if (isDefaultBuildCommand) {
                   outputChannel.appendLine(`--- BUILD TASK ENDED --- code ${code}`.trim());
-                  resolve();
+                  resolve(void 0);
                 } else {
                   if (code == 0) {
                     finishAction(showOutputDataOnSuccess ? dataToDisplayInLog : '');

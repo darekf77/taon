@@ -62,6 +62,14 @@ const start = async function () {
     config: config as any
     //#endregion
   });
+  //#region @backend
+  if (Morphi.isNode) {
+    context.node.app.get('/hello', (req, res) => {
+      res.send('Hello express')
+    })
+  }
+  //#endregion
+
   // console.log(context);
   if (Morphi.IsBrowser) {
     const c: BookCtrl = _.first(context.controllers);
