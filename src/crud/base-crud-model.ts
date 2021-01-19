@@ -82,12 +82,14 @@ export abstract class BaseCRUD<T>  {
   getAll(@Query('config') config?: ModelDataConfig): Models.Response<T[]> {
     //#region @backendFunc
     return async (request, response) => {
-
-      const totalCount = await this.repo.count();
-      const models = await getModels(config, this.repo);
-      response.setHeader(SYMBOL.X_TOTAL_COUNT, totalCount)
-      prepareData(models, config)
-      return models;
+      if (this.repo) {
+        const totalCount = await this.repo.count();
+        const models = await getModels(config, this.repo);
+        response.setHeader(SYMBOL.X_TOTAL_COUNT, totalCount)
+        prepareData(models, config)
+        return models;
+      }
+      return [];
     }
     //#endregion
   }

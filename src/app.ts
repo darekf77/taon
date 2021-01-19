@@ -5,10 +5,6 @@ import * as path from 'path';
 //#endregion
 import { Morphi } from './index';
 
-const host = 'http://localhost:3333';
-
-
-
 @Morphi.Entity({ className: 'Book' })
 class Book extends Morphi.Base.Entity<any> {
   static from(name: string) {
@@ -42,8 +38,9 @@ class BookCtrl extends Morphi.Base.Controller<any> {
   //#endregion
 }
 
-const start = async function () {
-
+const start = async (port = 3000) => {
+  const host = `http://localhost:${port}`;
+  console.log(`HOST MORPHI: ${host}`);
   //#region @backend
   const config = {
     type: "sqlite",
