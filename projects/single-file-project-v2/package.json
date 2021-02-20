@@ -15,7 +15,12 @@
       "nodts": false,
       "obscure": false,
       "ugly": false
-    }
+    },
+    "scripts": {
+      "start": "webpack-dev-server --config webpack.config.js"
+    },
+    "license": "MIT",
+    "private": false
   },
   "scripts": {
     "start": "webpack-dev-server --config webpack.config.js"
@@ -227,5 +232,6 @@
       "pre-push": "tnp deps:show:if:standalone"
     }
   },
-  "private": false
+  "private": false,
+  "version": "0.0.0"
 }

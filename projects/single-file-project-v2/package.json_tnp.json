@@ -14,5 +14,10 @@
     "nodts": false,
     "obscure": false,
     "ugly": false
-  }
+  },
+  "scripts": {
+    "start": "webpack-dev-server --config webpack.config.js"
+  },
+  "license": "MIT",
+  "private": false
 }
