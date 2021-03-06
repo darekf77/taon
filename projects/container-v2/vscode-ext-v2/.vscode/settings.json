@@ -3,6 +3,7 @@
     "out": true,
     "update-proj.js": true,
     ".vscodeignore": true,
+    "*.vsix": true,
     "node_modules": true,
     "tmp*": true,
     "dist*": true,
