@@ -19,6 +19,7 @@
   "json-stringify-safe": "^5.0.1",
   "json10": "~1.0.8",
   "json5": "~2.1.3",
+  "json5-writer": "~0.2.0",
   "lodash": "^4.17.4",
   "lodash-walk-object": "~1.0.9",
   "magic-renamer": "~0.0.4",
