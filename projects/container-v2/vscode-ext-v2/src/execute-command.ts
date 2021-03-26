@@ -174,6 +174,8 @@ export function executeCommand(registerName: string, commandToExecute: string | 
                 if (item.resolveValueFromCommand) {
                   try {
                     res = child.execSync(item.resolveValueFromCommand, { cwd, encoding: 'utf8' }).toString().trim();
+                    const splited = (res || '').split('\n');
+                    res = splited.pop();
                   } catch (err) {
                     reject();
                     return;
@@ -319,6 +321,14 @@ export function executeCommand(registerName: string, commandToExecute: string | 
                   execCommand = execCommand.replace(paramToResolve, absolutePath);
                   cmd = cmd.replace(paramToResolve, absolutePath);
                 }
+
+                // if (paramToResolve === '%cwd%') {
+                //   // @ts-ignore
+                //   const cwdToReplace = cwdToReplace || '';
+                //   execCommand = execCommand.replace(paramToResolve, cwdToReplace);
+                //   cmd = cmd.replace(paramToResolve, cwdToReplace);
+                // }
+
                 if (paramToResolve === '%relativePath%') {
                   log.data(`paramToResolve: '${paramToResolve}'`);
                   log.data(`relativePath: '${relativePathToFileFromWorkspaceRoot}'`);
