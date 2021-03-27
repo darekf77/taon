@@ -6,7 +6,7 @@ import { window, ProgressLocation } from 'vscode';
 import { ProcesOptions, ProgressData, ResolveVariable } from './models';
 import {
   capitalizeFirstLetter, optionsFix, Log, getModuleName,
-  fixJSONString, escapeStringForRegEx, deepClone
+  fixJSONString, escapeStringForRegEx, deepClone, valueFromCommand
 } from './helpers';
 
 const log = Log.instance(`execute-command`, 'logmsg');
@@ -146,7 +146,7 @@ export function executeCommand(registerName: string, commandToExecute: string | 
                   try {
                     const cmdToExec = item.options.replace(`%relativePath%`, relativePathToFileFromWorkspaceRoot);
                     log.data(`cmdToExec: ${cmdToExec}`)
-                    const res = fixJSONString(child.execSync(cmdToExec, { cwd, maxBuffer: 50 * 1024 * 1024, encoding: 'utf8' }));
+                    const res = valueFromCommand({ command: cmdToExec, cwd, bigBuffer: true })
                     item.optionsResolved = JSON.parse(res);
                   } catch (error) {
                     item.optionsResolved = [] as any;
@@ -186,9 +186,7 @@ export function executeCommand(registerName: string, commandToExecute: string | 
                 let res: string | undefined;
                 if (item.resolveValueFromCommand) {
                   try {
-                    res = child.execSync(item.resolveValueFromCommand, { cwd, encoding: 'utf8' }).toString().trim();
-                    const splited = (res || '').split('\n');
-                    res = splited.pop();
+                    res = valueFromCommand({ command: item.resolveValueFromCommand, cwd });
                   } catch (err) {
                     reject();
                     return;

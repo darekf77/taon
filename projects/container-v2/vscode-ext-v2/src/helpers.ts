@@ -1,5 +1,25 @@
 import * as vscode from 'vscode';
+import * as child from 'child_process';
 import { ProcesOptions } from './models';
+
+export function valueFromCommand({
+  command,
+  cwd,
+  bigBuffer,
+}: {
+  command: string;
+  cwd?: string;
+  bigBuffer?: boolean,
+}) {
+  const decode = true
+  let res = child.execSync(command, { cwd, encoding: 'utf8', maxBuffer: bigBuffer ? (50 * 1024 * 1024) : void 0 }).toString().trim();
+  const splited = (res || '').split('\n');
+  res = splited.pop() || '';
+  if (decode) {
+    res = decodeURIComponent(res);
+  }
+  return res;
+}
 
 export function deepClone(obj: any, hash = new WeakMap()): any {
   if (Object(obj) !== obj) { return obj; } // primitives
