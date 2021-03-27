@@ -73,11 +73,29 @@ export function executeCommand(registerName: string, commandToExecute: string | 
     //#endregion
 
     async function process() {
-      const mainTitle = capitalizeFirstLetter(title ? title : `Executing: ${commandToExecuteReadable}`);
+      let MAIN_TITLE = capitalizeFirstLetter(title ? title : `Executing: ${commandToExecuteReadable}`);
+      const resolveVars: ResolveVariable[] = [
+        {
+          variable: 'relativePath',
+          variableValue: relativePathToFileFromWorkspaceRoot
+        } as any,
+        {
+          variable: 'fileName',
+          variableValue: path.basename(relativePathToFileFromWorkspaceRoot)
+        } as any,
+      ];
+
+      resolveVars.forEach((v) => {
+        MAIN_TITLE = MAIN_TITLE.replace(
+          new RegExp(escapeStringForRegEx(`%${v.variable}%`), 'g'),
+          v.variableValue
+        );
+      });
+
       window.withProgress({
         //#region initialize progress
         location: progressLocation,
-        title: mainTitle,
+        title: MAIN_TITLE,
         cancellable,
         //#endregion
       }, (progress, token) => {
@@ -88,13 +106,8 @@ export function executeCommand(registerName: string, commandToExecute: string | 
         var endPromise = new Promise(async (resolve, reject) => {
           let dataToDisplayInLog = '';
 
-          //#region select resolving
-          const resolveVars: ResolveVariable[] = [
-            {
-              variable: 'relativePath',
-              variableValue: relativePathToFileFromWorkspaceRoot
-            } as any,
-          ];
+          //#region resolving variables
+
           if (resolveVariables) {
             for (let index = 0; index < resolveVariables.length; index++) {
               const item = resolveVariables[index];
@@ -210,20 +223,24 @@ export function executeCommand(registerName: string, commandToExecute: string | 
           //#endregion
 
           //#region endactions
+
+          //#region finish action
           function finishAction(childResult: any) {
             if (reloadAfterSuccesFinish) {
               vscode.commands.executeCommand('workbench.action.reloadWindow');
             } else {
               if (showSuccessMessage) {
-                let doneMsg = title ? title : `command: ${commandToExecuteReadable}`;
-                const message = `Done executing ${doneMsg}.\n\n` + (childResult ? childResult.toString() : '');
+                let doneMsg = title ? MAIN_TITLE : `command: ${commandToExecuteReadable}`;
+                const message = `Done executing - ${doneMsg}.\n\n` + (childResult ? childResult.toString() : '');
                 log.data(message);
                 window.showInformationMessage(message);
               }
             }
             resolve(void 0);
           }
+          //#endregion
 
+          //#region finish error
           function finishError(err: any, data?: string) {
             let doneMsg = title ? title : `command: ${commandToExecuteReadable}`;
             const message = `Execution of ${doneMsg} failed:\n ${commandToExecuteReadable}
@@ -234,6 +251,8 @@ export function executeCommand(registerName: string, commandToExecute: string | 
             window.showErrorMessage(message);
             resolve(void 0);
           }
+          //#endregion
+
           //#endregion
 
           //#region cancle action
@@ -312,7 +331,9 @@ export function executeCommand(registerName: string, commandToExecute: string | 
                     .replace(paramToResolve, name);
                   cmd = cmd
                     .replace(paramToResolve, name);
-
+                  if (options?.title) {
+                    options.title = options.title.replace(paramToResolve, relativePathToFileFromWorkspaceRoot);
+                  }
                 }
 
                 if (paramToResolve === '%absolutePath%') {
@@ -320,6 +341,9 @@ export function executeCommand(registerName: string, commandToExecute: string | 
                   const absolutePath = path.join(cwd, relativePathToFileFromWorkspaceRoot);
                   execCommand = execCommand.replace(paramToResolve, absolutePath);
                   cmd = cmd.replace(paramToResolve, absolutePath);
+                  if (options?.title) {
+                    options.title = options.title.replace(paramToResolve, relativePathToFileFromWorkspaceRoot);
+                  }
                 }
 
                 // if (paramToResolve === '%cwd%') {
@@ -334,10 +358,16 @@ export function executeCommand(registerName: string, commandToExecute: string | 
                   log.data(`relativePath: '${relativePathToFileFromWorkspaceRoot}'`);
                   execCommand = execCommand.replace(paramToResolve, relativePathToFileFromWorkspaceRoot);
                   cmd = cmd.replace(paramToResolve, relativePathToFileFromWorkspaceRoot);
+                  if (options?.title) {
+                    options.title = options.title.replace(paramToResolve, relativePathToFileFromWorkspaceRoot);
+                  }
                 }
                 if (paramToResolve === '%relativePathDirname%') {
                   execCommand = execCommand.replace(paramToResolve, path.dirname(relativePathToFileFromWorkspaceRoot));
                   cmd = cmd.replace(paramToResolve, path.dirname(relativePathToFileFromWorkspaceRoot));
+                  if (options?.title) {
+                    options.title = options.title.replace(paramToResolve, relativePathToFileFromWorkspaceRoot);
+                  }
                 }
               }
               if (resolveVariables) {
@@ -346,6 +376,9 @@ export function executeCommand(registerName: string, commandToExecute: string | 
                   const variableInsidPrecentSign = `%${variable}%`;
                   execCommand = execCommand.replace(variableInsidPrecentSign, variableValue);
                   cmd = cmd.replace(variableInsidPrecentSign, variableValue);
+                  if (options?.title) {
+                    options.title = options.title.replace(variableInsidPrecentSign, variableValue);
+                  }
                 }
               }
             }
