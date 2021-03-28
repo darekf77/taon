@@ -6,7 +6,7 @@ import { window, ProgressLocation } from 'vscode';
 import { ProcesOptions, ProgressData, ResolveVariable } from './models';
 import {
   capitalizeFirstLetter, optionsFix, Log, getModuleName,
-  fixJSONString, escapeStringForRegEx, deepClone, valueFromCommand
+  escapeStringForRegEx, deepClone, valueFromCommand
 } from './helpers';
 
 const log = Log.instance(`execute-command`, 'logmsg');
