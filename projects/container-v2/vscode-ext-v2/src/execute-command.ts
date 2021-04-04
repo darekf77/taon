@@ -41,7 +41,7 @@ export function executeCommand(registerName: string, commandToExecute: string | 
     }
     //#endregion
 
-    //#region  resovle cwd, relative path
+    //#region resovle cwd, relative path
     log.data(`root path ${vscode.workspace.rootPath?.toString()}`);
     var relativePathToFileFromWorkspaceRoot = uri ? vscode.workspace.asRelativePath(uri) : '';
     log.data(`relativePath: '${relativePathToFileFromWorkspaceRoot}' `);
@@ -72,6 +72,7 @@ export function executeCommand(registerName: string, commandToExecute: string | 
     }
     //#endregion
 
+    //#region process
     async function process() {
       let MAIN_TITLE = capitalizeFirstLetter(title ? title : `Executing: ${commandToExecuteReadable}`);
       const resolveVars: ResolveVariable[] = [
@@ -495,6 +496,6 @@ export function executeCommand(registerName: string, commandToExecute: string | 
         return endPromise;
       });
     }
-
+    //#endregion
   });
 }
