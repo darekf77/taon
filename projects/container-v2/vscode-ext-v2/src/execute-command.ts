@@ -204,7 +204,7 @@ export function executeCommand(registerName: string, commandToExecute: string | 
                 item.variableValue = res;
                 log.data(`Resolve from input: ${item.variableValue}`)
               }
-              if (!item.variableValue) {
+              if (!item.variableValue && item.variableValue !== null) {
                 reject();
                 return;
               }
