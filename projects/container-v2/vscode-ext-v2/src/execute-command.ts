@@ -112,6 +112,9 @@ export function executeCommand(registerName: string, commandToExecute: string | 
           if (resolveVariables) {
             for (let index = 0; index < resolveVariables.length; index++) {
               const item = resolveVariables[index];
+              if (typeof item.variableValue !== 'undefined') {
+                continue;
+              }
               //#region apply previous resolved vars
               resolveVars.forEach(resolved => {
                 [
@@ -142,6 +145,7 @@ export function executeCommand(registerName: string, commandToExecute: string | 
                 placeHolder = placeholder;
               }
 
+              //#region handle select
               if (item.options) {
                 if (typeof item.options === 'string') {
                   try {
@@ -204,10 +208,16 @@ export function executeCommand(registerName: string, commandToExecute: string | 
                 item.variableValue = res;
                 log.data(`Resolve from input: ${item.variableValue}`)
               }
+              //#endregion
+
+              //#region regject when undefined
               if (!item.variableValue && item.variableValue !== null) {
                 reject();
                 return;
               }
+              //#endregion
+
+              //#region handle result as link
               if (item.useResultAsLinkAndExit) {
                 try {
                   // @ts-ignore
@@ -216,6 +226,21 @@ export function executeCommand(registerName: string, commandToExecute: string | 
                 resolve(void 0);
                 return;
               }
+              //#endregion
+
+              //#region handle quick fill next
+              if (item.fillNextVariableResolveWhenSelectedIsActionOption
+                && !!item?.variableValue?.action
+              ) {
+                const nextItem = resolveVariables[index + 1];
+                if (!nextItem) {
+                  reject();
+                  return;
+                }
+                nextItem.variableValue = item.variableValue.action;
+                break;
+              }
+              //#endregion
               resolveVars.push(item);
             }
           }

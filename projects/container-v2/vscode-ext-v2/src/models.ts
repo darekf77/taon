@@ -37,6 +37,7 @@ export type ResolveVariable = {
   optionsResolved: { option: any, label: string }[];
   useResultAsLinkAndExit?: boolean;
   exitWithMessgeWhenNoOptions?: string;
+  fillNextVariableResolveWhenSelectedIsActionOption?: boolean;
 };
 
 export type ProcesOptions = {
