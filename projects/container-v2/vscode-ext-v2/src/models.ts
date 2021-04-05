@@ -37,6 +37,10 @@ export type ResolveVariable = {
   optionsResolved: { option: any, label: string }[];
   useResultAsLinkAndExit?: boolean;
   exitWithMessgeWhenNoOptions?: string;
+  /**
+   * { label: 'action item !!!', option: { action: 'STRING_SECRET_CODE' } }
+   * { label: 'normal item', option: < primitive value > }
+   */
   fillNextVariableResolveWhenSelectedIsActionOption?: boolean;
 };
 
