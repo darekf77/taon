@@ -7,7 +7,7 @@ import { SYMBOL } from '../symbols';
 import { CLASS } from 'typescript-class-helpers';
 //#endregion
 
-import * as _ from 'lodash';
+import { _ } from 'tnp-core';
 import { BASE_ENTITY } from './framework-entity';
 import { BASE_REPOSITORY } from './framework-repository';
 import { FrameworkContext } from './framework-context';

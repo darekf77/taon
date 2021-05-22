@@ -1,10 +1,11 @@
 import type { BASE_CONTROLLER } from './framework-controller';
 import type { BASE_ENTITY } from './framework-entity';
+import { ConfigModels } from 'tnp-config';
 
 
 export interface IConnectionOptions {
   database: string;
-  type: 'sqlite' | 'mysql';
+  type: ConfigModels.DatabaseType;
   synchronize: boolean;
   dropSchema: boolean;
   logging: boolean;

@@ -1,17 +1,15 @@
 //#region @backend
-import * as child from 'child_process';
-import * as fse from 'fs-extra';
-import * as rimraf from 'rimraf';
-import * as path from 'path';
-import * as _ from 'lodash';
-import { OutFolder } from './models';
+import {
+  _,
+  path,
+  fse,
+  rimraf,
+} from 'tnp-core';
 import { Helpers } from '../helpers';
 import { CodeCut } from './browser-code-cut';
-import { config } from './config';
 import { BackendCompilation } from './compilation-backend';
 import { IncCompiler } from 'incremental-compiler';
-
-
+import { ConfigModels } from 'tnp-config';
 
 @IncCompiler.Class({ className: 'BroswerCompilation' })
 export class BroswerCompilation extends BackendCompilation {
@@ -30,7 +28,7 @@ export class BroswerCompilation extends BackendCompilation {
      * Ex.   tmp-src-dist-browser
      */
     public sourceOutBrowser: string,
-    outFolder: OutFolder,
+    outFolder: ConfigModels.OutFolder,
     location: string,
     cwd: string,
     public backendOutFolder: string,

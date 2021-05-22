@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import { _ } from 'tnp-core';
 import { CLASS } from 'typescript-class-helpers';
 
 export function findTypeForEntity(entity: Function, isArray: boolean = false) {

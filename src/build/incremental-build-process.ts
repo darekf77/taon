@@ -1,12 +1,12 @@
 //#region @backend
-import * as path from 'path';
-import * as child from 'child_process';
-import * as _ from 'lodash';
-import chalk from 'chalk';
-
-import { OutFolder } from './models';
-import { config } from './config';
+import {
+  _,
+  path,
+  child_process,
+} from 'tnp-core';
+import { CLI } from 'tnp-cli';
 import { Helpers } from '../helpers';
+import { config, ConfigModels } from 'tnp-config';
 import { BroswerCompilation } from './compilation-browser';
 import { BackendCompilation } from './compilation-backend';
 import { IncCompiler } from 'incremental-compiler';
@@ -19,7 +19,7 @@ export class IncrementalBuildProcess {
   protected compileOnce = false;
 
 
-  constructor(outFolder: OutFolder = 'dist', relativeLocationToCwd = 'src', cwd = process.cwd(),
+  constructor(outFolder: ConfigModels.OutFolder = 'dist', relativeLocationToCwd = 'src', cwd = process.cwd(),
     addStandaloneBrowserCompilation = true) {
 
     if (_.isString(outFolder) && _.isString(relativeLocationToCwd) && _.isString(cwd)) {
@@ -57,7 +57,7 @@ export class IncrementalBuildProcess {
     const outDistPath = path.join(bc.cwd, bc.outFolder);
     Helpers.System.Operations.tryRemoveDir(outDistPath)
     const targetOut = path.join(bc.cwd, bc.backendOutFolder, bc.outFolder)
-    child.execSync(Helpers.createLink(outDistPath, targetOut))
+    child_process.execSync(Helpers.createLink(outDistPath, targetOut))
   }
 
   async start(taskName?: string, afterInitCallBack?: () => void) {
@@ -94,7 +94,7 @@ export class IncrementalBuildProcess {
       process.exit(0);
     }
     if (watchOnly) {
-      console.log(chalk.gray(
+      console.log(CLI.chalk.gray(
         `Watch mode only for "${taskName}"` +
         ` -- morphi only starts starAndWatch anyway --`
       ));

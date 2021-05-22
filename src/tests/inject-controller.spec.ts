@@ -1,8 +1,15 @@
-import { describe } from 'mocha'
+import { describe, it } from 'mocha'
 import { expect } from 'chai';
-import * as fse from 'fs-extra'
-import * as path from 'path';
-import * as _ from 'lodash';
+import {
+  _,
+  path,
+  fse,
+  rimraf,
+  crossPlatformPath,
+  os,
+  child_process,
+  http, https,
+} from 'tnp-core';
 
 import { Morphi } from '../index';
 import { Log } from 'ng2-logger';

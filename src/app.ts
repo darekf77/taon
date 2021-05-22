@@ -1,7 +1,14 @@
-import * as _ from 'lodash';
+import { _ } from 'tnp-core';
 //#region @backend
-import * as fse from 'fs-extra';
-import * as path from 'path';
+import {
+  path,
+  fse,
+  rimraf,
+  crossPlatformPath,
+  os,
+  child_process,
+  http, https,
+} from 'tnp-core';
 //#endregion
 import { Morphi } from './index';
 

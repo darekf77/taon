@@ -1,15 +1,13 @@
 import {
   Repository as TypeormRepository, EntityRepository
 } from 'typeorm';
-import * as _ from 'lodash';
-
+import { _ } from 'tnp-core';
 
 export function Repository(entity: Function) {
   return function (target: any) {
     EntityRepository(entity)(target)
   }
 }
-
 
 // TODO_NOT_IMPORTANT fix it whe typescipt stable
 export abstract class BASE_REPOSITORY<Entity, GlobalAliases = {}> extends TypeormRepository<Entity> {

@@ -6,8 +6,7 @@ import {
 } from '../init-method';
 export { CLASS } from 'typescript-class-helpers';
 import { CLASS } from 'typescript-class-helpers';
-import { Connection } from 'typeorm';
-import * as _ from 'lodash';
+import { _ } from 'tnp-core';
 import { SYMBOL } from '../symbols';
 import { Helpers } from '../helpers';
 import { activateBaseCrud } from '../crud/activate-base-crud';

@@ -1,9 +1,9 @@
 //#region @backend
-export { config } from './build/config';
+export { config } from 'tnp-config';
 export { FILE_NAME_ISOMORPHIC_PACKAGES } from './build/packages-recognition';
 export {
-  CodeCut, BrowserCodeCut, TsUsage, IncrementalBuildProcess, PackagesRecognition,
-  BroswerCompilation, OutFolder, BackendCompilation
+  CodeCut, BrowserCodeCut, IncrementalBuildProcess, PackagesRecognition,
+  BroswerCompilation, BackendCompilation
 } from './build';
 
 //#endregion
@@ -15,7 +15,7 @@ export { RepeatTypeComponent } from './crud/formly-repeat-component';
 export { FormlyHorizontalWrapper } from './crud/formly-group-wrapper-component';
 export { Log, Level } from 'ng2-logger';
 
-import * as _ from 'lodash';
+import { _ } from 'tnp-core';
 import * as crudMorph from './crud';
 import * as decoratorsMorphi from './decorators';
 import * as framework from './framework';

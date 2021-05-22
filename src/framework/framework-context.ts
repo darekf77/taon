@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import { _ } from 'tnp-core';
 import { Helpers } from '../helpers';
 import { StartOptions, FrameworkMode } from './framework-models';
 import { FrameworkContextBrowserApp } from './framework-context-browser-app';
@@ -7,9 +7,7 @@ import { IConnectionOptions } from './framework-models';
 import { FrameworkContextBase } from './framework-context-base';
 //#region @backend
 import { FrameworkContextNodeApp } from './framework-context-node-app.backend';
-if (Helpers.isNode) {
-  var { URL } = require('url');
-}
+import { URL } from 'url';
 //#endregion
 
 export class FrameworkContext extends FrameworkContextBase {

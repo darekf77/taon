@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import { _ } from 'tnp-core';
 import * as io from 'socket.io';
 import { SYMBOL } from '../symbols';
 import { Log, Level } from 'ng2-logger';

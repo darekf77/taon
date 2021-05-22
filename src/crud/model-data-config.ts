@@ -1,14 +1,13 @@
-import * as _ from 'lodash';
+import {
+  _,
+} from 'tnp-core';
 // import { Subject } from 'rxjs/Subject'; // TODO use rxjs to detec change
 // import { Observable } from 'rxjs/Observable';
 import { Helpers } from '../helpers';
 import { Mapping } from 'ng2-rest';
 import { CLASS } from 'typescript-class-helpers';
 
-//#region @backend
-import * as express from 'express';
 import { SYMBOL } from '../symbols';
-//#endregion
 
 const MAX_DATA_LENGTH_SENT_TO_CLIENT = 10000;
 

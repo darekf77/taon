@@ -1,5 +1,4 @@
-import * as _ from 'lodash';
-
+import { _ } from 'tnp-core';
 
 export const SYMBOL = {
   HAS_TABLE_IN_DB: Symbol(),

@@ -1,13 +1,11 @@
 //#region @backend
-
-import * as child from 'child_process';
-import * as fse from 'fs-extra';
-import * as rimraf from 'rimraf';
-import * as path from 'path';
-import * as _ from 'lodash';
-
-import { CodeCut, BrowserCodeCut } from './browser-code-cut';
-import { config } from './config';
+import {
+  _,
+  path,
+  fse,
+} from 'tnp-core';
+import { BrowserCodeCut } from './browser-code-cut';
+import { config } from 'tnp-config';
 
 export const FILE_NAME_ISOMORPHIC_PACKAGES = 'tmp-isomorphic-packages.json';
 

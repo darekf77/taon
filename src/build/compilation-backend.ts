@@ -1,14 +1,13 @@
 //#region @backend
-import * as child from 'child_process';
-import * as fse from 'fs-extra';
-import * as rimraf from 'rimraf';
-import * as path from 'path';
-import * as _ from 'lodash';
+import {
+  _,
+  path,
+  fse,
+  child_process,
+} from 'tnp-core';
 import { IncCompiler } from 'incremental-compiler';
-import { OutFolder } from './models';
 import { Helpers } from '../helpers';
-import { CodeCut } from './browser-code-cut';
-import { config } from './config';
+import { ConfigModels } from 'tnp-config';
 
 export type TscCompileOptions = {
   cwd: string;
@@ -71,14 +70,14 @@ export class BackendCompilation extends IncCompiler.Base {
 
 
     if (watch) {
-      await Helpers.log(child.exec(commandJsAndMaps, { cwd }), ['Watching for file changes.']);
+      await Helpers.log(child_process.exec(commandJsAndMaps, { cwd }), ['Watching for file changes.']);
       if (generateDeclarations) {
         debug && console.log(`(${this.compilerName}) Execute second command : ${commandDts}    # inside: ${cwd}`)
-        await Helpers.log(child.exec(commandDts, { cwd }), ['Watching for file changes.']);
+        await Helpers.log(child_process.exec(commandDts, { cwd }), ['Watching for file changes.']);
       }
     } else {
       try {
-        child.execSync(commandJsAndMaps, {
+        child_process.execSync(commandJsAndMaps, {
           cwd,
           stdio: [0, 1, 2]
         })
@@ -91,7 +90,7 @@ export class BackendCompilation extends IncCompiler.Base {
       if (generateDeclarations) {
         debug && console.log(`(${this.compilerName}) Execute second command : ${commandDts}    # inside: ${cwd}`)
         try {
-          child.execSync(commandDts, {
+          child_process.execSync(commandDts, {
             cwd,
             stdio: [0, 1, 2]
           })
@@ -135,7 +134,7 @@ export class BackendCompilation extends IncCompiler.Base {
      * Output folder
      * Ex. dist
      */
-    public outFolder: OutFolder,
+    public outFolder: ConfigModels.OutFolder,
     /**
      * Source location
      * Ex. src | components

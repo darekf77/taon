@@ -1,14 +1,12 @@
-import * as _ from 'lodash';
-import { Log, Helpers, Level } from 'ng2-logger';
+import { _ } from 'tnp-core';
+import { Log, Level } from 'ng2-logger';
 import { SYMBOL } from '../symbols';
 import { FormlyArrayTransformFn } from '../crud/fromly';
 import { classNameVlidation } from './framework-helpers';
 import { Mapping, Models } from 'ng2-rest';
 
-
 //#region @backend
 import {
-  InsertEvent, UpdateEvent, RemoveEvent,
   Entity as TypeormEntity, Tree
 } from 'typeorm';
 import { tableNameFrom } from './framework-helpers';

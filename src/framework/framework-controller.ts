@@ -1,18 +1,15 @@
 //#region @backend
 import {
-  Repository, EventSubscriber, EntitySubscriberInterface,
-  InsertEvent, UpdateEvent, RemoveEvent
+  EventSubscriber
 } from 'typeorm';
 //#endregion
 
-import * as _ from 'lodash';
+import { _ } from 'tnp-core';
 import { ENDPOINT, __ENDPOINT } from '../decorators/decorators-endpoint-class';
 import { BaseCRUD } from '../crud/base-crud-model';
 import { classNameVlidation } from './framework-helpers';
 import { Models } from '../models';
-import { Helpers } from '../helpers';
 import { CLASS } from 'typescript-class-helpers';
-import { Helpers as HelpersLog } from 'ng2-logger';
 import { FrameworkContext } from './framework-context';
 
 const updatedWithCtrl = {};

@@ -1,16 +1,13 @@
 //#region @backend
-import * as _ from 'lodash';
-
-
+import { _ } from 'tnp-core';
 import { Helpers } from '../helpers';
 import { getTransformFunction, singleTransform } from './transform-to-browser';
 import { SYMBOL } from '../symbols';
 import * as express from 'express';
 import { walk } from 'lodash-walk-object';
 import { CLASS } from 'typescript-class-helpers';
-import { BASE_ENTITY } from '../framework';
 import { ModelDataConfig } from '../crud';
-import { config } from '../build/config';
+import { config } from 'tnp-config';
 
 export class EntityProcess {
 

@@ -1,25 +1,18 @@
 //#region @backend
-import * as child from 'child_process';
-
-import * as path from 'path';
-
-import * as fs from 'fs';
-import * as fse from 'fs-extra';
-const ps = require('ps-node');
-
+import * as ps from 'ps-node';
 import { Helpers } from '../helpers';
 import { copyExampleTo } from './new';
 import { IncrementalBuildProcess } from '../build/incremental-build-process';
 import { BrowserCodeCut } from '../build/browser-code-cut';
-import chalk from 'chalk';
-import { config } from 'tnp-config';
+import { CLI } from 'tnp-cli';
+import { child_process, path, fse } from 'tnp-core';
 import { PackagesRecognition } from '../build/packages-recognition';
 
 export * from '../helpers';
 
 export async function run(argsv: string[], morphiEnvironmentCheck = true) {
   if (morphiEnvironmentCheck) {
-    config.checkEnvironment();
+    CLI.checkEnvironment();
   }
 
   if (argsv.length >= 3) {
@@ -32,7 +25,7 @@ export async function run(argsv: string[], morphiEnvironmentCheck = true) {
       process.exit(0)
     } else if (commandName === 'install') {
       PackagesRecognition.From(process.cwd()).start(true)
-      child.execSync(`npm i ${argsv.slice(3)}`, { cwd: process.cwd(), stdio: [0, 1, 2] });
+      child_process.execSync(`npm i ${argsv.slice(3)}`, { cwd: process.cwd(), stdio: [0, 1, 2] });
       process.exit(0)
     } else if (commandName === 'update:isomorphic') {
       PackagesRecognition.From(process.cwd()).start(true)
@@ -74,10 +67,10 @@ export async function run(argsv: string[], morphiEnvironmentCheck = true) {
       }
       const link = argsv[3]
       let target = argsv[4]
-      child.execSync(Helpers.createLink(target, link))
+      child_process.execSync(Helpers.createLink(target, link))
       process.exit(0)
     } else if (commandName === '-v') {
-      console.log(JSON.parse(fs.readFileSync(path.join(__dirname, '../..', 'package.json').toString(), 'utf8').toString()).version)
+      console.log(JSON.parse(fse.readFileSync(path.join(__dirname, '../..', 'package.json').toString(), 'utf8').toString()).version)
       process.exit(0)
     } else if (commandName === 'new:workspace') {
       if (!Array.isArray(argsv) || argsv.length < 4) {
@@ -104,21 +97,21 @@ export async function run(argsv: string[], morphiEnvironmentCheck = true) {
 
 function errorAll() {
   console.log(`Bad arguments..try one of the command below:
-- ${chalk.bold('morphi new:workspace myAppName')}
-- ${chalk.bold('morphi new:simple myAppName')}
-- ${chalk.bold('morphi build')}
-- ${chalk.bold('morphi build:watch')}
-- ${chalk.bold('morphi -v')}
-- ${chalk.bold('morphi -h')}          `);
+- ${CLI.chalk.bold('morphi new:workspace myAppName')}
+- ${CLI.chalk.bold('morphi new:simple myAppName')}
+- ${CLI.chalk.bold('morphi build')}
+- ${CLI.chalk.bold('morphi build:watch')}
+- ${CLI.chalk.bold('morphi -v')}
+- ${CLI.chalk.bold('morphi -h')}          `);
   process.exit(0)
 }
 
 
 function errorNew() {
   console.log(`Bad arguments..try:
-${ chalk.bold('morphi new:workspace myAppName')}
+${ CLI.chalk.bold('morphi new:workspace myAppName')}
 or
-${ chalk.bold('morphi new:simple myAppName')}
+${ CLI.chalk.bold('morphi new:simple myAppName')}
           `);
   process.exit(0)
 }

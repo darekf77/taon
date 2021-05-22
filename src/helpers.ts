@@ -1,19 +1,20 @@
+import { _ } from 'tnp-core';
 //#region @backend
-import * as path from 'path';
-import * as child from 'child_process';
-import * as os from 'os';
-import * as fs from 'fs';
-import * as fse from 'fs-extra';
-import chalk from 'chalk';
-import * as rimraf from 'rimraf';
+import {
+  path,
+  fse,
+  rimraf,
+  crossPlatformPath,
+  os,
+  child_process,
+  http, https,
+} from 'tnp-core';
+import { CLI } from 'tnp-cli';
 import * as dateformat from 'dateformat';
 
 //#endregion
 
 import * as JSON5 from 'json5';
-import * as _ from 'lodash';
-
-
 import { Helpers as HelpersNg2Rest } from 'ng2-rest';
 import { SYMBOL } from './symbols';
 import { Models } from './models';
@@ -89,16 +90,16 @@ export class Helpers extends HelpersNg2Rest {
       return `[${dateformat(new Date(), 'HH:MM:ss')}]`;
     }
     if (!fn || !_.isFunction(fn)) {
-      console.error(`${executionType} wrapper: "${fs}" is not a function.`)
+      console.error(`${executionType} wrapper: "${fn}" is not a function.`)
       process.exit(1)
     }
 
     try {
-      console.log(chalk.gray(`${currentDate()} ${executionType} of "${chalk.bold(taskName)}" started...`))
+      console.log(CLI.chalk.gray(`${currentDate()} ${executionType} of "${CLI.chalk.bold(taskName)}" started...`))
       await Helpers.runSyncOrAsync(fn)
-      console.log(chalk.green(`${currentDate()} ${executionType} of "${chalk.bold(taskName)}" finish OK...`))
+      console.log(CLI.chalk.green(`${currentDate()} ${executionType} of "${CLI.chalk.bold(taskName)}" finish OK...`))
     } catch (error) {
-      console.log(chalk.red(error));
+      console.log(CLI.chalk.red(error));
       console.log(`${currentDate()} ${executionType} of ${taskName} ERROR`)
     }
 
@@ -234,7 +235,7 @@ export class Helpers extends HelpersNg2Rest {
     return /^([a-zA-Z]|\-|\_|\@|\#|\$|\!|\^|\&|\*|\(|\))+$/.test(filePath);
   }
 
-  static log(proc: child.ChildProcess, stdoutMsg?: string | string[], stderMsg?: string | string[]) {
+  static log(proc: child_process.ChildProcess, stdoutMsg?: string | string[], stderMsg?: string | string[]) {
     // processes.push(proc);
     let isResolved = false;
 
@@ -328,8 +329,8 @@ export class Helpers extends HelpersNg2Rest {
           target = path.win32.normalize(path.join(target, path.basename(link)))
         }
       }
-      if (fs.existsSync(target)) {
-        fs.unlinkSync(target);
+      if (fse.existsSync(target)) {
+        fse.unlinkSync(target);
       }
       target = path.win32.normalize(target)
       if (link === '.' || link === './') {
@@ -360,10 +361,10 @@ export class Helpers extends HelpersNg2Rest {
 
   static getRecrusiveFilesFrom(dir): string[] {
     let files = [];
-    const readed = fs.readdirSync(dir).map(f => {
+    const readed = fse.readdirSync(dir).map(f => {
       const fullPath = path.join(dir, f);
       // console.log(`is direcotry ${fs.lstatSync(fullPath).isDirectory()} `, fullPath)
-      if (fs.lstatSync(fullPath).isDirectory()) {
+      if (fse.lstatSync(fullPath).isDirectory()) {
         this.getRecrusiveFilesFrom(fullPath).forEach(aa => files.push(aa))
       }
       return fullPath;

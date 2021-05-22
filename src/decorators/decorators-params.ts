@@ -1,7 +1,5 @@
-import { Helpers } from 'ng2-rest';
 import { Models } from '../models';
 import { CLASS } from 'typescript-class-helpers';
-
 
 function metaParam(param: Models.Rest.ParamType, name: string, expire: number, defaultValue = undefined, ...args: any[]) {
   const methodName = args[1];

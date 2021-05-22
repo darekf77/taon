@@ -1,19 +1,14 @@
-import { SYMBOL } from '../symbols';
-import { FormlyFormOptions, FormlyFieldConfig } from '@ngx-formly/core';
-import * as _ from 'lodash';
-import { Log, Level } from 'ng2-logger';
-import { Helpers } from '../helpers';
+import { FormlyFieldConfig } from '@ngx-formly/core';
+import { _ } from 'tnp-core';
 import { Mapping } from 'ng2-rest';
-import { Models } from '../models';
-import { getRegisteredComponents, findTypeForEntity } from './type-from-entity';
+import { findTypeForEntity } from './type-from-entity';
 import { CLASS } from 'typescript-class-helpers';
+import { ConfigModels } from 'tnp-config';
 
-
-type FormlyInputType = 'input' | 'switch' | 'datepicker' | 'repeat' | 'group'
 export function getFromlyConfigFor(
   target: Function,
   options: {
-    formType?: 'material' | 'bootstrap';
+    formType?: ConfigModels.UIFramework;
     keysPathesToInclude?: string[];
     keysPathesToExclude?: string[];
     parentModel?: string;
@@ -53,7 +48,7 @@ export function getFromlyConfigFor(
   let fields: FormlyFieldConfig[] = [];
 
 
-  function inputToPush(key: string, type: FormlyInputType, model: string, targetChild?: Function) {
+  function inputToPush(key: string, type: ConfigModels.FormlyInputType, model: string, targetChild?: Function) {
     // console.log(`key(${key}) type: ${type} | model: ${model} targetChild: ${targetChild && targetChild.name}`)
     let res: FormlyFieldConfig;
     if (type === 'repeat') {
@@ -151,7 +146,7 @@ export function getFromlyConfigFor(
         }
 
         const element = target.prototype[key];
-        let type: FormlyInputType = 'input';
+        let type: ConfigModels.FormlyInputType = 'input';
         if (_.isBoolean(element)) {
           type = 'switch'
         } else if (_.isDate(element)) {
@@ -209,7 +204,6 @@ export function getFromlyConfigFor(
   generate()
   return fields.filter(f => !!f);
 }
-
 
 export type FormlyArrayTransformFn =
   (fieldsArray: FormlyFieldConfig[],

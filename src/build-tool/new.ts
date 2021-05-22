@@ -1,11 +1,6 @@
 //#region @backend
-import * as path from 'path';
-import * as fse from 'fs-extra';
-import * as fs from 'fs';
-import * as os from 'os';
-import chalk from 'chalk';
-import * as child from 'child_process';
-const commandExistsSync = require('command-exists').sync;
+import { path, os, child_process, fse } from 'tnp-core';
+import { CLI } from 'tnp-cli';
 
 export function copyExampleTo(folder: string, exampleType: 'examples' | 'super-simple-morphi-example') {
   const options: fse.CopyOptionsSync = {
@@ -21,24 +16,24 @@ export function copyExampleTo(folder: string, exampleType: 'examples' | 'super-s
     bundle: path.join(__dirname, '..', exampleType)
   }
   let destinationPath = path.join(process.cwd(), folder)
-  const distMode = fs.existsSync(example.dist)
+  const distMode = fse.existsSync(example.dist)
   let sourcePath = distMode ? example.dist : example.bundle;
   if (os.platform() === 'win32') {
     sourcePath = path.win32.normalize(sourcePath);
     destinationPath = path.win32.normalize(destinationPath)
   }
-  console.log(chalk.green(`Creating example structure... please wait.`));
+  console.log(CLI.chalk.green(`Creating example structure... please wait.`));
   if (distMode) {
     fse.copySync(sourcePath, destinationPath, options);
   } else {
-    child.execSync(`cpr "${sourcePath}" "${destinationPath}" --owerwrite`);
+    child_process.execSync(`cpr "${sourcePath}" "${destinationPath}" --owerwrite`);
   }
   // console.log(chalk.green(`Morphi example structure created sucessfully, installing npm...`));
   // child.execSync('npm i', { cwd: destinationPath })
 
-  console.log(chalk.green('Done.'));
-  if (commandExistsSync('code')) {
-    child.execSync('code .', { cwd: destinationPath })
+  console.log(CLI.chalk.green('Done.'));
+  if (CLI.commandExistsSync('code')) {
+    child_process.execSync('code .', { cwd: destinationPath })
   }
 }
 //#endregion

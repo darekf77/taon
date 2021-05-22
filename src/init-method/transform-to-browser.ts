@@ -1,5 +1,5 @@
 //#region @backend
-import * as _ from 'lodash';
+import { _ } from 'tnp-core';
 import { Helpers } from '../helpers';
 import { CLASS } from 'typescript-class-helpers';
 import { Helpers as HelpersLog } from 'ng2-logger';

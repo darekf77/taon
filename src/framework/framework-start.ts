@@ -1,4 +1,4 @@
-import * as _ from 'lodash';
+import { _ } from 'tnp-core';
 import { StartOptions } from './framework-models';
 import { FrameworkContext } from './framework-context';
 import { Helpers } from 'ng2-logger';

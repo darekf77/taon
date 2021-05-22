@@ -1,8 +1,7 @@
-import * as _ from 'lodash';
+import { _ } from 'tnp-core';
 import { Helpers } from '../helpers';
 import { Models } from '../models';
 import { CLASS } from 'typescript-class-helpers';
-
 
 function metaReq(
   method: Models.Rest.HttpMethod, path: string,

@@ -1,11 +1,12 @@
 //#region @backend
-import * as _ from 'lodash'
-import * as fs from 'fs';
-import * as path from 'path';
-import * as fse from 'fs-extra';
-import { TsUsage, ReplaceOptions } from './models';
+import {
+  _,
+  path,
+  fse,
+} from 'tnp-core';
+import {  ReplaceOptions } from './models';
 import { Models } from '../models';
-
+import { ConfigModels } from 'tnp-config';
 
 export class CodeCut {
 
@@ -69,8 +70,8 @@ export class BrowserCodeCut {
   }
 
   constructor(protected absoluteFilePath: string) {
-    this.rawContent = fs.existsSync(absoluteFilePath) ?
-      fs.readFileSync(absoluteFilePath, 'utf8').toString()
+    this.rawContent = fse.existsSync(absoluteFilePath) ?
+      fse.readFileSync(absoluteFilePath, 'utf8').toString()
       : '';
   }
 
@@ -80,7 +81,7 @@ export class BrowserCodeCut {
     this.isDebuggingFile = (path.basename(this.absoluteFilePath) === fileName);
   }
 
-  public flatTypescriptImportExport(usage: TsUsage) {
+  public flatTypescriptImportExport(usage: ConfigModels.TsUsage) {
     if (!this.absoluteFilePath.endsWith('.ts')) {
       return this;
     }
@@ -132,7 +133,7 @@ export class BrowserCodeCut {
         return res;
       },
 
-      TSimportExport(rawImport, usage: TsUsage) {
+      TSimportExport(rawImport, usage: ConfigModels.TsUsage) {
         rawImport = rawImport.replace(new RegExp(`${usage}.+from\\s+`), '')
         rawImport = rawImport.replace(new RegExp(`(\'|\")`, 'g'), '').trim()
         if (rawImport.startsWith(`./`)) return void 0;
@@ -209,7 +210,7 @@ export class BrowserCodeCut {
     }
   }
 
-  replaceRegionsFromTsImportExport(usage: TsUsage) {
+  replaceRegionsFromTsImportExport(usage: ConfigModels.TsUsage) {
     if (!this.absoluteFilePath.endsWith('.ts')) {
       return this;
     }
@@ -273,7 +274,7 @@ export class BrowserCodeCut {
       if (!fse.existsSync(path.dirname(this.absoluteFilePath))) {
         fse.mkdirpSync(path.dirname(this.absoluteFilePath));
       }
-      fs.writeFileSync(this.absoluteFilePath, this.rawContent, 'utf8');
+      fse.writeFileSync(this.absoluteFilePath, this.rawContent, 'utf8');
     }
     // }
   }

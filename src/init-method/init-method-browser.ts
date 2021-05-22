@@ -1,5 +1,5 @@
 import { SYMBOL } from '../symbols';
-import * as _ from 'lodash';
+import { _ } from 'tnp-core';
 import { Models } from '../models';
 import { Resource } from 'ng2-rest';
 import { Models as Ng2RestModels } from 'ng2-rest';

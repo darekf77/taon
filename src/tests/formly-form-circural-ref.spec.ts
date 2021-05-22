@@ -1,8 +1,15 @@
 import { describe } from 'mocha'
 import { expect } from 'chai';
-import * as fse from 'fs-extra'
-import * as path from 'path';
-import * as _ from 'lodash';
+import {
+  _,
+  path,
+  fse,
+  rimraf,
+  crossPlatformPath,
+  os,
+  child_process,
+  http, https,
+} from 'tnp-core';
 // import { hello } from '../hello';
 
 // if you used the '@types/mocha' method to install mocha type definitions, uncomment the following line
