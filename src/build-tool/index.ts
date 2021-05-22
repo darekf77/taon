@@ -1,5 +1,5 @@
 //#region @backend
-import * as ps from 'ps-node';
+import { ps, crossPlatformPath } from 'tnp-core';
 import { Helpers } from '../helpers';
 import { copyExampleTo } from './new';
 import { IncrementalBuildProcess } from '../build/incremental-build-process';
@@ -70,7 +70,7 @@ export async function run(argsv: string[], morphiEnvironmentCheck = true) {
       child_process.execSync(Helpers.createLink(target, link))
       process.exit(0)
     } else if (commandName === '-v') {
-      console.log(JSON.parse(fse.readFileSync(path.join(__dirname, '../..', 'package.json').toString(), 'utf8').toString()).version)
+      console.log(JSON.parse(fse.readFileSync(path.join(crossPlatformPath(__dirname), '../..', 'package.json').toString(), 'utf8').toString()).version)
       process.exit(0)
     } else if (commandName === 'new:workspace') {
       if (!Array.isArray(argsv) || argsv.length < 4) {

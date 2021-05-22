@@ -70,7 +70,7 @@ describe('Formly forml generator', () => {
     let config = Morphi.Formly.getFrom(User);
     // console.log('')
     // log.i('config', config)
-    fse.writeJSONSync(path.join(__dirname, '..', '..', 'tmp-test-json1.json'), config, {
+    fse.writeJSONSync(path.join(crossPlatformPath(__dirname), '..', '..', 'tmp-test-json1.json'), config, {
       spaces: 2
     })
     expect(config).to.deep.eq(jsonData());

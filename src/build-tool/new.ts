@@ -1,5 +1,5 @@
 //#region @backend
-import { path, os, child_process, fse } from 'tnp-core';
+import { path, os, child_process, fse, crossPlatformPath } from 'tnp-core';
 import { CLI } from 'tnp-cli';
 
 export function copyExampleTo(folder: string, exampleType: 'examples' | 'super-simple-morphi-example') {
@@ -12,8 +12,8 @@ export function copyExampleTo(folder: string, exampleType: 'examples' | 'super-s
     }
   };
   let example = {
-    dist: path.join(__dirname, '..', '..', exampleType),
-    bundle: path.join(__dirname, '..', exampleType)
+    dist: path.join(crossPlatformPath(__dirname), '..', '..', exampleType),
+    bundle: path.join(crossPlatformPath(__dirname), '..', exampleType)
   }
   let destinationPath = path.join(process.cwd(), folder)
   const distMode = fse.existsSync(example.dist)
