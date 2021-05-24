@@ -3,6 +3,7 @@ import {
   _,
   path,
   fse,
+  crossPlatformPath,
 } from 'tnp-core';
 import { BrowserCodeCut } from './browser-code-cut';
 import { config } from 'tnp-config';
@@ -13,7 +14,7 @@ export class PackagesRecognition {
 
   static FILE_NAME_ISOMORPHIC_PACKAGES = FILE_NAME_ISOMORPHIC_PACKAGES;
   static From(cwd: string) {
-    return new PackagesRecognition(cwd);
+    return new PackagesRecognition( crossPlatformPath(cwd) );
   }
 
   protected recognizedPackages: string[];
@@ -27,7 +28,7 @@ export class PackagesRecognition {
   }
 
   start(force = false) {
-    const pjPath = path.join(this.cwd, FILE_NAME_ISOMORPHIC_PACKAGES);
+    const pjPath = crossPlatformPath(path.join(this.cwd, FILE_NAME_ISOMORPHIC_PACKAGES));
     if (!fse.existsSync(pjPath)) {
       fse.writeJSONSync(pjPath, {}, { encoding: 'utf8' });
     }
@@ -46,9 +47,9 @@ export class PackagesRecognition {
 
       }
     }
-    const node_modules = path.join(this.cwd, config.folder.node_modules);
+    const node_modules = crossPlatformPath(path.join(this.cwd, config.folder.node_modules));
 
-    let folders = fse.readdirSync(`${node_modules}/`)
+    let folders = fse.readdirSync(node_modules)
     folders = folders.filter(packageName => {
       try {
         return this.checkIsomorphic(node_modules, packageName);
@@ -83,7 +84,7 @@ export class PackagesRecognition {
   }
 
   protected checkIsomorphic(node_modules: string, packageName: string) {
-    const browser = path.join(node_modules, packageName, config.folder.browser);
+    const browser = crossPlatformPath(path.join(node_modules, packageName, config.folder.browser));
     return fse.existsSync(browser)
   }
 
