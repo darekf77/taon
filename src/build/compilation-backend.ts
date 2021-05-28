@@ -4,9 +4,11 @@ import {
   path,
   fse,
   child_process,
+  Helpers,
+  crossPlatformPath,
 } from 'tnp-core';
 import { IncCompiler } from 'incremental-compiler';
-import { Helpers } from '../helpers';
+import { MorphiHelpers } from '../helpers';
 import { ConfigModels } from 'tnp-config';
 
 export type TscCompileOptions = {
@@ -25,7 +27,7 @@ export class BackendCompilation extends IncCompiler.Base {
 
   public get compilationFolderPath() {
     if (_.isString(this.location) && _.isString(this.cwd)) {
-      return path.join(this.cwd, this.location);
+      return crossPlatformPath(path.join(this.cwd, this.location));
     }
   }
   public isEnableCompilation = true;
@@ -70,10 +72,10 @@ export class BackendCompilation extends IncCompiler.Base {
 
 
     if (watch) {
-      await Helpers.log(child_process.exec(commandJsAndMaps, { cwd }), ['Watching for file changes.']);
+      await Helpers.logProc2(child_process.exec(commandJsAndMaps, { cwd }), ['Watching for file changes.']);
       if (generateDeclarations) {
         debug && console.log(`(${this.compilerName}) Execute second command : ${commandDts}    # inside: ${cwd}`)
-        await Helpers.log(child_process.exec(commandDts, { cwd }), ['Watching for file changes.']);
+        await Helpers.logProc2(child_process.exec(commandDts, { cwd }), ['Watching for file changes.']);
       }
     } else {
       try {
@@ -110,7 +112,7 @@ export class BackendCompilation extends IncCompiler.Base {
   }
 
   async syncAction(filesPathes: string[]) {
-    const outDistPath = path.join(this.cwd, this.outFolder);
+    const outDistPath = crossPlatformPath(path.join(this.cwd, this.outFolder));
     // Helpers.System.Operations.tryRemoveDir(outDistPath)
     if (!fse.existsSync(outDistPath)) {
       fse.mkdirpSync(outDistPath);

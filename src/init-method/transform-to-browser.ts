@@ -1,8 +1,7 @@
 //#region @backend
 import { _ } from 'tnp-core';
-import { Helpers } from '../helpers';
 import { CLASS } from 'typescript-class-helpers';
-import { Helpers as HelpersLog } from 'ng2-logger';
+import { Helpers  } from 'tnp-core';
 import { ModelDataConfig } from '../crud';
 
 export function getTransformFunction(target: Function, mdc: ModelDataConfig) {
@@ -10,10 +9,10 @@ export function getTransformFunction(target: Function, mdc: ModelDataConfig) {
     return;
   }
 
-  HelpersLog.simulateBrowser = true;
+  Helpers.simulateBrowser = true;
   const className = CLASS.getName(target)
   target = CLASS.getBy(className);
-  HelpersLog.simulateBrowser = false;
+  Helpers.simulateBrowser = false;
   if (!target) {
     return void 0;
   }

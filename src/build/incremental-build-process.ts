@@ -3,9 +3,11 @@ import {
   _,
   path,
   child_process,
+  Helpers,
+  crossPlatformPath,
 } from 'tnp-core';
 import { CLI } from 'tnp-cli';
-import { Helpers } from '../helpers';
+import { MorphiHelpers } from '../helpers';
 import { config, ConfigModels } from 'tnp-config';
 import { BroswerCompilation } from './compilation-browser';
 import { BackendCompilation } from './compilation-backend';
@@ -54,10 +56,12 @@ export class IncrementalBuildProcess {
   }
 
   private recreateBrowserLinks(bc: BroswerCompilation) {
-    const outDistPath = path.join(bc.cwd, bc.outFolder);
-    Helpers.System.Operations.tryRemoveDir(outDistPath)
-    const targetOut = path.join(bc.cwd, bc.backendOutFolder, bc.outFolder)
-    child_process.execSync(Helpers.createLink(outDistPath, targetOut))
+    const outDistPath = crossPlatformPath(path.join(bc.cwd, bc.outFolder));
+    console.log(`recreateBrowserLinks: outDistPath: ${outDistPath}`)
+    MorphiHelpers.System.Operations.tryRemoveDir(outDistPath)
+    const targetOut = crossPlatformPath(path.join(bc.cwd, bc.backendOutFolder, bc.outFolder))
+    console.log(`recreateBrowserLinks: targetOut: ${targetOut}`)
+    Helpers.createSymLink(targetOut, outDistPath, { continueWhenExistedFolderDoesntExists: true });
   }
 
   async start(taskName?: string, afterInitCallBack?: () => void) {

@@ -1,6 +1,6 @@
 import { _ } from 'tnp-core';
 import { Models } from '../models';
-import { Helpers } from '../helpers';
+import { MorphiHelpers as Helpers } from '../helpers';
 import { SYMBOL } from '../symbols';
 import { EntityProcess } from './entity-process';
 import { MDC } from '../crud';

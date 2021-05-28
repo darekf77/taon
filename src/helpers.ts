@@ -24,7 +24,7 @@ import { Response as ExpressResponse, Request as ExpressRequest } from 'express'
 //#endregion
 import { CLASS } from 'typescript-class-helpers';
 
-export class Helpers extends HelpersNg2Rest {
+export class MorphiHelpers extends HelpersNg2Rest {
 
   //#region @backend
   static get System() {
@@ -61,7 +61,7 @@ export class Helpers extends HelpersNg2Rest {
       .slice(configs, 1)
       .reverse()
       .map(bc => {
-        if (Helpers.isGoodPath(bc.path)) {
+        if (MorphiHelpers.isGoodPath(bc.path)) {
           return bc.path
         }
         return CLASS.getName(bc.classReference);
@@ -85,40 +85,26 @@ export class Helpers extends HelpersNg2Rest {
   }
 
   //#region @backend
-  static async compilationWrapper(fn: () => void, taskName: string = 'Task', executionType: 'Compilation' | 'Code execution' = 'Compilation') {
-    function currentDate() {
-      return `[${dateformat(new Date(), 'HH:MM:ss')}]`;
-    }
-    if (!fn || !_.isFunction(fn)) {
-      console.error(`${executionType} wrapper: "${fn}" is not a function.`)
-      process.exit(1)
-    }
+  // static async compilationWrapper(fn: () => void, taskName: string = 'Task', executionType: 'Compilation' | 'Code execution' = 'Compilation') {
+  //   function currentDate() {
+  //     return `[${dateformat(new Date(), 'HH:MM:ss')}]`;
+  //   }
+  //   if (!fn || !_.isFunction(fn)) {
+  //     console.error(`${executionType} wrapper: "${fn}" is not a function.`)
+  //     process.exit(1)
+  //   }
 
-    try {
-      console.log(CLI.chalk.gray(`${currentDate()} ${executionType} of "${CLI.chalk.bold(taskName)}" started...`))
-      await Helpers.runSyncOrAsync(fn)
-      console.log(CLI.chalk.green(`${currentDate()} ${executionType} of "${CLI.chalk.bold(taskName)}" finish OK...`))
-    } catch (error) {
-      console.log(CLI.chalk.red(error));
-      console.log(`${currentDate()} ${executionType} of ${taskName} ERROR`)
-    }
+  //   try {
+  //     console.log(CLI.chalk.gray(`${currentDate()} ${executionType} of "${CLI.chalk.bold(taskName)}" started...`))
+  //     await Helpers.runSyncOrAsync(fn)
+  //     console.log(CLI.chalk.green(`${currentDate()} ${executionType} of "${CLI.chalk.bold(taskName)}" finish OK...`))
+  //   } catch (error) {
+  //     console.log(CLI.chalk.red(error));
+  //     console.log(`${currentDate()} ${executionType} of ${taskName} ERROR`)
+  //   }
 
-  }
+  // }
   //#endregion
-
-
-  static runSyncOrAsync(fn: Function) {
-    // let wasPromise = false;
-    let promisOrValue = fn()
-    if (promisOrValue instanceof Promise) {
-      // wasPromise = true;
-      promisOrValue = Promise.resolve(promisOrValue)
-    }
-    // console.log('was promis ', wasPromise)
-    return promisOrValue;
-  }
-
-
 
   static tryTransformParam(param) {
     if (typeof param === 'string') {
@@ -235,134 +221,11 @@ export class Helpers extends HelpersNg2Rest {
     return /^([a-zA-Z]|\-|\_|\@|\#|\$|\!|\^|\&|\*|\(|\))+$/.test(filePath);
   }
 
-  static log(proc: child_process.ChildProcess, stdoutMsg?: string | string[], stderMsg?: string | string[]) {
-    // processes.push(proc);
-    let isResolved = false;
-
-    if (_.isString(stdoutMsg)) {
-      stdoutMsg = [stdoutMsg];
-    }
-    if (_.isString(stderMsg)) {
-      stderMsg = [stderMsg];
-    }
-
-    return new Promise((resolve, reject) => {
-
-      // let stdio = [0,1,2]
-      proc.stdout.on('data', (message) => {
-        process.stdout.write(message);
-        const data: string = message.toString().trim();
-
-        if (!isResolved && _.isArray(stdoutMsg)) {
-          for (let index = 0; index < stdoutMsg.length; index++) {
-            const m = stdoutMsg[index];
-            if ((data.search(m) !== -1)) {
-              // Helpers.info(`[unitlOutputContains] Move to next step...`)
-              isResolved = true;
-              resolve(void 0);
-              break;
-            }
-          }
-        }
-        if (!isResolved && _.isArray(stderMsg)) {
-          for (let index = 0; index < stderMsg.length; index++) {
-            const rejectm = stderMsg[index];
-            if ((data.search(rejectm) !== -1)) {
-              // Helpers.info(`[unitlOutputContains] Rejected move to next step...`);
-              isResolved = true;
-              reject();
-              proc.kill('SIGINT');
-              break;
-            }
-          }
-        }
-
-        // console.log(data.toString());
-      })
-
-      proc.stdout.on('error', (data) => {
-        process.stdout.write(JSON.stringify(data))
-        // console.log(data);
-      })
-
-      proc.stderr.on('data', (message) => {
-        process.stderr.write(message);
-        // console.log(data.toString());
-        const data: string = message.toString().trim();
-        if (!isResolved && _.isArray(stderMsg)) {
-          for (let index = 0; index < stderMsg.length; index++) {
-            const rejectm = stderMsg[index];
-            if ((data.search(rejectm) !== -1)) {
-              // Helpers.info(`[unitlOutputContains] Rejected move to next step...`);
-              isResolved = true;
-              reject();
-              proc.kill('SIGINT');
-              break;
-            }
-          }
-        }
-
-      })
-
-      proc.stderr.on('error', (data) => {
-        process.stderr.write(JSON.stringify(data))
-        // console.log(data);
-      });
-    });
-
-  }
-
-  static createLink(target: string, link: string) {
-    if (this.isPlainFileOrFolder(link)) {
-      link = path.join(process.cwd(), link);
-    }
-
-    let command: string;
-    if (os.platform() === 'win32') {
-
-      if (target.startsWith('./')) {
-        target = path.win32.normalize(path.join(process.cwd(), path.basename(target)))
-      } else {
-        if (target === '.' || target === './') {
-          target = path.win32.normalize(path.join(process.cwd(), path.basename(link)))
-        } else {
-          target = path.win32.normalize(path.join(target, path.basename(link)))
-        }
-      }
-      if (fse.existsSync(target)) {
-        fse.unlinkSync(target);
-      }
-      target = path.win32.normalize(target)
-      if (link === '.' || link === './') {
-        link = process.cwd()
-      }
-      link = path.win32.normalize(link)
-      // console.log('taget', target)
-      // console.log('link', link)
-      command = "mklink \/D "
-        + target
-        + " "
-        + link
-        + " >nul 2>&1 "
-      // console.log('LINK COMMAND', command)
-    } else {
-      if (target.startsWith('./')) {
-        target = target.replace(/^\.\//g, '');
-      }
-      if (link === '.' || link === './') {
-        link = process.cwd()
-      }
-      command = `ln -sf "${link}" "${target}"`;
-    }
-    // console.log(command)
-    return command;
-  }
-
 
   static getRecrusiveFilesFrom(dir): string[] {
     let files = [];
     const readed = fse.readdirSync(dir).map(f => {
-      const fullPath = path.join(dir, f);
+      const fullPath = crossPlatformPath(path.join(dir, crossPlatformPath(f)));
       // console.log(`is direcotry ${fs.lstatSync(fullPath).isDirectory()} `, fullPath)
       if (fse.lstatSync(fullPath).isDirectory()) {
         this.getRecrusiveFilesFrom(fullPath).forEach(aa => files.push(aa))

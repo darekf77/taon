@@ -2,7 +2,6 @@ import { _ } from 'tnp-core';
 import * as io from 'socket.io-client';
 import { SYMBOL } from '../symbols';
 import { Log, Level } from 'ng2-logger';
-import { Helpers } from '../helpers';
 import { BASE_ENTITY } from '../framework/framework-entity';
 import { CLASS } from 'typescript-class-helpers';
 import { RealtimeBase } from './realtime';

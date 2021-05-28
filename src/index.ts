@@ -9,11 +9,11 @@ export {
 //#endregion
 
 export { ModelDataConfig, MDC } from './crud/model-data-config';
-export { Helpers } from './helpers';
 export { Models } from './models';
 export { RepeatTypeComponent } from './crud/formly-repeat-component';
 export { FormlyHorizontalWrapper } from './crud/formly-group-wrapper-component';
 export { Log, Level } from 'ng2-logger';
+
 
 import { _ } from 'tnp-core';
 import * as crudMorph from './crud';
@@ -22,10 +22,10 @@ import * as framework from './framework';
 import * as realtime from './realtime';
 import * as models from './models';
 import * as sym from './symbols';
-import * as helpers from './helpers';
+import { Helpers } from 'tnp-core';
 import { FrameworkContext } from './framework/framework-context';
 import * as context from './framework/framework-context';
-// import { Helpers } from 'tnp-helpers'; // circural dep
+import { MorphiHelpers } from './helpers';
 
 //#region @backend
 import { generate } from 'password-hash';
@@ -49,17 +49,17 @@ export class TypeormRepository<T>
 
 
 export namespace Morphi {
-  export const IsNode = helpers.Helpers.isNode;
-  export const IsBrowser = helpers.Helpers.isBrowser;
+  export const IsNode = Helpers.isNode;
+  export const IsBrowser = Helpers.isBrowser;
 
   //#region @backend
   export function setIsBackend() {
-    helpers.Helpers.setIsBackend();
+    Helpers.setIsBackend();
   }
   //#endregion
 
-  export const isNode = helpers.Helpers.isNode;
-  export const isBrowser = helpers.Helpers.isBrowser;
+  export const isNode = Helpers.isNode;
+  export const isBrowser = Helpers.isBrowser;
   export import FrameworkContext = context.FrameworkContext;
   export function destroyContext(contextOrHost: FrameworkContext | string) {
     if (_.isString(contextOrHost)) {
@@ -75,7 +75,7 @@ export namespace Morphi {
   }
 
   export function getHttpPathBy<T = Function>(classFn: new () => T, port: number, method: (keyof T)) {
-    return `http://localhost:${port}${helpers.Helpers.getPathFor(classFn as any)}/${method}`;
+    return `http://localhost:${port}${MorphiHelpers.getPathFor(classFn as any)}/${method}`;
   }
 
   /**
@@ -94,7 +94,7 @@ export namespace Morphi {
   //#region @backend
   export import BASE_CONTROLLER_INIT = framework.BASE_CONTROLLER_INIT;
   export import Repository = framework.Repository;
-  export const getResponseValue = helpers.Helpers.getResponseValue;
+  export const getResponseValue = MorphiHelpers.getResponseValue;
 
   // export const authenticate = pass.authenticate
   //#endregion

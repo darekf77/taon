@@ -4,6 +4,7 @@ import {
   path,
   fse,
   crossPlatformPath,
+  Helpers,
 } from 'tnp-core';
 import { BrowserCodeCut } from './browser-code-cut';
 import { config } from 'tnp-config';
@@ -14,7 +15,7 @@ export class PackagesRecognition {
 
   static FILE_NAME_ISOMORPHIC_PACKAGES = FILE_NAME_ISOMORPHIC_PACKAGES;
   static From(cwd: string) {
-    return new PackagesRecognition( crossPlatformPath(cwd) );
+    return new PackagesRecognition(crossPlatformPath(cwd));
   }
 
   protected recognizedPackages: string[];
@@ -27,7 +28,8 @@ export class PackagesRecognition {
     return _.isArray(this.recognizedPackages) ? this.recognizedPackages.length : 0;
   }
 
-  start(force = false) {
+  start(force?: boolean, reasonToSearch?: string) {
+    Helpers.log(`[morphi] ${reasonToSearch}`);
     const pjPath = crossPlatformPath(path.join(this.cwd, FILE_NAME_ISOMORPHIC_PACKAGES));
     if (!fse.existsSync(pjPath)) {
       fse.writeJSONSync(pjPath, {}, { encoding: 'utf8' });
@@ -49,8 +51,9 @@ export class PackagesRecognition {
     }
     const node_modules = crossPlatformPath(path.join(this.cwd, config.folder.node_modules));
 
-    let folders = fse.readdirSync(node_modules)
+    let folders = Helpers.foldersFrom(node_modules)
     folders = folders.filter(packageName => {
+      Helpers.log(`Checking package node_modules/${packageName}`)
       try {
         return this.checkIsomorphic(node_modules, packageName);
       } catch (error) {
@@ -64,7 +67,7 @@ export class PackagesRecognition {
   protected updateCurrentPackageJson() {
     // console.log('updateCurrentPackageJsonupdateCurrentPackageJsonupdateCurrentPackageJson')
     try {
-      const pjPath = path.join(this.cwd, FILE_NAME_ISOMORPHIC_PACKAGES);
+      const pjPath = crossPlatformPath(path.join(this.cwd, FILE_NAME_ISOMORPHIC_PACKAGES));
       if (!fse.existsSync(pjPath)) {
         fse.writeJSONSync(pjPath, {}, { encoding: 'utf8' });
       }
@@ -84,8 +87,8 @@ export class PackagesRecognition {
   }
 
   protected checkIsomorphic(node_modules: string, packageName: string) {
-    const browser = crossPlatformPath(path.join(node_modules, packageName, config.folder.browser));
-    return fse.existsSync(browser)
+    const browser = crossPlatformPath(path.join(crossPlatformPath(node_modules), packageName, config.folder.browser));
+    return Helpers.exists(browser)
   }
 
 }

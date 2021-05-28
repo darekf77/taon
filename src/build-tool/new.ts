@@ -12,16 +12,16 @@ export function copyExampleTo(folder: string, exampleType: 'examples' | 'super-s
     }
   };
   let example = {
-    dist: path.join(crossPlatformPath(__dirname), '..', '..', exampleType),
-    bundle: path.join(crossPlatformPath(__dirname), '..', exampleType)
+    dist: crossPlatformPath(path.join(crossPlatformPath(__dirname), '..', '..', exampleType)),
+    bundle: crossPlatformPath(path.join(crossPlatformPath(__dirname), '..', exampleType))
   }
-  let destinationPath = path.join(process.cwd(), folder)
+  let destinationPath = crossPlatformPath(path.join(crossPlatformPath(process.cwd()), folder))
   const distMode = fse.existsSync(example.dist)
   let sourcePath = distMode ? example.dist : example.bundle;
-  if (os.platform() === 'win32') {
-    sourcePath = path.win32.normalize(sourcePath);
-    destinationPath = path.win32.normalize(destinationPath)
-  }
+
+  sourcePath = crossPlatformPath(sourcePath);
+  destinationPath = crossPlatformPath(destinationPath)
+
   console.log(CLI.chalk.green(`Creating example structure... please wait.`));
   if (distMode) {
     fse.copySync(sourcePath, destinationPath, options);

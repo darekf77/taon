@@ -3,6 +3,7 @@ import {
   _,
   path,
   fse,
+  crossPlatformPath,
 } from 'tnp-core';
 import {  ReplaceOptions } from './models';
 import { Models } from '../models';
@@ -22,7 +23,7 @@ export class CodeCut {
   files() {
     // console.log('options in fiels', this.options)
     this.filesPathes.forEach((relativePathToFile) => {
-      const absolutePathToFile = path.join(this.cwd, relativePathToFile)
+      const absolutePathToFile = crossPlatformPath(path.join(this.cwd, relativePathToFile))
       // console.log('process', absolutePathToFile)
       this.file(absolutePathToFile);
     })

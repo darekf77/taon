@@ -1,6 +1,6 @@
 //#region @backend
 import { _ } from 'tnp-core';
-import { Helpers } from '../helpers';
+import { MorphiHelpers } from '../helpers';
 import { getTransformFunction, singleTransform } from './transform-to-browser';
 import { SYMBOL } from '../symbols';
 import * as express from 'express';
@@ -102,8 +102,8 @@ export class EntityProcess {
 
   setHeaders() {
     const { include } = this.mdc || { include: [] };
-    const cleaned = Helpers.JSON.cleaned(this.data, void 0, { breadthWalk: true, include })
-    this.entityMapping = Helpers.Mapping.decode(cleaned, !this.advancedManipulation);
+    const cleaned = MorphiHelpers.JSON.cleaned(this.data, void 0, { breadthWalk: true, include })
+    this.entityMapping = MorphiHelpers.Mapping.decode(cleaned, !this.advancedManipulation);
 
     this.response.set(SYMBOL.MAPPING_CONFIG_HEADER, JSON.stringify(this.entityMapping));
     if (this.advancedManipulation) {

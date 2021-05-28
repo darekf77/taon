@@ -1,6 +1,6 @@
 //#region @backend
-import { ps, crossPlatformPath } from 'tnp-core';
-import { Helpers } from '../helpers';
+import { ps, crossPlatformPath, Helpers } from 'tnp-core';
+import { MorphiHelpers } from '../helpers';
 import { copyExampleTo } from './new';
 import { IncrementalBuildProcess } from '../build/incremental-build-process';
 import { BrowserCodeCut } from '../build/browser-code-cut';
@@ -65,9 +65,9 @@ export async function run(argsv: string[], morphiEnvironmentCheck = true) {
         console.log(`To few arguments for linking function...`);
         process.exit(0)
       }
-      const link = argsv[3]
-      let target = argsv[4]
-      child_process.execSync(Helpers.createLink(target, link))
+      const link = argsv[4]
+      let target = argsv[3]
+      Helpers.createSymLink(target, link);
       process.exit(0)
     } else if (commandName === '-v') {
       console.log(JSON.parse(fse.readFileSync(path.join(crossPlatformPath(__dirname), '../..', 'package.json').toString(), 'utf8').toString()).version)

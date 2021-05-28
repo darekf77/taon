@@ -1,4 +1,4 @@
-import { _ } from 'tnp-core';
+import { _, Helpers } from 'tnp-core';
 import { CLASS } from 'typescript-class-helpers';
 import { SYMBOL } from '../symbols';
 import { ModelDataConfig } from './model-data-config';
@@ -10,7 +10,7 @@ import { Models } from '../models';
 //#region @backend
 import { Repository, Connection, getRepository } from 'typeorm';
 import { tableNameFrom } from '../framework/framework-helpers';
-import { Helpers } from '../helpers';
+import { MorphiHelpers } from '../helpers';
 import { IBASE_ENTITY } from '../framework/framework-entity';
 import { FrameworkContext } from '../framework/framework-context';
 declare const global: any;

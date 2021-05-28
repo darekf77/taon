@@ -1,9 +1,9 @@
 import {
-  _,
+  _, Helpers,
 } from 'tnp-core';
 // import { Subject } from 'rxjs/Subject'; // TODO use rxjs to detec change
 // import { Observable } from 'rxjs/Observable';
-import { Helpers } from '../helpers';
+import { MorphiHelpers } from '../helpers';
 import { Mapping } from 'ng2-rest';
 import { CLASS } from 'typescript-class-helpers';
 
@@ -92,10 +92,10 @@ export class ModelDataConfig {
 
     if (config && _.isString(config['config'])) {
       // console.log('from nested config')
-      this.config = Helpers.parseJSONwithStringJSONs(JSON.parse(config['config'])) as any;
+      this.config = MorphiHelpers.parseJSONwithStringJSONs(JSON.parse(config['config'])) as any;
     } else if (config) {
       // console.log('from normal interface config')
-      this.config = Helpers.parseJSONwithStringJSONs(config) as any;
+      this.config = MorphiHelpers.parseJSONwithStringJSONs(config) as any;
     } else {
       // console.log('from default config')
       this.config = this.defaultConfig;

@@ -3,7 +3,8 @@ import { _ } from 'tnp-core';
 import { Models } from '../models';
 import { Resource } from 'ng2-rest';
 import { Models as Ng2RestModels } from 'ng2-rest';
-import { Helpers } from '../helpers';
+import { Helpers } from 'tnp-core';
+import { MorphiHelpers } from '../helpers';
 import { FrameworkContext } from '../framework/framework-context';
 
 export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodConfig: Models.Rest.MethodConfig, expressPath) {
@@ -61,7 +62,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
       }
       if (currentParam.paramType === 'Query') {
         if (currentParam.paramName) {
-          const mapping = Helpers.Mapping.decode(param, !FrameworkContext.isProductionMode);
+          const mapping = MorphiHelpers.Mapping.decode(param, !FrameworkContext.isProductionMode);
           if (mapping) {
             rest.headers.set(
               `${SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${currentParam.paramName}`,
@@ -69,7 +70,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
           }
           queryParams[currentParam.paramName] = param;
         } else {
-          const mapping = Helpers.Mapping.decode(param, !FrameworkContext.isProductionMode);
+          const mapping = MorphiHelpers.Mapping.decode(param, !FrameworkContext.isProductionMode);
           if (mapping) {
             rest.headers.set(
               SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS,
@@ -96,7 +97,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
       }
       if (currentParam.paramType === 'Body') {
         if (currentParam.paramName) {
-          const mapping = Helpers.Mapping.decode(param, !FrameworkContext.isProductionMode);
+          const mapping = MorphiHelpers.Mapping.decode(param, !FrameworkContext.isProductionMode);
           if (mapping) {
             rest.headers.set(
               `${SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS}${currentParam.paramName}`,
@@ -104,7 +105,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
           }
           item[currentParam.paramName] = param;
         } else {
-          const mapping = Helpers.Mapping.decode(param, !FrameworkContext.isProductionMode);
+          const mapping = MorphiHelpers.Mapping.decode(param, !FrameworkContext.isProductionMode);
           if (mapping) {
             rest.headers.set(
               SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS,
@@ -117,7 +118,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
     // debugger;
     if (typeof item === 'object') {
       let circuralFromItem = []
-      item = Helpers.JSON.parse(Helpers.JSON.stringify(item, void 0, void 0, circs => {
+      item = MorphiHelpers.JSON.parse(MorphiHelpers.JSON.stringify(item, void 0, void 0, circs => {
         circuralFromItem = circs;
       }))
       rest.headers.set(
@@ -128,7 +129,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
 
     if (typeof queryParams === 'object') {
       let circuralFromQueryParams = []
-      queryParams = Helpers.JSON.parse(Helpers.JSON.stringify(queryParams, void 0, void 0, circs => {
+      queryParams = MorphiHelpers.JSON.parse(MorphiHelpers.JSON.stringify(queryParams, void 0, void 0, circs => {
         circuralFromQueryParams = circs;
       }))
 

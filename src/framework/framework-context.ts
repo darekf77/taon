@@ -1,5 +1,5 @@
-import { _ } from 'tnp-core';
-import { Helpers } from '../helpers';
+import { _, Helpers } from 'tnp-core';
+import { MorphiHelpers } from '../helpers';
 import { StartOptions, FrameworkMode } from './framework-models';
 import { FrameworkContextBrowserApp } from './framework-context-browser-app';
 import { CLASS } from 'typescript-class-helpers';

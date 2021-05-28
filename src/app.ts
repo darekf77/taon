@@ -89,7 +89,7 @@ const start = async (port = 3000) => {
   }
   //#region @backend
   if (Morphi.isNode) {
-    const dbfile = path.join(process.cwd(), config.database);
+    const dbfile = crossPlatformPath(path.join(crossPlatformPath(process.cwd()), config.database));
     // console.log(`dbfile: ${dbfile}`)
     // setTimeout(() => {
 

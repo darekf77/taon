@@ -1,5 +1,5 @@
 import type { FrameworkContext } from './framework-context';
-import { Helpers } from 'ng2-logger';
+import { Helpers } from 'tnp-core';
 import { Models } from '../models';
 import { SYMBOL } from '../symbols';
 import { CLASS } from 'typescript-class-helpers';

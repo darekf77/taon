@@ -1,7 +1,7 @@
 import { _ } from 'tnp-core';
 import { StartOptions } from './framework-models';
 import { FrameworkContext } from './framework-context';
-import { Helpers } from 'ng2-logger';
+import { Helpers } from 'tnp-core';
 
 export function start(options: StartOptions) {
   //#region @backend

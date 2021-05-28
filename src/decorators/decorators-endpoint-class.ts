@@ -6,9 +6,9 @@ import {
 } from '../init-method';
 export { CLASS } from 'typescript-class-helpers';
 import { CLASS } from 'typescript-class-helpers';
-import { _ } from 'tnp-core';
+import { _, Helpers } from 'tnp-core';
 import { SYMBOL } from '../symbols';
-import { Helpers } from '../helpers';
+import { MorphiHelpers } from '../helpers';
 import { activateBaseCrud } from '../crud/activate-base-crud';
 import { Models } from '../models';
 import { FrameworkContext } from '../framework/framework-context';
@@ -45,13 +45,13 @@ export function ENDPOINT(options?: {
           .slice(configs, 1)
           .reverse()
           .map(bc => {
-            if (Helpers.isGoodPath(bc.path)) {
+            if (MorphiHelpers.isGoodPath(bc.path)) {
               return bc.path
             }
             return CLASS.getName(bc.classReference);
           }).join('/')
 
-        if (Helpers.isGoodPath(targetPath)) {
+        if (MorphiHelpers.isGoodPath(targetPath)) {
           classConfig.calculatedPath = targetPath;
         } else {
           classConfig.calculatedPath = `/${parentscalculatedPath}/${CLASS.getName(target)}`
@@ -76,7 +76,7 @@ export function ENDPOINT(options?: {
         Object.keys(classConfig.methods).forEach(methodName => {
           const methodConfig: Models.Rest.MethodConfig = classConfig.methods[methodName];
           const type: Models.Rest.HttpMethod = methodConfig.type;
-          const expressPath = Helpers.getExpressPath(classConfig, methodConfig);
+          const expressPath = MorphiHelpers.getExpressPath(classConfig, methodConfig);
           // console.log('initfn expressPath', expressPath)
           if (Helpers.isNode) {
             //#region @backend

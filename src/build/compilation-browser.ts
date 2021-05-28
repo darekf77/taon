@@ -4,8 +4,9 @@ import {
   path,
   fse,
   rimraf,
+  crossPlatformPath,
 } from 'tnp-core';
-import { Helpers } from '../helpers';
+import { MorphiHelpers } from '../helpers';
 import { CodeCut } from './browser-code-cut';
 import { BackendCompilation } from './compilation-backend';
 import { IncCompiler } from 'incremental-compiler';
@@ -16,7 +17,7 @@ export class BroswerCompilation extends BackendCompilation {
 
   public get compilationFolderPath() {
     if (_.isString(this.sourceOutBrowser) && _.isString(this.cwd)) {
-      return path.join(this.cwd, this.sourceOutBrowser);
+      return crossPlatformPath(path.join(this.cwd, this.sourceOutBrowser));
     }
   }
   compilerName = 'Browser standard compiler'
@@ -47,7 +48,7 @@ export class BroswerCompilation extends BackendCompilation {
     // console.log(`copying ${path.join(this.cwd, this.location)}/ to  ${this.compilationFolderPath} dereference: ${dereference},`)
 
     // TODO_NOT_IMPORTANT this may be replaced by filesPathes
-    Helpers.System.Operations.tryCopyFrom(`${path.join(this.cwd, this.location)}/`, this.compilationFolderPath, {
+    MorphiHelpers.System.Operations.tryCopyFrom(`${crossPlatformPath(path.join(this.cwd, this.location))}/`, this.compilationFolderPath, {
       dereference,
       filter: (src: string, dest: string) => {
         return copyToBrowserSrcCodition(src);
@@ -57,8 +58,8 @@ export class BroswerCompilation extends BackendCompilation {
 
     this.initCodeCut(files)
     // tsconfig.browser.json
-    const source = path.join(this.cwd, this.tsConfigBrowserName);
-    const dest = path.join(this.cwd, this.sourceOutBrowser, this.tsConfigName);
+    const source = crossPlatformPath(path.join(this.cwd, this.tsConfigBrowserName));
+    const dest = crossPlatformPath(path.join(this.cwd, this.sourceOutBrowser, this.tsConfigName));
 
     fse.copyFileSync(source, dest)
     this.codecut.files();
@@ -67,7 +68,8 @@ export class BroswerCompilation extends BackendCompilation {
 
   initCodeCut(filesPathes: string[]) {
     filesPathes = filesPathes.map(f => {
-      return f.replace(path.join(this.cwd, this.location), '').replace(/^\//, '');
+      f = crossPlatformPath(f);
+      return f.replace(crossPlatformPath(path.join(this.cwd, this.location)), '').replace(/^\//, '');
     })
     this.codecut = new CodeCut(this.compilationFolderPath, filesPathes, {
       replacements: [
@@ -82,12 +84,12 @@ export class BroswerCompilation extends BackendCompilation {
 
   @IncCompiler.methods.AsyncAction()
   async asyncAction(event: IncCompiler.Change) {
-    const absoluteFilePath = event.fileAbsolutePath;
+    const absoluteFilePath = crossPlatformPath(event.fileAbsolutePath);
     // noting here for backend
     // console.log('[asyncAction][morphi][cb] event.fileAbsolutePath', event.fileAbsolutePath)
-    const relativeFilePath = absoluteFilePath.replace(path.join(this.cwd, this.location), '');
+    const relativeFilePath = absoluteFilePath.replace(crossPlatformPath(path.join(this.cwd, this.location)), '');
     // console.log('relativeFilePath', relativeFilePath)
-    const destinationFilePath = path.join(this.cwd, this.sourceOutBrowser, relativeFilePath);
+    const destinationFilePath = crossPlatformPath(path.join(this.cwd, this.sourceOutBrowser, relativeFilePath));
     // console.log('this.cwd', this.cwd)
     // console.log('this.sourceOutBrowser', this.sourceOutBrowser)
     // console.log('destinationFilePath', destinationFilePath)

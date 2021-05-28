@@ -1,5 +1,5 @@
 import { _ } from 'tnp-core';
-import { Helpers } from '../helpers';
+import { MorphiHelpers } from '../helpers';
 import { CLASS } from 'typescript-class-helpers';
 import type { FrameworkContext } from '../framework/framework-context';
 
@@ -14,7 +14,7 @@ export function activateBaseCrud(
   entites: Function[],
   context: FrameworkContext) {
 
-  if (_.isFunction(target) && Helpers.hasParentClassWithName(target, 'BaseCRUD') &&
+  if (_.isFunction(target) && MorphiHelpers.hasParentClassWithName(target, 'BaseCRUD') &&
     !abstractClasses.includes(CLASS.getName(target))) {
     if (_.isUndefined(entity)) {
       if (CLASS.getName(target) === CLASS.getName(target['__proto__'])) {
