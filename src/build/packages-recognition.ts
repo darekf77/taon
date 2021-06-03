@@ -29,60 +29,56 @@ export class PackagesRecognition {
   }
 
   start(force?: boolean, reasonToSearch?: string) {
-    Helpers.log(`[morphi] ${reasonToSearch}`);
+    debugger
+    Helpers.log(`[morphi][force = ${force}] ${reasonToSearch}`);
     const pjPath = crossPlatformPath(path.join(this.cwd, FILE_NAME_ISOMORPHIC_PACKAGES));
-    if (!fse.existsSync(pjPath)) {
-      fse.writeJSONSync(pjPath, {}, { encoding: 'utf8' });
+    if (!Helpers.exists(pjPath)) {
+      Helpers.writeJson(pjPath, {});
     }
     if (!force) {
       try {
-        const pj = fse.readJSONSync(pjPath, {
-          encoding: 'utf8'
-        });
+        const pj = Helpers.readJson(pjPath);
         if (_.isArray(pj[config.array.isomorphicPackages])) {
           this.recognizedPackages = pj[config.array.isomorphicPackages];
           BrowserCodeCut.IsomorphicLibs = _.cloneDeep(this.recognizedPackages);
-          // console.log("RECOGNIZEDDDDD in ", pjPath)
+          Helpers.log(`[morphi] Recognized (${this.recognizedPackages}) in ${pjPath}`)
           return;
         }
       } catch (error) {
-
+        Helpers.log(`[morphi] ERROR not recognized in`)
       }
     }
     const node_modules = crossPlatformPath(path.join(this.cwd, config.folder.node_modules));
 
-    let folders = Helpers.foldersFrom(node_modules)
-    folders = folders.filter(packageName => {
-      Helpers.log(`Checking package node_modules/${packageName}`)
-      try {
-        return this.checkIsomorphic(node_modules, packageName);
-      } catch (error) {
-        return false;
-      }
-    });
+    let folders = Helpers.foldersFrom(node_modules);
+    folders = folders
+      .map(f => path.basename(f))
+      .filter(packageName => {
+        Helpers.log(`Checking package node_modules/${packageName}`)
+        try {
+          return this.checkIsomorphic(node_modules, packageName);
+        } catch (error) {
+          return false;
+        }
+      });
     this.recognizedPackages = folders;
     this.updateCurrentPackageJson()
   }
 
   protected updateCurrentPackageJson() {
-    // console.log('updateCurrentPackageJsonupdateCurrentPackageJsonupdateCurrentPackageJson')
+    Helpers.log('[morphi] updateCurrentPackageJson')
     try {
       const pjPath = crossPlatformPath(path.join(this.cwd, FILE_NAME_ISOMORPHIC_PACKAGES));
-      if (!fse.existsSync(pjPath)) {
-        fse.writeJSONSync(pjPath, {}, { encoding: 'utf8' });
+      if (!Helpers.exists(pjPath)) {
+        Helpers.writeJson(pjPath, {});
       }
-      const pj = fse.readJSONSync(pjPath, {
-        encoding: 'utf8'
-      });
-      pj[config.array.isomorphicPackages] = this.recognizedPackages
-      fse.writeJSONSync(pjPath, pj, {
-        encoding: 'utf8',
-        spaces: 2
-      })
+      const pj = Helpers.readJson(pjPath);
+      pj[config.array.isomorphicPackages] = this.recognizedPackages;
+      Helpers.writeJson(pjPath, pj);
       BrowserCodeCut.IsomorphicLibs = _.cloneDeep(this.recognizedPackages);
     } catch (e) {
-      console.log(e)
-      console.error(`Error during update ismorphic packages list cache`);
+      Helpers.log(`[morphi]`, e)
+      Helpers.log(`[morphi] Error during update ismorphic packages list cache`);
     }
   }
 
