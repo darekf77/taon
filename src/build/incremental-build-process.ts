@@ -57,10 +57,10 @@ export class IncrementalBuildProcess {
 
   private recreateBrowserLinks(bc: BroswerCompilation) {
     const outDistPath = crossPlatformPath(path.join(bc.cwd, bc.outFolder));
-    console.log(`recreateBrowserLinks: outDistPath: ${outDistPath}`)
+    Helpers.log(`recreateBrowserLinks: outDistPath: ${outDistPath}`)
     MorphiHelpers.System.Operations.tryRemoveDir(outDistPath)
     const targetOut = crossPlatformPath(path.join(bc.cwd, bc.backendOutFolder, bc.outFolder))
-    console.log(`recreateBrowserLinks: targetOut: ${targetOut}`)
+    Helpers.log(`recreateBrowserLinks: targetOut: ${targetOut}`)
     Helpers.createSymLink(targetOut, outDistPath, { continueWhenExistedFolderDoesntExists: true });
   }
 
