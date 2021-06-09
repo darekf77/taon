@@ -1,0 +1,23 @@
+{
+  "resources": [
+    "README.md"
+  ],
+  "isCoreProject": true,
+  "useFramework": true,
+  "type": "isomorphic-lib",
+  "required": [],
+  "version": "v3",
+  "overrided": {
+    "ignoreDepsPattern": [],
+    "includeAsDev": [],
+    "includeOnly": [],
+    "dependencies": {},
+    "linkedFolders": []
+  },
+  "linkedProjects": [],
+  "libReleaseOptions": {
+    "nodts": false,
+    "obscure": false,
+    "ugly": false
+  }
+}

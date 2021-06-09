@@ -1,0 +1,13 @@
+{
+  "files.exclude": {},
+  "workbench.colorCustomizations": {
+    "activityBar.background": "#d11ab3",
+    "activityBar.foreground": "#313129"
+  },
+  "editor.rulers": [
+    100,
+    120
+  ],
+  "html.format.wrapAttributes": "force-aligned",
+  "workbench.colorTheme": "Default Light+"
+}
