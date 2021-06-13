@@ -1,7 +1,8 @@
 //#region @backend
+import { Models } from 'tnp-models';
 
 export interface ReplaceOptions {
-    replacements: (string | [string, string])[];
+  replacements: (Models.dev.Replacement | [Models.dev.Replacement, string])[];
 }
 
 

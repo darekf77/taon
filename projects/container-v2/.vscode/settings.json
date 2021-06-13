@@ -1,8 +1,8 @@
 {
   "workbench.colorCustomizations": {
-    "activityBar.background": "#999694",
+    "activityBar.background": "#a86f49",
     "activityBar.foreground": "#000000",
-    "statusBar.background": "#999694"
+    "statusBar.background": "#a86f49"
   },
   "workbench.colorTheme": "Default Light+",
   "files.exclude": {}

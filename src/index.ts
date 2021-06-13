@@ -63,10 +63,10 @@ export namespace Morphi {
   export import FrameworkContext = context.FrameworkContext;
   export function destroyContext(contextOrHost: FrameworkContext | string) {
     if (_.isString(contextOrHost)) {
-      console.log(`[morphi] Destroying context by host: ${contextOrHost}`)
+      Helpers.log(`[morphi] Destroying context by host: ${contextOrHost}`)
       const context = FrameworkContext.findByHost(contextOrHost);
       if (!context) {
-        console.warn(`[morphi] no context to delete by host: "${contextOrHost}"`);
+        Helpers.log(`[morphi] no context to delete by host: "${contextOrHost}"`);
         return;
       }
       contextOrHost = context;
@@ -121,6 +121,9 @@ export namespace Morphi {
   export namespace CRUD {
     export import ModelDataConfig = crudMorph.ModelDataConfig;
     export import Base = crudMorph.BaseCRUD;
+    //#region @backend
+    export import DB = crudMorph.DbCrud;
+    //#endregion
   }
 
   export namespace Formly {

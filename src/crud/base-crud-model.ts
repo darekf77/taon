@@ -13,14 +13,14 @@ import { tableNameFrom } from '../framework/framework-helpers';
 import { MorphiHelpers } from '../helpers';
 import { IBASE_ENTITY } from '../framework/framework-entity';
 import { FrameworkContext } from '../framework/framework-context';
+import { DbCrud } from './db-crud.backend';
 declare const global: any;
-
+import { CrudHelpers } from './crud-helpers.backend';
 //#endregion
 
 @CLASS.NAME('BaseCRUD')
 @__ENDPOINT(BaseCRUD)
-export abstract class BaseCRUD<T>  {
-
+export abstract class BaseCRUD<T> {
   //#region @backend
   connection: Connection;
   public get repository(): Repository<T> {
@@ -35,6 +35,10 @@ export abstract class BaseCRUD<T>  {
     this.init()
   }
 
+  //#region @backend
+  readonly db: DbCrud<T>;
+  //#endregion
+
   private init() {
     //#region @backend
     const context = FrameworkContext.findForTraget(this);
@@ -42,9 +46,11 @@ export abstract class BaseCRUD<T>  {
 
     if (Helpers.isNode && this.entity && this.connection && this.entity[SYMBOL.HAS_TABLE_IN_DB]) {
       this.repo = this.connection.getRepository(this.entity as any)
-      !global.hideLog && console.log(`Base CRUD inited for: ${(this.entity as any).name}`)
+      Helpers.log(`Base CRUD inited for: ${(this.entity as any).name}`);
+      // @ts-ignore
+      this.db = DbCrud.from(this.connection, this.entity);
     } else {
-      !global.hideLog && console.log(`Base CRUD NOT inited for: ${this.entity && (this.entity as any).name}`)
+      Helpers.log(`Base CRUD NOT inited for: ${this.entity && (this.entity as any).name}`)
     }
     //#endregion
   }
@@ -59,11 +65,11 @@ export abstract class BaseCRUD<T>  {
     //#region @backendFunc
     return async (request, response) => {
 
-      const model = await getModel(id, config, this.repo);
+      const model = await CrudHelpers.getModel(id, config, this.repo);
       if (model === void 0) {
         return;
       }
-      preventUndefinedModel(model, config, id)
+      CrudHelpers.preventUndefinedModel(model, config, id)
       let value = model[property];
       let result: any;
       if (_.isString(value) || _.isArray(value)) {
@@ -83,10 +89,8 @@ export abstract class BaseCRUD<T>  {
     //#region @backendFunc
     return async (request, response) => {
       if (this.repo) {
-        const totalCount = await this.repo.count();
-        const models = await getModels(config, this.repo);
+        const { models, totalCount } = await this.db.getAll(config);
         response.setHeader(SYMBOL.X_TOTAL_COUNT, totalCount)
-        prepareData(models, config)
         return models;
       }
       return [];
@@ -98,9 +102,7 @@ export abstract class BaseCRUD<T>  {
   getBy(@Path(`id`) id: number | string, @Query('config') config?: ModelDataConfig): Models.Response<T> {
     //#region @backendFunc
     return async () => {
-
-      const model = await getModel(id, config, this.repo);
-      prepareData(model, config, id)
+      const { model } = await this.db.getBy(id, config);
       return model;
     }
     //#endregion
@@ -112,16 +114,7 @@ export abstract class BaseCRUD<T>  {
     //#region @backendFunc
 
     return async () => {
-
-      for (const key in item) {
-        if (item.hasOwnProperty(key) && typeof item[key] !== 'object') {
-          await this.repo.query(`UPDATE "${tableNameFrom(this.entity as any)}" SET "${key}"="${item[key]}" WHERE "id"="${id}"`)
-        }
-      }
-      // console.log('update ok!')
-      let model = await getModel(id, config, this.repo);
-
-      prepareData(model, config, id)
+      const { model } = await this.db.updateById(id, item as any, config);
       return model;
 
     }
@@ -142,19 +135,18 @@ export abstract class BaseCRUD<T>  {
   deleteById(@Path(`id`) id: number, @Query('config') config?: ModelDataConfig): Models.Response<T> {
     //#region @backendFunc
     return async () => {
-      const deletedEntity = await getModel(id, config, this.repo);
-      await this.repo.remove(id);
-      prepareData(deletedEntity, config, id)
-      return deletedEntity;
+      const { model } = await this.db.deleteById(id, config);
+      return model;
     }
     //#endregion
   }
 
   @DELETE(`/bulk/${SYMBOL.CRUD_TABLE_MODEL}/:id`)
-  bulkDelete(@Path(`id`) id: (number | string)[], @Query('config') config?: ModelDataConfig): Models.Response<(number | string)[]> {
+  bulkDelete(@Path(`ids`) ids: (number | string)[], @Query('config') config?: ModelDataConfig): Models.Response<(number | string | T)[]> {
     //#region @backendFunc
     return async () => {
-      return [];
+      const { models } = await this.db.bulkDelete(ids, config);
+      return models;
     }
     //#endregion
   }
@@ -164,25 +156,18 @@ export abstract class BaseCRUD<T>  {
   create(@Body() item: T, @Query('config') config?: ModelDataConfig): Models.Response<T> {
     //#region @backendFunc
     return async () => {
-
-      let model = await this.repo.create(item)
-      model = await this.repo.save(model);
-      const { id } = model;
-
-      model = await getModel(id, config, this.repo);
-
-      prepareData(model, config, id)
+      const { model } = await this.db.create(item as any, config);
       return model;
     }
     //#endregion
   }
 
   @POST(`/bulk/${SYMBOL.CRUD_TABLE_MODEL}/`)
-  bulkCreate(@Body() item: T, @Query('config') config?: ModelDataConfig): Models.Response<T[]> {
+  bulkCreate(@Body() items: T, @Query('config') config?: ModelDataConfig): Models.Response<T[]> {
     //#region @backendFunc
     return async () => {
-      // TODO
-      return [];
+      const { models } = await this.db.bulkCreate(items as any, config);
+      return models;
     }
     //#endregion
   }
@@ -191,80 +176,4 @@ export abstract class BaseCRUD<T>  {
 
 //#region @backend
 
-async function getModels(config: ModelDataConfig, repo: any) {
-  const obj = {
-    where: config && config.db && config.db.where,
-    join: config && config.db && config.db.join,
-    skip: config && config.db && config.db.skip,
-    take: config && config.db && config.db.take
-  };
-  const toDelete = [];
-  Object.keys(obj).forEach(key => {
-    if (_.isNil(obj[key])) {
-      toDelete.push(key);
-    }
-  });
-
-  toDelete.forEach(key => {
-    delete obj[key];
-  });
-
-  let res = await repo.find(obj);
-  return res;
-}
-
-async function getModel(id: number | string, config: ModelDataConfig, repo: any) {
-  if (!repo) {
-    return void 0;
-  }
-  let res = await repo.findOne({
-    where: _.merge({ id }, config && config.db && config.db.where),
-    join: config && config.db && config.db.join
-  })
-  return res;
-}
-
-function prepareData(data: IBASE_ENTITY | IBASE_ENTITY[], config: ModelDataConfig, id?: number | string) {
-  if (data === void 0) {
-    return;
-  }
-  preventUndefinedModel(data, config, id);
-  if (_.isObject(config)) {
-    if (!(config instanceof ModelDataConfig)) {
-      console.error(`Config not instance of ModelDataConfig`)
-      return
-    }
-    if (_.isArray(data)) {
-      data.forEach(d => d.modelDataConfig = config)
-    } else if (_.isObject(data)) {
-      data.modelDataConfig = config;
-    }
-  }
-}
-
-function preventUndefinedModel(model, config, id) {
-  if (_.isUndefined(model)) {
-    console.error(config)
-    throw `Bad update by id, config, id: ${id}`
-  }
-}
-
-function forObjectPropertiesOf(item) {
-  return {
-    async run(action: (r: Repository<any>, partialItem: Object, entityClass?: Function, ) => Promise<any>) {
-      const objectPropertiesToUpdate = [];
-      Object.keys(item).forEach(propertyName => {
-        const partialItem = item[propertyName];
-        if (_.isObject(partialItem) && !_.isArray(partialItem)) {
-          const entityClass = CLASS.getFromObject(partialItem);
-          const repo = entityClass && entityClass[SYMBOL.HAS_TABLE_IN_DB] && getRepository(entityClass);
-          if (repo) {
-            objectPropertiesToUpdate.push(action(repo, partialItem, entityClass))
-          }
-        }
-      })
-      return Promise.all(objectPropertiesToUpdate);
-    }
-  }
-}
 //#endregion
