@@ -214,7 +214,7 @@
     "main": "index.js"
   },
   "name": "morphi",
-  "version": "4.0.14",
+  "version": "4.0.15",
   "description": "Isomorphic solution for expressjs and angular5",
   "main": "index.js",
   "scripts": {
