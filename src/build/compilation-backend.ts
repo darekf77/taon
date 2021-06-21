@@ -39,11 +39,10 @@ export class BackendCompilation extends IncCompiler.Base {
     generateDeclarations = false,
     tsExe = 'npm-run tsc',
     diagnostics = false,
-    hideErrors = false,
-    debug = false
+    hideErrors = false
   }: TscCompileOptions) {
     if (!this.isEnableCompilation) {
-      console.log(`Compilation disabled for ${_.startCase(BackendCompilation.name)}`)
+      Helpers.log(`Compilation disabled for ${_.startCase(BackendCompilation.name)}`)
       return;
     }
     if (hideErrors) {
@@ -64,7 +63,7 @@ export class BackendCompilation extends IncCompiler.Base {
     const commandJsAndMaps = `${tsExe} -d false  ${params.join(' ')}`
     const commandDts = `${tsExe}  ${params.join(' ')}`
 
-    debug && console.log(`(${this.compilerName}) Execute first command :
+    Helpers.log(`(${this.compilerName}) Execute first command :
 
     ${commandJsAndMaps}
 
@@ -74,7 +73,7 @@ export class BackendCompilation extends IncCompiler.Base {
     if (watch) {
       await Helpers.logProc2(child_process.exec(commandJsAndMaps, { cwd }), ['Watching for file changes.']);
       if (generateDeclarations) {
-        debug && console.log(`(${this.compilerName}) Execute second command : ${commandDts}    # inside: ${cwd}`)
+        Helpers.log(`(${this.compilerName}) Execute second command : ${commandDts}    # inside: ${cwd}`)
         await Helpers.logProc2(child_process.exec(commandDts, { cwd }), ['Watching for file changes.']);
       }
     } else {
@@ -84,21 +83,19 @@ export class BackendCompilation extends IncCompiler.Base {
           stdio: [0, 1, 2]
         })
       } catch (e) {
-        console.error(`Compilation error: ${e}`)
-        process.exit(1)
+        Helpers.error(`[morphi] Compilation error (1): ${e}`, false, true);
       }
 
 
       if (generateDeclarations) {
-        debug && console.log(`(${this.compilerName}) Execute second command : ${commandDts}    # inside: ${cwd}`)
+        Helpers.log(`(${this.compilerName}) Execute second command : ${commandDts}    # inside: ${cwd}`)
         try {
           child_process.execSync(commandDts, {
             cwd,
             stdio: [0, 1, 2]
           })
         } catch (e) {
-          console.error(`Compilation error: ${e}`)
-          process.exit(1)
+          Helpers.error(`[morphi] Compilation error (2): ${e}`, false, true);
         }
 
       }
