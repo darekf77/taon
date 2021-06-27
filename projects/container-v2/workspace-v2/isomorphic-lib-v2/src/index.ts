@@ -2,4 +2,4 @@
 export function helloWorld() {
 
 }
-console.log('hello')
+// console.log('hello')

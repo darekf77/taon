@@ -6,4 +6,4 @@ import { backendSeccond } from 'second-isomorphic-lib/src/second'
 
 backendSeccond()
 
-console.log('hello')
+// console.log('hello')

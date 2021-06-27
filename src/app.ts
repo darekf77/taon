@@ -1,3 +1,4 @@
+//#region @notForNpm
 import { _ } from 'tnp-core';
 //#region @backend
 import {
@@ -125,3 +126,4 @@ if (Morphi.IsBrowser) {
 
 
 export default start;
+//#endregion

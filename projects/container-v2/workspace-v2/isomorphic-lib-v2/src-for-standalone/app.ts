@@ -31,7 +31,7 @@ export async function start() {
     entities: Entities
   })
 
-  console.log('hello')
+  // console.log('hello')
 
 }
 
