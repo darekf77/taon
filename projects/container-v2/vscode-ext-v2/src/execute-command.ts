@@ -5,9 +5,10 @@ import * as child from 'child_process';
 import { window, ProgressLocation } from 'vscode';
 import { ProcesOptions, ProgressData, ResolveVariable } from './models';
 import {
-  capitalizeFirstLetter, optionsFix, Log, getModuleName,
+  capitalizeFirstLetter, optionsFix,
   escapeStringForRegEx, deepClone, valueFromCommand
 } from './helpers';
+import { Log, getModuleName } from './helpers-vscode';
 
 const log = Log.instance(`execute-command`, 'logmsg');
 
