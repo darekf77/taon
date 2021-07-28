@@ -1,0 +1,103 @@
+{
+  "/Users/dariusz/projects/npm/tnp/bin/start.js": {
+    "inspector": "inspector",
+    "ora": "/Users/dariusz/projects/npm/tnp/node_modules/ora/index.js",
+    "cross-spawn": "/Users/dariusz/projects/npm/tnp/node_modules/cross-spawn/index.js"
+  },
+  "/Users/dariusz/projects/npm/tnp/node_modules/ora/index.js": {
+    "chalk": "/Users/dariusz/projects/npm/tnp/node_modules/chalk/index.js",
+    "cli-cursor": "/Users/dariusz/projects/npm/tnp/node_modules/ora/node_modules/cli-cursor/index.js",
+    "cli-spinners": "/Users/dariusz/projects/npm/tnp/node_modules/cli-spinners/index.js",
+    "log-symbols": "/Users/dariusz/projects/npm/tnp/node_modules/ora/node_modules/log-symbols/index.js",
+    "strip-ansi": "/Users/dariusz/projects/npm/tnp/node_modules/ora/node_modules/strip-ansi/index.js",
+    "wcwidth": "/Users/dariusz/projects/npm/tnp/node_modules/wcwidth/index.js"
+  },
+  "/Users/dariusz/projects/npm/tnp/node_modules/chalk/index.js": {
+    "escape-string-regexp": "/Users/dariusz/projects/npm/tnp/node_modules/escape-string-regexp/index.js",
+    "ansi-styles": "/Users/dariusz/projects/npm/tnp/node_modules/ansi-styles/index.js",
+    "supports-color": "/Users/dariusz/projects/npm/tnp/node_modules/supports-color/index.js",
+    "./templates.js": "/Users/dariusz/projects/npm/tnp/node_modules/chalk/templates.js"
+  },
+  "/Users/dariusz/projects/npm/tnp/node_modules/ansi-styles/index.js": {
+    "color-convert": "/Users/dariusz/projects/npm/tnp/node_modules/color-convert/index.js"
+  },
+  "/Users/dariusz/projects/npm/tnp/node_modules/color-convert/index.js": {
+    "./conversions": "/Users/dariusz/projects/npm/tnp/node_modules/color-convert/conversions.js",
+    "./route": "/Users/dariusz/projects/npm/tnp/node_modules/color-convert/route.js"
+  },
+  "/Users/dariusz/projects/npm/tnp/node_modules/color-convert/conversions.js": {
+    "color-name": "/Users/dariusz/projects/npm/tnp/node_modules/color-name/index.js"
+  },
+  "/Users/dariusz/projects/npm/tnp/node_modules/color-convert/route.js": {
+    "./conversions": "/Users/dariusz/projects/npm/tnp/node_modules/color-convert/conversions.js"
+  },
+  "/Users/dariusz/projects/npm/tnp/node_modules/supports-color/index.js": {
+    "os": "os",
+    "has-flag": "/Users/dariusz/projects/npm/tnp/node_modules/has-flag/index.js"
+  },
+  "/Users/dariusz/projects/npm/tnp/node_modules/ora/node_modules/cli-cursor/index.js": {
+    "restore-cursor": "/Users/dariusz/projects/npm/tnp/node_modules/ora/node_modules/restore-cursor/index.js"
+  },
+  "/Users/dariusz/projects/npm/tnp/node_modules/ora/node_modules/restore-cursor/index.js": {
+    "onetime": "/Users/dariusz/projects/npm/tnp/node_modules/ora/node_modules/onetime/index.js",
+    "signal-exit": "/Users/dariusz/projects/npm/tnp/node_modules/signal-exit/index.js"
+  },
+  "/Users/dariusz/projects/npm/tnp/node_modules/ora/node_modules/onetime/index.js": {
+    "mimic-fn": "/Users/dariusz/projects/npm/tnp/node_modules/ora/node_modules/mimic-fn/index.js"
+  },
+  "/Users/dariusz/projects/npm/tnp/node_modules/signal-exit/index.js": {
+    "assert": "assert",
+    "./signals.js": "/Users/dariusz/projects/npm/tnp/node_modules/signal-exit/signals.js",
+    "events": "events"
+  },
+  "/Users/dariusz/projects/npm/tnp/node_modules/cli-spinners/index.js": {
+    "./spinners.json": "/Users/dariusz/projects/npm/tnp/node_modules/cli-spinners/spinners.json"
+  },
+  "/Users/dariusz/projects/npm/tnp/node_modules/ora/node_modules/log-symbols/index.js": {
+    "chalk": "/Users/dariusz/projects/npm/tnp/node_modules/chalk/index.js"
+  },
+  "/Users/dariusz/projects/npm/tnp/node_modules/ora/node_modules/strip-ansi/index.js": {
+    "ansi-regex": "/Users/dariusz/projects/npm/tnp/node_modules/ora/node_modules/ansi-regex/index.js"
+  },
+  "/Users/dariusz/projects/npm/tnp/node_modules/wcwidth/index.js": {
+    "defaults": "/Users/dariusz/projects/npm/tnp/node_modules/defaults/index.js",
+    "./combining": "/Users/dariusz/projects/npm/tnp/node_modules/wcwidth/combining.js"
+  },
+  "/Users/dariusz/projects/npm/tnp/node_modules/defaults/index.js": {
+    "clone": "/Users/dariusz/projects/npm/tnp/node_modules/defaults/node_modules/clone/clone.js"
+  },
+  "/Users/dariusz/projects/npm/tnp/node_modules/cross-spawn/index.js": {
+    "child_process": "child_process",
+    "./lib/parse": "/Users/dariusz/projects/npm/tnp/node_modules/cross-spawn/lib/parse.js",
+    "./lib/enoent": "/Users/dariusz/projects/npm/tnp/node_modules/cross-spawn/lib/enoent.js"
+  },
+  "/Users/dariusz/projects/npm/tnp/node_modules/cross-spawn/lib/parse.js": {
+    "path": "path",
+    "./util/resolveCommand": "/Users/dariusz/projects/npm/tnp/node_modules/cross-spawn/lib/util/resolveCommand.js",
+    "./util/escape": "/Users/dariusz/projects/npm/tnp/node_modules/cross-spawn/lib/util/escape.js",
+    "./util/readShebang": "/Users/dariusz/projects/npm/tnp/node_modules/cross-spawn/lib/util/readShebang.js"
+  },
+  "/Users/dariusz/projects/npm/tnp/node_modules/cross-spawn/lib/util/resolveCommand.js": {
+    "path": "path",
+    "which": "/Users/dariusz/projects/npm/tnp/node_modules/cross-spawn/node_modules/which/which.js",
+    "path-key": "/Users/dariusz/projects/npm/tnp/node_modules/cross-spawn/node_modules/path-key/index.js"
+  },
+  "/Users/dariusz/projects/npm/tnp/node_modules/cross-spawn/node_modules/which/which.js": {
+    "path": "path",
+    "isexe": "/Users/dariusz/projects/npm/tnp/node_modules/isexe/index.js"
+  },
+  "/Users/dariusz/projects/npm/tnp/node_modules/isexe/index.js": {
+    "fs": "fs",
+    "./mode.js": "/Users/dariusz/projects/npm/tnp/node_modules/isexe/mode.js"
+  },
+  "/Users/dariusz/projects/npm/tnp/node_modules/isexe/mode.js": {
+    "fs": "fs"
+  },
+  "/Users/dariusz/projects/npm/tnp/node_modules/cross-spawn/lib/util/readShebang.js": {
+    "fs": "fs",
+    "shebang-command": "/Users/dariusz/projects/npm/tnp/node_modules/cross-spawn/node_modules/shebang-command/index.js"
+  },
+  "/Users/dariusz/projects/npm/tnp/node_modules/cross-spawn/node_modules/shebang-command/index.js": {
+    "shebang-regex": "/Users/dariusz/projects/npm/tnp/node_modules/cross-spawn/node_modules/shebang-regex/index.js"
+  }
+}
