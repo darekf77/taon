@@ -1,6 +1,6 @@
 {
   "resources": [
-    "README.md",
+    "README.md", // readme for humans
     "bin",
     "logo_github.png",
     "logo.png",
@@ -12,8 +12,8 @@
     "linkedFolders": [],
     "includeAsDev": [],
     "includeOnly": [
-      "@angular-devkit/build-angular",
-      "@angular-devkit/build-optimizer",
+      "@angular-devkit/build-angular", // for angular
+      "@angular-devkit/build-optimizer",// for angular
       "@angular-devkit/schematics",
       "@angular/animations",
       "@angular/cdk",
@@ -196,7 +196,7 @@
     "ugly": false
   },
   "scripts": {},
-  "description": "Part of firedev.io - framework for isomorphic (node/angular) apps",
+  "description": 'Part of firedev.io - framework for isomorphic (node/angular) apps',
   "license": "MIT",
   "private": false,
   "author": "Dariusz Filipiak",
