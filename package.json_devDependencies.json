@@ -28,7 +28,7 @@
   "lnk": "1.0.1",
   "lodash": "4.17.4",
   "lodash-walk-object": "~1.0.20",
-  "magic-renamer": "~0.0.9",
+  "magic-renamer": "~0.0.11",
   "mkdirp": "0.5.1",
   "morphi": "~4.0.22",
   "ng-modal-lib": "0.0.6",
