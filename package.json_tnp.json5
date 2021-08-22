@@ -156,7 +156,7 @@
       "progress",
       "prompts",
       "protractor",
-      "redbird",
+      // "redbird",
       "reflect-metadata",
       "rxjs",
       "rxjs-compat",
