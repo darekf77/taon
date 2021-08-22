@@ -198,7 +198,7 @@
     "main": "index.js"
   },
   "name": "morphi",
-  "version": "4.0.29",
+  "version": "4.0.30",
   "description": "Part of firedev.io - framework for isomorphic (node/angular) apps",
   "main": "index.js",
   "scripts": {},
@@ -273,7 +273,7 @@
     "sudo-block": "3.0.0",
     "tnp-cli": "~0.0.17",
     "tnp-config": "~0.0.69",
-    "tnp-core": "~0.0.47",
+    "tnp-core": "~0.0.51",
     "tnp-db": "~0.0.30",
     "tnp-helpers": "~0.0.58",
     "tnp-models": "~0.0.29",
