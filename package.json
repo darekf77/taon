@@ -254,7 +254,7 @@
     "lodash-walk-object": "~1.0.21",
     "magic-renamer": "~0.0.12",
     "mkdirp": "0.5.1",
-    "morphi": "~4.0.26",
+    "morphi": "~4.0.27",
     "ng-modal-lib": "0.0.6",
     "ng-talkback": "~2.4.17",
     "ng2-logger": "~5.0.17",
@@ -455,5 +455,5 @@
   },
   "license": "MIT",
   "private": false,
-  "lastBuildTagHash": "3b1722a524811c49a71a797c5ee550727232815d"
+  "lastBuildTagHash": "efe239716e463a458784a477ef8b9114725a2c8a"
 }
