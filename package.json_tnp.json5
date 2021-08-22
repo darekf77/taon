@@ -180,7 +180,7 @@
       "uglifyjs-webpack-plugin",
       "underscore",
       "validator",
-      "wait.for",
+      // "wait.for",
       "watch",
       "webpack-cli",
       "zone.js"

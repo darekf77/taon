@@ -177,7 +177,6 @@
         "uglifyjs-webpack-plugin",
         "underscore",
         "validator",
-        "wait.for",
         "watch",
         "webpack-cli",
         "zone.js"
@@ -200,7 +199,7 @@
     "main": "index.js"
   },
   "name": "morphi",
-  "version": "4.0.27",
+  "version": "4.0.28",
   "description": "Part of firedev.io - framework for isomorphic (node/angular) apps",
   "main": "index.js",
   "scripts": {},
@@ -448,7 +447,6 @@
     "uglifyjs-webpack-plugin": "2.2.0",
     "underscore": "1.9.1",
     "validator": "9.2.0",
-    "wait.for": "0.6.6",
     "watch": "1.0.2",
     "webpack-cli": "3.3.11",
     "zone.js": "0.10.2"
