@@ -198,7 +198,7 @@
     "main": "index.js"
   },
   "name": "morphi",
-  "version": "4.0.32",
+  "version": "4.0.33",
   "description": "Part of firedev.io - framework for isomorphic (node/angular) apps",
   "main": "index.js",
   "scripts": {},
