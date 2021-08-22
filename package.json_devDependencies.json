@@ -38,7 +38,7 @@
   "ng4-modal": "~0.0.23",
   "ngx-store": "2.1.0",
   "node-cli-test": "0.0.2",
-  "node-cli-tester": "~0.0.12",
+  "node-cli-tester": "~0.0.15",
   "node-localstorage": "2.1.6",
   "open": "7.2.1",
   "ps-list": "6.1.0",
