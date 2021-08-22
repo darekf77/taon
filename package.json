@@ -205,7 +205,7 @@
     "main": "index.js"
   },
   "name": "morphi",
-  "version": "4.0.23",
+  "version": "4.0.24",
   "description": "Part of firedev.io - framework for isomorphic (node/angular) apps",
   "main": "index.js",
   "scripts": {},
@@ -442,7 +442,6 @@
     "sloc": "0.2.0",
     "socket.io": "2.4.1",
     "sort-package-json": "1.11.0",
-    "sqlite3": "4.0.9",
     "static-columns": "~1.0.23",
     "svg-png-converter": "0.0.9",
     "systeminformation": "3.45.7",
