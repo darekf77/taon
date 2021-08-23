@@ -122,24 +122,7 @@
         "socket.io": "~2.4.1",
         "sqlite3": null
       },
-      "linkedFolders": [
-        {
-          "from": "../../morphi/projects/container-v2/workspace-v2",
-          "to": "./workspace-v2"
-        },
-        {
-          "from": "../../morphi/projects/container-v2/vscode-ext-v2",
-          "to": "./vscode-ext-v2"
-        },
-        {
-          "from": "../../morphi/projects/container-v2/electron-lib-v2",
-          "to": "./electron-lib-v2"
-        },
-        {
-          "from": "../../morphi/projects/single-file-project-v2",
-          "to": "./single-file-project-v2"
-        }
-      ]
+      "linkedFolders": []
     },
     "linkedProjects": [],
     "libReleaseOptions": {
@@ -359,8 +342,8 @@
     "systeminformation": "3.45.7",
     "task.js": "0.1.5",
     "tnp-cli": "0.0.23",
-    "tnp-config": "0.0.76",
-    "tnp-core": "0.0.57",
+    "tnp-config": "0.0.83",
+    "tnp-core": "0.0.60",
     "tnp-db": "0.0.31",
     "tnp-helpers": "0.0.59",
     "tnp-models": "0.0.30",
