@@ -225,7 +225,8 @@
     "wait.for": "0.6.6",
     "watch": "~1.0.2",
     "webpack-cli": "3.3.11",
-    "zone.js": "~0.10.2"
+    "zone.js": "~0.10.2",
+    "@ngneat/transloco": "~2.22.0"
   },
   "husky": {
     "hooks": {
