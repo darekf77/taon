@@ -18,22 +18,27 @@ config = {
         "port": 6001
       },
       {
-        "baseUrl": "/docker-v3",
-        "name": "docker-v3",
-        "port": 6003
-      },
-      {
-        "baseUrl": "/api-isomorphic-lib-v3",
+        "baseUrl": "/isomorphic-lib-v3",
         "name": "isomorphic-lib-v3",
-        "$db": {
-          "database": "tmp/db-for-isomorphic-lib-v3.sqlite3",
-          "type": "sqlite",
-          "synchronize": true,
-          "dropSchema": true,
-          "logging": false
-        },
         "port": 6002
-      }
+      },
+      // {
+      //   "baseUrl": "/docker-v3",
+      //   "name": "docker-v3",
+      //   "port": 6003
+      // },
+      // {
+      //   "baseUrl": "/api-isomorphic-lib-v3",
+      //   "name": "isomorphic-lib-v3",
+      //   "$db": {
+      //     "database": "tmp/db-for-isomorphic-lib-v3.sqlite3",
+      //     "type": "sqlite",
+      //     "synchronize": true,
+      //     "dropSchema": true,
+      //     "logging": false
+      //   },
+      //   "port": 6002
+      // }
 
     ]
   }

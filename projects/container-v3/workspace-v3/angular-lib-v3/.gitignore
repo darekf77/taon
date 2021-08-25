@@ -12,6 +12,7 @@ yarn-error.log
 testem.log
 /typings
 
+
 # System Files
 .DS_Store
 Thumbs.db
@@ -51,7 +52,7 @@ Thumbs.db
 /src/tsconfig.app.json
 /src-for-stanalone
 /components-for-stanalone
-/src/assets/angular-lib-v2
+/src/assets/angular-lib-v3
 
 
 

@@ -23,7 +23,6 @@
       "@angular/compiler-cli",
       "@angular/core",
       "@angular/forms",
-      "@angular/http",
       "@angular/language-service",
       "@angular/material",
       "@angular/platform-browser",
