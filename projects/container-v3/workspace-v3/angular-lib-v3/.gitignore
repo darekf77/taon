@@ -34,6 +34,7 @@ Thumbs.db
 /npm-debug.log*
 /.sass-cache
 /.sourcemaps
+/tsconfig.ng.json
 /tsconfig.isomorphic.json
 /tsconfig.json
 /src/tsconfig.app.json

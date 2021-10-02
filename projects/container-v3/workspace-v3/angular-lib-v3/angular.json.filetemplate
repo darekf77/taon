@@ -137,21 +137,21 @@
     },
     "{{{ (ENV && ENV.currentProjectName) ? (ENV && ENV.currentProjectName): 'my-lib'  }}}": {
       "projectType": "library",
-      "root": "tmp-projects/{{{ (ENV && ENV.currentProjectName) ? (ENV && ENV.currentProjectName): 'my-lib'  }}}",
-      "sourceRoot": "tmp-projects/{{{ (ENV && ENV.currentProjectName) ? (ENV && ENV.currentProjectName): 'my-lib'  }}}/src",
+      "root": "tmp-projects-for-dist/{{{ (ENV && ENV.currentProjectName) ? (ENV && ENV.currentProjectName): 'my-lib'  }}}",
+      "sourceRoot": "tmp-projects-for-dist/{{{ (ENV && ENV.currentProjectName) ? (ENV && ENV.currentProjectName): 'my-lib'  }}}/src",
       "prefix": "lib",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:ng-packagr",
           "options": {
-            "project": "tmp-projects/{{{ (ENV && ENV.currentProjectName) ? (ENV && ENV.currentProjectName): 'my-lib'  }}}/ng-package.json"
+            "project": "tmp-projects-for-dist/{{{ (ENV && ENV.currentProjectName) ? (ENV && ENV.currentProjectName): 'my-lib'  }}}/ng-package.json"
           },
           "configurations": {
             "production": {
-              "tsConfig": "tmp-projects/{{{ (ENV && ENV.currentProjectName) ? (ENV && ENV.currentProjectName): 'my-lib'  }}}/tsconfig.lib.prod.json"
+              "tsConfig": "tmp-projects-for-dist/{{{ (ENV && ENV.currentProjectName) ? (ENV && ENV.currentProjectName): 'my-lib'  }}}/tsconfig.lib.prod.json"
             },
             "development": {
-              "tsConfig": "tmp-projects/{{{ (ENV && ENV.currentProjectName) ? (ENV && ENV.currentProjectName): 'my-lib'  }}}/tsconfig.lib.json"
+              "tsConfig": "tmp-projects-for-dist/{{{ (ENV && ENV.currentProjectName) ? (ENV && ENV.currentProjectName): 'my-lib'  }}}/tsconfig.lib.json"
             }
           },
           "defaultConfiguration": "production"
@@ -159,9 +159,9 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "tmp-projects/{{{ (ENV && ENV.currentProjectName) ? (ENV && ENV.currentProjectName): 'my-lib'  }}}/src/test.ts",
-            "tsConfig": "tmp-projects/{{{ (ENV && ENV.currentProjectName) ? (ENV && ENV.currentProjectName): 'my-lib'  }}}/tsconfig.spec.json",
-            "karmaConfig": "tmp-projects/{{{ (ENV && ENV.currentProjectName) ? (ENV && ENV.currentProjectName): 'my-lib'  }}}/karma.conf.js"
+            "main": "tmp-projects-for-dist/{{{ (ENV && ENV.currentProjectName) ? (ENV && ENV.currentProjectName): 'my-lib'  }}}/src/test.ts",
+            "tsConfig": "tmp-projects-for-dist/{{{ (ENV && ENV.currentProjectName) ? (ENV && ENV.currentProjectName): 'my-lib'  }}}/tsconfig.spec.json",
+            "karmaConfig": "tmp-projects-for-dist/{{{ (ENV && ENV.currentProjectName) ? (ENV && ENV.currentProjectName): 'my-lib'  }}}/karma.conf.js"
           }
         }
       }

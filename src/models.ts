@@ -75,11 +75,6 @@ export namespace Models {
     (methodReference: Function): RequestHandler;
   }
 
-  export type InlinePkg = {
-    isIsomorphic: boolean;
-    realName: string;
-  }
-
   //#endregion
 
 }

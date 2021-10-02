@@ -2,11 +2,8 @@
 import { ps, crossPlatformPath, Helpers } from 'tnp-core';
 import { MorphiHelpers } from '../helpers';
 import { copyExampleTo } from './new';
-import { IncrementalBuildProcess } from '../build/incremental-build-process';
-import { BrowserCodeCut } from '../build/browser-code-cut';
 import { CLI } from 'tnp-cli';
 import { child_process, path, fse } from 'tnp-core';
-import { PackagesRecognition } from '../build/packages-recognition';
 
 export * from '../helpers';
 
@@ -19,21 +16,21 @@ export async function run(argsv: string[], morphiEnvironmentCheck = true) {
     const commandName: 'build' | 'build:watch' | 'ln' | 'new:simple' | 'new:workspace' | 'process-info'
       | '-v' | '-h' | '--help' | '-help' | 'update:isomorphic' | 'install' = argsv[2] as any;
     if (commandName === 'build') {
-      PackagesRecognition.From(process.cwd()).start()
-      BrowserCodeCut.resolveAndAddIsomorphicLibs(argsv.slice(4))
-      await (new IncrementalBuildProcess()).start('isomprphic build')
+      // PackagesRecognition.From(process.cwd()).start()
+      // BrowserCodeCut.resolveAndAddIsomorphicLibs(argsv.slice(4))
+      // await (new IncrementalBuildProcess()).start('isomprphic build')
       process.exit(0)
     } else if (commandName === 'install') {
-      PackagesRecognition.From(process.cwd()).start(true)
-      child_process.execSync(`npm i ${argsv.slice(3)}`, { cwd: process.cwd(), stdio: [0, 1, 2] });
+      // PackagesRecognition.From(process.cwd()).start(true)
+      // child_process.execSync(`npm i ${argsv.slice(3)}`, { cwd: process.cwd(), stdio: [0, 1, 2] });
       process.exit(0)
     } else if (commandName === 'update:isomorphic') {
-      PackagesRecognition.From(process.cwd()).start(true)
+      // PackagesRecognition.From(process.cwd()).start(true)
       process.exit(0)
     } else if (commandName === 'build:watch') {
-      PackagesRecognition.From(process.cwd()).start()
-      BrowserCodeCut.resolveAndAddIsomorphicLibs(argsv.slice(4))
-      await (new IncrementalBuildProcess()).startAndWatch('isomorphic build (watch)');
+      // PackagesRecognition.From(process.cwd()).start()
+      // BrowserCodeCut.resolveAndAddIsomorphicLibs(argsv.slice(4))
+      // await (new IncrementalBuildProcess()).startAndWatch('isomorphic build (watch)');
       process.stdin.resume();
     } else if (commandName === 'process-info') {
       // A simple pid lookup
