@@ -37,13 +37,13 @@ module.exports = (env) => {
   const { watch = false, outFolder = 'dist', moduleName = undefined, port = 9000 } = env;
   // console.log('env', env)
   const browserOutFolder = `browser-for-${moduleName}`;
-  const srcDirRelative = _.isString(moduleName) ? `./tmp-src-${outFolder}-${browserOutFolder}` : `./tmp-src-${outFolder}-browser`;
+  const srcDirRelative = _.isString(moduleName) ? `./tmp-src-${outFolder}-${browserOutFolder}` : `./tmp-src-${outFolder}`;
   const distDirRelative = _.isString(moduleName) ? `./${browserOutFolder}` : `./${outFolder}-browser`;
 
   const srcDir = path.join(__dirname, srcDirRelative);
   const distDir = path.join(__dirname, distDirRelative);
 
-  let ENV = moduleName ? fse.readJSONSync('./tmp-environment.json', {
+  let ENV = fse.existsSync('./tmp-environment.json') ? fse.readJSONSync('./tmp-environment.json', {
     'encoding': 'utf8'
   }) : {}
 
@@ -60,6 +60,10 @@ module.exports = (env) => {
     },
     module: {
       rules: [
+        {
+          test: /\.css$/i,
+          use: ['style-loader', 'css-loader'],
+        },
         // {
         //   enforce: 'pre',
         //   test: /\.tsx?$/,
@@ -76,17 +80,17 @@ module.exports = (env) => {
           include: srcDir,
           exclude: /node_modules/,
           use: [
-            {
-              /**
-               * 2. Transpile ES6 + dynamic imports into ES5
-               *    (smaller bundle sizes than ts-loader alone)
-               */
-              loader: 'babel-loader',
-              options: {
-                presets: ['es2015'],
-                plugins: ['babel-plugin-syntax-dynamic-import']
-              }
-            },
+            // {
+            //   /**
+            //    * 2. Transpile ES6 + dynamic imports into ES5
+            //    *    (smaller bundle sizes than ts-loader alone)
+            //    */
+            //   loader: 'babel-loader',
+            //   options: {
+            //     presets: ['es2015'],
+            //     plugins: ['babel-plugin-syntax-dynamic-import']
+            //   }
+            // },
             {
               /**
                * 1. Transpile TypeScript into ES6 + dynamic imports

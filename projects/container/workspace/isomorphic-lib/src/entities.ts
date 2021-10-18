@@ -15,7 +15,7 @@ export const Entities: Morphi.Base.Entity<any>[] = [
 
 import { Repository } from 'typeorm';
 export { Repository } from 'typeorm';
-import * as _ from 'lodash'
+import { _ } from 'tnp-core'
 
 export function entities<ADDITIONAL={}>(connection?: Morphi.Orm.Connection, decoratorsEntities?: ADDITIONAL) {
 return _.merge({

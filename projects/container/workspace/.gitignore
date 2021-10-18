@@ -12,6 +12,7 @@ yarn-error.log
 testem.log
 /typings
 
+
 # System Files
 .DS_Store
 Thumbs.db
@@ -33,6 +34,8 @@ Thumbs.db
 /npm-debug.log*
 /.sass-cache
 /.sourcemaps
+/.vscode/launch.json
+/.vscode/tasks.json
 /src-for-stanalone
 /components-for-stanalone
 

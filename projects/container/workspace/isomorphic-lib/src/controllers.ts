@@ -12,7 +12,7 @@ export const Controllers: Morphi.Base.Controller<any>[] = [
 //#region @backend
 
 import { CLASS } from 'typescript-class-helpers';
-import * as _ from 'lodash'
+import { _ } from 'tnp-core'
 
 export function controllers<ADDITIONAL={}>(decoratorsControllers?: ADDITIONAL) {
 return _.merge( {

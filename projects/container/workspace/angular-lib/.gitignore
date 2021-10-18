@@ -12,6 +12,7 @@ yarn-error.log
 testem.log
 /typings
 
+
 # System Files
 .DS_Store
 Thumbs.db
@@ -33,10 +34,21 @@ Thumbs.db
 /npm-debug.log*
 /.sass-cache
 /.sourcemaps
+/tsconfig.ng.json
 /tsconfig.isomorphic.json
 /tsconfig.json
 /src/tsconfig.app.json
-/.angular-cli.json
+/.vscode/launch.json
+/.vscode/tasks.json
+/angular.json
+/browserslist
+/ngsw-config.json
+/tsconfig.app.json
+/tsconfig.base.json
+/src/index.html
+/src/manifest.webmanifest
+/tsconfig.browser.json
+/tsconfig.isomorphic.json
 /components/tsconfig.json
 /src/tsconfig.app.json
 /src-for-stanalone
@@ -49,3 +61,6 @@ Thumbs.db
 
 # =====================
 !*.filetemplate
+
+/tsconfig.browser.json.filetemplate
+/tsconfig.isomorphic.json.filetemplate

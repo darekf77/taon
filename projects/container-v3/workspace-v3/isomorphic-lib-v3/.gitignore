@@ -34,11 +34,8 @@ Thumbs.db
 /npm-debug.log*
 /.sass-cache
 /.sourcemaps
-/tsconfig.isomorphic.json
-/tsconfig.browser.json
-/.vscode/launch.json
-/.vscode/tasks.json
-/tsconfig.json
+/angular.json
+/tsconfig.ng.json
 /src-for-stanalone
 /components-for-stanalone
 /src/assets/angular-lib-v3
@@ -57,3 +54,5 @@ Thumbs.db
 /projects/my-lib/package.json
 /projects/my-lib/ng-package.json
 /projects/my-lib/karma.conf.js
+/angular.json.filetemplate
+/tsconfig.ng.json.filetemplate
