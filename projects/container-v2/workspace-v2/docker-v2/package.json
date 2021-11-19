@@ -17,7 +17,8 @@
       "nodts": false,
       "obscure": false,
       "ugly": false
-    }
+    },
+    "workerPlugins": {}
   },
   "name": "docker-v2",
   "version": "0.0.0",

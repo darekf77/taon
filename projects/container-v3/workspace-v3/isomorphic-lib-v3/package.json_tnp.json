@@ -19,5 +19,9 @@
     "nodts": false,
     "obscure": false,
     "ugly": false
-  }
+  },
+  "workerPlugins": {},
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "index.js"
 }

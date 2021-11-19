@@ -147,5 +147,6 @@
     "nodts": false
   },
   "license": "UNLICENSED",
-  "private": true
+  "private": true,
+  "workerPlugins": {}
 }

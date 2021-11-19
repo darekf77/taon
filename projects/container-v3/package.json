@@ -148,7 +148,8 @@
       "nodts": false
     },
     "license": "UNLICENSED",
-    "private": true
+    "private": true,
+    "workerPlugins": {}
   },
   "name": "container-v3",
   "version": "0.0.0",

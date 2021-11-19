@@ -6,8 +6,10 @@
     "logo.png",
     "files.png"
   ],
+
   "type": "isomorphic-lib",
   "version": "v2",
+
   "overrided": {
     "linkedFolders": [],
     "includeAsDev": [],
@@ -187,17 +189,21 @@
     "ignoreDepsPattern": [],
     "dependencies": {}
   },
+
   "linkedProjects": [],
+
   "libReleaseOptions": {
     "nodts": false,
     "obscure": false,
     "ugly": false
   },
+
   "scripts": {},
   "description": 'Part of firedev.io - framework for isomorphic (node/angular) apps',
   "license": "MIT",
   "private": false,
   "author": "Dariusz Filipiak",
   "homepage": "https://github.com/darekf77/morphi#readme",
-  "main": "index.js"
+  "main": "index.js",
+  'workerPlugins': {},
 }

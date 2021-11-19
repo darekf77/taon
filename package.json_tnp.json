@@ -193,5 +193,6 @@
   "private": false,
   "author": "Dariusz Filipiak",
   "homepage": "https://github.com/darekf77/morphi#readme",
-  "main": "index.js"
+  "main": "index.js",
+  "workerPlugins": {}
 }

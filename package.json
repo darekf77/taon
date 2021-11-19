@@ -194,7 +194,8 @@
     "private": false,
     "author": "Dariusz Filipiak",
     "homepage": "https://github.com/darekf77/morphi#readme",
-    "main": "index.js"
+    "main": "index.js",
+    "workerPlugins": {}
   },
   "name": "morphi",
   "version": "4.0.54",
@@ -244,7 +245,7 @@
     "lodash-walk-object": "~1.0.35",
     "magic-renamer": "~0.0.19",
     "mkdirp": "0.5.1",
-    "morphi": "~4.0.54",
+    "morphi": "~4.0.53",
     "ng-modal-lib": "0.0.6",
     "ng-talkback": "~2.4.24",
     "ng2-logger": "~8.0.20",

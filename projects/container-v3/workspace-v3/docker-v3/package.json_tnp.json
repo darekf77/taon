@@ -16,5 +16,6 @@
     "nodts": false,
     "obscure": false,
     "ugly": false
-  }
+  },
+  "workerPlugins": {}
 }
