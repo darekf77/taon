@@ -24,7 +24,8 @@
     "engines": {
       "node": ">=9.2.0",
       "npm": ">=5.6.0"
-    }
+    },
+    "workerPlugins": {}
   },
   "name": "workspace-v3",
   "version": "0.0.0",

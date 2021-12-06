@@ -21,7 +21,10 @@
       "nodts": false,
       "obscure": false,
       "ugly": false
-    }
+    },
+    "workerPlugins": {},
+    "license": "MIT",
+    "private": false
   },
   "name": "angular-lib-v3",
   "version": "0.0.0",
@@ -406,10 +409,5 @@
     "watch": "~1.0.2",
     "zone.js": "~0.10.2"
   },
-  "private": false,
-  "husky": {
-    "hooks": {
-      "pre-push": "tnp deps:show:if:standalone"
-    }
-  }
+  "private": false
 }
