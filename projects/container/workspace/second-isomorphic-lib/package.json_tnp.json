@@ -16,5 +16,8 @@
     "nodts": false,
     "obscure": false,
     "ugly": false
-  }
+  },
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "index.js"
 }

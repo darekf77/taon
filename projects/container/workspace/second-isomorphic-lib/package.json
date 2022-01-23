@@ -17,7 +17,10 @@
       "nodts": false,
       "obscure": false,
       "ugly": false
-    }
+    },
+    "license": "UNLICENSED",
+    "private": true,
+    "main": "index.js"
   },
   "name": "second-isomorphic-lib",
   "version": "0.0.0",
@@ -38,5 +41,6 @@
   "dependencies": {},
   "devDependencies": {},
   "license": "UNLICENSED",
-  "private": true
+  "private": true,
+  "recreatedFrom": {}
 }

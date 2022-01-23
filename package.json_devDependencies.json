@@ -1,5 +1,5 @@
 {
-  "@angular/http": "7.2.15",
+  "@angular/http": "~7.2.15",
   "@mdi/js": "5.8.55",
   "axios": "0.17.1",
   "background-worker-process": "~0.0.35",
@@ -50,7 +50,7 @@
   "sudo-block": "3.0.0",
   "tnp-cli": "~2.0.20",
   "tnp-config": "~1.0.20",
-  "tnp-core": "~1.0.34",
+  "tnp-core": "~1.0.35",
   "tnp-db": "~0.0.44",
   "tnp-helpers": "~0.0.73",
   "tnp-models": "~0.0.37",

@@ -19,7 +19,13 @@
       "nodts": false,
       "obscure": false,
       "ugly": false
-    }
+    },
+    "scripts": {
+      "build": "tnp rimraf dist-app && tnp npm-run webpack --config=webpack.config.build.js",
+      "build:aot": "tnp rimraf dist-app && tnp npm-run webpack --config=webpack.config.build.aot.js"
+    },
+    "license": "UNLICENSED",
+    "private": true
   },
   "name": "angular-client",
   "version": "0.0.0",
@@ -30,5 +36,6 @@
   },
   "dependencies": {},
   "devDependencies": {},
-  "private": true
+  "private": true,
+  "recreatedFrom": {}
 }

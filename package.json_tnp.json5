@@ -4,7 +4,8 @@
     "bin",
     "logo_github.png",
     "logo.png",
-    "files.png"
+    "files.png",
+    'dupa.png'
   ],
 
   "type": "isomorphic-lib",

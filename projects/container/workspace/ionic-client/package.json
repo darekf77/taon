@@ -18,7 +18,20 @@
       "nodts": false,
       "obscure": false,
       "ugly": false
-    }
+    },
+    "scripts": {
+      "clean": "npm-run ionic-app-scripts clean",
+      "build": "npm-run ionic-app-scripts build",
+      "lint": "npm-run ionic-app-scripts lint",
+      "ionic:build": "npm-run ionic-app-scripts build",
+      "ionic:serve": "npm-run ionic-app-scripts serve",
+      "build:watch": "npm-run ionic serve --no-open"
+    },
+    "description": "An Ionic project",
+    "license": "UNLICENSED",
+    "private": true,
+    "author": "Ionic Framework",
+    "homepage": "http://ionicframework.com/"
   },
   "name": "ionic-client",
   "version": "0.0.1",
@@ -36,5 +49,6 @@
   "description": "An Ionic project",
   "dependencies": {},
   "devDependencies": {},
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "recreatedFrom": {}
 }

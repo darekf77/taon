@@ -221,5 +221,8 @@
     "zone.js": "~0.10.2"
   },
   "devDependencies": {},
-  "private": true
+  "private": true,
+  "recreatedFrom": {
+    "tnp.json": true
+  }
 }

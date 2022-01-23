@@ -396,5 +396,6 @@
     "webpack-cli": "3.3.11",
     "zone.js": "~0.11.3"
   },
-  "private": true
+  "private": true,
+  "recreatedFrom": {}
 }

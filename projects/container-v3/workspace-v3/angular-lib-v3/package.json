@@ -409,5 +409,8 @@
     "watch": "~1.0.2",
     "zone.js": "~0.10.2"
   },
-  "private": false
+  "private": false,
+  "recreatedFrom": {
+    "tnp.json": true
+  }
 }

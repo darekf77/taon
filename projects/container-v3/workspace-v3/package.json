@@ -36,5 +36,8 @@
   },
   "dependencies": {},
   "private": true,
-  "devDependencies": {}
+  "devDependencies": {},
+  "recreatedFrom": {
+    "tnp.json": true
+  }
 }

@@ -17,6 +17,12 @@
       "nodts": false,
       "obscure": false,
       "ugly": false
+    },
+    "license": "UNLICENSED",
+    "private": true,
+    "engines": {
+      "node": ">=9.2.0",
+      "npm": ">=5.6.0"
     }
   },
   "name": "workspace",
@@ -253,5 +259,6 @@
     "zone.js": "0.8.20"
   },
   "devDependencies": {},
-  "private": true
+  "private": true,
+  "recreatedFrom": {}
 }
