@@ -20,6 +20,7 @@ export class TESTOWY extends Morphi.Base.Entity<TESTOWY, ITESTOWY> implements IT
     return this.ctrl.getAll();
   }
 
+  // @ts-ignore
   public static czescwerka() {
     return this.ctrl.circualDep().received;
   }

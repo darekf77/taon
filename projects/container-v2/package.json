@@ -343,7 +343,7 @@
     "task.js": "0.1.5",
     "tnp-cli": "2.0.20",
     "tnp-config": "1.0.20",
-    "tnp-core": "1.0.34",
+    "tnp-core": "1.0.35",
     "tnp-db": "0.0.44",
     "tnp-helpers": "0.0.73",
     "tnp-models": "0.0.37",
@@ -366,8 +366,11 @@
     "vscode": "1.1.37",
     "wait-on": "5.0.1",
     "watch": "1.0.2",
-    "webpack-cli": "3.3.11",
+    "webpack-cli": "~3.3.11",
     "zone.js": "~0.10.2"
   },
-  "private": true
+  "private": true,
+  "recreatedFrom": {
+    "tnp.json": true
+  }
 }
