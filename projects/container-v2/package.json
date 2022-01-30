@@ -3,9 +3,6 @@
     "resources": [
       "README.md"
     ],
-    "type": "container",
-    "isCoreProject": true,
-    "version": "v2",
     "overrided": {
       "ignoreDepsPattern": [],
       "includeAsDev": [],
@@ -123,7 +120,24 @@
         "socket.io": "~2.4.1",
         "sqlite3": null
       },
-      "linkedFolders": []
+      "linkedFolders": [
+        {
+          "from": "../../morphi/projects/container-v2/workspace-v2",
+          "to": "./workspace-v2"
+        },
+        {
+          "from": "../../morphi/projects/container-v2/vscode-ext-v2",
+          "to": "./vscode-ext-v2"
+        },
+        {
+          "from": "../../morphi/projects/container-v2/electron-lib-v2",
+          "to": "./electron-lib-v2"
+        },
+        {
+          "from": "../../morphi/projects/single-file-project-v2",
+          "to": "./single-file-project-v2"
+        }
+      ]
     },
     "linkedProjects": [],
     "libReleaseOptions": {
@@ -132,14 +146,13 @@
       "ugly": false,
       "nodts": false
     },
+    "isCoreProject": true,
     "license": "UNLICENSED",
     "private": true,
+    "type": "container",
+    "version": "v2",
     "workerPlugins": {}
   },
-  "name": "container-v2",
-  "version": "0.0.0",
-  "license": "UNLICENSED",
-  "devDependencies": {},
   "dependencies": {
     "@angular-devkit/build-angular": "~0.901.3",
     "@angular-devkit/build-optimizer": "~0.900.0-rc.7",
@@ -369,8 +382,9 @@
     "webpack-cli": "~3.3.11",
     "zone.js": "~0.10.2"
   },
+  "devDependencies": {},
+  "license": "UNLICENSED",
+  "name": "container-v2",
   "private": true,
-  "recreatedFrom": {
-    "tnp.json": true
-  }
+  "version": "0.0.0"
 }

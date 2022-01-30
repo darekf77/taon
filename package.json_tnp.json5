@@ -7,9 +7,6 @@
     "files.png"
   ],
 
-  "type": "isomorphic-lib",
-  "version": "v2",
-
   "overrided": {
     "linkedFolders": [],
     "includeAsDev": [],
@@ -189,7 +186,6 @@
     "ignoreDepsPattern": [],
     "dependencies": {}
   },
-
   "linkedProjects": [],
 
   "libReleaseOptions": {
@@ -197,6 +193,10 @@
     "obscure": false,
     "ugly": false
   },
+
+  "type": "isomorphic-lib",
+
+  "version": "v2",
 
   "scripts": {},
   "description": 'Part of firedev.io - framework for isomorphic (node/angular) apps',

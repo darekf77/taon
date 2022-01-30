@@ -2,9 +2,6 @@
   "resources": [
     "README.md"
   ],
-  "type": "container",
-  "isCoreProject": true,
-  "version": "v2",
   "overrided": {
     "ignoreDepsPattern": [],
     "includeAsDev": [],
@@ -122,7 +119,24 @@
       "socket.io": "~2.4.1",
       "sqlite3": null
     },
-    "linkedFolders": []
+    "linkedFolders": [
+      {
+        "from": "../../morphi/projects/container-v2/workspace-v2",
+        "to": "./workspace-v2"
+      },
+      {
+        "from": "../../morphi/projects/container-v2/vscode-ext-v2",
+        "to": "./vscode-ext-v2"
+      },
+      {
+        "from": "../../morphi/projects/container-v2/electron-lib-v2",
+        "to": "./electron-lib-v2"
+      },
+      {
+        "from": "../../morphi/projects/single-file-project-v2",
+        "to": "./single-file-project-v2"
+      }
+    ]
   },
   "linkedProjects": [],
   "libReleaseOptions": {
@@ -131,7 +145,10 @@
     "ugly": false,
     "nodts": false
   },
+  "isCoreProject": true,
   "license": "UNLICENSED",
   "private": true,
+  "type": "container",
+  "version": "v2",
   "workerPlugins": {}
 }

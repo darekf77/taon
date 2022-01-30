@@ -2,9 +2,6 @@
   "resources": [
     "README.md"
   ],
-  "type": "container",
-  "isCoreProject": true,
-  "version": "v3",
   "overrided": {
     "ignoreDepsPattern": [],
     "includeAsDev": [],
@@ -25,7 +22,7 @@
       "@angular/http": null,
       "hammerjs": null,
       "rxjs": "~7.4.0",
-      "rxjs-compat": "6.5.3",
+      "rxjs-compat": null,
       "tslib": "^2.3.0",
       "zone.js": "~0.11.4",
       "@angular-devkit/build-optimizer": null,
@@ -140,7 +137,24 @@
       "@ngrx/data": "^13.0.2",
       "bootstrap": "^5.1.3"
     },
-    "linkedFolders": []
+    "linkedFolders": [
+      {
+        "from": "../../morphi/projects/container-v3/workspace-v3",
+        "to": "./workspace-v3"
+      },
+      {
+        "from": "../../morphi/projects/container-v3/vscode-ext-v3",
+        "to": "./vscode-ext-v3"
+      },
+      {
+        "from": "../../morphi/projects/container-v3/electron-lib-v3",
+        "to": "./electron-lib-v3"
+      },
+      {
+        "from": "../../morphi/projects/single-file-project-v3",
+        "to": "./single-file-project-v3"
+      }
+    ]
   },
   "linkedProjects": [],
   "libReleaseOptions": {
@@ -149,6 +163,9 @@
     "ugly": false,
     "nodts": false
   },
+  "type": "container",
+  "isCoreProject": true,
+  "version": "v3",
   "license": "UNLICENSED",
   "private": true,
   "workerPlugins": {}

@@ -3,14 +3,17 @@
     "resources": [
       "README.md"
     ],
-    "type": "container",
-    "isCoreProject": true,
     "overrided": {
       "ignoreDepsPattern": [],
       "includeAsDev": [],
       "includeOnly": [],
       "dependencies": {},
-      "linkedFolders": []
+      "linkedFolders": [
+        {
+          "from": "../../morphi/projects/container/workspace",
+          "to": "./workspace"
+        }
+      ]
     },
     "linkedProjects": [],
     "libReleaseOptions": {
@@ -18,6 +21,8 @@
       "obscure": false,
       "ugly": false
     },
+    "type": "container",
+    "isCoreProject": true,
     "license": "UNLICENSED",
     "private": true,
     "workerPlugins": {}
@@ -213,7 +218,6 @@
     "reflect-metadata": "0.1.10",
     "rimraf": "2.6.2",
     "rxjs": "~7.4.0",
-    "rxjs-compat": "~6.5.3",
     "simple-git": "1.96.0",
     "sloc": "0.2.0",
     "socket.io": "2.4.1",
@@ -249,8 +253,5 @@
     "watch": "1.0.2",
     "zone.js": "~0.11.4"
   },
-  "private": true,
-  "recreatedFrom": {
-    "tnp.json": true
-  }
+  "private": true
 }

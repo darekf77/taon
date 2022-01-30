@@ -4,11 +4,8 @@
     "bin",
     "logo_github.png",
     "logo.png",
-    "files.png",
-    "dupa.png"
+    "files.png"
   ],
-  "type": "isomorphic-lib",
-  "version": "v2",
   "overrided": {
     "linkedFolders": [],
     "includeAsDev": [],
@@ -188,6 +185,8 @@
     "obscure": false,
     "ugly": false
   },
+  "type": "isomorphic-lib",
+  "version": "v2",
   "scripts": {},
   "description": "Part of firedev.io - framework for isomorphic (node/angular) apps",
   "license": "MIT",
