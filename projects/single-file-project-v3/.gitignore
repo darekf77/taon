@@ -11,10 +11,13 @@ npm-debug.log
 yarn-error.log
 testem.log
 /typings
+/tests-environments
 
 # System Files
 .DS_Store
 Thumbs.db
+
+
 /node_modules
 /tmp*
 /dist*
@@ -31,6 +34,8 @@ Thumbs.db
 /npm-debug.log*
 /.sass-cache
 /.sourcemaps
+/angular.json
+/tsconfig.ng.json
 /tsconfig.isomorphic.json
 /tsconfig.browser.json
 /.vscode/launch.json
@@ -45,6 +50,8 @@ Thumbs.db
 /webpack.config.js
 /webpack.backend-bundle-build.js
 /run.js
+/angular.json.filetemplate
+/tsconfig.ng.json.filetemplate
 /tsconfig.isomorphic.json.filetemplate
 /tsconfig.browser.json.filetemplate
 /.vscode/launch.json.filetemplate
