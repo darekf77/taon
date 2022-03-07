@@ -4,8 +4,8 @@ import { FrameworkContext } from '../framework/framework-context';
 
 export class RealtimeBase {
 
-  private socketFrontEnd: Socket;
-  private socketFrontEndRealtime: Socket;
+  private socketFrontEnd: any; //  Socket; // TODO QUICK_FIX
+  private socketFrontEndRealtime:  any; //  Socket; // TODO QUICK_FIX;
   //#region @backend
   private socketNamespaceBE: Server;
   private socketNamespaceBERealtime: Namespace;
