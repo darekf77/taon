@@ -115,6 +115,7 @@
       "@iconify/icons-fa-solid": "1.2.2",
       "@iconify/icons-mdi": "1.2.1",
       "@iconify/react": null,
+      "@mdi/js": "6.5.95",
       "@types/socket.io": null,
       "@types/socket.io-client": null,
       "socket.io": "~2.4.1",
@@ -145,7 +146,8 @@
       "tsickle": null,
       "@types/diff": "^3.2.2",
       "diff": "^3.2.0",
-      "typeorm": "0.2.45"
+      "typeorm": "0.2.45",
+      "lodash.merge": "4.6.2"
     },
     "linkedFolders": [
       {

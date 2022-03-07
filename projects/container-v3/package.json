@@ -116,6 +116,7 @@
         "@iconify/icons-fa-solid": "1.2.2",
         "@iconify/icons-mdi": "1.2.1",
         "@iconify/react": null,
+        "@mdi/js": "6.5.95",
         "@types/socket.io": null,
         "@types/socket.io-client": null,
         "socket.io": "~2.4.1",
@@ -146,7 +147,8 @@
         "tsickle": null,
         "@types/diff": "^3.2.2",
         "diff": "^3.2.0",
-        "typeorm": "0.2.45"
+        "typeorm": "0.2.45",
+        "lodash.merge": "4.6.2"
       },
       "linkedFolders": [
         {
@@ -204,7 +206,7 @@
     "@angular/service-worker": "~13.2.0",
     "@iconify/icons-fa-solid": "1.2.2",
     "@iconify/icons-mdi": "1.2.1",
-    "@mdi/js": "5.8.55",
+    "@mdi/js": "6.5.95",
     "@ngrx/component-store": "~13.0.2",
     "@ngrx/data": "~13.0.2",
     "@ngrx/effects": "~13.0.2",
@@ -322,6 +324,7 @@
     "lockfile": "1.0.4",
     "lodash": "4.17.4",
     "lodash-walk-object": "1.0.41",
+    "lodash.merge": "4.6.2",
     "lowdb": "1.0.0",
     "material-design-icons": "3.0.1",
     "method-override": "2.3.10",
@@ -333,6 +336,8 @@
     "ng-packagr": "13.0.0",
     "ng2-logger": "8.0.30",
     "ng2-rest": "13.0.3",
+    "ng4-icons": "13.0.3",
+    "ng4-modal": "13.0.2",
     "ngx-bootstrap": "8.0.0",
     "ngx-editor": "12.2.1",
     "ngx-moment": "6.0.2",
@@ -377,6 +382,7 @@
     "tnp-db": "13.0.3",
     "tnp-helpers": "13.0.5",
     "tnp-models": "13.0.3",
+    "tnp-ui": "0.0.33",
     "ts-node": "10.7.0",
     "tslib": "~2.3.0",
     "typeorm": "0.2.45",
