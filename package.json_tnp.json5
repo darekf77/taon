@@ -1,17 +1,17 @@
 {
-  "resources": [
+  resources: [
     "README.md", // readme for humans
     "bin",
     "logo_github.png",
     "logo.png",
-    "files.png"
+    "files.png",
   ],
-  "overrided": {
-    "linkedFolders": [],
-    "includeAsDev": [],
-    "includeOnly": [
+  overrided: {
+    linkedFolders: [],
+    includeAsDev: [],
+    includeOnly: [
       "@angular-devkit/build-angular", // for angular
-      "@angular-devkit/build-optimizer",// for angular
+      "@angular-devkit/build-optimizer", // for angular
       "@angular-devkit/schematics",
       "@angular/animations",
       "@angular/cdk",
@@ -180,23 +180,24 @@
       // "wait.for",
       "watch",
       "webpack-cli",
-      "zone.js"
+      "zone.js",
     ],
-    "ignoreDepsPattern": [],
-    "dependencies": {}
+    ignoreDepsPattern: [],
+    dependencies: {},
   },
-  "linkedProjects": [],
-  "libReleaseOptions": {
-    "nodts": false,
-    "obscure": false,
-    "ugly": false
+  linkedProjects: [],
+  libReleaseOptions: {
+    nodts: false,
+    obscure: false,
+    ugly: false,
   },
-  "type": "isomorphic-lib",
-  "version": "v3",
-  "scripts": {},
-  "description": 'Part of firedev.io - framework for isomorphic (node/angular) apps',
-  "license": "MIT",
-  "private": false,
-  "author": "Dariusz Filipiak",
-  "homepage": "https://github.com/darekf77/morphi#readme",
+  type: "isomorphic-lib",
+  version: "v3",
+  additionalNpmNames: ["firedev-framework"],
+  scripts: {},
+  description: "Part of firedev.io - framework for isomorphic (node/angular) apps",
+  license: "MIT",
+  private: false,
+  author: "Dariusz Filipiak",
+  homepage: "https://github.com/darekf77/morphi#readme",
 }
