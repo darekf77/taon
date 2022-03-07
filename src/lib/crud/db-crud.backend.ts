@@ -86,7 +86,9 @@ export class DbCrud<T> {
   }
 
   async create(item: T, config?: ModelDataConfig) {
+    // @ts-ignore
     let model = await this.repo.create(item)
+    // @ts-ignore
     model = await this.repo.save(model);
     const { id } = model as any;
 

@@ -1,11 +1,11 @@
 //#region @backend
 import { ps, crossPlatformPath, Helpers } from 'tnp-core';
-import { MorphiHelpers } from '../helpers';
+import { MorphiHelpers } from '../lib/helpers';
 import { copyExampleTo } from './new';
 import { CLI } from 'tnp-cli';
 import { child_process, path, fse } from 'tnp-core';
 
-export * from '../helpers';
+export * from '../lib/helpers';
 
 export async function run(argsv: string[], morphiEnvironmentCheck = true) {
   if (morphiEnvironmentCheck) {

@@ -33,7 +33,7 @@ DON'T FORGET
       </formly-group>
     </div>
     <div>
-      <button class="btn btn-primary" type="button" (click)="add()">{{ field.fieldArray.templateOptions.label }}</button>
+      <button class="btn btn-primary" type="button" (click)="add()">{{ labelTemplate }}</button>
     </div>
   `,
   styles: [
@@ -61,7 +61,12 @@ DON'T FORGET
   ]
 })
 export class RepeatTypeComponent extends FieldArrayType {
-  constructor(builder: FormlyFormBuilder) {
+  get labelTemplate() {
+    // @ts-ignore
+    return this.field.fieldArray.templateOptions.label; // TODO QUICK_FIX @LAST
+  }
+  constructor(builder: FormlyFormBuilder) { // TODO QUICK_FIX
+    // @ts-ignore
     super(builder);
   }
 }

@@ -3,8 +3,6 @@ import { Response as ExpressResponse, Request as ExpressRequest } from 'express'
 import { Models as ModelsNg2Rest } from 'ng2-rest';
 
 
-
-import 'rxjs/add/operator/map'
 import { CLASS } from 'typescript-class-helpers';
 
 
