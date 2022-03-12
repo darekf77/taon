@@ -77,7 +77,7 @@
       "bcryptjs",
       "body-parser",
       "bootstrap",
-      "bs4-breakpoint",
+      // "bs4-breakpoint",
       "callsite-record",
       "chai",
       "check-node-version",
