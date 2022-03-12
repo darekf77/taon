@@ -10,8 +10,10 @@ export { config } from 'tnp-config';
 
 export { ModelDataConfig, MDC } from './crud/model-data-config';
 export { Models } from './models';
+//#region @browser
 export { RepeatTypeComponent } from './crud/formly-repeat-component';
 export { FormlyHorizontalWrapper } from './crud/formly-group-wrapper-component';
+//#endregion
 export { Log, Level } from 'ng2-logger';
 
 
