@@ -4,25 +4,6 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Launch Server isomorphic-lib-v3 for angular-lib-v3",
-      "program": "${workspaceFolder}/../isomorphic-lib-v3/run.js",
-      "cwd": "${workspaceFolder}/../isomorphic-lib-v3",
-      "args": [
-        "--ENVoverride=%7B%0A%20%20%20%20%22clientProjectName%22%3A%20%22angular-lib-v3%22%0A%7D"
-      ],
-      "runtimeArgs": [
-        "--nolazy",
-        "-r",
-        "ts-node/register",
-        "--experimental-worker"
-      ],
-      "presentation": {
-        "group": "workspaceServers"
-      }
-    },
-    {
-      "type": "node",
-      "request": "launch",
       "name": "Launch Server isomorphic-lib-v3 for isomorphic-lib-v3",
       "program": "${workspaceFolder}/run.js",
       "args": [

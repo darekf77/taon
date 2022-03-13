@@ -12,11 +12,11 @@ config = {
       port: 5000
     },
     projects: [
-      {
-        "baseUrl": "/angular-lib-v3",
-        "name": "angular-lib-v3",
-        "port": 6001
-      },
+      // {
+      //   "baseUrl": "/angular-lib-v3",
+      //   "name": "angular-lib-v3",
+      //   "port": 6001
+      // },
       {
         "baseUrl": "/isomorphic-lib-v3",
         "name": "isomorphic-lib-v3",
