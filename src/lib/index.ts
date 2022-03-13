@@ -100,6 +100,7 @@ export namespace Morphi {
   // export const authenticate = pass.authenticate
   //#endregion
   export import init = framework.start;
+  export import InitOptions = framework.StartOptions;
   export import SYMBOL = sym.SYMBOL;
 
   export namespace Realtime {

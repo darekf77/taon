@@ -34,7 +34,6 @@ Thumbs.db
 /npm-debug.log*
 /.sass-cache
 /.sourcemaps
-/tsconfig.ng.json
 /tsconfig.isomorphic.json
 /tsconfig.json
 /src/tsconfig.app.json
@@ -47,8 +46,6 @@ Thumbs.db
 /tsconfig.base.json
 /src/index.html
 /src/manifest.webmanifest
-/tsconfig.browser.json
-/tsconfig.isomorphic.json
 /components/tsconfig.json
 /src/tsconfig.app.json
 /src-for-stanalone
@@ -61,6 +58,3 @@ Thumbs.db
 
 # =====================
 !*.filetemplate
-
-/tsconfig.browser.json.filetemplate
-/tsconfig.isomorphic.json.filetemplate

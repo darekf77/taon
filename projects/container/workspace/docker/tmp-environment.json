@@ -313,9 +313,9 @@
     "private": true
   },
   "build": {
-    "number": 871,
-    "date": "2022-01-16T15:31:49.000Z",
-    "hash": "8ef863eb86aebad2e0630bc9dcd2b7062f9e9d34",
+    "number": 904,
+    "date": "2022-03-13T16:58:58.000Z",
+    "hash": "fcf070390d710fb62fb0cdf36f3184869560a909",
     "options": {}
   },
   "currentProjectName": "docker",
@@ -323,8 +323,8 @@
   "currentProjectLaunchConfiguration": "{\"version\":\"0.2.0\",\"configurations\":[],\"compounds\":[]}",
   "currentProjectTasksConfiguration": "{\"version\":\"2.0.0\",\"tasks\":[{\"label\":\"terminateall\",\"command\":\"echo ${input:terminate}\",\"type\":\"shell\",\"problemMatcher\":[]}],\"inputs\":[{\"id\":\"terminate\",\"type\":\"command\",\"command\":\"workbench.action.tasks.terminate\",\"args\":\"terminateAll\"}]}",
   "currentProjectType": "docker",
-  "currentFrameworkVersion": "0.0.159",
-  "currentProjectLocation": "/Users/dariusz/projects/npm/firedev-projects/container/workspace/docker",
+  "currentFrameworkVersion": "13.0.6",
+  "currentProjectLocation": "/Users/dfilipiak/projects/npm/firedev-projects/container/workspace/docker",
   "currentProjectIsStrictSite": false,
   "currentProjectIsDependencySite": false,
   "currentProjectIsStatic": false,

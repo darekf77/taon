@@ -5,11 +5,15 @@
     "module": "esnext",
     "rootDir": "./",
     "baseUrl": "./",
+#    "inlineSourceMap": true,
     "sourceMap": true,
     "lib": [
       "dom",
       "es2018"
-    ]
+    ],
+#    "paths": {
+#      {{{ENV.currentProjectTsConfigPathesForBrowser ? ENV.currentProjectTsConfigPathesForBrowser: ''}}}
+#    }
   },
   "include": [
     "./**/*"
