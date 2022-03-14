@@ -329,7 +329,7 @@ function validateConfigAndAssignEntites(
       Missing config for backend:
 
 
-      Morphi.init({
+      Firedev.init({
         ...
         config: <YOUR DB CONFIG HERE>
         ...

@@ -28,7 +28,7 @@ export function activateBaseCrud(
         !global.hideLog && console.warn(`
         You are extending BaseCRUD class.. CRUD functionality won't work
         unless you provide "entity" property for CRUD operations on db.
-        @Morphi.Controller({
+        @Firedev.Controller({
           ...
           entity: <YOUR ENTITY CLASS HERE>
           ...

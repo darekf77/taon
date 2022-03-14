@@ -11,7 +11,7 @@ export function start(options: StartOptions) {
       host,
       controllers = [],
       entities = [],
-      disabledRealtime = false,
+      disabledRealtime,
       allowedHosts,
       //#region @backend
       mode,
@@ -31,9 +31,9 @@ export function start(options: StartOptions) {
       controllers,
       entities,
       allowedHosts,
+      disabledRealtime,
       //#region @backend
       mode,
-      disabledRealtime,
       InitDataPriority,
       publicAssets,
       config,

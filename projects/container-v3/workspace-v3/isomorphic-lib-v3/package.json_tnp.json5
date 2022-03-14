@@ -2,11 +2,6 @@
   "resources": [
     "README.md"
   ],
-  "isCoreProject": true,
-  "useFramework": true,
-  "type": "isomorphic-lib",
-  "required": [],
-  "version": "v3",
   "overrided": {
     "ignoreDepsPattern": [],
     "includeAsDev": [],
@@ -20,6 +15,11 @@
     "obscure": false,
     "ugly": false
   },
+  "isCoreProject": true,
+  "useFramework": true,
+  "type": "isomorphic-lib",
+  "required": [],
+  "version": "v3",
   "workerPlugins": {},
   "license": "UNLICENSED",
   "private": true,

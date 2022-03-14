@@ -10,12 +10,12 @@ import { ServiceWorkerModule } from '@angular/service-worker';
   ],
   imports: [
     BrowserModule,
-    ServiceWorkerModule.register('ngsw-worker.js', {
-      enabled: true,
-      // Register the ServiceWorker as soon as the app is stable
-      // or after 30 seconds (whichever comes first).
-      registrationStrategy: 'registerWhenStable:30000'
-    }),
+    //bundleOnly ServiceWorkerModule.register('ngsw-worker.js', {
+      //bundleOnlyenabled: true,
+      //bundleOnly// Register the ServiceWorker as soon as the app is stable
+      //bundleOnly// or after 30 seconds (whichever comes first).
+      //bundleOnlyregistrationStrategy: 'registerWhenStable:30000'
+    //bundleOnly}),
     //<<<TO_REPLACE_MODULE>>>
   ],
   providers: [],
