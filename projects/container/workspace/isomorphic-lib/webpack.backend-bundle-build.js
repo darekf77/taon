@@ -1,5 +1,5 @@
-var webpack = require('webpack'),
-  path = require('path'),
+// var webpack = require('webpack'),
+  var path = require('path'),
   fs = require('fs');
 
 // var WebpackOnBuildPlugin = require('on-build-webpack');
