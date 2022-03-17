@@ -6,9 +6,7 @@
     "ignoreDepsPattern": [],
     "includeAsDev": [],
     "includeOnly": [],
-    "dependencies": {
-      "webpack": "3.10.0"
-    },
+    "dependencies": {},
     "linkedFolders": [
       {
         "from": "../../morphi/projects/container/workspace",

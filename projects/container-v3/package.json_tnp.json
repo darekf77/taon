@@ -110,7 +110,7 @@
       "sharp": null,
       "@types/sharp": null,
       "@types/node": "^12.11.1",
-      "ts-loader": null,
+      "ts-loader": "^2.3.1",
       "@iconify/icons-fa-solid": "1.2.2",
       "@iconify/icons-mdi": "1.2.1",
       "@iconify/react": null,
