@@ -153,12 +153,7 @@
       "lodash.set": ">= 4",
       "node-cli-test": null,
       "button-dropdown": null,
-      "magic-renamer": null,
-      "ng-talkback": null,
-      "node-cli-tester": null,
-      "record-replay-req-res-scenario": null,
       "static-columns": null,
-      "vpn-split": null,
       "tnp-tools": null,
       "@types/semver": "6.0.1",
       "semver": "6.3.0"
