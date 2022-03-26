@@ -57,15 +57,6 @@ export async function run(argsv: string[], morphiEnvironmentCheck = true) {
       console.log('Where lib(n) is name of included in node_modules isomorphic lib')
       console.log('Example isomorphic libs are: typeorm, ng2-rest, morphi...');
       process.exit(0)
-    } else if (commandName === 'ln') {
-      if (!Array.isArray(argsv) || argsv.length < 2) {
-        console.log(`To few arguments for linking function...`);
-        process.exit(0)
-      }
-      const link = argsv[4]
-      let target = argsv[3]
-      Helpers.createSymLink(target, link);
-      process.exit(0)
     } else if (commandName === '-v') {
       console.log(JSON.parse(fse.readFileSync(path.join(crossPlatformPath(__dirname), '../..', 'package.json').toString(), 'utf8').toString()).version)
       process.exit(0)
