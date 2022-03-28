@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig.isomorphic.json",
   "compilerOptions": {
-     "rootDir": "./{{{ (ENV && ENV.currentProjectIsSite) ? 'tmp-src' : 'src' }}}",
+     {{{ (ENV && ENV.customRootDir) }}},
      "paths": {{{ (ENV && ENV.pathesTsconfig) }}},
   #   "paths": {
    #    "codete-ngrx-quick-start": [
@@ -14,7 +14,7 @@
 # {{{ENV.currentProjectTsConfigPathes ? ENV.currentProjectTsConfigPathes: ''}}}
 #      }
   },
-  {{{ (ENV && ENV.exclusion) }}},
+#  {{{ (ENV && ENV.exclusion) }}},
   "include": [
     "{{{ (ENV && ENV.currentProjectIsSite) ? 'tmp-src' : 'src' }}}/**/*"
   ]
