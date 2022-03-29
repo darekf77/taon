@@ -15,9 +15,9 @@
     "obscure": false,
     "ugly": false
   },
+  "type": "isomorphic-lib",
   "isCoreProject": true,
   "useFramework": true,
-  "type": "isomorphic-lib",
   "required": [],
   "version": "v3",
   "workerPlugins": {},
