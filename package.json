@@ -161,7 +161,7 @@
   },
   "license": "MIT",
   "private": false,
-  "lastBuildTagHash": "57fd020730c2f6496faf0c5662ba045930d0f43f",
+  "lastBuildTagHash": "b8dbb03c3879631275c5ae2fdc4a4515759dc47d",
   "devDependencies": {
     "@angular/flex-layout": "~13.0.0-beta.38",
     "@iconify/icons-fa-solid": "1.2.2",
@@ -218,7 +218,7 @@
     "lodash.set": ">= 4",
     "magic-renamer": "13.0.5",
     "mkdirp": "0.5.1",
-    "morphi": "~13.0.16",
+    "morphi": "~13.0.17",
     "ng-talkback": "13.0.7",
     "ng2-logger": "~13.0.9",
     "ng4-icons": "~13.0.9",
