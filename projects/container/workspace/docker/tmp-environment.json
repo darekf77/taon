@@ -313,9 +313,9 @@
     "private": true
   },
   "build": {
-    "number": 905,
-    "date": "2022-03-13T20:43:05.000Z",
-    "hash": "ffd54b2cf736851c2613c30f6cfa1ae0955ee7a5",
+    "number": 927,
+    "date": "2022-03-29T13:38:06.000Z",
+    "hash": "06052c80fee0e1e2c7a6aae7253cc59a80235735",
     "options": {}
   },
   "currentProjectName": "docker",
@@ -323,7 +323,7 @@
   "currentProjectLaunchConfiguration": "{\"version\":\"0.2.0\",\"configurations\":[],\"compounds\":[]}",
   "currentProjectTasksConfiguration": "{\"version\":\"2.0.0\",\"tasks\":[{\"label\":\"terminateall\",\"command\":\"echo ${input:terminate}\",\"type\":\"shell\",\"problemMatcher\":[]}],\"inputs\":[{\"id\":\"terminate\",\"type\":\"command\",\"command\":\"workbench.action.tasks.terminate\",\"args\":\"terminateAll\"}]}",
   "currentProjectType": "docker",
-  "currentFrameworkVersion": "13.0.6",
+  "currentFrameworkVersion": "13.0.48",
   "currentProjectLocation": "/Users/dariusz/projects/npm/firedev-projects/container/workspace/docker",
   "currentProjectIsStrictSite": false,
   "currentProjectIsDependencySite": false,
@@ -334,5 +334,7 @@
     "ionic",
     "material"
   ],
+  "pathesTsconfig": "\"paths\": {},",
+  "customRootDir": "\"rootDir\": \"./src\",",
   "currentProjectComponentsFolder": "browser-for-angular-lib"
 }

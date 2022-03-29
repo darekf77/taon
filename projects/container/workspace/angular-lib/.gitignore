@@ -37,15 +37,7 @@ Thumbs.db
 /tsconfig.isomorphic.json
 /tsconfig.json
 /src/tsconfig.app.json
-/.vscode/launch.json
-/.vscode/tasks.json
-/angular.json
-/browserslist
-/ngsw-config.json
-/tsconfig.app.json
-/tsconfig.base.json
-/src/index.html
-/src/manifest.webmanifest
+/.angular-cli.json
 /components/tsconfig.json
 /src/tsconfig.app.json
 /src-for-stanalone
