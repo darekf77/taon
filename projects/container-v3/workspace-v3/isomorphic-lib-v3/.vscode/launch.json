@@ -9,9 +9,6 @@
       "args": [
         "--ENVoverride=%7B%0A%20%20%20%20%22clientProjectName%22%3A%20%22isomorphic-lib-v3%22%0A%7D"
       ],
-      "outFiles": [
-        "${workspaceFolder}/dist/**/*.js"
-      ],
       "runtimeArgs": [
         "--nolazy",
         "-r",
