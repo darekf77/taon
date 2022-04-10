@@ -216,7 +216,7 @@
     "lodash.isequal": ">= 4",
     "lodash.merge": ">= 4",
     "lodash.set": ">= 4",
-    "magic-renamer": "13.0.6",
+    "magic-renamer": "~13.0.6",
     "mkdirp": "0.5.1",
     "morphi": "~13.0.17",
     "ng-talkback": "~13.0.8",
@@ -224,7 +224,7 @@
     "ng4-icons": "~13.0.10",
     "ng4-modal": "~13.0.12",
     "ngx-store": "3.1.1",
-    "node-cli-tester": "13.0.8",
+    "node-cli-tester": "~13.0.8",
     "node-localstorage": "2.1.6",
     "open": "7.2.1",
     "prettier": "2.5.1",
@@ -232,7 +232,7 @@
     "ps-node": "0.1.6",
     "q": "1.5.1",
     "randomcolor": "0.5.3",
-    "record-replay-req-res-scenario": "13.0.9",
+    "record-replay-req-res-scenario": "~13.0.9",
     "rimraf": "2.6.2",
     "semver": "6.3.0",
     "string-similarity": "4.0.2",
@@ -247,6 +247,6 @@
     "ts-debug": "1.3.0",
     "typescript-class-helpers": "~13.0.9",
     "uuid": "8.3.2",
-    "vpn-split": "13.0.13"
+    "vpn-split": "~13.0.13"
   }
 }
