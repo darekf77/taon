@@ -222,6 +222,8 @@ export class FrameworkContext extends FrameworkContextBase {
     this.prepareEntities();
   }
 
+  anotherReason = `Please check if your "class name" matches  @Controller( className ) or @Entity( className )`;
+
   private prepareEntities() {
     //#region @backend
     if (this.context.config) {
@@ -232,7 +234,10 @@ export class FrameworkContext extends FrameworkContextBase {
       .forEach(c => {
         const className = CLASS.getName(c);
         if (FrameworkContext.contextByClassName[className]) {
-          throw `[morphi][frameworkcontext] Context already register for class "${className}"
+          throw `[morphi][frameworkcontext]
+${this.anotherReason}
+
+          Context already register for class "${className}"
 This is class names based framework....
 You can create subclass from this class to fix this
 
@@ -257,7 +262,10 @@ class ${className}Extended extends ${className} {
       .forEach(c => {
         const className = CLASS.getName(c);
         if (FrameworkContext.contextByClassName[className]) {
-          throw `[morphi][frameworkcontext] Context already register for class "${className}"
+          throw `[morphi][frameworkcontext]
+${this.anotherReason}
+
+          Context already register for class "${className}"
 This is class names based framework....
 You can create subclass from this class to fix this
 
