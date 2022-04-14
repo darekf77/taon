@@ -1,17 +1,46 @@
 //#region @notForNpm
 import { _ } from 'tnp-core';
-//#region @backend
-import {
-  path,
-  fse,
-  rimraf,
-  crossPlatformPath,
-  os,
-  child_process,
-  http, https,
-} from 'tnp-core';
-//#endregion
 import { Morphi } from './index';
+
+
+@Morphi.Entity({ className: 'Student' })
+class Student {
+  //#region @backend
+  @Morphi.Orm.Column.Generated()
+  //#endregion
+  public id: number;
+
+  //#region @backend
+  @Morphi.Orm.Column.Custom('varchar')
+  //#endregion
+  public firstName: string
+
+  //#region @backend
+  @Morphi.Orm.Column.Custom('varchar')
+  //#endregion
+  public lastName: string
+
+}
+
+
+@Morphi.Entity({ className: 'User' })
+class User {
+  //#region @backend
+  @Morphi.Orm.Column.Generated()
+  //#endregion
+  public id: number;
+
+  //#region @backend
+  @Morphi.Orm.Column.Custom('varchar')
+  //#endregion
+  public firstName: string
+
+  //#region @backend
+  @Morphi.Orm.Column.Custom('varchar')
+  //#endregion
+  public lastName: string
+
+}
 
 @Morphi.Entity({ className: 'Book' })
 class Book extends Morphi.Base.Entity<any> {
@@ -33,6 +62,25 @@ class Book extends Morphi.Base.Entity<any> {
 
 }
 
+@Morphi.Controller({ className: 'UserController' })
+class UserController {
+  @Morphi.Http.GET()
+  helloWorld(): Morphi.Response<string> {
+    return async (req, res) => {
+      return 'hello world from here';
+    }
+  }
+}
+
+@Morphi.Controller({ className: 'StudentController', entity: Student })
+class StudentController extends Morphi.Base.Controller<any>  {
+  @Morphi.Http.GET()
+  helloStudencie(): Morphi.Response<string> {
+    return async (req, res) => {
+      return 'hello world from here';
+    }
+  }
+}
 
 
 @Morphi.Controller({ className: 'BookCtrl', entity: Book })
@@ -44,80 +92,76 @@ class BookCtrl extends Morphi.Base.Controller<any> {
     await db.save(Book.from('cryptography'));
   }
   //#endregion
+
+  @Morphi.Http.GET()
+  helloWorld(): Morphi.Response<string> {
+    return async (req, res) => {
+      return 'hello world';
+    }
+  }
 }
 
-const start = async (port = 3000) => {
-  const host = `http://localhost:${port}`;
-  console.log(`HOST MORPHI: ${host}`);
-  //#region @backend
-  const config = {
-    type: "sqlite",
-    database: 'tmp-db.sqlite',
-    synchronize: true,
-    dropSchema: true,
-    logging: false
-  };
-  //#endregion
+const host1 = `http://localhost:3111`;
+const host2 = `http://localhost:3222`;
 
-  const context = await Morphi.init({
-    host,
-    controllers: [BookCtrl],
-    entities: [Book],
+const start = async (port = 3000) => {
+
+  const context1 = await Morphi.init({
+    host: host1,
+    controllers: [
+      BookCtrl,
+    ],
+    entities: [
+      Book,
+      // User,
+    ],
     //#region @backend
-    config: config as any
+    config: {
+      type: "sqlite",
+      database: 'tmp-db1.sqlite',
+      synchronize: true,
+      dropSchema: true,
+      logging: false
+    }
     //#endregion
   });
-  //#region @backend
-  if (Morphi.isNode) {
-    context.node.app.get('/hello', (req, res) => {
-      res.send('Hello express')
-    })
-  }
-  //#endregion
 
   // console.log(context);
   if (Morphi.IsBrowser) {
-    const c: BookCtrl = _.first(context.controllers);
+    const c: BookCtrl = _.first(context1.controllers);
     const data = (await c.getAll().received).body.json as Book[];
-    // console.log(data);
-    data.forEach(b => {
-      b.subscribeRealtimeUpdates({
-        callback: () => {
-          // console.log(`hello update: ${b.id} `)
-        }
-      });
-    })
-  }
-  //#region @backend
-  if (Morphi.isNode) {
-    const dbfile = crossPlatformPath(path.join(crossPlatformPath(process.cwd()), config.database));
-    // console.log(`dbfile: ${dbfile}`)
-    // setTimeout(() => {
-
-    // }, 2000)
-    const db = await context.connection.getRepository(Book);
-    let oldData = await db.find();
-    fse.watchFile(dbfile, async (a, b) => {
-      // console.log(`update entities`)
-      const newData = await db.find();
-      oldData.forEach(b => {
-        const newb = newData.find(d => d.id === b.id);
-        if (newb) {
-          if (!_.isEqual(newb.name, b.name)) {
-            Morphi.Realtime.Server.TrigggerEntityChanges('Book', b.id);
-          }
-        } else {
-          Morphi.Realtime.Server.TrigggerEntityChanges('Book', b.id);
-        }
-        oldData = newData;
-      })
-    });
-    // context.controllers.forEach(c => {
-
-    // })
+    console.log('context 1', data);
   }
 
-  //#endregion
+  const context2 = await Morphi.init({
+    host: host2,
+    controllers: [
+      // BookCtrl,
+      UserController,
+      StudentController,
+    ],
+    entities: [
+      User,
+      Student,
+      // Book,
+    ],
+    //#region @backend
+    config: {
+      type: "sqlite",
+      database: 'tmp-db2.sqlite',
+      synchronize: true,
+      dropSchema: true,
+      logging: false
+    }
+    //#endregion
+  });
+
+  // console.log(context);
+  if (Morphi.IsBrowser) {
+    const c: BookCtrl = _.first(context2.controllers);
+    const data = (await c.getAll().received).body.json as Book[];
+    console.log('context 2', data);
+  }
 }
 
 if (Morphi.IsBrowser) {

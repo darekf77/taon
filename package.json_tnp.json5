@@ -183,7 +183,9 @@
       "zone.js",
     ],
     ignoreDepsPattern: [],
-    dependencies: {},
+    dependencies: {
+      "sqlite3": "4.0.9"
+    },
   },
   linkedProjects: [],
   libReleaseOptions: {

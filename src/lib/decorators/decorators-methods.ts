@@ -6,30 +6,44 @@ function metaReq(
   method: Models.Rest.HttpMethod, path: string,
   target: any, propertyKey: string,
   descriptor: PropertyDescriptor, realtimeUpdate = false) {
+  const className = CLASS.getName(target.constructor);
+  // TODO @LAST CLASS NAME IS NOT WORKING!!!
+  //
+
+  if (className === 'UserController') {
+    debugger
+  }
+  // const isBaseCurd = (className === 'BaseCRUD');
+  // if (isBaseCurd) {
+  //   debugger;
+  // }
   const configs = CLASS.getConfig(target.constructor as any);
-  const c = configs[0];
-  const m: Models.Rest.MethodConfig = c.methods[propertyKey] = (!c.methods[propertyKey] ? new Models.Rest.MethodConfig() : c.methods[propertyKey]);
-  m.methodName = propertyKey;
-  m.type = method;
+  const config = _.first(configs);
+  // if (config.vChildren.length > 0) {
+  //   debugger
+  // }
+  const methodConfig: Models.Rest.MethodConfig = config.methods[propertyKey] = (!config.methods[propertyKey] ? new Models.Rest.MethodConfig() : config.methods[propertyKey]);
+  methodConfig.methodName = propertyKey;
+  methodConfig.type = method;
   // debugger
   if (!path) {
     let paramsPathConcatedPath = '';
-    for (const key in m.parameters) {
-      if (m.parameters.hasOwnProperty(key)) {
-        const element = m.parameters[key];
+    for (const key in methodConfig.parameters) {
+      if (methodConfig.parameters.hasOwnProperty(key)) {
+        const element = methodConfig.parameters[key];
         if (element.paramType === 'Path' && _.isString(element.paramName) && element.paramName.trim().length > 0) {
           paramsPathConcatedPath += `/${element.paramName}/:${element.paramName}`
         }
       }
     }
-    m.path = `/${propertyKey}${paramsPathConcatedPath}`
+    methodConfig.path = `/${propertyKey}${paramsPathConcatedPath}`
     // console.log(`Authogenerated path: `, m.path)
   } else {
-    m.path = path;
+    methodConfig.path = path;
   }
 
-  m.descriptor = descriptor;
-  m.realtimeUpdate = realtimeUpdate;
+  methodConfig.descriptor = descriptor;
+  methodConfig.realtimeUpdate = realtimeUpdate;
 }
 export function GET(path?: string, realtimeUpdate = false) {
   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {

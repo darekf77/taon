@@ -79,7 +79,9 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
       }
       await this.initConnection();
       this.initDecoratorsFunctions();
-      this.writeActiveRoutes(this.context.workerMode);
+
+      const { contexts } = (await import('./framework-context')).FrameworkContext;
+      this.writeActiveRoutes(contexts);
 
       this.context.publicAssets.forEach(asset => {
         this.app.use(asset.path, express.static(asset.location))
@@ -125,18 +127,38 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
 
   public activeRoutes: { routePath: string; method: Models.Rest.HttpMethod }[] = []
 
-  private writeActiveRoutes(isWorker = false) {
-    const routes = this.activeRoutes.map(({ method, routePath }) => {
-      return `${method.toUpperCase()}:    ${this.context.uri.href.replace(/\/$/, '')}${routePath}`
-    });
-    const instanceClass = _.first(this.context.controllersClasses) as any;
-    const instance = instanceClass && this.context.getInstance(instanceClass as any) as any;
-    fse.writeJSONSync(path.join(process.cwd(), `tmp-routes${isWorker ? '--worker--'
-      + path.basename(instance.filename).replace(/\.js$/, '')
-      : ''}.json`), routes, {
+  private writeActiveRoutes(contexts: FrameworkContext[], isWorker = false) {
+
+    let routes = [];
+    for (let index = 0; index < contexts.length; index++) {
+      const context = contexts[index];
+
+      const troutes = context.node.activeRoutes.map(({ method, routePath }) => {
+        return `${method.toUpperCase()}:    ${context.uri.href.replace(/\/$/, '')}${routePath}`
+      });
+      const tinstanceClass = _.first(context.controllersClasses) as any;
+      const tinstance = tinstanceClass && context.getInstance(tinstanceClass as any) as any;
+      const isWorker = context.workerMode;
+
+      if (isWorker) {
+        fse.writeJSONSync(path.join(process.cwd(), `tmp-routes--worker--`
+          + `${path.basename(tinstance.filename).replace(/\.js$/, '')}.json`), routes, {
+          spaces: 2,
+          encoding: 'utf8'
+        })
+      } else {
+        routes = [
+          ...routes,
+          ...(['', `---------- FOR HOST ${context.uri.href} ----------`]),
+          ...troutes,
+        ];
+      }
+    }
+    fse.writeJSONSync(path.join(process.cwd(), `tmp-routes.json`), routes, {
       spaces: 2,
       encoding: 'utf8'
-    })
+    });
+
   }
 
   private initMidleware() {
