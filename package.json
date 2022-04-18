@@ -1,6 +1,6 @@
 {
   "name": "morphi",
-  "version": "13.0.27",
+  "version": "13.0.28",
   "description": "Part of firedev.io - framework for isomorphic (node/angular) apps",
   "scripts": {},
   "bin": {
