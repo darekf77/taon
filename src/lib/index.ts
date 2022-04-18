@@ -1,5 +1,4 @@
 //#region @backend
-export { config } from 'tnp-config';
 // export { FILE_NAME_ISOMORPHIC_PACKAGES } from './build/packages-recognition';
 // export {
 //   CodeCut, BrowserCodeCut, IncrementalBuildProcess, PackagesRecognition,

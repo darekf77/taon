@@ -5,14 +5,15 @@ import { SYMBOL } from '../symbols';
 import { EntityProcess } from './entity-process';
 import { MDC } from '../crud';
 import { FrameworkContext } from '../framework/framework-context';
-
+// TODO below thing needs to be there
+// @ts-ignore
 export function initMethodNodejs(
   type: Models.Rest.HttpMethod,
   methodConfig: Models.Rest.MethodConfig,
   classConfig: Models.Rest.ClassConfig,
   expressPath: string,
   target: Function
-) {
+): any {
 
   const requestHandler = (methodConfig.requestHandler && typeof methodConfig.requestHandler === 'function')
     ? methodConfig.requestHandler : (req, res, next) => { next() };
