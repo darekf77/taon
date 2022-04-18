@@ -37,7 +37,7 @@ export function ENDPOINT(options?: {
 
         activateBaseCrud(target, entity, additionalEntities, context)
 
-        const configs = CLASS.getConfig(target) as any[];
+        const configs = CLASS.getConfigs(target) as any[];
         // console.log(`Class config for ${CLASS.getName(target)}`, configs)
         const classConfig: Models.Rest.ClassConfig = configs[0];
         classConfig.path = targetPath;

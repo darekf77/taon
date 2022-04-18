@@ -1,6 +1,9 @@
 //#region @notForNpm
 import { _ } from 'tnp-core';
+import { CLASS } from 'typescript-class-helpers';
 import { Morphi } from './index';
+
+
 
 
 @Morphi.Entity({ className: 'Student' })
@@ -162,6 +165,17 @@ const start = async (port = 3000) => {
     const data = (await c.getAll().received).body.json as Book[];
     console.log('context 2', data);
   }
+
+  console.log('-------------');
+  const { BaseCRUD } = await import('./lib/crud');
+  console.log(`${BaseCRUD.name}: ${CLASS.getName(BaseCRUD)}`);
+  const { BASE_CONTROLLER } = await import('./lib/framework');
+  console.log(`${BASE_CONTROLLER.name}: ${CLASS.getName(BASE_CONTROLLER)}`);
+  console.log(`${Student.name}: ${CLASS.getName(Student)}`);
+  console.log(`${StudentController.name}: ${CLASS.getName(StudentController)}`);
+  console.log(`${Book.name}: ${CLASS.getName(Book)}`);
+  console.log(`${BookCtrl.name}: ${CLASS.getName(BookCtrl)}`);
+
 }
 
 if (Morphi.IsBrowser) {

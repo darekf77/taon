@@ -3,9 +3,8 @@ import { CLASS } from 'typescript-class-helpers';
 
 function metaParam(param: Models.Rest.ParamType, name: string, expire: number, defaultValue = undefined, ...args: any[]) {
   const methodName = args[1];
-  const configs = CLASS.getConfig(args[0].constructor);
-  let c = configs[0];
-  const m = c.methods[methodName] = (!c.methods[methodName] ? new Models.Rest.MethodConfig() : c.methods[methodName]);
+  const config = CLASS.getConfig(args[0].constructor);
+  const m = config.methods[methodName] = (!config.methods[methodName] ? new Models.Rest.MethodConfig() : config.methods[methodName]);
 
   const nameKey = name ? name : param;
   const p = m.parameters[nameKey] = (!m.parameters[nameKey] ? new Models.Rest.ParamConfig() : m.parameters[nameKey]);

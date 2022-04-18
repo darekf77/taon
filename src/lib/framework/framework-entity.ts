@@ -21,8 +21,7 @@ const log = Log.create('Framework entity',
 
 
 function getUpdateID(id, entityName, propterty, config) {
-  return `${_.kebabCase(id)}-${_.kebabCase(entityName)}-${_.kebabCase(propterty)}-${
-    _.isObject(config) ? _.kebabCase(JSON.stringify(config)) : ''
+  return `${_.kebabCase(id)}-${_.kebabCase(entityName)}-${_.kebabCase(propterty)}-${_.isObject(config) ? _.kebabCase(JSON.stringify(config)) : ''
     }`
 }
 
@@ -98,8 +97,7 @@ export function Entity<T = {}>(options?: {
 
     //#region @backend
     if (_.isFunction(browserTransformFn)) {
-      const configs = CLASS.getConfig(target) as any[];
-      const config = _.first(configs);
+      const config = CLASS.getConfig(target);
       config.browserTransformFn = browserTransformFn;
       // console.log('BROWSER TRANSFORM FUNCTION ADDED TO CONFIGS', configs)
     }
@@ -276,11 +274,13 @@ export abstract class BASE_ENTITY<T = any, TRAW = T, CTRL extends BaseCRUD<T> = 
 
 
     if (this.isListeningToRealtimeChanges(property)) {
-      console.warn(`Alread listen to this ${
-        _.isString(property) ? ('property: ' + property + ' of entity: ' + CLASS.getNameFromObject(this))
-          : ('entity: ' + CLASS.getNameFromObject(this))
+      console.warn(`Alread listen to this ${_.isString(property)
+        ? ('property: ' + property + ' of entity: ' + CLASS.getNameFromObject(this))
+        : ('entity: ' + CLASS.getNameFromObject(this))
         } `, this)
-      RealtimeBrowser.addDupicateRealtimeEntityListener(this, changesListener(this, `duplicate property(${property})`), property as any)
+      RealtimeBrowser.addDupicateRealtimeEntityListener(this,
+        changesListener(this, `duplicate property(${property})`), property as any);
+
       return;
     }
     if (_.isString(property)) {

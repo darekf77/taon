@@ -16,7 +16,7 @@ export function getTransformFunction(target: Function, mdc: ModelDataConfig) {
   if (!target) {
     return void 0;
   }
-  const configs = CLASS.getConfig(target);
+  const configs = CLASS.getConfigs(target);
   // console.log(`CONFIGS TO CHECK`, configs)
   const functions = configs
     .map(c => {

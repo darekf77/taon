@@ -21,6 +21,7 @@ import { FrameworkContextBase } from './framework-context-base';
 import type { BASE_CONTROLLER } from './framework-controller';
 import { Http2Server } from 'http2';
 import { RealtimeNodejs } from '../realtime';
+import { MorphiHelpers } from '../helpers';
 
 export class FrameworkContextNodeApp extends FrameworkContextBase {
   public readonly app: Application;
@@ -110,9 +111,9 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
         ((controller: Function) => {
 
           const instance = this.context.getInstance(controller);
-          const c = CLASS.getConfig(currentCtrl)[0];
+          const config = CLASS.getConfig(currentCtrl);
 
-          c.injections.forEach(inj => {
+          config.injections.forEach(inj => {
             Object.defineProperty(instance, inj.propertyName, { get: inj.getter as any });
           });
           // CLASS.setSing letonObj(controller, new (controller as any)());
@@ -134,7 +135,7 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
       const context = contexts[index];
 
       const troutes = context.node.activeRoutes.map(({ method, routePath }) => {
-        return `${method.toUpperCase()}:    ${context.uri.href.replace(/\/$/, '')}${routePath}`
+        return `${MorphiHelpers.string(method.toUpperCase() + ':').fillUpTo(10)}${context.uri.href.replace(/\/$/, '')}${routePath}`
       });
       const tinstanceClass = _.first(context.controllersClasses) as any;
       const tinstance = tinstanceClass && context.getInstance(tinstanceClass as any) as any;

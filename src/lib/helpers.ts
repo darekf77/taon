@@ -49,12 +49,25 @@ export class MorphiHelpers extends HelpersNg2Rest {
   }
   //#endregion
 
+  static string(s: string) {
+    return {
+      fillUpTo(nCharacters: number) {
+        return _.times(nCharacters, n => {
+          if (s.charAt(n)) {
+            return s.charAt(n);
+          }
+          return ' ';
+        }).join('')
+      }
+    }
+  }
+
   static isGoodPath(p: string) {
     return p && typeof p === 'string' && p.trim() !== ''
   }
 
   static getPathFor(target: Function) {
-    const configs = CLASS.getConfig(target) as any[];
+    const configs = CLASS.getConfigs(target) as any[];
     // console.log(`Class config for ${CLASS.getName(target)}`, configs)
     const classConfig: Models.Rest.ClassConfig = configs[0];
     const parentscalculatedPath = _
@@ -171,9 +184,6 @@ export class MorphiHelpers extends HelpersNg2Rest {
 
     return res;
   }
-
-
-
 
   //#region @backend
 

@@ -6,23 +6,17 @@ function metaReq(
   method: Models.Rest.HttpMethod, path: string,
   target: any, propertyKey: string,
   descriptor: PropertyDescriptor, realtimeUpdate = false) {
-  const className = CLASS.getName(target.constructor);
-  // TODO @LAST CLASS NAME IS NOT WORKING!!!
-  //
+  // const className = CLASS.getName(target.constructor);
 
-  if (className === 'UserController') {
-    debugger
-  }
-  // const isBaseCurd = (className === 'BaseCRUD');
-  // if (isBaseCurd) {
-  //   debugger;
-  // }
-  const configs = CLASS.getConfig(target.constructor as any);
-  const config = _.first(configs);
+  const config = CLASS.getConfig(target.constructor as any);
   // if (config.vChildren.length > 0) {
   //   debugger
   // }
-  const methodConfig: Models.Rest.MethodConfig = config.methods[propertyKey] = (!config.methods[propertyKey] ? new Models.Rest.MethodConfig() : config.methods[propertyKey]);
+  config.methods[propertyKey] = (
+    !config.methods[propertyKey] ? new Models.Rest.MethodConfig() : config.methods[propertyKey]
+  );
+  const methodConfig: Models.Rest.MethodConfig = config.methods[propertyKey];
+
   methodConfig.methodName = propertyKey;
   methodConfig.type = method;
   // debugger
