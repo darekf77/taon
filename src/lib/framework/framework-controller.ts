@@ -88,6 +88,8 @@ export function Controller(options?: {
     }
     //#endregion
 
+    // console.log(`classname for ${className}`)
+
     className = classNameVlidation(className, target);
     CLASS.NAME(className)(target);
 

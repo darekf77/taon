@@ -13,8 +13,6 @@
         "--nolazy",
         "-r",
         "ts-node/register",
-        "--preserve-symlinks",
-        "--preserve-symlinks-main",
         "--experimental-worker"
       ],
       "presentation": {

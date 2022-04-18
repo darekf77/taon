@@ -106,11 +106,11 @@ export class FrameworkContext extends FrameworkContextBase {
     return FrameworkContext._isProductionMode;
   }
 
-  public set isProductionMode(v: boolean) {
+  public static set isProductionMode(v: boolean) {
     if (!FrameworkContext._isProductionModeAlreadySet) {
       FrameworkContext._isProductionModeAlreadySet = true;
     } else {
-      throw `[Morphi] production mode already set`
+      throw `[Firedev] production mode already set`
     }
     // @ts-ignore
     FrameworkContext._isProductionMode = v;

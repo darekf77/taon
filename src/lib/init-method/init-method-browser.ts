@@ -20,6 +20,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
   //#endregion
 
 
+  // UNCOMMENT THIS TO SEE FRONTEND PATHES
   // console.log(`FRONTEND ${target.name} method on ${expressPath}`)
 
   target.prototype[methodConfig.methodName] = function (...args) {

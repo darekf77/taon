@@ -17,7 +17,6 @@ export { FormlyHorizontalWrapper } from './crud/formly-group-wrapper-component';
 
 export { Log, Level } from 'ng2-logger';
 
-
 import { _ } from 'tnp-core';
 import * as crudMorph from './crud';
 import * as decoratorsMorphi from './decorators';
@@ -51,6 +50,7 @@ export class TypeormRepository<T>
 
 
 export namespace Morphi {
+  export const symbols = sym.SYMBOL;
   export const IsNode = Helpers.isNode;
   export const IsBrowser = Helpers.isBrowser;
 
@@ -90,6 +90,9 @@ export namespace Morphi {
 
   export import Response = models.Models.Response;
 
+  export function enableProductionMode() {
+    FrameworkContext.isProductionMode = true;
+  }
 
   export import Controller = framework.Controller;
   export import Entity = framework.Entity;

@@ -84,7 +84,7 @@ export abstract class BaseCRUD<T> {
   }
 
 
-  @GET(`/${SYMBOL.CRUD_TABLE_MODEL}`)
+  @GET(`/${SYMBOL.CRUD_TABLE_MODELS}`)
   getAll(@Query('config') config?: ModelDataConfig): Models.Response<T[]> {
     //#region @backendFunc
     return async (request, response) => {
@@ -121,7 +121,7 @@ export abstract class BaseCRUD<T> {
     //#endregion
   }
 
-  @PUT(`/bulk/${SYMBOL.CRUD_TABLE_MODEL}`)
+  @PUT(`/bulk/${SYMBOL.CRUD_TABLE_MODELS}`)
   bulkUpdate(@Body() item: T[], @Query('config') config?: ModelDataConfig): Models.Response<T[]> {
     //#region @backendFunc
     return async () => {
@@ -141,7 +141,7 @@ export abstract class BaseCRUD<T> {
     //#endregion
   }
 
-  @DELETE(`/bulk/${SYMBOL.CRUD_TABLE_MODEL}/:id`)
+  @DELETE(`/bulk/${SYMBOL.CRUD_TABLE_MODELS}/:ids`)
   bulkDelete(@Path(`ids`) ids: (number | string)[], @Query('config') config?: ModelDataConfig): Models.Response<(number | string | T)[]> {
     //#region @backendFunc
     return async () => {
@@ -162,7 +162,7 @@ export abstract class BaseCRUD<T> {
     //#endregion
   }
 
-  @POST(`/bulk/${SYMBOL.CRUD_TABLE_MODEL}/`)
+  @POST(`/bulk/${SYMBOL.CRUD_TABLE_MODELS}/`)
   bulkCreate(@Body() items: T, @Query('config') config?: ModelDataConfig): Models.Response<T[]> {
     //#region @backendFunc
     return async () => {

@@ -85,7 +85,7 @@ export function Entity<T = {}>(options?: {
   } = options;
   return function (target: any) {
 
-
+    // console.log(`classname for ${className}`)
     className = classNameVlidation(className, target);
 
     CLASS.NAME(className, {

@@ -20,29 +20,31 @@ export function tableNameFrom(entityClass: Function | BASE_ENTITY<any>) {
 //#endregion
 
 export function classNameVlidation(className, target: Function) {
-  if (_.isUndefined(className)) {
-    if (FrameworkContext.isProductionMode) {
-      throw `[Morphi]
-  Please provide "className" property for each Controller and Entity:
 
-      @Morphi.Controller({ className: 'MyExampleCtrl'  })
-      class MyExampleCtrl {
-        ...
-      }
+  setTimeout(() => {
+    // console.log(`check after timeout ${className} , production mode: ${FrameworkContext.isProductionMode}`)
+    if (_.isUndefined(className) && FrameworkContext.isProductionMode) {
+      throw `[Firedev]
+    Please provide "className" property for each Controller and Entity:
 
-      @Morphi.Entity({ className: 'MyExampleEntity'  })
-      class MyExampleEntity {
-        ...
-      }
+        @Firedev.Controller({ className: 'MyExampleCtrl'  })
+        class MyExampleCtrl {
+          ...
+        }
 
-Notice that minified javascript code does not preserve
-Functions/Classes names.
+        @Firedev.Entity({ className: 'MyExampleEntity'  })
+        class MyExampleEntity {
+          ...
+        }
 
-    `
+  Notice that minified javascript code does not preserve
+  Functions/Classes names -this is only solution to preserve classes names.
+
+      `;
     }
-    className = target.name;
-  }
-  return className
+  });
+
+  return _.isUndefined(className) ? target.name : className;
 }
 
 //#region @backend
