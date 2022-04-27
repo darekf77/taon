@@ -154,7 +154,6 @@
         "lodash.set": ">= 4",
         "node-cli-test": null,
         "button-dropdown": null,
-        "static-columns": null,
         "tnp-tools": null,
         "@types/semver": "6.0.1",
         "semver": "6.3.0"
@@ -400,6 +399,7 @@
     "sloc": "0.2.0",
     "socket.io": "2.4.1",
     "sort-package-json": "1.11.0",
+    "static-columns": "13.0.13",
     "string-similarity": "4.0.2",
     "sudo-block": "3.0.0",
     "systeminformation": "3.45.7",

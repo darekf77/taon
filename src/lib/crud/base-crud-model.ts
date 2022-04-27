@@ -122,11 +122,14 @@ export abstract class BaseCRUD<T> {
   }
 
   @PUT(`/bulk/${SYMBOL.CRUD_TABLE_MODELS}`)
-  bulkUpdate(@Body() item: T[], @Query('config') config?: ModelDataConfig): Models.Response<T[]> {
+  bulkUpdate(@Body() items: T[], @Query('config') config?: ModelDataConfig): Models.Response<T[]> {
     //#region @backendFunc
     return async () => {
-      // TODO NEEDS TO BE IMPLEMENTED
-      return [];
+      if (!Array.isArray(items) || (items?.length === 0)) {
+        return [];
+      }
+      const { models } = await this.db.bulkUpdate(items);
+      return models;
     }
     //#endregion
   }

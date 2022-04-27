@@ -42,14 +42,21 @@ export class DbCrud<T> {
   async updateById(id: number | string, item: T, config?: ModelDataConfig) {
     const allowedPropsToUpdate = [];
     for (const key in item) {
-      if (item.hasOwnProperty(key) && typeof item[key] !== 'object') {
+      if (
+        item.hasOwnProperty(key)
+        && typeof item[key] !== 'object'
+        && !_.isUndefined(this.repo.metadata.ownColumns.find(c => c.propertyName === key))
+      ) {
         allowedPropsToUpdate.push(key);
       }
     }
+
     for (let i = 0; i < allowedPropsToUpdate.length; i++) {
       const key = allowedPropsToUpdate[i];
+      const raw = _.isBoolean(item[key]) || _.isNumber(item[key]) || _.isNull(item[key]); // TODO does this make any sense ?
+      const toSet = raw ? item[key] : `"${item[key]}"`
       await this.repo.query(`UPDATE "${tableNameFrom(this.entity as any)}" `
-          + `SET "${key}"="${item[key]}" WHERE "id"="${id}"`)
+        + `SET "${key}"=${toSet} WHERE "id"="${id}"`)
     }
     // console.log('update ok!')
     let model = await CrudHelpers.getModel(id, config, this.repo);

@@ -153,7 +153,6 @@
       "lodash.set": ">= 4",
       "node-cli-test": null,
       "button-dropdown": null,
-      "static-columns": null,
       "tnp-tools": null,
       "@types/semver": "6.0.1",
       "semver": "6.3.0"
