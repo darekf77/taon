@@ -109,12 +109,15 @@ export namespace Morphi {
 
   export namespace Realtime {
     export namespace Browser {
-      export const SubscribeEntity = realtime.RealtimeBrowser.SubscribeEntity;
-      export const SubscribeEntityChanges = realtime.RealtimeBrowser.SubscribeEntityChanges;
-      export const SubscribeEntityPropertyChanges = realtime.RealtimeBrowser.SubscribeEntityPropertyChanges;
-      export const UnsubscribeEverything = realtime.RealtimeBrowser.UnsubscribeEverything;
-      export const UnsubscribeEntityChanges = realtime.RealtimeBrowser.UnsubscribeEntityChanges;
-      export const UnsubscribeEntityPropertyChanges = realtime.RealtimeBrowser.UnsubscribeEntityPropertyChanges;
+
+      export const listenChangesEntity = realtime.RealtimeBrowserRxjs.listenChangesEntity;
+      export const listenChangesEntityObjy = realtime.RealtimeBrowserRxjs.listenChangesEntityObj
+      // export const SubscribeEntity = realtime.RealtimeBrowser.SubscribeEntity;
+      // export const SubscribeEntityChanges = realtime.RealtimeBrowser.SubscribeEntityChanges;
+      // export const SubscribeEntityPropertyChanges = realtime.RealtimeBrowser.SubscribeEntityPropertyChanges;
+      // export const UnsubscribeEverything = realtime.RealtimeBrowser.UnsubscribeEverything;
+      // export const UnsubscribeEntityChanges = realtime.RealtimeBrowser.UnsubscribeEntityChanges;
+      // export const UnsubscribeEntityPropertyChanges = realtime.RealtimeBrowser.UnsubscribeEntityPropertyChanges;
     }
 
     //#region @backend

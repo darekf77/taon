@@ -70,9 +70,9 @@ export class FrameworkContext extends FrameworkContextBase {
   public static findForTraget(target: Function | object | string): FrameworkContext {
     let className: string;
     if (_.isArray(target)) {
-      throw `[Firedev][findForTraget] incorrect target:
+      throw new Error(`[Firedev][findForTraget] incorrect target:
       shoould be string, function or object
-      `
+      `)
     }
     if (_.isFunction(target)) {
       className = CLASS.getName(target);

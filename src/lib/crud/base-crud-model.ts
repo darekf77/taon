@@ -3,7 +3,7 @@ import { CLASS } from 'typescript-class-helpers';
 import { SYMBOL } from '../symbols';
 import { ModelDataConfig } from './model-data-config';
 import { __ENDPOINT } from '../decorators/decorators-endpoint-class';
-import { GET, PUT, DELETE, POST } from '../decorators/decorators-methods';
+import { GET, PUT, DELETE, POST, HEAD, PATCH } from '../decorators/decorators-methods';
 import { Query, Path, Body } from '../decorators/decorators-params';
 import { Models } from '../models';
 
@@ -17,6 +17,13 @@ import { DbCrud } from './db-crud.backend';
 declare const global: any;
 import { CrudHelpers } from './crud-helpers.backend';
 //#endregion
+
+const Firedev = {
+  symbols: SYMBOL,
+  Http: {
+    GET, PUT, DELETE, POST, HEAD, PATCH
+  }
+}
 
 @CLASS.NAME('BaseCRUD')
 @__ENDPOINT(BaseCRUD)
@@ -55,7 +62,7 @@ export abstract class BaseCRUD<T> {
     //#endregion
   }
 
-  @GET(`/${SYMBOL.CRUD_TABLE_MODEL}/:id/property/:property`)
+  @Firedev.Http.GET(`/${Firedev.symbols.CRUD_TABLE_MODEL}/:id/property/:property`)
   bufforedChanges(
     @Path(`id`) id: number | string,
     @Path(`property`) property: string,
@@ -84,7 +91,7 @@ export abstract class BaseCRUD<T> {
   }
 
 
-  @GET(`/${SYMBOL.CRUD_TABLE_MODELS}`)
+  @Firedev.Http.GET(`/${Firedev.symbols.CRUD_TABLE_MODELS}`)
   getAll(@Query('config') config?: ModelDataConfig): Models.Response<T[]> {
     //#region @backendFunc
     return async (request, response) => {
@@ -98,7 +105,7 @@ export abstract class BaseCRUD<T> {
     //#endregion
   }
 
-  @GET(`/${SYMBOL.CRUD_TABLE_MODEL}/:id`)
+  @Firedev.Http.GET(`/${Firedev.symbols.CRUD_TABLE_MODEL}/:id`)
   getBy(@Path(`id`) id: number | string, @Query('config') config?: ModelDataConfig): Models.Response<T> {
     //#region @backendFunc
     return async () => {
@@ -109,7 +116,7 @@ export abstract class BaseCRUD<T> {
   }
 
 
-  @PUT(`/${SYMBOL.CRUD_TABLE_MODEL}/:id`)
+  @Firedev.Http.PUT(`/${Firedev.symbols.CRUD_TABLE_MODEL}/:id`)
   updateById(@Path(`id`) id: number | string, @Body() item: T, @Query('config') config?: ModelDataConfig): Models.Response<T> {
     //#region @backendFunc
 
@@ -121,7 +128,7 @@ export abstract class BaseCRUD<T> {
     //#endregion
   }
 
-  @PUT(`/bulk/${SYMBOL.CRUD_TABLE_MODELS}`)
+  @Firedev.Http.PUT(`/bulk/${Firedev.symbols.CRUD_TABLE_MODELS}`)
   bulkUpdate(@Body() items: T[], @Query('config') config?: ModelDataConfig): Models.Response<T[]> {
     //#region @backendFunc
     return async () => {
@@ -134,7 +141,7 @@ export abstract class BaseCRUD<T> {
     //#endregion
   }
 
-  @DELETE(`/${SYMBOL.CRUD_TABLE_MODEL}/:id`)
+  @Firedev.Http.DELETE(`/${Firedev.symbols.CRUD_TABLE_MODEL}/:id`)
   deleteById(@Path(`id`) id: number, @Query('config') config?: ModelDataConfig): Models.Response<T> {
     //#region @backendFunc
     return async () => {
@@ -144,7 +151,7 @@ export abstract class BaseCRUD<T> {
     //#endregion
   }
 
-  @DELETE(`/bulk/${SYMBOL.CRUD_TABLE_MODELS}/:ids`)
+  @Firedev.Http.DELETE(`/bulk/${Firedev.symbols.CRUD_TABLE_MODELS}/:ids`)
   bulkDelete(@Path(`ids`) ids: (number | string)[], @Query('config') config?: ModelDataConfig): Models.Response<(number | string | T)[]> {
     //#region @backendFunc
     return async () => {
@@ -155,7 +162,7 @@ export abstract class BaseCRUD<T> {
   }
 
 
-  @POST(`/${SYMBOL.CRUD_TABLE_MODEL}/`)
+  @Firedev.Http.POST(`/${Firedev.symbols.CRUD_TABLE_MODEL}/`)
   create(@Body() item: T, @Query('config') config?: ModelDataConfig): Models.Response<T> {
     //#region @backendFunc
     return async () => {
@@ -165,7 +172,7 @@ export abstract class BaseCRUD<T> {
     //#endregion
   }
 
-  @POST(`/bulk/${SYMBOL.CRUD_TABLE_MODELS}/`)
+  @Firedev.Http.POST(`/bulk/${Firedev.symbols.CRUD_TABLE_MODELS}/`)
   bulkCreate(@Body() items: T, @Query('config') config?: ModelDataConfig): Models.Response<T[]> {
     //#region @backendFunc
     return async () => {

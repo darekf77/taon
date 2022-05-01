@@ -52,9 +52,9 @@ export namespace CrudHelpers {
         return
       }
       if (_.isArray(data)) {
-        data.forEach(d => d.modelDataConfig = config)
+        data.forEach(d => d['modelDataConfig'] = config)
       } else if (_.isObject(data)) {
-        data.modelDataConfig = config;
+        data['modelDataConfig'] = config;
       }
     }
   }

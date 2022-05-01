@@ -5,9 +5,11 @@ import { SYMBOL } from '../symbols';
 import { CLASS } from 'typescript-class-helpers';
 import { FrameworkContextBase } from './framework-context-base';
 import { RealtimeBrowser } from '../realtime';
+import { RealtimeBrowserRxjs } from '../realtime/realtime-browser-rxjs';
 
 export class FrameworkContextBrowserApp extends FrameworkContextBase {
   readonly realtime: RealtimeBrowser;
+  readonly realtimerxjs: RealtimeBrowserRxjs;
   constructor(
     private context: FrameworkContext) {
     super();
@@ -50,7 +52,9 @@ export class FrameworkContextBrowserApp extends FrameworkContextBase {
       //#endregion
     ) {
       //@ts-ignore
-      this.realtime = new RealtimeBrowser(this.context);
+      // this.realtime = new RealtimeBrowser(this.context);
+      //@ts-ignore
+      this.realtimerxjs = new RealtimeBrowserRxjs(this.context);
     }
 
   }

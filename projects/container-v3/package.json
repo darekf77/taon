@@ -191,10 +191,7 @@
     "private": true,
     "workerPlugins": {}
   },
-  "version": "2.0.1",
-  "name": "container-v3",
-  "license": "UNLICENSED",
-  "private": true,
+  "": {},
   "dependencies": {
     "@angular-devkit/build-angular": "~13.2.5",
     "@angular/animations": "~13.2.0",
@@ -428,5 +425,9 @@
     "watch": "1.0.2",
     "zone.js": "~0.11.4"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "license": "UNLICENSED",
+  "private": true,
+  "name": "container-v3",
+  "version": "0.0.0"
 }

@@ -200,14 +200,19 @@ const start = async () => {
     console.log('context 2', data);
 
     let i = 0;
-    Firedev.Realtime.Browser.SubscribeEntity(Book, 1, (unsub) => {
+    Firedev.Realtime.Browser.listenChangesEntity(Book, 1).subscribe(() => {
       console.log(`realtime update of Book with id=1 (` + i++ + ')')
-    });
+    })
 
     let j = 0
-    Firedev.Realtime.Browser.SubscribeEntity<Book>(Book, 2, (value) => {
-      console.log('realtime update of Book with id 2 for property "name" (' + j++ + ')')
-    }, 'name')
+
+    Firedev.Realtime.Browser.listenChangesEntity(Book, 2, { property: 'name' }).subscribe((d) => {
+      console.log('realtime update of Book with id 2 for property "name" (' + j++ + ')', d)
+    });
+
+    // Firedev.Realtime.Browser.SubscribeEntity<Book>(Book, 2, (value) => {
+    //   console.log('realtime update of Book with id 2 for property "name" (' + j++ + ')')
+    // }, 'name')
 
     // book.subscribeRealtimeUpdates({
     //   callback: (b) => {

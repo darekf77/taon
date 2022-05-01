@@ -4,8 +4,22 @@ import { FrameworkContext } from '../framework/framework-context';
 
 export class RealtimeBase {
 
+  private static contexts = [];
+  private static instances = [];
+  public static by(context: FrameworkContext) {
+    const indexContext = this.contexts.findIndex(c => c === context);
+    if (indexContext === -1) {
+      this.contexts.push(context);
+      const instance = new RealtimeBase(context)
+      this.instances.push(instance);
+      return instance;
+    } else {
+      return this.instances[indexContext];
+    }
+  }
+
   private socketFrontEnd: any; //  Socket; // TODO QUICK_FIX
-  private socketFrontEndRealtime:  any; //  Socket; // TODO QUICK_FIX;
+  private socketFrontEndRealtime: any; //  Socket; // TODO QUICK_FIX;
   //#region @backend
   private socketNamespaceBE: Server;
   private socketNamespaceBERealtime: Namespace;
@@ -42,9 +56,10 @@ export class RealtimeBase {
     }
   }
 
-  constructor(protected context: FrameworkContext) {
+  private constructor(protected context: FrameworkContext) {
 
   }
+
   public pathFor(namespace?: string) {
     const uri = this.context.uri;
     const nsp = namespace ? namespace : '';
