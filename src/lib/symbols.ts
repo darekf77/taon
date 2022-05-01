@@ -7,23 +7,31 @@ export const SYMBOL = {
     NAMESPACE: 'firedevrealtime',
     ROOM: {
       SUBSCRIBE: {
+        CUSTOM: 'subscribeCustomRoomEvent',
         ENTITY_UPDATE_EVENTS: 'subscribeEntityEvents',
         ENTITY_PROPERTY_UPDATE_EVENTS: 'subscribeEntityPropertyEvents',
       },
       UNSUBSCRIBE: {
+        CUSTOM: 'unsubscribeCustomRoomEvent',
         ENTITY_UPDATE_EVENTS: 'unsubscribeEntityEvents',
         ENTITY_PROPERTY_UPDATE_EVENTS: 'unsubscribeEntityPropertyEvents',
       }
     },
     EVENT: {
+      CUSTOM(customEvent: string) {
+        return `customevnet${customEvent}`;
+      },
       ENTITY_UPDATE_BY_ID(className: string, entityId: number | string) {
         return `entityupdatebyid${_.camelCase(className)}${entityId}`.toLowerCase();
       },
       ENTITY_PROPTERY_UPDATE_BY_ID(className: string, property: string, entityId: number | string) {
         return `entityupdatebyid${_.camelCase(className)}${_.camelCase(property)}${entityId}`.toLowerCase();
-      }
+      },
     },
     ROOM_NAME: {
+      CUSTOM(customEvent: string) {
+        return `roomcustomevnet${customEvent}`;
+      },
       UPDATE_ENTITY(className: string, entityId: number | string) {
         return `room${_.camelCase(className)}${entityId}`.toLowerCase();
       },

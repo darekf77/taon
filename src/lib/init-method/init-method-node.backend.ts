@@ -3,7 +3,6 @@ import { Models } from '../models';
 import { MorphiHelpers as Helpers } from '../helpers';
 import { SYMBOL } from '../symbols';
 import { EntityProcess } from './entity-process';
-import { MDC } from '../crud';
 import { FrameworkContext } from '../framework/framework-context';
 // TODO below thing needs to be there
 // @ts-ignore
@@ -129,10 +128,9 @@ export function initMethodNodejs(
           resolvedParams
         );
         let result = await Helpers.getResponseValue(response, req, res);
-        // console.log(req.headers)
-        const mdc = MDC.fromHeader(req);
+
         // console.log(mdc)
-        await EntityProcess.init(result, res, mdc);
+        await EntityProcess.init(result, res);
 
       } catch (error) {
         if (_.isString(error)) {

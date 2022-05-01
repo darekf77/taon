@@ -11,8 +11,6 @@ import {
 } from 'typeorm';
 import { tableNameFrom } from './framework-helpers';
 //#endregion
-import { RealtimeBrowser } from '../realtime';
-import { BaseCRUD, ModelDataConfig } from '../crud'
 import { CLASS } from 'typescript-class-helpers';
 
 const log = Log.create('Framework entity',
@@ -41,45 +39,45 @@ function getRealtimeIsRealtime(entity, property: string) {
 
 export function Entity<T = {}>(options?: {
   className?: string;
-  classNameInBrowser?: string;
-  defaultModelValues?: Mapping.ModelValue<T>;
-  mapping?: Mapping.Mapping<T>;
+  // classNameInBrowser?: string;
+  // defaultModelValues?: Mapping.ModelValue<T>;
+  // mapping?: Mapping.Mapping<T>;
   uniqueKeyProp?: (keyof T);
-  classFamily?: string,
-  additionalMapping?: { [lodashPathes: string]: string | [string]; }
-  tree?: 'closure-table';
-  formly?: {
-    transformFn?: FormlyArrayTransformFn;
-    include?: (keyof T)[];
-    exclude?: (keyof T)[];
-  },
+  // classFamily?: string,
+  // additionalMapping?: { [lodashPathes: string]: string | [string]; }
+  // tree?: 'closure-table';
+  // formly?: {
+  //   transformFn?: FormlyArrayTransformFn;
+  //   include?: (keyof T)[];
+  //   exclude?: (keyof T)[];
+  // },
   //#region @backend
   createTable?: boolean;
-  browserTransformFn?: (entity: T, mdc?: ModelDataConfig) => void
+  // browserTransformFn?: (entity: T, mdc?: any) => void
   //#endregion
 }) {
-  if (!options) {
-    options = { formly: {} };
-  }
-  if (!options.formly) {
-    options.formly = {}
-  }
+  // if (!options) {
+  //   options = { formly: {} };
+  // }
+  // if (!options.formly) {
+  //   options.formly = {}
+  // }
   let {
-    defaultModelValues,
-    tree,
-    mapping,
-    additionalMapping = {},
+    // defaultModelValues,
+    // tree,
+    // mapping,
+    // additionalMapping = {},
     uniqueKeyProp = 'id',
-    classFamily,
+    // classFamily,
     className,
-    classNameInBrowser,
-    formly: {
-      transformFn = undefined,
-      include = undefined,
-      exclude = undefined
-    } = {},
+    // classNameInBrowser,
+    // formly: {
+    //   transformFn = undefined,
+    //   include = undefined,
+    //   exclude = undefined
+    // } = {},
     //#region @backend
-    browserTransformFn,
+    // browserTransformFn,
     createTable = true,
     //#endregion
   } = options;
@@ -90,26 +88,29 @@ export function Entity<T = {}>(options?: {
 
     CLASS.NAME(className, {
       uniqueKey: uniqueKeyProp,
-      classFamily,
-      classNameInBrowser
+      // classFamily,
+      // classNameInBrowser
     } as any)(target)
-    Mapping.DefaultModelWithMapping<T>(defaultModelValues, _.merge(mapping, additionalMapping))(target)
+    // Mapping.DefaultModelWithMapping<T>(defaultModelValues, _.merge(mapping, additionalMapping))(target)
+
+    // TODO when entit metadata generator read use this
+    Mapping.DefaultModelWithMapping<T>(void 0, {})(target)
 
     //#region @backend
-    if (_.isFunction(browserTransformFn)) {
-      const config = CLASS.getConfig(target);
-      config.browserTransformFn = browserTransformFn;
-      // console.log('BROWSER TRANSFORM FUNCTION ADDED TO CONFIGS', configs)
-    }
+    // if (_.isFunction(browserTransformFn)) {
+    //   const config = CLASS.getConfig(target);
+    //   config.browserTransformFn = browserTransformFn;
+    //   // console.log('BROWSER TRANSFORM FUNCTION ADDED TO CONFIGS', configs)
+    // }
 
     if (createTable) {
       TypeormEntity(tableNameFrom(target))(target)
     }
     target[SYMBOL.HAS_TABLE_IN_DB] = createTable;
 
-    if (_.isString(tree)) {
-      Tree("closure-table")(target)
-    }
+    // if (_.isString(tree)) {
+    //   Tree("closure-table")(target)
+    // }
     //#endregion
   }
 
@@ -117,6 +118,10 @@ export function Entity<T = {}>(options?: {
 
 export abstract class BASE_ENTITY<T = any> {
 
+  /**
+   * reserver property for uniq identifier
+   * Note: if id is not uniq.. maybe create getter for id ?
+   */
   abstract id: number | string;
   /**
    * here will be injected Firedev controller instance for entity

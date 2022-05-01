@@ -1,7 +1,6 @@
 import { _, Helpers } from 'tnp-core';
 import { CLASS } from 'typescript-class-helpers';
 import { SYMBOL } from '../symbols';
-import { ModelDataConfig } from './model-data-config';
 import { __ENDPOINT } from '../decorators/decorators-endpoint-class';
 import { GET, PUT, DELETE, POST, HEAD, PATCH } from '../decorators/decorators-methods';
 import { Query, Path, Body } from '../decorators/decorators-params';
@@ -66,17 +65,16 @@ export abstract class BaseCRUD<T> {
   bufforedChanges(
     @Path(`id`) id: number | string,
     @Path(`property`) property: string,
-    @Query('alreadyLength') alreadyLength?: number,
-    @Query('config') config?: ModelDataConfig
+    @Query('alreadyLength') alreadyLength?: number
   ): Models.Response<string | any[]> {
     //#region @backendFunc
     return async (request, response) => {
 
-      const model = await CrudHelpers.getModel(id, config, this.repo);
+      const model = await CrudHelpers.getModel(id, this.repo);
       if (model === void 0) {
         return;
       }
-      CrudHelpers.preventUndefinedModel(model, config, id)
+      CrudHelpers.preventUndefinedModel(model, id)
       let value = model[property];
       let result: any;
       if (_.isString(value) || _.isArray(value)) {
@@ -92,11 +90,11 @@ export abstract class BaseCRUD<T> {
 
 
   @Firedev.Http.GET(`/${Firedev.symbols.CRUD_TABLE_MODELS}`)
-  getAll(@Query('config') config?: ModelDataConfig): Models.Response<T[]> {
+  getAll(): Models.Response<T[]> {
     //#region @backendFunc
     return async (request, response) => {
       if (this.repo) {
-        const { models, totalCount } = await this.db.getAll(config);
+        const { models, totalCount } = await this.db.getAll();
         response.setHeader(SYMBOL.X_TOTAL_COUNT, totalCount)
         return models;
       }
@@ -106,10 +104,10 @@ export abstract class BaseCRUD<T> {
   }
 
   @Firedev.Http.GET(`/${Firedev.symbols.CRUD_TABLE_MODEL}/:id`)
-  getBy(@Path(`id`) id: number | string, @Query('config') config?: ModelDataConfig): Models.Response<T> {
+  getBy(@Path(`id`) id: number | string): Models.Response<T> {
     //#region @backendFunc
     return async () => {
-      const { model } = await this.db.getBy(id, config);
+      const { model } = await this.db.getBy(id);
       return model;
     }
     //#endregion
@@ -117,11 +115,11 @@ export abstract class BaseCRUD<T> {
 
 
   @Firedev.Http.PUT(`/${Firedev.symbols.CRUD_TABLE_MODEL}/:id`)
-  updateById(@Path(`id`) id: number | string, @Body() item: T, @Query('config') config?: ModelDataConfig): Models.Response<T> {
+  updateById(@Path(`id`) id: number | string, @Body() item: T): Models.Response<T> {
     //#region @backendFunc
 
     return async () => {
-      const { model } = await this.db.updateById(id, item as any, config);
+      const { model } = await this.db.updateById(id, item as any);
       return model;
 
     }
@@ -129,7 +127,7 @@ export abstract class BaseCRUD<T> {
   }
 
   @Firedev.Http.PUT(`/bulk/${Firedev.symbols.CRUD_TABLE_MODELS}`)
-  bulkUpdate(@Body() items: T[], @Query('config') config?: ModelDataConfig): Models.Response<T[]> {
+  bulkUpdate(@Body() items: T[]): Models.Response<T[]> {
     //#region @backendFunc
     return async () => {
       if (!Array.isArray(items) || (items?.length === 0)) {
@@ -142,20 +140,20 @@ export abstract class BaseCRUD<T> {
   }
 
   @Firedev.Http.DELETE(`/${Firedev.symbols.CRUD_TABLE_MODEL}/:id`)
-  deleteById(@Path(`id`) id: number, @Query('config') config?: ModelDataConfig): Models.Response<T> {
+  deleteById(@Path(`id`) id: number): Models.Response<T> {
     //#region @backendFunc
     return async () => {
-      const { model } = await this.db.deleteById(id, config);
+      const { model } = await this.db.deleteById(id);
       return model;
     }
     //#endregion
   }
 
   @Firedev.Http.DELETE(`/bulk/${Firedev.symbols.CRUD_TABLE_MODELS}/:ids`)
-  bulkDelete(@Path(`ids`) ids: (number | string)[], @Query('config') config?: ModelDataConfig): Models.Response<(number | string | T)[]> {
+  bulkDelete(@Path(`ids`) ids: (number | string)[]): Models.Response<(number | string | T)[]> {
     //#region @backendFunc
     return async () => {
-      const { models } = await this.db.bulkDelete(ids, config);
+      const { models } = await this.db.bulkDelete(ids);
       return models;
     }
     //#endregion
@@ -163,20 +161,20 @@ export abstract class BaseCRUD<T> {
 
 
   @Firedev.Http.POST(`/${Firedev.symbols.CRUD_TABLE_MODEL}/`)
-  create(@Body() item: T, @Query('config') config?: ModelDataConfig): Models.Response<T> {
+  create(@Body() item: T): Models.Response<T> {
     //#region @backendFunc
     return async () => {
-      const { model } = await this.db.create(item as any, config);
+      const { model } = await this.db.create(item as any);
       return model;
     }
     //#endregion
   }
 
   @Firedev.Http.POST(`/bulk/${Firedev.symbols.CRUD_TABLE_MODELS}/`)
-  bulkCreate(@Body() items: T, @Query('config') config?: ModelDataConfig): Models.Response<T[]> {
+  bulkCreate(@Body() items: T): Models.Response<T[]> {
     //#region @backendFunc
     return async () => {
-      const { models } = await this.db.bulkCreate(items as any, config);
+      const { models } = await this.db.bulkCreate(items as any);
       return models;
     }
     //#endregion

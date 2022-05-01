@@ -199,6 +199,7 @@ const start = async () => {
     const data = (await c.getAll().received).body.json as Book[];
     console.log('context 2', data);
 
+
     let i = 0;
     Firedev.Realtime.Browser.listenChangesEntity(Book, 1).subscribe(() => {
       console.log(`realtime update of Book with id=1 (` + i++ + ')')

@@ -11,27 +11,27 @@ const log = Log.create('RealtimeNodejs',
   Level.__NOTHING
 );
 
+const SOCKET_EVENT_DEBOUNCE = 500;
+
 export class RealtimeNodejs {
-  readonly base: RealtimeBase;
+
   private static jobs = {};
 
   //#region constructor
   constructor(private context: FrameworkContext) {
-    this.base = RealtimeBase.by(context);
+    const base = RealtimeBase.by(context);
     if (!context.disabledRealtime) {
 
       const nspPath = {
-        global: this.base.pathFor(),
-        realtime: this.base.pathFor(SYMBOL.REALTIME.NAMESPACE)
+        global: base.pathFor(),
+        realtime: base.pathFor(SYMBOL.REALTIME.NAMESPACE)
       };
 
-
-      this.base.socketNamespace.BE = io(context.node.httpServer, {
+      base.socketNamespace.BE = io(context.node.httpServer, {
         path: nspPath.global.pathname
       });
 
-
-      const ioGlobalNsp = this.base.socketNamespace.BE;
+      const ioGlobalNsp = base.socketNamespace.BE;
 
       ioGlobalNsp.on('connection', (clientSocket) => {
         log.i(`client conected to namespace "${clientSocket.nsp.name}",  host: ${context.host}`)
@@ -45,7 +45,7 @@ export class RealtimeNodejs {
 
       log.i(`CREATE REALTIME NAMESPACE: '${ioRealtimeNsp.path()}' , path: '${nspPath.realtime.pathname}' `)
 
-      this.base.socketNamespace.BE_REALTIME = ioRealtimeNsp as any;
+      base.socketNamespace.BE_REALTIME = ioRealtimeNsp as any;
 
       ioRealtimeNsp.on('connection', (clientSocket) => {
         log.i(`client conected to namespace "${clientSocket.nsp.name}",  host: ${context.host}`)
@@ -76,50 +76,66 @@ export class RealtimeNodejs {
   }
   //#endregion
 
-  public __TrigggerEntityChanges(
+  private static __TrigggerEntityChanges(
+    context: FrameworkContext,
     entityObjOrClass: BASE_ENTITY<any> | Function,
     property?: string,
-    valueOfUniquPropery?: number | string
+    valueOfUniquPropery?: number | string,
+    customEvent?: string,
+    customEventData?: any,
   ) {
-    if (this.context.disabledRealtime) {
+
+    const base = RealtimeBase.by(context);
+    let modelSocketRoomPath: string;
+    let eventName: string;
+
+    if (context.disabledRealtime) {
       return;
     }
 
-    let entityFn = entityObjOrClass as Function;
-    const enittyIsObject = (!_.isFunction(entityObjOrClass) && _.isObject(entityObjOrClass));
+    if (customEvent) {
+      modelSocketRoomPath = SYMBOL.REALTIME.ROOM_NAME.CUSTOM(customEvent);
+      eventName = SYMBOL.REALTIME.EVENT.CUSTOM(customEvent);
+    } else {
 
-    if (enittyIsObject) {
-      entityFn = CLASS.getBy(CLASS.getNameFromObject(entityObjOrClass)) as any;
+      let entityFn = entityObjOrClass as Function;
+      const enittyIsObject = (!_.isFunction(entityObjOrClass) && _.isObject(entityObjOrClass));
+
+      if (enittyIsObject) {
+        entityFn = CLASS.getBy(CLASS.getNameFromObject(entityObjOrClass)) as any;
+      }
+      const config = CLASS.getConfig(entityFn);
+      const uniqueKey = config.uniqueKey;
+
+      if (enittyIsObject) {
+        valueOfUniquPropery = entityObjOrClass[uniqueKey];
+      }
+
+      if (!valueOfUniquPropery) {
+        Helpers.error(`[Firedev][Realtime] Entity without iD ! ${config.className} `, true, true);
+        return;
+      }
+
+      modelSocketRoomPath = _.isString(property) ?
+        SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY_PROPERTY(config.className, property, valueOfUniquPropery) :
+        SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY(config.className, valueOfUniquPropery);
+
+      eventName = _.isString(property) ?
+        SYMBOL.REALTIME.EVENT.ENTITY_PROPTERY_UPDATE_BY_ID(config.className, property, valueOfUniquPropery) :
+        SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(config.className, valueOfUniquPropery);
+
     }
-    const config = CLASS.getConfig(entityFn);
-    const uniqueKey = config.uniqueKey;
-
-    if (enittyIsObject) {
-      valueOfUniquPropery = entityObjOrClass[uniqueKey];
-    }
-
-    if (!valueOfUniquPropery) {
-      Helpers.error(`[Firedev][Realtime] Entity without iD ! ${config.className} `, true, true);
-      return;
-    }
-
-    const modelSocketRoomPath = _.isString(property) ?
-      SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY_PROPERTY(config.className, property, valueOfUniquPropery) :
-      SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY(config.className, valueOfUniquPropery);
-
-    const eventName = _.isString(property) ?
-      SYMBOL.REALTIME.EVENT.ENTITY_PROPTERY_UPDATE_BY_ID(config.className, property, valueOfUniquPropery) :
-      SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(config.className, valueOfUniquPropery);
 
     const job = () => {
-      this.base.socketNamespace.BE_REALTIME.in(modelSocketRoomPath).emit(eventName, '');
+      base.socketNamespace.BE_REALTIME.in(modelSocketRoomPath).emit(eventName,
+        customEventData ? customEventData : ''
+      );
     }
 
     if (!_.isFunction(RealtimeNodejs.jobs[eventName])) {
-      log.i('CREATE FUNCTION DEBOUNCE')
       RealtimeNodejs.jobs[eventName] = _.debounce(() => {
         job()
-      }, 500);
+      }, SOCKET_EVENT_DEBOUNCE);
     }
 
     RealtimeNodejs.jobs[eventName]();
@@ -142,13 +158,20 @@ export class RealtimeNodejs {
 
     if (_.isArray(property)) {
       property.forEach(propertyFromArr => {
-        context.node?.realtime?.__TrigggerEntityChanges(entityObjOrClass, propertyFromArr as any, idToTrigger)
+        RealtimeNodejs.__TrigggerEntityChanges(context, entityObjOrClass, propertyFromArr as any, idToTrigger)
       })
     } else {
-      context.node?.realtime?.__TrigggerEntityChanges(entityObjOrClass, property as any, idToTrigger)
+      RealtimeNodejs.__TrigggerEntityChanges(context, entityObjOrClass, property as any, idToTrigger)
     };
   }
 
+  public triggerCustomEvent(customEvent: string, dataToPush: any) {
+    RealtimeNodejs.TrigggerCustomEvent(this.context, customEvent, dataToPush);
+  }
+
+  public static TrigggerCustomEvent(context: FrameworkContext, customEvent: string, dataToPush: any) {
+    RealtimeNodejs.__TrigggerEntityChanges(context, void 0, void 0, void 0, customEvent, dataToPush);
+  }
 
   public static TrigggerEntityChanges(entityObjOrClass: BASE_ENTITY<any> | Function, idToTrigger?: number | string) {
     const context = FrameworkContext.findForTraget(entityObjOrClass);
@@ -160,7 +183,7 @@ export class RealtimeNodejs {
       Helpers.warn(`[Firedev][TrigggerEntityPropertyChanges] Entity "${className}' is not realtime`);
       return;
     }
-    context.node?.realtime?.__TrigggerEntityChanges(entityObjOrClass as any, void 0, idToTrigger);
+    RealtimeNodejs.__TrigggerEntityChanges(context, entityObjOrClass as any, void 0, idToTrigger);
   }
 
 }

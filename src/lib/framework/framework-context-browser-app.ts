@@ -4,11 +4,10 @@ import { Models } from '../models';
 import { SYMBOL } from '../symbols';
 import { CLASS } from 'typescript-class-helpers';
 import { FrameworkContextBase } from './framework-context-base';
-import { RealtimeBrowser } from '../realtime';
 import { RealtimeBrowserRxjs } from '../realtime/realtime-browser-rxjs';
 
 export class FrameworkContextBrowserApp extends FrameworkContextBase {
-  readonly realtime: RealtimeBrowser;
+  // readonly realtime: RealtimeBrowser;
   readonly realtimerxjs: RealtimeBrowserRxjs;
   constructor(
     private context: FrameworkContext) {

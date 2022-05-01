@@ -1,9 +1,5 @@
 import * as _ from 'lodash';
 import { Repository, Connection, getRepository } from 'typeorm';
-import { ModelDataConfig } from './model-data-config';
-import { Models } from '../models';
-import { CLASS } from 'typescript-class-helpers';
-import type { IBASE_ENTITY } from '../framework/framework-entity';
 import { CrudHelpers } from './crud-helpers.backend';
 import { tableNameFrom } from '../framework/framework-helpers';
 
@@ -21,25 +17,25 @@ export class DbCrud<T> {
     this.repo = connection.getRepository(entity);
   }
 
-  async getAll(config?: ModelDataConfig) {
+  async getAll() {
     const totalCount = await this.repo.count();
-    const models = await CrudHelpers.getModels(config, this.repo);
-    CrudHelpers.prepareData(models, config)
+    const models = await CrudHelpers.getModels(this.repo);
+    CrudHelpers.prepareData(models)
     return { models, totalCount };
   }
 
-  async getBy(id: number | string, config?: ModelDataConfig) {
-    const model = await CrudHelpers.getModel(id, config, this.repo);
-    CrudHelpers.prepareData(model, config, id);
+  async getBy(id: number | string) {
+    const model = await CrudHelpers.getModel(id, this.repo);
+    CrudHelpers.prepareData(model, id);
     return { model };
   }
 
-  async update(item: T, config?: ModelDataConfig) {
+  async update(item: T) {
     const { id } = item as any;
     return await this.updateById(id, item);
   }
 
-  async updateById(id: number | string, item: T, config?: ModelDataConfig) {
+  async updateById(id: number | string, item: T) {
     const allowedPropsToUpdate = [];
     for (const key in item) {
       if (
@@ -59,57 +55,57 @@ export class DbCrud<T> {
         + `SET "${key}"=${toSet} WHERE "id"="${id}"`)
     }
     // console.log('update ok!')
-    let model = await CrudHelpers.getModel(id, config, this.repo);
+    let model = await CrudHelpers.getModel(id, this.repo);
 
-    CrudHelpers.prepareData(model, config, id);
+    CrudHelpers.prepareData(model, id);
     return { model };
   }
 
-  async bulkUpdate(items: T[], config?: ModelDataConfig) {
+  async bulkUpdate(items: T[]) {
     const models = [];
     for (let index = 0; index < items.length; index++) {
       const item = items[index];
       const { id } = item as any; // TOOD
-      const { model } = await this.updateById(id, item, config);
+      const { model } = await this.updateById(id, item);
       models.push(model);
     }
     return { models };
   }
 
-  async deleteById(id: number | string, config?: ModelDataConfig) {
-    const deletedEntity = await CrudHelpers.getModel(id, config, this.repo);
+  async deleteById(id: number | string) {
+    const deletedEntity = await CrudHelpers.getModel(id, this.repo);
     await this.repo.remove(deletedEntity);
-    CrudHelpers.prepareData(deletedEntity, config, id);
+    CrudHelpers.prepareData(deletedEntity, id);
     return { model: deletedEntity };
   }
 
-  async bulkDelete(ids: (number | string)[], config?: ModelDataConfig) {
+  async bulkDelete(ids: (number | string)[]) {
     const models = [];
     for (let index = 0; index < ids.length; index++) {
       const id = ids[index];
-      await this.deleteById(id, config);
+      await this.deleteById(id);
     }
     return { models };
   }
 
-  async create(item: T, config?: ModelDataConfig) {
+  async create(item: T) {
     // @ts-ignore
     let model = await this.repo.create(item)
     // @ts-ignore
     model = await this.repo.save(model);
     const { id } = model as any;
 
-    model = await CrudHelpers.getModel(id, config, this.repo);
+    model = await CrudHelpers.getModel(id, this.repo);
 
-    CrudHelpers.prepareData(model as any, config, id);
+    CrudHelpers.prepareData(model as any, id);
     return { model };
   }
 
-  async bulkCreate(items: T[], config?: ModelDataConfig) {
+  async bulkCreate(items: T[]) {
     const models = [];
     for (let index = 0; index < items.length; index++) {
       const item = items[index];
-      const { model } = await this.create(item, config);
+      const { model } = await this.create(item);
       models.push(model);
     }
     return { models };

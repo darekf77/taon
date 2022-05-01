@@ -72,7 +72,7 @@ export function Controller(options?: {
   className?: string;
   realtime?: boolean,
   entity?: Function,
-  additionalEntities?: Function[],
+  // additionalEntities?: Function[],
   path?: string,
   autoinit?: boolean,
   //#region @backend

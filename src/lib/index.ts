@@ -7,7 +7,6 @@
 
 //#endregion
 
-export { ModelDataConfig, MDC } from './crud/model-data-config';
 export { Models } from './models';
 // @browserLine
 export { RepeatTypeComponent } from './crud/formly-repeat-component';
@@ -129,7 +128,6 @@ export namespace Morphi {
   }
 
   export namespace CRUD {
-    export import ModelDataConfig = crudMorph.ModelDataConfig;
     export import Base = crudMorph.BaseCRUD;
     //#region @backend
     export import DB = crudMorph.DbCrud;

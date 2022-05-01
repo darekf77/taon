@@ -6,13 +6,12 @@ import { SYMBOL } from '../symbols';
 import * as express from 'express';
 import { walk } from 'lodash-walk-object';
 import { CLASS } from 'typescript-class-helpers';
-import { ModelDataConfig } from '../crud';
 import { config } from 'tnp-config';
 
 export class EntityProcess {
 
-  static async init(result: any, response: express.Response, mdc: ModelDataConfig) {
-    return await (new EntityProcess(result, response).run(mdc));
+  static async init(result: any, response: express.Response) {
+    return await (new EntityProcess(result, response).run());
   }
 
   /**
@@ -45,17 +44,13 @@ export class EntityProcess {
 
   private entityMapping: any;
   private circural = [];
-  private mdc: ModelDataConfig;
 
-  public async run(mdc: ModelDataConfig) {
+  public async run() {
     this.checkAdvancedManiupulation()
     this.data = this.result;
-    this.mdc = mdc;
 
     if (_.isObject(this.result)) {
       if (this.advancedManipulation) {
-
-        this.resolveModelDataConfig();
         this.applayTransformFn()
       }
 
@@ -64,33 +59,17 @@ export class EntityProcess {
     this.send()
   }
 
-  resolveModelDataConfig() {
-
-    if (_.isObject(this.mdc)) {
-      if (_.isArray(this.mdc.include) && this.mdc.include.length > 0) {
-
-        const toAdd = this.mdc.include.map(c => `browser.${c}`);
-        this.mdc.include.push('browser')
-        toAdd.forEach(c => this.mdc.include.push(c))
-      } else if (_.isArray(this.mdc.exclude) && this.mdc.exclude.length > 0) {
-        const toAdd = this.mdc.exclude.map(c => `browser.${c}`);
-        // this.mdc.exclude.push('browser')
-        toAdd.forEach(c => this.mdc.exclude.push(c))
-      }
-    }
-
-  }
 
   applayTransformFn() {
     if (_.isObject(this.data) && !_.isArray(this.data)) {
-      this.data = singleTransform(this.data, this.mdc)
+      this.data = singleTransform(this.data)
     }
-    const { include } = this.mdc || { include: [] };
+    const { include } = { include: [] };
     walk.Object(this.data, (value, lodashPath, changeValue, { skipObject, isCircural }) => {
       // console.log(`${isCircural ? 'CIR' : 'NOT'} : ${lodashPath}`)
       if (!isCircural) {
         if (!_.isArray(value) && _.isObject(value)) {
-          changeValue(singleTransform(value, this.mdc))
+          changeValue(singleTransform(value))
         }
       }
 
@@ -101,7 +80,7 @@ export class EntityProcess {
   }
 
   setHeaders() {
-    const { include } = this.mdc || { include: [] };
+    const { include } = { include: [] };
     const cleaned = MorphiHelpers.JSON.cleaned(this.data, void 0, { breadthWalk: true, include })
     this.entityMapping = MorphiHelpers.Mapping.decode(cleaned, !this.advancedManipulation);
 
@@ -123,14 +102,14 @@ export class EntityProcess {
       let toSend = _.isArray(this.data) ? [] : {};
 
 
-      const { include = [], exclude = [] } = this.mdc || { include: [], exclude: [] };
+      const { include = [], exclude = [] } =  { include: [], exclude: [] };
 
       walk.Object(this.data, (value, lodashPath, changeVAlue, { isCircural, skipObject }) => {
         // console.log(`${isCircural ? 'CIR' : 'NOT'} ${lodashPath}`)
         if (isCircural) {
           _.set(toSend, lodashPath, null);
         } else {
-          const fun = getTransformFunction(CLASS.getFromObject(value), this.mdc);
+          const fun = getTransformFunction(CLASS.getFromObject(value));
 
           if (_.isFunction(fun)) {
             _.set(toSend, `${lodashPath}.${browserKey}`, value[browserKey]);
@@ -145,7 +124,7 @@ export class EntityProcess {
       }, { checkCircural: true, breadthWalk: true, include })
 
       if (!_.isArray(this.data)) {
-        let funParent = getTransformFunction(CLASS.getFromObject(this.data), this.mdc);
+        let funParent = getTransformFunction(CLASS.getFromObject(this.data));
         // if (this.mdc && this.mdc.exclude && this.mdc.exclude.length > 0) {
         //   console.log(`funParent !!! have fun? ${!!funParent} `)
         // }
@@ -162,7 +141,7 @@ export class EntityProcess {
               ((exclude.length > 0) && exclude.includes(prop))
             )) {
               if (CLASS.OBJECT(v).isClassObject &&
-                _.isFunction(getTransformFunction(CLASS.getFromObject(v), this.mdc))) {
+                _.isFunction(getTransformFunction(CLASS.getFromObject(v)))) {
                 toSend[prop] = {
                   [browserKey]: v[browserKey]
                 }

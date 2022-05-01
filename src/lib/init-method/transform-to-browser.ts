@@ -2,9 +2,8 @@
 import { _ } from 'tnp-core';
 import { CLASS } from 'typescript-class-helpers';
 import { Helpers  } from 'tnp-core';
-import { ModelDataConfig } from '../crud';
 
-export function getTransformFunction(target: Function, mdc: ModelDataConfig) {
+export function getTransformFunction(target: Function) {
   if (!target) {
     return;
   }
@@ -30,16 +29,16 @@ export function getTransformFunction(target: Function, mdc: ModelDataConfig) {
 
     for (let index = functions.length - 1; index >= 0; index--) {
       const transformFun = functions[index];
-      transformFun(entity, mdc)
+      transformFun(entity)
     }
     return entity;
   }
 }
 
-export function singleTransform(json: any, mdc: ModelDataConfig) {
+export function singleTransform(json: any) {
 
   let ptarget = CLASS.getFromObject(json);
-  let pbrowserTransformFn = getTransformFunction(ptarget, mdc);
+  let pbrowserTransformFn = getTransformFunction(ptarget);
   if (pbrowserTransformFn) {
     const newValue = pbrowserTransformFn(json)
     if (!_.isObject(newValue)) {
