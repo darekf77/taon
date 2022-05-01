@@ -7,8 +7,8 @@ import { child_process, path, fse } from 'tnp-core';
 
 export * from '../lib/helpers';
 
-export async function run(argsv: string[], morphiEnvironmentCheck = true) {
-  if (morphiEnvironmentCheck) {
+export async function run(argsv: string[], FiredevEnvironmentCheck = true) {
+  if (FiredevEnvironmentCheck) {
     CLI.checkEnvironment();
   }
 
@@ -53,9 +53,9 @@ export async function run(argsv: string[], morphiEnvironmentCheck = true) {
       });
     } else if (commandName === '-h' || commandName === '-help' || commandName === '--help') {
       console.log('HELP  - WORK IN PROGRESS')
-      console.log('Usage: morphi build <lib1> <lib2> ... ')
+      console.log('Usage: firedev build <lib1> <lib2> ... ')
       console.log('Where lib(n) is name of included in node_modules isomorphic lib')
-      console.log('Example isomorphic libs are: typeorm, ng2-rest, morphi...');
+      console.log('Example isomorphic libs are: typeorm, ng2-rest, firedev...');
       process.exit(0)
     } else if (commandName === '-v') {
       console.log(JSON.parse(fse.readFileSync(path.join(crossPlatformPath(__dirname), '../..', 'package.json').toString(), 'utf8').toString()).version)
@@ -85,21 +85,21 @@ export async function run(argsv: string[], morphiEnvironmentCheck = true) {
 
 function errorAll() {
   console.log(`Bad arguments..try one of the command below:
-- ${CLI.chalk.bold('morphi new:workspace myAppName')}
-- ${CLI.chalk.bold('morphi new:simple myAppName')}
-- ${CLI.chalk.bold('morphi build')}
-- ${CLI.chalk.bold('morphi build:watch')}
-- ${CLI.chalk.bold('morphi -v')}
-- ${CLI.chalk.bold('morphi -h')}          `);
+- ${CLI.chalk.bold('firedev new:workspace myAppName')}
+- ${CLI.chalk.bold('firedev new:simple myAppName')}
+- ${CLI.chalk.bold('firedev build')}
+- ${CLI.chalk.bold('firedev build:watch')}
+- ${CLI.chalk.bold('firedev -v')}
+- ${CLI.chalk.bold('firedev -h')}          `);
   process.exit(0)
 }
 
 
 function errorNew() {
   console.log(`Bad arguments..try:
-${ CLI.chalk.bold('morphi new:workspace myAppName')}
+${ CLI.chalk.bold('firedev new:workspace myAppName')}
 or
-${ CLI.chalk.bold('morphi new:simple myAppName')}
+${ CLI.chalk.bold('firedev new:simple myAppName')}
           `);
   process.exit(0)
 }

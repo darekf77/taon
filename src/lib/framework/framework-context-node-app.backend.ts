@@ -118,7 +118,7 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
           });
           // CLASS.setSing letonObj(controller, new (controller as any)());
 
-          // Helpers.isBrowser && console.log(`[morphi] Sing leton cleated for "${controller && controller.name}"`, CLASS.getSing leton(controller))
+          // Helpers.isBrowser && console.log(`[Firedev] Sing leton cleated for "${controller && controller.name}"`, CLASS.getSing leton(controller))
         })(currentCtrl);
 
       }

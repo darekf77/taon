@@ -122,9 +122,14 @@ export abstract class BASE_ENTITY<T = any, TRAW = T, CTRL extends BaseCRUD<T> = 
   public modelDataConfig?: ModelDataConfig;
 
   /**
-   * injected controller for entity for easy coding
+   * here will be injected Firedev controller instance for entity
+   * for easy creation of intuitive api
    */
   public ctrl: CTRL;
+  /**
+   * here will be injected Firedev controller instance for entity
+   * for easy creation of intuitive api
+   */
   public static ctrl: any;
 
   /**
@@ -132,6 +137,8 @@ export abstract class BASE_ENTITY<T = any, TRAW = T, CTRL extends BaseCRUD<T> = 
    */
   browser: Partial<IBASE_ENTITY>;
 
+
+  //#region is listening to relatime changes ?
   isListeningToRealtimeChanges(property?: (keyof T)) {
     if (_.isString(property)) {
       return !!getRealtimeIsRealtime(this, property)
@@ -140,7 +147,9 @@ export abstract class BASE_ENTITY<T = any, TRAW = T, CTRL extends BaseCRUD<T> = 
     }
 
   }
+  //#endregion
 
+  //#region unsubscribe
   unsubscribeRealtimeUpdatesOfProperties() {
     if (_.isObject(this[IS_RELATIME_PROPERTY])) {
       Object.keys(this[IS_RELATIME_PROPERTY]).forEach(property => {
@@ -163,6 +172,7 @@ export abstract class BASE_ENTITY<T = any, TRAW = T, CTRL extends BaseCRUD<T> = 
       RealtimeBrowser.UnsubscribeEntityChanges(this);
     }
   }
+  //#endregion
 
   subscribeRealtimeUpdates<CALLBACK = T>(options: {
     modelDataConfig?: ModelDataConfig,
@@ -195,6 +205,7 @@ export abstract class BASE_ENTITY<T = any, TRAW = T, CTRL extends BaseCRUD<T> = 
       this[IS_RELATIME_PROPERTY] = {};
     }
 
+    //#region change listener
 
     const changesListener = (entityToUpdate: BASE_ENTITY<any>, info: string) => {
       return async () => {
@@ -216,7 +227,7 @@ export abstract class BASE_ENTITY<T = any, TRAW = T, CTRL extends BaseCRUD<T> = 
 
         let data: Models.HttpResponse<any> = { body: { json: entityToUpdate } } as any;
         if (!entityToUpdate.ctrl) {
-          log.w(`There is not ctrl (controller) for entity "${CLASS.getNameFromObject(entityToUpdate)}"`);
+          log.w(`[Firedev] There is not ctrl (controller) for entity "${CLASS.getNameFromObject(entityToUpdate)}"`);
           return;
         }
         if (_.isFunction(update)) {
@@ -271,10 +282,10 @@ export abstract class BASE_ENTITY<T = any, TRAW = T, CTRL extends BaseCRUD<T> = 
         BASE_ENTITY.__updatesInProgress[updateID] = false;
       }
     }
-
+    //#endregion
 
     if (this.isListeningToRealtimeChanges(property)) {
-      console.warn(`Alread listen to this ${_.isString(property)
+      console.warn(`[Firedev] Already listen to this ${_.isString(property)
         ? ('property: ' + property + ' of entity: ' + CLASS.getNameFromObject(this))
         : ('entity: ' + CLASS.getNameFromObject(this))
         } `, this)

@@ -157,7 +157,7 @@ export function initMethodNodejs(
             message: err.message
           }))
         } else {
-          console.log(`Bad result isomorphic method: ${error}`)
+          console.log(`[Firedev] Bad result isomorphic method: ${error}`)
           res.status(400).send(Helpers.JSON.stringify(error))
         }
       }

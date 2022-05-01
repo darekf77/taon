@@ -70,7 +70,7 @@ export class FrameworkContext extends FrameworkContextBase {
   public static findForTraget(target: Function | object | string): FrameworkContext {
     let className: string;
     if (_.isArray(target)) {
-      throw `[morphi][findForTraget] incorrect target:
+      throw `[Firedev][findForTraget] incorrect target:
       shoould be string, function or object
       `
     }
@@ -82,7 +82,7 @@ export class FrameworkContext extends FrameworkContextBase {
       className = target;
     }
     if (!className) {
-      throw `[morphi][findForTarget] incorrect class name: "${className}"`
+      throw new Error(`[Firedev][findForTarget] incorrect class name: "${className}"`)
     }
 
     const result = FrameworkContext.contextByClassName[className];
@@ -95,7 +95,7 @@ export class FrameworkContext extends FrameworkContextBase {
       //#endregion
       // console.log(`FrameworkContext.contexts.length: ${FrameworkContext.contexts.length}`)
       // console.trace('-' + className + '- context length: ' + FrameworkContext.contexts.length)
-      throw `[morphi][findForTarget] not able to find target by name: "${className}"`
+      throw new Error(`[Firedev][findForTarget] not able to find target by name: "${className}"`)
     }
     return result;
   }
@@ -234,7 +234,7 @@ export class FrameworkContext extends FrameworkContextBase {
       .forEach(c => {
         const className = CLASS.getName(c);
         if (FrameworkContext.contextByClassName[className]) {
-          throw `[morphi][frameworkcontext]
+          throw new Error(`[Firedev][frameworkcontext]
 ${this.anotherReason}
 
           Context already register for class "${className}"
@@ -250,7 +250,7 @@ class ${className}Extended extends ${className} {
   ...
 }
 
-          `;
+          `);
         }
         FrameworkContext.contextByClassName[className] = this;
       });
@@ -262,14 +262,14 @@ class ${className}Extended extends ${className} {
       .forEach(c => {
         const className = CLASS.getName(c);
         if (FrameworkContext.contextByClassName[className]) {
-          throw `[morphi][frameworkcontext]
+          throw new Error(`[Firedev][frameworkcontext]
 ${this.anotherReason}
 
           Context already register for class "${className}"
 This is class names based framework....
 You can create subclass from this class to fix this
 
-@Morphi.Controller({
+@Firedev.Controller({
   ...
   className: '${className}Extended'
   ...
@@ -278,7 +278,7 @@ class ${className}Extended extends ${className} {
   ...
 }
 
-          `;
+          `);
         }
         FrameworkContext.contextByClassName[className] = this;
       });

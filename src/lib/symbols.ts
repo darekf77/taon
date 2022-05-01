@@ -4,7 +4,7 @@ export const SYMBOL = {
   HAS_TABLE_IN_DB: Symbol(),
   MDC_KEY: 'modeldataconfig',
   REALTIME: {
-    NAMESPACE: 'morphirealtime',
+    NAMESPACE: 'firedevrealtime',
     ROOM: {
       SUBSCRIBE: {
         ENTITY_UPDATE_EVENTS: 'subscribeEntityEvents',

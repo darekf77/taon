@@ -49,8 +49,8 @@ export class RealtimeBase {
     const uri = this.context.uri;
     const nsp = namespace ? namespace : '';
     const pathname = uri.pathname !== '/' ? uri.pathname : '';
-    const morphiPrefix = `socketnodejs`;
-    const href = `${uri.origin}${pathname}/${morphiPrefix}${nsp}`;
+    const prefix = `socketnodejs`;
+    const href = `${uri.origin}${pathname}/${prefix}${nsp}`;
     // console.log(`HREF: ${href}`)
     return new URL(href) as URL;
   }

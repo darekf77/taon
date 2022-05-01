@@ -1,52 +1,56 @@
 //#region @notForNpm
 import { _ } from 'tnp-core';
 import { CLASS } from 'typescript-class-helpers';
-import { Morphi } from './index';
+import { Morphi as Firedev } from './index';
 
+// @browserLine
+import { NgModule } from '@angular/core';
+// @browserLine
+import { Component, OnInit } from '@angular/core';
 
-
-
-@Morphi.Entity({ className: 'Student' })
+const host1 = `http://localhost:3111`;
+const host2 = `http://localhost:3222`;
+@Firedev.Entity({ className: 'Student' })
 class Student {
   //#region @backend
-  @Morphi.Orm.Column.Generated()
+  @Firedev.Orm.Column.Generated()
   //#endregion
   public id: number;
 
   //#region @backend
-  @Morphi.Orm.Column.Custom('varchar')
+  @Firedev.Orm.Column.Custom('varchar')
   //#endregion
   public firstName: string
 
   //#region @backend
-  @Morphi.Orm.Column.Custom('varchar')
+  @Firedev.Orm.Column.Custom('varchar')
   //#endregion
   public lastName: string
 
 }
 
 
-@Morphi.Entity({ className: 'User' })
+@Firedev.Entity({ className: 'User' })
 class User {
   //#region @backend
-  @Morphi.Orm.Column.Generated()
+  @Firedev.Orm.Column.Generated()
   //#endregion
   public id: number;
 
   //#region @backend
-  @Morphi.Orm.Column.Custom('varchar')
+  @Firedev.Orm.Column.Custom('varchar')
   //#endregion
   public firstName: string
 
   //#region @backend
-  @Morphi.Orm.Column.Custom('varchar')
+  @Firedev.Orm.Column.Custom('varchar')
   //#endregion
   public lastName: string
 
 }
 
-@Morphi.Entity({ className: 'Book' })
-class Book extends Morphi.Base.Entity<any> {
+@Firedev.Entity({ className: 'Book' })
+class Book extends Firedev.Base.Entity<any> {
   static from(name: string) {
     const b = new Book();
     b.name = name;
@@ -54,31 +58,31 @@ class Book extends Morphi.Base.Entity<any> {
   }
 
   //#region @backend
-  @Morphi.Orm.Column.Custom('varchar')
+  @Firedev.Orm.Column.Custom('varchar')
   //#endregion
   public name: string
 
   //#region @backend
-  @Morphi.Orm.Column.Generated()
+  @Firedev.Orm.Column.Generated()
   //#endregion
   public id: number
 
 }
 
-@Morphi.Controller({ className: 'UserController' })
+@Firedev.Controller({ className: 'UserController' })
 class UserController {
-  @Morphi.Http.GET()
-  helloWorld(): Morphi.Response<string> {
+  @Firedev.Http.GET()
+  helloWorld(): Firedev.Response<string> {
     return async (req, res) => {
       return 'hello world from here';
     }
   }
 }
 
-@Morphi.Controller({ className: 'StudentController', entity: Student })
-class StudentController extends Morphi.Base.Controller<any>  {
-  @Morphi.Http.GET()
-  helloStudencie(): Morphi.Response<string> {
+@Firedev.Controller({ className: 'StudentController', entity: Student })
+class StudentController extends Firedev.Base.Controller<any>  {
+  @Firedev.Http.GET()
+  helloStudencie(): Firedev.Response<string> {
     return async (req, res) => {
       return 'hello world from here';
     }
@@ -86,8 +90,39 @@ class StudentController extends Morphi.Base.Controller<any>  {
 }
 
 
-@Morphi.Controller({ className: 'BookCtrl', entity: Book })
-class BookCtrl extends Morphi.Base.Controller<any> {
+
+
+//#region @browser
+@Component({
+  selector: 'app-morphi',
+  template: `
+hello world
+
+  `
+})
+export class MorphiComponent implements OnInit {
+  constructor() {
+
+
+  }
+
+  async ngOnInit() {
+    await start();
+    console.log('INITED ')
+  }
+}
+
+@NgModule({
+  imports: [],
+  exports: [MorphiComponent],
+  declarations: [MorphiComponent],
+})
+export class MorphiModule { }
+//#endregion
+
+
+@Firedev.Controller({ className: 'BookCtrl', entity: Book })
+class BookCtrl extends Firedev.Base.Controller<any> {
   //#region @backend
   async initExampleDbData() {
     const db = await this.connection.getRepository(Book);
@@ -96,57 +131,56 @@ class BookCtrl extends Morphi.Base.Controller<any> {
   }
   //#endregion
 
-  @Morphi.Http.GET()
-  helloWorld(): Morphi.Response<string> {
+  @Firedev.Http.GET()
+  helloWorld(): Firedev.Response<string> {
     return async (req, res) => {
       return 'hello world';
     }
   }
 }
 
-const host1 = `http://localhost:3111`;
-const host2 = `http://localhost:3222`;
 
-const start = async (port = 3000) => {
 
-  const context1 = await Morphi.init({
-    host: host1,
-    controllers: [
-      BookCtrl,
-    ],
-    entities: [
-      Book,
-      // User,
-    ],
-    //#region @backend
-    config: {
-      type: "sqlite",
-      database: 'tmp-db1.sqlite',
-      synchronize: true,
-      dropSchema: true,
-      logging: false
-    }
-    //#endregion
-  });
+const start = async () => {
+
+  // const context1 = await Firedev.init({
+  //   host: host1,
+  //   controllers: [
+  //     BookCtrl,
+  //   ],
+  //   entities: [
+  //     Book,
+  //     // User,
+  //   ],
+  //   //#region @backend
+  //   config: {
+  //     type: "sqlite",
+  //     database: 'tmp-db1.sqlite',
+  //     synchronize: true,
+  //     dropSchema: true,
+  //     logging: false
+  //   }
+  //   //#endregion
+  // });
 
   // console.log(context);
-  if (Morphi.IsBrowser) {
-    const c: BookCtrl = _.first(context1.controllers);
-    const data = (await c.getAll().received).body.json as Book[];
-    console.log('context 1', data);
-  }
+  // if (Firedev.IsBrowser) {
+  //   const c: BookCtrl = _.first(context1.controllers);
+  //   const data = (await c.getAll().received).body.json as Book[];
+  //   console.log('context 1', data);
+  // }
 
-  const context2 = await Morphi.init({
+  const context2 = await Firedev.init({
     host: host2,
     controllers: [
-      // BookCtrl,
-      UserController,
-      StudentController,
+      BookCtrl,
+      // UserController,
+      // StudentController,
     ],
     entities: [
-      User,
-      Student,
-      // Book,
+      // User,
+      // Student,
+      Book,
     ],
     //#region @backend
     config: {
@@ -160,27 +194,66 @@ const start = async (port = 3000) => {
   });
 
   // console.log(context);
-  if (Morphi.IsBrowser) {
+  if (Firedev.IsBrowser) {
     const c: BookCtrl = _.first(context2.controllers);
     const data = (await c.getAll().received).body.json as Book[];
     console.log('context 2', data);
+
+    let i = 0;
+    Firedev.Realtime.Browser.SubscribeEntity(Book, 1, (unsub) => {
+      console.log(`realtime update of Book with id=1 (` + i++ + ')')
+    });
+
+    let j = 0
+    Firedev.Realtime.Browser.SubscribeEntity<Book>(Book, 2, (value) => {
+      console.log('realtime update of Book with id 2 for property "name" (' + j++ + ')')
+    }, 'name')
+
+    // book.subscribeRealtimeUpdates({
+    //   callback: (b) => {
+    //     console.log('realtime update', b)
+    //   }
+    // })
+
   }
 
-  console.log('-------------');
-  const { BaseCRUD } = await import('./lib/crud');
-  console.log(`${BaseCRUD.name}: ${CLASS.getName(BaseCRUD)}`);
-  const { BASE_CONTROLLER } = await import('./lib/framework');
-  console.log(`${BASE_CONTROLLER.name}: ${CLASS.getName(BASE_CONTROLLER)}`);
-  console.log(`${Student.name}: ${CLASS.getName(Student)}`);
-  console.log(`${StudentController.name}: ${CLASS.getName(StudentController)}`);
-  console.log(`${Book.name}: ${CLASS.getName(Book)}`);
-  console.log(`${BookCtrl.name}: ${CLASS.getName(BookCtrl)}`);
+  // console.log('-------------');
+  // const { BaseCRUD } = await import('./lib/crud');
+  // console.log(`${BaseCRUD.name}: ${CLASS.getName(BaseCRUD)}`);
+  // const { BASE_CONTROLLER } = await import('./lib/framework');
+  // console.log(`${BASE_CONTROLLER.name}: ${CLASS.getName(BASE_CONTROLLER)}`);
+  // console.log(`${Student.name}: ${CLASS.getName(Student)}`);
+  // console.log(`${StudentController.name}: ${CLASS.getName(StudentController)}`);
+  // console.log(`${Book.name}: ${CLASS.getName(Book)}`);
+  // console.log(`${BookCtrl.name}: ${CLASS.getName(BookCtrl)}`);
+
+  //#region @backend
+  notifyBookUpdate(Book, 1);
+  notifyBookUpdate(Book, 2, 'name');
+
+  //#endregion
 
 }
 
-if (Morphi.IsBrowser) {
-  start()
+
+//#region @backend
+
+function notifyBookUpdate(entityFn, idValue, property?, counter = 0) {
+  if (property) {
+    Firedev.Realtime.Server.TrigggerEntityPropertyChanges(Book, property, idValue);
+  } else {
+    Firedev.Realtime.Server.TrigggerEntityChanges(Book, idValue);
+  }
+  const name = CLASS.getName(entityFn);
+
+  console.log(`notify enitty ${name} with id=${idValue}`
+    + ` ${property ? ('and property "' + property + '"') : ''} (` + counter++ + ')');
+
+  setTimeout(() => {
+    notifyBookUpdate(entityFn, idValue, property, counter)
+  }, 4444)
 }
+//#endregion
 
 
 export default start;

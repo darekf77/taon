@@ -13,7 +13,6 @@ const log = Log.create('RealtimeNodejs',
 export class RealtimeNodejs extends RealtimeBase {
   private static jobs = {};
 
-  //#region @backend
   constructor(context: FrameworkContext) {
     super(context);
     if (!context.disabledRealtime) {
@@ -87,8 +86,8 @@ export class RealtimeNodejs extends RealtimeBase {
       entity = CLASS.getName(entity);
     }
     if (_.isString(entity) && !(_.isString(idToTrigger) || _.isNumber(idToTrigger))) {
-      throw `[morphi][realtime-nodejs] `
-      + `Please provide id if you are trigerring realtime change for entity by name: "${entity}"`;
+      throw new Error(`[Firedev][realtime-nodejs] `
+      + `Please provide id if you are trigerring realtime change for entity by name: "${entity}"`);
     }
     const keyPropertyName = 'id';
 

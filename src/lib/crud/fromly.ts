@@ -35,7 +35,7 @@ export function getFromlyConfigFor(
   const checkExclude = (_.isArray(keysPathesToExclude) && keysPathesToExclude.length > 0);
   const checkInclude = (_.isArray(keysPathesToInclude) && keysPathesToInclude.length > 0);
   if (checkExclude && checkInclude) {
-    throw `In morphi function getFromlyConfigFor(...) please use keysPathesToInclude or keysPathesToExclude, `
+    throw new Error(`In Firedev function getFromlyConfigFor(...) please use keysPathesToInclude or keysPathesToExclude, `)
   }
   // if (checkInclude) {
   //   console.log('check include', keysPathesToExclude)

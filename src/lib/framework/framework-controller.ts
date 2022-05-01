@@ -31,7 +31,7 @@ function updateChain(entity: Function, target: Function) {
   const className = CLASS.getName(entity);
 
   if (updatedWithCtrl[className]) {
-    console.warn(`[morphi] Property 'ctrl' already exist for ${className}`);
+    console.warn(`[Firedev] Property 'ctrl' already exist for ${className}`);
     try {
       Object.defineProperty(entity.prototype, 'ctrl', {
         get: function () {
@@ -48,7 +48,7 @@ function updateChain(entity: Function, target: Function) {
     })
   }
   if (updatedStaticWithCtrl[className]) {
-    console.warn(`[morphi] Static property 'ctrl' already exist for ${className}`);
+    console.warn(`[Firedev] Static property 'ctrl' already exist for ${className}`);
     try {
       Object.defineProperty(entity, 'ctrl', {
         get: function () {

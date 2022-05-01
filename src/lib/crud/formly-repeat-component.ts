@@ -21,7 +21,7 @@ DON'T FORGET
     <div  *ngIf="field.fieldGroup && field.fieldGroup.length === 0" >
       Press button below to add new element...
     </div>
-    <div *ngFor="let field of field.fieldGroup; let i = index;" class="morphi-formly-array"  >
+    <div *ngFor="let field of field.fieldGroup; let i = index;" class="firedev-formly-array"  >
       <formly-group
         [model]="model[i]"
         [field]="field"
@@ -52,7 +52,7 @@ DON'T FORGET
         padding: 5px;
       }
 
-      .morphi-formly-array {
+      .firedev-formly-array {
         padding: 5px;
         background: white;
       }

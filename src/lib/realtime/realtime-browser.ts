@@ -1,3 +1,4 @@
+//#region imports
 import { _ } from 'tnp-core';
 import * as io from 'socket.io-client';
 import { SYMBOL } from '../symbols';
@@ -6,21 +7,28 @@ import { BASE_ENTITY } from '../framework/framework-entity';
 import { CLASS } from 'typescript-class-helpers';
 import { RealtimeBase } from './realtime';
 import { FrameworkContext } from '../framework/framework-context';
+//#endregion
+
 const log = Log.create('RealtimeBrowser',
-  Level.__NOTHING
+  // Level.__NOTHING
 );
 
+//#region types
 export type AliasChangeListenerType = (unsubscribe: () => void) => void;
 export type AliasEntityType = Partial<BASE_ENTITY<any>>;
+//#endregion
 
 export class RealtimeBrowser extends RealtimeBase {
+
+  //#region static fields
   private static realtimeEntityListener: { [className: string]: { [entitiesIds: number]: any[]; } } = {} as any;
   private static realtimeEntityPropertyListener: { [className: string]: { [propertyInEntityIds: string]: any[]; } } = {} as any;
 
   private static realtimeEntitySockets: { [className: string]: { [entitiesIds: number]: any } } = {} as any;
   private static realtimeEntityPropertySockets: { [className: string]: { [propertyInEntityIds: string]: any } } = {} as any;
+  //#endregion
 
-
+  //#region constructor
   constructor(context: FrameworkContext) {
     super(context);
     if (!context.disabledRealtime) {
@@ -58,7 +66,11 @@ export class RealtimeBrowser extends RealtimeBase {
       log.i('IT SHOULD CONNECT TO REALTIME')
     }
   }
+  //#endregion
 
+  //#region public api
+
+  //#region public api / trigger change to entity
   public static TriggerChange(entity: AliasEntityType, property?: string) {
     const context = FrameworkContext.findForTraget(entity);
     return context.browser.realtime?.TriggerChange(entity, property);
@@ -104,21 +116,35 @@ export class RealtimeBrowser extends RealtimeBase {
       }
     }
   }
+  //#endregion
 
-  private entityIdIsCorrect(id: string | number, entity: any,
-    action: 'Subscribe' | 'Unsubscribe') {
-    if (!(_.isNumber(id) || _.isString(id))) {
-      if (_.isFunction(entity)) {
-        entity = CLASS.getName(entity)
-      }
-      if (_.isObject(entity)) {
-        entity = CLASS.getNameFromObject(entity)
-      }
+  //#region public api / add duplicate realtime entity listener
+  /**
+   * TODO why do I need this ?
+   */
+  public static addDupicateRealtimeEntityListener(entity: AliasEntityType, changesListener: AliasChangeListenerType, property?: string) {
+    const context = FrameworkContext.findForTraget(entity);
+    return context.browser.realtime?.addDupicateRealtimeEntityListener(entity, changesListener, property);
+  }
 
-      throw `[Morphi.Realtime.Browser.${action}] bad id "${id}" for entity "${entity}" `
-      + `. Should be number or string`;
+  public addDupicateRealtimeEntityListener(entity: AliasEntityType, changesListener: AliasChangeListenerType, property?: string) {
+    if (this.context.disabledRealtime) {
+      return;
+    }
+    const className = CLASS.getNameFromObject(entity);
+    if (_.isUndefined(RealtimeBrowser.realtimeEntityPropertyListener[className])) {
+      RealtimeBrowser.realtimeEntityPropertyListener[className] = {};
+    }
+    if (_.isString(property)) {
+      const propertyInEntityKey = propertyInEntityKeyFn(entity, property)
+      RealtimeBrowser.realtimeEntityPropertyListener[className][propertyInEntityKey].push(changesListener);
+    } else {
+      RealtimeBrowser.realtimeEntityListener[className][entity.id].push(changesListener);
     }
   }
+  //#endregion
+
+  //#region public api / subscribe entity changes
 
   private __SubscribeEntityChanges(entity: AliasEntityType, changesListener: AliasChangeListenerType, property?: string) {
     if (this.context.disabledRealtime) {
@@ -139,20 +165,20 @@ export class RealtimeBrowser extends RealtimeBase {
     const className = CLASS.getName(constructFn);
 
     this.checkObjects(className, entity, property, changesListener);
-    if(property) {
+    if (property) {
       log.d(`subsceibe entity property changes: "${className}/${property}"`)
     } else {
       log.d(`subsceibe entity changes: "${className}"`)
     }
 
-    log.d(`[className][after check object] ${className} host: ${this.context.host} `)
+    log.d(`[Firedev][className][after check object] ${className} host: ${this.context.host} `)
 
     const roomName = _.isString(property) ?
       SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY_PROPERTY(className, property, entity.id) :
       SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY(className, entity.id)
 
 
-    log.d(`[className][roomName] ${roomName} host: ${this.context.host} `)
+    log.d(`[Firedev][className][roomName] ${roomName} host: ${this.context.host} `)
     const realtime = this.socketNamespace.FE_REALTIME;
     const ngZone = this.context.ngZone;
 
@@ -162,12 +188,12 @@ export class RealtimeBrowser extends RealtimeBase {
     //   console.log(`conented to namespace ${realtime.nsp && realtime.nsp.name}`)
     if (_.isString(property)) {
       realtime.emit(SYMBOL.REALTIME.ROOM.SUBSCRIBE.ENTITY_PROPERTY_UPDATE_EVENTS, roomName)
-      log.i('SUBSCRIBE TO ' +
+      log.i('[Firedev] SUBSCRIBE TO ' +
         SYMBOL.REALTIME.EVENT.ENTITY_PROPTERY_UPDATE_BY_ID(className, property, entity.id)
         + ` for host: ${this.context.host}`)
     } else {
       realtime.emit(SYMBOL.REALTIME.ROOM.SUBSCRIBE.ENTITY_UPDATE_EVENTS, roomName)
-      log.i('SUBSCRIBE TO ' +
+      log.i('[Firedev] SUBSCRIBE TO ' +
         SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(className, entity.id)
         + ` for host: ${this.context.host}`)
     }
@@ -207,7 +233,7 @@ export class RealtimeBrowser extends RealtimeBase {
 
     const cb = _.debounce(() => {
       callBackDebouced();
-    }, 500);
+    });
 
     const callbackForRealtimeChanges = (
       data // NO need to know data
@@ -242,24 +268,20 @@ export class RealtimeBrowser extends RealtimeBase {
     }
   }
 
-  public static addDupicateRealtimeEntityListener(entity: AliasEntityType, changesListener: AliasChangeListenerType, property?: string) {
+  static SubscribeEntity<T = { [prop: string]: string; }>(
+    entityFn: Function,
+    valueOfUniqueIdProperty: any,
+    changesListener: AliasChangeListenerType,
+    property?: (keyof T) | string,
+  ) {
+    const entity = new (entityFn as any)();
+    const indexProp = CLASS.OBJECT(entity).indexProperty;
+    entity[indexProp] = valueOfUniqueIdProperty;
     const context = FrameworkContext.findForTraget(entity);
-    return context.browser.realtime?.addDupicateRealtimeEntityListener(entity, changesListener, property);
-  }
-
-  public addDupicateRealtimeEntityListener(entity: AliasEntityType, changesListener: AliasChangeListenerType, property?: string) {
-    if (this.context.disabledRealtime) {
-      return;
-    }
-    const className = CLASS.getNameFromObject(entity);
-    if (_.isUndefined(RealtimeBrowser.realtimeEntityPropertyListener[className])) {
-      RealtimeBrowser.realtimeEntityPropertyListener[className] = {};
-    }
-    if (_.isString(property)) {
-      const propertyInEntityKey = propertyInEntityKeyFn(entity, property)
-      RealtimeBrowser.realtimeEntityPropertyListener[className][propertyInEntityKey].push(changesListener);
+    if (property) {
+      return context.browser.realtime.SubscribeEntityPropertyChanges(entity, property as any, changesListener);
     } else {
-      RealtimeBrowser.realtimeEntityListener[className][entity.id].push(changesListener);
+      return context.browser.realtime.SubscribeEntityChanges(entity, changesListener);
     }
   }
 
@@ -284,69 +306,9 @@ export class RealtimeBrowser extends RealtimeBase {
     }
     return this.__SubscribeEntityChanges(entity, changesListener, property);
   }
+  //#endregion
 
-  private checkObjects(className: string, entity: Partial<BASE_ENTITY<any>>, property: string, changesListener) {
-    if (this.context.disabledRealtime) {
-      return;
-    }
-    if (_.isString(property)) {
-
-      if (_.isUndefined(RealtimeBrowser.realtimeEntityPropertySockets[className])) {
-        RealtimeBrowser.realtimeEntityPropertySockets[className] = {};
-      }
-
-      if (_.isUndefined(RealtimeBrowser.realtimeEntityPropertyListener[className])) {
-        RealtimeBrowser.realtimeEntityPropertyListener[className] = {};
-      }
-
-      const propertyInEntityKey = propertyInEntityKeyFn(entity, property);
-
-
-      if (!_.isArray(RealtimeBrowser.realtimeEntityPropertyListener[className][propertyInEntityKey])) {
-        RealtimeBrowser.realtimeEntityPropertyListener[className][propertyInEntityKey] = [];
-      }
-
-      if (_.isObject(RealtimeBrowser.realtimeEntityPropertyListener[className][propertyInEntityKey])) {
-        log.w(`alread listen to this object property: ${property} realtime events`, entity)
-        if (!RealtimeBrowser.realtimeEntityPropertyListener[className][propertyInEntityKey].includes(changesListener)) {
-          log.d(`new change listener added, property: ${property}`, entity)
-          RealtimeBrowser.realtimeEntityPropertyListener[className][propertyInEntityKey].push(changesListener);
-        } else {
-          log.d(`change listener already exist, property: ${property}`, entity)
-        }
-        return false
-      }
-
-
-    } else {
-      if (_.isUndefined(RealtimeBrowser.realtimeEntitySockets[className])) {
-        RealtimeBrowser.realtimeEntitySockets[className] = {};
-      }
-
-      if (_.isUndefined(RealtimeBrowser.realtimeEntityListener[className])) {
-        RealtimeBrowser.realtimeEntityListener[className] = {};
-      }
-
-      if (!_.isArray(RealtimeBrowser.realtimeEntityListener[className][entity.id])) {
-        RealtimeBrowser.realtimeEntityListener[className][entity.id] = [];
-      }
-
-      if (_.isObject(RealtimeBrowser.realtimeEntitySockets[className][entity.id])) {
-        log.w('alread listen to this object realtime events', entity)
-        if (!RealtimeBrowser.realtimeEntityListener[className][entity.id].includes(changesListener)) {
-          log.d('new change listener added', entity)
-          RealtimeBrowser.realtimeEntityListener[className][entity.id].push(changesListener);
-        } else {
-          log.d('change listener already exist', entity)
-        }
-        return false
-      }
-    }
-
-    return true;
-  }
-
-
+  //#region public api / unsubscribe entity changes
   private __UnsubscribeEntityChanges(entity: AliasEntityType, property?: string, includePropertyChanges = false, classFN?: Function) {
     if (this.context.disabledRealtime) {
       return;
@@ -446,11 +408,99 @@ export class RealtimeBrowser extends RealtimeBase {
     }
     return this.__UnsubscribeEntityChanges(entity, property)
   }
+  //#endregion
 
+  //#endregion
+
+  //#region private methods
+
+  //#region private methods / is entity id ok
+  private entityIdIsCorrect(id: string | number, entity: any,
+    action: 'Subscribe' | 'Unsubscribe') {
+    if (!(_.isNumber(id) || _.isString(id))) {
+      if (_.isFunction(entity)) {
+        entity = CLASS.getName(entity)
+      }
+      if (_.isObject(entity)) {
+        entity = CLASS.getNameFromObject(entity)
+      }
+
+      throw `[Firedev.Realtime.Browser.${action}] bad id "${id}" for entity "${entity}" `
+      + `. Should be number or string`;
+    }
+  }
+  //#endregion
+
+  //#region private methods / check objects
+  private checkObjects(className: string, entity: Partial<BASE_ENTITY<any>>, property: string, changesListener) {
+    if (this.context.disabledRealtime) {
+      return;
+    }
+    if (_.isString(property)) {
+
+      if (_.isUndefined(RealtimeBrowser.realtimeEntityPropertySockets[className])) {
+        RealtimeBrowser.realtimeEntityPropertySockets[className] = {};
+      }
+
+      if (_.isUndefined(RealtimeBrowser.realtimeEntityPropertyListener[className])) {
+        RealtimeBrowser.realtimeEntityPropertyListener[className] = {};
+      }
+
+      const propertyInEntityKey = propertyInEntityKeyFn(entity, property);
+
+
+      if (!_.isArray(RealtimeBrowser.realtimeEntityPropertyListener[className][propertyInEntityKey])) {
+        RealtimeBrowser.realtimeEntityPropertyListener[className][propertyInEntityKey] = [];
+      }
+
+      if (_.isObject(RealtimeBrowser.realtimeEntityPropertyListener[className][propertyInEntityKey])) {
+        log.w(`alread listen to this object property: ${property} realtime events`, entity)
+        if (!RealtimeBrowser.realtimeEntityPropertyListener[className][propertyInEntityKey].includes(changesListener)) {
+          log.d(`new change listener added, property: ${property}`, entity)
+          RealtimeBrowser.realtimeEntityPropertyListener[className][propertyInEntityKey].push(changesListener);
+        } else {
+          log.d(`change listener already exist, property: ${property}`, entity)
+        }
+        return false
+      }
+
+
+    } else {
+      if (_.isUndefined(RealtimeBrowser.realtimeEntitySockets[className])) {
+        RealtimeBrowser.realtimeEntitySockets[className] = {};
+      }
+
+      if (_.isUndefined(RealtimeBrowser.realtimeEntityListener[className])) {
+        RealtimeBrowser.realtimeEntityListener[className] = {};
+      }
+
+      if (!_.isArray(RealtimeBrowser.realtimeEntityListener[className][entity.id])) {
+        RealtimeBrowser.realtimeEntityListener[className][entity.id] = [];
+      }
+
+      if (_.isObject(RealtimeBrowser.realtimeEntitySockets[className][entity.id])) {
+        log.w('alread listen to this object realtime events', entity)
+        if (!RealtimeBrowser.realtimeEntityListener[className][entity.id].includes(changesListener)) {
+          log.d('new change listener added', entity)
+          RealtimeBrowser.realtimeEntityListener[className][entity.id].push(changesListener);
+        } else {
+          log.d('change listener already exist', entity)
+        }
+        return false
+      }
+    }
+
+    return true;
+  }
+  //#endregion
+
+  //#endregion
 
 }
 
+//#region helpers
 
 function propertyInEntityKeyFn(entity: AliasEntityType, property: string) {
   return `${entity.id}${property}`
 }
+//#endregion

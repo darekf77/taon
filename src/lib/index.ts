@@ -64,10 +64,10 @@ export namespace Morphi {
   export import FrameworkContext = context.FrameworkContext;
   export function destroyContext(contextOrHost: FrameworkContext | string) {
     if (_.isString(contextOrHost)) {
-      Helpers.log(`[morphi] Destroying context by host: ${contextOrHost}`)
+      Helpers.log(`[Firedev] Destroying context by host: ${contextOrHost}`)
       const context = FrameworkContext.findByHost(contextOrHost);
       if (!context) {
-        Helpers.log(`[morphi] no context to delete by host: "${contextOrHost}"`);
+        Helpers.log(`[Firedev] no context to delete by host: "${contextOrHost}"`);
         return;
       }
       contextOrHost = context;
@@ -109,6 +109,7 @@ export namespace Morphi {
 
   export namespace Realtime {
     export namespace Browser {
+      export const SubscribeEntity = realtime.RealtimeBrowser.SubscribeEntity;
       export const SubscribeEntityChanges = realtime.RealtimeBrowser.SubscribeEntityChanges;
       export const SubscribeEntityPropertyChanges = realtime.RealtimeBrowser.SubscribeEntityPropertyChanges;
       export const UnsubscribeEverything = realtime.RealtimeBrowser.UnsubscribeEverything;
