@@ -82,7 +82,7 @@ const start = async (port = 3000) => {
 
 
     data.forEach(b => {
-      Firedev.Realtime.Browser.listenChangesEntityObjy(b).subscribe(() => {
+      Firedev.Realtime.Browser.listenChangesEntityObj(b).subscribe(() => {
         console.log(`hello update: ${b.id} `)
       });
     })

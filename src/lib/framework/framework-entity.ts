@@ -122,15 +122,15 @@ export abstract class BASE_ENTITY<T = any> {
    * reserver property for uniq identifier
    * Note: if id is not uniq.. maybe create getter for id ?
    */
-  abstract id: number | string;
+  abstract id?: number | string;
   /**
    * here will be injected Firedev controller instance for entity
    * for easy creation of intuitive api
    */
-  public ctrl: any;
+  public ctrl?: any;
   /**
    * here will be injected Firedev controller instance for entity
    * for easy creation of intuitive api
    */
-  public static ctrl: any;
+  public static ctrl?: any;
 }

@@ -70,9 +70,18 @@ function updateChain(entity: Function, target: Function) {
 
 export function Controller(options?: {
   className?: string;
-  realtime?: boolean,
+  /**
+   * typeorm realtime subscribtion // TODO disabled for now, does not make sense ?s
+   */
+  // realtime?: boolean,
+  /**
+   * Entity required fro CRUD functions
+   */
   entity?: Function,
   // additionalEntities?: Function[],
+  /**
+   * override default path for controller api
+   */
   path?: string,
   autoinit?: boolean,
   //#region @backend

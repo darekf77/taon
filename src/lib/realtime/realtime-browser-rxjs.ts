@@ -5,11 +5,14 @@ import { RealtimeBase } from "./realtime";
 import { _ } from 'tnp-core';
 import * as io from 'socket.io-client';
 import { CLASS } from "typescript-class-helpers";
-import { Observable } from "rxjs";
+import { Observable, Subscriber } from 'rxjs';
+import { RealtimeSubsManager, SubscribtionRealtime } from "./realtime-subs-manager";
 
 const log = Log.create('REALTIME RXJS',
   Level.__NOTHING
 );
+
+
 
 export type RealtimeBrowserRxjsOptions = {
   property?: string
@@ -17,8 +20,8 @@ export type RealtimeBrowserRxjsOptions = {
   customEvent?: string;
 };
 
-export class RealtimeBrowserRxjs {
 
+export class RealtimeBrowserRxjs {
 
   //#region constructor
   constructor(private context: FrameworkContext) {
@@ -59,8 +62,11 @@ export class RealtimeBrowserRxjs {
   }
   //#endregion
 
+  //#region listen changes entity
   static listenChangesEntity(entityClassFn, idOrUniqValue: any, options?: RealtimeBrowserRxjsOptions) {
     options = options || {} as any;
+
+    //#region parameters validation
     const { property, customEvent } = options;
     const className = !customEvent && CLASS.getName(entityClassFn);
 
@@ -69,13 +75,15 @@ export class RealtimeBrowserRxjs {
         throw new Error(`[Firedev][listenChangesEntity.. incorect property '' for ${className}`);
       }
     }
-    const context = options.overrideContext
-      ? options.overrideContext
-      : FrameworkContext.findForTraget(entityClassFn);
+    //#endregion
 
     return new Observable((observer) => {
 
-      const ngZone = context.ngZone;
+      //#region prepare parameters for manager
+      const context = options.overrideContext
+        ? options.overrideContext
+        : FrameworkContext.findForTraget(entityClassFn);
+
       const base = RealtimeBase.by(context);
       const realtime = base.socketNamespace.FE_REALTIME;
       let subPath: string;
@@ -101,49 +109,39 @@ export class RealtimeBrowserRxjs {
           SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY(className, idOrUniqValue);
       }
 
-      if (customEvent) {
-        realtime.emit(SYMBOL.REALTIME.ROOM.SUBSCRIBE.CUSTOM, roomName);
-      } else {
-        if (_.isString(property)) {
-          realtime.emit(SYMBOL.REALTIME.ROOM.SUBSCRIBE.ENTITY_PROPERTY_UPDATE_EVENTS, roomName);
-        } else {
-          realtime.emit(SYMBOL.REALTIME.ROOM.SUBSCRIBE.ENTITY_UPDATE_EVENTS, roomName);
-        }
-      }
+      const roomSubOptions: SubscribtionRealtime = {
+        context,
+        property,
+        roomName,
+        subPath,
+        customEvent,
+      };
+      //#endregion
+
+      const inst = RealtimeSubsManager.from(roomSubOptions);
 
       observer.remove(() => {
-        if (customEvent) {
-          realtime.emit(SYMBOL.REALTIME.ROOM.UNSUBSCRIBE.CUSTOM, roomName)
-        } else {
-          if (_.isString(property)) {
-            realtime.emit(SYMBOL.REALTIME.ROOM.UNSUBSCRIBE.ENTITY_PROPERTY_UPDATE_EVENTS, roomName)
-          } else {
-            realtime.emit(SYMBOL.REALTIME.ROOM.UNSUBSCRIBE.ENTITY_UPDATE_EVENTS, roomName)
-          }
-        }
+        inst.remove(observer);
       });
 
-      realtime.on(subPath, (data) => {
-        if (!observer.closed) {
-          if (ngZone) {
-            ngZone.run(() => {
-              observer.next(data);
-            })
-          } else {
-            observer.next(data);
-          }
-        }
-      });
+      inst.add(observer);
+
+      inst.startListenIfNotStarted(realtime);
 
     });
   }
 
+  //#endregion
+
+  //#region listen change entity object
   static listenChangesEntityObj(entity, options?: RealtimeBrowserRxjsOptions) {
     const classFn = CLASS.getFromObject(entity);
     const config = CLASS.getConfig(classFn);
     return RealtimeBrowserRxjs.listenChangesEntity(classFn, entity[config.uniqueKey], options);
   }
+  //#endregion
 
+  //#region listen changes custom event
   static listenChangesCustomEvent(context: FrameworkContext, customEvent: string) {
     return RealtimeBrowserRxjs.listenChangesEntity(void 0, void 0, {
       overrideContext: context,
@@ -154,6 +152,6 @@ export class RealtimeBrowserRxjs {
   listenChangesCustomEvent(customEvent: string) {
     return RealtimeBrowserRxjs.listenChangesCustomEvent(this.context, customEvent);
   }
-
+  //#endregion
 
 }

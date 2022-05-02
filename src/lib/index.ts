@@ -110,7 +110,9 @@ export namespace Morphi {
     export namespace Browser {
 
       export const listenChangesEntity = realtime.RealtimeBrowserRxjs.listenChangesEntity;
-      export const listenChangesEntityObjy = realtime.RealtimeBrowserRxjs.listenChangesEntityObj
+      export const listenChangesEntityObj = realtime.RealtimeBrowserRxjs.listenChangesEntityObj
+      // export const stopListenChangesEntity = realtime.RealtimeBrowserRxjs.listenChangesEntity;
+      // export const stopListenChangesEntityObj = realtime.RealtimeBrowserRxjs.listenChangesEntityObj
       // export const SubscribeEntity = realtime.RealtimeBrowser.SubscribeEntity;
       // export const SubscribeEntityChanges = realtime.RealtimeBrowser.SubscribeEntityChanges;
       // export const SubscribeEntityPropertyChanges = realtime.RealtimeBrowser.SubscribeEntityPropertyChanges;
