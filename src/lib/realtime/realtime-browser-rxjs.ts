@@ -2,7 +2,7 @@ import { Level, Log } from "ng2-logger";
 import { FrameworkContext } from "../framework/framework-context";
 import { SYMBOL } from "../symbols";
 import { RealtimeBase } from "./realtime";
-import { _ } from 'tnp-core';
+import { Helpers, _ } from 'tnp-core';
 import * as io from 'socket.io-client';
 import { CLASS } from "typescript-class-helpers";
 import { Observable, Subscriber } from 'rxjs';
@@ -26,6 +26,7 @@ export class RealtimeBrowserRxjs {
   //#region constructor
   constructor(private context: FrameworkContext) {
     const base = RealtimeBase.by(context);
+    console.log('INITING SOCKETS')
     if (!context.disabledRealtime) {
 
       const nspPath = {
@@ -39,6 +40,7 @@ export class RealtimeBrowserRxjs {
       const global = io(nspPath.global.origin, {
         path: nspPath.global.pathname
       });
+
       base.socketNamespace.FE = global as any;
 
       global.on('connect', () => {
@@ -59,6 +61,7 @@ export class RealtimeBrowserRxjs {
 
       log.i('IT SHOULD CONNECT TO REALTIME')
     }
+    console.log('INITING SOCKETS DONE')
   }
   //#endregion
 
@@ -84,49 +87,61 @@ export class RealtimeBrowserRxjs {
         ? options.overrideContext
         : FrameworkContext.findForTraget(entityClassFn);
 
-      const base = RealtimeBase.by(context);
-      const realtime = base.socketNamespace.FE_REALTIME;
-      let subPath: string;
-      let roomName: string;
+      if (context.disabledRealtime) {
+        Helpers.error(`[Firedev][realtime rxjs] remove firedev config flag:
 
-      if (customEvent) {
-        roomName = SYMBOL.REALTIME.ROOM_NAME.CUSTOM(customEvent);
-        subPath = SYMBOL.REALTIME.EVENT.CUSTOM(customEvent);
+        ...
+        disabledRealtime: true
+        ...
+
+to use socket realtime connection;
+        `)
+
       } else {
-        subPath = _.isString(property)
-          ? SYMBOL.REALTIME.EVENT.ENTITY_PROPTERY_UPDATE_BY_ID(
-            className,
-            property,
-            idOrUniqValue
-          )
-          : SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(
-            className,
-            idOrUniqValue
-          );
+        const base = RealtimeBase.by(context);
+        const realtime = base.socketNamespace.FE_REALTIME;
+        let subPath: string;
+        let roomName: string;
 
-        roomName = _.isString(property) ?
-          SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY_PROPERTY(className, property, idOrUniqValue) :
-          SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY(className, idOrUniqValue);
+        if (customEvent) {
+          roomName = SYMBOL.REALTIME.ROOM_NAME.CUSTOM(customEvent);
+          subPath = SYMBOL.REALTIME.EVENT.CUSTOM(customEvent);
+        } else {
+          subPath = _.isString(property)
+            ? SYMBOL.REALTIME.EVENT.ENTITY_PROPTERY_UPDATE_BY_ID(
+              className,
+              property,
+              idOrUniqValue
+            )
+            : SYMBOL.REALTIME.EVENT.ENTITY_UPDATE_BY_ID(
+              className,
+              idOrUniqValue
+            );
+
+          roomName = _.isString(property) ?
+            SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY_PROPERTY(className, property, idOrUniqValue) :
+            SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY(className, idOrUniqValue);
+        }
+
+        const roomSubOptions: SubscribtionRealtime = {
+          context,
+          property,
+          roomName,
+          subPath,
+          customEvent,
+        };
+        //#endregion
+
+        const inst = RealtimeSubsManager.from(roomSubOptions);
+
+        observer.remove(() => {
+          inst.remove(observer);
+        });
+
+        inst.add(observer);
+
+        inst.startListenIfNotStarted(realtime);
       }
-
-      const roomSubOptions: SubscribtionRealtime = {
-        context,
-        property,
-        roomName,
-        subPath,
-        customEvent,
-      };
-      //#endregion
-
-      const inst = RealtimeSubsManager.from(roomSubOptions);
-
-      observer.remove(() => {
-        inst.remove(observer);
-      });
-
-      inst.add(observer);
-
-      inst.startListenIfNotStarted(realtime);
 
     });
   }

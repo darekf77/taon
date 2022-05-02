@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import { Subscriber } from "rxjs";
+import { Helpers } from 'tnp-core';
 import { FrameworkContext } from "../framework/framework-context";
 import { SYMBOL } from "../symbols";
 import { RealtimeBase } from "./realtime";
@@ -32,6 +33,16 @@ export class RealtimeSubsManager {
   private observers: Subscriber<any>[] = []
 
   startListenIfNotStarted(realtime: any) {
+    if(this.options.context.disabledRealtime) {
+      console.warn(`[Firedev][startListenIfNotStarted] socket are disabled`)
+      return;
+    }
+
+    if(!realtime) {
+      console.warn(`[Firedev][startListenIfNotStarted] invalid socket connection`)
+      return;
+    }
+
     if (!this.isListening) {
       this.isListening = true;
 
