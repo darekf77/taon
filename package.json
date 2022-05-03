@@ -1,6 +1,6 @@
 {
   "name": "morphi",
-  "version": "13.0.33",
+  "version": "13.0.34",
   "description": "Part of firedev.io - framework for isomorphic (node/angular) apps",
   "scripts": {},
   "bin": {
@@ -131,7 +131,7 @@
     "sloc": "0.2.0",
     "socket.io": "2.4.1",
     "sort-package-json": "1.11.0",
-    "static-columns": "~13.0.16",
+    "static-columns": "13.0.16",
     "systeminformation": "3.45.7",
     "task.js": "0.1.5",
     "ts-loader": "2.3.1",

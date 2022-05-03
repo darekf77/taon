@@ -26,7 +26,7 @@ export class RealtimeBrowserRxjs {
   //#region constructor
   constructor(private context: FrameworkContext) {
     const base = RealtimeBase.by(context);
-    console.log('INITING SOCKETS')
+    Helpers.log('INITING SOCKETS')
     if (!context.disabledRealtime) {
 
       const nspPath = {
@@ -37,7 +37,7 @@ export class RealtimeBrowserRxjs {
       log.i('NAMESPACE GLOBAL ', nspPath.global.href + ` host: ${context.host}`)
       log.i('NAMESPACE REALTIME', nspPath.realtime.href + ` host: ${context.host}`)
 
-      const global = io(nspPath.global.origin, {
+      const global = io.connect(nspPath.global.origin, {
         path: nspPath.global.pathname
       });
 
@@ -49,7 +49,7 @@ export class RealtimeBrowserRxjs {
       log.i('IT SHOULD CONNECT TO GLOBAL')
 
 
-      const realtime = io(nspPath.realtime.origin, {
+      const realtime = io.connect(nspPath.realtime.origin, {
         path: nspPath.realtime.pathname
       }) as any;
 
@@ -61,7 +61,7 @@ export class RealtimeBrowserRxjs {
 
       log.i('IT SHOULD CONNECT TO REALTIME')
     }
-    console.log('INITING SOCKETS DONE')
+    Helpers.log('INITING SOCKETS DONE')
   }
   //#endregion
 
