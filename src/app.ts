@@ -3,9 +3,9 @@ import { _ } from 'tnp-core';
 import { CLASS } from 'typescript-class-helpers';
 import { Morphi as Firedev } from './index';
 
-// @browserLine
+// @browserImport
 import { NgModule } from '@angular/core';
-// @browserLine
+// @browserImport
 import { Component, OnInit } from '@angular/core';
 
 const host1 = `http://localhost:3111`;

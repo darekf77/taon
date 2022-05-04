@@ -8,9 +8,9 @@
 //#endregion
 
 export { Models } from './models';
-// @browserLine
+// @browserExport
 export { RepeatTypeComponent } from './crud/formly-repeat-component';
-// @browserLine
+// @browserExport
 export { FormlyHorizontalWrapper } from './crud/formly-group-wrapper-component';
 
 export { Log, Level } from 'ng2-logger';
