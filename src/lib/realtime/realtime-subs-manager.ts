@@ -1,10 +1,14 @@
 import * as _ from 'lodash';
+import { Level, Log } from 'ng2-logger';
 import { Subscriber } from "rxjs";
 import { Helpers } from 'tnp-core';
 import { FrameworkContext } from "../framework/framework-context";
 import { SYMBOL } from "../symbols";
 import { RealtimeBase } from "./realtime";
 
+const log = Log.create('REALTIME SUBS MANAGER',
+  Level.__NOTHING
+)
 
 export type SubscribtionRealtime = {
   context: FrameworkContext;
@@ -33,17 +37,19 @@ export class RealtimeSubsManager {
   private observers: Subscriber<any>[] = []
 
   startListenIfNotStarted(realtime: any) {
-    if(this.options.context.disabledRealtime) {
+    if (this.options.context.disabledRealtime) {
       console.warn(`[Firedev][startListenIfNotStarted] socket are disabled`)
       return;
     }
 
-    if(!realtime) {
+    if (!realtime) {
       console.warn(`[Firedev][startListenIfNotStarted] invalid socket connection`)
       return;
     }
 
     if (!this.isListening) {
+
+      log.i('subscribe to ', this.options)
       this.isListening = true;
 
       if (this.options.customEvent) {
