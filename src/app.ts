@@ -181,8 +181,8 @@ const start = async () => {
       Book,
     ],
     //#region @backend
-    config: {
-      type: "sqlite",
+    config: { // @ts-ignore
+      type: "better-sqlite3",
       database: 'tmp-db2.sqlite',
       synchronize: true,
       dropSchema: true,
