@@ -184,7 +184,7 @@
     ],
     ignoreDepsPattern: [],
     dependencies: {
-      "sqlite3": "4.0.9"
+       "sqlite3": "4.0.9"
     },
   },
   linkedProjects: [],

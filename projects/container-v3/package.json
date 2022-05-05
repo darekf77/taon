@@ -29,6 +29,7 @@
         "@angular-devkit/build-optimizer": null,
         "@angular-devkit/build-angular": "~13.2.5",
         "@angular-devkit/schematics": null,
+        "@angular-devkit/core": "~13.2.6",
         "@angular/cli": "~13.2.5",
         "@angular/compiler-cli": "~13.2.0",
         "@angular/language-service": null,
@@ -194,6 +195,7 @@
   "": {},
   "dependencies": {
     "@angular-devkit/build-angular": "~13.2.5",
+    "@angular-devkit/core": "~13.2.6",
     "@angular/animations": "~13.2.0",
     "@angular/cdk": "~13.2.4",
     "@angular/cli": "~13.2.5",
