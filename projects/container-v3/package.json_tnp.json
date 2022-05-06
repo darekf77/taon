@@ -156,7 +156,8 @@
       "button-dropdown": null,
       "tnp-tools": null,
       "@types/semver": "6.0.1",
-      "semver": "6.3.0"
+      "semver": "6.3.0",
+      "better-sqlite3": "7.5.1"
     },
     "linkedFolders": [
       {
