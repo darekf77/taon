@@ -1,6 +1,6 @@
 import { _, Helpers } from 'tnp-core';
 import { MorphiHelpers } from '../helpers';
-import { StartOptions, FrameworkMode } from './framework-models';
+import { StartOptions, FrameworkMode, MiddlewareType } from './framework-models';
 import { FrameworkContextBrowserApp } from './framework-context-browser-app';
 import { CLASS } from 'typescript-class-helpers';
 import { IConnectionOptions } from './framework-models';
@@ -133,6 +133,16 @@ export class FrameworkContext extends FrameworkContextBase {
   public get host() {
     return this.context.host;
   }
+
+  //#region @backend
+  public get middlewares(): MiddlewareType[] {
+    return this.context.middlewares || [];
+  }
+
+  public get session() {
+    return this.context.session;
+  }
+  //#endregion
 
   public get controllersClasses() {
     return [

@@ -95,6 +95,18 @@ export namespace Morphi {
   export import Controller = framework.Controller;
   export import Entity = framework.Entity;
   //#region @backend
+  export type Session = {
+    [additionalvalues: string]: any;
+    destroy: () => void;
+    save: () => void;
+    reload: () => void;
+    id: string;
+    token: string;
+    req: any;
+    userId: number | string;
+    cookie: any;
+  };
+
   export import BASE_CONTROLLER_INIT = framework.BASE_CONTROLLER_INIT;
   export import Repository = framework.Repository;
   export const getResponseValue = MorphiHelpers.getResponseValue;
@@ -105,6 +117,8 @@ export namespace Morphi {
   export import InitOptions = framework.StartOptions;
   export import IConnectionOptions = framework.IConnectionOptions;
   export import SYMBOL = sym.SYMBOL;
+
+
 
   export namespace Realtime {
     export namespace Browser {

@@ -7,6 +7,7 @@ import {
   http,
 } from 'tnp-core';
 import * as express from 'express';
+import * as expressSession from 'express-session';
 import { SYMBOL } from '../symbols';
 import * as  cors from 'cors';
 import * as bodyParser from 'body-parser';
@@ -22,6 +23,7 @@ import type { BASE_CONTROLLER } from './framework-controller';
 import { Http2Server } from 'http2';
 import { RealtimeNodejs } from '../realtime';
 import { MorphiHelpers } from '../helpers';
+import { ISession } from './framework-models';
 
 export class FrameworkContextNodeApp extends FrameworkContextBase {
   public readonly app: Application;
@@ -164,15 +166,59 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
 
   private initMidleware() {
     const app = this.app;
+    if (this.context.middlewares) {
+      this.context.middlewares.forEach(m => {
+        const [fun, args] = m;
+        app.use(fun.apply(null, args));
+      });
+    }
+
     app.use(fileUpload())
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(bodyParser.json());
     app.use(methodOverride());
     app.use(cookieParser());
-    app.use(cors());
+
+    if (this.context.session) {
+      app.use(expressSession(_.omit(this.context.session, 'frontendHost' as keyof ISession)))
+      app.use(cors({
+        credentials: true,
+        origin: this.context.session.frontendHost,
+      }));
+    } else {
+      app.use(cors())
+    }
+
+
 
     (() => {
+
+      // app.all('*', function (req, res) {
+      //   console.log('checking')
+      //   // res.header("Access-Control-Allow-Origin", "*");
+      //   // res.header("Access-Control-Allow-Headers", "Content-Type,Content-Length, Authorization, Accept,X-Requested-With");
+      //   // res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+      // });
+
+
       app.use((req, res, next) => {
+        // console.log('mayeb this')
+        // res.header('Access-Control-Allow-Origin', '*');
+        // res.header('Access-Control-Allow-Credentials', 'true');
+        // res.header(
+        //   'Access-Control-Allow-Headers',
+        //   'Origin, X-Requested-With, Content-Type, Accept'
+        // );
+        // res.set('Access-Control-Allow-Origin', ['*']);
+        // res.header("Access-Control-Allow-Origin", "*");
+        // res.header("Access-Control-Allow-Headers", "Content-Type,Content-Length, Authorization, Accept,X-Requested-With");
+        // res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+
+        // res.header('Access-Control-Allow-Credentials', 'true');
+        // res.set('Access-Control-Allow-Origin', '*');
+        // res.set("Access-Control-Allow-Headers", "Content-Type,Content-Length, Authorization, Accept,X-Requested-With");
+        // // res.set("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
+        // res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
 
         res.set('Access-Control-Expose-Headers',
           [

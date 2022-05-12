@@ -17,7 +17,9 @@ export function start(options: StartOptions) {
       mode,
       config,
       InitDataPriority,
+      session,
       publicAssets = [],
+      middlewares = [],
       //#endregion
     } = options as StartOptions;
     //#region @backend
@@ -35,8 +37,10 @@ export function start(options: StartOptions) {
       //#region @backend
       mode,
       InitDataPriority,
+      session,
       publicAssets,
       config,
+      middlewares,
       //#endregion
     });
 

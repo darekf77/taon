@@ -131,7 +131,7 @@
     "sloc": "0.2.0",
     "socket.io": "2.4.1",
     "sort-package-json": "1.11.0",
-    "static-columns": "~13.0.17",
+    "static-columns": "13.0.17",
     "systeminformation": "3.45.7",
     "task.js": "0.1.5",
     "ts-loader": "2.3.1",

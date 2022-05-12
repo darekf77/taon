@@ -158,7 +158,8 @@
         "tnp-tools": null,
         "@types/semver": "6.0.1",
         "semver": "6.3.0",
-        "better-sqlite3": "7.5.1"
+        "better-sqlite3": "7.5.1",
+        "express-session": "1.17.3"
       },
       "linkedFolders": [
         {
@@ -306,6 +307,7 @@
     "eslint-plugin-prefer-arrow": "1.2.2",
     "express": "4.16.3",
     "express-fileupload": "0.4.0",
+    "express-session": "1.17.3",
     "fbgraph": "1.4.1",
     "file-loader": "1.1.5",
     "firedev": "^13",

@@ -101,6 +101,7 @@
       "eslint",
       "express",
       "express-fileupload",
+      "express-session",
       "fbgraph",
       "file-loader",
       "font-awesome",
