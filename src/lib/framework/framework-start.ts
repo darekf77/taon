@@ -2,6 +2,7 @@ import { _ } from 'tnp-core';
 import { StartOptions } from './framework-models';
 import { FrameworkContext } from './framework-context';
 import { Helpers } from 'tnp-core';
+import axios from 'axios';
 
 export function start(options: StartOptions) {
   //#region @backend
@@ -13,11 +14,11 @@ export function start(options: StartOptions) {
       entities = [],
       disabledRealtime,
       allowedHosts,
+      session,
       //#region @backend
       mode,
       config,
       InitDataPriority,
-      session,
       publicAssets = [],
       middlewares = [],
       //#endregion
@@ -28,16 +29,25 @@ export function start(options: StartOptions) {
     }
     //#endregion
 
+    if (session) {
+      const oneHour = 1000 * 60 * 60 * 1; // 24;
+      if (!session.maxAge) {
+        session.maxAge = oneHour;
+      }
+      if (Helpers.isBrowser) {
+        axios.defaults.withCredentials = true;
+      }
+    }
     const context = new FrameworkContext({
       host,
       controllers,
       entities,
       allowedHosts,
       disabledRealtime,
+      session,
       //#region @backend
       mode,
       InitDataPriority,
-      session,
       publicAssets,
       config,
       middlewares,

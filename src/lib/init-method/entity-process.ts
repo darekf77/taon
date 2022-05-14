@@ -81,12 +81,19 @@ export class EntityProcess {
 
   setHeaders() {
     const { include } = { include: [] };
-    const cleaned = MorphiHelpers.JSON.cleaned(this.data, void 0, { breadthWalk: true, include })
-    this.entityMapping = MorphiHelpers.Mapping.decode(cleaned, !this.advancedManipulation);
 
-    this.response.set(SYMBOL.MAPPING_CONFIG_HEADER, JSON.stringify(this.entityMapping));
-    if (this.advancedManipulation) {
-      this.response.set(SYMBOL.CIRCURAL_OBJECTS_MAP_BODY, JSON.stringify(this.circural));
+    const className = CLASS.getNameFromObject(this.data);
+    // console.log(`CLASS.getNameFromObject(this.data) ${className}`)
+    const doNothing = _.isNil(this.data) || ['Object', '', void 0, null].includes(className);
+    // console.log('doNothing', doNothing)
+    if (!doNothing) {
+      const cleaned = MorphiHelpers.JSON.cleaned(this.data, void 0, { breadthWalk: true, include })
+      this.entityMapping = MorphiHelpers.Mapping.decode(cleaned, !this.advancedManipulation);
+
+      this.response.set(SYMBOL.MAPPING_CONFIG_HEADER, JSON.stringify(this.entityMapping));
+      if (this.advancedManipulation) {
+        this.response.set(SYMBOL.CIRCURAL_OBJECTS_MAP_BODY, JSON.stringify(this.circural));
+      }
     }
   }
 
@@ -102,7 +109,7 @@ export class EntityProcess {
       let toSend = _.isArray(this.data) ? [] : {};
 
 
-      const { include = [], exclude = [] } =  { include: [], exclude: [] };
+      const { include = [], exclude = [] } = { include: [], exclude: [] };
 
       walk.Object(this.data, (value, lodashPath, changeVAlue, { isCircural, skipObject }) => {
         // console.log(`${isCircural ? 'CIR' : 'NOT'} ${lodashPath}`)
@@ -148,7 +155,7 @@ export class EntityProcess {
                 const indexProp = CLASS.OBJECT(v).indexProperty;
                 toSend[prop][indexProp] = this.data[prop][indexProp]
                 for (const key in v) {
-                  if (v.hasOwnProperty(key) &&
+                  if (_.isObject(v) && v.hasOwnProperty(key) &&
                     ![indexProp, config.folder.browser].includes(key) &&
                     (
                       _.isString(v[key]) ||

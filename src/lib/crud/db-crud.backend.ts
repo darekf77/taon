@@ -39,7 +39,7 @@ export class DbCrud<T> {
     const allowedPropsToUpdate = [];
     for (const key in item) {
       if (
-        item.hasOwnProperty(key)
+        _.isObject(item) && item.hasOwnProperty(key)
         && typeof item[key] !== 'object'
         && !_.isUndefined(this.repo.metadata.ownColumns.find(c => c.propertyName === key))
       ) {

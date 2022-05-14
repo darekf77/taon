@@ -23,7 +23,8 @@ import type { BASE_CONTROLLER } from './framework-controller';
 import { Http2Server } from 'http2';
 import { RealtimeNodejs } from '../realtime';
 import { MorphiHelpers } from '../helpers';
-import { ISession } from './framework-models';
+import { ISession, ISessionExposed } from '.';
+
 
 export class FrameworkContextNodeApp extends FrameworkContextBase {
   public readonly app: Application;
@@ -180,12 +181,24 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
     app.use(cookieParser());
 
     if (this.context.session) {
-      app.use(expressSession(_.omit(this.context.session, 'frontendHost' as keyof ISession)))
+
+      const { frontendHost, maxAge } = this.context.session;
+
+      const sessionObj = {
+        frontendHost,
+        secret: "mysecretsessioncookithing",
+        saveUninitialized: true,
+        cookie: { maxAge, secure: frontendHost.startsWith('https://') },
+        resave: false,
+      } as ISession;
+
       app.use(cors({
         credentials: true,
         origin: this.context.session.frontendHost,
       }));
+      app.use(expressSession(sessionObj));
     } else {
+      // console.log('NOT ENABLING SESSION')
       app.use(cors())
     }
 
@@ -193,32 +206,21 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
 
     (() => {
 
-      // app.all('*', function (req, res) {
-      //   console.log('checking')
-      //   // res.header("Access-Control-Allow-Origin", "*");
-      //   // res.header("Access-Control-Allow-Headers", "Content-Type,Content-Length, Authorization, Accept,X-Requested-With");
-      //   // res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
-      // });
-
-
       app.use((req, res, next) => {
-        // console.log('mayeb this')
-        // res.header('Access-Control-Allow-Origin', '*');
-        // res.header('Access-Control-Allow-Credentials', 'true');
-        // res.header(
-        //   'Access-Control-Allow-Headers',
-        //   'Origin, X-Requested-With, Content-Type, Accept'
-        // );
-        // res.set('Access-Control-Allow-Origin', ['*']);
-        // res.header("Access-Control-Allow-Origin", "*");
-        // res.header("Access-Control-Allow-Headers", "Content-Type,Content-Length, Authorization, Accept,X-Requested-With");
-        // res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
 
-        // res.header('Access-Control-Allow-Credentials', 'true');
-        // res.set('Access-Control-Allow-Origin', '*');
-        // res.set("Access-Control-Allow-Headers", "Content-Type,Content-Length, Authorization, Accept,X-Requested-With");
-        // // res.set("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
-        // res.header("Access-Control-Allow-Methods", "PUT, POST, PATCH, DELETE, GET");
+        //#region good for cors session obj
+        // if (this.context.session) {
+        //   res.header('Access-Control-Allow-Origin', this.context.session.frontendHost);
+        //   res.header('Access-Control-Allow-Credentials', 'true');
+        //   res.header(
+        //     'Access-Control-Allow-Headers',
+        //     'Origin, X-Requested-With, Content-Type, Accept'
+        //   );
+        //   res.header("Access-Control-Allow-Methods", "PUT,POST,GET,HEAD,DELETE,OPTIONS,PATCH");
+        // // maybe this
+        // res.header("Access-Control-Allow-Headers", "Content-Type,Content-Length, Authorization, Accept,X-Requested-With");
+        // }
+        //#endregion
 
         res.set('Access-Control-Expose-Headers',
           [

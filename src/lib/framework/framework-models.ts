@@ -20,8 +20,29 @@ export type ISession = {
   frontendHost: string;
   secret: string,
   saveUninitialized: boolean,
-  cookie: { maxAge: number, secure: boolean },
+  cookie: {
+    maxAge: number,
+    /**
+     * true only for https, false fopr the rest
+     * when is true and http => everytime new session
+     */
+    secure: boolean
+  },
   resave: boolean,
+}
+
+export type ISessionExposed = {
+  /**
+   * REQUIRED - backend need to know that to negotiate credentials
+   * frontend host only needed when we are using
+   * withCredentials for axios
+   * and session cookie
+   */
+  frontendHost: string;
+  /**
+   * max age of session
+   */
+  maxAge?: number;
 }
 
 export type MiddlewareType = [Function, any[]];
@@ -43,11 +64,11 @@ export interface StartOptions {
   entities?: BASE_ENTITY<any>[] | Function[];
   disabledRealtime?: boolean;
   allowedHosts?: string[];
+  session?: ISessionExposed;
 
   //#region @backend
   mode?: FrameworkMode;
   config?: IConnectionOptions;
-  session?: ISession;
   middlewares?: MiddlewareType[];
   InitDataPrioritypublicAssets?: { path: string; location: string }[];
   InitDataPriority?: BASE_CONTROLLER<any>[] | Function[];

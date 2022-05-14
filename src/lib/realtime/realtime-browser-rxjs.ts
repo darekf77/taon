@@ -26,7 +26,7 @@ export class RealtimeBrowserRxjs {
   //#region constructor
   constructor(private context: FrameworkContext) {
     const base = RealtimeBase.by(context);
-    Helpers.log('INITING SOCKETS')
+    // Helpers.log('INITING SOCKETS')
     if (!context.disabledRealtime) {
 
       const nspPath = {
@@ -61,7 +61,7 @@ export class RealtimeBrowserRxjs {
 
       log.i('IT SHOULD CONNECT TO REALTIME')
     }
-    Helpers.log('INITING SOCKETS DONE')
+    // Helpers.log('INITING SOCKETS DONE')
   }
   //#endregion
 
