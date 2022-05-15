@@ -148,7 +148,7 @@
   },
   "license": "MIT",
   "private": false,
-  "lastBuildTagHash": "d6dab570383f9fc6bec71575a2055acb09db34b2",
+  "lastBuildTagHash": "51d450600eccccc3aa50aed3c45b1726ea5095b7",
   "devDependencies": {
     "@angular-devkit/build-angular": "~13.2.5",
     "@angular-devkit/core": "~13.2.6",
@@ -222,7 +222,7 @@
     "lodash.set": ">= 4",
     "magic-renamer": "~13.0.11",
     "mkdirp": "0.5.1",
-    "morphi": "~13.0.37",
+    "morphi": "~13.0.38",
     "ng-talkback": "~13.0.13",
     "ng2-logger": "~13.0.16",
     "ng4-icons": "~13.0.15",
