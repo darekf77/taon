@@ -29,9 +29,15 @@ export class FrameworkContext extends FrameworkContextBase {
   public readonly Providers: Function[] = [];
 
   private static readonly ngZoneInstance: any;
+
+  public static get isNgZoneInited() {
+    return !!FrameworkContext.ngZoneInstance;
+  }
   public static initNGZone(ngZoneInstance: any) {
-    // @ts-ignore
-    FrameworkContext.ngZoneInstance = ngZoneInstance;
+    if (ngZoneInstance) {
+      // @ts-ignore
+      FrameworkContext.ngZoneInstance = ngZoneInstance;
+    }
   }
   private static contextByClassName: { [className in string]: FrameworkContext; } = {};
   public static get contexts(): FrameworkContext[] {

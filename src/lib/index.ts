@@ -51,6 +51,9 @@ export namespace Morphi {
   export const symbols = sym.SYMBOL;
   export const IsNode = Helpers.isNode;
   export const IsBrowser = Helpers.isBrowser;
+  export function initNgZone(ngZone: any) {
+    context.FrameworkContext.initNGZone(ngZone);
+  }
 
   //#region @backend
   export function setIsBackend() {
