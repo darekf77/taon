@@ -2,7 +2,7 @@
 var path = require('path'),
   fs = require('fs');
 
-// var WebpackOnBuildPlugin = require('on-build-webpack');
+var WebpackOnBuildPlugin = require('on-build-webpack');
 
 var nodeModules = {};
 fs.readdirSync('node_modules')
@@ -13,13 +13,17 @@ fs.readdirSync('node_modules')
     nodeModules[mod] = 'commonjs ' + mod;
   });
 
+const outputFolder = 'dist';
+
+const outputPath = __dirname + '/' + outputFolder;
+
 module.exports = {
-  entry: './src/app.ts',
+  entry: './src/index.ts',
   target: 'node',
   output: {
-    path: __dirname + '/dist',
+    path: outputPath,
     libraryTarget: "commonjs",
-    filename: 'app.js'
+    filename: 'index.js'
   },
   devtool: 'source-map',
   resolve: {
@@ -37,7 +41,6 @@ module.exports = {
   },
   externals: [
     function (context, request, callback) {
-      console.log(request[0])
       if (request[0] == '.') {
         callback();
       } else {
@@ -55,8 +58,11 @@ module.exports = {
     //     warnings: true
     //   }
     // }),
-    // new WebpackOnBuildPlugin(function (stats) {
-    //   // Do whatever you want...
-    // }),
+    new WebpackOnBuildPlugin(function (stats) {
+      console.log('WEBPACK DONE COMPILATION')
+      fs.writeFileSync(path.join(outputPath, 'index.d.ts'),`export * from './${outputFolder}';
+      `);
+    }),
   ]
 }
+

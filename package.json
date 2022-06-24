@@ -230,6 +230,7 @@
     "ngx-store": "3.1.1",
     "node-cli-tester": "~13.0.14",
     "node-localstorage": "2.1.6",
+    "on-build-webpack": "0.1.0",
     "open": "7.2.1",
     "prettier": "2.5.1",
     "ps-list": "6.1.0",

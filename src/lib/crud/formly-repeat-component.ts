@@ -19,7 +19,7 @@ DON'T FORGET
   selector: 'formly-repeat-section',
   template: `
     <div  *ngIf="field.fieldGroup && field.fieldGroup.length === 0" >
-      Press button below to add new element...
+      Press button to add new element...
     </div>
     <div *ngFor="let field of field.fieldGroup; let i = index;" class="firedev-formly-array"  >
       <formly-group

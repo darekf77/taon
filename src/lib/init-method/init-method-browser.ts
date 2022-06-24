@@ -8,7 +8,7 @@ import { MorphiHelpers } from '../helpers';
 import { FrameworkContext } from '../framework/framework-context';
 
 export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodConfig: Models.Rest.MethodConfig, expressPath) {
-
+  console.log('aaaaddddaaa')
   let storage: any;
   if (Helpers.isBrowser) {
     storage = window;

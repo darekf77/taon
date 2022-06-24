@@ -1,3 +1,4 @@
+console.log('hello there')
 export * from './lib';
 //#region @backend
 export * from './build-tool';

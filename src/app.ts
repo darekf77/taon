@@ -6,6 +6,7 @@ import { Morphi as Firedev } from './index';
 // @browserLine
 import { NgModule, Component, OnInit } from '@angular/core';
 
+
 const host1 = `http://localhost:3111`;
 const host2 = `http://localhost:3222`;
 @Firedev.Entity({ className: 'Student' })
