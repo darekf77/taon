@@ -159,7 +159,7 @@
       "semver": "6.3.0",
       "better-sqlite3": "7.5.1",
       "express-session": "1.17.3",
-      "on-build-webpack": "0.1.0"
+      "isomorphic-region-loader": "1.0.2"
     },
     "linkedFolders": [
       {
