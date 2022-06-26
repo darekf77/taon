@@ -34,8 +34,12 @@ module.exports = {
       {
         test: /\.ts$/,
         exclude: path.resolve(__dirname, "node_modules"),
-        loaders: ['ts-loader']
+        loaders: ['ts-loader','isomorphic-region-loader']
       },
+      // {
+      //   test: /\.ts$/,
+      //   loaders: [],
+      // }
       // { test: /\.json$/, loaders: ['json-loader'] }
     ]
   },
@@ -48,10 +52,10 @@ module.exports = {
       }
     }
   ],
-  node: {
-    __dirname: false,
-    __filename: false
-  },
+  // node: {
+  //   __dirname: false,
+  //   __filename: false
+  // },
   plugins: [
     // new webpack.optimize.UglifyJsPlugin({
     //   compress: {
@@ -65,4 +69,3 @@ module.exports = {
     }),
   ]
 }
-
