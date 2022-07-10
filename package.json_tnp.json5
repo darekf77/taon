@@ -72,8 +72,6 @@
       "@types/watch",
       "accepts",
       "angular-tree-component",
-      "babel-cli",
-      "babel-preset-env",
       "bcryptjs",
       "body-parser",
       "bootstrap",
