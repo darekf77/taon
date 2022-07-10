@@ -1,7 +1,6 @@
 {
   resources: [
     "README.md", // readme for humans
-    "bin",
     "logo_github.png",
     "logo.png",
     "files.png",
