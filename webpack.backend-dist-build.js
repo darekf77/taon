@@ -2,7 +2,7 @@
 var path = require('path'),
   fs = require('fs');
 
-var WebpackOnBuildPlugin = require('on-build-webpack');
+// var WebpackOnBuildPlugin = require('on-build-webpack');
 
 var nodeModules = {};
 fs.readdirSync('node_modules')
@@ -62,10 +62,10 @@ module.exports = {
     //     warnings: true
     //   }
     // }),
-    new WebpackOnBuildPlugin(function (stats) {
-      console.log('WEBPACK DONE COMPILATION')
-      fs.writeFileSync(path.join(outputPath, 'index.d.ts'),`export * from './${outputFolder}';
-      `);
-    }),
+    // new WebpackOnBuildPlugin(function (stats) {
+    //   console.log('WEBPACK DONE COMPILATION')
+    //   fs.writeFileSync(path.join(outputPath, 'index.d.ts'),`export * from './${outputFolder}';
+    //   `);
+    // }),
   ]
 }

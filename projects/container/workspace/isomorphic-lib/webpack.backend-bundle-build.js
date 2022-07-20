@@ -14,7 +14,7 @@ fs.readdirSync('node_modules')
   });
 
 module.exports = {
-  entry: './src/index.ts',
+  entry: './tmp-source-bundle/index.ts',
   target: 'node',
   output: {
     path: __dirname + '/bundle',
