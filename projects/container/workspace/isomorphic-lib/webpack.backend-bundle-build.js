@@ -1,5 +1,5 @@
 // var webpack = require('webpack'),
-  var path = require('path'),
+var path = require('path'),
   fs = require('fs');
 
 // var WebpackOnBuildPlugin = require('on-build-webpack');
@@ -25,20 +25,30 @@ module.exports = {
     extensions: ['.ts', '.js']
   },
   module: {
+
     rules: [
+
       {
         test: /\.ts$/,
         exclude: path.resolve(__dirname, "node_modules"),
-        loaders: ['ts-loader']
+        use: [
+          {
+            loader: 'ts-loader',
+            options: {
+              // transpileOnly: true,
+              configFile: 'tsconfig.backend.bundle.json'
+            }
+          }
+        ]
       },
       // { test: /\.json$/, loaders: ['json-loader'] }
     ]
   },
-  externals: nodeModules,
+  // externals: nodeModules,
   node: {
     fs: "empty",
-    __dirname: false,
-    __filename: false
+    // __dirname: false,
+    // __filename: false
   },
   plugins: [
     // new webpack.optimize.UglifyJsPlugin({
