@@ -1,6 +1,1 @@
-
-export function helloWorld() {
-
-}
-export default helloWorld;
-// console.log('hello')
+export * from './lib';

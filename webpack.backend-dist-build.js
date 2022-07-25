@@ -18,7 +18,7 @@ const outputFolder = 'dist';
 const outputPath = __dirname + '/' + outputFolder;
 
 module.exports = {
-  entry: './src/index.ts',
+  entry: './tmp-source-dist/index.ts',
   target: 'node',
   output: {
     path: outputPath,

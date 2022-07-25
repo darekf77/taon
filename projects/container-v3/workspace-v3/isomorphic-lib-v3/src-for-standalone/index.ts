@@ -1,5 +1,1 @@
-
-export function helloWorld() {
-
-}
-// console.log('hello')
+export * from './lib';

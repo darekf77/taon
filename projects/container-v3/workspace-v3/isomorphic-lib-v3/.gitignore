@@ -40,9 +40,11 @@ Thumbs.db
 /.vscode/tasks.json
 /tsconfig.json
 /tsconfig.backend.dist.json
-/tsconfig.backend.browser.json
+/tsconfig.backend.bundle.json
 /src-for-stanalone
 /components-for-stanalone
+/tsconfig.backend.dist.json
+/tsconfig.backend.bundle.json
 
 
 
