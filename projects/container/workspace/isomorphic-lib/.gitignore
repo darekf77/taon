@@ -35,10 +35,14 @@ Thumbs.db
 /.sass-cache
 /.sourcemaps
 /tsconfig.json
+/tsconfig.backend.dist.json
+/tsconfig.backend.bundle.json
 /src-for-stanalone
 /components-for-stanalone
 /src/assets/angular-lib
 /src/assets/second-angular-lib
+/tsconfig.backend.dist.json
+/tsconfig.backend.bundle.json
 
 
 

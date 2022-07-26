@@ -36,6 +36,8 @@ Thumbs.db
 /.sourcemaps
 /src-for-stanalone
 /components-for-stanalone
+/tsconfig.backend.dist.json
+/tsconfig.backend.bundle.json
 
 
 

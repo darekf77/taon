@@ -34,7 +34,7 @@ module.exports = {
       {
         test: /\.ts$/,
         exclude: path.resolve(__dirname, "node_modules"),
-        loaders: ['ts-loader','isomorphic-region-loader']
+        loaders: ['ts-loader']
       },
       // {
       //   test: /\.ts$/,

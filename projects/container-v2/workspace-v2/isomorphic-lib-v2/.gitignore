@@ -39,9 +39,13 @@ Thumbs.db
 /.vscode/launch.json
 /.vscode/tasks.json
 /tsconfig.json
+/tsconfig.backend.dist.json
+/tsconfig.backend.bundle.json
 /src-for-stanalone
 /components-for-stanalone
 /src/assets/angular-lib-v2
+/tsconfig.backend.dist.json
+/tsconfig.backend.bundle.json
 
 
 

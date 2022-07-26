@@ -53,6 +53,8 @@ Thumbs.db
 /src-for-stanalone
 /components-for-stanalone
 /src/assets/angular-lib-v2
+/tsconfig.backend.dist.json
+/tsconfig.backend.bundle.json
 
 
 

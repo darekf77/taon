@@ -14,7 +14,7 @@ fs.readdirSync('node_modules')
   });
 
 module.exports = {
-  entry: './tmp-source-bundle/index.ts',
+  entry: './src/index.ts',
   target: 'node',
   output: {
     path: __dirname + '/bundle',
@@ -31,20 +31,12 @@ module.exports = {
       {
         test: /\.ts$/,
         exclude: path.resolve(__dirname, "node_modules"),
-        use: [
-          {
-            loader: 'ts-loader',
-            options: {
-              // transpileOnly: true,
-              configFile: 'tsconfig.backend.bundle.json'
-            }
-          }
-        ]
+        loaders: ['ts-loader']
       },
       // { test: /\.json$/, loaders: ['json-loader'] }
     ]
   },
-  // externals: nodeModules,
+  externals: nodeModules,
   node: {
     fs: "empty",
     // __dirname: false,
