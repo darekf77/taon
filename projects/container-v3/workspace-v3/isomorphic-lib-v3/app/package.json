@@ -1,23 +1,4 @@
 {
-  "tnp": {
-    "resources": [],
-    "type": "navi",
-    "overrided": {
-      "linkedFolders": [],
-      "ignoreDepsPattern": [
-        "*"
-      ],
-      "includeAsDev": [],
-      "includeOnly": [],
-      "dependencies": {}
-    },
-    "linkedProjects": [],
-    "libReleaseOptions": {
-      "nodts": false,
-      "obscure": false,
-      "ugly": false
-    }
-  },
   "name": "app",
   "version": "0.0.0",
   "dependencies": {
