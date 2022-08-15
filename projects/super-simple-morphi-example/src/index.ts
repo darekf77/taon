@@ -44,7 +44,7 @@ const controllers: Morphi.Base.Controller<any>[] = [UserController as any];
 
   //#region @backend
   const config = {
-    type: "sqlite",
+    type: 'better-sqlite3',
     database: 'tmp-db.sqlite',
     synchronize: true,
     dropSchema: true,

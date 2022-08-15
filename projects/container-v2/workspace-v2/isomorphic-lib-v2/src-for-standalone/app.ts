@@ -11,7 +11,7 @@ const host = 'http://localhost:3000';
 
  //#region @backend
  const config = {
-  type: "sqlite",
+  type: 'better-sqlite3',
   database: 'tmp-db.sqlite',
   synchronize: true,
   dropSchema: true,

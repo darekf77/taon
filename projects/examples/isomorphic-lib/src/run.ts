@@ -5,7 +5,7 @@ import { Morphi } from 'morphi';
 Morphi.init({
   config: {
     database: 'tmp/db.sqlite3',
-    type: 'sqlite',
+    type: 'better-sqlite3',
     synchronize: true,
     dropSchema: true,
     logging: false

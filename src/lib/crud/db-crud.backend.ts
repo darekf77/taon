@@ -2,6 +2,11 @@ import * as _ from 'lodash';
 import { Repository, Connection, getRepository } from 'typeorm';
 import { CrudHelpers } from './crud-helpers.backend';
 import { tableNameFrom } from '../framework/framework-helpers';
+import { CLASS } from 'typescript-class-helpers';
+
+const INDEX_KEYS_NO_FOR_UPDATE = [
+  'id',
+];
 
 export class DbCrud<T> {
 
@@ -47,12 +52,26 @@ export class DbCrud<T> {
       }
     }
 
+
+
     for (let i = 0; i < allowedPropsToUpdate.length; i++) {
-      const key = allowedPropsToUpdate[i];
-      const raw = _.isBoolean(item[key]) || _.isNumber(item[key]) || _.isNull(item[key]); // TODO does this make any sense ?
-      const toSet = raw ? item[key] : `"${item[key]}"`
-      await this.repo.query(`UPDATE "${tableNameFrom(this.entity as any)}" `
-        + `SET "${key}"=${toSet} WHERE "id"="${id}"`)
+      const key: string = allowedPropsToUpdate[i];
+      if (!INDEX_KEYS_NO_FOR_UPDATE.includes(key.toLowerCase())) {
+        // const raw = _.isBoolean(item[key]) || _.isNumber(item[key]) || _.isNull(item[key]); // TODO does this make any sense ?
+        const toSet = item[key];
+        // const tableName = tableNameFrom(this.entity as any);
+        // const table = CLASS.getName(this.entity);
+        await this.repo.update({
+          id
+        } as any, {
+          [key]: toSet
+        } as any);
+//         await this.repo.query(
+//           `UPDATE '${tableName}' as ${table}
+// SET ${key}=${toSet}
+// WHERE ${table}.id='${id}'
+// `);
+      }
     }
     // console.log('update ok!')
     let model = await CrudHelpers.getModel(id, this.repo);

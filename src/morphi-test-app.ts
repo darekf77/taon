@@ -49,7 +49,7 @@ const start = async (port = 3000) => {
   console.log(`HOST MORPHI: ${host}`);
   //#region @backend
   const config = {
-    type: "sqlite",
+    type: 'better-sqlite3',
     database: 'tmp-db.sqlite',
     synchronize: true,
     dropSchema: true,

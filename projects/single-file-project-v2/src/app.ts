@@ -47,7 +47,7 @@ const start = async () => {
 
   //#region @backend
   const config = {
-    type: "sqlite",
+    type: 'better-sqlite3',
     database: 'tmp-db.sqlite',
     synchronize: true,
     dropSchema: true,
