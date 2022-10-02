@@ -1,18 +1,21 @@
 //#region @backend
 import 'reflect-metadata';
+//#endregion
+//#region @websql
 import { Repository } from 'typeorm';
 import { Connection } from 'typeorm';
 export { Connection } from 'typeorm';
+//#endregion
 import { SYMBOL } from '../symbols';
 import { CLASS } from 'typescript-class-helpers';
-//#endregion
+
 
 import { _ } from 'tnp-core';
 import { BASE_ENTITY } from './framework-entity';
 import { BASE_REPOSITORY } from './framework-repository';
 import { FrameworkContext } from './framework-context';
 
-//#region @backend
+//#region @websql
 export function tableNameFrom(entityClass: Function | BASE_ENTITY<any>) {
   entityClass = entityClass as Function;
   return `tb_${entityClass.name.toLowerCase()}`
@@ -47,7 +50,7 @@ export function classNameVlidation(className, target: Function) {
   return _.isUndefined(className) ? target.name : className;
 }
 
-//#region @backend
+//#region @websql
 export function repositoryFrom<E, R = Repository<E>>(connection: Connection, entityFN: Function, repoFn?: Function): R {
   if (!connection) {
     console.error(`[Morphi][repositoryFrom] no connection!

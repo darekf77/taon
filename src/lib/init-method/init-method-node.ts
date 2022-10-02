@@ -1,3 +1,4 @@
+//#region @websql
 import { _ } from 'tnp-core';
 import { Models } from '../models';
 import { MorphiHelpers as Helpers } from '../helpers';
@@ -14,6 +15,7 @@ export function initMethodNodejs(
   target: Function
 ): any {
 
+
   const requestHandler = (methodConfig.requestHandler && typeof methodConfig.requestHandler === 'function')
     ? methodConfig.requestHandler : (req, res, next) => { next() };
 
@@ -25,6 +27,14 @@ export function initMethodNodejs(
   expressPath = url.pathname.startsWith('/') ? `${url.pathname}${expressPath}` : expressPath;
   expressPath = expressPath.replace(/\/\//g, '/')
   // console.log(`BACKEND: expressPath: ${expressPath}`)
+
+  //#region @websqlOnly
+  if (!context.node.app) {
+    // @ts-ignore
+    context.node.app = {}
+  }
+  //#endregion
+
   if (!context.onlyForBackendRemoteServerAccess) {
     context.node.app[type.toLowerCase()](expressPath, requestHandler, async (req, res) => {
 
@@ -149,7 +159,9 @@ export function initMethodNodejs(
         } else if (error instanceof Error) {
           const err: Error = error;
           console.log('Code Error', error)
+          //#region @backend
           betterError(err)
+          //#endregion
           res.status(400).send(Helpers.JSON.stringify({
             stack: err.stack,
             message: err.message
@@ -167,8 +179,10 @@ export function initMethodNodejs(
     routePath: expressPath,
     method: methodConfig.type
   }
+
 }
 
+//#region @backend
 function betterError(error) {
   console.log(require('callsite-record')({
     forError: error
@@ -178,3 +192,5 @@ function betterError(error) {
     // }
   }))
 }
+//#endregion
+//#endregion

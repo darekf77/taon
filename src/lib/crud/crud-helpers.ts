@@ -1,3 +1,4 @@
+//#region @websql
 import * as _ from 'lodash';
 import { Repository, Connection, getRepository } from 'typeorm';
 import { CLASS } from 'typescript-class-helpers';
@@ -58,3 +59,4 @@ export namespace CrudHelpers {
 
 
 }
+//#endregion

@@ -1,5 +1,8 @@
+//#region @websql
 import { _ } from 'tnp-core';
+//#region @backend
 import * as io from 'socket.io';
+//#endregion
 import { SYMBOL } from '../symbols';
 import { Log, Level } from 'ng2-logger';
 import { Helpers } from 'tnp-core';
@@ -19,6 +22,7 @@ export class RealtimeNodejs {
 
   //#region constructor
   constructor(private context: FrameworkContext) {
+    //#region @backend
     const base = RealtimeBase.by(context);
     if (!context.disabledRealtime) {
 
@@ -72,7 +76,7 @@ export class RealtimeNodejs {
 
       })
     }
-
+    //#endregion
   }
   //#endregion
 
@@ -84,7 +88,7 @@ export class RealtimeNodejs {
     customEvent?: string,
     customEventData?: any,
   ) {
-
+    //#region @backend
     const base = RealtimeBase.by(context);
     let modelSocketRoomPath: string;
     let eventName: string;
@@ -139,6 +143,7 @@ export class RealtimeNodejs {
     }
 
     RealtimeNodejs.jobs[eventName]();
+    //#endregion
   }
 
   public static TrigggerEntityPropertyChanges<ENTITY = any>(
@@ -187,3 +192,4 @@ export class RealtimeNodejs {
   }
 
 }
+//#endregion

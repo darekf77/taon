@@ -1,4 +1,4 @@
-//#region @backend
+//#region @websql
 import { _ } from 'tnp-core';
 import { MorphiHelpers } from '../helpers';
 import { getTransformFunction, singleTransform } from './transform-to-browser';

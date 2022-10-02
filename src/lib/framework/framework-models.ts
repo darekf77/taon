@@ -50,7 +50,8 @@ export type MiddlewareType = [Function, any[]];
 export type FrameworkMode = 'backend/frontend' |
   'remote-backend' |
   'tests' |
-  'backend/frontend-worker'
+  'backend/frontend-worker' |
+  'websql/backend-frontend'
   ;
 
 export interface StartOptions {
@@ -66,7 +67,7 @@ export interface StartOptions {
   allowedHosts?: string[];
   session?: ISessionExposed;
 
-  //#region @backend
+  //#region @websql
   mode?: FrameworkMode;
   config?: IConnectionOptions;
   middlewares?: MiddlewareType[];

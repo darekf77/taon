@@ -1,12 +1,3 @@
-//#region @backend
-// export { FILE_NAME_ISOMORPHIC_PACKAGES } from './build/packages-recognition';
-// export {
-//   CodeCut, BrowserCodeCut, IncrementalBuildProcess, PackagesRecognition,
-//   BroswerCompilation, BackendCompilation
-// } from './build';
-
-//#endregion
-
 export { Models } from './models';
 //#region @browser
 export { RepeatTypeComponent } from './crud/formly-repeat-component';
@@ -27,19 +18,30 @@ import { FrameworkContext } from './framework/framework-context';
 import * as context from './framework/framework-context';
 import { MorphiHelpers } from './helpers';
 
-//#region @backend
-import { generate } from 'password-hash';
-import * as pass from 'passport';
+//#region @websql
 import * as tsorm from 'typeorm'
-import { Handler } from 'express'
 //#endregion
 
 //#region @backend
+import { generate as generateHash } from 'password-hash';
+import * as pass from 'passport';
+import { Handler } from 'express'
+//#endregion
+let generate
+  //#region @backend
+  = generateHash;
+//#endregion
+//#region @websqlOnly
+// @ts-ignore
+generate = () => { }
+//#endregion
+
+//#region @websql
 import { Repository } from 'typeorm';
 //#endregion
 
 export class TypeormRepository<T>
-  //#region @backend
+  //#region @websql
   extends Repository<T>
 //#endregion
 {
@@ -55,7 +57,7 @@ export namespace Morphi {
     context.FrameworkContext.initNGZone(ngZone);
   }
 
-  //#region @backend
+  //#region @websql
   export function setIsBackend() {
     Helpers.setIsBackend();
   }
@@ -78,7 +80,7 @@ export namespace Morphi {
   }
 
   export function getHttpPathBy<T = Function>(classFn: new () => T, port: number, method: (keyof T)) {
-    return `http://localhost:${port}${MorphiHelpers.getPathFor(classFn as any)}/${method}`;
+    return `http://localhost:${port}${MorphiHelpers.getPathFor(classFn as any)}/${method as any}`;
   }
 
   /**
@@ -97,7 +99,7 @@ export namespace Morphi {
 
   export import Controller = framework.Controller;
   export import Entity = framework.Entity;
-  //#region @backend
+  //#region @websql
   export type Session = {
     [additionalvalues: string]: any;
     destroy: () => void;
@@ -138,7 +140,7 @@ export namespace Morphi {
       // export const UnsubscribeEntityPropertyChanges = realtime.RealtimeBrowser.UnsubscribeEntityPropertyChanges;
     }
 
-    //#region @backend
+    //#region @websql
     export namespace Server {
       export const TrigggerEntityChanges = realtime.RealtimeNodejs.TrigggerEntityChanges;
       export const TrigggerEntityPropertyChanges = realtime.RealtimeNodejs.TrigggerEntityPropertyChanges;
@@ -148,7 +150,7 @@ export namespace Morphi {
 
   export namespace CRUD {
     export import Base = crudMorph.BaseCRUD;
-    //#region @backend
+    //#region @websql
     export import DB = crudMorph.DbCrud;
     //#endregion
   }
@@ -161,7 +163,7 @@ export namespace Morphi {
   export namespace Base {
     export import Controller = framework.BASE_CONTROLLER;
     export import Entity = framework.BASE_ENTITY;
-    //#region @backend
+    //#region @websql
     export import Repository = framework.BASE_REPOSITORY;
     //#endregion
   }
@@ -187,7 +189,7 @@ export namespace Morphi {
   }
 
   export namespace Auth {
-    //#region @backend
+    //#region @websql
     export namespace Password {
       export namespace Hash {
         export const Generate = generate;
@@ -199,7 +201,7 @@ export namespace Morphi {
 
   export namespace Orm {
     export const Repository = TypeormRepository;
-    //#region @backend
+    //#region @websql
     export import getConnection = tsorm.getConnection;
     export import Errors = models.Models.Errors;
     export import Connection = tsorm.Connection;

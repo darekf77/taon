@@ -29,9 +29,9 @@ export function start(options: StartOptions) {
   // }
 
 
-  //#region @backend
+
   return new Promise<FrameworkContext>(async (resolve, reject) => {
-    //#endregion
+
     let {
       host,
       controllers = [],
@@ -39,7 +39,7 @@ export function start(options: StartOptions) {
       disabledRealtime,
       allowedHosts,
       session,
-      //#region @backend
+      //#region @websql
       mode,
       config,
       InitDataPriority,
@@ -52,6 +52,18 @@ export function start(options: StartOptions) {
       mode = 'backend/frontend';
     }
     //#endregion
+
+    //#region @websqlOnly
+    mode = 'websql/backend-frontend';
+    if(config) { // @ts-ignore
+      config.type = 'sqljs';
+      // @ts-ignore
+      config.autoSave = true;
+      // @ts-ignore
+      config.logging = ['query', 'schema'];
+    }
+    //#endregion
+
 
     if (session) {
       const oneHour = 1000 * 60 * 60 * 1; // 24;
@@ -69,7 +81,7 @@ export function start(options: StartOptions) {
       allowedHosts,
       disabledRealtime,
       session,
-      //#region @backend
+      //#region @websql
       mode,
       InitDataPriority,
       publicAssets,
@@ -78,9 +90,10 @@ export function start(options: StartOptions) {
       //#endregion
     });
 
-    //#region @backend
+    //#region @websql
     await context.initNode();
     //#endregion
+
     context.initBrowser();
 
     if (Helpers.isBrowser) {
@@ -109,9 +122,9 @@ export function start(options: StartOptions) {
 
       return context;
     }
-    //#region @backend
+
     resolve(context);
   })
-  //#endregion
+
 
 }

@@ -19,6 +19,9 @@ export class FrameworkContextBrowserApp extends FrameworkContextBase {
       //#region @backend
       || this.context.onlyForBackendRemoteServerAccess
       //#endregion
+      //#region @websqlOnly
+      || Helpers.isWebSQL
+      //#endregion
     ) {
       const notFound: Function[] = [];
       const providers = this.context.controllersClasses.filter(ctrl => {
@@ -48,6 +51,9 @@ export class FrameworkContextBrowserApp extends FrameworkContextBase {
     if (Helpers.isBrowser
       //#region @backend
       || this.context.onlyForBackendRemoteServerAccess
+      //#endregion
+      //#region @websqlOnly
+      || Helpers.isWebSQL
       //#endregion
     ) {
       //@ts-ignore

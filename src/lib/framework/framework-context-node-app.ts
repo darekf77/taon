@@ -1,34 +1,50 @@
 import type { FrameworkContext } from './framework-context';
-import { Application } from 'express';
-import {
-  _,
-  path,
-  fse,
-  http,
-} from 'tnp-core';
+//#region @websql
+import type { Application } from 'express';
+//#endregion
+//#region @backend
 import * as express from 'express';
 import * as expressSession from 'express-session';
-import { SYMBOL } from '../symbols';
 import * as  cors from 'cors';
 import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
 import * as methodOverride from 'method-override';
 import * as fileUpload from 'express-fileupload';
+import { Http2Server } from 'http2';
+//#endregion
+import { _ } from 'tnp-core';
+//#region @websql
+import { path } from 'tnp-core';
+//#endregion
+//#region @backend
+import {
+  fse,
+  http,
+} from 'tnp-core';
+//#endregion
+
+import { SYMBOL } from '../symbols';
+//#region @websql
 import { createConnections, getConnection } from 'typeorm';
 import { Connection } from 'typeorm';
+//#endregion
 import { CLASS } from 'typescript-class-helpers';
 import { Models } from '../models';
 import { FrameworkContextBase } from './framework-context-base';
 import type { BASE_CONTROLLER } from './framework-controller';
-import { Http2Server } from 'http2';
+
 import { RealtimeNodejs } from '../realtime';
 import { MorphiHelpers } from '../helpers';
-import { ISession, ISessionExposed } from '.';
+import { ISession, ISessionExposed } from './framework-models';
 
 
 export class FrameworkContextNodeApp extends FrameworkContextBase {
+  //#region @websql
   public readonly app: Application;
+  //#endregion
+  //#region @backend
   public readonly httpServer: Http2Server;
+  //#endregion
   public readonly connection: Connection;
   readonly realtime: RealtimeNodejs;
   constructor(private context: FrameworkContext) {
@@ -56,6 +72,8 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
   }
 
   async init() {
+
+
     // console.log(`
 
     // INIT
@@ -67,6 +85,8 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
       // @ts-ignore
       this.app = {} as any;
     } else {
+
+      //#region @backend
       // @ts-ignore
       this.app = express()
       this.initMidleware();
@@ -81,15 +101,22 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
               `);
         });
       }
+      //#endregion
+
       await this.initConnection();
       this.initDecoratorsFunctions();
 
       const { contexts } = (await import('./framework-context')).FrameworkContext;
-      this.writeActiveRoutes(contexts);
 
+      //#region @websql
+      this.writeActiveRoutes(contexts);
+      //#endregion
+
+      //#region @backend
       this.context.publicAssets.forEach(asset => {
         this.app.use(asset.path, express.static(asset.location))
       });
+      //#endregion
 
       // @ts-ignore
       this.realtime = new RealtimeNodejs(this.context);
@@ -133,6 +160,7 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
 
   private writeActiveRoutes(contexts: FrameworkContext[], isWorker = false) {
 
+    //#region @websql
     let routes = [];
     for (let index = 0; index < contexts.length; index++) {
       const context = contexts[index];
@@ -144,12 +172,20 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
       const tinstance = tinstanceClass && context.getInstance(tinstanceClass as any) as any;
       const isWorker = context.workerMode;
 
+      const fileNameFor = path.join(process.cwd(), `tmp-routes--worker--`
+        + `${path.basename(tinstance.filename).replace(/\.js$/, '')}.json`);
+
       if (isWorker) {
-        fse.writeJSONSync(path.join(process.cwd(), `tmp-routes--worker--`
-          + `${path.basename(tinstance.filename).replace(/\.js$/, '')}.json`), routes, {
+        //#region @websqlOnly
+        console.log(`FILE: ${fileNameFor}`)
+        console.log(JSON.stringify(routes, null, 4))
+        //#endregion
+        //#region @backend
+        fse.writeJSONSync(fileNameFor, routes, {
           spaces: 2,
           encoding: 'utf8'
         })
+        //#endregion
       } else {
         routes = [
           ...routes,
@@ -158,14 +194,22 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
         ];
       }
     }
-    fse.writeJSONSync(path.join(process.cwd(), `tmp-routes.json`), routes, {
+    const fileName = path.join(process.cwd(), `tmp-routes.json`)
+    //#region @websqlOnly
+    console.log(`FILE: ${fileName}`)
+    console.log(JSON.stringify(routes, null, 4))
+    //#endregion
+    //#region @backend
+    fse.writeJSONSync(fileName, routes, {
       spaces: 2,
       encoding: 'utf8'
     });
-
+    //#endregion
+    //#endregion
   }
 
   private initMidleware() {
+    //#region @backend
     const app = this.app;
     if (this.context.middlewares) {
       this.context.middlewares.forEach(m => {
@@ -235,7 +279,7 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
         next();
       });
     })()
-
+    //#endregion
   }
 
 }

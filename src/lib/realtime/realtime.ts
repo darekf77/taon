@@ -20,7 +20,7 @@ export class RealtimeBase {
 
   private socketFrontEnd: any; //  Socket; // TODO QUICK_FIX
   private socketFrontEndRealtime: any; //  Socket; // TODO QUICK_FIX;
-  //#region @backend
+  //#region @websql
   private socketNamespaceBE: Server;
   private socketNamespaceBERealtime: Namespace;
   //#endregion
@@ -39,7 +39,7 @@ export class RealtimeBase {
       get FE_REALTIME() {
         return self.socketFrontEndRealtime;
       },
-      //#region @backend
+      //#region @websql
       set BE(v) {
         self.socketNamespaceBE = v;
       },

@@ -1,0 +1,64 @@
+{
+  "configVersion": 1,
+  "timestamp": 1664682116327,
+  "index": "morphi/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "morphi/favicon.ico",
+        "morphi/index.html",
+        "morphi/main.a30ec7d194372757.js",
+        "morphi/manifest.webmanifest",
+        "morphi/polyfills.8fbd9df867a65200.js",
+        "morphi/runtime.2b0469dcac1161a3.js",
+        "morphi/styles.7918f519d4caa72e.css"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [],
+      "patterns": []
+    }
+  ],
+  "dataGroups": [],
+  "hashTable": {
+    "morphi/favicon.ico": "22f6a4a3bcaafafb0254e0f2fa4ceb89e505e8b2",
+    "morphi/index.html": "f320de7aed8cfa0705ac2ca7c9599206160729d4",
+    "morphi/main.a30ec7d194372757.js": "9cbbff8a1846027bd852d115c66989e8c7d3d9dc",
+    "morphi/manifest.webmanifest": "6ca2e68a41a8df6a6ee9feb4f6962526746d89ba",
+    "morphi/polyfills.8fbd9df867a65200.js": "305908dc1517f327996ee29b441737551647678c",
+    "morphi/runtime.2b0469dcac1161a3.js": "763b432716069d2b79f82200209a04e696cc5bb3",
+    "morphi/styles.7918f519d4caa72e.css": "b4cc6dd89f3886427c9bd20cc47cf270a52ad13f"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*\\.[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*\\/.*$"
+    }
+  ],
+  "navigationRequestStrategy": "performance"
+}

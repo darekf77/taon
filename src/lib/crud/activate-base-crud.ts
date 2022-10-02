@@ -22,8 +22,8 @@ export function activateBaseCrud(
         return;
       }
 
-      //#region @backend
-      if (context.mode === 'backend/frontend') {
+      //#region @websql
+      if (context.mode === 'backend/frontend' || context.mode === 'websql/backend-frontend') {
         //#endregion
         !global.hideLog && console.warn(`
         You are extending BaseCRUD class.. CRUD functionality won't work
@@ -35,7 +35,7 @@ export function activateBaseCrud(
         })
         class ${CLASS.getName(target)} extends  ...
               `)
-        //#region @backend
+        //#region @websql
       }
       //#endregion
 

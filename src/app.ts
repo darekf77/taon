@@ -12,17 +12,17 @@ const host1 = `http://localhost:3111`;
 const host2 = `http://localhost:3222`;
 @Firedev.Entity({ className: 'Student' })
 class Student {
-  //#region @backend
+  //#region @websql
   @Firedev.Orm.Column.Generated()
   //#endregion
   public id: number;
 
-  //#region @backend
+  //#region @websql
   @Firedev.Orm.Column.Custom('varchar')
   //#endregion
   public firstName: string
 
-  //#region @backend
+  //#region @websql
   @Firedev.Orm.Column.Custom('varchar')
   //#endregion
   public lastName: string
@@ -32,17 +32,17 @@ class Student {
 
 @Firedev.Entity({ className: 'User' })
 class User {
-  //#region @backend
+  //#region @websql
   @Firedev.Orm.Column.Generated()
   //#endregion
   public id: number;
 
-  //#region @backend
+  //#region @websql
   @Firedev.Orm.Column.Custom('varchar')
   //#endregion
   public firstName: string
 
-  //#region @backend
+  //#region @websql
   @Firedev.Orm.Column.Custom('varchar')
   //#endregion
   public lastName: string
@@ -57,12 +57,12 @@ class Book extends Firedev.Base.Entity<any> {
     return b;
   }
 
-  //#region @backend
+  //#region @websql
   @Firedev.Orm.Column.Custom('varchar')
   //#endregion
   public name: string
 
-  //#region @backend
+  //#region @websql
   @Firedev.Orm.Column.Generated()
   //#endregion
   public id: number
@@ -123,7 +123,7 @@ export class MorphiModule { }
 
 @Firedev.Controller({ className: 'BookCtrl', entity: Book })
 class BookCtrl extends Firedev.Base.Controller<any> {
-  //#region @backend
+  //#region @websql
   async initExampleDbData() {
     const db = await this.connection.getRepository(Book);
     await db.save(Book.from('alice in wonderland'));
@@ -152,7 +152,7 @@ const start = async () => {
   //     Book,
   //     // User,
   //   ],
-  //   //#region @backend
+  //   //#region @websql
   //   config: {
   //     type: "sqlite",
   //     database: 'tmp-db1.sqlite',
@@ -182,7 +182,7 @@ const start = async () => {
       // Student,
       Book,
     ],
-    //#region @backend
+    //#region @websql
     config: { // @ts-ignore
       type: "better-sqlite3",
       database: 'tmp-db2.sqlite',
@@ -233,7 +233,7 @@ const start = async () => {
   // console.log(`${Book.name}: ${CLASS.getName(Book)}`);
   // console.log(`${BookCtrl.name}: ${CLASS.getName(BookCtrl)}`);
 
-  //#region @backend
+  //#region @websql
   notifyBookUpdate(Book, 1);
   notifyBookUpdate(Book, 2, 'name');
 
@@ -242,7 +242,7 @@ const start = async () => {
 }
 
 
-//#region @backend
+//#region @websql
 
 function notifyBookUpdate(entityFn, idValue, property?, counter = 0) {
   if (property) {

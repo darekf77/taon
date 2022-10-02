@@ -161,7 +161,15 @@
       "semver": "6.3.0",
       "better-sqlite3": "7.6.2",
       "express-session": "1.17.3",
-      "isomorphic-region-loader": "1.0.2"
+      "isomorphic-region-loader": "1.0.2",
+      "path-browserify": "~1.0.1",
+      "timers-browserify": "~2.0.12",
+      "stream-browserify": "~3.0.0",
+      "os-browserify": "~0.3.0",
+      "browserify-fs": "~1.0.0",
+      "stream-http": "~3.2.0",
+      "crypto-browserify": "~3.12.0",
+      "browserify": "~17.0.0"
     },
     "linkedFolders": [
       {

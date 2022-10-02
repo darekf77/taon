@@ -6,15 +6,12 @@ import { GET, PUT, DELETE, POST, HEAD, PATCH } from '../decorators/decorators-me
 import { Query, Path, Body } from '../decorators/decorators-params';
 import { Models } from '../models';
 
-//#region @backend
-import { Repository, Connection, getRepository } from 'typeorm';
-import { tableNameFrom } from '../framework/framework-helpers';
-import { MorphiHelpers } from '../helpers';
-import { IBASE_ENTITY } from '../framework/framework-entity';
+//#region @websql
+import { Repository, Connection } from 'typeorm';
 import { FrameworkContext } from '../framework/framework-context';
-import { DbCrud } from './db-crud.backend';
+import { DbCrud } from './db-crud';
 declare const global: any;
-import { CrudHelpers } from './crud-helpers.backend';
+import { CrudHelpers } from './crud-helpers';
 //#endregion
 
 const Firedev = {
@@ -27,7 +24,7 @@ const Firedev = {
 @CLASS.NAME('BaseCRUD')
 @__ENDPOINT(BaseCRUD)
 export abstract class BaseCRUD<T> {
-  //#region @backend
+  //#region @websql
   connection: Connection;
   public get repository(): Repository<T> {
     return this.repo;
@@ -41,12 +38,12 @@ export abstract class BaseCRUD<T> {
     this.init()
   }
 
-  //#region @backend
+  //#region @websql
   readonly db: DbCrud<T>;
   //#endregion
 
   private init() {
-    //#region @backend
+    //#region @websql
     const context = FrameworkContext.findForTraget(this);
     this.connection = context.connection;
 
@@ -67,7 +64,7 @@ export abstract class BaseCRUD<T> {
     @Path(`property`) property: string,
     @Query('alreadyLength') alreadyLength?: number
   ): Models.Response<string | any[]> {
-    //#region @backendFunc
+    //#region @websqlFunc
     return async (request, response) => {
 
       const model = await CrudHelpers.getModel(id, this.repo);
@@ -91,7 +88,7 @@ export abstract class BaseCRUD<T> {
 
   @Firedev.Http.GET(`/${Firedev.symbols.CRUD_TABLE_MODELS}`)
   getAll(): Models.Response<T[]> {
-    //#region @backendFunc
+    //#region @websqlFunc
     return async (request, response) => {
       if (this.repo) {
         const { models, totalCount } = await this.db.getAll();
@@ -105,7 +102,7 @@ export abstract class BaseCRUD<T> {
 
   @Firedev.Http.GET(`/${Firedev.symbols.CRUD_TABLE_MODEL}/:id`)
   getBy(@Path(`id`) id: number | string): Models.Response<T> {
-    //#region @backendFunc
+    //#region @websqlFunc
     return async () => {
       const { model } = await this.db.getBy(id);
       return model;
@@ -116,7 +113,7 @@ export abstract class BaseCRUD<T> {
 
   @Firedev.Http.PUT(`/${Firedev.symbols.CRUD_TABLE_MODEL}/:id`)
   updateById(@Path(`id`) id: number | string, @Body() item: T): Models.Response<T> {
-    //#region @backendFunc
+    //#region @websqlFunc
 
     return async () => {
       const { model } = await this.db.updateById(id, item as any);
@@ -128,7 +125,7 @@ export abstract class BaseCRUD<T> {
 
   @Firedev.Http.PUT(`/bulk/${Firedev.symbols.CRUD_TABLE_MODELS}`)
   bulkUpdate(@Body() items: T[]): Models.Response<T[]> {
-    //#region @backendFunc
+    //#region @websqlFunc
     return async () => {
       if (!Array.isArray(items) || (items?.length === 0)) {
         return [];
@@ -141,7 +138,7 @@ export abstract class BaseCRUD<T> {
 
   @Firedev.Http.DELETE(`/${Firedev.symbols.CRUD_TABLE_MODEL}/:id`)
   deleteById(@Path(`id`) id: number): Models.Response<T> {
-    //#region @backendFunc
+    //#region @websqlFunc
     return async () => {
       const { model } = await this.db.deleteById(id);
       return model;
@@ -151,7 +148,7 @@ export abstract class BaseCRUD<T> {
 
   @Firedev.Http.DELETE(`/bulk/${Firedev.symbols.CRUD_TABLE_MODELS}/:ids`)
   bulkDelete(@Path(`ids`) ids: (number | string)[]): Models.Response<(number | string | T)[]> {
-    //#region @backendFunc
+    //#region @websqlFunc
     return async () => {
       const { models } = await this.db.bulkDelete(ids);
       return models;
@@ -162,7 +159,7 @@ export abstract class BaseCRUD<T> {
 
   @Firedev.Http.POST(`/${Firedev.symbols.CRUD_TABLE_MODEL}/`)
   create(@Body() item: T): Models.Response<T> {
-    //#region @backendFunc
+    //#region @websqlFunc
     return async () => {
       const { model } = await this.db.create(item as any);
       return model;
@@ -172,7 +169,7 @@ export abstract class BaseCRUD<T> {
 
   @Firedev.Http.POST(`/bulk/${Firedev.symbols.CRUD_TABLE_MODELS}/`)
   bulkCreate(@Body() items: T): Models.Response<T[]> {
-    //#region @backendFunc
+    //#region @websqlFunc
     return async () => {
       const { models } = await this.db.bulkCreate(items as any);
       return models;
@@ -181,7 +178,3 @@ export abstract class BaseCRUD<T> {
   }
 
 }
-
-//#region @backend
-
-//#endregion

@@ -13,7 +13,7 @@ export function Repository(entity: Function) {
 export abstract class BASE_REPOSITORY<Entity, GlobalAliases = {}> extends TypeormRepository<Entity> {
 
 
-  //#region @backend
+  //#region @websql
 
   __?: { [prop in keyof GlobalAliases]: { [propertyName in keyof Entity]: string } };
   _?: GlobalAliases;

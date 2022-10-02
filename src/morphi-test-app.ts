@@ -1,11 +1,9 @@
 //#region @notForNpm
-import { _ } from 'tnp-core';
+import { _, crossPlatformPath, path } from 'tnp-core';
 //#region @backend
 import {
-  path,
   fse,
   rimraf,
-  crossPlatformPath,
   os,
   child_process,
   http, https,
@@ -21,12 +19,12 @@ class Book extends Firedev.Base.Entity<any> {
     return b;
   }
 
-  //#region @backend
+  //#region @websql
   @Firedev.Orm.Column.Custom('varchar')
   //#endregion
   public name: string
 
-  //#region @backend
+  //#region @websql
   @Firedev.Orm.Column.Generated()
   //#endregion
   public id: number
@@ -35,7 +33,7 @@ class Book extends Firedev.Base.Entity<any> {
 
 @Firedev.Controller({ className: 'BookCtrl', entity: Book })
 class BookCtrl extends Firedev.Base.Controller<any> {
-  //#region @backend
+  //#region @websql
   async initExampleDbData() {
     const db = await this.connection.getRepository(Book);
     await db.save(Book.from('alice in wonderland'));
@@ -47,7 +45,7 @@ class BookCtrl extends Firedev.Base.Controller<any> {
 const start = async (port = 3000) => {
   const host = `http://localhost:${port}`;
   console.log(`HOST MORPHI: ${host}`);
-  //#region @backend
+  //#region @websql
   const config = {
     type: 'better-sqlite3',
     database: 'tmp-db.sqlite',
@@ -61,7 +59,7 @@ const start = async (port = 3000) => {
     host,
     controllers: [BookCtrl],
     entities: [Book],
-    //#region @backend
+    //#region @websql
     config: config as any
     //#endregion
   });
@@ -87,7 +85,7 @@ const start = async (port = 3000) => {
       });
     })
   }
-  //#region @backend
+  //#region @websql
   if (Firedev.isNode) {
     const dbfile = crossPlatformPath(path.join(crossPlatformPath(process.cwd()), config.database));
     // console.log(`dbfile: ${dbfile}`)
@@ -96,6 +94,7 @@ const start = async (port = 3000) => {
     // }, 2000)
     const db = await context.connection.getRepository(Book);
     let oldData = await db.find();
+    //#region @backend
     fse.watchFile(dbfile, async (a, b) => {
       // console.log(`update entities`)
       const newData = await db.find();
@@ -111,6 +110,7 @@ const start = async (port = 3000) => {
         oldData = newData;
       })
     });
+    //#endregion
     // context.controllers.forEach(c => {
 
     // })

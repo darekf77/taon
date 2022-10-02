@@ -1,13 +1,14 @@
 import { _, Helpers } from 'tnp-core';
-import { MorphiHelpers } from '../helpers';
 import { StartOptions, FrameworkMode, MiddlewareType } from './framework-models';
 import { FrameworkContextBrowserApp } from './framework-context-browser-app';
 import { CLASS } from 'typescript-class-helpers';
 import { IConnectionOptions } from './framework-models';
 import { FrameworkContextBase } from './framework-context-base';
+//#region @websql
+import { FrameworkContextNodeApp } from './framework-context-node-app';
 //#region @backend
-import { FrameworkContextNodeApp } from './framework-context-node-app.backend';
 import { URL } from 'url';
+//#endregion
 //#endregion
 
 export class FrameworkContext extends FrameworkContextBase {
@@ -93,7 +94,7 @@ export class FrameworkContext extends FrameworkContextBase {
 
     const result = FrameworkContext.contextByClassName[className];
     if (!result) {
-      //#region @backend
+      //#region @websql
       if (FrameworkContext.contexts.length === 1 &&
         _.first(FrameworkContext.contexts).mode === 'backend/frontend-worker') {
         return _.first(FrameworkContext.contexts);
@@ -127,7 +128,7 @@ export class FrameworkContext extends FrameworkContextBase {
   public readonly allowedHosts: URL[] = [];
   public readonly disabledRealtime = false;
   public browser: FrameworkContextBrowserApp;
-  //#region @backend
+  //#region @websql
   public node: FrameworkContextNodeApp;
   //#endregion
 
@@ -158,7 +159,7 @@ export class FrameworkContext extends FrameworkContextBase {
 
   public get controllers() {
     let ctrls: Function[] = this.context.controllers as any;
-    //#region @backend
+    //#region @websql
     if (this.context.InitDataPriority) {
       ctrls = [
         ...(this.context.InitDataPriority ? this.context.InitDataPriority : []),
@@ -183,7 +184,7 @@ export class FrameworkContext extends FrameworkContextBase {
     return (this.context.entities as Function[]) || [];
   }
 
-  //#region @backend
+  //#region @websql
   public get mode() {
     return this.context.mode;
   }
@@ -215,6 +216,10 @@ export class FrameworkContext extends FrameworkContextBase {
   get testMode() {
     return this.context.mode === 'tests';
   }
+
+  get websqlBackendOnFrontend() {
+    return this.context.mode === 'websql/backend-frontend';
+  }
   //#endregion
 
   constructor(context: StartOptions) {
@@ -232,7 +237,7 @@ export class FrameworkContext extends FrameworkContextBase {
       // @ts-ignore
       this.disabledRealtime = true;
     }
-    //#region @backend
+    //#region @websql
     validateConfigAndAssignEntites(context.config, this.mode, this.entitiesClasses);
     //#endregion
     this.prepareEntities();
@@ -241,7 +246,7 @@ export class FrameworkContext extends FrameworkContextBase {
   anotherReason = `Please check if your "class name" matches  @Controller( className ) or @Entity( className )`;
 
   private prepareEntities() {
-    //#region @backend
+    //#region @websql
     if (this.context.config) {
       this.context.config['entities'] = this.entitiesClasses as any;
     };
@@ -301,7 +306,7 @@ class ${className}Extended extends ${className} {
   }
 
   public async initNode() {
-    //#region @backend
+    //#region @websql
     if (Helpers.isNode) {
       this.node = new FrameworkContextNodeApp(this);
       await this.node.init();
@@ -338,7 +343,7 @@ class ${className}Extended extends ${className} {
 }
 
 
-//#region @backend
+//#region @websql
 function validateConfigAndAssignEntites(
   config: IConnectionOptions,
   mode: FrameworkMode,

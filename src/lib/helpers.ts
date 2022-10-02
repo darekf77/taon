@@ -1,54 +1,26 @@
-import { _ } from 'tnp-core';
+//#region imports
+import { _, crossPlatformPath, path } from 'tnp-core';
 //#region @backend
 import {
-  path,
-  fse,
-  rimraf,
-  crossPlatformPath,
-  os,
-  child_process,
-  http, https,
+  fse
 } from 'tnp-core';
-import { CLI } from 'tnp-cli';
-import * as dateformat from 'dateformat';
-
 //#endregion
 
 import * as JSON5 from 'json5';
 import { Helpers as HelpersNg2Rest } from 'ng2-rest';
-import { SYMBOL } from './symbols';
 import { Models } from './models';
 
-//#region @backend
-import { Response as ExpressResponse, Request as ExpressRequest } from 'express';
+//#region @websql
+import type { Response as ExpressResponse, Request as ExpressRequest } from 'express';
 //#endregion
 import { CLASS } from 'typescript-class-helpers';
+//#endregion
 
 export class MorphiHelpers extends HelpersNg2Rest {
 
-  //#region @backend
-  static get System() {
+  //#region static
 
-    return {
-      get Operations() {
-        return {
-          tryRemoveDir(dirpath) {
-            rimraf.sync(dirpath);
-          },
-
-          tryCopyFrom(source, destination, options = {}) {
-            // console.log(`Trying to copy from hahah: ${source} to ${destination}`)
-            fse.copySync(source, destination, _.merge({
-              overwrite: true,
-              recursive: true
-            }, options));
-          }
-        }
-      }
-    }
-  }
-  //#endregion
-
+  //#region static / string operations
   static string(s: string) {
     return {
       fillUpTo(nCharacters: number) {
@@ -61,11 +33,15 @@ export class MorphiHelpers extends HelpersNg2Rest {
       }
     }
   }
+  //#endregion
 
+  //#region static / is good path
   static isGoodPath(p: string) {
     return p && typeof p === 'string' && p.trim() !== ''
   }
+  //#endregion
 
+  //#region static / get path for
   static getPathFor(target: Function) {
     const configs = CLASS.getConfigs(target) as any[];
     // console.log(`Class config for ${CLASS.getName(target)}`, configs)
@@ -82,7 +58,9 @@ export class MorphiHelpers extends HelpersNg2Rest {
 
     return `/${parentscalculatedPath}/${CLASS.getName(target)}`;
   }
+  //#endregion
 
+  //#region static / has parent class with name
   static hasParentClassWithName(target: Function, name: string, targets = []): boolean {
     if (!target) {
       // console.log(`false "${_.first(targets).name}" for ${targets.map(d => d.name).join(',')}`)
@@ -96,29 +74,9 @@ export class MorphiHelpers extends HelpersNg2Rest {
     }
     return this.hasParentClassWithName(targetProto, name, targets);
   }
-
-  //#region @backend
-  // static async compilationWrapper(fn: () => void, taskName: string = 'Task', executionType: 'Compilation' | 'Code execution' = 'Compilation') {
-  //   function currentDate() {
-  //     return `[${dateformat(new Date(), 'HH:MM:ss')}]`;
-  //   }
-  //   if (!fn || !_.isFunction(fn)) {
-  //     console.error(`${executionType} wrapper: "${fn}" is not a function.`)
-  //     process.exit(1)
-  //   }
-
-  //   try {
-  //     console.log(CLI.chalk.gray(`${currentDate()} ${executionType} of "${CLI.chalk.bold(taskName)}" started...`))
-  //     await Helpers.runSyncOrAsync(fn)
-  //     console.log(CLI.chalk.green(`${currentDate()} ${executionType} of "${CLI.chalk.bold(taskName)}" finish OK...`))
-  //   } catch (error) {
-  //     console.log(CLI.chalk.red(error));
-  //     console.log(`${currentDate()} ${executionType} of ${taskName} ERROR`)
-  //   }
-
-  // }
   //#endregion
 
+  //#region static / try transform param
   static tryTransformParam(param) {
     if (typeof param === 'string') {
       let n = Number(param);
@@ -139,19 +97,25 @@ export class MorphiHelpers extends HelpersNg2Rest {
     }
     return param;
   }
+  //#endregion
 
+  //#region static / get express path
   static getExpressPath(c: Models.Rest.ClassConfig, pathOrClassConfig: Models.Rest.MethodConfig | string) {
     if (typeof pathOrClassConfig === 'string') return `${c.calculatedPath}${pathOrClassConfig}`.replace(/\/$/, '')
     return `${c.calculatedPath}${pathOrClassConfig.path}`.replace(/\/$/, '')
   }
+  //#endregion
 
+  //#region static / default type
   static defaultType(value) {
     if (typeof value === 'string') return '';
     if (typeof value === 'boolean') return false;
     if (Array.isArray(value)) return {};
     if (typeof value === 'object') return {};
   }
+  //#endregion
 
+  //#region static / parse json with string jsons
   static parseJSONwithStringJSONs(object: Object, waring = false): Object {
     // console.log('checking object', object)
     if (!_.isObject(object)) {
@@ -184,15 +148,15 @@ export class MorphiHelpers extends HelpersNg2Rest {
 
     return res;
   }
+  //#endregion
 
-  //#region @backend
-
-
-
+  //#region static / get response value
+  //#region @websql
 
   static getResponseValue<T>(response: Models.Response<T>, req: ExpressRequest, res: ExpressResponse): Promise<Models.SyncResponse<T>> {
-    //#region @backendFunc
+    //#region @websqlFunc
     return new Promise<Models.SyncResponse<T>>(async (resolve, reject) => {
+      //#region @websql
       const resp: Models.__Response<T> = response;
       if (!response && response.send === undefined) {
         console.error('Bad response value for function');
@@ -223,16 +187,25 @@ export class MorphiHelpers extends HelpersNg2Rest {
           reject(error);
         }
       } else reject(`Not recognized type of reposne ${response}`);
+      //#endregion
     });
     //#endregion
   }
+  //#endregion
+  //#endregion
 
+  //#region static / is plain file or folder
+  //#region @websql
   static isPlainFileOrFolder(filePath) {
     return /^([a-zA-Z]|\-|\_|\@|\#|\$|\!|\^|\&|\*|\(|\))+$/.test(filePath);
   }
+  //#endregion
+  //#endregion
 
-
+  //#region static / get recrusive files from
+  //#region @websql
   static getRecrusiveFilesFrom(dir): string[] {
+    //#region @backendFunc
     let files = [];
     const readed = fse.readdirSync(dir).map(f => {
       const fullPath = crossPlatformPath(path.join(dir, crossPlatformPath(f)));
@@ -246,10 +219,11 @@ export class MorphiHelpers extends HelpersNg2Rest {
       readed.forEach(r => files.push(r))
     }
     return files;
+    //#endregion
   }
-
+  //#endregion
   //#endregion
 
-
+  //#endregion
 
 }

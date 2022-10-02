@@ -1,9 +1,11 @@
 import {
   initMethodBrowser,
-  //#region @backend
-  initMethodNodejs
-  //#endregion
 } from '../init-method';
+//#region @websql
+import {
+  initMethodNodejs
+} from '../init-method';
+//#endregion
 export { CLASS } from 'typescript-class-helpers';
 import { CLASS } from 'typescript-class-helpers';
 import { _, Helpers } from 'tnp-core';
@@ -23,7 +25,7 @@ export function ENDPOINT(options?: {
   entity?: Function,
   additionalEntities?: Function[],
   auth?
-  //#region @backend
+  //#region @websql
   : Models.AuthCallBack
   //#endregion
 }) {
@@ -78,25 +80,34 @@ export function ENDPOINT(options?: {
           const type: Models.Rest.HttpMethod = methodConfig.type;
           const expressPath = MorphiHelpers.getExpressPath(classConfig, methodConfig);
           // console.log('initfn expressPath', expressPath)
-          if (Helpers.isNode) {
-            //#region @backend
+          if (Helpers.isNode
+            //#region @websqlOnly
+            || Helpers.isWebSQL
+            //#endregion
+          ) {
+            //#region @websql
             if (checkAuthFn) {
               methodConfig.requestHandler = auth(methodConfig.descriptor.value);
             }
 
             const { routePath, method } = initMethodNodejs(type, methodConfig, classConfig, expressPath, target);
+            //#region @backend
             if (!context.onlyForBackendRemoteServerAccess) {
               context.node.activeRoutes.push({
                 routePath,
                 method
               });
             }
+            //#endregion
 
             //#endregion
           }
           if (Helpers.isBrowser
             //#region @backend
             || context.onlyForBackendRemoteServerAccess
+            //#endregion
+            //#region @websqlOnly
+            || Helpers.isWebSQL
             //#endregion
           ) {
             initMethodBrowser(target, type, methodConfig, expressPath)

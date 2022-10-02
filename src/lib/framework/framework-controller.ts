@@ -1,4 +1,4 @@
-//#region @backend
+//#region @websql
 import {
   EventSubscriber
 } from 'typeorm';
@@ -84,14 +84,14 @@ export function Controller(options?: {
    */
   path?: string,
   autoinit?: boolean,
-  //#region @backend
+  //#region @websql
   auth?: Models.AuthCallBack
   //#endregion
 }) {
   let { className, realtime, autoinit = false, entity, additionalEntities } = options || {} as any;
 
   return function (target: Function) {
-    //#region @backend
+    //#region @websql
     if (realtime) {
       EventSubscriber()(target)
     }
@@ -128,7 +128,7 @@ export function Controller(options?: {
   }
 }
 
-//#region @backend
+//#region @websql
 export interface BASE_CONTROLLER_INIT {
   initExampleDbData?: (isWoker?: boolean) => Promise<any>;
 }
@@ -139,7 +139,7 @@ export interface BASE_CONTROLLER_INIT {
   autoinit: true
 })
 export abstract class BASE_CONTROLLER<T> extends BaseCRUD<T>
-  //#region @backend
+  //#region @websql
   implements BASE_CONTROLLER_INIT
 //#endregion
 {
@@ -149,7 +149,7 @@ export abstract class BASE_CONTROLLER<T> extends BaseCRUD<T>
   entites: Function[];
 
 
-  //#region @backend
+  //#region @websql
 
   // get db(): { [entities: string]: Repository<any> } {
   //   throw `db method not implemented ${CLASS.getNameFromObject(this)}`

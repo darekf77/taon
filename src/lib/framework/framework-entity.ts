@@ -5,7 +5,7 @@ import { FormlyArrayTransformFn } from '../crud/fromly';
 import { classNameVlidation } from './framework-helpers';
 import { Mapping, Models } from 'ng2-rest';
 
-//#region @backend
+//#region @websql
 import {
   Entity as TypeormEntity, Tree
 } from 'typeorm';
@@ -51,7 +51,7 @@ export function Entity<T = {}>(options?: {
   //   include?: (keyof T)[];
   //   exclude?: (keyof T)[];
   // },
-  //#region @backend
+  //#region @websql
   createTable?: boolean;
   // browserTransformFn?: (entity: T, mdc?: any) => void
   //#endregion
@@ -76,7 +76,7 @@ export function Entity<T = {}>(options?: {
     //   include = undefined,
     //   exclude = undefined
     // } = {},
-    //#region @backend
+    //#region @websql
     // browserTransformFn,
     createTable = true,
     //#endregion
@@ -96,7 +96,7 @@ export function Entity<T = {}>(options?: {
     // TODO when entit metadata generator read use this
     Mapping.DefaultModelWithMapping<T>(void 0, {})(target)
 
-    //#region @backend
+    //#region @websql
     // if (_.isFunction(browserTransformFn)) {
     //   const config = CLASS.getConfig(target);
     //   config.browserTransformFn = browserTransformFn;

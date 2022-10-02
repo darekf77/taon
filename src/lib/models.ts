@@ -31,7 +31,7 @@ export namespace Models {
   }
 
   export interface __Response<T> {
-    //#region @backend
+    //#region @websql
     send?: MixResponse<T>;
     //#endregion
   }
@@ -68,7 +68,7 @@ export namespace Models {
 
 
 
-  //#region @backend
+  //#region @websql
   export interface AuthCallBack {
     (methodReference: Function): RequestHandler;
   }

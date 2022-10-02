@@ -1,8 +1,7 @@
+//#region @websql
 import * as _ from 'lodash';
-import { Repository, Connection, getRepository } from 'typeorm';
-import { CrudHelpers } from './crud-helpers.backend';
-import { tableNameFrom } from '../framework/framework-helpers';
-import { CLASS } from 'typescript-class-helpers';
+import { Repository, Connection } from 'typeorm';
+import { CrudHelpers } from './crud-helpers';
 
 const INDEX_KEYS_NO_FOR_UPDATE = [
   'id',
@@ -132,3 +131,4 @@ export class DbCrud<T> {
 
 }
 
+//#endregion
