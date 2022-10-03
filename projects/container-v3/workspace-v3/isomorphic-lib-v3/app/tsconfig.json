@@ -15,6 +15,7 @@
     "declaration": false,
     "downlevelIteration": true,
     "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "moduleResolution": "node",
     "importHelpers": true,
     "target": "es2017",
@@ -22,19 +23,7 @@
     "lib": [
       "es2020",
       "dom"
-    ],
-    "paths": {
-      "stream": ["./node_modules/stream-browserify"],
-      "os": ["./node_modules/os-browserify"],
-      "path": ["./node_modules/path-browserify"],
-      "timers": ["./node_modules/timers-browserify"],
-      "fs": ["./node_modules/browserify-fs"],
-      "crypto": ["./node_modules/crypto-browserify"],
-      "http": ["./node_modules/stream-http"],
-      "https": ["./node_modules/https-browserify"],
-      "assert": ["./node_modules/assert"],
-      "url":  ["./node_modules/browserify-url"]
-    }
+    ]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
