@@ -27,7 +27,7 @@ export class RealtimeBrowserRxjs {
   constructor(private context: FrameworkContext) {
     const base = RealtimeBase.by(context);
     // Helpers.log('INITING SOCKETS')
-    if (!context.disabledRealtime) {
+    if (!context.disabledRealtime && !Helpers.isWebSQL) {
 
       const nspPath = {
         global: base.pathFor(),

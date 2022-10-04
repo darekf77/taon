@@ -25,7 +25,8 @@
     "isCoreProject": true,
     "license": "UNLICENSED",
     "private": true,
-    "workerPlugins": {}
+    "workerPlugins": {},
+    "linkedRepos": []
   },
   "name": "container",
   "version": "0.0.0",

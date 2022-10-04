@@ -150,5 +150,6 @@
   "private": true,
   "type": "container",
   "version": "v2",
-  "workerPlugins": {}
+  "workerPlugins": {},
+  "linkedRepos": []
 }

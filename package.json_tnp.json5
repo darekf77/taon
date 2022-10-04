@@ -5,6 +5,7 @@
     "logo.png",
     "files.png",
   ],
+
   overrided: {
     linkedFolders: [],
     includeAsDev: [],
@@ -185,12 +186,16 @@
       "path-browserify": "~1.0.1"
     },
   },
+
   linkedProjects: [],
+  linkedRepos: [],
+
   libReleaseOptions: {
     nodts: false,
     obscure: false,
     ugly: false,
   },
+
   type: "isomorphic-lib",
   version: "v3",
   additionalNpmNames: ["firedev-framework"],

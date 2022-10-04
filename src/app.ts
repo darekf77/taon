@@ -234,8 +234,8 @@ const start = async () => {
   // console.log(`${BookCtrl.name}: ${CLASS.getName(BookCtrl)}`);
 
   //#region @websql
-  notifyBookUpdate(Book, 1);
-  notifyBookUpdate(Book, 2, 'name');
+  // notifyBookUpdate(Book, 1);
+  // notifyBookUpdate(Book, 2, 'name');
 
   //#endregion
 
