@@ -55,12 +55,17 @@ export function start(options: StartOptions) {
 
     //#region @websqlOnly
     mode = 'websql/backend-frontend';
-    if(config) { // @ts-ignore
+    if (config) { // @ts-ignore
       config.type = 'sqljs';
       // @ts-ignore
       config.autoSave = true;
       // @ts-ignore
+      // delete config.dropSchema;
+      // @ts-ignore
       config.logging = ['query', 'schema'];
+      // @ts-ignore
+      config.location = (config.database || '').replace('.sqlite', '');
+      delete config.database;
     }
     //#endregion
 
@@ -113,7 +118,7 @@ export function start(options: StartOptions) {
     ngzone:NgZone
     ...
   ) {
-    Friedev.initNgZone(ngzone);
+    Firedev.initNgZone(ngzone);
   }
 
           `, true, true)

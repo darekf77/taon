@@ -1,6 +1,6 @@
 //#region @websql
 import * as _ from 'lodash';
-import { Repository, Connection } from 'typeorm';
+import { Repository, Connection } from 'firedev-typeorm';
 import { CrudHelpers } from './crud-helpers';
 
 const INDEX_KEYS_NO_FOR_UPDATE = [

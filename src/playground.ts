@@ -25,7 +25,7 @@
 
 
 
-// import { QueryBuilder, SelectQueryBuilder } from 'typeorm'
+// import { QueryBuilder, SelectQueryBuilder } from 'firedev-typeorm'
 
 // type BaseQueryBuilder<T> = Pick<QueryBuilder<T>, 'select'>
 // type BaseSelectQueryBuilder<T> = Pick<SelectQueryBuilder<T>, 'getMany' | 'delete' | 'getManyAndCount'>

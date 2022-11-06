@@ -1,6 +1,6 @@
 //#region @websql
 import * as _ from 'lodash';
-import { Repository, Connection, getRepository } from 'typeorm';
+import { Repository, Connection, getRepository } from 'firedev-typeorm';
 import { CLASS } from 'typescript-class-helpers';
 import type { IBASE_ENTITY } from '../framework/framework-entity';
 import { SYMBOL } from '../symbols';

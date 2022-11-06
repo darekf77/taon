@@ -7,7 +7,7 @@ import { Query, Path, Body } from '../decorators/decorators-params';
 import { Models } from '../models';
 
 //#region @websql
-import { Repository, Connection } from 'typeorm';
+import { Repository, Connection } from 'firedev-typeorm';
 import { FrameworkContext } from '../framework/framework-context';
 import { DbCrud } from './db-crud';
 declare const global: any;

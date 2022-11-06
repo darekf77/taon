@@ -36,6 +36,14 @@ export function initMethodNodejs(
   //#endregion
 
   if (!context.onlyForBackendRemoteServerAccess) {
+    //#region @websqlOnly
+    if (!context.node.app[type.toLowerCase()]) {
+      context.node.app[type.toLowerCase()] = (expressPath) => {
+        console.log(`registering ${expressPath}`);
+      }
+    }
+    //#endregion
+
     context.node.app[type.toLowerCase()](expressPath, requestHandler, async (req, res) => {
 
       const args: any[] = [];

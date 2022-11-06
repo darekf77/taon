@@ -19,7 +19,7 @@ import * as context from './framework/framework-context';
 import { MorphiHelpers } from './helpers';
 
 //#region @websql
-import * as tsorm from 'typeorm'
+import * as tsorm from 'firedev-typeorm'
 //#endregion
 
 //#region @backend
@@ -37,7 +37,8 @@ generate = () => { }
 //#endregion
 
 //#region @websql
-import { Repository } from 'typeorm';
+import { Repository } from 'firedev-typeorm';
+import { Observable } from 'rxjs';
 //#endregion
 
 export class TypeormRepository<T>
@@ -61,7 +62,12 @@ export namespace Morphi {
   export function setIsBackend() {
     Helpers.setIsBackend();
   }
+
   //#endregion
+
+  export const loadedSqlJs = () => {
+    return window['onLoadSqlJS'] as Observable<void>;
+  }
 
   export const isNode = Helpers.isNode;
   export const isBrowser = Helpers.isBrowser;

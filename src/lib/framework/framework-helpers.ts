@@ -2,9 +2,9 @@
 import 'reflect-metadata';
 //#endregion
 //#region @websql
-import { Repository } from 'typeorm';
-import { Connection } from 'typeorm';
-export { Connection } from 'typeorm';
+import { Repository } from 'firedev-typeorm';
+import { Connection } from 'firedev-typeorm';
+export { Connection } from 'firedev-typeorm';
 //#endregion
 import { SYMBOL } from '../symbols';
 import { CLASS } from 'typescript-class-helpers';

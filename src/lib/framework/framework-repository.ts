@@ -1,6 +1,6 @@
 import {
   Repository as TypeormRepository, EntityRepository
-} from 'typeorm';
+} from 'firedev-typeorm';
 import { _ } from 'tnp-core';
 
 export function Repository(entity: Function) {
@@ -11,10 +11,6 @@ export function Repository(entity: Function) {
 
 // TODO_NOT_IMPORTANT fix it whe typescipt stable
 export abstract class BASE_REPOSITORY<Entity, GlobalAliases = {}> extends TypeormRepository<Entity> {
-
-
-  //#region @websql
-
   __?: { [prop in keyof GlobalAliases]: { [propertyName in keyof Entity]: string } };
   _?: GlobalAliases;
 
@@ -23,7 +19,5 @@ export abstract class BASE_REPOSITORY<Entity, GlobalAliases = {}> extends Typeor
   pagination() {
     // TODO_NOT_IMPORTANT
   }
-
-  //#endregion
 
 }

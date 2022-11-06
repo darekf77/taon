@@ -1,7 +1,7 @@
 //#region @websql
 import {
   EventSubscriber
-} from 'typeorm';
+} from 'firedev-typeorm';
 //#endregion
 
 import { _ } from 'tnp-core';

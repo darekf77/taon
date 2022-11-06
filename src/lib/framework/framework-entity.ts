@@ -1,14 +1,13 @@
 import { _ } from 'tnp-core';
 import { Log, Level } from 'ng2-logger';
 import { SYMBOL } from '../symbols';
-import { FormlyArrayTransformFn } from '../crud/fromly';
 import { classNameVlidation } from './framework-helpers';
 import { Mapping, Models } from 'ng2-rest';
 
 //#region @websql
 import {
   Entity as TypeormEntity, Tree
-} from 'typeorm';
+} from 'firedev-typeorm';
 import { tableNameFrom } from './framework-helpers';
 //#endregion
 import { CLASS } from 'typescript-class-helpers';

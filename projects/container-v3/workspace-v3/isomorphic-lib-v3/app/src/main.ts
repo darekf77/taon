@@ -1,6 +1,9 @@
 import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { Subject } from 'rxjs';
 
+// @ts-ignore
+window.onLoadSqlJS = new Subject();
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 

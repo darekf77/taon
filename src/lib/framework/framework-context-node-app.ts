@@ -15,6 +15,7 @@ import { Http2Server } from 'http2';
 import { _ } from 'tnp-core';
 //#region @websql
 import { path } from 'tnp-core';
+console.log({ path })
 //#endregion
 //#region @backend
 import {
@@ -25,8 +26,8 @@ import {
 
 import { SYMBOL } from '../symbols';
 //#region @websql
-import { createConnections, getConnection } from 'typeorm';
-import { Connection } from 'typeorm';
+import { createConnections, getConnection } from 'firedev-typeorm';
+import { Connection } from 'firedev-typeorm';
 //#endregion
 import { CLASS } from 'typescript-class-helpers';
 import { Models } from '../models';
@@ -53,7 +54,12 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
 
   private async initConnection() {
 
-    if (this.context.mode === 'backend/frontend' || this.context.mode === 'tests') {
+    if (this.context.mode === 'backend/frontend' || this.context.mode === 'tests'
+    //#region @websqlOnly
+    ||
+    this.context.mode === 'websql/backend-frontend'
+    //#endregion
+    ) {
       try {
         const con = await getConnection();
 
@@ -172,7 +178,11 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
       const tinstance = tinstanceClass && context.getInstance(tinstanceClass as any) as any;
       const isWorker = context.workerMode;
 
-      const fileNameFor = path.join(process.cwd(), `tmp-routes--worker--`
+      const fileNameFor = path.join(
+        //#region @backend
+        process.cwd(),
+        //#endregion
+        `tmp-routes--worker--`
         + `${path.basename(tinstance.filename).replace(/\.js$/, '')}.json`);
 
       if (isWorker) {
@@ -194,7 +204,12 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
         ];
       }
     }
-    const fileName = path.join(process.cwd(), `tmp-routes.json`)
+    const fileName = path.join(
+      //#region @backend
+      process.cwd(),
+      //#endregion
+      `tmp-routes.json`
+      )
     //#region @websqlOnly
     console.log(`FILE: ${fileName}`)
     console.log(JSON.stringify(routes, null, 4))

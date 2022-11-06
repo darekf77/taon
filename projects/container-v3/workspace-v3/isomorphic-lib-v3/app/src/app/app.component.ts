@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Subject } from 'rxjs';
 import { Helpers } from 'tnp-core/websql'
 
 @Component({
@@ -11,7 +12,7 @@ export class AppComponent {
 
   async ngOnInit() {
 
-    if(Helpers.isWebSQL) {
+    if(Helpers.isWebSQL) { // @ts-ignore
       const initSqlJs = require('sql.js');
       // or if you are in a browser:
       // const initSqlJs = window.initSqlJs;
@@ -25,7 +26,8 @@ export class AppComponent {
 
       // @ts-ignore
       window['SQL'] = SQL;
-      console.log('WEBSQL LOADED')
+      console.log('WEBSQL LOADED');
+      (window['onLoadSqlJS'] as Subject<void>).next()
     } else {
       console.log('WEBSQL NOT LOADED')
     }

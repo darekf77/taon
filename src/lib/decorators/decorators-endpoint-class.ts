@@ -14,7 +14,7 @@ import { MorphiHelpers } from '../helpers';
 import { activateBaseCrud } from '../crud/activate-base-crud';
 import { Models } from '../models';
 import { FrameworkContext } from '../framework/framework-context';
-export { Connection } from 'typeorm';
+export { Connection } from 'firedev-typeorm';
 
 export function __ENDPOINT(baseEntity?: Function): (...args: any[]) => any {
   return ENDPOINT();

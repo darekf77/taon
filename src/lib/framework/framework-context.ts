@@ -307,10 +307,8 @@ class ${className}Extended extends ${className} {
 
   public async initNode() {
     //#region @websql
-    if (Helpers.isNode) {
-      this.node = new FrameworkContextNodeApp(this);
-      await this.node.init();
-    }
+    this.node = new FrameworkContextNodeApp(this);
+    await this.node.init();
     //#endregion
   }
 
