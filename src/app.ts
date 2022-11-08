@@ -57,6 +57,12 @@ class Book extends Firedev.Base.Entity<any> {
     return b;
   }
 
+  static ctrl: BookCtrl;
+  static async getAll() {
+    const data = await this.ctrl.getAll().received;
+    return data.body.json;
+  }
+
   //#region @websql
   @Firedev.Orm.Column.Custom('varchar')
   //#endregion
@@ -102,9 +108,16 @@ hello world
 })
 export class MorphiComponent implements AfterViewInit {
 
-  loadedSqlJs = Firedev.loadedSqlJs().subscribe(() => {
+  loadedSqlJs = Firedev.loadedSqlJs().subscribe(async () => {
     Firedev.initNgZone(this.ngzone);
-    start();
+
+    await start();
+
+
+    const books = await Book.getAll();
+    console.log({
+      books
+    })
   });
 
   constructor(
@@ -135,8 +148,8 @@ class BookCtrl extends Firedev.Base.Controller<any> {
     await db.save(Book.from('cryptography'));
 
 
-    const allBooks = await db.find();
-    console.log('ALL BOOKS', allBooks);
+    // const allBooks = await db.find();
+    // console.log('ALL BOOKS', allBooks);
   }
   //#endregion
 
@@ -150,7 +163,7 @@ class BookCtrl extends Firedev.Base.Controller<any> {
 
 
 
-const start = async () => {
+async function start() {
 
   const context1 = await Firedev.init({
     host: host1,

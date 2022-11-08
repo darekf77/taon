@@ -125,7 +125,6 @@ export function start(options: StartOptions) {
         }
       });
 
-      return context;
     }
 
     resolve(context);
