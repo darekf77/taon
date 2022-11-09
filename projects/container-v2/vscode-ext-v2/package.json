@@ -38,7 +38,8 @@
     ],
     "license": "MIT",
     "private": false,
-    "isCoreProject": true
+    "isCoreProject": true,
+    "linkedRepos": []
   },
   "name": "vscode-ext-v2",
   "displayName": "tnp-vscode-ext",
