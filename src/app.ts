@@ -107,7 +107,6 @@ hello world
   `
 })
 export class MorphiComponent implements AfterViewInit {
-
   loadedSqlJs = Firedev.loadedSqlJs().subscribe(async () => {
     Firedev.initNgZone(this.ngzone);
 

@@ -3,6 +3,7 @@ export { Models } from './models';
 export { RepeatTypeComponent } from './crud/formly-repeat-component';
 export { FormlyHorizontalWrapper } from './crud/formly-group-wrapper-component';
 //#endregion
+import { Observable, Subject } from 'rxjs';
 
 export { Log, Level } from 'ng2-logger';
 
@@ -27,18 +28,20 @@ import { generate as generateHash } from 'password-hash';
 import * as pass from 'passport';
 import { Handler } from 'express'
 //#endregion
+
 let generate
   //#region @backend
   = generateHash;
 //#endregion
+
 //#region @websqlOnly
 // @ts-ignore
 generate = () => { }
 //#endregion
 
+
 //#region @websql
 import { Repository } from 'firedev-typeorm';
-import { Observable } from 'rxjs';
 //#endregion
 
 export class TypeormRepository<T>
@@ -65,8 +68,17 @@ export namespace Morphi {
 
   //#endregion
 
+  /**
+   * Function only for websql mode
+   */
   export const loadedSqlJs = () => {
+
+    //#region @websql
     return window['onLoadSqlJS'] as Observable<void>;
+    //#endregion
+    const obs = new Subject<void>();
+    obs.next()
+    return obs.asObservable();
   }
 
   export const isNode = Helpers.isNode;

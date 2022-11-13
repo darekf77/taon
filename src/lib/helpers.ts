@@ -1,5 +1,8 @@
 //#region imports
-import { _, crossPlatformPath, path } from 'tnp-core';
+import { _, crossPlatformPath } from 'tnp-core';
+//#region @websql
+import { path } from 'tnp-core';
+//#endregion
 //#region @backend
 import {
   fse
