@@ -112,11 +112,13 @@ export class MorphiComponent implements AfterViewInit {
 
     await start();
 
+    const res = await Book.ctrl.helloWorld().received;
+    console.log(res.body.text);
 
-    const books = await Book.getAll();
-    console.log({
-      books
-    })
+    // const books = await Book.getAll();
+    // console.log({
+    //   books
+    // })
   });
 
   constructor(

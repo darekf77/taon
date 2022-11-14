@@ -6,6 +6,8 @@ import { Models as Ng2RestModels } from 'ng2-rest';
 import { Helpers } from 'tnp-core';
 import { MorphiHelpers } from '../helpers';
 import { FrameworkContext } from '../framework/framework-context';
+import { Subject } from 'rxjs';
+import { firstValueFrom, Observable } from 'rxjs';
 
 export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodConfig: Models.Rest.MethodConfig, expressPath) {
   let storage: any;
@@ -18,6 +20,47 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
   }
   //#endregion
 
+  //#region @websqlOnly
+
+  const orgMethods = target.prototype[methodConfig.methodName];
+  target.prototype[methodConfig.methodName] = function (...args) {
+    const subject = new Subject();
+    const received = new Promise(async (resove, reject) => {
+      try {
+        let res = await Helpers.runSyncOrAsync(orgMethods, args);
+        if (typeof res === 'function') {
+          res = await Helpers.runSyncOrAsync(res);
+        }
+        if (typeof res === 'function') {
+          res = await Helpers.runSyncOrAsync(res);
+        }
+        if (typeof res === 'object' && res.received) {
+          res = await res.received;
+        }
+        const body = res;
+        res = new Ng2RestModels.HttpResponse({
+          body,
+          isArray: void 0 as any,
+          method: 'websql' as any,
+          url: ''
+        }, JSON.stringify(body));
+
+        subject.next(res);
+        resove(res);
+      } catch (error) {
+        error = new Ng2RestModels.HttpResponseError('Error during websql request',
+        JSON.stringify(error));
+        subject.error(error);
+        reject(error);
+      }
+    });
+    received['observable'] = subject;
+    return {
+      received
+    }
+  }
+  return;
+  //#endregion
 
   // UNCOMMENT THIS TO SEE FRONTEND PATHES
   // console.log(`FRONTEND ${target.name} method on ${expressPath}`)
@@ -27,7 +70,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
     // const productionMode = FrameworkContext.isProductionMode;
     const context = FrameworkContext.findForTraget(target);
     let uri: URL = context.uri;
-    //#endregion
+
     if (!storage[SYMBOL.ENDPOINT_META_CONFIG]) storage[SYMBOL.ENDPOINT_META_CONFIG] = {};
     if (!storage[SYMBOL.ENDPOINT_META_CONFIG][uri.href]) storage[SYMBOL.ENDPOINT_META_CONFIG][uri.href] = {};
     const endpoints = storage[SYMBOL.ENDPOINT_META_CONFIG];
@@ -55,7 +98,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
           break;
         }
       }
-      //#endregion
+
       // debugger
       if (currentParam.paramType === 'Path') {
         pathPrams[currentParam.paramName] = param;
