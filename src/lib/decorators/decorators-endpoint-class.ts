@@ -74,7 +74,9 @@ export function ENDPOINT(options?: {
           }
         })
 
-
+        //#region @browser
+        console.groupCollapsed('express routes')
+        //#endregion
         Object.keys(classConfig.methods).forEach(methodName => {
           const methodConfig: Models.Rest.MethodConfig = classConfig.methods[methodName];
           const type: Models.Rest.HttpMethod = methodConfig.type;
@@ -113,6 +115,12 @@ export function ENDPOINT(options?: {
             initMethodBrowser(target, type, methodConfig, expressPath)
           }
         });
+
+
+        //#region @browser
+        console.groupEnd();
+        //#endregion
+
       }
     })(target, path, auth);
     target.prototype[SYMBOL.CLASS_DECORATOR_CONTEXT] = { initFN, target };

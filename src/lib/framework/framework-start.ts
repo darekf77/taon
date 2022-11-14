@@ -62,7 +62,7 @@ export function start(options: StartOptions) {
       // @ts-ignore
       // delete config.dropSchema;
       // @ts-ignore
-      config.logging = ['query', 'schema'];
+      // config.logging = ['query', 'schema'];
       // @ts-ignore
       config.location = (config.database || '').replace('.sqlite', '');
       delete config.database;

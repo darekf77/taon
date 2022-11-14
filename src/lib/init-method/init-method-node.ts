@@ -44,6 +44,7 @@ export function initMethodNodejs(
     }
     //#endregion
 
+
     context.node.app[type.toLowerCase()](expressPath, requestHandler, async (req, res) => {
 
       const args: any[] = [];
@@ -180,7 +181,8 @@ export function initMethodNodejs(
         }
       }
 
-    })
+    });
+
   }
 
   return {
