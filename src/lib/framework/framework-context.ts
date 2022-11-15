@@ -177,7 +177,7 @@ export class FrameworkContext extends FrameworkContextBase {
     if (!this.instances[className]) {
       this.instances[className] = new (f as any)();
     }
-    return this.instances[className];
+    return this.instances[className] as FrameworkContext;
   }
 
   public get entitiesClasses() {

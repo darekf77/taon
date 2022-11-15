@@ -1,17 +1,15 @@
 //#region @websql
 import { _ } from 'tnp-core';
 import { CLASS } from 'typescript-class-helpers';
-import { Helpers  } from 'tnp-core';
 
 export function getTransformFunction(target: Function) {
   if (!target) {
     return;
   }
 
-  Helpers.simulateBrowser = true;
   const className = CLASS.getName(target)
   target = CLASS.getBy(className);
-  Helpers.simulateBrowser = false;
+
   if (!target) {
     return void 0;
   }

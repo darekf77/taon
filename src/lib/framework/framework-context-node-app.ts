@@ -55,10 +55,10 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
   private async initConnection() {
 
     if (this.context.mode === 'backend/frontend' || this.context.mode === 'tests'
-    //#region @websqlOnly
-    ||
-    this.context.mode === 'websql/backend-frontend'
-    //#endregion
+      //#region @websqlOnly
+      ||
+      this.context.mode === 'websql/backend-frontend'
+      //#endregion
     ) {
       try {
         const con = await getConnection();
@@ -129,7 +129,7 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
 
       const instancesOfControllers: BASE_CONTROLLER<any>[] = this.context
         .controllers
-        .filter(f => _.isFunction((f as BASE_CONTROLLER<any>).initExampleDbData)) as any;
+        .filter(f => _.isFunction((f as any as BASE_CONTROLLER<any>).initExampleDbData)) as any;
 
       for (let index = 0; index < instancesOfControllers.length; index++) {
         const controllerInstance = instancesOfControllers[index];
@@ -175,7 +175,7 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
         return `${MorphiHelpers.string(method.toUpperCase() + ':').fillUpTo(10)}${context.uri.href.replace(/\/$/, '')}${routePath}`
       });
       const tinstanceClass = _.first(context.controllersClasses) as any;
-      const tinstance = tinstanceClass && context.getInstance(tinstanceClass as any) as any;
+      // const tinstance = tinstanceClass && context.getInstance(tinstanceClass as any) as any as BASE_CONTROLLER<any>;
       const isWorker = context.workerMode;
 
       const fileNameFor = path.join(
@@ -183,7 +183,7 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
         process.cwd(),
         //#endregion
         `tmp-routes--worker--`
-        + `${path.basename(tinstance.filename).replace(/\.js$/, '')}.json`);
+        + `${path.basename(CLASS.getName(tinstanceClass)).replace(/\.js$/, '')}.json`);
 
       if (isWorker) {
         //#region @websqlOnly
@@ -209,7 +209,7 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
       process.cwd(),
       //#endregion
       `tmp-routes.json`
-      )
+    )
     //#region @websqlOnly
     console.log(`FILE: ${fileName}`)
     console.log(JSON.stringify(routes, null, 4))

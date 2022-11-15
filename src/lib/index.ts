@@ -61,13 +61,6 @@ export namespace Morphi {
     context.FrameworkContext.initNGZone(ngZone);
   }
 
-  //#region @websql
-  export function setIsBackend() {
-    Helpers.setIsBackend();
-  }
-
-  //#endregion
-
   /**
    * Function only for websql mode
    */
@@ -77,7 +70,9 @@ export namespace Morphi {
     return window['onLoadSqlJS'] as Observable<void>;
     //#endregion
     const obs = new Subject<void>();
-    obs.next()
+    setTimeout(()=> {
+      obs.next();
+    })
     return obs.asObservable();
   }
 

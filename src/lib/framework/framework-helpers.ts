@@ -62,7 +62,7 @@ Please check your Morphi.Repository(...) decorators `, entityFN, repoFn)
   if (!!entityFN && !entityFN[SYMBOL.HAS_TABLE_IN_DB]) {
     if (_.isFunction(repoFn)) {
       let repo = context.getInstance(repoFn);
-      return repo;
+      return repo as any;
     }
     console.warn(`Repository function not abailable for ${CLASS.getName(entityFN)}`)
     return;

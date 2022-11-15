@@ -177,11 +177,11 @@ async function start() {
     ],
     //#region @websql
     config: {
-      type: "sqlite",
+      type: 'better-sqlite3',
       database: 'tmp-db1.sqlite',
       synchronize: true,
       dropSchema: true,
-      logging: false
+      logging: true
     }
     //#endregion
   });
