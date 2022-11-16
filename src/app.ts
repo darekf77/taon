@@ -112,8 +112,10 @@ export class MorphiComponent implements AfterViewInit {
 
     await start();
 
-    const res = await Book.ctrl.helloWorld().received;
-    console.log(res.body.text);
+    // console.log((await Book.ctrl.helloWorld().received).body.text);
+
+    const bookObj = (await Book.ctrl.getBook().received);
+    console.log(bookObj);
 
     // const books = await Book.getAll();
     // console.log({
@@ -127,7 +129,7 @@ export class MorphiComponent implements AfterViewInit {
 
   async ngAfterViewInit() {
 
-    console.log('INITED ')
+    // console.log('INITED ')
   }
 }
 
@@ -160,6 +162,14 @@ class BookCtrl extends Firedev.Base.Controller<any> {
       return 'hello world';
     }
   }
+
+  @Firedev.Http.GET()
+  getBook(): Firedev.Response<any> {
+    return async (req, res) => {
+      return Object.assign(new Book(), { name: 'angular bppl' });
+    }
+  }
+
 }
 
 
@@ -181,7 +191,7 @@ async function start() {
       database: 'tmp-db1.sqlite',
       synchronize: true,
       dropSchema: true,
-      logging: true
+      logging: false
     }
     //#endregion
   });

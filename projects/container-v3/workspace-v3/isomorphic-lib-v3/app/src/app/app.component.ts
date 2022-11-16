@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Subject } from 'rxjs';
-import { Helpers } from 'tnp-core/websql'
+import { Helpers } from 'tnp-core';  // <- this is to replace by firedev
 
 @Component({
   selector: 'app-root',

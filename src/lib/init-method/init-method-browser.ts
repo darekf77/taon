@@ -20,6 +20,9 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
   }
   //#endregion
 
+  const context = FrameworkContext.findForTraget(target);
+  const uri: URL = context.uri;
+
   //#region @websqlOnly
 
   const orgMethods = target.prototype[methodConfig.methodName];
@@ -39,17 +42,22 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
         }
         const body = res;
         res = new Ng2RestModels.HttpResponse({
-          body,
+          body: void 0,
           isArray: void 0 as any,
-          method: 'websql' as any,
-          url: ''
-        }, JSON.stringify(body));
+          method: methodConfig.type,
+          url: `${uri.origin}${'' // TODO express path
+            }${methodConfig.path}`
+        }, _.isString(body) ? body : JSON.stringify(body),
+          void 0,
+          void 0,
+          () => body,
+        );
 
         subject.next(res);
         resove(res);
       } catch (error) {
         error = new Ng2RestModels.HttpResponseError('Error during websql request',
-        JSON.stringify(error));
+          JSON.stringify(error));
         subject.error(error);
         reject(error);
       }
@@ -68,8 +76,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
   target.prototype[methodConfig.methodName] = function (...args) {
     // console.log('FRONTEND expressPath', expressPath)
     // const productionMode = FrameworkContext.isProductionMode;
-    const context = FrameworkContext.findForTraget(target);
-    let uri: URL = context.uri;
+
 
     if (!storage[SYMBOL.ENDPOINT_META_CONFIG]) storage[SYMBOL.ENDPOINT_META_CONFIG] = {};
     if (!storage[SYMBOL.ENDPOINT_META_CONFIG][uri.href]) storage[SYMBOL.ENDPOINT_META_CONFIG][uri.href] = {};

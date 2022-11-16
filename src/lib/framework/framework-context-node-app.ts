@@ -15,7 +15,6 @@ import { Http2Server } from 'http2';
 import { _ } from 'tnp-core';
 //#region @websql
 import { path } from 'tnp-core';
-console.log({ path })
 //#endregion
 //#region @backend
 import {
@@ -211,8 +210,8 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
       `tmp-routes.json`
     )
     //#region @websqlOnly
-    console.log(`FILE: ${fileName}`)
-    console.log(JSON.stringify(routes, null, 4))
+    // console.log(`FILE: ${fileName}`)
+    // console.log(JSON.stringify(routes, null, 4))
     //#endregion
     //#region @backend
     fse.writeJSONSync(fileName, routes, {

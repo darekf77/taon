@@ -74,7 +74,7 @@ export function ENDPOINT(options?: {
           }
         })
 
-        //#region @browser
+        //#region @websqlOnly
         console.groupCollapsed('express routes')
         //#endregion
         Object.keys(classConfig.methods).forEach(methodName => {
@@ -117,7 +117,7 @@ export function ENDPOINT(options?: {
         });
 
 
-        //#region @browser
+        //#region @websqlOnly
         console.groupEnd();
         //#endregion
 
