@@ -180,6 +180,7 @@
       "watch",
       "webpack-cli",
       "zone.js",
+      "firedev-typeorm"
     ],
     ignoreDepsPattern: [],
     dependencies: {
