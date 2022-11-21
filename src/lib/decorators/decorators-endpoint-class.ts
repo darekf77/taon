@@ -75,7 +75,7 @@ export function ENDPOINT(options?: {
         })
 
         //#region @websqlOnly
-        console.groupCollapsed('express routes')
+        console.groupCollapsed('express routes');
         //#endregion
         Object.keys(classConfig.methods).forEach(methodName => {
           const methodConfig: Models.Rest.MethodConfig = classConfig.methods[methodName];
@@ -115,8 +115,6 @@ export function ENDPOINT(options?: {
             initMethodBrowser(target, type, methodConfig, expressPath)
           }
         });
-
-
         //#region @websqlOnly
         console.groupEnd();
         //#endregion

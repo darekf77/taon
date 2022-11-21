@@ -47,7 +47,13 @@ export abstract class BaseCRUD<T> {
     const context = FrameworkContext.findForTraget(this);
     this.connection = context.connection;
 
-    if (Helpers.isNode && this.entity && this.connection && this.entity[SYMBOL.HAS_TABLE_IN_DB]) {
+    if (
+      (Helpers.isNode
+        //#region @websqlOnly
+        || Helpers.isWebSQL
+        //#endregion
+      )
+      && this.entity && this.connection && this.entity[SYMBOL.HAS_TABLE_IN_DB]) {
       this.repo = this.connection.getRepository(this.entity as any)
       Helpers.log(`Base CRUD inited for: ${(this.entity as any).name}`);
       // @ts-ignore

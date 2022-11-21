@@ -9,6 +9,7 @@ import { FrameworkContext } from '../framework/framework-context';
 import { Subject } from 'rxjs';
 import { firstValueFrom, Observable } from 'rxjs';
 
+
 export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodConfig: Models.Rest.MethodConfig, expressPath) {
   let storage: any;
   if (Helpers.isBrowser) {
@@ -27,15 +28,31 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
 
   const orgMethods = target.prototype[methodConfig.methodName];
   target.prototype[methodConfig.methodName] = function (...args) {
+
     const subject = new Subject();
     const received = new Promise(async (resove, reject) => {
+      const { request, response } = websqlMocks()
+
+      let res: any;
       try {
-        let res = await Helpers.runSyncOrAsync(orgMethods, args);
+        res = await Helpers.runSyncOrAsync({
+          functionFn: orgMethods,
+          context: this,
+          arrayOfParams: args
+        }, args); // @LAST
         if (typeof res === 'function') {
-          res = await Helpers.runSyncOrAsync(res);
+          res = await Helpers.runSyncOrAsync({
+            functionFn: res,
+            context: this,
+            arrayOfParams: [request, response]
+          });
         }
         if (typeof res === 'function') {
-          res = await Helpers.runSyncOrAsync(res);
+          res = await Helpers.runSyncOrAsync({
+            functionFn: res,
+            context: this,
+            arrayOfParams: [request, response]
+          });
         }
         if (typeof res === 'object' && res.received) {
           res = await res.received;
@@ -56,8 +73,8 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
         subject.next(res);
         resove(res);
       } catch (error) {
-        error = new Ng2RestModels.HttpResponseError('Error during websql request',
-          JSON.stringify(error));
+        // error = new Ng2RestModels.HttpResponseError('Error during websql request',
+        //   JSON.stringify(error));
         subject.error(error);
         reject(error);
       }
@@ -193,3 +210,17 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
     }
   };
 }
+
+
+
+//#region @websqlOnly
+function websqlMocks() {
+  const response: Express.Response = {
+    setHeader() {
+      console.log('Dummy set header', arguments)
+    }
+  };
+  const request: Express.Request = {};
+  return { request, response }
+}
+//#endregion

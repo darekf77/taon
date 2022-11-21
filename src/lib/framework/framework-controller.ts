@@ -17,7 +17,7 @@ const updatedStaticWithCtrl = {};
 
 function getSing(target) {
   const context = FrameworkContext.findForTraget(target);
-  const res = context.getInstance(target);;
+  const res = context.getInstanceBy(target);;
   if (!res) {
     debugger
   }

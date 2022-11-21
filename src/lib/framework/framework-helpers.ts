@@ -61,7 +61,7 @@ Please check your Morphi.Repository(...) decorators `, entityFN, repoFn)
   let repo: Repository<any>;
   if (!!entityFN && !entityFN[SYMBOL.HAS_TABLE_IN_DB]) {
     if (_.isFunction(repoFn)) {
-      let repo = context.getInstance(repoFn);
+      let repo = context.getInstanceBy(repoFn);
       return repo as any;
     }
     console.warn(`Repository function not abailable for ${CLASS.getName(entityFN)}`)
@@ -70,7 +70,7 @@ Please check your Morphi.Repository(...) decorators `, entityFN, repoFn)
 
   if (repoFn) {
     repo = connection.getCustomRepository(repoFn);
-    let existedRepo = context.getInstance(repoFn);
+    let existedRepo = context.getInstanceBy(repoFn);
 
   } else {
     repo = connection.getRepository(entityFN) as any;

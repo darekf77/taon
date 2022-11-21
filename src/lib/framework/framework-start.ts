@@ -6,7 +6,7 @@ import axios from 'axios';
 
 export function start(options: StartOptions) {
 
-  /// autodetecting ngzone in progress
+  //#region autodetecting ngzone in progress in progress
 
   // try {
   //   // @ts-ignore
@@ -27,8 +27,7 @@ export function start(options: StartOptions) {
   // } catch (error) {
   //   console.warn(`error while getting ngzone `, error)
   // }
-
-
+  //#endregion
 
   return new Promise<FrameworkContext>(async (resolve, reject) => {
 

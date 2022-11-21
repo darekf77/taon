@@ -12,7 +12,7 @@ import * as methodOverride from 'method-override';
 import * as fileUpload from 'express-fileupload';
 import { Http2Server } from 'http2';
 //#endregion
-import { _ } from 'tnp-core';
+import { Helpers, _ } from 'tnp-core';
 //#region @websql
 import { path } from 'tnp-core';
 //#endregion
@@ -25,7 +25,7 @@ import {
 
 import { SYMBOL } from '../symbols';
 //#region @websql
-import { createConnections, getConnection } from 'firedev-typeorm';
+import { createConnections, getConnection, DataSource } from 'firedev-typeorm';
 import { Connection } from 'firedev-typeorm';
 //#endregion
 import { CLASS } from 'typescript-class-helpers';
@@ -45,7 +45,7 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
   //#region @backend
   public readonly httpServer: Http2Server;
   //#endregion
-  public readonly connection: Connection;
+  public readonly connection: Connection | DataSource;
   readonly realtime: RealtimeNodejs;
   constructor(private context: FrameworkContext) {
     super();
@@ -59,19 +59,61 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
       this.context.mode === 'websql/backend-frontend'
       //#endregion
     ) {
-      try {
-        const con = await getConnection();
 
-        const connectionExists = !!(con);
-        if (connectionExists) {
-          console.log('Connection exists')
-          await con.close()
+      if (Helpers.isWebSQL) {
+        //#region @websqlOnly
+        Helpers.info('PREPARING WEBSQL TYPEORM CONNECTION')
+        try {
+          // @ts-ignore
+          const connection = new DataSource(this.context.config);
+          await connection.initialize();
+          // @ts-ignore
+          this.connection = connection;
+        } catch (error) {
+
         }
-      } catch (error) { };
+        //#endregion
 
-      const connections = await createConnections([this.context.config] as any);
-      // @ts-ignore
-      this.connection = connections[0];
+        //#region websql with only one connection
+        // //#region @websqlOnly
+        // try {
+        //   if (!FrameworkContextNodeApp.firstConnection) {
+        //     // @ts-ignore
+        //     const con = new DataSource(this.context.config);
+        //     // @ts-ignore
+        //     FrameworkContextNodeApp.firstConnection = con;
+        //     await FrameworkContextNodeApp.firstConnection.initialize();
+        //   }
+        //   // @ts-ignore
+        //   this.connection = FrameworkContextNodeApp.firstConnection
+        // } catch (error) { };
+        // //#endregion
+        //#endregion
+      } else {
+        Helpers.info('PREPARING BACKEND TYPEORM CONNECTION')
+        try {
+          // @ts-ignore
+          const connection = new DataSource(this.context.config);
+          await connection.initialize();
+          // @ts-ignore
+          this.connection = connection;
+        } catch (error) { }
+        //#region old way
+        // try {
+        //   const con = await getConnection();
+
+        //   const connectionExists = !!(con);
+        //   if (connectionExists) {
+        //     console.log('Connection exists')
+        //     await con.close()
+        //   }
+        // } catch (error) { };
+
+        // const connections = await createConnections([this.context.config] as any);
+        // // @ts-ignore
+        // this.connection = connections[0];
+        //#endregion
+      }
     }
 
   }
@@ -127,7 +169,7 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
       this.realtime = new RealtimeNodejs(this.context);
 
       const instancesOfControllers: BASE_CONTROLLER<any>[] = this.context
-        .controllers
+        .allControllersInstances
         .filter(f => _.isFunction((f as any as BASE_CONTROLLER<any>).initExampleDbData)) as any;
 
       for (let index = 0; index < instancesOfControllers.length; index++) {
@@ -145,7 +187,7 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
 
         ((controller: Function) => {
 
-          const instance = this.context.getInstance(controller);
+          const instance = this.context.getInstanceBy(controller);
           const config = CLASS.getConfig(currentCtrl);
 
           config.injections.forEach(inj => {
@@ -185,10 +227,8 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
         + `${path.basename(CLASS.getName(tinstanceClass)).replace(/\.js$/, '')}.json`);
 
       if (isWorker) {
-        //#region @websqlOnly
         console.log(`FILE: ${fileNameFor}`)
         console.log(JSON.stringify(routes, null, 4))
-        //#endregion
         //#region @backend
         fse.writeJSONSync(fileNameFor, routes, {
           spaces: 2,
@@ -209,10 +249,9 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
       //#endregion
       `tmp-routes.json`
     )
-    //#region @websqlOnly
-    // console.log(`FILE: ${fileName}`)
-    // console.log(JSON.stringify(routes, null, 4))
-    //#endregion
+
+    console.log(`FILE: ${fileName}`)
+    console.log(JSON.stringify(routes, null, 4))
     //#region @backend
     fse.writeJSONSync(fileName, routes, {
       spaces: 2,

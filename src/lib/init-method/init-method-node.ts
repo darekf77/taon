@@ -140,7 +140,7 @@ export function initMethodNodejs(
           /**
            * Context for method @GET,@PUT etc.
            */
-          context.getInstance(target),
+          context.getInstanceBy(target),
           /**
            * Params for metjod @GET, @PUT etc.
            */

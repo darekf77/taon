@@ -15,12 +15,9 @@ export class FrameworkContextBrowserApp extends FrameworkContextBase {
   }
 
   init() {
-    if (Helpers.isBrowser
+    if ((Helpers.isBrowser && !Helpers.isWebSQL)
       //#region @backend
       || this.context.onlyForBackendRemoteServerAccess
-      //#endregion
-      //#region @websqlOnly
-      || Helpers.isWebSQL
       //#endregion
     ) {
       const notFound: Function[] = [];

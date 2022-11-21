@@ -11,6 +11,9 @@ import { URL } from 'url';
 //#endregion
 //#endregion
 
+import type { BASE_CONTROLLER } from './framework-controller';
+import { BaseCRUD } from '../crud';
+
 export class FrameworkContext extends FrameworkContextBase {
 
   public static readonly initFunc: { initFN: Function, target: Function }[] = [];
@@ -157,7 +160,7 @@ export class FrameworkContext extends FrameworkContextBase {
     ]
   }
 
-  public get controllers() {
+  public get allControllersInstances(): (object)[] {
     let ctrls: Function[] = this.context.controllers as any;
     //#region @websql
     if (this.context.InitDataPriority) {
@@ -167,17 +170,28 @@ export class FrameworkContext extends FrameworkContextBase {
       ] as any;
     }
     //#endregion
-    return ctrls.map(c => this.getInstance(c as any)).filter(f => !!f);
+    return ctrls.map(c => this.getInstanceBy(c as any)).filter(f => !!f);
+  }
+
+  public get crudControllersInstances(): BASE_CONTROLLER<any>[] {
+    return this.allControllersInstances.filter(c => {
+      return c instanceof BaseCRUD;
+    }).map(c => {
+      return c as BASE_CONTROLLER<any>;
+    });
   }
 
   private instances = {};
 
-  public getInstance(f: Function) {
-    const className = CLASS.getName(f);
+  /**
+   * Get controller instace by name of class function
+   */
+  public getInstanceBy(ctrlClassOrName: Function | string) {
+    const className = _.isString(ctrlClassOrName) ? ctrlClassOrName : CLASS.getName(ctrlClassOrName);
     if (!this.instances[className]) {
-      this.instances[className] = new (f as any)();
+      this.instances[className] = new (ctrlClassOrName as any)();
     }
-    return this.instances[className] as FrameworkContext;
+    return this.instances[className] as (object | BASE_CONTROLLER<any>)
   }
 
   public get entitiesClasses() {

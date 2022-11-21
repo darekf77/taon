@@ -218,7 +218,6 @@ export namespace Morphi {
     export import getConnection = tsorm.getConnection;
     export import Errors = models.Models.Errors;
     export import Connection = tsorm.Connection;
-    export import CreateConnection = tsorm.createConnection;
     export import TableNameFrom = framework.tableNameFrom;
     export import RepositoryFrom = framework.repositoryFrom
 

@@ -7,6 +7,7 @@ import { Morphi as Firedev } from './index';
 import { NgModule, Component, OnInit, AfterViewInit, NgZone } from '@angular/core';
 //#endregion
 
+const LOG_QUERIES = false;
 
 const host1 = `http://localhost:3111`;
 const host2 = `http://localhost:3222`;
@@ -115,9 +116,11 @@ export class MorphiComponent implements AfterViewInit {
     // console.log((await Book.ctrl.helloWorld().received).body.text);
 
     const bookObj = (await Book.ctrl.getBook().received);
-    console.log(bookObj);
+    console.log({ bookObj });
 
-    // const books = await Book.getAll();
+    console.log({ book: bookObj.body.json });
+
+    const books = await Book.getAll();
     // console.log({
     //   books
     // })
@@ -151,8 +154,8 @@ class BookCtrl extends Firedev.Base.Controller<any> {
     await db.save(Book.from('cryptography'));
 
 
-    // const allBooks = await db.find();
-    // console.log('ALL BOOKS', allBooks);
+    const allBooks = await db.find();
+    console.log('ALL BOOKS', allBooks);
   }
   //#endregion
 
@@ -183,7 +186,6 @@ async function start() {
     ],
     entities: [
       Book,
-      // User,
     ],
     //#region @websql
     config: {
@@ -191,80 +193,87 @@ async function start() {
       database: 'tmp-db1.sqlite',
       synchronize: true,
       dropSchema: true,
-      logging: false
+      logging: LOG_QUERIES
     }
     //#endregion
   });
 
-  // console.log(context);
+  console.log('connection 1 ', context1);
+
   // if (Firedev.IsBrowser) {
   //   const c: BookCtrl = _.first(context1.controllers);
   //   const data = (await c.getAll().received).body.json as Book[];
   //   console.log('context 1', data);
   // }
 
-  // const context2 = await Firedev.init({
-  //   host: host2,
-  //   controllers: [
-  //     BookCtrl,
-  //     // UserController,
-  //     // StudentController,
-  //   ],
-  //   entities: [
-  //     // User,
-  //     // Student,
-  //     Book,
-  //   ],
-  //   //#region @websql
-  //   config: { // @ts-ignore
-  //     type: "better-sqlite3",
-  //     database: 'tmp-db2.sqlite',
-  //     synchronize: true,
-  //     dropSchema: true,
-  //     logging: false
-  //   }
-  //   //#endregion
+  //#region context 2
+  const context2 = await Firedev.init({
+    host: host2,
+    controllers: [
+      UserController,
+      StudentController,
+    ],
+    entities: [
+      User,
+      Student,
+
+    ],
+    //#region @websql
+    config: { // @ts-ignore
+      type: "better-sqlite3",
+      database: 'tmp-db2.sqlite',
+      synchronize: true,
+      dropSchema: true,
+      logging: LOG_QUERIES
+    }
+    //#endregion
+  });
+  console.log('connection 2 ', context2);
+
+  //#endregion
+
+  // console.log(context);
+  if (Firedev.IsBrowser) {
+
+
+
+  // const ctrl = _.first(context2.crudControllersInstances);
+  // const data = (await ctrl.getAll().received).body.json as Book[];
+  // console.log('context 2', data);
+
+
+  // let i = 0;
+  // Firedev.Realtime.Browser.listenChangesEntity(Book, 1).subscribe(() => {
+  //   console.log(`realtime update of Book with id=1 (` + i++ + ')')
+  // })
+
+  // let j = 0
+
+  // Firedev.Realtime.Browser.listenChangesEntity(Book, 2, { property: 'name' }).subscribe((d) => {
+  //   console.log('realtime update of Book with id 2 for property "name" (' + j++ + ')', d)
   // });
 
-  // // console.log(context);
-  // if (Firedev.IsBrowser) {
-  //   const c: BookCtrl = _.first(context2.controllers);
-  //   const data = (await c.getAll().received).body.json as Book[];
-  //   console.log('context 2', data);
+  // Firedev.Realtime.Browser.SubscribeEntity<Book>(Book, 2, (value) => {
+  //   console.log('realtime update of Book with id 2 for property "name" (' + j++ + ')')
+  // }, 'name')
 
+  // book.subscribeRealtimeUpdates({
+  //   callback: (b) => {
+  //     console.log('realtime update', b)
+  //   }
+  // })
 
-  //   let i = 0;
-  //   Firedev.Realtime.Browser.listenChangesEntity(Book, 1).subscribe(() => {
-  //     console.log(`realtime update of Book with id=1 (` + i++ + ')')
-  //   })
+  }
 
-  //   let j = 0
-
-  //   Firedev.Realtime.Browser.listenChangesEntity(Book, 2, { property: 'name' }).subscribe((d) => {
-  //     console.log('realtime update of Book with id 2 for property "name" (' + j++ + ')', d)
-  //   });
-
-  //   // Firedev.Realtime.Browser.SubscribeEntity<Book>(Book, 2, (value) => {
-  //   //   console.log('realtime update of Book with id 2 for property "name" (' + j++ + ')')
-  //   // }, 'name')
-
-  //   // book.subscribeRealtimeUpdates({
-  //   //   callback: (b) => {
-  //   //     console.log('realtime update', b)
-  //   //   }
-  //   // })
-
-  // }
-
-  // // console.log('-------------');
-  // // const { BaseCRUD } = await import('./lib/crud');
-  // // console.log(`${BaseCRUD.name}: ${CLASS.getName(BaseCRUD)}`);
-  // // const { BASE_CONTROLLER } = await import('./lib/framework');
-  // // console.log(`${BASE_CONTROLLER.name}: ${CLASS.getName(BASE_CONTROLLER)}`);
-  // // console.log(`${Student.name}: ${CLASS.getName(Student)}`);
-  // // console.log(`${StudentController.name}: ${CLASS.getName(StudentController)}`);
-  // // console.log(`${Book.name}: ${CLASS.getName(Book)}`);
-  // // console.log(`${BookCtrl.name}: ${CLASS.getName(BookCtrl)}`);
+  // console.log('-------------');
+  // const { BaseCRUD } = await import('./lib/crud');
+  // console.log(`${BaseCRUD.name}: ${CLASS.getName(BaseCRUD)}`);
+  // const { BASE_CONTROLLER } = await import('./lib/framework');
+  // console.log(`${BASE_CONTROLLER.name}: ${CLASS.getName(BASE_CONTROLLER)}`);
+  // console.log(`${Student.name}: ${CLASS.getName(Student)}`);
+  // console.log(`${StudentController.name}: ${CLASS.getName(StudentController)}`);
+  // console.log(`${Book.name}: ${CLASS.getName(Book)}`);
+  // console.log(`${BookCtrl.name}: ${CLASS.getName(BookCtrl)}`);
 
   // //#region @websql
   // notifyBookUpdate(Book, 1);
