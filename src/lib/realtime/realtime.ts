@@ -22,7 +22,7 @@ export class RealtimeBase {
   private socketFrontEndRealtime: any; //  Socket; // TODO QUICK_FIX;
   //#region @websql
   private socketNamespaceBE: any; // socketio.Server;
-  private socketNamespaceBERealtime: any: // socketio.Namespace;
+  private socketNamespaceBERealtime: any; // socketio.Namespace;
   //#endregion
   public get socketNamespace() {
     const self = this;
