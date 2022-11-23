@@ -21,8 +21,8 @@ export class RealtimeBase {
   private socketFrontEnd: any; //  Socket; // TODO QUICK_FIX
   private socketFrontEndRealtime: any; //  Socket; // TODO QUICK_FIX;
   //#region @websql
-  private socketNamespaceBE: socketio.Server;
-  private socketNamespaceBERealtime: socketio.Namespace;
+  private socketNamespaceBE: any; // socketio.Server;
+  private socketNamespaceBERealtime: any: // socketio.Namespace;
   //#endregion
   public get socketNamespace() {
     const self = this;
@@ -43,13 +43,13 @@ export class RealtimeBase {
       set BE(v) {
         self.socketNamespaceBE = v;
       },
-      get BE(): socketio.Server {
+      get BE() {
         return self.socketNamespaceBE;
       },
       set BE_REALTIME(v) {
         self.socketNamespaceBERealtime = v;
       },
-      get BE_REALTIME(): socketio.Namespace {
+      get BE_REALTIME() {
         return self.socketNamespaceBERealtime;
       }
       //#endregion
