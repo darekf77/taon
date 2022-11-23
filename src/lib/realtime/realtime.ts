@@ -1,5 +1,5 @@
 import { Socket } from 'socket.io'
-import { Server, Namespace } from 'socket.io'
+import * as socketio from 'socket.io'
 import { FrameworkContext } from '../framework/framework-context';
 
 export class RealtimeBase {
@@ -21,8 +21,8 @@ export class RealtimeBase {
   private socketFrontEnd: any; //  Socket; // TODO QUICK_FIX
   private socketFrontEndRealtime: any; //  Socket; // TODO QUICK_FIX;
   //#region @websql
-  private socketNamespaceBE: Server;
-  private socketNamespaceBERealtime: Namespace;
+  private socketNamespaceBE: socketio.Server;
+  private socketNamespaceBERealtime: socketio.Namespace;
   //#endregion
   public get socketNamespace() {
     const self = this;
@@ -43,13 +43,13 @@ export class RealtimeBase {
       set BE(v) {
         self.socketNamespaceBE = v;
       },
-      get BE() {
+      get BE(): socketio.Server {
         return self.socketNamespaceBE;
       },
       set BE_REALTIME(v) {
         self.socketNamespaceBERealtime = v;
       },
-      get BE_REALTIME() {
+      get BE_REALTIME(): socketio.Namespace {
         return self.socketNamespaceBERealtime;
       }
       //#endregion
