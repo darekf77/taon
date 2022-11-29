@@ -25,5 +25,6 @@
   "license": "UNLICENSED",
   "private": true,
   "workerPlugins": {},
-  "linkedRepos": []
+  "linkedRepos": [],
+  "smartContainerBuildTarget": ""
 }

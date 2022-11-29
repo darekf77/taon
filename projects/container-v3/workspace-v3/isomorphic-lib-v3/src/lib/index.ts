@@ -1,1 +1,1 @@
-export function helloWorldFromIsomorphicLib3() { }
+export * from './my-organization-proj';
