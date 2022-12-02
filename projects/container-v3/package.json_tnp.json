@@ -184,7 +184,6 @@
     ]
   },
   "linkedProjects": [],
-  "smartContainerBuildTarget": "",
   "linkedRepos": [],
   "libReleaseOptions": {
     "noDts": false,
@@ -192,6 +191,7 @@
     "ugly": false,
     "nodts": false
   },
+  "smartContainerBuildTarget": "",
   "smartContainerTarget": "",
   "type": "container",
   "isCoreProject": true,
