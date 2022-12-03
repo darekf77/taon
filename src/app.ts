@@ -1,8 +1,8 @@
 //#region @notForNpm
 import { _ } from 'tnp-core';
-import { CLASS } from 'typescript-class-helpers';
+// import { isE2E } from '@codete-ngrx-quick-start/shared'
 import { Morphi as Firedev } from './index';
-
+// console.log({ isE2E })
 //#region @browser
 import { NgModule, Component, OnInit, AfterViewInit, NgZone } from '@angular/core';
 //#endregion
@@ -237,31 +237,31 @@ async function start() {
 
 
 
-  // const ctrl = _.first(context2.crudControllersInstances);
-  // const data = (await ctrl.getAll().received).body.json as Book[];
-  // console.log('context 2', data);
+    // const ctrl = _.first(context2.crudControllersInstances);
+    // const data = (await ctrl.getAll().received).body.json as Book[];
+    // console.log('context 2', data);
 
 
-  // let i = 0;
-  // Firedev.Realtime.Browser.listenChangesEntity(Book, 1).subscribe(() => {
-  //   console.log(`realtime update of Book with id=1 (` + i++ + ')')
-  // })
+    // let i = 0;
+    // Firedev.Realtime.Browser.listenChangesEntity(Book, 1).subscribe(() => {
+    //   console.log(`realtime update of Book with id=1 (` + i++ + ')')
+    // })
 
-  // let j = 0
+    // let j = 0
 
-  // Firedev.Realtime.Browser.listenChangesEntity(Book, 2, { property: 'name' }).subscribe((d) => {
-  //   console.log('realtime update of Book with id 2 for property "name" (' + j++ + ')', d)
-  // });
+    // Firedev.Realtime.Browser.listenChangesEntity(Book, 2, { property: 'name' }).subscribe((d) => {
+    //   console.log('realtime update of Book with id 2 for property "name" (' + j++ + ')', d)
+    // });
 
-  // Firedev.Realtime.Browser.SubscribeEntity<Book>(Book, 2, (value) => {
-  //   console.log('realtime update of Book with id 2 for property "name" (' + j++ + ')')
-  // }, 'name')
+    // Firedev.Realtime.Browser.SubscribeEntity<Book>(Book, 2, (value) => {
+    //   console.log('realtime update of Book with id 2 for property "name" (' + j++ + ')')
+    // }, 'name')
 
-  // book.subscribeRealtimeUpdates({
-  //   callback: (b) => {
-  //     console.log('realtime update', b)
-  //   }
-  // })
+    // book.subscribeRealtimeUpdates({
+    //   callback: (b) => {
+    //     console.log('realtime update', b)
+    //   }
+    // })
 
   }
 
