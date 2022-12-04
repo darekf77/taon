@@ -19,7 +19,7 @@ function getSing(target) {
   const context = FrameworkContext.findForTraget(target);
   const res = context.getInstanceBy(target);;
   if (!res) {
-    debugger
+    console.warn('[morphi][getSing] can not get instance by target', target);
   }
   return res;
 }
