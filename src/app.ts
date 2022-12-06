@@ -6,6 +6,9 @@ import { Morphi as Firedev } from './index';
 //#region @browser
 import { NgModule, Component, OnInit, AfterViewInit, NgZone } from '@angular/core';
 //#endregion
+import { Log } from 'ng2-logger';
+const log = Log.create('firedev framework app');
+import { isE2E } from '@codete-ngrx-quick-start/shared'
 
 const LOG_QUERIES = false;
 
@@ -198,6 +201,7 @@ async function start() {
     //#endregion
   });
 
+  log.data('heelo')
   console.log('connection 1 ', context1);
 
   // if (Firedev.IsBrowser) {
@@ -228,6 +232,7 @@ async function start() {
     }
     //#endregion
   });
+  console.log({ isE2E });
   console.log('connection 2 ', context2);
 
   //#endregion
