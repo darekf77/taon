@@ -225,7 +225,6 @@
     "node-cli-tester": "~13.1.18",
     "node-localstorage": "2.1.6",
     "open": "7.2.1",
-    "path-browserify": "~1.0.1",
     "prettier": "2.5.1",
     "ps-list": "6.1.0",
     "ps-node": "^0.1.6",

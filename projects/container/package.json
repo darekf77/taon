@@ -16,6 +16,7 @@
       ]
     },
     "linkedProjects": [],
+    "linkedRepos": [],
     "libReleaseOptions": {
       "nodts": false,
       "obscure": false,
@@ -26,13 +27,8 @@
     "license": "UNLICENSED",
     "private": true,
     "workerPlugins": {},
-    "linkedRepos": [],
     "smartContainerBuildTarget": ""
   },
-  "name": "container",
-  "version": "0.0.0",
-  "license": "UNLICENSED",
-  "devDependencies": {},
   "dependencies": {
     "@angular-devkit/build-optimizer": "^0.3.1",
     "@angular-devkit/schematics": "^0.0.42",
@@ -301,5 +297,9 @@
     "webpack-dev-server": "~2.9.3",
     "zone.js": "0.8.20"
   },
-  "private": true
+  "devDependencies": {},
+  "license": "UNLICENSED",
+  "private": true,
+  "name": "container",
+  "version": "0.0.0"
 }

@@ -183,9 +183,7 @@
       "firedev-typeorm"
     ],
     ignoreDepsPattern: [],
-    dependencies: {
-      "path-browserify": "~1.0.1"
-    },
+    dependencies: {},
   },
 
   linkedProjects: [],

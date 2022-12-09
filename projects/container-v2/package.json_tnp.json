@@ -152,6 +152,5 @@
   "type": "container",
   "version": "v2",
   "workerPlugins": {},
-  "smartContainerTarget": "",
   "smartContainerBuildTarget": ""
 }
