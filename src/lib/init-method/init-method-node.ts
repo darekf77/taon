@@ -169,7 +169,7 @@ export function initMethodNodejs(
           const err: Error = error;
           console.log('Code Error', error)
           //#region @backend
-          betterError(err)
+          console.error(err)
           //#endregion
           res.status(400).send(Helpers.JSON.stringify({
             stack: err.stack,

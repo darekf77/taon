@@ -162,7 +162,7 @@ export class MorphiHelpers extends HelpersNg2Rest {
       //#region @websql
       const resp: Models.__Response<T> = response;
       if (!response && response.send === undefined) {
-        console.error('Bad response value for function');
+        console.error('[firedev] Bad response value for function');
         resolve(undefined);
       }
       else if (typeof response === 'function') {
@@ -171,10 +171,8 @@ export class MorphiHelpers extends HelpersNg2Rest {
           const result = await asyncResponse(req, res);
           resolve(result as any);
         } catch (e) {
-          if (e && e.stack) {
-            console.log(e.stack)
-          }
-          console.error('Bad async function call ', e)
+          console.error(e);
+          console.error('[firedev] Bad async function call ')
           reject(e);
         }
       } else if (typeof response === 'object') {
@@ -186,10 +184,11 @@ export class MorphiHelpers extends HelpersNg2Rest {
             resolve(response.send as any)
           }
         } catch (error) {
-          console.error('Bad synchonus function call ', error)
+          console.error(error);
+          console.error('[firedev] Bad synchonus function call ')
           reject(error);
         }
-      } else reject(`Not recognized type of reposne ${response}`);
+      } else reject(`[firedev] Not recognized type of reposne ${response}`);
       //#endregion
     });
     //#endregion
