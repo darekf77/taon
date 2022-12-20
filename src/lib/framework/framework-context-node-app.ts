@@ -52,7 +52,7 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
   }
 
   private async initConnection() {
-
+    // debugger
     if (this.context.mode === 'backend/frontend' || this.context.mode === 'tests'
       //#region @websqlOnly
       ||
@@ -62,15 +62,18 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
 
       if (Helpers.isWebSQL) {
         //#region @websqlOnly
+
         Helpers.info('PREPARING WEBSQL TYPEORM CONNECTION')
+        Helpers.log(this.context.config)
         try {
           // @ts-ignore
           const connection = new DataSource(this.context.config);
-          await connection.initialize();
           // @ts-ignore
           this.connection = connection;
+          await this.connection.initialize();
+          // console.log('this.connection.isInitialized', this.connection.isInitialized)
         } catch (error) {
-
+          Helpers.error(error, false, true)
         }
         //#endregion
 
@@ -90,14 +93,20 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
         // //#endregion
         //#endregion
       } else {
+
         Helpers.info('PREPARING BACKEND TYPEORM CONNECTION')
+        Helpers.log(this.context.config)
         try {
           // @ts-ignore
           const connection = new DataSource(this.context.config);
-          await connection.initialize();
           // @ts-ignore
           this.connection = connection;
-        } catch (error) { }
+          await this.connection.initialize();
+          // console.log('this.connection.isInitialized', this.connection.isInitialized)
+
+        } catch (error) {
+          Helpers.error(error, false, true)
+        }
         //#region old way
         // try {
         //   const con = await getConnection();
@@ -115,7 +124,7 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
         //#endregion
       }
     }
-
+    Helpers.info('PREPARING TYPEORM CONNECTION DONE.')
   }
 
   async init() {

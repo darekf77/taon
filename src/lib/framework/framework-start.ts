@@ -64,8 +64,11 @@ export function start(options: StartOptions) {
       // config.logging = ['query', 'schema'];
       // @ts-ignore
       config.location = (config.database || '').replace('.sqlite', '');
+
       delete config.database;
     }
+    // @ts-ignore
+    // console.log('INITING LOCATION WEBSQL DB ' + config?.location)
     //#endregion
 
 

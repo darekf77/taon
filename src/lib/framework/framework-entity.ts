@@ -103,6 +103,7 @@ export function Entity<T = {}>(options?: {
     // }
 
     if (createTable) {
+      // console.log(`CREATE TABLE FOR`, target);
       TypeormEntity(tableNameFrom(target))(target)
     }
     target[SYMBOL.HAS_TABLE_IN_DB] = createTable;
