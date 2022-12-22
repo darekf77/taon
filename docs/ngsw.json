@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1671659717120,
+  "timestamp": 1671670518980,
   "index": "morphi/index.html",
   "assetGroups": [
     {
@@ -13,7 +13,7 @@
       "urls": [
         "morphi/favicon.ico",
         "morphi/index.html",
-        "morphi/main.8a66867ac315251a.js",
+        "morphi/main.8393cca664d90a12.js",
         "morphi/manifest.webmanifest",
         "morphi/polyfills.060259fe3ebef873.js",
         "morphi/runtime.5b3e6a35bf1c02ae.js",
@@ -28,15 +28,20 @@
       "cacheQueryOptions": {
         "ignoreVary": true
       },
-      "urls": [],
+      "urls": [
+        "morphi/assets/assets-for/morphi/.gitkeep",
+        "morphi/assets/assets-for/morphi/logo-flower.png"
+      ],
       "patterns": []
     }
   ],
   "dataGroups": [],
   "hashTable": {
+    "morphi/assets/assets-for/morphi/.gitkeep": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
+    "morphi/assets/assets-for/morphi/logo-flower.png": "c58946e32643210412a780671d86e6fef37a88ce",
     "morphi/favicon.ico": "22f6a4a3bcaafafb0254e0f2fa4ceb89e505e8b2",
-    "morphi/index.html": "dcf65161cc697a77b9241f937e48de90e9aac23a",
-    "morphi/main.8a66867ac315251a.js": "1b45936a9d718d03403930111945d014742dd0ab",
+    "morphi/index.html": "e3f7db3996868d09f7cc154144c6f36003de63dd",
+    "morphi/main.8393cca664d90a12.js": "f748c7861906395d6130bd68a78629847bece5a9",
     "morphi/manifest.webmanifest": "6ca2e68a41a8df6a6ee9feb4f6962526746d89ba",
     "morphi/polyfills.060259fe3ebef873.js": "41902278f954258cca62454634dd561db11a8211",
     "morphi/runtime.5b3e6a35bf1c02ae.js": "40cfffa4b8ed92f87be11e916107b1d6811b0048",

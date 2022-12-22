@@ -105,6 +105,7 @@ class StudentController extends Firedev.Base.Controller<any>  {
   selector: 'app-morphi',
   template: `
 hello world
+<img src="/src/assets/logo-flower.png" alt="image"><img>
 
   `
 })
