@@ -38,7 +38,9 @@
     ],
     "license": "MIT",
     "private": false,
-    "isCoreProject": true
+    "isCoreProject": true,
+    "smartContainerBuildTarget": "",
+    "linkedRepos": []
   },
   "name": "vscode-ext-v3",
   "displayName": "tnp-vscode-ext",

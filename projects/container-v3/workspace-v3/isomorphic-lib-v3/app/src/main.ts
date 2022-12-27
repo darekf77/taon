@@ -1,9 +1,7 @@
 import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import { Subject } from 'rxjs';
+import { Helpers } from 'tnp-core';  // <- this is to replace by firedev
 
-// @ts-ignore
-window.onLoadSqlJS = new Subject();
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 
@@ -11,5 +9,27 @@ if (environment.production) {
   enableProdMode();
 }
 
-platformBrowserDynamic().bootstrapModule(AppModule)
-  .catch(err => console.error(err));
+async function init() {
+  if (Helpers.isWebSQL) { // @ts-ignore
+    const initSqlJs = require('sql.js');
+    // or if you are in a browser:
+    // const initSqlJs = window.initSqlJs;
+
+    const SQL = await initSqlJs({
+      // Required to load the wasm binary asynchronously. Of course, you can host it wherever you want
+      // You can omit locateFile completely when running in node
+      // @ts-ignore
+      locateFile: file => `https://sql.js.org/dist/${file}`
+    });
+
+    // @ts-ignore
+    window['SQL'] = SQL;
+    console.log('WEBSQL LOADED');
+  } else {
+    console.log('WEBSQL NOT LOADED')
+  }
+  platformBrowserDynamic().bootstrapModule(AppModule)
+    .catch(err => console.error(err));
+}
+
+init();
