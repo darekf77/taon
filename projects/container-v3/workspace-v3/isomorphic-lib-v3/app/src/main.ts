@@ -19,7 +19,13 @@ async function init() {
       // Required to load the wasm binary asynchronously. Of course, you can host it wherever you want
       // You can omit locateFile completely when running in node
       // @ts-ignore
-      locateFile: file => `https://sql.js.org/dist/${file}`
+      locateFile: file => {
+        const basename = '<<<TO_REPLACE_BASENAME>>>'
+        const wasmPath = `${window.location.origin}/${basename}/assets/${file}`;
+        console.log(`Trying to get sql.js wasm from: ${wasmPath}`)
+        return wasmPath;
+        // return `https://sql.js.org/dist/${file}`
+      }
     });
 
     // @ts-ignore
