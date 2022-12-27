@@ -109,8 +109,18 @@ hello world
 
   `
 })
-export class MorphiComponent implements AfterViewInit {
-  loadedSqlJs = Firedev.loadedSqlJs().subscribe(async () => {
+export class MorphiComponent implements AfterViewInit, OnInit {
+
+  constructor(
+    private ngzone: NgZone
+  ) { }
+
+  async ngAfterViewInit() {
+
+    // console.log('INITED ')
+  }
+
+  async ngOnInit() {
     Firedev.initNgZone(this.ngzone);
 
     await start();
@@ -123,18 +133,6 @@ export class MorphiComponent implements AfterViewInit {
     console.log({ book: bookObj.body.json });
 
     const books = await Book.getAll();
-    // console.log({
-    //   books
-    // })
-  });
-
-  constructor(
-    private ngzone: NgZone
-  ) { }
-
-  async ngAfterViewInit() {
-
-    // console.log('INITED ')
   }
 }
 
