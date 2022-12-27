@@ -1,7 +1,7 @@
 {
   "configVersion": 1,
-  "timestamp": 1672122250341,
-  "index": "morphi/index.html",
+  "timestamp": 1672180711316,
+  "index": "/morphi/index.html",
   "assetGroups": [
     {
       "name": "app",
@@ -11,13 +11,13 @@
         "ignoreVary": true
       },
       "urls": [
-        "morphi/favicon.ico",
-        "morphi/index.html",
-        "morphi/main.f1087b696d10e321.js",
-        "morphi/manifest.webmanifest",
-        "morphi/polyfills.060259fe3ebef873.js",
-        "morphi/runtime.5b3e6a35bf1c02ae.js",
-        "morphi/styles.106adc5fefc24396.css"
+        "/morphi/favicon.ico",
+        "/morphi/index.html",
+        "/morphi/main.7b125633e6514f11.js",
+        "/morphi/manifest.webmanifest",
+        "/morphi/polyfills.060259fe3ebef873.js",
+        "/morphi/runtime.5b3e6a35bf1c02ae.js",
+        "/morphi/styles.106adc5fefc24396.css"
       ],
       "patterns": []
     },
@@ -29,21 +29,21 @@
         "ignoreVary": true
       },
       "urls": [
-        "morphi/assets/logo-flower.png"
+        "/morphi/assets/logo-flower.png"
       ],
       "patterns": []
     }
   ],
   "dataGroups": [],
   "hashTable": {
-    "morphi/assets/logo-flower.png": "c58946e32643210412a780671d86e6fef37a88ce",
-    "morphi/favicon.ico": "22f6a4a3bcaafafb0254e0f2fa4ceb89e505e8b2",
-    "morphi/index.html": "aac1a6d7cfc5e1cf99e85ad0e830569859886fa7",
-    "morphi/main.f1087b696d10e321.js": "5f0cff533fc8aba85d6834d2ff9ea4b602ef6f71",
-    "morphi/manifest.webmanifest": "6ca2e68a41a8df6a6ee9feb4f6962526746d89ba",
-    "morphi/polyfills.060259fe3ebef873.js": "41902278f954258cca62454634dd561db11a8211",
-    "morphi/runtime.5b3e6a35bf1c02ae.js": "40cfffa4b8ed92f87be11e916107b1d6811b0048",
-    "morphi/styles.106adc5fefc24396.css": "aa07ccf2b1035fdd3bf6d0314bf46de212c3e2e9"
+    "/morphi/assets/logo-flower.png": "c58946e32643210412a780671d86e6fef37a88ce",
+    "/morphi/favicon.ico": "22f6a4a3bcaafafb0254e0f2fa4ceb89e505e8b2",
+    "/morphi/index.html": "22280b266687a34eac6b5b02ba4e6209f22a98f8",
+    "/morphi/main.7b125633e6514f11.js": "91f098b22c6a2174728fe4414c1b7d9996c57aa6",
+    "/morphi/manifest.webmanifest": "6ca2e68a41a8df6a6ee9feb4f6962526746d89ba",
+    "/morphi/polyfills.060259fe3ebef873.js": "41902278f954258cca62454634dd561db11a8211",
+    "/morphi/runtime.5b3e6a35bf1c02ae.js": "40cfffa4b8ed92f87be11e916107b1d6811b0048",
+    "/morphi/styles.106adc5fefc24396.css": "aa07ccf2b1035fdd3bf6d0314bf46de212c3e2e9"
   },
   "navigationUrls": [
     {
