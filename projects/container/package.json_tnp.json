@@ -7,15 +7,9 @@
     "includeAsDev": [],
     "includeOnly": [],
     "dependencies": {},
-    "linkedFolders": [
-      {
-        "from": "../../morphi/projects/container/workspace",
-        "to": "./workspace"
-      }
-    ]
+    "linkedFolders": []
   },
   "linkedProjects": [],
-  "linkedRepos": [],
   "libReleaseOptions": {
     "nodts": false,
     "obscure": false,
@@ -25,6 +19,5 @@
   "isCoreProject": true,
   "license": "UNLICENSED",
   "private": true,
-  "workerPlugins": {},
-  "smartContainerBuildTarget": ""
+  "workerPlugins": {}
 }
