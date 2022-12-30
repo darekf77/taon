@@ -7,6 +7,7 @@
     ignoreDepsPattern: [],
     includeAsDev: [],
     includeOnly: [],
+
     dependencies: {
       "@angular/animations": '~13.3.0',
       "@angular/cdk": "^13.3.9",
@@ -200,6 +201,8 @@
       // "browserify": "~17.0.0",
       "sql.js": "^1.8.0",
     },
+
+    linkedFolders: [],
   },
 
   linkedProjects: [],

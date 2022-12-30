@@ -103,9 +103,12 @@ class StudentController extends Firedev.Base.Controller<any>  {
 //#region @browser
 @Component({
   selector: 'app-morphi',
+  styleUrls: ['./app.scss'],
   template: `
 hello world
 <img src="/src/assets/logo-flower.png" alt="image"><img>
+
+<div  class="my-pic" > </div>
 
   `
 })

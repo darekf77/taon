@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1672180711316,
+  "timestamp": 1672359120886,
   "index": "/morphi/index.html",
   "assetGroups": [
     {
@@ -13,9 +13,9 @@
       "urls": [
         "/morphi/favicon.ico",
         "/morphi/index.html",
-        "/morphi/main.7b125633e6514f11.js",
+        "/morphi/main.c9c9cdbd43134df3.js",
         "/morphi/manifest.webmanifest",
-        "/morphi/polyfills.060259fe3ebef873.js",
+        "/morphi/polyfills.65bf0cf253bd241c.js",
         "/morphi/runtime.5b3e6a35bf1c02ae.js",
         "/morphi/styles.106adc5fefc24396.css"
       ],
@@ -29,19 +29,39 @@
         "ignoreVary": true
       },
       "urls": [
-        "/morphi/assets/logo-flower.png"
+        "/morphi/assets/assets-for/morphi/cutsmall.jpg",
+        "/morphi/assets/assets-for/morphi/logo-flower.png",
+        "/morphi/assets/icons/icon-128x128.png",
+        "/morphi/assets/icons/icon-144x144.png",
+        "/morphi/assets/icons/icon-152x152.png",
+        "/morphi/assets/icons/icon-192x192.png",
+        "/morphi/assets/icons/icon-384x384.png",
+        "/morphi/assets/icons/icon-512x512.png",
+        "/morphi/assets/icons/icon-72x72.png",
+        "/morphi/assets/icons/icon-96x96.png",
+        "/morphi/assets/sql-wasm.wasm"
       ],
       "patterns": []
     }
   ],
   "dataGroups": [],
   "hashTable": {
-    "/morphi/assets/logo-flower.png": "c58946e32643210412a780671d86e6fef37a88ce",
+    "/morphi/assets/assets-for/morphi/cutsmall.jpg": "2a6fadf1a3d538f123a9c2adbae028ad2c71c924",
+    "/morphi/assets/assets-for/morphi/logo-flower.png": "c58946e32643210412a780671d86e6fef37a88ce",
+    "/morphi/assets/icons/icon-128x128.png": "dae3b6ed49bdaf4327b92531d4b5b4a5d30c7532",
+    "/morphi/assets/icons/icon-144x144.png": "b0bd89982e08f9bd2b642928f5391915b74799a7",
+    "/morphi/assets/icons/icon-152x152.png": "7479a9477815dfd9668d60f8b3b2fba709b91310",
+    "/morphi/assets/icons/icon-192x192.png": "1abd80d431a237a853ce38147d8c63752f10933b",
+    "/morphi/assets/icons/icon-384x384.png": "329749cd6393768d3131ed6304c136b1ca05f2fd",
+    "/morphi/assets/icons/icon-512x512.png": "559d9c4318b45a1f2b10596bbb4c960fe521dbcc",
+    "/morphi/assets/icons/icon-72x72.png": "c457e56089a36952cd67156f9996bc4ce54a5ed9",
+    "/morphi/assets/icons/icon-96x96.png": "3914125a4b445bf111c5627875fc190f560daa41",
+    "/morphi/assets/sql-wasm.wasm": "fcc42ce03c2b5af20e90acc2b75263acc502d736",
     "/morphi/favicon.ico": "22f6a4a3bcaafafb0254e0f2fa4ceb89e505e8b2",
-    "/morphi/index.html": "22280b266687a34eac6b5b02ba4e6209f22a98f8",
-    "/morphi/main.7b125633e6514f11.js": "91f098b22c6a2174728fe4414c1b7d9996c57aa6",
+    "/morphi/index.html": "3c357907f39559378ce6763eae5a89678ada7b44",
+    "/morphi/main.c9c9cdbd43134df3.js": "a77ccb2fc2bbeb22a072d7333af13607e4216a69",
     "/morphi/manifest.webmanifest": "6ca2e68a41a8df6a6ee9feb4f6962526746d89ba",
-    "/morphi/polyfills.060259fe3ebef873.js": "41902278f954258cca62454634dd561db11a8211",
+    "/morphi/polyfills.65bf0cf253bd241c.js": "9111ec110d71719953afbba5d46c9368b0a0df57",
     "/morphi/runtime.5b3e6a35bf1c02ae.js": "40cfffa4b8ed92f87be11e916107b1d6811b0048",
     "/morphi/styles.106adc5fefc24396.css": "aa07ccf2b1035fdd3bf6d0314bf46de212c3e2e9"
   },
