@@ -25,43 +25,46 @@ export class RealtimeBrowserRxjs {
 
   //#region constructor
   constructor(private context: FrameworkContext) {
-    const base = RealtimeBase.by(context);
-    // Helpers.log('INITING SOCKETS')
-    if (!context.disabledRealtime && !Helpers.isWebSQL) {
+    if (!Helpers.isWebSQL) {
+      const base = RealtimeBase.by(context);
+      // Helpers.log('INITING SOCKETS')
+      if (!context.disabledRealtime && !Helpers.isWebSQL) {
 
-      const nspPath = {
-        global: base.pathFor(),
-        realtime: base.pathFor(SYMBOL.REALTIME.NAMESPACE)
-      };
+        const nspPath = {
+          global: base.pathFor(),
+          realtime: base.pathFor(SYMBOL.REALTIME.NAMESPACE)
+        };
 
-      log.i('NAMESPACE GLOBAL ', nspPath.global.href + ` host: ${context.host}`)
-      log.i('NAMESPACE REALTIME', nspPath.realtime.href + ` host: ${context.host}`)
+        log.i('NAMESPACE GLOBAL ', nspPath.global.href + ` host: ${context.host}`)
+        log.i('NAMESPACE REALTIME', nspPath.realtime.href + ` host: ${context.host}`)
 
-      const global = io.connect(nspPath.global.origin, {
-        path: nspPath.global.pathname
-      });
+        const global = io.connect(nspPath.global.origin, {
+          path: nspPath.global.pathname
+        });
 
-      base.socketNamespace.FE = global as any;
+        base.socketNamespace.FE = global as any;
 
-      global.on('connect', () => {
-        log.i(`conented to GLOBAL namespace ${global.nsp} of host: ${context.host}`)
-      });
-      log.i('IT SHOULD CONNECT TO GLOBAL')
+        global.on('connect', () => {
+          log.i(`conented to GLOBAL namespace ${global.nsp} of host: ${context.host}`)
+        });
+        log.i('IT SHOULD CONNECT TO GLOBAL')
 
 
-      const realtime = io.connect(nspPath.realtime.origin, {
-        path: nspPath.realtime.pathname
-      }) as any;
+        const realtime = io.connect(nspPath.realtime.origin, {
+          path: nspPath.realtime.pathname
+        }) as any;
 
-      base.socketNamespace.FE_REALTIME = realtime;
+        base.socketNamespace.FE_REALTIME = realtime;
 
-      realtime.on('connect', () => {
-        log.i(`conented to REALTIME namespace ${realtime.nsp} host: ${context.host}`)
-      });
+        realtime.on('connect', () => {
+          log.i(`conented to REALTIME namespace ${realtime.nsp} host: ${context.host}`)
+        });
 
-      log.i('IT SHOULD CONNECT TO REALTIME')
+        log.i('IT SHOULD CONNECT TO REALTIME')
+      }
+      // Helpers.log('INITING SOCKETS DONE')
     }
-    // Helpers.log('INITING SOCKETS DONE')
+
   }
   //#endregion
 
