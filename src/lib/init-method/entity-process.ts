@@ -100,7 +100,11 @@ export class EntityProcess {
 
   send() {
     if (!_.isObject(this.data)) {
-      this.response.send(this.data)
+      if (_.isNumber(this.data)) {
+        this.response.send(this.data.toString());
+      } else {
+        this.response.send(this.data)
+      }
       return
     }
     if (this.advancedManipulation) {
