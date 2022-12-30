@@ -118,9 +118,11 @@
       "@types/socket.io-client": null,
       "socket.io": "~2.4.1",
       "sqlite3": null
-    }
+    },
+    "linkedFolders": []
   },
   "linkedProjects": [],
+  "linkedRepos": [],
   "libReleaseOptions": {
     "noDts": false,
     "obscure": false,
@@ -132,5 +134,6 @@
   "private": true,
   "type": "container",
   "version": "v2",
-  "workerPlugins": {}
+  "workerPlugins": {},
+  "smartContainerBuildTarget": ""
 }

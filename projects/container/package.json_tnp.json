@@ -10,6 +10,7 @@
     "linkedFolders": []
   },
   "linkedProjects": [],
+  "linkedRepos": [],
   "libReleaseOptions": {
     "nodts": false,
     "obscure": false,
@@ -19,5 +20,6 @@
   "isCoreProject": true,
   "license": "UNLICENSED",
   "private": true,
-  "workerPlugins": {}
+  "workerPlugins": {},
+  "smartContainerBuildTarget": ""
 }

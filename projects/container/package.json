@@ -8,12 +8,7 @@
       "includeAsDev": [],
       "includeOnly": [],
       "dependencies": {},
-      "linkedFolders": [
-        {
-          "from": "../../morphi/projects/container/workspace",
-          "to": "./workspace"
-        }
-      ]
+      "linkedFolders": []
     },
     "linkedProjects": [],
     "linkedRepos": [],
