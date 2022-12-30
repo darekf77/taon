@@ -6,9 +6,8 @@ import { Models as Ng2RestModels } from 'ng2-rest';
 import { Helpers } from 'tnp-core';
 import { MorphiHelpers } from '../helpers';
 import { FrameworkContext } from '../framework/framework-context';
-import { Subject } from 'rxjs';
-import { firstValueFrom, Observable } from 'rxjs';
-
+import { from } from 'rxjs';
+// const subjectHandler = Symbol();
 
 export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodConfig: Models.Rest.MethodConfig, expressPath) {
   let storage: any;
@@ -28,8 +27,9 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
 
   const orgMethods = target.prototype[methodConfig.methodName];
   target.prototype[methodConfig.methodName] = function (...args) {
-
-    const subject = new Subject();
+    // if (!target.prototype[methodConfig.methodName][subjectHandler]) {
+    //   target.prototype[methodConfig.methodName][subjectHandler] = new Subject();
+    // }
     const received = new Promise(async (resove, reject) => {
       const { request, response } = websqlMocks()
 
@@ -39,7 +39,8 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
           functionFn: orgMethods,
           context: this,
           arrayOfParams: args
-        }, args); // @LAST
+        }, args);
+        // console.log({ res1: res })
         if (typeof res === 'function') {
           res = await Helpers.runSyncOrAsync({
             functionFn: res,
@@ -47,6 +48,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
             arrayOfParams: [request, response]
           });
         }
+        // console.log({ res2: res })
         if (typeof res === 'function') {
           res = await Helpers.runSyncOrAsync({
             functionFn: res,
@@ -54,9 +56,11 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
             arrayOfParams: [request, response]
           });
         }
+        // console.log({ res3: res })
         if (typeof res === 'object' && res.received) {
           res = await res.received;
         }
+        // console.log({ res4: res })
         const body = res;
         res = new Ng2RestModels.HttpResponse({
           body: void 0,
@@ -70,16 +74,19 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
           () => body,
         );
 
-        subject.next(res);
+        // console.log('NEXT', res);
+        // target.prototype[methodConfig.methodName][subjectHandler].next(res);
+
         resove(res);
       } catch (error) {
         // error = new Ng2RestModels.HttpResponseError('Error during websql request',
         //   JSON.stringify(error));
-        subject.error(error);
+        // target.prototype[methodConfig.methodName][subjectHandler].error(error);
         reject(error);
       }
     });
-    received['observable'] = subject;
+    received['observable'] = from(received);
+    console.log('assign subject')
     return {
       received
     }
@@ -217,7 +224,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
 function websqlMocks() {
   const response: Express.Response = {
     setHeader() {
-      console.log('Dummy set header', arguments)
+      // console.log('Dummy set header', arguments)
     }
   };
   const request: Express.Request = {};

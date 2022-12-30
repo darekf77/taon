@@ -148,7 +148,7 @@ export function initMethodNodejs(
         );
         let result = await Helpers.getResponseValue(response, req, res);
 
-        // console.log(mdc)
+        // console.log('REQUEST RESULT', result)
         await EntityProcess.init(result, res);
 
       } catch (error) {
