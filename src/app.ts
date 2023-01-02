@@ -1,6 +1,6 @@
 //#region @notForNpm
 import { _ } from 'tnp-core';
-import { Morphi as Firedev } from './index';
+import { Firedev } from 'firedev';
 // console.log({ isE2E })
 //#region @browser
 import { NgModule, Component, OnInit, AfterViewInit, NgZone } from '@angular/core';
@@ -113,18 +113,12 @@ hello world
   `
 })
 export class MorphiComponent implements AfterViewInit, OnInit {
-
-  constructor(
-    private ngzone: NgZone
-  ) { }
-
   async ngAfterViewInit() {
 
     // console.log('INITED ')
   }
 
   async ngOnInit() {
-    Firedev.initNgZone(this.ngzone);
 
     await start();
 
@@ -134,8 +128,6 @@ export class MorphiComponent implements AfterViewInit, OnInit {
     console.log({ bookObj });
 
     console.log({ book: bookObj.body.json });
-
-    const books = await Book.getAll();
   }
 }
 

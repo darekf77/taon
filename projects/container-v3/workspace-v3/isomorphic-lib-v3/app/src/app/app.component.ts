@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
+import { Firedev } from 'firedev';  // <- this is to replace by firedev
 
 @Component({
   selector: 'app-root',
@@ -8,5 +9,11 @@ import { Component } from '@angular/core';
 export class AppComponent {
   title = 'app';
 
-  async ngOnInit() {  }
+  constructor(
+    ngzone: NgZone
+  ) {
+    Firedev.initNgZone(ngzone)
+  }
+
+  async ngOnInit() { }
 }
