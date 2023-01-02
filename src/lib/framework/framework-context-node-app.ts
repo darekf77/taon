@@ -152,7 +152,7 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
 
       if (!this.context.testMode) {
         h.listen(this.context.uri.port, () => {
-          console.log(`Server listening on port: ${this.context.uri.port}, hostname: ${this.context.uri.pathname},
+          Helpers.log(`Server listening on port: ${this.context.uri.port}, hostname: ${this.context.uri.pathname},
               env: ${this.app.settings.env}
               `);
         });
@@ -236,8 +236,8 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
         + `${path.basename(CLASS.getName(tinstanceClass)).replace(/\.js$/, '')}.json`);
 
       if (isWorker) {
-        console.log(`FILE: ${fileNameFor}`)
-        console.log(JSON.stringify(routes, null, 4))
+        Helpers.log(`FILE: ${fileNameFor}`)
+        Helpers.log(JSON.stringify(routes, null, 4))
         //#region @backend
         fse.writeJSONSync(fileNameFor, routes, {
           spaces: 2,
@@ -259,8 +259,8 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
       `tmp-routes.json`
     )
 
-    console.log(`FILE: ${fileName}`)
-    console.log(JSON.stringify(routes, null, 4))
+    Helpers.log(`FILE: ${fileName}`)
+    Helpers.log(JSON.stringify(routes, null, 4))
     //#region @backend
     fse.writeJSONSync(fileName, routes, {
       spaces: 2,

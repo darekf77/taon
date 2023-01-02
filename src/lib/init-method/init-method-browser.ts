@@ -86,7 +86,6 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
       }
     });
     received['observable'] = from(received);
-    console.log('assign subject')
     return {
       received
     }
