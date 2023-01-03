@@ -18,14 +18,17 @@
     "libReleaseOptions": {
       "nodts": false,
       "obscure": false,
-      "ugly": false
+      "ugly": false,
+      "includeNodeModules": false
     },
     "scripts": {
       "build": "tnp rimraf dist-app && tnp npm-run webpack --config=webpack.config.build.js",
       "build:aot": "tnp rimraf dist-app && tnp npm-run webpack --config=webpack.config.build.aot.js"
     },
     "license": "UNLICENSED",
-    "private": true
+    "private": true,
+    "smartContainerBuildTarget": "",
+    "linkedRepos": []
   },
   "name": "angular-client",
   "version": "0.0.0",
@@ -36,6 +39,5 @@
   },
   "dependencies": {},
   "devDependencies": {},
-  "private": true,
-  "recreatedFrom": {}
+  "private": true
 }

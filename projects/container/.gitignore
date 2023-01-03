@@ -11,6 +11,8 @@ npm-debug.log
 yarn-error.log
 testem.log
 /typings
+/linked-repos
+
 
 
 # System Files
@@ -24,6 +26,8 @@ Thumbs.db
 /bundle*
 /browser
 /browser*
+/websql
+/websql*
 /module*
 /backup
 /module
@@ -34,9 +38,10 @@ Thumbs.db
 /npm-debug.log*
 /.sass-cache
 /.sourcemaps
-/workspace
 /src-for-stanalone
 /components-for-stanalone
+/tsconfig.backend.dist.json
+/tsconfig.backend.bundle.json
 
 
 

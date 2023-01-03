@@ -15,10 +15,13 @@
     "libReleaseOptions": {
       "nodts": false,
       "obscure": false,
-      "ugly": false
+      "ugly": false,
+      "includeNodeModules": false
     },
     "license": "UNLICENSED",
-    "private": true
+    "private": true,
+    "smartContainerBuildTarget": "",
+    "linkedRepos": []
   },
   "name": "second-angular-lib",
   "version": "0.0.0",
@@ -38,6 +41,5 @@
   "dependencies": {},
   "devDependencies": {},
   "license": "UNLICENSED",
-  "private": true,
-  "recreatedFrom": {}
+  "private": true
 }

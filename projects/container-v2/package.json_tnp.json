@@ -127,7 +127,8 @@
     "noDts": false,
     "obscure": false,
     "ugly": false,
-    "nodts": false
+    "nodts": false,
+    "includeNodeModules": false
   },
   "isCoreProject": true,
   "license": "UNLICENSED",

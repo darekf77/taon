@@ -5,6 +5,7 @@ var path = require('path'),
 // var WebpackOnBuildPlugin = require('on-build-webpack');
 
 var nodeModules = {};
+
 fs.readdirSync('node_modules')
   .filter(function (x) {
     return ['.bin'].indexOf(x) === -1;
@@ -13,43 +14,51 @@ fs.readdirSync('node_modules')
     nodeModules[mod] = 'commonjs ' + mod;
   });
 
-module.exports = {
-  entry: './src/index.ts',
-  target: 'node',
-  output: {
-    path: __dirname + '/bundle',
-    libraryTarget: "commonjs",
-    filename: 'index.js'
-  },
-  resolve: {
-    extensions: ['.ts', '.js']
-  },
-  module: {
+module.exports = (env) => {
+  // console.log({
+  //   env
+  // });
 
-    rules: [
+  var config = {
+    entry: './src/index.ts',
+    target: 'node',
+    output: {
+      path: __dirname + '/' + env.outDir ,
+      libraryTarget: "commonjs",
+      filename: 'index.js'
+    },
+    resolve: {
+      extensions: ['.ts', '.js']
+    },
+    module: {
 
-      {
-        test: /\.ts$/,
-        exclude: path.resolve(__dirname, "node_modules"),
-        loaders: ['ts-loader']
-      },
-      // { test: /\.json$/, loaders: ['json-loader'] }
+      rules: [
+
+        {
+          test: /\.ts$/,
+          exclude: path.resolve(__dirname, "node_modules"),
+          loaders: ['ts-loader']
+        },
+        // { test: /\.json$/, loaders: ['json-loader'] }
+      ]
+    },
+    externals: nodeModules,
+    node: {
+      fs: "empty",
+      // __dirname: false,
+      // __filename: false
+    },
+    plugins: [
+      // new webpack.optimize.UglifyJsPlugin({
+      //   compress: {
+      //     warnings: true
+      //   }
+      // }),
+      // new WebpackOnBuildPlugin(function (stats) {
+      //   // Do whatever you want...
+      // }),
     ]
-  },
-  externals: nodeModules,
-  node: {
-    fs: "empty",
-    // __dirname: false,
-    // __filename: false
-  },
-  plugins: [
-    // new webpack.optimize.UglifyJsPlugin({
-    //   compress: {
-    //     warnings: true
-    //   }
-    // }),
-    // new WebpackOnBuildPlugin(function (stats) {
-    //   // Do whatever you want...
-    // }),
-  ]
+  };
+
+  return config;
 }

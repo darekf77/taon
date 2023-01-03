@@ -17,7 +17,8 @@
     "libReleaseOptions": {
       "nodts": false,
       "obscure": false,
-      "ugly": false
+      "ugly": false,
+      "includeNodeModules": false
     },
     "scripts": {
       "clean": "npm-run ionic-app-scripts clean",
@@ -31,7 +32,9 @@
     "license": "UNLICENSED",
     "private": true,
     "author": "Ionic Framework",
-    "homepage": "http://ionicframework.com/"
+    "homepage": "http://ionicframework.com/",
+    "smartContainerBuildTarget": "",
+    "linkedRepos": []
   },
   "name": "ionic-client",
   "version": "0.0.1",
@@ -49,6 +52,5 @@
   "description": "An Ionic project",
   "dependencies": {},
   "devDependencies": {},
-  "license": "UNLICENSED",
-  "recreatedFrom": {}
+  "license": "UNLICENSED"
 }
