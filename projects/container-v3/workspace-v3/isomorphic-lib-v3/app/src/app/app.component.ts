@@ -1,5 +1,6 @@
 import { Component, NgZone } from '@angular/core';
 import { Firedev } from 'firedev';  // <- this is to replace by firedev
+import { Morphi } from 'morphi';  // <- this is to replace by firedev
 
 @Component({
   selector: 'app-root',
@@ -12,7 +13,8 @@ export class AppComponent {
   constructor(
     ngzone: NgZone
   ) {
-    Firedev.initNgZone(ngzone)
+    Firedev.initNgZone(ngzone);
+    Morphi.initNgZone(ngzone);
   }
 
   async ngOnInit() { }

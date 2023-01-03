@@ -53,5 +53,8 @@ export const SYMBOL = {
   SOCKET_MSG: 'socketmessageng2rest',
   ANGULAR: {
     INPUT_NAMES: Symbol()
+  },
+  ERROR_MESSAGES : {
+    CLASS_NAME_MATCH: `Please check if your "class name" matches  @Controller( className ) or @Entity( className )`
   }
 }

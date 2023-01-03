@@ -1,17 +1,20 @@
 //#region @notForNpm
 import { _ } from 'tnp-core';
-import { Firedev } from 'firedev';
+import { Morphi as Firedev } from './index';
 // console.log({ isE2E })
 //#region @browser
 import { NgModule, Component, OnInit, AfterViewInit, NgZone } from '@angular/core';
 //#endregion
 import { Log } from 'ng2-logger';
+import { CLASS } from 'typescript-class-helpers';
 const log = Log.create('firedev framework app');
 
 const LOG_QUERIES = false;
 
 const host1 = `http://localhost:3111`;
 const host2 = `http://localhost:3222`;
+
+//#region STUDENT entity
 @Firedev.Entity({ className: 'Student' })
 class Student {
   //#region @websql
@@ -30,8 +33,9 @@ class Student {
   public lastName: string
 
 }
+//#endregion
 
-
+//#region USER entity
 @Firedev.Entity({ className: 'User' })
 class User {
   //#region @websql
@@ -48,9 +52,10 @@ class User {
   @Firedev.Orm.Column.Custom('varchar')
   //#endregion
   public lastName: string
-
 }
+//#endregion
 
+//#region BOOK entity
 @Firedev.Entity({ className: 'Book' })
 class Book extends Firedev.Base.Entity<any> {
   static from(name: string) {
@@ -74,9 +79,10 @@ class Book extends Firedev.Base.Entity<any> {
   @Firedev.Orm.Column.Generated()
   //#endregion
   public id: number
-
 }
+//#endregion
 
+//#region UserController
 @Firedev.Controller({ className: 'UserController' })
 class UserController {
   @Firedev.Http.GET()
@@ -86,7 +92,9 @@ class UserController {
     }
   }
 }
+//#endregion
 
+//#region StudentController
 @Firedev.Controller({ className: 'StudentController', entity: Student })
 class StudentController extends Firedev.Base.Controller<any>  {
   @Firedev.Http.GET()
@@ -96,50 +104,9 @@ class StudentController extends Firedev.Base.Controller<any>  {
     }
   }
 }
-
-
-
-
-//#region @browser
-@Component({
-  selector: 'app-morphi',
-  styleUrls: ['./app.scss'],
-  template: `
-hello world
-<img src="/src/assets/logo-flower.png" alt="image"><img>
-
-<div  class="my-pic" > </div>
-
-  `
-})
-export class MorphiComponent implements AfterViewInit, OnInit {
-  async ngAfterViewInit() {
-
-    // console.log('INITED ')
-  }
-
-  async ngOnInit() {
-
-    await start();
-
-    // console.log((await Book.ctrl.helloWorld().received).body.text);
-
-    const bookObj = (await Book.ctrl.getBook().received);
-    console.log({ bookObj });
-
-    console.log({ book: bookObj.body.json });
-  }
-}
-
-@NgModule({
-  imports: [],
-  exports: [MorphiComponent],
-  declarations: [MorphiComponent],
-})
-export class MorphiModule { }
 //#endregion
 
-
+//#region BookController
 @Firedev.Controller({ className: 'BookCtrl', entity: Book })
 class BookCtrl extends Firedev.Base.Controller<any> {
   //#region @websql
@@ -167,13 +134,51 @@ class BookCtrl extends Firedev.Base.Controller<any> {
       return Object.assign(new Book(), { name: 'angular bppl' });
     }
   }
-
 }
+//#endregion
 
+//#region Morphi Component
+//#region @browser
+@Component({
+  selector: 'app-morphi',
+  styleUrls: ['./app.scss'],
+  template: `
+hello world
+<img src="/src/assets/logo-flower.png" alt="image"><img>
 
+<div  class="my-pic" > </div>
+
+  `
+})
+export class MorphiComponent implements AfterViewInit, OnInit {
+  async ngAfterViewInit() { }
+
+  async ngOnInit() {
+    await start();
+    const bookObj = (await Book.ctrl.getBook().received);
+    console.log({ bookObj });
+    console.log({ book: bookObj.body.json });
+  }
+
+  constructor(ngzone: NgZone) { Firedev.initNgZone(ngzone); }
+}
+//#endregion
+//#endregion
+
+//#region Morphi module
+//#region @browser
+@NgModule({
+  imports: [],
+  exports: [MorphiComponent],
+  declarations: [MorphiComponent],
+})
+export class MorphiModule { }
+//#endregion
+//#endregion
 
 async function start() {
 
+  //#region context 1
   const context1 = await Firedev.init({
     host: host1,
     controllers: [
@@ -192,15 +197,8 @@ async function start() {
     }
     //#endregion
   });
-
-  log.data('heelo')
-  console.log('connection 1 ', context1);
-
-  // if (Firedev.IsBrowser) {
-  //   const c: BookCtrl = _.first(context1.controllers);
-  //   const data = (await c.getAll().received).body.json as Book[];
-  //   console.log('context 1', data);
-  // }
+  console.log(context1);
+  //#endregion
 
   //#region context 2
   const context2 = await Firedev.init({
@@ -224,79 +222,55 @@ async function start() {
     }
     //#endregion
   });
-  console.log('connection 2 ', context2);
+  console.log(context2);
 
   //#endregion
 
-  // console.log(context);
+  //#region @websql
   if (Firedev.IsBrowser) {
 
+    const ctrl = _.first(context2.crudControllersInstances);
+    const data = (await ctrl.getAll().received).body.json as Book[];
+    console.log('context 2', data);
 
 
-    // const ctrl = _.first(context2.crudControllersInstances);
-    // const data = (await ctrl.getAll().received).body.json as Book[];
-    // console.log('context 2', data);
+    let i = 0;
+    Firedev.Realtime.Browser.listenChangesEntity(Book, 1).subscribe(() => {
+      console.log(`realtime update of Book with id=1 (` + i++ + ')')
+    })
 
+    let j = 0
 
-    // let i = 0;
-    // Firedev.Realtime.Browser.listenChangesEntity(Book, 1).subscribe(() => {
-    //   console.log(`realtime update of Book with id=1 (` + i++ + ')')
-    // })
-
-    // let j = 0
-
-    // Firedev.Realtime.Browser.listenChangesEntity(Book, 2, { property: 'name' }).subscribe((d) => {
-    //   console.log('realtime update of Book with id 2 for property "name" (' + j++ + ')', d)
-    // });
-
-    // Firedev.Realtime.Browser.SubscribeEntity<Book>(Book, 2, (value) => {
-    //   console.log('realtime update of Book with id 2 for property "name" (' + j++ + ')')
-    // }, 'name')
-
-    // book.subscribeRealtimeUpdates({
-    //   callback: (b) => {
-    //     console.log('realtime update', b)
-    //   }
-    // })
+    Firedev.Realtime.Browser.listenChangesEntity(Book, 2, { property: 'name' }).subscribe((d) => {
+      console.log('realtime update of Book with id 2 for property "name" (' + j++ + ')', d)
+    });
 
   }
 
-  // console.log('-------------');
-  // const { BaseCRUD } = await import('./lib/crud');
-  // console.log(`${BaseCRUD.name}: ${CLASS.getName(BaseCRUD)}`);
-  // const { BASE_CONTROLLER } = await import('./lib/framework');
-  // console.log(`${BASE_CONTROLLER.name}: ${CLASS.getName(BASE_CONTROLLER)}`);
-  // console.log(`${Student.name}: ${CLASS.getName(Student)}`);
-  // console.log(`${StudentController.name}: ${CLASS.getName(StudentController)}`);
-  // console.log(`${Book.name}: ${CLASS.getName(Book)}`);
-  // console.log(`${BookCtrl.name}: ${CLASS.getName(BookCtrl)}`);
 
-  // //#region @websql
-  // notifyBookUpdate(Book, 1);
-  // notifyBookUpdate(Book, 2, 'name');
-
-  // //#endregion
+  notifyBookUpdate(Book, 1);
+  notifyBookUpdate(Book, 2, 'name');
+  //#endregion
 
 }
 
 
 //#region @websql
+function notifyBookUpdate(entityFn, idValue, property?, counter = 0) {
+  if (property) {
+    Firedev.Realtime.Server.TrigggerEntityPropertyChanges(Book, property, idValue);
+  } else {
+    Firedev.Realtime.Server.TrigggerEntityChanges(Book, idValue);
+  }
+  const name = CLASS.getName(entityFn);
 
-// function notifyBookUpdate(entityFn, idValue, property?, counter = 0) {
-//   if (property) {
-//     Firedev.Realtime.Server.TrigggerEntityPropertyChanges(Book, property, idValue);
-//   } else {
-//     Firedev.Realtime.Server.TrigggerEntityChanges(Book, idValue);
-//   }
-//   const name = CLASS.getName(entityFn);
+  console.log(`notify enitty ${name} with id=${idValue}`
+    + ` ${property ? ('and property "' + property + '"') : ''} (` + counter++ + ')');
 
-//   console.log(`notify enitty ${name} with id=${idValue}`
-//     + ` ${property ? ('and property "' + property + '"') : ''} (` + counter++ + ')');
-
-//   setTimeout(() => {
-//     notifyBookUpdate(entityFn, idValue, property, counter)
-//   }, 4444)
-// }
+  setTimeout(() => {
+    notifyBookUpdate(entityFn, idValue, property, counter)
+  }, 4444)
+}
 //#endregion
 
 

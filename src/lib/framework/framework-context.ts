@@ -13,6 +13,7 @@ import { URL } from 'url';
 
 import type { BASE_CONTROLLER } from './framework-controller';
 import { BaseCRUD } from '../crud';
+import { SYMBOL } from '../symbols';
 
 export class FrameworkContext extends FrameworkContextBase {
 
@@ -257,7 +258,6 @@ export class FrameworkContext extends FrameworkContextBase {
     this.prepareEntities();
   }
 
-  anotherReason = `Please check if your "class name" matches  @Controller( className ) or @Entity( className )`;
 
   private prepareEntities() {
     //#region @websql
@@ -270,7 +270,7 @@ export class FrameworkContext extends FrameworkContextBase {
         const className = CLASS.getName(c);
         if (FrameworkContext.contextByClassName[className]) {
           throw new Error(`[Firedev][frameworkcontext]
-${this.anotherReason}
+${SYMBOL.ERROR_MESSAGES.CLASS_NAME_MATCH}
 
           Context already register for class "${className}"
 This is class names based framework....
@@ -298,7 +298,7 @@ class ${className}Extended extends ${className} {
         const className = CLASS.getName(c);
         if (FrameworkContext.contextByClassName[className]) {
           throw new Error(`[Firedev][frameworkcontext]
-${this.anotherReason}
+${SYMBOL.ERROR_MESSAGES.CLASS_NAME_MATCH}
 
           Context already register for class "${className}"
 This is class names based framework....
