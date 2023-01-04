@@ -20,10 +20,10 @@ module.exports = (env) => {
   // });
 
   var config = {
-    entry: './src/index.ts',
+    entry: './tmp-source-' + env.outDir + '/index.ts',
     target: 'node',
     output: {
-      path: __dirname + '/' + env.outDir ,
+      path: __dirname + '/' + env.outDir,
       libraryTarget: "commonjs",
       filename: 'index.js'
     },
@@ -37,7 +37,10 @@ module.exports = (env) => {
         {
           test: /\.ts$/,
           exclude: path.resolve(__dirname, "node_modules"),
-          loaders: ['ts-loader']
+          loader: 'ts-loader',
+          options: {
+            configFileName:  'tsconfig.isomorphic-flat-' + env.outDir + '.json'
+          }
         },
         // { test: /\.json$/, loaders: ['json-loader'] }
       ]
