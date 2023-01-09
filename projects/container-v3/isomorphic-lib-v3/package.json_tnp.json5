@@ -1,0 +1,35 @@
+{
+  "resources": [
+    "README.md"
+  ],
+
+  "overrided": {
+    "ignoreDepsPattern": [],
+    "includeAsDev": [],
+    "includeOnly": [],
+    "dependencies": {},
+    "linkedFolders": []
+  },
+
+  "linkedProjects": [],
+  'smartContainerBuildTarget': '',
+  'linkedRepos': [],
+
+  "libReleaseOptions": {
+    "nodts": false,
+    "obscure": false,
+    "ugly": false,
+    'includeNodeModules': false,
+  },
+
+  'smartContainerTarget': '',
+  "type": "isomorphic-lib",
+  "isCoreProject": true,
+  "useFramework": true,
+  "required": [],
+  "version": "v3",
+  "workerPlugins": {},
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "index.js",
+}

@@ -1,0 +1,81 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Server isomorphic-lib for angular-lib",
+      "program": "${workspaceFolder}/../isomorphic-lib/run.js",
+      "cwd": "${workspaceFolder}/../isomorphic-lib",
+      "args": [
+        "--ENVoverride=%7B%0A%20%20%20%20%22clientProjectName%22%3A%20%22angular-lib%22%0A%7D"
+      ],
+      "runtimeArgs": [
+        "--nolazy",
+        "-r",
+        "ts-node/register",
+        "--experimental-worker"
+      ],
+      "presentation": {
+        "group": "workspaceServers"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Server isomorphic-lib for isomorphic-lib",
+      "program": "${workspaceFolder}/run.js",
+      "args": [
+        "--ENVoverride=%7B%0A%20%20%20%20%22clientProjectName%22%3A%20%22isomorphic-lib%22%0A%7D"
+      ],
+      "runtimeArgs": [
+        "--nolazy",
+        "-r",
+        "ts-node/register",
+        "--experimental-worker"
+      ],
+      "presentation": {
+        "group": "workspaceServers"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Server isomorphic-lib for second-angular-lib",
+      "program": "${workspaceFolder}/../isomorphic-lib/run.js",
+      "cwd": "${workspaceFolder}/../isomorphic-lib",
+      "args": [
+        "--ENVoverride=%7B%0A%20%20%20%20%22clientProjectName%22%3A%20%22second-angular-lib%22%0A%7D"
+      ],
+      "runtimeArgs": [
+        "--nolazy",
+        "-r",
+        "ts-node/register",
+        "--experimental-worker"
+      ],
+      "presentation": {
+        "group": "workspaceServers"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Server isomorphic-lib for second-isomorphic-lib",
+      "program": "${workspaceFolder}/../isomorphic-lib/run.js",
+      "cwd": "${workspaceFolder}/../isomorphic-lib",
+      "args": [
+        "--ENVoverride=%7B%0A%20%20%20%20%22clientProjectName%22%3A%20%22second-isomorphic-lib%22%0A%7D"
+      ],
+      "runtimeArgs": [
+        "--nolazy",
+        "-r",
+        "ts-node/register",
+        "--experimental-worker"
+      ],
+      "presentation": {
+        "group": "workspaceServers"
+      }
+    }
+  ],
+  "compounds": []
+}

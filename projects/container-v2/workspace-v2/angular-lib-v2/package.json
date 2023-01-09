@@ -20,11 +20,14 @@
     "libReleaseOptions": {
       "nodts": false,
       "obscure": false,
-      "ugly": false
+      "ugly": false,
+      "includeNodeModules": false
     },
     "workerPlugins": {},
     "license": "MIT",
-    "private": false
+    "private": false,
+    "smartContainerBuildTarget": "",
+    "linkedRepos": []
   },
   "name": "angular-lib-v2",
   "version": "0.0.0",
@@ -409,6 +412,5 @@
     "watch": "~1.0.2",
     "zone.js": "~0.10.2"
   },
-  "private": false,
-  "recreatedFrom": {}
+  "private": false
 }

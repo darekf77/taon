@@ -1,0 +1,29 @@
+{
+  "extends": "../tsconfig.isomorphic.json",
+  "compilerOptions": {
+    "target": "es2015",
+    "module": "esnext",
+    "rootDir": "./",
+    "baseUrl": "./",
+#    "inlineSourceMap": true,
+    "sourceMap": true,
+    "lib": [
+      "dom",
+      "es2018"
+    ],
+#    "paths": {
+#      {{{ENV.currentProjectTsConfigPathesForBrowser ? ENV.currentProjectTsConfigPathesForBrowser: ''}}}
+#    }
+  },
+  "include": [
+    "./**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "preview",
+    "docs",
+    "dist",
+    "bundle",
+    "tests"
+  ]
+}
