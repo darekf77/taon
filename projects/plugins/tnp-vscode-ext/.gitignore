@@ -56,7 +56,7 @@ Thumbs.db
 /tsconfig.backend.dist.json
 /tsconfig.backend.bundle.json
 
-
+!tsconfig*
 
 
 # =====================
