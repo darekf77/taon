@@ -17,8 +17,7 @@
     "libReleaseOptions": {
       "nodts": false,
       "obscure": false,
-      "ugly": false,
-      "includeNodeModules": false
+      "ugly": false
     },
     "workerPlugins": {},
     "license": "UNLICENSED",
