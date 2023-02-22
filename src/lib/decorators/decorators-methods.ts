@@ -10,7 +10,6 @@ function metaReq(
 
   const config = CLASS.getConfig(target.constructor as any);
   // if (config.vChildren.length > 0) {
-  //   debugger
   // }
   config.methods[propertyKey] = (
     !config.methods[propertyKey] ? new Models.Rest.MethodConfig() : config.methods[propertyKey]
@@ -19,7 +18,6 @@ function metaReq(
 
   methodConfig.methodName = propertyKey;
   methodConfig.type = method;
-  // debugger
   if (!path) {
     let paramsPathConcatedPath = '';
     for (const key in methodConfig.parameters) {

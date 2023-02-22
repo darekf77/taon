@@ -1,12 +1,14 @@
 import { Socket } from 'socket.io'
 import * as socketio from 'socket.io'
 import { FrameworkContext } from '../framework/framework-context';
+import type { BroadcastApiIoMockServer } from './broadcast-api-io-mock-server';
+import type { BroadcastApiIoMockClient } from './broadcast-api-io-mock-client';
 
 export class RealtimeBase {
 
   private static contexts = [];
   private static instances = [];
-  public static by(context: FrameworkContext) {
+  public static by(context: FrameworkContext): RealtimeBase {
     const indexContext = this.contexts.findIndex(c => c === context);
     if (indexContext === -1) {
       this.contexts.push(context);
@@ -18,43 +20,13 @@ export class RealtimeBase {
     }
   }
 
-  private socketFrontEnd: any; //  Socket; // TODO QUICK_FIX
-  private socketFrontEndRealtime: any; //  Socket; // TODO QUICK_FIX;
+  public FE: BroadcastApiIoMockClient; //  Socket; // TODO QUICK_FIX
+  public FE_REALTIME: BroadcastApiIoMockClient; //  Socket; // TODO QUICK_FIX;
   //#region @websql
-  private socketNamespaceBE: any; // socketio.Server;
-  private socketNamespaceBERealtime: any; // socketio.Namespace;
+  public BE: BroadcastApiIoMockServer; // socketio.Server;
+  public BE_REALTIME: BroadcastApiIoMockServer; // socketio.Namespace;
   //#endregion
-  public get socketNamespace() {
-    const self = this;
-    return {
-      set FE(v) {
-        self.socketFrontEnd = v;
-      },
-      get FE() {
-        return self.socketFrontEnd;
-      },
-      set FE_REALTIME(v) {
-        self.socketFrontEndRealtime = v;
-      },
-      get FE_REALTIME() {
-        return self.socketFrontEndRealtime;
-      },
-      //#region @websql
-      set BE(v) {
-        self.socketNamespaceBE = v;
-      },
-      get BE() {
-        return self.socketNamespaceBE;
-      },
-      set BE_REALTIME(v) {
-        self.socketNamespaceBERealtime = v;
-      },
-      get BE_REALTIME() {
-        return self.socketNamespaceBERealtime;
-      }
-      //#endregion
-    }
-  }
+
 
   private constructor(protected context: FrameworkContext) {
 

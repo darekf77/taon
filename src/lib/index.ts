@@ -141,8 +141,11 @@ export namespace Morphi {
   export namespace Realtime {
     export namespace Browser {
 
+      export const listenChangesTableEntity = realtime.RealtimeBrowserRxjs.listenChangesEntityTable;
       export const listenChangesEntity = realtime.RealtimeBrowserRxjs.listenChangesEntity;
       export const listenChangesEntityObj = realtime.RealtimeBrowserRxjs.listenChangesEntityObj
+
+
       // export const stopListenChangesEntity = realtime.RealtimeBrowserRxjs.listenChangesEntity;
       // export const stopListenChangesEntityObj = realtime.RealtimeBrowserRxjs.listenChangesEntityObj
       // export const SubscribeEntity = realtime.RealtimeBrowser.SubscribeEntity;
@@ -155,6 +158,7 @@ export namespace Morphi {
 
     //#region @websql
     export namespace Server {
+      export const TrigggerEntityTableChanges = realtime.RealtimeNodejs.TrigggerEntityTableChanges;
       export const TrigggerEntityChanges = realtime.RealtimeNodejs.TrigggerEntityChanges;
       export const TrigggerEntityPropertyChanges = realtime.RealtimeNodejs.TrigggerEntityPropertyChanges;
     }

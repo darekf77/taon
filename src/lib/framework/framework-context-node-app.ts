@@ -26,6 +26,10 @@ import {
 import { SYMBOL } from '../symbols';
 //#region @websql
 import { createConnections, getConnection, DataSource } from 'firedev-typeorm';
+import type {
+  TransactionRollbackEvent, TransactionCommitEvent, TransactionStartEvent,
+  RecoverEvent, SoftRemoveEvent, RemoveEvent, UpdateEvent, InsertEvent
+} from 'typeorm';
 import { Connection } from 'firedev-typeorm';
 //#endregion
 import { CLASS } from 'typescript-class-helpers';
@@ -42,8 +46,10 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
   //#region @websql
   public readonly app: Application;
   //#endregion
-  //#region @backend
-  public readonly httpServer: Http2Server;
+
+  public readonly httpServer
+    //#region @backend
+    : Http2Server;
   //#endregion
   public readonly connection: Connection | DataSource;
   readonly realtime: RealtimeNodejs;
@@ -52,7 +58,7 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
   }
 
   private async initConnection() {
-    // debugger
+
     if (this.context.mode === 'backend/frontend' || this.context.mode === 'tests'
       //#region @websqlOnly
       ||
@@ -74,6 +80,7 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
           // console.log('this.connection.isInitialized', this.connection.isInitialized)
         } catch (error) {
           Helpers.error(error, false, true)
+
         }
         //#endregion
 
@@ -102,10 +109,11 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
           // @ts-ignore
           this.connection = connection;
           await this.connection.initialize();
-          // console.log('this.connection.isInitialized', this.connection.isInitialized)
+          console.log('this.connection.isInitialized', this.connection.isInitialized)
 
         } catch (error) {
           Helpers.error(error, false, true)
+          process.exit(1)
         }
         //#region old way
         // try {
@@ -124,8 +132,186 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
         //#endregion
       }
     }
-    Helpers.info('PREPARING TYPEORM CONNECTION DONE.')
+    if (!this.connection.isInitialized) {
+      console.log(this.connection);
+      Helpers.error('Something wrong with connection init', false, true)
+    }
+    Helpers.info(`PREPARING TYPEORM CONNECTION DONE. initialize=${this.connection.isInitialized}`)
+
   }
+
+
+  private entitiesTriggers = {};
+
+  initSubscribers() {
+    //#region @websql
+    const entities = this.context.entitiesClasses;
+    for (let index = 0; index < entities.length; index++) {
+      const Entity = entities[index];
+
+      const className = CLASS.getName(Entity);
+      this.entitiesTriggers[className] = _.debounce(() => {
+        this.context.node.realtime.TrigggerEntityTableChanges(Entity);
+      }, 1000);
+
+      const notifyFn = (nameOfEvent, entityData) => {
+        // console.log('trigger table event: ',nameOfEvent)
+        this.entitiesTriggers[className]();
+      };
+
+      //#region sub
+      const sub = {
+        listenTo() {
+          return Entity
+        },
+        /**
+         * Called after entity is loaded.
+         */
+        afterLoad(entity: any) {
+          notifyFn(`AFTER ENTITY LOADED: `, entity)
+        }
+
+        /**
+         * Called before post insertion.
+         */,
+        beforeInsert(event: InsertEvent<any>) {
+          notifyFn(`BEFORE POST INSERTED: `, event.entity)
+        }
+
+        /**
+         * Called after entity insertion.
+         */,
+        afterInsert(event: InsertEvent<any>) {
+          notifyFn(`AFTER ENTITY INSERTED: `, event.entity)
+        }
+
+        /**
+         * Called before entity update.
+         */,
+        beforeUpdate(event: UpdateEvent<any>) {
+          notifyFn(`BEFORE ENTITY UPDATED: `, event.entity)
+        }
+
+        /**
+         * Called after entity update.
+         */,
+        afterUpdate(event: UpdateEvent<any>) {
+          notifyFn(`AFTER ENTITY UPDATED: `, event.entity)
+        }
+
+        /**
+         * Called before entity removal.
+         */,
+        beforeRemove(event: RemoveEvent<any>) {
+          notifyFn(
+            `BEFORE ENTITY WITH ID ${event.entityId} REMOVED: `,
+            event.entity,
+          )
+        }
+
+        /**
+         * Called after entity removal.
+         */,
+        afterRemove(event: RemoveEvent<any>) {
+          notifyFn(
+            `AFTER ENTITY WITH ID ${event.entityId} REMOVED: `,
+            event.entity,
+          )
+        }
+
+        /**
+         * Called before entity removal.
+         */,
+        beforeSoftRemove(event: SoftRemoveEvent<any>) {
+          notifyFn(
+            `BEFORE ENTITY WITH ID ${event.entityId} SOFT REMOVED: `,
+            event.entity,
+          )
+        }
+
+        /**
+         * Called after entity removal.
+         */,
+        afterSoftRemove(event: SoftRemoveEvent<any>) {
+          notifyFn(
+            `AFTER ENTITY WITH ID ${event.entityId} SOFT REMOVED: `,
+            event.entity,
+          )
+        }
+
+        /**
+         * Called before entity recovery.
+         */,
+        beforeRecover(event: RecoverEvent<any>) {
+          notifyFn(
+            `BEFORE ENTITY WITH ID ${event.entityId} RECOVERED: `,
+            event.entity,
+          )
+        }
+
+        /**
+         * Called after entity recovery.
+         */,
+        afterRecover(event: RecoverEvent<any>) {
+          notifyFn(
+            `AFTER ENTITY WITH ID ${event.entityId} RECOVERED: `,
+            event.entity,
+          )
+        }
+
+        /**
+         * Called before transaction start.
+         */,
+        beforeTransactionStart(event: TransactionStartEvent) {
+          notifyFn(`BEFORE TRANSACTION STARTED: `, event)
+        }
+
+        /**
+         * Called after transaction start.
+         */,
+        afterTransactionStart(event: TransactionStartEvent) {
+          notifyFn(`AFTER TRANSACTION STARTED: `, event)
+        }
+
+        /**
+         * Called before transaction commit.
+         */,
+        beforeTransactionCommit(event: TransactionCommitEvent) {
+          notifyFn(`BEFORE TRANSACTION COMMITTED: `, event)
+        }
+
+        /**
+         * Called after transaction commit.
+         */,
+        afterTransactionCommit(event: TransactionCommitEvent) {
+          notifyFn(`AFTER TRANSACTION COMMITTED: `, event)
+        }
+
+        /**
+         * Called before transaction rollback.
+         */,
+        beforeTransactionRollback(event: TransactionRollbackEvent) {
+          notifyFn(`BEFORE TRANSACTION ROLLBACK: `, event)
+        }
+
+        /**
+         * Called after transaction rollback.
+         */,
+        afterTransactionRollback(event: TransactionRollbackEvent) {
+          notifyFn(`AFTER TRANSACTION ROLLBACK: `, event)
+        }
+      };
+      //#endregion
+
+      // @ts-ignore
+      this.context.connection.subscribers.push(sub);
+
+
+    }
+    //#endregion
+  }
+
+
 
   async init() {
 
@@ -160,6 +346,7 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
       //#endregion
 
       await this.initConnection();
+      await this.initSubscribers();
       this.initDecoratorsFunctions();
 
       const { contexts } = (await import('./framework-context')).FrameworkContext;
@@ -182,9 +369,13 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
         .filter(f => _.isFunction((f as any as BASE_CONTROLLER<any>).initExampleDbData)) as any;
 
       for (let index = 0; index < instancesOfControllers.length; index++) {
-        const controllerInstance = instancesOfControllers[index];
+        const controllerInstance = instancesOfControllers[index]
+
+        // preserve data but dont add any new
         await controllerInstance.initExampleDbData(this.context.workerMode);
       }
+
+
     }
   }
 

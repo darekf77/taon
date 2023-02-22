@@ -4,7 +4,12 @@ import { Subscriber } from "rxjs";
 import { Helpers } from 'tnp-core';
 import { FrameworkContext } from "../framework/framework-context";
 import { SYMBOL } from "../symbols";
+import type { BroadcastApiIoMockClient } from './broadcast-api-io-mock-client';
+// import type { BroadcastApiIoMockServer } from './broadcast-api-io-mock-server';
 import { RealtimeBase } from "./realtime";
+//#region @backend
+import { URL } from 'url';
+//#endregion
 
 const log = Log.create('REALTIME SUBS MANAGER',
   Level.__NOTHING
@@ -15,12 +20,12 @@ export type SubscribtionRealtime = {
   customEvent: string;
   roomName: string;
   property: string;
-  subPath: string;
 }
 export class RealtimeSubsManager {
 
   private static idFrm(options: SubscribtionRealtime) {
-    return `${options.context.host}|${options.roomName}|${options.subPath}|${options.property}|${options.customEvent}`;
+    const url = new URL(options.context.host);
+    return `${url.origin}|${options.roomName}|${options.property}|${options.customEvent}`;
   }
   private static roomSubs = {};
   public static from(options: SubscribtionRealtime) {
@@ -36,7 +41,8 @@ export class RealtimeSubsManager {
 
   private observers: Subscriber<any>[] = []
 
-  startListenIfNotStarted(realtime: any) {
+  startListenIfNotStarted(realtime: BroadcastApiIoMockClient) {
+
     if (this.options.context.disabledRealtime) {
       console.warn(`[Firedev][startListenIfNotStarted] socket are disabled`)
       return;
@@ -49,20 +55,24 @@ export class RealtimeSubsManager {
 
     if (!this.isListening) {
 
-      log.i('subscribe to ', this.options)
+      log.i(`subscribe to ${this.options?.roomName}`, this.options)
       this.isListening = true;
 
-      if (this.options.customEvent) {
-        realtime.emit(SYMBOL.REALTIME.ROOM.SUBSCRIBE.CUSTOM, this.options.roomName);
+      if (this.options.customEvent) { // this means: send to current client custom event notification
+        realtime.emit(SYMBOL.REALTIME.ROOM_NAME.SUBSCRIBE.CUSTOM, this.options.roomName);
       } else {
         if (_.isString(this.options.property)) {
-          realtime.emit(SYMBOL.REALTIME.ROOM.SUBSCRIBE.ENTITY_PROPERTY_UPDATE_EVENTS, this.options.roomName);
+           // this means: send to current client entity property events updates
+          realtime.emit(SYMBOL.REALTIME.ROOM_NAME.SUBSCRIBE.ENTITY_PROPERTY_UPDATE_EVENTS, this.options.roomName);
         } else {
-          realtime.emit(SYMBOL.REALTIME.ROOM.SUBSCRIBE.ENTITY_UPDATE_EVENTS, this.options.roomName);
+           // this means: send to current client entity update events
+          realtime.emit(SYMBOL.REALTIME.ROOM_NAME.SUBSCRIBE.ENTITY_UPDATE_EVENTS, this.options.roomName);
         }
       }
 
-      realtime.on(this.options.subPath, (data) => {
+      // subPath -> SYMBOL - (customevnet|entityupdatebyid){..}{..}
+      realtime.on(this.options.roomName, (data) => {
+        log.data('realtime update!!!!!')
         this.update(data);
       });
     }
@@ -78,15 +88,15 @@ export class RealtimeSubsManager {
       this.isListening = false;
       const { context, customEvent, roomName, property } = this.options;
       const base = RealtimeBase.by(context);
-      const realtime = base.socketNamespace.FE_REALTIME;
+      const realtime = base.FE_REALTIME;
 
       if (customEvent) {
-        realtime.emit(SYMBOL.REALTIME.ROOM.UNSUBSCRIBE.CUSTOM, roomName)
+        realtime.emit(SYMBOL.REALTIME.ROOM_NAME.UNSUBSCRIBE.CUSTOM, roomName)
       } else {
         if (_.isString(property)) {
-          realtime.emit(SYMBOL.REALTIME.ROOM.UNSUBSCRIBE.ENTITY_PROPERTY_UPDATE_EVENTS, roomName)
+          realtime.emit(SYMBOL.REALTIME.ROOM_NAME.UNSUBSCRIBE.ENTITY_PROPERTY_UPDATE_EVENTS, roomName)
         } else {
-          realtime.emit(SYMBOL.REALTIME.ROOM.UNSUBSCRIBE.ENTITY_UPDATE_EVENTS, roomName)
+          realtime.emit(SYMBOL.REALTIME.ROOM_NAME.UNSUBSCRIBE.ENTITY_UPDATE_EVENTS, roomName)
         }
       }
     }

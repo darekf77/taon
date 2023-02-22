@@ -188,7 +188,6 @@
       "better-sqlite3": "7.6.2",
 
       "express-session": "1.17.3",
-      'isomorphic-region-loader': '1.0.2',
 
       // "on-build-webpack": "0.1.0",
       // "path-browserify": "~1.0.1",

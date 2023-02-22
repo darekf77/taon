@@ -217,7 +217,7 @@ export class FrameworkContext extends FrameworkContextBase {
   }
 
   public get config() {
-    return this.context.config;
+    return this.context.config as IConnectionOptions;
   }
 
   get onlyForBackendRemoteServerAccess() {
@@ -253,7 +253,7 @@ export class FrameworkContext extends FrameworkContextBase {
       this.disabledRealtime = true;
     }
     //#region @websql
-    validateConfigAndAssignEntites(context.config, this.mode, this.entitiesClasses);
+    validateConfigAndAssignEntites(context.config as any, this.mode, this.entitiesClasses);
     //#endregion
     this.prepareEntities();
   }

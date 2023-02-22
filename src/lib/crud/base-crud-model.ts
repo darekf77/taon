@@ -44,7 +44,6 @@ export abstract class BaseCRUD<T> {
 
   private init() {
     //#region @websql
-    // debugger
     const context = FrameworkContext.findForTraget(this);
     this.connection = context.connection;
 

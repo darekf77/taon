@@ -1,5 +1,5 @@
 import { _ } from 'tnp-core';
-import { StartOptions } from './framework-models';
+import { IConnectionOptions, StartOptions } from './framework-models';
 import { FrameworkContext } from './framework-context';
 import { Helpers } from 'tnp-core';
 import axios from 'axios';
@@ -58,10 +58,7 @@ export function start(options: StartOptions) {
       config.type = 'sqljs';
       // @ts-ignore
       config.autoSave = true;
-      // @ts-ignore
-      // delete config.dropSchema;
-      // @ts-ignore
-      // config.logging = ['query', 'schema'];
+
       // @ts-ignore
       config.location = (config.database || '').replace('.sqlite', '');
 
@@ -81,6 +78,16 @@ export function start(options: StartOptions) {
         axios.defaults.withCredentials = true;
       }
     }
+
+    //#region @websql
+
+    if(config) {
+      const c = config as any as IConnectionOptions;
+      c.dropSchema = true;
+      c.synchronize = true;
+    }
+    //#endregion
+
     const context = new FrameworkContext({
       host,
       controllers,

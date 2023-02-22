@@ -93,7 +93,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
   return;
   //#endregion
 
-  // UNCOMMENT THIS TO SEE FRONTEND PATHES
+  // FRONTEND PATHES
   // console.log(`FRONTEND ${target.name} method on ${expressPath}`)
 
   target.prototype[methodConfig.methodName] = function (...args) {
@@ -129,7 +129,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
         }
       }
 
-      // debugger
+
       if (currentParam.paramType === 'Path') {
         pathPrams[currentParam.paramName] = param;
       }
@@ -188,7 +188,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
         }
       }
     });
-    // debugger;
+
     if (typeof item === 'object') {
       let circuralFromItem = []
       item = MorphiHelpers.JSON.parse(MorphiHelpers.JSON.stringify(item, void 0, void 0, circs => {

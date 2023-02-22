@@ -5,30 +5,16 @@ export const SYMBOL = {
   MDC_KEY: 'modeldataconfig',
   REALTIME: {
     NAMESPACE: 'firedevrealtime',
-    ROOM: {
-      SUBSCRIBE: {
-        CUSTOM: 'subscribeCustomRoomEvent',
-        ENTITY_UPDATE_EVENTS: 'subscribeEntityEvents',
-        ENTITY_PROPERTY_UPDATE_EVENTS: 'subscribeEntityPropertyEvents',
-      },
-      UNSUBSCRIBE: {
-        CUSTOM: 'unsubscribeCustomRoomEvent',
-        ENTITY_UPDATE_EVENTS: 'unsubscribeEntityEvents',
-        ENTITY_PROPERTY_UPDATE_EVENTS: 'unsubscribeEntityPropertyEvents',
-      }
+    TABLE_CHANGE(tableName: string) {
+      return `listentablename${tableName}`;
     },
-    EVENT: {
-      CUSTOM(customEvent: string) {
-        return `customevnet${customEvent}`;
-      },
-      ENTITY_UPDATE_BY_ID(className: string, entityId: number | string) {
-        return `entityupdatebyid${_.camelCase(className)}${entityId}`.toLowerCase();
-      },
-      ENTITY_PROPTERY_UPDATE_BY_ID(className: string, property: string, entityId: number | string) {
-        return `entityupdatebyid${_.camelCase(className)}${_.camelCase(property)}${entityId}`.toLowerCase();
-      },
-    },
-    ROOM_NAME: {
+    /**
+    * for backendSocket.in(ROOM_NAME).emit(EVENT)
+    *
+    * Room names are uniqe..
+    * here I am limiting number of event for clients.
+    */
+    ROOM_NAME: { // it identifys group of client to notify
       CUSTOM(customEvent: string) {
         return `roomcustomevnet${customEvent}`;
       },
@@ -37,6 +23,17 @@ export const SYMBOL = {
       },
       UPDATE_ENTITY_PROPERTY(className: string, property: string, entityId: number | string) {
         return `room${_.camelCase(className)}${_.camelCase(property)}${entityId}`.toLowerCase();
+      },
+
+      SUBSCRIBE: {
+        CUSTOM: 'roomSubscribeCustomRoomEvent',
+        ENTITY_UPDATE_EVENTS: 'roomSubscribeEntityEvents',
+        ENTITY_PROPERTY_UPDATE_EVENTS: 'roomSubscribeEntityPropertyEvents',
+      },
+      UNSUBSCRIBE: {
+        CUSTOM: 'roomUnsubscribeCustomRoomEvent',
+        ENTITY_UPDATE_EVENTS: 'roomUnsubscribeEntityEvents',
+        ENTITY_PROPERTY_UPDATE_EVENTS: 'roomUnsubscribeEntityPropertyEvents',
       }
     }
   },
@@ -54,7 +51,7 @@ export const SYMBOL = {
   ANGULAR: {
     INPUT_NAMES: Symbol()
   },
-  ERROR_MESSAGES : {
+  ERROR_MESSAGES: {
     CLASS_NAME_MATCH: `Please check if your "class name" matches  @Controller( className ) or @Entity( className )`
   }
 }

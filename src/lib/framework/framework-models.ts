@@ -5,12 +5,14 @@ import { ConfigModels } from 'tnp-config';
 
 export interface IConnectionOptions {
   database: string;
-  type: ConfigModels.DatabaseType;
+  type?: ConfigModels.DatabaseType;
   synchronize: boolean;
   dropSchema: boolean;
   logging: boolean;
 }
 
+
+export type IConnectionOptionInit = Pick<IConnectionOptions, 'database' | 'logging' | 'type'>;
 export type ISession = {
   /**
      * frontend host only needed when we are using
@@ -69,7 +71,7 @@ export interface StartOptions {
 
   //#region @websql
   mode?: FrameworkMode;
-  config?: IConnectionOptions;
+  config?: IConnectionOptionInit;
   middlewares?: MiddlewareType[];
   InitDataPrioritypublicAssets?: { path: string; location: string }[];
   InitDataPriority?: BASE_CONTROLLER<any>[] | Function[];

@@ -107,7 +107,7 @@ export function Controller(options?: {
     // }
 
 
-    // debugger
+    //
     if (autoinit) {
       // console.log(`AUTOINTI!!!!! Options for ${target.name}, partnt ${target['__proto__'].name}`, options)
       __ENDPOINT(target)(target)

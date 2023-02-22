@@ -65,11 +65,11 @@ export class DbCrud<T> {
         } as any, {
           [key]: toSet
         } as any);
-//         await this.repo.query(
-//           `UPDATE '${tableName}' as ${table}
-// SET ${key}=${toSet}
-// WHERE ${table}.id='${id}'
-// `);
+        //         await this.repo.query(
+        //           `UPDATE '${tableName}' as ${table}
+        // SET ${key}=${toSet}
+        // WHERE ${table}.id='${id}'
+        // `);
       }
     }
     // console.log('update ok!')
@@ -92,8 +92,10 @@ export class DbCrud<T> {
 
   async deleteById(id: number | string) {
     const deletedEntity = await CrudHelpers.getModel(id, this.repo);
+    const idCopy = deletedEntity.id;
     await this.repo.remove(deletedEntity);
     CrudHelpers.prepareData(deletedEntity, id);
+    deletedEntity.id = idCopy;
     return { model: deletedEntity };
   }
 
@@ -101,7 +103,8 @@ export class DbCrud<T> {
     const models = [];
     for (let index = 0; index < ids.length; index++) {
       const id = ids[index];
-      await this.deleteById(id);
+      const { model } = await this.deleteById(id);
+      models.push(model);
     }
     return { models };
   }

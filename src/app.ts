@@ -7,6 +7,7 @@ import { NgModule, Component, OnInit, AfterViewInit, NgZone } from '@angular/cor
 //#endregion
 import { Log } from 'ng2-logger';
 import { CLASS } from 'typescript-class-helpers';
+import { IsomorphicBroadCastChannel } from './lib/realtime/broadcast-channel-dummy';
 const log = Log.create('firedev framework app');
 
 const LOG_QUERIES = false;
@@ -155,9 +156,9 @@ export class MorphiComponent implements AfterViewInit, OnInit {
 
   async ngOnInit() {
     await start();
-    const bookObj = (await Book.ctrl.getBook().received);
-    console.log({ bookObj });
-    console.log({ book: bookObj.body.json });
+    // const bookObj = (await Book.ctrl.getBook().received);
+    // console.log({ bookObj });
+    // console.log({ book: bookObj.body.json });
   }
 
   constructor(ngzone: NgZone) { Firedev.initNgZone(ngzone); }
@@ -178,80 +179,102 @@ export class MorphiModule { }
 
 async function start() {
 
-  //#region context 1
-  const context1 = await Firedev.init({
-    host: host1,
-    controllers: [
-      BookCtrl,
-    ],
-    entities: [
-      Book,
-    ],
-    //#region @websql
-    config: {
-      type: 'better-sqlite3',
-      database: 'tmp-db1.sqlite',
-      synchronize: true,
-      dropSchema: true,
-      logging: LOG_QUERIES
-    }
-    //#endregion
-  });
-  console.log(context1);
-  //#endregion
+  // //#region context 1
+  // const context1 = await Firedev.init({
+  //   host: host1,
+  //   controllers: [
+  //     BookCtrl,
+  //   ],
+  //   entities: [
+  //     Book,
+  //   ],
+  //   //#region @websql
+  //   config: {
+  //     type: 'better-sqlite3',
+  //     database: 'tmp-db1.sqlite',
+  //     synchronize: true,
+  //     dropSchema: true,
+  //     logging: LOG_QUERIES
+  //   }
+  //   //#endregion
+  // });
+  // console.log(context1);
+  // //#endregion
 
-  //#region context 2
-  const context2 = await Firedev.init({
-    host: host2,
-    controllers: [
-      UserController,
-      StudentController,
-    ],
-    entities: [
-      User,
-      Student,
+  // //#region context 2
+  // const context2 = await Firedev.init({
+  //   host: host2,
+  //   controllers: [
+  //     UserController,
+  //     StudentController,
+  //   ],
+  //   entities: [
+  //     User,
+  //     Student,
 
-    ],
-    //#region @websql
-    config: { // @ts-ignore
-      type: "better-sqlite3",
-      database: 'tmp-db2.sqlite',
-      synchronize: true,
-      dropSchema: true,
-      logging: LOG_QUERIES
-    }
-    //#endregion
-  });
-  console.log(context2);
+  //   ],
+  //   //#region @websql
+  //   config: { // @ts-ignore
+  //     type: "better-sqlite3",
+  //     database: 'tmp-db2.sqlite',
+  //     synchronize: true,
+  //     dropSchema: true,
+  //     logging: LOG_QUERIES
+  //   }
+  //   //#endregion
+  // });
+  // console.log(context2);
 
-  //#endregion
+  // //#endregion
 
-  //#region @websql
-  if (Firedev.IsBrowser) {
+  // //#region @websql
+  // if (Firedev.IsBrowser) {
 
-    const ctrl = _.first(context2.crudControllersInstances);
-    const data = (await ctrl.getAll().received).body.json as Book[];
-    console.log('context 2', data);
+  //   const ctrl = _.first(context2.crudControllersInstances);
+  //   const data = (await ctrl.getAll().received).body.json as Book[];
+  //   console.log('context 2', data);
 
 
-    let i = 0;
-    Firedev.Realtime.Browser.listenChangesEntity(Book, 1).subscribe(() => {
-      console.log(`realtime update of Book with id=1 (` + i++ + ')')
-    })
+  //   let i = 0;
+  //   Firedev.Realtime.Browser.listenChangesEntity(Book, 1).subscribe(() => {
+  //     console.log(`realtime update of Book with id=1 (` + i++ + ')')
+  //   })
 
-    let j = 0
+  //   let j = 0
 
-    Firedev.Realtime.Browser.listenChangesEntity(Book, 2, { property: 'name' }).subscribe((d) => {
-      console.log('realtime update of Book with id 2 for property "name" (' + j++ + ')', d)
-    });
+  //   Firedev.Realtime.Browser.listenChangesEntity(Book, 2, { property: 'name' }).subscribe((d) => {
+  //     console.log('realtime update of Book with id 2 for property "name" (' + j++ + ')', d)
+  //   });
 
+  // }
+
+
+  // // notifyBookUpdate(Book, 1);
+  // // notifyBookUpdate(Book, 2, 'name');
+  // //#endregion
+
+  const b1 = IsomorphicBroadCastChannel.for('b1', 'http://localhost:4201/test');
+  b1.onmessage = (a) => {
+    console.log(`Message from b1`, a)
+  }
+  const b2 = IsomorphicBroadCastChannel.for('b1', 'http://localhost:4200/test');
+  b2.onmessage = (a) => {
+    console.log(`Message from b2`, a)
   }
 
+  IsomorphicBroadCastChannel.for('b1', 'http://localhost:4201/test').postMessage('raw from b1')
+  IsomorphicBroadCastChannel.for('b3', 'http://localhost:4201/test').postMessage('raw from b3')
 
-  notifyBookUpdate(Book, 1);
-  notifyBookUpdate(Book, 2, 'name');
-  //#endregion
+  b1.postMessage('helllo b1')
 
+  console.log({
+    hosts: IsomorphicBroadCastChannel.hosts
+  })
+  // b1.postMessage('helllo b1 1')
+  // b1.postMessage('helllo b1 2')
+  // b2.postMessage('helllo b2')
+  // b2.postMessage('helllo b2 1')
+  // b2.postMessage('helllo b2 2')
 }
 
 
