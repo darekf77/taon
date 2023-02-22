@@ -167,8 +167,8 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
         /**
          * Called after entity is loaded.
          */
-        afterLoad(entity: any) {
-          notifyFn(`AFTER ENTITY LOADED: `, entity)
+        afterLoad(entity: any) { // TOOD this triggers too much
+          // notifyFn(`AFTER ENTITY LOADED: `, entity)
         }
 
         /**

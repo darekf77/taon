@@ -15,7 +15,7 @@ import { mockIoServer } from './broadcast-api-io-mock-server';
 
 //#region consts
 const log = Log.create('RealtimeNodejs',
-  Level.__NOTHING
+  // Level.__NOTHING
 );
 
 const SOCKET_EVENT_DEBOUNCE = 500;
@@ -77,6 +77,11 @@ export class RealtimeNodejs {
       ioRealtimeNsp.on('connection', (backendSocketForClient) => {
         log.i(`client conected to namespace "${backendSocketForClient.nsp.name}",  host: ${context.host}`)
 
+        backendSocketForClient.on(SYMBOL.REALTIME.ROOM_NAME.SUBSCRIBE.CUSTOM, roomName => {
+          log.i(`Joining room ${roomName} in namespace  REALTIME` + ` host: ${context.host}`)
+          backendSocketForClient.join(roomName);
+        });
+
         backendSocketForClient.on(SYMBOL.REALTIME.ROOM_NAME.SUBSCRIBE.ENTITY_UPDATE_EVENTS, roomName => {
           log.i(`Joining room ${roomName} in namespace  REALTIME` + ` host: ${context.host}`)
           backendSocketForClient.join(roomName);
@@ -84,6 +89,11 @@ export class RealtimeNodejs {
 
         backendSocketForClient.on(SYMBOL.REALTIME.ROOM_NAME.SUBSCRIBE.ENTITY_PROPERTY_UPDATE_EVENTS, roomName => {
           log.i(`Joining room ${roomName} in namespace REALTIME ` + ` host: ${context.host}`)
+          backendSocketForClient.join(roomName);
+        });
+
+        backendSocketForClient.on(SYMBOL.REALTIME.ROOM_NAME.UNSUBSCRIBE.CUSTOM, roomName => {
+          log.i(`Joining room ${roomName} in namespace  REALTIME` + ` host: ${context.host}`)
           backendSocketForClient.join(roomName);
         });
 
@@ -152,6 +162,7 @@ export class RealtimeNodejs {
     }
 
     const job = () => {
+      console.log(`Trigger realtime: ${roomName}`)
       base.BE_REALTIME.in(roomName).emit(roomName, // roomName == eventName in room na
         customEventData ? customEventData : ''
       );
@@ -220,12 +231,14 @@ export class RealtimeNodejs {
 
   //#region trigger entity table changes
   public static TrigggerEntityTableChanges(entityClass: Function) {
+
     const context = FrameworkContext.findForTraget(entityClass);
     const className = CLASS.getName(entityClass)
     if (context.disabledRealtime) {
       Helpers.warn(`[Firedev][TrigggerEntityTableChanges] Entity "${className}' is not realtime`);
       return;
     }
+
     RealtimeNodejs.__TrigggerEntityChanges(
       context,
       entityClass as any,
