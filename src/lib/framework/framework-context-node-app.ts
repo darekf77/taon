@@ -155,7 +155,7 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
       }, 1000);
 
       const notifyFn = (nameOfEvent, entityData) => {
-        console.log('trigger table event: ',nameOfEvent)
+        // console.log('trigger table event: ',nameOfEvent)
         this.entitiesTriggers[className]();
       };
 

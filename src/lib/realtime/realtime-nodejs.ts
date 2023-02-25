@@ -15,7 +15,7 @@ import { mockIoServer } from './broadcast-api-io-mock-server';
 
 //#region consts
 const log = Log.create('RealtimeNodejs',
-  // Level.__NOTHING
+  Level.__NOTHING
 );
 
 const SOCKET_EVENT_DEBOUNCE = 500;
