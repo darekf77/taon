@@ -162,7 +162,7 @@ export class RealtimeNodejs {
     }
 
     const job = () => {
-      console.log(`Trigger realtime: ${roomName}`)
+      // console.log(`Trigger realtime: ${roomName}`)
       base.BE_REALTIME.in(roomName).emit(roomName, // roomName == eventName in room na
         customEventData ? customEventData : ''
       );
