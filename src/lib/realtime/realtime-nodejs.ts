@@ -93,8 +93,8 @@ export class RealtimeNodejs {
         });
 
         backendSocketForClient.on(SYMBOL.REALTIME.ROOM_NAME.UNSUBSCRIBE.CUSTOM, roomName => {
-          log.i(`Joining room ${roomName} in namespace  REALTIME` + ` host: ${context.host}`)
-          backendSocketForClient.join(roomName);
+          log.i(`Leaving room ${roomName} in namespace  REALTIME` + ` host: ${context.host}`)
+          backendSocketForClient.leave(roomName);
         });
 
         backendSocketForClient.on(SYMBOL.REALTIME.ROOM_NAME.UNSUBSCRIBE.ENTITY_UPDATE_EVENTS, roomName => {

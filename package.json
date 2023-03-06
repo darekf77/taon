@@ -195,7 +195,7 @@
     "firedev-crud-deamon": "~13.1.27",
     "firedev-ports": "~13.1.31",
     "firedev-storage": "~13.1.23",
-    "firedev-ui": "13.0.1",
+    "firedev-ui": "~13.0.1",
     "fkill": "6.1.0",
     "fs-extra": "8.1.0",
     "glob": "7.1.2",

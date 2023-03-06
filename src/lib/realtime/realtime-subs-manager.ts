@@ -62,29 +62,32 @@ export class RealtimeSubsManager {
         realtime.emit(SYMBOL.REALTIME.ROOM_NAME.SUBSCRIBE.CUSTOM, this.options.roomName);
       } else {
         if (_.isString(this.options.property)) {
-           // this means: send to current client entity property events updates
+          // this means: send to current client entity property events updates
           realtime.emit(SYMBOL.REALTIME.ROOM_NAME.SUBSCRIBE.ENTITY_PROPERTY_UPDATE_EVENTS, this.options.roomName);
         } else {
-           // this means: send to current client entity update events
+          // this means: send to current client entity update events
           realtime.emit(SYMBOL.REALTIME.ROOM_NAME.SUBSCRIBE.ENTITY_UPDATE_EVENTS, this.options.roomName);
         }
       }
 
       // subPath -> SYMBOL - (customevnet|entityupdatebyid){..}{..}
       realtime.on(this.options.roomName, (data) => {
-        log.data('realtime update!!!!!')
+
         this.update(data);
       });
     }
   }
 
   add(observer: Subscriber<any>) {
+    // log.info('Add observer')
     this.observers.push(observer);
   }
 
   remove(observer: Subscriber<any>) {
+    // log.info('Remove observer')
     this.observers = this.observers.filter(obs => obs !== observer);
     if (this.observers.length === 0) {
+      // log.info('Emit unsubscribe to server SERVER')
       this.isListening = false;
       const { context, customEvent, roomName, property } = this.options;
       const base = RealtimeBase.by(context);
@@ -103,6 +106,8 @@ export class RealtimeSubsManager {
   }
 
   private update(data: any) {
+
+    // log.data(`realtime update!!!!!  observers=${this.observers?.length} `)
     const ngZone = this.options.context.ngZone;
     // console.log('updating', data);
     // console.log('ngzone', ngZone);

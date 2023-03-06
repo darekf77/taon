@@ -120,39 +120,38 @@ export class RealtimeBrowserRxjs {
 
 to use socket realtime connection;
         `)
-
-      } else {
-        const base = RealtimeBase.by(context);
-        const realtime = base.FE_REALTIME;
-        let roomName: string;
-
-        if (customEvent) {
-          roomName = SYMBOL.REALTIME.ROOM_NAME.CUSTOM(customEvent);
-        } else {
-          roomName = _.isString(property) ?
-            SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY_PROPERTY(className, property, idOrUniqValue) :
-            SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY(className, idOrUniqValue);
-        }
-
-        const roomSubOptions: SubscribtionRealtime = {
-          context,
-          property,
-          roomName,
-          customEvent,
+        return () => {
+          // empty nothing to do
         };
-        //#endregion
+      }
+      const base = RealtimeBase.by(context);
+      const realtime = base.FE_REALTIME;
+      let roomName: string;
 
-        const inst = RealtimeSubsManager.from(roomSubOptions);
-
-        observer.remove(() => {
-          inst.remove(observer);
-        });
-
-        inst.add(observer);
-
-        inst.startListenIfNotStarted(realtime);
+      if (customEvent) {
+        roomName = SYMBOL.REALTIME.ROOM_NAME.CUSTOM(customEvent);
+      } else {
+        roomName = _.isString(property) ?
+          SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY_PROPERTY(className, property, idOrUniqValue) :
+          SYMBOL.REALTIME.ROOM_NAME.UPDATE_ENTITY(className, idOrUniqValue);
       }
 
+      const roomSubOptions: SubscribtionRealtime = {
+        context,
+        property,
+        roomName,
+        customEvent,
+      };
+      //#endregion
+
+      const inst = RealtimeSubsManager.from(roomSubOptions);
+      inst.add(observer);
+
+      inst.startListenIfNotStarted(realtime);
+
+      return () => {
+        inst.remove(observer);
+      };
     });
   }
 
