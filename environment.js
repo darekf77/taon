@@ -4,7 +4,7 @@ var { config } = { config: {} };
 
 config = {
 
-    domain: 'morphi.example.domain.com',
+    domain: 'firedev.io/framework',
 
 
 }
