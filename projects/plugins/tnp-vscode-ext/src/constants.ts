@@ -1,2 +1,2 @@
 
-export const FRAMEWORK_NAME = 'tnp';
+export const FRAMEWORK_NAME = 'firedev';

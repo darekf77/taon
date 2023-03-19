@@ -1,8 +1,8 @@
 import { FRAMEWORK_NAME } from './constants';
-import { capitalizeFirstLetter } from './helpers';
+// import { capitalizeFirstLetter } from './helpers';
 import { CommandType } from './models';
 
-const group = `${capitalizeFirstLetter(FRAMEWORK_NAME)} CLI essentials`;
+const group = `FIREDEV CLI essentials`;
 
 export const commands: CommandType[] = ([
   {
