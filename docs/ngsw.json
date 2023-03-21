@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1672359120886,
+  "timestamp": 1679433025161,
   "index": "/morphi/index.html",
   "assetGroups": [
     {
@@ -13,7 +13,7 @@
       "urls": [
         "/morphi/favicon.ico",
         "/morphi/index.html",
-        "/morphi/main.c9c9cdbd43134df3.js",
+        "/morphi/main.2617a7c15d253201.js",
         "/morphi/manifest.webmanifest",
         "/morphi/polyfills.65bf0cf253bd241c.js",
         "/morphi/runtime.5b3e6a35bf1c02ae.js",
@@ -58,8 +58,8 @@
     "/morphi/assets/icons/icon-96x96.png": "3914125a4b445bf111c5627875fc190f560daa41",
     "/morphi/assets/sql-wasm.wasm": "fcc42ce03c2b5af20e90acc2b75263acc502d736",
     "/morphi/favicon.ico": "22f6a4a3bcaafafb0254e0f2fa4ceb89e505e8b2",
-    "/morphi/index.html": "3c357907f39559378ce6763eae5a89678ada7b44",
-    "/morphi/main.c9c9cdbd43134df3.js": "a77ccb2fc2bbeb22a072d7333af13607e4216a69",
+    "/morphi/index.html": "9c132d59488ecf321d1815192e257278cde5d9a5",
+    "/morphi/main.2617a7c15d253201.js": "c7af830370e1849ce6f8cb02f21c57485bebab23",
     "/morphi/manifest.webmanifest": "6ca2e68a41a8df6a6ee9feb4f6962526746d89ba",
     "/morphi/polyfills.65bf0cf253bd241c.js": "9111ec110d71719953afbba5d46c9368b0a0df57",
     "/morphi/runtime.5b3e6a35bf1c02ae.js": "40cfffa4b8ed92f87be11e916107b1d6811b0048",
