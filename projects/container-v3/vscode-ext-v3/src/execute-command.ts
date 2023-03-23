@@ -6,10 +6,10 @@ import { window, ProgressLocation } from 'vscode';
 import { ProcesOptions, ProgressData, ResolveVariable } from './models';
 import {
   capitalizeFirstLetter, optionsFix, Log, getModuleName,
-  escapeStringForRegEx, deepClone, valueFromCommand
+  escapeStringForRegEx, deepClone, valueFromCommand, crossPlatformPath
 } from './helpers';
 
-const log = Log.instance(`execute-command`, 'logmsg');
+const log = Log.instance(`execute-command`, 'logmsg', true);
 
 export function executeCommand(registerName: string, commandToExecute: string | string[],
   pOptions?: ProcesOptions, isDefaultBuildCommand?: boolean, context?: vscode.ExtensionContext) {
@@ -47,9 +47,10 @@ export function executeCommand(registerName: string, commandToExecute: string | 
     log.data(`relativePath: '${relativePathToFileFromWorkspaceRoot}' `);
     const isAbsolute = !uri ? true : path.isAbsolute(relativePathToFileFromWorkspaceRoot);
     log.data(`isAbsolute: ${isAbsolute} `);
-    relativePathToFileFromWorkspaceRoot = relativePathToFileFromWorkspaceRoot.replace(/\\/g, '/');
+    relativePathToFileFromWorkspaceRoot = crossPlatformPath(relativePathToFileFromWorkspaceRoot);
     log.data(`relativePath replaced \ '${relativePathToFileFromWorkspaceRoot}' `);
-    const cwd = vscode.workspace.rootPath;
+    // @ts-ignore
+    const cwd = crossPlatformPath(vscode.workspace.rootPath);
     log.data(`cwd: ${cwd} `);
     if (typeof cwd !== 'string') {
       log.error(`Not able to get cwd`);
@@ -292,7 +293,7 @@ export function executeCommand(registerName: string, commandToExecute: string | 
 
           //#region resolving cwd
           try {
-            let newCwd = isAbsolute ? cwd : path.join(cwd as string, relativePathToFileFromWorkspaceRoot);
+            let newCwd = isAbsolute ? cwd : crossPlatformPath(path.join(cwd as string, relativePathToFileFromWorkspaceRoot));
             log.data(`first newCwd : ${newCwd}, relativePath: "${relativePathToFileFromWorkspaceRoot}"`)
             if (!fse.existsSync(newCwd as string)) {
               // QUICK_FIX for vscode workspace
@@ -307,10 +308,10 @@ export function executeCommand(registerName: string, commandToExecute: string | 
             log.data(`newCwd: ${newCwd}`)
             if (fse.existsSync(newCwd as string)) {
               if (!fse.lstatSync(newCwd as string).isDirectory()) {
-                newCwd = path.dirname(newCwd as string);
+                newCwd = crossPlatformPath(path.dirname(newCwd as string));
               }
             } else {
-              const cwdFixed = (typeof newCwd === 'string') ? path.dirname(newCwd) : void 0;
+              const cwdFixed = (typeof newCwd === 'string') ? crossPlatformPath(path.dirname(newCwd)) : void 0;
               if (cwdFixed && fse.existsSync(cwdFixed) && fse.lstatSync(cwdFixed).isDirectory()) {
                 newCwd = cwdFixed;
                 log.data(`newCwd fixed: ${newCwd}`)
@@ -362,7 +363,7 @@ export function executeCommand(registerName: string, commandToExecute: string | 
 
                 if (paramToResolve === '%absolutePath%') {
                   // @ts-ignore
-                  const absolutePath = path.join(cwd, relativePathToFileFromWorkspaceRoot);
+                  const absolutePath = crossPlatformPath(path.join(cwd, relativePathToFileFromWorkspaceRoot));
                   execCommand = execCommand.replace(paramToResolve, absolutePath);
                   cmd = cmd.replace(paramToResolve, absolutePath);
                   if (options?.title) {
@@ -387,8 +388,8 @@ export function executeCommand(registerName: string, commandToExecute: string | 
                   }
                 }
                 if (paramToResolve === '%relativePathDirname%') {
-                  execCommand = execCommand.replace(paramToResolve, path.dirname(relativePathToFileFromWorkspaceRoot));
-                  cmd = cmd.replace(paramToResolve, path.dirname(relativePathToFileFromWorkspaceRoot));
+                  execCommand = execCommand.replace(paramToResolve, crossPlatformPath(path.dirname(relativePathToFileFromWorkspaceRoot)));
+                  cmd = cmd.replace(paramToResolve, crossPlatformPath(path.dirname(relativePathToFileFromWorkspaceRoot)));
                   if (options?.title) {
                     options.title = options.title.replace(paramToResolve, relativePathToFileFromWorkspaceRoot);
                   }

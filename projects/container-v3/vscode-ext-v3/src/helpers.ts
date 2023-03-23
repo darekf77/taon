@@ -104,6 +104,30 @@ export function optionsFix(options?: ProcesOptions) {
   return options;
 }
 
+export function crossPlatformPath(pathStringOrPathParts: string | string[]) {
+  if (Array.isArray(pathStringOrPathParts)) {
+    pathStringOrPathParts = pathStringOrPathParts.join('/')
+  }
+  //#region @backend
+  if (process.platform !== 'win32') {
+    return pathStringOrPathParts;
+  }
+  //#endregion
+  if (typeof pathStringOrPathParts !== 'string') {
+    return pathStringOrPathParts;
+  }
+
+  const isExtendedLengthPath = /^\\\\\?\\/.test(pathStringOrPathParts);
+  const hasNonAscii = /[^\u0000-\u0080]+/.test(pathStringOrPathParts); // eslint-disable-line no-control-regex
+
+  if (isExtendedLengthPath || hasNonAscii) {
+    return pathStringOrPathParts;
+  }
+
+  return pathStringOrPathParts.replace(/\\/g, '/');
+}
+
+
 export async function getModuleName(value: string = 'Filename') {
   const result = await vscode.window.showInputBox({
     value,
@@ -126,6 +150,7 @@ export class Log {
       this.outputChannel.show();
     }
   }
+
 
   public static instance(name: string, mode: LogMode, debugMode = false) {
     return new Log(name, mode, debugMode);
