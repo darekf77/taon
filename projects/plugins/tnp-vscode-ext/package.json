@@ -73,8 +73,8 @@
         "title": "FIREDEV TEMP FILES - hide"
       },
       {
-        "command": "extension.firedevcopyandrename",
-        "title": "FIREDEV Copy And Rename"
+        "command": "extension.firedevmagiccopyandrename",
+        "title": "FIREDEV MAGIC COPY AND RENAME"
       },
       {
         "command": "extension.firedevinitproject",
@@ -150,7 +150,7 @@
           "command": "extension.firedevtempfileshide"
         },
         {
-          "command": "extension.firedevcopyandrename"
+          "command": "extension.firedevmagiccopyandrename"
         },
         {
           "command": "extension.firedevinitproject"
@@ -211,7 +211,7 @@
           "group": "FIREDEV CLI essentials"
         },
         {
-          "command": "extension.firedevcopyandrename",
+          "command": "extension.firedevmagiccopyandrename",
           "group": "FIREDEV CLI essentials"
         },
         {
