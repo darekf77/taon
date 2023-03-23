@@ -27,6 +27,21 @@ export const commands: CommandType[] = ([
       showSuccessMessage: false
     }
   },
+  {
+    title: `${FRAMEWORK_NAME.toUpperCase()} Copy And Rename`,
+    exec: `${FRAMEWORK_NAME} copy:and:rename %relativePath% '%rules%'`,
+    options: {
+      findNearestProject: true,
+      title: 'navi-cli is magically renaming files and folders..',
+      cancellable: false,
+      resolveVariables: [
+        {
+          variable: 'rules',
+          placeholder: `%fileName% -> %fileName%-new`
+        }
+      ]
+    },
+  },
   // {
   //   title: `${FRAMEWORK_NAME.toUpperCase()} TEMP FILES ALL WORKSPACE CHILDS - show`,
   //   exec: 'tnp filesshowall',
