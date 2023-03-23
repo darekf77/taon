@@ -28,11 +28,11 @@ export const commands: CommandType[] = ([
     }
   },
   {
-    title: `${FRAMEWORK_NAME.toUpperCase()} Copy And Rename`,
+    title: `${FRAMEWORK_NAME.toUpperCase()} MAGIC COPY AND RENAME`,
     exec: `${FRAMEWORK_NAME} copy:and:rename %relativePath% '%rules%'`,
     options: {
       findNearestProject: true,
-      title: 'navi-cli is magically renaming files and folders..',
+      title: 'firedev is magically renaming files and folders..',
       cancellable: false,
       resolveVariables: [
         {
