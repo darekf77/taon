@@ -342,7 +342,7 @@
     "lodash.merge": ">= 4",
     "lodash.set": ">= 4",
     "lowdb": "1.0.0",
-    "magic-renamer": "13.1.17",
+    "magic-renamer": "13.0.1",
     "material-design-icons": "3.0.1",
     "method-override": "2.3.10",
     "minimist": "1.2.0",
