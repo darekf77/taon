@@ -29,9 +29,8 @@ export const commands: CommandType[] = ([
   },
   {
     title: `${FRAMEWORK_NAME.toUpperCase()} MAGIC COPY AND RENAME`,
-    exec: `${FRAMEWORK_NAME} copy:and:rename %relativePath% '%rules%'`,
+    exec: `tnp-debug-brk copy:and:rename '%rules%'`,
     options: {
-      findNearestProject: true,
       title: 'firedev is magically renaming files and folders..',
       cancellable: false,
       resolveVariables: [
