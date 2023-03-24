@@ -29,14 +29,15 @@ export const commands: CommandType[] = ([
   },
   {
     title: `${FRAMEWORK_NAME.toUpperCase()} MAGIC COPY AND RENAME`,
-    exec: `tnp-debug-brk copy:and:rename '%rules%'`,
+    exec: `${FRAMEWORK_NAME} copy:and:rename '%rules%'`,
     options: {
       title: 'firedev is magically renaming files and folders..',
       cancellable: false,
       resolveVariables: [
         {
           variable: 'rules',
-          placeholder: `%fileName% -> %fileName%-new`
+          placeholder: `%fileName% -> %fileName%-new`,
+          encode: true,
         }
       ]
     },

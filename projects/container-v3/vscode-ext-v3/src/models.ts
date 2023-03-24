@@ -33,6 +33,7 @@ export type ResolveVariable = {
   prompt?: string;
   placeholder?: string | Function;
   variableValue?: any;
+  encode?: boolean;
   options: { option: any, label: string }[] | string;
   optionsResolved: { option: any, label: string }[];
   useResultAsLinkAndExit?: boolean;
