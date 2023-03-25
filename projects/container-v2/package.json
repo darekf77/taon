@@ -209,7 +209,7 @@
     "bcryptjs": "2.4.3",
     "body-parser": "1.18.2",
     "bootstrap": "4.3.1",
-    "bs4-breakpoint": "13.0.32",
+    "bs4-breakpoint": "13.0.33",
     "buffer-shims": "1.0.0",
     "button-dropdown": "1.0.45",
     "callsite-record": "4.1.3",
