@@ -99,6 +99,40 @@ export const commands: CommandType[] = ([
       findNearestProjectWithGitRoot: true,
     }
   },
+
+  {
+    title: `${FRAMEWORK_NAME.toUpperCase()} CODE GENERATOR`,
+    // exec: `${FRAMEWORK_NAME} generate %absolutePath%' %moduleName% %entity%`,
+     exec: `tnp generate %absolutePath%' %moduleName% %entity%`,
+    options: {
+      title: 'generating firedev code',
+      resolveVariables: [
+        {
+          variable: 'moduleName',
+          options: [
+            {
+              option: 'dummy-angular-module',
+              label: 'Generate dummy Angular module/component structure'
+            },
+            {
+              option: 'firedev-backend-frontend-module',
+              label: 'Generate Firedev backend/frontend module structure'
+            },
+            {
+              option: 'ngrx-feature-container-module',
+              label: 'Generate NgRx container module structure'
+            }
+          ]
+        },
+        {
+          variable: 'entity',
+          placeholder: `my-entity-name`,
+          encode: true,
+        }
+      ]
+    }
+  },
+
   // {
   //   title: `${FRAMEWORK_NAME.toUpperCase()} OPEN workspace`,
   //   exec: `${FRAMEWORK_NAME} open:workspace`,

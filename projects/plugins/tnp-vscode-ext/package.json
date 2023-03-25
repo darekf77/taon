@@ -99,6 +99,10 @@
       {
         "command": "extension.firedevgitcommitpushupdate",
         "title": "FIREDEV GIT COMMIT/PUSH UPDATE"
+      },
+      {
+        "command": "extension.firedevcodegenerator",
+        "title": "FIREDEV CODE GENERATOR"
       }
     ],
     "menus": {
@@ -129,6 +133,9 @@
         },
         {
           "command": "extension.firedevgitcommitpushupdate"
+        },
+        {
+          "command": "extension.firedevcodegenerator"
         }
       ],
       "editor/title/context": [
@@ -166,6 +173,10 @@
         },
         {
           "command": "extension.firedevgitcommitpushupdate",
+          "group": "FIREDEV CLI essentials"
+        },
+        {
+          "command": "extension.firedevcodegenerator",
           "group": "FIREDEV CLI essentials"
         }
       ]
