@@ -9,7 +9,7 @@ import {
   escapeStringForRegEx, deepClone, valueFromCommand, crossPlatformPath
 } from './helpers';
 
-const log = Log.instance(`execute-command`, 'logmsg', true);
+const log = Log.instance(`execute-command`, 'logmsg');
 
 export function executeCommand(registerName: string, commandToExecute: string | string[],
   pOptions?: ProcesOptions, isDefaultBuildCommand?: boolean, context?: vscode.ExtensionContext) {
@@ -401,7 +401,7 @@ export function executeCommand(registerName: string, commandToExecute: string | 
                   const variableInsidPrecentSign = `%${variable}%`;
                   const variableValueFinal = encode ? encodeURIComponent(variableValue) : variableValue;
                   execCommand = execCommand.replace(variableInsidPrecentSign, variableValueFinal);
-                  cmd = cmd.replace(variableInsidPrecentSign,variableValueFinal);
+                  cmd = cmd.replace(variableInsidPrecentSign, variableValueFinal);
                   if (options?.title) {
                     options.title = options.title.replace(variableInsidPrecentSign, variableValueFinal);
                   }

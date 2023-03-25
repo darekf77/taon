@@ -66,79 +66,39 @@
     "commands": [
       {
         "command": "extension.firedevtempfilesshow",
-        "title": "FIREDEV TEMP FILES - show"
+        "title": "FIREDEV TEMP FILES => SHOW"
       },
       {
         "command": "extension.firedevtempfileshide",
-        "title": "FIREDEV TEMP FILES - hide"
+        "title": "FIREDEV TEMP FILES => HIDE"
       },
       {
         "command": "extension.firedevmagiccopyandrename",
         "title": "FIREDEV MAGIC COPY AND RENAME"
       },
       {
-        "command": "extension.firedevinitproject",
-        "title": "FIREDEV INIT project"
+        "command": "extension.firedevopenroutesfile",
+        "title": "FIREDEV OPEN ROUTES FILE"
       },
       {
-        "command": "extension.firedevopenroutes",
-        "title": "FIREDEV OPEN routes"
-      },
-      {
-        "command": "extension.firedevopendbfile",
-        "title": "FIREDEV OPEN db file"
-      },
-      {
-        "command": "extension.firedevopenworkspace",
-        "title": "FIREDEV OPEN workspace"
-      },
-      {
-        "command": "extension.firedevopenallworkspacechilds",
-        "title": "FIREDEV OPEN ALL WORKSPACE CHILDS"
-      },
-      {
-        "command": "extension.firedevopenbaseline",
-        "title": "FIREDEV OPEN baseline"
-      },
-      {
-        "command": "extension.firedevopencoreproject",
-        "title": "FIREDEV OPEN core project"
+        "command": "extension.firedevopendatabasefile",
+        "title": "FIREDEV OPEN DATABASE FILE"
       },
       {
         "command": "extension.firedevopencorecontainer",
-        "title": "FIREDEV OPEN core container"
+        "title": "FIREDEV OPEN CORE CONTAINER"
       },
       {
-        "command": "extension.firedevreleaseproject",
-        "title": "FIREDEV RELEASE PROJECT"
+        "command": "extension.firedevopencoreproject",
+        "title": "FIREDEV OPEN CORE PROJECT"
       },
       {
-        "command": "extension.firedevresetproject",
-        "title": "FIREDEV RESET PROJECT"
+        "command": "extension.firedevclearallandinit",
+        "title": "FIREDEV CLEAR ALL AND INIT"
       },
       {
-        "command": "extension.firedevcleanallandinit",
-        "title": "FIREDEV CLEAN ALL AND INIT"
-      },
-      {
-        "command": "extension.firedevnewlogicuimodule",
-        "title": "FIREDEV NEW LOGIC-UI MODULE"
-      },
-      {
-        "command": "extension.firedevnewuimodule",
-        "title": "FIREDEV NEW UI MODULE"
-      },
-      {
-        "command": "extension.firedevquickgitcommitandpushupdate",
-        "title": "FIREDEV QUICK GIT commit and push update"
-      },
-      {
-        "command": "extension.firedevquickgitresethardandpull",
-        "title": "FIREDEV QUICK GIT reset hard and pull"
-      },
-      {
-        "command": "extension.firedevautoupdate",
-        "title": "FIREDEV AUTOUPDATE"
+        "command": "extension.firedevgitcommitpushupdate",
+        "title": "FIREDEV GIT COMMIT/PUSH UPDATE"
       }
     ],
     "menus": {
@@ -153,52 +113,22 @@
           "command": "extension.firedevmagiccopyandrename"
         },
         {
-          "command": "extension.firedevinitproject"
+          "command": "extension.firedevopenroutesfile"
         },
         {
-          "command": "extension.firedevopenroutes"
-        },
-        {
-          "command": "extension.firedevopendbfile"
-        },
-        {
-          "command": "extension.firedevopenworkspace"
-        },
-        {
-          "command": "extension.firedevopenallworkspacechilds"
-        },
-        {
-          "command": "extension.firedevopenbaseline"
-        },
-        {
-          "command": "extension.firedevopencoreproject"
+          "command": "extension.firedevopendatabasefile"
         },
         {
           "command": "extension.firedevopencorecontainer"
         },
         {
-          "command": "extension.firedevreleaseproject"
+          "command": "extension.firedevopencoreproject"
         },
         {
-          "command": "extension.firedevresetproject"
+          "command": "extension.firedevclearallandinit"
         },
         {
-          "command": "extension.firedevcleanallandinit"
-        },
-        {
-          "command": "extension.firedevnewlogicuimodule"
-        },
-        {
-          "command": "extension.firedevnewuimodule"
-        },
-        {
-          "command": "extension.firedevquickgitcommitandpushupdate"
-        },
-        {
-          "command": "extension.firedevquickgitresethardandpull"
-        },
-        {
-          "command": "extension.firedevautoupdate"
+          "command": "extension.firedevgitcommitpushupdate"
         }
       ],
       "editor/title/context": [
@@ -215,31 +145,11 @@
           "group": "FIREDEV CLI essentials"
         },
         {
-          "command": "extension.firedevinitproject",
+          "command": "extension.firedevopenroutesfile",
           "group": "FIREDEV CLI essentials"
         },
         {
-          "command": "extension.firedevopenroutes",
-          "group": "FIREDEV CLI essentials"
-        },
-        {
-          "command": "extension.firedevopendbfile",
-          "group": "FIREDEV CLI essentials"
-        },
-        {
-          "command": "extension.firedevopenworkspace",
-          "group": "FIREDEV CLI essentials"
-        },
-        {
-          "command": "extension.firedevopenallworkspacechilds",
-          "group": "FIREDEV CLI essentials"
-        },
-        {
-          "command": "extension.firedevopenbaseline",
-          "group": "FIREDEV CLI essentials"
-        },
-        {
-          "command": "extension.firedevopencoreproject",
+          "command": "extension.firedevopendatabasefile",
           "group": "FIREDEV CLI essentials"
         },
         {
@@ -247,35 +157,15 @@
           "group": "FIREDEV CLI essentials"
         },
         {
-          "command": "extension.firedevreleaseproject",
+          "command": "extension.firedevopencoreproject",
           "group": "FIREDEV CLI essentials"
         },
         {
-          "command": "extension.firedevresetproject",
+          "command": "extension.firedevclearallandinit",
           "group": "FIREDEV CLI essentials"
         },
         {
-          "command": "extension.firedevcleanallandinit",
-          "group": "FIREDEV CLI essentials"
-        },
-        {
-          "command": "extension.firedevnewlogicuimodule",
-          "group": "FIREDEV CLI essentials"
-        },
-        {
-          "command": "extension.firedevnewuimodule",
-          "group": "FIREDEV CLI essentials"
-        },
-        {
-          "command": "extension.firedevquickgitcommitandpushupdate",
-          "group": "FIREDEV CLI essentials"
-        },
-        {
-          "command": "extension.firedevquickgitresethardandpull",
-          "group": "FIREDEV CLI essentials"
-        },
-        {
-          "command": "extension.firedevautoupdate",
+          "command": "extension.firedevgitcommitpushupdate",
           "group": "FIREDEV CLI essentials"
         }
       ]
@@ -448,7 +338,7 @@
     "lodash.merge": ">= 4",
     "lodash.set": ">= 4",
     "lowdb": "1.0.0",
-    "magic-renamer": "~13.1.17",
+    "magic-renamer": "~13.0.1",
     "material-design-icons": "3.0.1",
     "method-override": "2.3.10",
     "minimist": "1.2.0",
