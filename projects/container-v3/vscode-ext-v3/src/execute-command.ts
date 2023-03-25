@@ -397,12 +397,13 @@ export function executeCommand(registerName: string, commandToExecute: string | 
               }
               if (resolveVariables) {
                 for (let index = 0; index < resolveVariables.length; index++) {
-                  const { variable, variableValue } = resolveVariables[index];
+                  const { variable, variableValue, encode } = resolveVariables[index];
                   const variableInsidPrecentSign = `%${variable}%`;
-                  execCommand = execCommand.replace(variableInsidPrecentSign, variableValue);
-                  cmd = cmd.replace(variableInsidPrecentSign, variableValue);
+                  const variableValueFinal = encode ? encodeURIComponent(variableValue) : variableValue;
+                  execCommand = execCommand.replace(variableInsidPrecentSign, variableValueFinal);
+                  cmd = cmd.replace(variableInsidPrecentSign,variableValueFinal);
                   if (options?.title) {
-                    options.title = options.title.replace(variableInsidPrecentSign, variableValue);
+                    options.title = options.title.replace(variableInsidPrecentSign, variableValueFinal);
                   }
                 }
               }
