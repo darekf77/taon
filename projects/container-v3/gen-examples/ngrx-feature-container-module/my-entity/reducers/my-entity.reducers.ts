@@ -5,7 +5,7 @@ import * as myEntityActions from '../actions/my-entity.actions'
 import { MyEntityInitialState } from '../my-entity.models';
 
 const initialState: MyEntityInitialState = {
-  myentityarr: [],
+  myEntityArr: [],
 };
 
 export const myEntityReducer = createReducer(

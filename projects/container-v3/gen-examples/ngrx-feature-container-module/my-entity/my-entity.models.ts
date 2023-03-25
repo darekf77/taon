@@ -2,6 +2,6 @@
 export const myEntityFeatureKey = 'myentity';
 
 export interface MyEntityInitialState {
-  myentityarr: any[];
+  myEntityArr: any[];
 };
 //#endregion
