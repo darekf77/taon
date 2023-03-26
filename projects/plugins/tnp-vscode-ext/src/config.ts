@@ -103,7 +103,7 @@ export const commands: CommandType[] = ([
   {
     title: `${FRAMEWORK_NAME.toUpperCase()} CODE GENERATOR`,
     // exec: `${FRAMEWORK_NAME} generate %absolutePath%' %moduleName% %entity%`,
-     exec: `tnp generate %absolutePath%' %moduleName% %entity%`,
+     exec: `tnp generate %absolutePath% %moduleName% %entity%`,
     options: {
       title: 'generating firedev code',
       resolveVariables: [
@@ -111,8 +111,16 @@ export const commands: CommandType[] = ([
           variable: 'moduleName',
           options: [
             {
+              option: 'app-extended_flat',
+              label: 'Generate extended app.* files for firedev app'
+            },
+            {
               option: 'dummy-angular-module',
               label: 'Generate dummy Angular module/component structure'
+            },
+            {
+              option: 'dummy-angular-lazy-module',
+              label: 'Generate dummy Angular lazy module/component structure'
             },
             {
               option: 'firedev-backend-frontend-module',

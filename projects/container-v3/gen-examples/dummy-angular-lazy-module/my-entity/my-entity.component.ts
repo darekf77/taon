@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -8,9 +8,6 @@ import { Subscription } from 'rxjs';
 })
 export class MyEntityComponent implements OnInit {
   handlers: Subscription[] = [];
-  @Output() myEntityDataChanged = new EventEmitter();
-  @Input() myEntityData: any = {};
-
   constructor() { }
 
   ngOnInit() {
