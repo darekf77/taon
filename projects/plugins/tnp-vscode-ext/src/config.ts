@@ -102,7 +102,7 @@ export const commands: CommandType[] = ([
 
   {
     title: `${FRAMEWORK_NAME.toUpperCase()} CODE GENERATOR`,
-    exec: `${FRAMEWORK_NAME} generate %absolutePath%' %moduleName% %entity%`,
+    exec: `${FRAMEWORK_NAME} generate %absolutePath% %moduleName% %entity%`,
     //  exec: `tnp generate %absolutePath% %moduleName% %entity%`,
     options: {
       title: 'generating firedev code',
