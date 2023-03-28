@@ -5,7 +5,7 @@ const host = 'http://localhost:4199';
 //#region @browser
 import { NgModule, NgZone, ViewEncapsulation } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
-import { RouterModule, Routes } from "@angular/router";
+import { PreloadAllModules, RouterModule, Routes } from "@angular/router";
 //#endregion
 //#endregion
 
@@ -45,6 +45,8 @@ export class MyEntityComponent implements OnInit {
   imports: [
     RouterModule.forRoot(routes, {
       useHash: true,
+      preloadingStrategy: PreloadAllModules,
+      enableTracing: false,
     }),
   ],
   exports: [MyEntityComponent],

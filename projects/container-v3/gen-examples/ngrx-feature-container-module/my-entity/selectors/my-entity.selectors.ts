@@ -13,4 +13,3 @@ export const allowedToUndo = createSelector(myEntityFeatureSelector, state => {
 });
 
 //#endregion
-console.log; // @module=my-entity

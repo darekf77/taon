@@ -1,3 +1,4 @@
+//#region @browser
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Subscription } from 'rxjs';
 
@@ -21,3 +22,4 @@ export class MyEntityComponent implements OnInit {
   }
 
 }
+//#endregion

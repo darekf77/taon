@@ -1,7 +1,6 @@
 //#region @browser
 import { createAction, props } from "@ngrx/store";
 
-
 export const INIT = createAction(
   '[my-entity] INIT'
 );

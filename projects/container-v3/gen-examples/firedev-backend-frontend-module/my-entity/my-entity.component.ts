@@ -1,3 +1,4 @@
+//#region @browser
 import { Component, OnInit } from '@angular/core';
 import { MyEntityService } from './my-entity.service';
 
@@ -17,3 +18,4 @@ export class MyEntityComponent implements OnInit {
   }
 
 }
+//#endregion
