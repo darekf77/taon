@@ -1,5 +1,10 @@
 {
   "files.exclude": {
+    "**/*____ORIGINAL____.ts": true,
+    "tsconfig.backend.dist.json": true,
+    "tsconfig.backend.bundle.json": true,
+    "tsconfig.backend.dist.json.filetemplate": true,
+    "tsconfig.backend.bundle.json.filetemplate": true,
     "out": true,
     "update-proj.js": true,
     ".vscodeignore": true,
@@ -10,6 +15,8 @@
     "bundle*": true,
     "browser": true,
     "browser*": true,
+    "websql": true,
+    "websql*": true,
     "module*": true,
     "backup": true,
     "module": true,

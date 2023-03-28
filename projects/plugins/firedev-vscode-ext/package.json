@@ -43,16 +43,16 @@
     "linkedRepos": [],
     "smartContainerBuildTarget": ""
   },
-  "name": "tnp-vscode-ext",
-  "displayName": "tnp-vscode-ext",
-  "publisher": "morphi-io",
+  "name": "firedev-vscode-ext",
+  "displayName": "firedev-vscode-ext",
+  "publisher": "firedev-io",
   "description": "",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.30.0"
   },
   "repository": {
-    "url": "https://github.com/darekf77/tsc-npm-project.git",
+    "url": "https://github.com/darekf77/firedev.git",
     "type": "git"
   },
   "categories": [
