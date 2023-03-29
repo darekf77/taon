@@ -28,4 +28,12 @@ export class MyEntityController extends Firedev.Base.Controller<any> {
     //#endregion
   }
 
+  //#region @websql
+  async initExampleDbData() {
+    // const repo = this.connection.getRepository(MyEntity);
+    // await repo.save(new MyEntity())
+    // const all = await repo.find()
+  }
+  //#endregion
+
 }
