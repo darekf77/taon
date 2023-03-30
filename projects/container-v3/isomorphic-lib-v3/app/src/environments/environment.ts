@@ -1,14 +1,17 @@
 // @ts-ignore
 import * as ENV from '../../../../tmp-environment.json';
+const production = false;
 // @ts-ignore
 window.ENV = ENV;
+// @ts-ignore
+window.ENV.angularProd = production;
 
 // This file can be replaced during build by using the `fileReplacements` array.
 // `ng build` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production
 };
 
 /*
