@@ -1,6 +1,6 @@
 // @ts-ignore
 import * as ENV from '../../../../tmp-environment.json';
-const production = false;
+const production = true;
 // @ts-ignore
 window.ENV = ENV;
 // @ts-ignore
