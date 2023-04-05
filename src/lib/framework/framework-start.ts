@@ -58,6 +58,7 @@ export function start(options: StartOptions) {
       config.type = 'sqljs';
       // @ts-ignore
       config.autoSave = true;
+      config['useLocalForage'] = !!window['localforage']
 
       // @ts-ignore
       config.location = (config.database || '').replace('.sqlite', '');

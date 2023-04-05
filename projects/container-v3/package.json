@@ -162,7 +162,8 @@
         "semver": "6.3.0",
         "better-sqlite3": "7.6.2",
         "express-session": "1.17.3",
-        "sql.js": "^1.8.0"
+        "sql.js": "^1.8.0",
+        "localforage": "~1.10.0"
       },
       "linkedFolders": []
     },
@@ -334,6 +335,7 @@
     "karma-jasmine": "4.0.0",
     "karma-jasmine-html-reporter": "1.7.0",
     "lnk": "1.0.1",
+    "localforage": "1.10.0",
     "lockfile": "1.0.4",
     "lodash": "4.17.4",
     "lodash-walk-object": "13.1.32",
