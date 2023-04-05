@@ -211,6 +211,7 @@
     "json5-writer": "0.2.0",
     "karma-coverage": "2.1.0",
     "lnk": "1.0.1",
+    "localforage": "1.10.0",
     "lodash": "4.17.4",
     "lodash-walk-object": "~13.1.32",
     "lodash.get": ">= 4",
