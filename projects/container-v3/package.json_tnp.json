@@ -162,7 +162,9 @@
       "better-sqlite3": "7.6.2",
       "express-session": "1.17.3",
       "sql.js": "^1.8.0",
-      "localforage": "~1.10.0"
+      "localforage": "~1.10.0",
+      "jszip": "3.10.1",
+      "file-saver": "2.0.5"
     },
     "linkedFolders": []
   },

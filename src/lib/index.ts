@@ -70,7 +70,7 @@ export namespace Morphi {
     return window['onLoadSqlJS'] as Observable<void>;
     //#endregion
     const obs = new Subject<void>();
-    setTimeout(()=> {
+    setTimeout(() => {
       obs.next();
     })
     return obs.asObservable();
@@ -203,6 +203,11 @@ export namespace Morphi {
       export import Success = models.Models.Rest.HttpResponse;
       export import Error = models.Models.Rest.HttpResponseError;
     }
+  }
+
+  export namespace Files {
+    export type MimeType = keyof typeof models.Models.mimeTypes;
+    export const MimeTypesObj = models.Models.mimeTypes; // TODO Download it ?
   }
 
   export namespace Auth {
