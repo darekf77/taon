@@ -239,6 +239,7 @@ export namespace Morphi {
       export import Primary = tsorm.PrimaryColumn;
       export import CreateDate = tsorm.CreateDateColumn;
       export import Custom = tsorm.Column;
+      export const SimpleJson = () => tsorm.Column({ type: 'simple-json', nullable: true });
     }
 
     export namespace Join {
