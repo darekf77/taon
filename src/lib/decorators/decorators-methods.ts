@@ -5,7 +5,7 @@ import { CLASS } from 'typescript-class-helpers';
 function metaReq(
   method: Models.Rest.HttpMethod, path: string,
   target: any, propertyKey: string,
-  descriptor: PropertyDescriptor, realtimeUpdate = false) {
+  descriptor: PropertyDescriptor, pathIsGlobal = false) {
   // const className = CLASS.getName(target.constructor);
 
   const config = CLASS.getConfig(target.constructor as any);
@@ -35,40 +35,40 @@ function metaReq(
   }
 
   methodConfig.descriptor = descriptor;
-  methodConfig.realtimeUpdate = realtimeUpdate;
+  methodConfig.global = pathIsGlobal;
 }
-export function GET(path?: string, realtimeUpdate = false) {
+export function GET(path?: string, pathIsGlobal = false) {
   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    metaReq('get', path, target, propertyKey, descriptor, realtimeUpdate);
+    metaReq('get', path, target, propertyKey, descriptor, pathIsGlobal);
   }
 }
 
-export function HEAD(path?: string, realtimeUpdate = false) {
+export function HEAD(path?: string, pathIsGlobal = false) {
   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    metaReq('head', path, target, propertyKey, descriptor, realtimeUpdate);
+    metaReq('head', path, target, propertyKey, descriptor, pathIsGlobal);
   }
 }
 
-export function POST(path?: string) {
+export function POST(path?: string, pathIsGlobal = false) {
   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    metaReq('post', path, target, propertyKey, descriptor);
+    metaReq('post', path, target, propertyKey, descriptor, pathIsGlobal);
   }
 }
 
-export function PUT(path?: string) {
+export function PUT(path?: string, pathIsGlobal = false) {
   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    metaReq('put', path, target, propertyKey, descriptor);
+    metaReq('put', path, target, propertyKey, descriptor, pathIsGlobal);
   }
 }
 
-export function PATCH(path?: string) {
+export function PATCH(path?: string, pathIsGlobal = false) {
   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    metaReq('patch', path, target, propertyKey, descriptor);
+    metaReq('patch', path, target, propertyKey, descriptor, pathIsGlobal);
   }
 }
 
-export function DELETE(path?: string) {
+export function DELETE(path?: string, pathIsGlobal = false) {
   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    metaReq('delete', path, target, propertyKey, descriptor);
+    metaReq('delete', path, target, propertyKey, descriptor, pathIsGlobal);
   }
 }

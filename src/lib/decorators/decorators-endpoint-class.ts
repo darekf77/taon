@@ -80,7 +80,10 @@ export function ENDPOINT(options?: {
         Object.keys(classConfig.methods).forEach(methodName => {
           const methodConfig: Models.Rest.MethodConfig = classConfig.methods[methodName];
           const type: Models.Rest.HttpMethod = methodConfig.type;
-          const expressPath = MorphiHelpers.getExpressPath(classConfig, methodConfig);
+          const expressPath = methodConfig.global
+            ? `/${methodConfig.path?.replace(/\//, '')}`
+            : MorphiHelpers.getExpressPath(classConfig, methodConfig);
+
           // console.log('initfn expressPath', expressPath)
           if (Helpers.isNode
             //#region @websqlOnly
