@@ -35,7 +35,7 @@ export type ResolveVariable = {
   variableValue?: any;
   encode?: boolean;
   options: { option: any, label: string }[] | string;
-  optionsResolved: { option: any, label: string }[];
+  optionsResolved: { option: any, label: string, skipNextVariableResolve?: boolean; }[];
   useResultAsLinkAndExit?: boolean;
   exitWithMessgeWhenNoOptions?: string;
   /**

@@ -115,7 +115,7 @@ export const commands: CommandType[] = ([
               label: 'Generate extended app.* files for firedev app'
             },
             {
-              option: 'dummy-angular-standalone-component',
+              option: 'dummy-angul∂ar-standalone-component',
               label: 'Generate dummy Angular component structure'
             },
             {
@@ -124,7 +124,7 @@ export const commands: CommandType[] = ([
             },
             {
               option: 'dummy-angular-lazy-module',
-              label: 'Generate dummy Angular lazy module/component structure'
+              label: 'Generate dummy Angular lazy routing module/component structure'
             },
             {
               option: 'firedev-backend-frontend-module',
@@ -133,6 +133,16 @@ export const commands: CommandType[] = ([
             {
               option: 'ngrx-feature-container-module',
               label: 'Generate NgRx container module structure'
+            },
+            {
+              option: 'generated-index-exports_custom',
+              label: 'Generate in index.ts typescript exports from folders',
+              skipNextVariableResolve: true
+            },
+            {
+              option: 'wrap-with-browser-regions_custom',
+              label: 'Wrap file with @browser regions',
+              skipNextVariableResolve: true
             }
           ]
         },
@@ -144,6 +154,24 @@ export const commands: CommandType[] = ([
       ]
     }
   },
+
+  {
+    title: `${FRAMEWORK_NAME.toUpperCase()} GENERATE index.ts`,
+    exec: `${FRAMEWORK_NAME} generate %absolutePath% generated-index-exports_custom`,
+    options: {
+      title: 'generating index.ts',
+      showSuccessMessage: false
+    }
+  },
+
+  {
+    title: `${FRAMEWORK_NAME.toUpperCase()} WRAP FILE WITH @browser TAG`,
+    exec: `${FRAMEWORK_NAME} generate %absolutePath% wrap-with-browser-regions_custom`,
+    options: {
+      title: 'wrapping file with @browser',
+      showSuccessMessage: false
+    }
+  }
 
   // {
   //   title: `${FRAMEWORK_NAME.toUpperCase()} OPEN workspace`,

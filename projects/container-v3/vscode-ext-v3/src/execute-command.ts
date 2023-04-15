@@ -9,7 +9,7 @@ import {
   escapeStringForRegEx, deepClone, valueFromCommand, crossPlatformPath
 } from './helpers';
 
-const log = Log.instance(`execute-command`, 'logmsg', true);
+const log = Log.instance(`execute-command`, 'logmsg');
 
 export function executeCommand(registerName: string, commandToExecute: string | string[],
   pOptions?: ProcesOptions, isDefaultBuildCommand?: boolean, context?: vscode.ExtensionContext) {
@@ -111,11 +111,18 @@ export function executeCommand(registerName: string, commandToExecute: string | 
           //#region resolving variables
 
           if (resolveVariables) {
+            let skipNextVariableResolve = false;
             for (let index = 0; index < resolveVariables.length; index++) {
+
               const item = resolveVariables[index];
               if (typeof item.variableValue !== 'undefined') {
                 continue;
               }
+              if(skipNextVariableResolve) {
+                skipNextVariableResolve = false;
+                continue;
+              }
+
               //#region apply previous resolved vars
               resolveVars.forEach(resolved => {
                 [
@@ -179,6 +186,7 @@ export function executeCommand(registerName: string, commandToExecute: string | 
                     placeHolder,
                     ignoreFocusOut: true,
                   });
+                  skipNextVariableResolve  = !!res?.skipNextVariableResolve;
                   item.variableValue = res?.option;
                 }
 
