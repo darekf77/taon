@@ -1,7 +1,7 @@
 import { SYMBOL } from '../symbols';
 import { _ } from 'tnp-core';
 import { Models } from '../models';
-import { Resource } from 'ng2-rest';
+import { Resource, RestHeaders } from 'ng2-rest';
 import { Models as Ng2RestModels } from 'ng2-rest';
 import { Helpers } from 'tnp-core';
 import { MorphiHelpers } from '../helpers';
@@ -107,7 +107,13 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
     let rest: Ng2RestModels.ResourceModel<any, any>;
     if (!endpoints[uri.href][expressPath]) {
       rest = Resource.create(uri.href, expressPath, SYMBOL.MAPPING_CONFIG_HEADER as any,
-        SYMBOL.CIRCURAL_OBJECTS_MAP_BODY as any) as any;
+        SYMBOL.CIRCURAL_OBJECTS_MAP_BODY as any,
+        RestHeaders.from({
+          'Content-Type': methodConfig.contentType,
+          'Accept': methodConfig.contentType,
+          'responsetypeaxios': methodConfig.responseType
+        }),
+      );
       endpoints[uri.href][expressPath] = rest;
     } else {
       rest = endpoints[uri.href][expressPath] as any;

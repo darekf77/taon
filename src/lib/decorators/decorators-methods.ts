@@ -1,11 +1,15 @@
 import { _ } from 'tnp-core';
 import { Models } from '../models';
 import { CLASS } from 'typescript-class-helpers';
+import { Models as ModelsNg2Rest } from 'ng2-rest';
 
 function metaReq(
-  method: Models.Rest.HttpMethod, path: string,
+  method: Models.Rest.HttpMethod,
+  path: string,
   target: any, propertyKey: string,
-  descriptor: PropertyDescriptor, pathIsGlobal = false) {
+  descriptor: PropertyDescriptor,
+  options: FiredevHttpDecoratorOptions) {
+  const { pathIsGlobal, overrideContentType, overridResponseType } = (_.isObject(options) ? options : {}) as any as FiredevHttpDecoratorOptions;
   // const className = CLASS.getName(target.constructor);
 
   const config = CLASS.getConfig(target.constructor as any);
@@ -36,39 +40,100 @@ function metaReq(
 
   methodConfig.descriptor = descriptor;
   methodConfig.global = pathIsGlobal;
+  methodConfig.contentType = overrideContentType;
+  methodConfig.responseType = overridResponseType;
 }
-export function GET(path?: string, pathIsGlobal = false) {
+
+
+
+export interface FiredevHttpDecoratorOptions {
+  path?: string;
+  pathIsGlobal?: boolean;
+  overrideContentType?: Models.ContentType;
+  overridResponseType?: ModelsNg2Rest.ResponseTypeAxios,
+}
+
+
+export function GET(pathOrOptions?: string | FiredevHttpDecoratorOptions, pathIsGlobal = false) {
+  let obj: FiredevHttpDecoratorOptions;
+  if (typeof pathOrOptions === 'object') {
+    obj = pathOrOptions;
+    pathOrOptions = obj.path;
+    pathIsGlobal = !!obj.pathIsGlobal;
+  } else {
+    obj = { pathOrOptions, pathIsGlobal } as any;
+  }
   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    metaReq('get', path, target, propertyKey, descriptor, pathIsGlobal);
+    metaReq('get', pathOrOptions as string, target, propertyKey, descriptor, obj);
   }
 }
 
-export function HEAD(path?: string, pathIsGlobal = false) {
+export function HEAD(pathOrOptions?: string | FiredevHttpDecoratorOptions, pathIsGlobal = false) {
+  let obj: FiredevHttpDecoratorOptions;
+  if (typeof pathOrOptions === 'object') {
+    obj = pathOrOptions;
+    pathOrOptions = obj.path;
+    pathIsGlobal = !!obj.pathIsGlobal;
+  } else {
+    obj = { pathOrOptions, pathIsGlobal } as any;
+  }
   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    metaReq('head', path, target, propertyKey, descriptor, pathIsGlobal);
+    metaReq('head', pathOrOptions as string, target, propertyKey, descriptor, obj);
   }
 }
 
-export function POST(path?: string, pathIsGlobal = false) {
+export function POST(pathOrOptions?: string | FiredevHttpDecoratorOptions, pathIsGlobal = false) {
+  let obj: FiredevHttpDecoratorOptions;
+  if (typeof pathOrOptions === 'object') {
+    obj = pathOrOptions;
+    pathOrOptions = obj.path;
+    pathIsGlobal = !!obj.pathIsGlobal;
+  } else {
+    obj = { pathOrOptions, pathIsGlobal } as any;
+  }
   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    metaReq('post', path, target, propertyKey, descriptor, pathIsGlobal);
+    metaReq('post', pathOrOptions as string, target, propertyKey, descriptor, obj);
   }
 }
 
-export function PUT(path?: string, pathIsGlobal = false) {
+export function PUT(pathOrOptions?: string | FiredevHttpDecoratorOptions, pathIsGlobal = false) {
+  let obj: FiredevHttpDecoratorOptions;
+  if (typeof pathOrOptions === 'object') {
+    obj = pathOrOptions;
+    pathOrOptions = obj.path;
+    pathIsGlobal = !!obj.pathIsGlobal;
+  } else {
+    obj = { pathOrOptions, pathIsGlobal } as any;
+  }
   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    metaReq('put', path, target, propertyKey, descriptor, pathIsGlobal);
+    metaReq('put', pathOrOptions as string, target, propertyKey, descriptor, obj);
   }
 }
 
-export function PATCH(path?: string, pathIsGlobal = false) {
+export function PATCH(pathOrOptions?: string | FiredevHttpDecoratorOptions, pathIsGlobal = false) {
+  let obj: FiredevHttpDecoratorOptions;
+  if (typeof pathOrOptions === 'object') {
+    obj = pathOrOptions;
+    pathOrOptions = obj.path;
+    pathIsGlobal = !!obj.pathIsGlobal;
+  } else {
+    obj = { pathOrOptions, pathIsGlobal } as any;
+  }
   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    metaReq('patch', path, target, propertyKey, descriptor, pathIsGlobal);
+    metaReq('patch', pathOrOptions as string, target, propertyKey, descriptor, obj);
   }
 }
 
-export function DELETE(path?: string, pathIsGlobal = false) {
+export function DELETE(pathOrOptions?: string | FiredevHttpDecoratorOptions, pathIsGlobal = false) {
+  let obj: FiredevHttpDecoratorOptions;
+  if (typeof pathOrOptions === 'object') {
+    obj = pathOrOptions;
+    pathOrOptions = obj.path;
+    pathIsGlobal = !!obj.pathIsGlobal;
+  } else {
+    obj = { pathOrOptions, pathIsGlobal } as any;
+  }
   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    metaReq('delete', path, target, propertyKey, descriptor, pathIsGlobal);
+    metaReq('delete', pathOrOptions as string, target, propertyKey, descriptor, obj);
   }
 }

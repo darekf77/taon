@@ -203,11 +203,13 @@ export namespace Morphi {
       export import Success = models.Models.Rest.HttpResponse;
       export import Error = models.Models.Rest.HttpResponseError;
     }
+    export type ContentType = models.Models.ContentType;
   }
 
   export namespace Files {
     export type MimeType = keyof typeof models.Models.mimeTypes;
-    export const MimeTypesObj = models.Models.mimeTypes; // TODO Download it ?
+    export const MimeTypesObj = models.Models.mimeTypes;
+    export type ContentType = models.Models.ContentType;
   }
 
   export namespace Auth {

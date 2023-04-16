@@ -148,8 +148,28 @@ export function initMethodNodejs(
         );
         let result = await MorphiHelpers.getResponseValue(response, req, res);
 
-        // console.log('REQUEST RESULT', result)
-        await EntityProcess.init(result, res);
+        if (methodConfig.contentType && methodConfig.responseType) {
+          //#region @backend
+          // SENDING BLOB
+          // Extract image data
+          const img_base64 = result;
+          const m = /^data:(.+?);base64,(.+)$/.exec(img_base64)
+          if (!m) {
+            throw new Error(`Not a base64 image [${img_base64}]`)
+          }
+          const [_, content_type, file_base64] = m
+          const file = Buffer.from(file_base64, 'base64')
+
+          res.writeHead(200, {
+            'Content-Type': content_type,
+            'Content-Length': file.length
+          });
+          res.end(file);
+          //#endregion
+        } else {
+          // console.log('REQUEST RESULT', result)
+          await EntityProcess.init(result, res);
+        }
 
       } catch (error) {
         if (_.isString(error)) {

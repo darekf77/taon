@@ -1,5 +1,5 @@
 //#region @browser
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, HostBinding, Input, OnInit, Output } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -8,6 +8,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./my-entity.component.scss']
 })
 export class MyEntityComponent implements OnInit {
+  @HostBinding('style.minHeight.px') @Input() height: number = 100;
   handlers: Subscription[] = [];
   @Output() myEntityDataChanged = new EventEmitter();
   @Input() myEntityData: any = {};
