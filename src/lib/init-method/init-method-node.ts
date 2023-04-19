@@ -19,7 +19,6 @@ export function initMethodNodejs(
   const requestHandler = (methodConfig.requestHandler && typeof methodConfig.requestHandler === 'function')
     ? methodConfig.requestHandler : (req, res, next) => { next() };
 
-  const productionMode = FrameworkContext.isProductionMode;
   const context = FrameworkContext.findForTraget(target);
   const url = context.uri;
 
@@ -148,14 +147,15 @@ export function initMethodNodejs(
         );
         let result = await MorphiHelpers.getResponseValue(response, req, res);
 
-        if (methodConfig.contentType && methodConfig.responseType) {
+        // TODO handle buffor or blob instance reponse
+        if (methodConfig.contentType && methodConfig.contentType !== 'multipart/form-data' && methodConfig.responseType) {
           //#region @backend
-          // SENDING BLOB
+          // SENDING BLOB (string)
           // Extract image data
           const img_base64 = result;
           const m = /^data:(.+?);base64,(.+)$/.exec(img_base64)
           if (!m) {
-            throw new Error(`Not a base64 image [${img_base64}]`)
+            throw new Error(`[firedev-framework] Not a base64 image [${img_base64}]`)
           }
           const [_, content_type, file_base64] = m
           const file = Buffer.from(file_base64, 'base64')

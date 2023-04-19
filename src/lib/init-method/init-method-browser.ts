@@ -7,7 +7,7 @@ import { Helpers } from 'tnp-core';
 import { MorphiHelpers } from '../helpers';
 import { FrameworkContext } from '../framework/framework-context';
 import { from } from 'rxjs';
-// const subjectHandler = Symbol();
+import { CLASS } from 'typescript-class-helpers';
 
 export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodConfig: Models.Rest.MethodConfig, expressPath) {
   let storage: any;
@@ -97,7 +97,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
   // console.log(`FRONTEND ${target.name} method on ${expressPath}`)
 
   target.prototype[methodConfig.methodName] = function (...args) {
-    // console.log('FRONTEND expressPath', expressPath)
+    // console.log('[init method browser] FRONTEND expressPath', expressPath)
     // const productionMode = FrameworkContext.isProductionMode;
 
 
@@ -106,14 +106,37 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
     const endpoints = storage[SYMBOL.ENDPOINT_META_CONFIG];
     let rest: Ng2RestModels.ResourceModel<any, any>;
     if (!endpoints[uri.href][expressPath]) {
-      rest = Resource.create(uri.href, expressPath, SYMBOL.MAPPING_CONFIG_HEADER as any,
-        SYMBOL.CIRCURAL_OBJECTS_MAP_BODY as any,
-        RestHeaders.from({
-          'Content-Type': methodConfig.contentType,
-          'Accept': methodConfig.contentType,
-          'responsetypeaxios': methodConfig.responseType
-        }),
-      );
+      let headers = {};
+      if (methodConfig.contentType && !methodConfig.responseType) {
+        rest = Resource.create(uri.href, expressPath, SYMBOL.MAPPING_CONFIG_HEADER as any,
+          SYMBOL.CIRCURAL_OBJECTS_MAP_BODY as any,
+          RestHeaders.from({
+            'Content-Type': methodConfig.contentType,
+            'Accept': methodConfig.contentType,
+          }),
+        );
+      } else if (methodConfig.contentType && methodConfig.responseType) {
+        rest = Resource.create(uri.href, expressPath, SYMBOL.MAPPING_CONFIG_HEADER as any,
+          SYMBOL.CIRCURAL_OBJECTS_MAP_BODY as any,
+          RestHeaders.from({
+            'Content-Type': methodConfig.contentType,
+            'Accept': methodConfig.contentType,
+            'responsetypeaxios': methodConfig.responseType
+          }),
+        );
+      } else if (!methodConfig.contentType && methodConfig.responseType) {
+        rest = Resource.create(uri.href, expressPath, SYMBOL.MAPPING_CONFIG_HEADER as any,
+          SYMBOL.CIRCURAL_OBJECTS_MAP_BODY as any,
+          RestHeaders.from({
+            'responsetypeaxios': methodConfig.responseType
+          }),
+        );
+      } else {
+        rest = Resource.create(uri.href, expressPath, SYMBOL.MAPPING_CONFIG_HEADER as any,
+          SYMBOL.CIRCURAL_OBJECTS_MAP_BODY as any,
+        );
+      }
+
       endpoints[uri.href][expressPath] = rest;
     } else {
       rest = endpoints[uri.href][expressPath] as any;
@@ -123,7 +146,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
     const isWithBody = (method === 'put' || method === 'post');
     const pathPrams = {};
     let queryParams = {};
-    let item = {};
+    let bodyObject = {};
     args.forEach((param, i) => {
       let currentParam: Models.Rest.ParamConfig;
       //#region find param
@@ -176,13 +199,26 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
       }
       if (currentParam.paramType === 'Body') {
         if (currentParam.paramName) {
+          if (CLASS.getNameFromObject(bodyObject) === 'FormData') {
+            throw new Error(`[firedev-framework] Don use param names when posting/putting FormData.
+            Use this:
+            // ...
+            (@Firedev.Http.Param.Body() formData: FormData) ...
+            // ...
+
+            instead
+            // ...
+            (@Firedev.Http.Param.Body('${currentParam.paramName}') formData: FormData) ...
+            // ...
+            `)
+          }
           const mapping = MorphiHelpers.Mapping.decode(param, !FrameworkContext.isProductionMode);
           if (mapping) {
             rest.headers.set(
               `${SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS}${currentParam.paramName}`,
               JSON.stringify(mapping))
           }
-          item[currentParam.paramName] = param;
+          bodyObject[currentParam.paramName] = param;
         } else {
           const mapping = MorphiHelpers.Mapping.decode(param, !FrameworkContext.isProductionMode);
           if (mapping) {
@@ -190,14 +226,14 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
               SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS,
               JSON.stringify(mapping))
           }
-          item = param;
+          bodyObject = param;
         }
       }
     });
 
-    if (typeof item === 'object') {
+    if (typeof bodyObject === 'object' && (CLASS.getNameFromObject(bodyObject) !== 'FormData')) {
       let circuralFromItem = []
-      item = MorphiHelpers.JSON.parse(MorphiHelpers.JSON.stringify(item, void 0, void 0, circs => {
+      bodyObject = MorphiHelpers.JSON.parse(MorphiHelpers.JSON.stringify(bodyObject, void 0, void 0, circs => {
         circuralFromItem = circs;
       }))
       rest.headers.set(
@@ -218,7 +254,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
     }
 
     return {
-      received: isWithBody ? rest.model(pathPrams)[method](item, [queryParams]) : rest.model(pathPrams)[method]([queryParams])
+      received: isWithBody ? rest.model(pathPrams)[method](bodyObject, [queryParams]) : rest.model(pathPrams)[method]([queryParams])
     }
   };
 }

@@ -138,7 +138,7 @@ export interface BASE_CONTROLLER_INIT {
   className: 'BASE_CONTROLLER',
   autoinit: true
 })
-export abstract class BASE_CONTROLLER<T> extends BaseCRUD<T>
+export abstract class BASE_CONTROLLER<EntityType> extends BaseCRUD<EntityType>
   //#region @websql
   implements BASE_CONTROLLER_INIT
 //#endregion

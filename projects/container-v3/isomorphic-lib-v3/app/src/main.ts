@@ -4,6 +4,9 @@ import { Helpers } from 'tnp-core';  // <- this is to replace by firedev
 
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
+import * as localForge from 'localforage';
+// @ts-ignore
+window['localForge'] = localForge;
 
 if (environment.production) {
   enableProdMode();
