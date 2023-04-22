@@ -339,7 +339,6 @@ export function executeCommand(registerName: string, commandToExecute: string | 
               findNearestProjectWithGitRoot && '--findNearestProjectWithGitRoot',
               findNearestProjectType && `--findNearestProjectType=${findNearestProjectType}`,
               findNearestProjectTypeWithGitRoot && `--findNearestProjectTypeWithGitRoot=${findNearestProjectTypeWithGitRoot}`,
-              '-dist',
               '-verbose'
             ].filter(f => !!f).join(' ');
 
