@@ -1,0 +1,10 @@
+{
+  "name": "Isomorphic Lib V 3",
+  "short_name": "isomorphic-lib-v3",
+  "theme_color": "#1976d2",
+  "background_color": "#fafafa",
+  "display": "standalone",
+  "scope": "./",
+  "start_url": "https://darekf77.github.io/isomorphic-lib-v3/",
+  "icons": []
+}
