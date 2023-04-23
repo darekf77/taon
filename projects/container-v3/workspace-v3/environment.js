@@ -17,11 +17,11 @@ config = {
       //   "name": "angular-lib-v3",
       //   "port": 6001
       // },
-      {
-        "baseUrl": "/isomorphic-lib-v3",
-        "name": "isomorphic-lib-v3",
-        "port": 6002
-      },
+      // {
+      //   "baseUrl": "/isomorphic-lib-v3",
+      //   "name": "isomorphic-lib-v3",
+      //   "port": 6002
+      // },
       // {
       //   "baseUrl": "/docker-v3",
       //   "name": "docker-v3",

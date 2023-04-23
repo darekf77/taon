@@ -1,9 +1,0 @@
-{
-  "name": "isomorphic-lib-v3",
-  "version": "13.0.9",
-  "license": "UNLICENSED",
-  "dependencies": {},
-  "devDependencies": {},
-  "private": true,
-  "main": "index.js"
-}
