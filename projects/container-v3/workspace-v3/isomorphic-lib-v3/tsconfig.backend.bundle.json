@@ -1,9 +1,0 @@
-{
-  "extends": "./tsconfig.isomorphic.json",
-  "compilerOptions": {
-    "rootDir": "./tmp-source-bundle"
-  },
-  "include": [
-    "tmp-source-bundle/**/*"
-  ]
-}

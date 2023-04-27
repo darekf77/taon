@@ -240,8 +240,7 @@
       '@types/express-fileupload': '^1.4.1',
       'express-fileupload': '~1.4.0',
 
-      // favicons generator!
-      favicons: '~7.1.2',
+
 
       // for data for nodejs (browser has it build it)
       'form-data': '~4.0.0',
@@ -264,7 +263,11 @@
       // top horizontal request progress bard, v9 dla angular 15
       'ngx-progressbar': '~8.0.0',
 
+      // good for higlighting in read only mode
       'ngx-highlightjs': '~6.1.3',
+
+      // highlighting and editing at the same time!
+      'ngx-ace-wrapper': '12',
     },
 
     linkedFolders: []
