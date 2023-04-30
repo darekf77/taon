@@ -17,5 +17,8 @@
 #  {{{ (ENV && ENV.exclusion) }}},
   "include": [
     "{{{ (ENV && ENV.currentProjectIsSite) ? 'tmp-src' : 'src' }}}/**/*"
+  ],
+  "exclude": [
+    "{{{ (ENV && ENV.currentProjectIsSite) ? 'tmp-src' : 'src' }}}/assets"
   ]
 }

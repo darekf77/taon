@@ -4,6 +4,7 @@ import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FiredevAdminModeConfigurationModule } from 'firedev-ui'; // <- this is to replace by firedev
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
       //bundleOnlyregistrationStrategy: 'registerWhenStable:30000'
     //bundleOnly}),
     BrowserAnimationsModule,
+    FiredevAdminModeConfigurationModule,
     //<<<TO_REPLACE_MODULE>>>
   ],
   providers: [],

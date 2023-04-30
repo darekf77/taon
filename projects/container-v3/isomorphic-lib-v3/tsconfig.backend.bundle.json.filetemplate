@@ -17,5 +17,8 @@
 #  {{{ (ENV && ENV.exclusion) }}},
   "include": [
     "tmp-source-bundle/**/*"
+  ],
+  "exclude": [
+    "tmp-source-bundle/assets"
   ]
 }

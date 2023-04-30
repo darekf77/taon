@@ -46,6 +46,7 @@
     "module",
     "{{{ (ENV && ENV.currentProjectIsSite) ? 'src' : 'tmp-src' }}}",
     "{{{ (ENV && ENV.currentProjectIsSite) ? 'tmp-src' : 'src' }}}/tests",
+    "{{{ (ENV && ENV.currentProjectIsSite) ? 'tmp-src' : 'src' }}}/assets",
     "{{{ (ENV && ENV.currentProjectIsSite) ? 'tmp-src' : 'src' }}}/**/*.spec.ts",
     "tmp-site-src",
     "tmp-tests-context"
