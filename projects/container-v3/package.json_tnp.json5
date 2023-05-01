@@ -269,6 +269,10 @@
 
       // highlighting and editing at the same time!
       'ngx-ace-wrapper': '12',
+
+      // fantastic immutable arrays
+      'immutable': '4.3.0',
+
     },
 
     linkedFolders: []
