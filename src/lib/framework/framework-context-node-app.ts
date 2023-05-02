@@ -1,4 +1,5 @@
 import type { FrameworkContext } from './framework-context';
+import { Log, Level } from 'ng2-logger';
 //#region @websql
 import type { Application } from 'express';
 //#endregion
@@ -42,6 +43,10 @@ import { MorphiHelpers } from '../helpers';
 import { ISession, ISessionExposed } from './framework-models';
 
 
+const log = Log.create('context node app',
+  Level.__NOTHING
+)
+
 export class FrameworkContextNodeApp extends FrameworkContextBase {
   //#region @websql
   public readonly app: Application;
@@ -69,14 +74,21 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
       if (Helpers.isWebSQL) {
         //#region @websqlOnly
 
-        Helpers.info('PREPARING WEBSQL TYPEORM CONNECTION')
-        Helpers.log(this.context.config)
+        log.info('PREPARING WEBSQL TYPEORM CONNECTION')
+        log.d(this.context.config)
         try {
           // @ts-ignore
           const connection = new DataSource(this.context.config);
           // @ts-ignore
           this.connection = connection;
           await this.connection.initialize();
+          let admin: any;
+          if (Helpers.isBrowser) {
+            //#region @browser
+            const win = window['firedev'];
+            admin = win?.db?.register(this.context);
+            //#endregion
+          }
           // console.log('this.connection.isInitialized', this.connection.isInitialized)
         } catch (error) {
           Helpers.error(error, false, true)
@@ -101,15 +113,15 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
         //#endregion
       } else {
 
-        Helpers.info('PREPARING BACKEND TYPEORM CONNECTION')
-        Helpers.log(this.context.config)
+        log.info('PREPARING BACKEND TYPEORM CONNECTION')
+        log.d(this.context.config)
         try {
           // @ts-ignore
           const connection = new DataSource(this.context.config);
           // @ts-ignore
           this.connection = connection;
           await this.connection.initialize();
-          console.log('this.connection.isInitialized', this.connection.isInitialized)
+          log.i('this.connection.isInitialized', this.connection.isInitialized)
 
         } catch (error) {
           Helpers.error(error, false, true)
@@ -136,7 +148,7 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
       console.log(this.connection);
       Helpers.error('Something wrong with connection init', false, true)
     }
-    Helpers.info(`PREPARING TYPEORM CONNECTION DONE. initialize=${this.connection.isInitialized}`)
+    log.info(`PREPARING TYPEORM CONNECTION DONE. initialize=${this.connection.isInitialized}`)
 
   }
 
@@ -356,7 +368,7 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
       //#endregion
 
       //#region @backend
-      this.context.publicAssets.forEach(asset => {
+      this.context.publicAssets.forEach(asset => { // @ts-ignore
         this.app.use(asset.path, express.static(asset.location))
       });
       //#endregion
@@ -427,15 +439,15 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
         + `${path.basename(CLASS.getName(tinstanceClass)).replace(/\.js$/, '')}.json`);
 
       if (isWorker) {
-        Helpers.log(`FILE: ${fileNameFor}`)
-        Helpers.log(JSON.stringify(routes, null, 4))
+        log.i(`FILE: ${fileNameFor}`)
+        log.i(JSON.stringify(routes, null, 4))
         //#region @backend
         fse.writeJSONSync(fileNameFor, routes, {
           spaces: 2,
           encoding: 'utf8'
         })
         //#endregion
-      } else {
+      } else { // @ts-ignore
         routes = [
           ...routes,
           ...(['', `---------- FOR HOST ${context.uri.href} ----------`]),
@@ -450,8 +462,8 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
       `tmp-routes.json`
     )
 
-    Helpers.log(`FILE: ${fileName}`)
-    Helpers.log(JSON.stringify(routes, null, 4))
+    log.d(`FILE: ${fileName}`)
+    log.d(JSON.stringify(routes, null, 4))
     //#region @backend
     fse.writeJSONSync(fileName, routes, {
       spaces: 2,

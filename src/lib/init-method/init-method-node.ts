@@ -38,7 +38,7 @@ export function initMethodNodejs(
     //#region @websqlOnly
     if (!context.node.app[type.toLowerCase()]) {
       context.node.app[type.toLowerCase()] = (expressPath) => {
-        console.log(`registering ${expressPath}`);
+        console.log(`[${classConfig.className}][${type.toUpperCase()}] ${expressPath}`);
       }
     }
     //#endregion

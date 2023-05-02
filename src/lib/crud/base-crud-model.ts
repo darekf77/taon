@@ -5,6 +5,7 @@ import { __ENDPOINT } from '../decorators/decorators-endpoint-class';
 import { GET, PUT, DELETE, POST, HEAD, PATCH } from '../decorators/decorators-methods';
 import { Query, Path, Body } from '../decorators/decorators-params';
 import { Models } from '../models';
+import { Level, Log } from 'ng2-logger';
 
 //#region @websql
 import { Repository, Connection } from 'firedev-typeorm';
@@ -13,6 +14,10 @@ import { DbCrud } from './db-crud';
 declare const global: any;
 import { CrudHelpers } from './crud-helpers';
 //#endregion
+
+const log = Log.create('base crud model',
+  Level.__NOTHING
+)
 
 const Firedev = {
   symbols: SYMBOL,
@@ -55,11 +60,11 @@ export abstract class BaseCRUD<T> {
       )
       && this.entity && this.connection && this.entity[SYMBOL.HAS_TABLE_IN_DB]) {
       this.repo = this.connection.getRepository(this.entity as any)
-      Helpers.log(`Base CRUD inited for: ${(this.entity as any).name}`);
+      log.i(`Base CRUD inited for: ${(this.entity as any).name}`);
       // @ts-ignore
       this.db = DbCrud.from(this.connection, this.entity);
     } else {
-      Helpers.log(`Base CRUD NOT inited for: ${this.entity && (this.entity as any).name}`)
+      log.w(`Base CRUD NOT inited for: ${this.entity && (this.entity as any).name}`)
     }
     //#endregion
   }

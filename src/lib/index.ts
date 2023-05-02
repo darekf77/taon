@@ -16,6 +16,7 @@ import * as models from './models';
 import * as sym from './symbols';
 import { Helpers } from 'tnp-core';
 import { FrameworkContext } from './framework/framework-context';
+export { FrameworkContext } from './framework/framework-context';
 import * as context from './framework/framework-context';
 import { MorphiHelpers } from './helpers';
 
