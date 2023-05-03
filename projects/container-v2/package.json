@@ -251,7 +251,7 @@
     "firedev-crud": "13.1.47",
     "firedev-crud-deamon": "13.1.37",
     "firedev-ports": "13.1.41",
-    "firedev-storage": "13.1.30",
+    "firedev-storage": "13.2.31",
     "firedev-typeorm": "13.1.25",
     "firedev-ui": "13.1.20",
     "fkill": "6.1.0",
