@@ -41,7 +41,9 @@ import type { BASE_CONTROLLER } from './framework-controller';
 import { RealtimeNodejs } from '../realtime';
 import { MorphiHelpers } from '../helpers';
 import { ISession, ISessionExposed } from './framework-models';
-
+//#region notForNpm
+// import type { FiredevAdmin } from 'firedev-ui'; // circural dependency DO NOT UNCOMMENT
+//#endregion
 
 const log = Log.create('context node app',
   Level.__NOTHING
@@ -51,6 +53,27 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
   //#region @websql
   public readonly app: Application;
   //#endregion
+
+  private get admin() {
+    //#region @browser
+    if (Helpers.isBrowser) {
+      const admin = window['firedev'];
+      return admin // as FiredevAdmin;
+    }
+    //#endregion
+    return void 0;
+  }
+
+  get keepWebsqlDbDataAfterReload() {
+    //#region @browser
+    if (Helpers.isBrowser) {
+      const keepWebsqlDbDataAfterReload = this.admin?.keepWebsqlDbDataAfterReload;
+      return keepWebsqlDbDataAfterReload;
+    }
+    //#endregion
+    return true;
+  }
+
 
   public readonly httpServer
     //#region @backend
@@ -376,20 +399,30 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
       // @ts-ignore
       this.realtime = new RealtimeNodejs(this.context);
 
-      const instancesOfControllers: BASE_CONTROLLER<any>[] = this.context
-        .allControllersInstances
-        .filter(f => _.isFunction((f as any as BASE_CONTROLLER<any>).initExampleDbData)) as any;
-
-      for (let index = 0; index < instancesOfControllers.length; index++) {
-        const controllerInstance = instancesOfControllers[index]
-
-        // preserve data but dont add any new
-        await controllerInstance.initExampleDbData(this.context.workerMode);
+      if (this.admin && this.keepWebsqlDbDataAfterReload && !Helpers.isNode) {
+        if (this.admin.firstTimeKeepWebsqlDbDataTrue) {
+          this.admin.firstTimeKeepWebsqlDbDataTrue = false;
+          await this.reinitControllersData();
+        }
+      } else {
+        await this.reinitControllersData();
       }
-
-
     }
   }
+
+  async reinitControllersData() {
+    const instancesOfControllers: BASE_CONTROLLER<any>[] = this.context
+      .allControllersInstances
+      .filter(f => _.isFunction((f as any as BASE_CONTROLLER<any>).initExampleDbData)) as any;
+
+    for (let index = 0; index < instancesOfControllers.length; index++) {
+      const controllerInstance = instancesOfControllers[index]
+
+      // preserve data but dont add any new
+      await controllerInstance.initExampleDbData(this.context.workerMode);
+    }
+  }
+
 
   private initDecoratorsFunctions() {
     this.context.initFunc.filter(e => {

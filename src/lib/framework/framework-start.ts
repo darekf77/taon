@@ -3,6 +3,9 @@ import { IConnectionOptions, StartOptions } from './framework-models';
 import { FrameworkContext } from './framework-context';
 import { Helpers } from 'tnp-core';
 import axios from 'axios';
+//#region notForNpm
+// import type { FiredevAdmin } from 'firedev-ui'; // circural dependency DO NOT UNCOMMENT
+//#endregion
 
 export function start(options: StartOptions) {
 
@@ -27,6 +30,15 @@ export function start(options: StartOptions) {
   // } catch (error) {
   //   console.warn(`error while getting ngzone `, error)
   // }
+  //#endregion
+
+  let admin
+  // : FiredevAdmin; // DO NOT UNCOMMNET
+
+  //#region @browser
+  if (Helpers.isBrowser) {
+    admin = window['firedev'];
+  }
   //#endregion
 
   return new Promise<FrameworkContext>(async (resolve, reject) => {
@@ -82,10 +94,16 @@ export function start(options: StartOptions) {
 
     //#region @websql
 
-    if(config) {
+    if (config) {
+
       const c = config as any as IConnectionOptions;
-      c.dropSchema = true;
-      c.synchronize = true;
+      if (!admin || !admin.keepWebsqlDbDataAfterReload || admin.firstTimeKeepWebsqlDbDataTrue) {
+        c.dropSchema = true;
+        c.synchronize = true;
+      } else {
+        c.dropSchema = false;
+        delete c.synchronize // false is not auto synchonize - from what I understand
+      }
     }
     //#endregion
 
