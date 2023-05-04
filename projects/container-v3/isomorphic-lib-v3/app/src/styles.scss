@@ -1,8 +1,2 @@
 /* You can add global styles to this file, and also import other style files */
 @import '~@angular/material/prebuilt-themes/indigo-pink.css';
-
-
-// QUICK_FIX for tasb that are moving out of view
-.mat-tab-list {
-  transform: translateX(0px) !important;
-}
