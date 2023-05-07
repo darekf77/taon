@@ -242,7 +242,7 @@
     "rimraf": "2.6.2",
     "semver": "6.3.0",
     "sql.js": "1.8.0",
-    "static-columns": "~13.3.2",
+    "static-columns": "~13.3.3",
     "string-similarity": "4.0.2",
     "sudo-block": "3.0.0",
     "tnp-cli": "~13.1.57",

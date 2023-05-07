@@ -273,6 +273,16 @@
       // fantastic immutable arrays
       'immutable': '4.3.0',
 
+      // use csss variable from js inside scss
+      "angular-material-css-vars": "~5.0.0",
+
+      // promise button for loading things
+      // "angular2-promise-buttons": "~5.0.3",
+
+      // additonal thing for material https://ng-matero.github.io/extensions/components/progress/overview
+      // there is version for ng 15!
+      "@ng-matero/extensions": "13.3.2",
+
     },
 
     linkedFolders: []

@@ -4,6 +4,7 @@ import { Mapping } from 'ng2-rest';
 import { findTypeForEntity } from './type-from-entity';
 import { CLASS } from 'typescript-class-helpers';
 import { ConfigModels } from 'tnp-config';
+import { FormlyInputType } from './formly.models';
 
 export function getFromlyConfigFor(
   target: Function,
@@ -21,9 +22,6 @@ export function getFromlyConfigFor(
     parentModel, relativePath = '', level = 0, maxLevel = 4,
   } = options;
 
-  if (CLASS.getName(target) === 'Project') {
-    return [];
-  }
 
   if (level === maxLevel) {
     return [];
@@ -47,8 +45,13 @@ export function getFromlyConfigFor(
 
   let fields: FormlyFieldConfig[] = [];
 
-
-  function inputToPush(key: string, type: ConfigModels.FormlyInputType, model: string, targetChild?: Function) {
+  //#region input to push
+  function inputToPush(key: string, type: FormlyInputType, model: string,
+    inptToPushOptions?: {
+      targetChild?: Function,
+      selectOptions?: any[],
+    }) {
+    const { targetChild, selectOptions } = inptToPushOptions || {};
     // console.log(`key(${key}) type: ${type} | model: ${model} targetChild: ${targetChild && targetChild.name}`)
     let res: FormlyFieldConfig;
     if (type === 'repeat') {
@@ -98,7 +101,8 @@ export function getFromlyConfigFor(
         defaultValue: !_.isUndefined(target.prototype[key]) ? target.prototype[key] : undefined,
         templateOptions: {
           label: _.isString(model) ? `${model.split('.').map(l => _.startCase(l)).join(' / ')} / ${_.startCase(key)}`
-            : _.startCase(key)
+            : _.startCase(key),
+          options: selectOptions,
         }
       }
     }
@@ -107,7 +111,9 @@ export function getFromlyConfigFor(
     }
     return res;
   }
+  //#endregion
 
+  //#region is allowed path
   function isAlowedPath(key: string) {
     let isAlowed = true;
     const matchPath = relativePath === '' ? key : `${relativePath}:${key}`
@@ -129,9 +135,11 @@ export function getFromlyConfigFor(
     // console.log(`Is allowed;${matchPath} `, isAlowed)
     return isAlowed;
   }
+  //#endregion
 
   const simpleResolved = []
 
+  //#region resolve simple types
   function resolveSimpleTypes() {
 
     for (const key in target.prototype) {
@@ -146,18 +154,30 @@ export function getFromlyConfigFor(
         }
 
         const element = target.prototype[key];
-        let type: ConfigModels.FormlyInputType = 'input';
+        let type: FormlyInputType = 'input';
         if (_.isBoolean(element)) {
           type = 'switch'
         } else if (_.isDate(element)) {
           type = 'datepicker'
+        } else if (_.isFunction(target['getOptionsFor'])) {
+          var selectOptions = target['getOptionsFor'](key);
+          if (!_.isUndefined(selectOptions)) {
+            type = 'select'
+          }
+        } else if (_.isFunction(target.prototype?.getOptionsFor)) {
+          var selectOptions = target.prototype?.getOptionsFor(key);
+          if (!_.isUndefined(selectOptions)) {
+            type = 'select'
+          }
         }
-        fields.push(inputToPush(key, type, parentModel))
+        fields.push(inputToPush(key, type, parentModel, { selectOptions }))
         simpleResolved.push(key)
       }
     }
   }
+  //#endregion
 
+  //#region resolve complex types
   function resolveComplexTypes() {
 
     fieldNames
@@ -183,9 +203,9 @@ export function getFromlyConfigFor(
                 fields = fields.concat(inputToPush(key, ftype.name as any, key))
               } else {
                 if (isArray) {
-                  fields = fields.concat(inputToPush(key, 'repeat', key, targetChild))
+                  fields = fields.concat(inputToPush(key, 'repeat', key, { targetChild }))
                 } else {
-                  fields = fields.concat(inputToPush(key, 'group', key, targetChild))
+                  fields = fields.concat(inputToPush(key, 'group', key, { targetChild }))
                 }
               }
 
@@ -193,12 +213,15 @@ export function getFromlyConfigFor(
           }
 
         }
-      })
+      });
   }
+  //#endregion
 
   function generate() {
     resolveSimpleTypes();
+    console.log('after simple', fields);
     resolveComplexTypes()
+    console.log('after complext', fields);
   }
 
   generate()

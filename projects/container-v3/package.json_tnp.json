@@ -167,7 +167,9 @@
       "ngx-progressbar": "~8.0.0",
       "ngx-highlightjs": "~6.1.3",
       "ngx-ace-wrapper": "12",
-      "immutable": "4.3.0"
+      "immutable": "4.3.0",
+      "angular-material-css-vars": "~5.0.0",
+      "@ng-matero/extensions": "13.3.2"
     },
     "linkedFolders": []
   },

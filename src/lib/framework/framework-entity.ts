@@ -39,11 +39,15 @@ function getRealtimeIsRealtime(entity, property: string) {
 export function Entity<T = {}>(options?: {
   className?: string;
   // classNameInBrowser?: string;
-  // defaultModelValues?: Mapping.ModelValue<T>;
-  // mapping?: Mapping.Mapping<T>;
+  defaultModelValues?: Mapping.ModelValue<T>;
+  defaultModelMapping?: Mapping.Mapping<T>;
+  /**
+   * default unique property is "id"
+   * for your entity it may be something else
+   */
   uniqueKeyProp?: (keyof T);
   // classFamily?: string,
-  // additionalMapping?: { [lodashPathes: string]: string | [string]; }
+  defaultModelMappingDeep?: { [lodashPathes: string]: string | [string]; }
   // tree?: 'closure-table';
   // formly?: {
   //   transformFn?: FormlyArrayTransformFn;
@@ -62,10 +66,10 @@ export function Entity<T = {}>(options?: {
   //   options.formly = {}
   // }
   let {
-    // defaultModelValues,
+    defaultModelValues,
     // tree,
-    // mapping,
-    // additionalMapping = {},
+    defaultModelMapping,
+    defaultModelMappingDeep = {},
     uniqueKeyProp = 'id',
     // classFamily,
     className,
@@ -90,7 +94,7 @@ export function Entity<T = {}>(options?: {
       // classFamily,
       // classNameInBrowser
     } as any)(target)
-    // Mapping.DefaultModelWithMapping<T>(defaultModelValues, _.merge(mapping, additionalMapping))(target)
+    Mapping.DefaultModelWithMapping<T>(defaultModelValues, _.merge(defaultModelMapping, defaultModelMappingDeep))(target)
 
     // TODO when entit metadata generator read use this
     Mapping.DefaultModelWithMapping<T>(void 0, {})(target)
