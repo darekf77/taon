@@ -169,7 +169,9 @@
       "ngx-ace-wrapper": "12",
       "immutable": "4.3.0",
       "angular-material-css-vars": "~5.0.0",
-      "@ng-matero/extensions": "13.3.2"
+      "@ng-matero/extensions": "13.3.2",
+      "video.js": "~8.3.0",
+      "howler": "~2.2.3"
     },
     "linkedFolders": []
   },

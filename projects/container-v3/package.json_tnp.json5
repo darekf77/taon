@@ -283,6 +283,12 @@
       // there is version for ng 15!
       "@ng-matero/extensions": "13.3.2",
 
+      // embed/customize videos
+      "video.js": "~8.3.0",
+
+      // embed/customize audio
+      "howler": "~2.2.3"
+
     },
 
     linkedFolders: []
