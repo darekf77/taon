@@ -115,7 +115,7 @@ export const commands: CommandType[] = ([
               label: 'Generate extended app.* files for firedev app'
             },
             {
-              option: 'dummy-angul∂ar-standalone-component',
+              option: 'dummy-angular-standalone-component',
               label: 'Generate dummy Angular component structure'
             },
             {
