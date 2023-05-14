@@ -65,15 +65,15 @@ export namespace Morphi {
   /**
    * Function only for websql mode
    */
-  export const loadedSqlJs = () => {
+  export const anyContextLoaded = () => {
 
-    //#region @websql
-    return window['onLoadSqlJS'] as Observable<void>;
-    //#endregion
-    const obs = new Subject<void>();
-    setTimeout(() => {
-      obs.next();
-    })
+    let obs: Subject<boolean>;
+    if (!window['firedev']['contextLoaded']) {
+      obs = new Subject<boolean>();
+      window['firedev']['contextLoaded'] = obs;
+    } else {
+      obs = window['firedev']['contextLoaded'];
+    }
     return obs.asObservable();
   }
 

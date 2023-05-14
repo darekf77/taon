@@ -3,6 +3,7 @@ import { IConnectionOptions, StartOptions } from './framework-models';
 import { FrameworkContext } from './framework-context';
 import { Helpers } from 'tnp-core';
 import axios from 'axios';
+import { Subject } from 'rxjs';
 //#region notForNpm
 // import type { FiredevAdmin } from 'firedev-ui'; // circural dependency DO NOT UNCOMMENT
 //#endregion
@@ -154,6 +155,15 @@ export function start(options: StartOptions) {
       });
 
     }
+
+    let obs: Subject<boolean>;
+    if (!window['firedev']['contextLoaded']) {
+      obs = new Subject<boolean>();
+      window['firedev']['contextLoaded'] = obs;
+    } else {
+      obs = window['firedev']['contextLoaded'];
+    }
+    obs.next(true);
 
     resolve(context);
   })

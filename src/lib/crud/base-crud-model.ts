@@ -8,7 +8,7 @@ import { Models } from '../models';
 import { Level, Log } from 'ng2-logger';
 
 //#region @websql
-import { Repository, Connection } from 'firedev-typeorm';
+import { Repository, Connection, Like } from 'firedev-typeorm';
 import { FrameworkContext } from '../framework/framework-context';
 import { DbCrud } from './db-crud';
 declare const global: any;
@@ -95,6 +95,59 @@ export abstract class BaseCRUD<T> {
     }
     //#endregion
   }
+
+  @Firedev.Http.GET(`/${Firedev.symbols.CRUD_TABLE_MODELS}-pagination`)
+  pagination<T = any>(
+    @Query('pageNumber') pageNumber: number = 1,
+    @Query('pageSize') pageSize: number = 10,
+    @Query('search') search: string = '',
+  ): Models.Response<T[]> {
+    //#region @websqlFunc
+    return async (request, response) => {
+      if (this.repo) {
+
+        const query = {
+          page: pageNumber,
+          take: pageSize,
+          keyword: search,
+        };
+        // console.log({
+        //   query
+        // })
+
+        const take = query.take || 10
+        const page = query.page || 1;
+        const skip = (page - 1) * take;
+        const keyword = query.keyword || ''
+
+        const data = await this.repo.findAndCount(
+          {
+            // where: { name: Like('%' + keyword + '%') },
+            // order: { name: "DESC" },
+            take: take,
+            skip: skip
+          }
+        );
+
+        const [result, total] = data;
+        response.setHeader(SYMBOL.X_TOTAL_COUNT, total)
+        // const lastPage = Math.ceil(total / take);
+        // const nextPage = page + 1 > lastPage ? null : page + 1;
+        // const prevPage = page - 1 < 1 ? null : page - 1;
+
+        // console.log({
+        //   result,
+        //   total
+        // })
+
+        return result;
+      }
+      return []
+    }
+    //#endregion
+  }
+
+
 
 
   @Firedev.Http.GET(`/${Firedev.symbols.CRUD_TABLE_MODELS}`)

@@ -30,8 +30,9 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
     // if (!target.prototype[methodConfig.methodName][subjectHandler]) {
     //   target.prototype[methodConfig.methodName][subjectHandler] = new Subject();
     // }
-    const received = new Promise(async (resove, reject) => {
-      const { request, response } = websqlMocks()
+    const received = new Promise(async (resolve, reject) => {
+      const headers = {};
+      const { request, response } = websqlMocks(headers)
 
       let res: any;
       try {
@@ -68,8 +69,9 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
           method: methodConfig.type,
           url: `${uri.origin}${'' // TODO express path
             }${methodConfig.path}`
-        }, _.isString(body) ? body : JSON.stringify(body),
-          void 0,
+        },
+          _.isString(body) ? body : JSON.stringify(body),
+          RestHeaders.from(headers) ,
           void 0,
           () => body,
         );
@@ -77,8 +79,9 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
         // console.log('NEXT', res);
         // target.prototype[methodConfig.methodName][subjectHandler].next(res);
 
-        resove(res);
+        resolve(res);
       } catch (error) {
+        console.error(error)
         // error = new Ng2RestModels.HttpResponseError('Error during websql request',
         //   JSON.stringify(error));
         // target.prototype[methodConfig.methodName][subjectHandler].error(error);
@@ -86,6 +89,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
       }
     });
     received['observable'] = from(received);
+    // debugger
     return {
       received
     }
@@ -262,10 +266,12 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
 
 
 //#region @websqlOnly
-function websqlMocks() {
+function websqlMocks(headers) {
+
   const response: Express.Response = {
-    setHeader() {
+    setHeader(key: string, value: any) {
       // console.log('Dummy set header', arguments)
+      headers[key] = value;
     }
   };
   const request: Express.Request = {};

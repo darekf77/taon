@@ -219,9 +219,9 @@ export function getFromlyConfigFor(
 
   function generate() {
     resolveSimpleTypes();
-    console.log('after simple', fields);
+    // console.log('after simple', fields);
     resolveComplexTypes()
-    console.log('after complext', fields);
+    // console.log('after complext', fields);
   }
 
   generate()
