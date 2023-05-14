@@ -66,7 +66,7 @@ export namespace Morphi {
    * Function only for websql mode
    */
   export const anyContextLoaded = () => {
-
+    //#region @browser
     let obs: Subject<boolean>;
     if (!window['firedev']['contextLoaded']) {
       obs = new Subject<boolean>();
@@ -74,7 +74,11 @@ export namespace Morphi {
     } else {
       obs = window['firedev']['contextLoaded'];
     }
+    setTimeout(() => {
+      obs.next(!!obs['anyContextLoaded']);
+    })
     return obs.asObservable();
+    //#endregion
   }
 
   export const isNode = Helpers.isNode;

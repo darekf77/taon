@@ -156,6 +156,7 @@ export function start(options: StartOptions) {
 
     }
 
+    //#region @browser
     let obs: Subject<boolean>;
     if (!window['firedev']['contextLoaded']) {
       obs = new Subject<boolean>();
@@ -163,7 +164,9 @@ export function start(options: StartOptions) {
     } else {
       obs = window['firedev']['contextLoaded'];
     }
+    obs['anyContextLoaded'] = true;
     obs.next(true);
+    //#endregion
 
     resolve(context);
   })
