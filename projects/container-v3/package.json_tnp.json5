@@ -194,15 +194,18 @@
       // --------------------
 
       //--------- VALIDATION ----------------------------------------
-      // validation (https://github.com/typestack/class-validator)
+      // validation decorator based (https://github.com/typestack/class-validator)
       'class-validator': '~0.14.0',
-      // amazing validation
+      // amazing schema validation
       yup: '~1.1.1',
+      // validation function based
+      validator: "^9.2.0",
       // ------------------------------------------------------------
 
       // -------- THREADS / WORKERS ---------------------------------
       // threads lib: (https://github.com/andywer/threads.js)
       'threads': '~1.7.0',
+      // "task.js": "^0.1.5",
       // ------------------------------------------------------------
 
       // ------- MEDIA (IMAGE/VIDEO/AUDIO) MANIPULATION -------------
@@ -217,6 +220,8 @@
       // ------------------------------------------------------------
 
       // ------- ICONS ----------------------------------------------
+      "font-awesome": "^4.7.0",
+      "material-design-icons": "3.0.1",
       '@iconify/icons-fa-solid': '1.2.2',
       '@iconify/icons-mdi': '1.2.1',
       '@mdi/js': '6.5.95',
@@ -266,6 +271,7 @@
       // ------------------------------------------------------------
 
       // ------- UI EXTENSIONS ---------------------------------------
+      "element-resize-detector": "1.1.15",
       // easy rxjs destroy
       '@ngneat/until-destroy': '9.2.3',
       // handle bootstrap components
