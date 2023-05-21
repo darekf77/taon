@@ -9,38 +9,7 @@ import { FrameworkContext } from '../framework/framework-context';
 import { from, Observable, Subject } from 'rxjs';
 import { CLASS } from 'typescript-class-helpers';
 
-//#region @websqlOnly
-const MIN_TIMEOUT = 500;
-const MIN_TIMEOUT_STEP = 200;
-const timeout = window[SYMBOL.WEBSQL_REST_PROGRESS_TIMEOUT] || MIN_TIMEOUT;
-let updateFun: Subject<number> = window[SYMBOL.WEBSQL_REST_PROGRESS_FUN];
-if (!window[SYMBOL.WEBSQL_REST_PROGRESS_FUN]) {
-  window[SYMBOL.WEBSQL_REST_PROGRESS_FUN] = new Subject();
-}
-updateFun = window[SYMBOL.WEBSQL_REST_PROGRESS_FUN];
 
-let periodsToUpdate = 0;
-if (timeout > MIN_TIMEOUT) {
-  const part = MIN_TIMEOUT_STEP;
-  periodsToUpdate = Math.floor(timeout / part) + 1;
-}
-
-const periods = async () => {
-  for (let n = 0; n < periodsToUpdate; n++) {
-    if (n === 0) {
-      updateFun.next(0)
-    } else {
-      let upValue = Math.floor(timeout / (MIN_TIMEOUT_STEP * n));
-      updateFun.next(upValue);
-    }
-    await new Promise((resolve, reject) => {
-      setTimeout(() => {
-        resolve(void 0);
-      }, MIN_TIMEOUT_STEP)
-    })
-  }
-}
-//#endregion
 
 export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodConfig: Models.Rest.MethodConfig, expressPath) {
   let storage: any;
@@ -56,10 +25,65 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
   const context = FrameworkContext.findForTraget(target);
   const uri: URL = context.uri;
 
+  //#region handling web sql request
+
   //#region @websqlOnly
 
-  const orgMethods = target.prototype[methodConfig.methodName];
+  //#region resolve variables
+  const MIN_TIMEOUT = 500;
+  const MIN_TIMEOUT_STEP = 200;
+  const timeout = window[SYMBOL.WEBSQL_REST_PROGRESS_TIMEOUT] || MIN_TIMEOUT;
 
+  let updateFun: Subject<number> = window[SYMBOL.WEBSQL_REST_PROGRESS_FUN];
+  if (!window[SYMBOL.WEBSQL_REST_PROGRESS_FUN]) {
+    window[SYMBOL.WEBSQL_REST_PROGRESS_FUN] = new Subject();
+  }
+  updateFun = window[SYMBOL.WEBSQL_REST_PROGRESS_FUN];
+
+  let startFun: Subject<void> = window[SYMBOL.WEBSQL_REST_PROGRESS_FUN_START];
+  if (!window[SYMBOL.WEBSQL_REST_PROGRESS_FUN_START]) {
+    window[SYMBOL.WEBSQL_REST_PROGRESS_FUN_START] = new Subject();
+  }
+  startFun = window[SYMBOL.WEBSQL_REST_PROGRESS_FUN_START];
+
+  let doneFun: Subject<void> = window[SYMBOL.WEBSQL_REST_PROGRESS_FUN_DONE];
+  if (!window[SYMBOL.WEBSQL_REST_PROGRESS_FUN_DONE]) {
+    window[SYMBOL.WEBSQL_REST_PROGRESS_FUN_DONE] = new Subject();
+  }
+  doneFun = window[SYMBOL.WEBSQL_REST_PROGRESS_FUN_DONE];
+
+  let periodsToUpdate = 0;
+  if (timeout >= MIN_TIMEOUT) {
+    periodsToUpdate = Math.floor(timeout / MIN_TIMEOUT_STEP);
+  }
+  //#endregion
+
+  //#region web sql periods to wait
+  const periods = async () => {
+    startFun.next();
+    for (let n = 1; n <= periodsToUpdate; n++) {
+      // if (n === 0) {
+      // updateFun.next(0)
+      // } else {
+      let upValue = Math.round(((MIN_TIMEOUT_STEP * n) / timeout) * 100);
+      if (upValue > 100) {
+        upValue = 100;
+      }
+      // console.log(`ping upValue: ${upValue}`)
+      updateFun.next(upValue);
+      // }
+      await new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve(void 0);
+        }, MIN_TIMEOUT_STEP)
+      })
+      // console.log('pong')
+    }
+    doneFun.next();
+  }
+  //#endregion
+
+  const orgMethods = target.prototype[methodConfig.methodName];
 
   target.prototype[methodConfig.methodName] = function (...args) {
     // if (!target.prototype[methodConfig.methodName][subjectHandler]) {
@@ -134,6 +158,8 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
     }
   }
   return;
+  //#endregion
+
   //#endregion
 
   // FRONTEND PATHES
