@@ -187,7 +187,7 @@
       // --------------------
 
       // FORMLY
-      '@ngx-formly/bootstrap': '6.0.0-next.8',
+      // '@ngx-formly/bootstrap': '6.0.0-next.8',
       '@ngx-formly/core': '6.0.0-next.8',
       // '@ngx-formly/ionic': '6.0.0-next.8', disabled for now
       '@ngx-formly/material': '6.0.0-next.8',
@@ -270,7 +270,24 @@
       '@ngx-translate/http-loader': '7.0.0',
       // ------------------------------------------------------------
 
+      // ------- FLASHY UI EXTENSIONS ---------------------------------------
+      // awesome typing effect
+      'ngx-typed-js': '2.1.1',
+      // ------------------------------------------------------------
+
       // ------- UI EXTENSIONS ---------------------------------------
+      // top right corner notifications
+      // 'ngx-toastr': '14.2.2',
+      '@ngneat/overview': '~3.0.0',
+      '@ngneat/hot-toast': '~4',
+      // top horizontal request progress bard, v9 dla angular 15 (inuse)
+      'ngx-progressbar': '~8.0.0',
+      // '@ngx-loading-bar/core':'6.0.2' ,
+      // '@ngx-loading-bar/http-client': '6.0.2',
+      // '@ngx-loading-bar/router': '6.0.2',
+      // slim scroll, v10 for angular 15
+      'ngx-scrollbar': '~9.0.2',
+      // check when element is being resized (jquery plugin)
       "element-resize-detector": "1.1.15",
       // easy rxjs destroy
       '@ngneat/until-destroy': '9.2.3',
@@ -278,21 +295,10 @@
       // 'ngx-bootstrap': '8.0.0',
       // 'ng-bootstrap': '11.0.1', // bootstrap feels old
       bootstrap: '^4.6.2',
-      // top right corner notifications
-      'ngx-toastr': '14.2.2',
-      '@ngneat/overview': '~3.0.0',
-      '@ngneat/hot-toast': '~4',
       // creating zips in browser/node!
       jszip: '3.10.1',
       // exporting zips from browser
       'file-saver': '2.0.5',
-      // slim scroll, v10 for angular 15
-      'ngx-scrollbar': '~9.0.2',
-      // top horizontal request progress bard, v9 dla angular 15 (inuse)
-      'ngx-progressbar': '~8.0.0',
-      '@ngx-loading-bar/core':'6.0.2' ,
-      '@ngx-loading-bar/http-client': '6.0.2',
-      '@ngx-loading-bar/router': '6.0.2',
       // easy lazy loading
       'ng-in-viewport': '13.0.1',
       // use csss variable from js inside scss
