@@ -3,6 +3,8 @@ import { _ } from 'tnp-core';
 export const SYMBOL = {
   HAS_TABLE_IN_DB: Symbol(),
   MDC_KEY: 'modeldataconfig',
+  WEBSQL_REST_PROGRESS_FUN: Symbol(),
+  WEBSQL_REST_PROGRESS_TIMEOUT: Symbol(),
   REALTIME: {
     NAMESPACE: 'firedevrealtime',
     TABLE_CHANGE(tableName: string) {

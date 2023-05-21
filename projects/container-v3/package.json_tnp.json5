@@ -288,7 +288,7 @@
       'file-saver': '2.0.5',
       // slim scroll, v10 for angular 15
       'ngx-scrollbar': '~9.0.2',
-      // top horizontal request progress bard, v9 dla angular 15
+      // top horizontal request progress bard, v9 dla angular 15 (inuse)
       'ngx-progressbar': '~8.0.0',
       '@ngx-loading-bar/core':'6.0.2' ,
       '@ngx-loading-bar/http-client': '6.0.2',

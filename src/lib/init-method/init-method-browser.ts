@@ -6,8 +6,41 @@ import { Models as Ng2RestModels } from 'ng2-rest';
 import { Helpers } from 'tnp-core';
 import { MorphiHelpers } from '../helpers';
 import { FrameworkContext } from '../framework/framework-context';
-import { from } from 'rxjs';
+import { from, Observable, Subject } from 'rxjs';
 import { CLASS } from 'typescript-class-helpers';
+
+//#region @websqlOnly
+const MIN_TIMEOUT = 500;
+const MIN_TIMEOUT_STEP = 200;
+const timeout = window[SYMBOL.WEBSQL_REST_PROGRESS_TIMEOUT] || MIN_TIMEOUT;
+let updateFun: Subject<number> = window[SYMBOL.WEBSQL_REST_PROGRESS_FUN];
+if (!window[SYMBOL.WEBSQL_REST_PROGRESS_FUN]) {
+  window[SYMBOL.WEBSQL_REST_PROGRESS_FUN] = new Subject();
+}
+updateFun = window[SYMBOL.WEBSQL_REST_PROGRESS_FUN];
+
+let periodsToUpdate = 0;
+if (timeout > MIN_TIMEOUT) {
+  const part = MIN_TIMEOUT_STEP;
+  periodsToUpdate = Math.floor(timeout / part) + 1;
+}
+
+const periods = async () => {
+  for (let n = 0; n < periodsToUpdate; n++) {
+    if (n === 0) {
+      updateFun.next(0)
+    } else {
+      let upValue = Math.floor(timeout / (MIN_TIMEOUT_STEP * n));
+      updateFun.next(upValue);
+    }
+    await new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve(void 0);
+      }, MIN_TIMEOUT_STEP)
+    })
+  }
+}
+//#endregion
 
 export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodConfig: Models.Rest.MethodConfig, expressPath) {
   let storage: any;
@@ -26,6 +59,8 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
   //#region @websqlOnly
 
   const orgMethods = target.prototype[methodConfig.methodName];
+
+
   target.prototype[methodConfig.methodName] = function (...args) {
     // if (!target.prototype[methodConfig.methodName][subjectHandler]) {
     //   target.prototype[methodConfig.methodName][subjectHandler] = new Subject();
@@ -71,7 +106,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
             }${methodConfig.path}`
         },
           _.isString(body) ? body : JSON.stringify(body),
-          RestHeaders.from(headers) ,
+          RestHeaders.from(headers),
           void 0,
           () => body,
         );
@@ -79,13 +114,17 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
         // console.log('NEXT', res);
         // target.prototype[methodConfig.methodName][subjectHandler].next(res);
 
+        await periods();
         resolve(res);
       } catch (error) {
+        await periods();
         console.error(error)
         // error = new Ng2RestModels.HttpResponseError('Error during websql request',
         //   JSON.stringify(error));
         // target.prototype[methodConfig.methodName][subjectHandler].error(error);
         reject(error);
+
+
       }
     });
     received['observable'] = from(received);

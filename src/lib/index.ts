@@ -30,6 +30,7 @@ import * as pass from 'passport';
 import { Handler } from 'express'
 //#endregion
 
+
 let generate
   //#region @backend
   = generateHash;
@@ -209,6 +210,15 @@ export namespace Morphi {
       export import Error = models.Models.Rest.HttpResponseError;
     }
     export type ContentType = models.Models.ContentType;
+  }
+
+
+  export namespace Websql {
+    export function useFakeTimeout(miliseconds: number) {
+      //#region @browser
+      window[sym.SYMBOL.WEBSQL_REST_PROGRESS_TIMEOUT] = miliseconds;
+      //#endregion
+    }
   }
 
   export namespace Files {
