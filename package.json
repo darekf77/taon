@@ -250,7 +250,7 @@
     "tnp-core": "~13.2.16",
     "tnp-db": "~13.1.19",
     "tnp-helpers": "~13.1.32",
-    "tnp-models": "~13.1.23",
+    "tnp-models": "~13.1.24",
     "tnp-ui": "~13.1.27",
     "ts-debug": "1.3.0",
     "typescript-class-helpers": "~13.2.10",

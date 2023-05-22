@@ -100,6 +100,7 @@ export namespace Models {
     ".midi": "application/midi",
     ".mjs": "text/javascript",
     ".mp3": "audio/mpeg",
+    ".mp4": "video/mp4",
     ".mpeg": "video/mpeg",
     ".mpkg": "application/vnd.apple.installer+xml",
     ".odp": "application/vnd.oasis.opendocument.presentation",
