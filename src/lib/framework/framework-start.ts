@@ -82,6 +82,7 @@ export function start(options: StartOptions) {
     // console.log('INITING LOCATION WEBSQL DB ' + config?.location)
     //#endregion
 
+    // console.log('USE LOCAL FORAGE', config['useLocalForage'])
 
     if (session) {
       const oneHour = 1000 * 60 * 60 * 1; // 24;

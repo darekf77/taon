@@ -135,7 +135,8 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
           () => body,
         );
 
-        // console.log('NEXT', res);
+        // @LAST blob should be blob not json
+        console.log('NEXT', res);
         // target.prototype[methodConfig.methodName][subjectHandler].next(res);
 
         await periods();

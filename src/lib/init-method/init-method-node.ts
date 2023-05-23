@@ -5,6 +5,9 @@ import { MorphiHelpers } from '../helpers';
 import { SYMBOL } from '../symbols';
 import { EntityProcess } from './entity-process';
 import { FrameworkContext } from '../framework/framework-context';
+//#region @backend
+import { Blob } from 'node:buffer';
+//#endregion
 // TODO below thing needs to be there
 // @ts-ignore
 export function initMethodNodejs(
@@ -146,9 +149,30 @@ export function initMethodNodejs(
           resolvedParams
         );
         let result = await MorphiHelpers.getResponseValue(response, req, res);
+        console.log({
+          result
+        })
+        debugger
+        if (result instanceof Blob) {
+          // res.type(blob.type)
+          // blob.arrayBuffer().then((buf) => {
+          //     res.send(Buffer.from(buf))
+          // }
 
-        // TODO handle buffor or blob instance reponse
-        if (methodConfig.contentType && methodConfig.contentType !== 'multipart/form-data' && methodConfig.responseType) {
+
+          const blob = result as Blob;
+          res.type(blob.type);
+          const toSend = await blob.arrayBuffer();
+          res.send(toSend);
+
+          // res.writeHead(200, {
+          //   'Content-Type': blob.type,
+          //   'Content-Length': blob.size
+          // });
+          // const buffer = await blob.arrayBuffer();
+          // res.end(buffer);
+        } else if (methodConfig.contentType && methodConfig.contentType !== 'multipart/form-data' && methodConfig.responseType) {
+          // TODO handle buffor or blob instance reponse
           //#region @backend
           // SENDING BLOB (string)
           // Extract image data

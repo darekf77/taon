@@ -278,6 +278,8 @@ export namespace Morphi {
       export import Custom = tsorm.Column;
       export const SimpleJson = () => tsorm.Column({ type: 'simple-json', nullable: true });
 
+      export const Boolean = (defaultValue: boolean) => tsorm.Column({ type: 'boolean', default: defaultValue });
+
       // TODO has limitation => comma in name
       // export const SimpleArray = () => tsorm.Column({ type: 'simple-array', nullable: true });
       export import Version = tsorm.VersionColumn;

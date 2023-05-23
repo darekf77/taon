@@ -6,7 +6,7 @@ import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
 import * as localForge from 'localforage';
 // @ts-ignore
-window['localForge'] = localForge;
+window['localforage'] = localForge;
 // @ts-ignore
 window['firedev'] = new FiredevAdmin(window['ENV']);
 
