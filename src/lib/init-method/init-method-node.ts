@@ -6,7 +6,7 @@ import { SYMBOL } from '../symbols';
 import { EntityProcess } from './entity-process';
 import { FrameworkContext } from '../framework/framework-context';
 //#region @backend
-import { Blob } from 'node:buffer';
+import { Blob } from 'buffer';
 //#endregion
 // TODO below thing needs to be there
 // @ts-ignore

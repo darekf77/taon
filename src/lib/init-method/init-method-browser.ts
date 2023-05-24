@@ -120,8 +120,9 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
         if (typeof res === 'object' && res.received) {
           res = await res.received;
         }
-        // console.log({ res4: res })
+
         const body = res;
+
         res = new Ng2RestModels.HttpResponse({
           body: void 0,
           isArray: void 0 as any,
@@ -129,14 +130,14 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
           url: `${uri.origin}${'' // TODO express path
             }${methodConfig.path}`
         },
-          _.isString(body) ? body : JSON.stringify(body),
+          (Helpers.isBlob(body) || _.isString(body)) ? body : JSON.stringify(body),
           RestHeaders.from(headers),
           void 0,
           () => body,
         );
 
         // @LAST blob should be blob not json
-        console.log('NEXT', res);
+        // console.log('NEXT', res);
         // target.prototype[methodConfig.methodName][subjectHandler].next(res);
 
         await periods();
