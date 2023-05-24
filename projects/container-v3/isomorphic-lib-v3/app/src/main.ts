@@ -1,12 +1,12 @@
+import * as localForge from 'localforage';
+// @ts-ignore
+window['localforage'] = localForge;
 import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { Helpers } from 'tnp-core';  // <- this is to replace by firedev
 import { FiredevAdmin } from 'firedev-ui';  // <- this is to replace by firedev
 import { AppModule } from './app/app.module';
 import { environment } from './environments/environment';
-import * as localForge from 'localforage';
-// @ts-ignore
-window['localforage'] = localForge;
 // @ts-ignore
 window['firedev'] = new FiredevAdmin(window['ENV']);
 

@@ -82,7 +82,8 @@ export function start(options: StartOptions) {
     // console.log('INITING LOCATION WEBSQL DB ' + config?.location)
     //#endregion
 
-    // console.log('USE LOCAL FORAGE', config['useLocalForage'])
+    // config['useLocalForage'] = false; // TODO REMOVE
+    // console.log('USING LOCAL FORAGE', config['useLocalForage'])
 
     if (session) {
       const oneHour = 1000 * 60 * 60 * 1; // 24;
@@ -129,7 +130,9 @@ export function start(options: StartOptions) {
     await context.initNode();
     //#endregion
 
+    // console.log('browser init start')
     context.initBrowser();
+    // console.log('browser init done')
 
     if (Helpers.isBrowser) {
       setTimeout(() => {

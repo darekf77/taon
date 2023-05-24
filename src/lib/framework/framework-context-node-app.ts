@@ -417,10 +417,12 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
 
     for (let index = 0; index < instancesOfControllers.length; index++) {
       const controllerInstance = instancesOfControllers[index]
-
+      // console.log('initing controllers')
       // preserve data but dont add any new
       await controllerInstance.initExampleDbData(this.context.workerMode);
     }
+    // console.log('initing controllers done')
+
   }
 
 
