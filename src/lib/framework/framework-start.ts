@@ -4,6 +4,7 @@ import { FrameworkContext } from './framework-context';
 import { Helpers } from 'tnp-core';
 import axios from 'axios';
 import { Subject } from 'rxjs';
+import { CLASS } from 'typescript-class-helpers';
 //#region notForNpm
 // import type { FiredevAdmin } from 'firedev-ui'; // circural dependency DO NOT UNCOMMENT
 //#endregion
@@ -109,6 +110,18 @@ export function start(options: StartOptions) {
       }
     }
     //#endregion
+    controllers = Array.isArray(controllers) ? controllers : [];
+    entities = Array.isArray(entities) ? entities : [];
+
+    const FiredevFileController = CLASS.getBy('FiredevFileController');
+    const FiredevFile = CLASS.getBy('FiredevFile');
+    const FiredevFileCss = CLASS.getBy('FiredevFileCss');
+    // console.log({ FiredevFileController, FiredevFile, FiredevFileCss })
+    // const { FiredevFileController, FiredevFile, FiredevFileCss } = await import('firedev-ui');
+    controllers.push(FiredevFileController as any);
+    entities.push(FiredevFile);
+    entities.push(FiredevFileCss);
+
 
     const context = new FrameworkContext({
       host,

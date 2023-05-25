@@ -117,7 +117,8 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
           });
         }
         // console.log({ res3: res })
-        if (typeof res === 'object' && res.received) {
+
+        if ((typeof res === 'object') && res?.received) {
           res = await res.received;
         }
 
