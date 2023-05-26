@@ -21,6 +21,14 @@ export class AppComponent {
 
   async ngOnInit() {
     await start();
+    removeElement('firedevpreloadertoremove');
+    document.body.style.backgroundColor = "FIREDEV_TO_REPLACE_COLOR";
     this.inited = true
   }
+}
+
+
+function removeElement(id) {
+  var elem = document.getElementById(id);
+  return elem.parentNode.removeChild(elem);
 }
