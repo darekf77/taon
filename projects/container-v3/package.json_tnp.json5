@@ -205,7 +205,7 @@
       // -------- THREADS / WORKERS ---------------------------------
       // threads lib: (https://github.com/andywer/threads.js)
       'threads': '~1.7.0',
-      // "task.js": "^0.1.5",
+      "task.js": "^0.1.5",
       // ------------------------------------------------------------
 
       // ------- MEDIA (IMAGE/VIDEO/AUDIO) MANIPULATION -------------
