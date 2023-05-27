@@ -23,3 +23,9 @@
   -webkit-font-feature-settings: 'liga';
   -webkit-font-smoothing: antialiased;
 }
+
+
+.ng-scroll-content {
+  // TODO QUICK_FIX for modal mode
+  display: block !important;
+}

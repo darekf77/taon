@@ -101,10 +101,14 @@ export function start(options: StartOptions) {
     if (config) {
 
       const c = config as any as IConnectionOptions;
-      if (!admin || !admin.keepWebsqlDbDataAfterReload || admin.firstTimeKeepWebsqlDbDataTrue) {
+      if (!admin || !admin.keepWebsqlDbDataAfterReload
+        // || admin.firstTimeKeepWebsqlDbDataTrue
+      ) {
+        // console.log('DROP SCHEMA')
         c.dropSchema = true;
         c.synchronize = true;
       } else {
+        // console.log('KEEP SCHEMA')
         c.dropSchema = false;
         delete c.synchronize // false is not auto synchonize - from what I understand
       }

@@ -12,6 +12,7 @@ import start from './---projectname---/app';
 export class AppComponent {
   title = 'app';
   inited = false;
+  removedPreloader = false;
   constructor(
     ngzone: NgZone
   ) {
@@ -20,9 +21,10 @@ export class AppComponent {
   }
 
   async ngOnInit() {
-    await start();
     removeElement('firedevpreloadertoremove');
     document.body.style.backgroundColor = "FIREDEV_TO_REPLACE_COLOR";
+    this.removedPreloader = true;
+    await start();
     this.inited = true
   }
 }

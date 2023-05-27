@@ -400,10 +400,10 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
       this.realtime = new RealtimeNodejs(this.context);
 
       if (this.admin && this.keepWebsqlDbDataAfterReload && !Helpers.isNode) {
-        if (this.admin.firstTimeKeepWebsqlDbDataTrue) {
-          this.admin.firstTimeKeepWebsqlDbDataTrue = false;
-          await this.reinitControllersData();
-        }
+        // if (this.admin.firstTimeKeepWebsqlDbDataTrue) {
+        //   this.admin.firstTimeKeepWebsqlDbDataTrue = false;
+        //   await this.reinitControllersData();
+        // }
       } else {
         await this.reinitControllersData();
       }

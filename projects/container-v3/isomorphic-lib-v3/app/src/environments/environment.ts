@@ -1,5 +1,5 @@
 // @ts-ignore
-import * as ENV from '../../../../tmp-environment.json';
+import * as ENV from '../../../../tmp-environment-for-browser.json';
 const production = false;
 // @ts-ignore
 window.ENV = ENV;
