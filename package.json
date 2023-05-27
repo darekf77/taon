@@ -1,6 +1,6 @@
 {
   "name": "morphi",
-  "version": "13.2.7",
+  "version": "13.2.8",
   "description": "Part of firedev.io - framework for isomorphic (node/angular) apps",
   "scripts": {},
   "repository": {
@@ -250,7 +250,7 @@
     "tnp-config": "~13.1.74",
     "tnp-core": "~13.2.18",
     "tnp-db": "~13.1.20",
-    "tnp-helpers": "~13.1.33",
+    "tnp-helpers": "~13.1.36",
     "tnp-models": "~13.1.26",
     "tnp-ui": "~13.1.27",
     "ts-debug": "1.3.0",
