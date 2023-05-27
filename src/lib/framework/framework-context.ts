@@ -388,7 +388,7 @@ function validateClassFunctions(controllers, entities) {
     console.error('controllers', controllers)
     throw `
 
-Incorect value for property "controllers" inside Morphi.Init(...)
+Incorect value for property "controllers" inside Firedev.Init(...)
 
 `
   }
@@ -397,7 +397,7 @@ Incorect value for property "controllers" inside Morphi.Init(...)
     console.error('entites', entities)
     throw `
 
-Incorect value for property "entities" inside Morphi.Init(...)
+Incorect value for property "entities" inside Firedev.Init(...)
 
 `
   }

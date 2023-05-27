@@ -38,12 +38,11 @@ export function initMethodNodejs(
   //#endregion
 
   if (!context.onlyForBackendRemoteServerAccess) {
-    //#region @websqlOnly
+    //#region @websql
     if (!context.node.app[type.toLowerCase()]) {
-      context.node.app[type.toLowerCase()] = (expressPath) => {
-        console.log(`[${type.toUpperCase()}] ${expressPath}`);
-      }
+      context.node.app[type.toLowerCase()] = () => { }
     }
+    console.log(`[${type.toUpperCase()}] ${expressPath}`);
     //#endregion
 
 
@@ -149,10 +148,10 @@ export function initMethodNodejs(
           resolvedParams
         );
         let result = await MorphiHelpers.getResponseValue(response, req, res);
-        console.log({
-          result
-        })
-        debugger
+        // console.log({
+        //   result
+        // })
+        // debugger
         if (result instanceof Blob) {
           // res.type(blob.type)
           // blob.arrayBuffer().then((buf) => {
