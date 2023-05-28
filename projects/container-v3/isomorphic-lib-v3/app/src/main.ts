@@ -1,4 +1,7 @@
 import { environment } from './environments/environment';
+const basename = '<<<TO_REPLACE_BASENAME>>>'
+// @ts-ignore
+window.ENV.basename = basename
 import * as localForge from 'localforage';
 // @ts-ignore
 window['localforage'] = localForge;
@@ -26,7 +29,7 @@ async function init() {
       // You can omit locateFile completely when running in node
       // @ts-ignore
       locateFile: file => {
-        const basename = '<<<TO_REPLACE_BASENAME>>>'
+
         const wasmPath = `${window.location.origin}${basename}/assets/${file}`;
         // console.log(`Trying to get sql.js wasm from: ${wasmPath}`)
         return wasmPath;
