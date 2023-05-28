@@ -117,11 +117,17 @@ export function start(options: StartOptions) {
     controllers = Array.isArray(controllers) ? controllers : [];
     entities = Array.isArray(entities) ? entities : [];
 
-    const FiredevFileController = CLASS.getBy('FiredevFileController');
-    const FiredevFile = CLASS.getBy('FiredevFile');
-    const FiredevFileCss = CLASS.getBy('FiredevFileCss');
-    // console.log({ FiredevFileController, FiredevFile, FiredevFileCss })
+    let FiredevFileController = CLASS.getBy('FiredevFileController');
+    let FiredevFile = CLASS.getBy('FiredevFile');
+    let FiredevFileCss = CLASS.getBy('FiredevFileCss');
+
     // const { FiredevFileController, FiredevFile, FiredevFileCss } = await import('firedev-ui');
+    //#region @backend
+    FiredevFileController = require('firedev-ui').FiredevFileController;
+    FiredevFile = require('firedev-ui').FiredevFile;
+    FiredevFileCss = require('firedev-ui').FiredevFileCss;
+    // console.log({ FiredevFileController, FiredevFile, FiredevFileCss })
+    //#endregion
     controllers.push(FiredevFileController as any);
     entities.push(FiredevFile);
     entities.push(FiredevFileCss);
