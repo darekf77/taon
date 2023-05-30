@@ -183,7 +183,8 @@
       "prettier": "2.5.1",
       "ngx-store": "3.1.1"
     },
-    "linkedFolders": []
+    "linkedFolders": [],
+    "npmFixes": []
   },
   "linkedProjects": [],
   "smartContainerBuildTarget": "",

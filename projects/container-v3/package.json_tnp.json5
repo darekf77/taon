@@ -4,343 +4,344 @@
   ],
 
   overrided: {
-    ignoreDepsPattern: [],
-    includeAsDev: [],
-    includeOnly: [],
+   ignoreDepsPattern: [],
+   includeAsDev: [],
+   includeOnly: [],
 
-    dependencies: {
-      // not needed anymore
-      '@angular/http': null,
-      hammerjs: null,
-      'rxjs-compat': null,
-      '@angular-devkit/build-optimizer': null,
-      '@angular-devkit/schematics': null,
-      '@angular/language-service': null,
-      '@types/jasminewd2': null,
-      codelyzer: null,
-      'jasmine-spec-reporter': null,
-      'karma-coverage-istanbul-reporter': null,
-      protractor: null,
-      tslint: null,
-      'core-js': null,
-      'core-js-compat': null,
-      webpack: null,
-      'webpack-cli': null,
-      'webpack-dev-server': null,
-      'html-webpack-plugin': null,
-      'sw-toolbox': null,
-      'gulp-inline-ng2-template': null,
-      autoprefixer: null,
-      'circular-dependency-plugin': null,
-      'copy-webpack-plugin': null,
-      'css-loader': null,
-      cssnano: null,
-      'exports-loader': null,
-      'friendly-errors-webpack-plugin': null,
-      'less-loader': null,
-      'ngc-webpack': null,
-      'postcss-custom-properties': null,
-      'postcss-loader': null,
-      'postcss-url': null,
-      'raw-loader': null,
-      'sass-loader': null,
-      'source-map-loader': null,
-      'style-loader': null,
-      'stylus-loader': null,
-      'uglifyjs-webpack-plugin': null,
-      'url-loader': null,
-      '@ngtools/webpack': null,
-      'sass-variable-loader': null,
-      '@ionic-native/core': null,
-      '@ionic-native/splash-screen': null,
-      '@ionic-native/status-bar': null,
-      '@ionic/storage': null,
-      '@ionic/app-scripts': null,
-      ionic: null,
-      'ionic-angular': null,
-      ionicons: null,
-      '@ngx-loading-bar/http': null,
-      'babel-cli': null,
-      'babel-loader': null,
-      'babel-core': null,
-      'babel-plugin-syntax-dynamic-import': null,
-      'babel-preset-env': null,
-      'babel-preset-es2015': null,
-      'node-sass': null,
-      'svg-png-converter': null,   // FIND ALTERNATIVE
-      sharp: null,
-      '@types/sharp': null,   // FIND ALTERNATIVE
-      '@iconify/react': null,
-      '@types/socket.io': null,
-      '@types/socket.io-client': null,
-      sqlite3: null,
-      '@ngneat/transloco': null,
-      jest: null,
-      'jest-date-mock': null,
-      'jest-junit': null,
-      'jest-preset-angular': null,
-      'angular-tree-component': null,
-      'ngx-breadcrumbs': null,
-      'ng-modal-lib': null,
-      tsickle: null,
-      'node-cli-test': null,
-      'button-dropdown': null,
-      'tnp-tools': null,
-      // "@types/lodash.get": "^4.4.4",
-      // "@types/lodash.isequal": "^4.5.3",
-      // "@types/lodash.merge": "^4.6.4",
-      // "@types/lodash.set": "^4.3.4",
-      // "on-build-webpack": "0.1.0",
-      // "path-browserify": "~1.0.1",
-      // "timers-browserify": "~2.0.12",
-      // "stream-browserify": "~3.0.0",
-      // "os-browserify": "~0.3.0",
-      // "browserify-fs": "~1.0.0",
-      // "stream-http": "~3.2.0",
-      // "crypto-browserify": "~3.12.0",
-      // "browserify": "~17.0.0",
-      // 'ng2-file-upload': '~4.0.0',
-      // multer: '1.4.5-lts.1', // for file upload => file-upload is ok for now
-      // explore file system in browser => not needed for now
-      // 'filer.js': '0.4.5',
-      // 'ngx-wig': '13.0.3', // wysig editor
-      // 'lodash.get': '>= 4',
-      // 'lodash.isequal': '>= 4',
-      // 'lodash.merge': '>= 4',
-      // 'lodash.set': '>= 4',
+   dependencies: {
+     // not needed anymore
+     '@angular/http': null,
+     hammerjs: null,
+     'rxjs-compat': null,
+     '@angular-devkit/build-optimizer': null,
+     '@angular-devkit/schematics': null,
+     '@angular/language-service': null,
+     '@types/jasminewd2': null,
+     codelyzer: null,
+     'jasmine-spec-reporter': null,
+     'karma-coverage-istanbul-reporter': null,
+     protractor: null,
+     tslint: null,
+     'core-js': null,
+     'core-js-compat': null,
+     webpack: null,
+     'webpack-cli': null,
+     'webpack-dev-server': null,
+     'html-webpack-plugin': null,
+     'sw-toolbox': null,
+     'gulp-inline-ng2-template': null,
+     autoprefixer: null,
+     'circular-dependency-plugin': null,
+     'copy-webpack-plugin': null,
+     'css-loader': null,
+     cssnano: null,
+     'exports-loader': null,
+     'friendly-errors-webpack-plugin': null,
+     'less-loader': null,
+     'ngc-webpack': null,
+     'postcss-custom-properties': null,
+     'postcss-loader': null,
+     'postcss-url': null,
+     'raw-loader': null,
+     'sass-loader': null,
+     'source-map-loader': null,
+     'style-loader': null,
+     'stylus-loader': null,
+     'uglifyjs-webpack-plugin': null,
+     'url-loader': null,
+     '@ngtools/webpack': null,
+     'sass-variable-loader': null,
+     '@ionic-native/core': null,
+     '@ionic-native/splash-screen': null,
+     '@ionic-native/status-bar': null,
+     '@ionic/storage': null,
+     '@ionic/app-scripts': null,
+     ionic: null,
+     'ionic-angular': null,
+     ionicons: null,
+     '@ngx-loading-bar/http': null,
+     'babel-cli': null,
+     'babel-loader': null,
+     'babel-core': null,
+     'babel-plugin-syntax-dynamic-import': null,
+     'babel-preset-env': null,
+     'babel-preset-es2015': null,
+     'node-sass': null,
+     'svg-png-converter': null,   // FIND ALTERNATIVE
+     sharp: null,
+     '@types/sharp': null,   // FIND ALTERNATIVE
+     '@iconify/react': null,
+     '@types/socket.io': null,
+     '@types/socket.io-client': null,
+     sqlite3: null,
+     '@ngneat/transloco': null,
+     jest: null,
+     'jest-date-mock': null,
+     'jest-junit': null,
+     'jest-preset-angular': null,
+     'angular-tree-component': null,
+     'ngx-breadcrumbs': null,
+     'ng-modal-lib': null,
+     tsickle: null,
+     'node-cli-test': null,
+     'button-dropdown': null,
+     'tnp-tools': null,
+     // "@types/lodash.get": "^4.4.4",
+     // "@types/lodash.isequal": "^4.5.3",
+     // "@types/lodash.merge": "^4.6.4",
+     // "@types/lodash.set": "^4.3.4",
+     // "on-build-webpack": "0.1.0",
+     // "path-browserify": "~1.0.1",
+     // "timers-browserify": "~2.0.12",
+     // "stream-browserify": "~3.0.0",
+     // "os-browserify": "~0.3.0",
+     // "browserify-fs": "~1.0.0",
+     // "stream-http": "~3.2.0",
+     // "crypto-browserify": "~3.12.0",
+     // "browserify": "~17.0.0",
+     // 'ng2-file-upload': '~4.0.0',
+     // multer: '1.4.5-lts.1', // for file upload => file-upload is ok for now
+     // explore file system in browser => not needed for now
+     // 'filer.js': '0.4.5',
+     // 'ngx-wig': '13.0.3', // wysig editor
+     // 'lodash.get': '>= 4',
+     // 'lodash.isequal': '>= 4',
+     // 'lodash.merge': '>= 4',
+     // 'lodash.set': '>= 4',
 
 
-      // CORE PACKAGES
-      '@angular/animations': '~13.3.0',
-      '@angular/cdk': '^13.3.9',
-      '@angular/common': '~13.3.0',
-      '@angular/compiler': '~13.3.0',
-      '@angular/core': '~13.3.0',
-      '@angular/forms': '~13.3.0',
-      '@angular/material': '^13.3.9',
-      '@angular/platform-browser': '~13.3.0',
-      '@angular/platform-browser-dynamic': '~13.3.0',
-      '@angular/pwa': '~13.3.9',
-      '@angular/router': '~13.3.0',
-      '@angular/service-worker': '~13.3.11',
-      '@angular-devkit/build-angular': '~13.3.9',
-      '@angular-devkit/core': '~13.3.9',
-      '@angular/cli': '~13.3.9',
-      '@angular/compiler-cli': '~13.3.0',
-      '@angular/flex-layout': '13.0.0-beta.38',
-      rxjs: '~7.5.0',
-      tslib: '^2.3.0',
-      'zone.js': '~0.11.4',
-      'ng-packagr': '^13.0.0',
-      'ts-node': '~10.7.0',
-      typescript: '~4.6.2',
-      'ts-loader': '^2.3.1',
-      'ts-debug': '^1.3.0',
-      '@types/node': '^16.18.21', // typescript types for fs, net etc. (build in from node)
-      '@babel/cli': '^7.18.6',
-      '@types/q': '1.5.5',
+     // CORE PACKAGES
+     '@angular/animations': '~13.3.0',
+     '@angular/cdk': '^13.3.9',
+     '@angular/common': '~13.3.0',
+     '@angular/compiler': '~13.3.0',
+     '@angular/core': '~13.3.0',
+     '@angular/forms': '~13.3.0',
+     '@angular/material': '^13.3.9',
+     '@angular/platform-browser': '~13.3.0',
+     '@angular/platform-browser-dynamic': '~13.3.0',
+     '@angular/pwa': '~13.3.9',
+     '@angular/router': '~13.3.0',
+     '@angular/service-worker': '~13.3.11',
+     '@angular-devkit/build-angular': '~13.3.9',
+     '@angular-devkit/core': '~13.3.9',
+     '@angular/cli': '~13.3.9',
+     '@angular/compiler-cli': '~13.3.0',
+     '@angular/flex-layout': '13.0.0-beta.38',
+     rxjs: '~7.5.0',
+     tslib: '^2.3.0',
+     'zone.js': '~0.11.4',
+     'ng-packagr': '^13.0.0',
+     'ts-node': '~10.7.0',
+     typescript: '~4.6.2',
+     'ts-loader': '^2.3.1',
+     'ts-debug': '^1.3.0',
+     '@types/node': '^16.18.21', // typescript types for fs, net etc. (build in from node)
+     '@babel/cli': '^7.18.6',
+     '@types/q': '1.5.5',
 
-      // CORE COMMUNICATION PACKAGES
-       // socket communication
-      'socket.io': '~2.4.1',
-      // http request
-      axios: '~1.3.5',
-      // --------------------
+     // CORE COMMUNICATION PACKAGES
+      // socket communication
+     'socket.io': '~2.4.1',
+     // http request
+     axios: '~1.3.5',
+     // --------------------
 
-       // ------- DATABASES ------------------------------------------
-      // outstanding crossplatform orm
-      typeorm: '^0.3.10',
-      // amazing sqlite drive without node-gyp
-      'better-sqlite3': '7.6.2',
-      // awesome sql in browser
-      'sql.js': '^1.8.0',
-       // indexeddb just like localstorage
-      localforage: '~1.10.0',
-      // ------------------------------------------------------------
+      // ------- DATABASES ------------------------------------------
+     // outstanding crossplatform orm
+     typeorm: '^0.3.10',
+     // amazing sqlite drive without node-gyp
+     'better-sqlite3': '7.6.2',
+     // awesome sql in browser
+     'sql.js': '^1.8.0',
+      // indexeddb just like localstorage
+     localforage: '~1.10.0',
+     // ------------------------------------------------------------
 
-      // NGRX
-      '@ngrx/effects': '^13.0.2',
-      '@ngrx/entity': '^13.0.2',
-      '@ngrx/router-store': '^13.0.2',
-      '@ngrx/schematics': '^13.0.2',
-      '@ngrx/store': '^13.0.2',
-      '@ngrx/store-devtools': '^13.0.2',
-      '@ngrx/component-store': '^13.0.2',
-      '@ngrx/data': '^13.0.2',
-       // fantastic immutable arrays
-      'immutable': '4.3.0',
+     // NGRX
+     '@ngrx/effects': '^13.0.2',
+     '@ngrx/entity': '^13.0.2',
+     '@ngrx/router-store': '^13.0.2',
+     '@ngrx/schematics': '^13.0.2',
+     '@ngrx/store': '^13.0.2',
+     '@ngrx/store-devtools': '^13.0.2',
+     '@ngrx/component-store': '^13.0.2',
+     '@ngrx/data': '^13.0.2',
+      // fantastic immutable arrays
+     'immutable': '4.3.0',
 
-      // TESTING / MOCKING
-      '@types/jasmine': '~3.10.0',
-      'jasmine-core': '~4.0.0',
-      karma: '~6.3.0',
-      'karma-chrome-launcher': '~3.1.0',
-      'karma-jasmine': '~4.0.0',
-      'karma-jasmine-html-reporter': '~1.7.0',
-      'karma-coverage': '~2.1.0',
-      // faking data (https://github.com/ngneat/falso)
-      '@ngneat/falso': '6.4.0',
-      // awesome e2e (https://docs.cypress.io/guides/getting-started/installing-cypress)
-      // 'cypress': '12.12.0',
-      // proper angular testing
-      // '@ngneat/spectator': '13.0.0',
-      // --------------------
+     // TESTING / MOCKING
+     '@types/jasmine': '~3.10.0',
+     'jasmine-core': '~4.0.0',
+     karma: '~6.3.0',
+     'karma-chrome-launcher': '~3.1.0',
+     'karma-jasmine': '~4.0.0',
+     'karma-jasmine-html-reporter': '~1.7.0',
+     'karma-coverage': '~2.1.0',
+     // faking data (https://github.com/ngneat/falso)
+     '@ngneat/falso': '6.4.0',
+     // awesome e2e (https://docs.cypress.io/guides/getting-started/installing-cypress)
+     // 'cypress': '12.12.0',
+     // proper angular testing
+     // '@ngneat/spectator': '13.0.0',
+     // --------------------
 
-      // FORMLY
-      // '@ngx-formly/bootstrap': '6.0.0-next.8',
-      '@ngx-formly/core': '6.0.0-next.8',
-      // '@ngx-formly/ionic': '6.0.0-next.8', disabled for now
-      '@ngx-formly/material': '6.0.0-next.8',
-      // --------------------
+     // FORMLY
+     // '@ngx-formly/bootstrap': '6.0.0-next.8',
+     '@ngx-formly/core': '6.0.0-next.8',
+     // '@ngx-formly/ionic': '6.0.0-next.8', disabled for now
+     '@ngx-formly/material': '6.0.0-next.8',
+     // --------------------
 
-      //--------- VALIDATION ----------------------------------------
-      // validation decorator based (https://github.com/typestack/class-validator)
-      'class-validator': '~0.14.0',
-      // amazing schema validation
-      yup: '~1.1.1',
-      // validation function based
-      validator: "^9.2.0",
-      // ------------------------------------------------------------
+     //--------- VALIDATION ----------------------------------------
+     // validation decorator based (https://github.com/typestack/class-validator)
+     'class-validator': '~0.14.0',
+     // amazing schema validation
+     yup: '~1.1.1',
+     // validation function based
+     validator: "^9.2.0",
+     // ------------------------------------------------------------
 
-      // -------- THREADS / WORKERS ---------------------------------
-      // threads lib: (https://github.com/andywer/threads.js)
-      'threads': '~1.7.0',
-      "task.js": "^0.1.5",
-      // ------------------------------------------------------------
+     // -------- THREADS / WORKERS ---------------------------------
+     // threads lib: (https://github.com/andywer/threads.js)
+     'threads': '~1.7.0',
+     "task.js": "^0.1.5",
+     // ------------------------------------------------------------
 
-      // ------- MEDIA (IMAGE/VIDEO/AUDIO) MANIPULATION -------------
-      // nodejs no deps image manipulation
-      'jimp': '~0.22.8',
-      // embed/customize videos
-      "video.js": "~8.3.0",
-      // embed/customize audio
-      "howler": "~2.2.3",
-      // browser image manipulation
-      'pica': '9.0.1',
-      // ------------------------------------------------------------
+     // ------- MEDIA (IMAGE/VIDEO/AUDIO) MANIPULATION -------------
+     // nodejs no deps image manipulation
+     'jimp': '~0.22.8',
+     // embed/customize videos
+     "video.js": "~8.3.0",
+     // embed/customize audio
+     "howler": "~2.2.3",
+     // browser image manipulation
+     'pica': '9.0.1',
+     // ------------------------------------------------------------
 
-      // ------- ICONS ----------------------------------------------
-      "font-awesome": "^4.7.0",
-      "material-design-icons": "3.0.1",
-      '@iconify/icons-fa-solid': '1.2.2',
-      '@iconify/icons-mdi': '1.2.1',
-      '@mdi/js': '6.5.95',
-      // ------------------------------------------------------------
+     // ------- ICONS ----------------------------------------------
+     "font-awesome": "^4.7.0",
+     "material-design-icons": "3.0.1",
+     '@iconify/icons-fa-solid': '1.2.2',
+     '@iconify/icons-mdi': '1.2.1',
+     '@mdi/js': '6.5.95',
+     // ------------------------------------------------------------
 
-      // --------- PIPES --------------------------------------------
-      // handle dates
-      'ngx-moment': '6.0.2',
-      // usefull pipe for angular
-      'ngx-pipes': '3.0.0',
-      // ------------------------------------------------------------
+     // --------- PIPES --------------------------------------------
+     // handle dates
+     'ngx-moment': '6.0.2',
+     // usefull pipe for angular
+     'ngx-pipes': '3.0.0',
+     // ------------------------------------------------------------
 
-      // ------ NODE EXPRESSJS --------------------------------------
-      // handle user session auth
-      'express-session': '1.17.3',
-      // smooth file uplload
-      '@types/express-fileupload': '^1.4.1',
-      'express-fileupload': '~1.4.0',
-      // for data for nodejs (browser has it build it)
-      'form-data': '~4.0.0',
-      // ------------------------------------------------------------
+     // ------ NODE EXPRESSJS --------------------------------------
+     // handle user session auth
+     'express-session': '1.17.3',
+     // smooth file uplload
+     '@types/express-fileupload': '^1.4.1',
+     'express-fileupload': '~1.4.0',
+     // for data for nodejs (browser has it build it)
+     'form-data': '~4.0.0',
+     // ------------------------------------------------------------
 
-      // ------- WYSIG ----------------------------------------------
-      // good for higlighting in read only mode
-      'ngx-highlightjs': '~6.1.3',
-      // highlighting and editing at the same time!
-      'ngx-ace-wrapper': '12',
-      // wysig editor with copy / paste images
-      'ngx-editor': '12.2.1',
-      // ------------------------------------------------------------
+     // ------- WYSIG ----------------------------------------------
+     // good for higlighting in read only mode
+     'ngx-highlightjs': '~6.1.3',
+     // highlighting and editing at the same time!
+     'ngx-ace-wrapper': '12',
+     // wysig editor with copy / paste images
+     'ngx-editor': '12.2.1',
+     // ------------------------------------------------------------
 
-      // ------ STRING MANIPULATIONS  -------------------------------
-      // compare advanced strings
-      '@types/diff': '^3.2.2',
-      diff: '^3.2.0',
-       // usefull if you wanna ecode in hash text
-      base32: '0.0.7',
-      // compare npm pacakages  versions
-      '@types/semver': '6.0.1',
-      semver: '6.3.0',
-      // ------------------------------------------------------------
+     // ------ STRING MANIPULATIONS  -------------------------------
+     // compare advanced strings
+     '@types/diff': '^3.2.2',
+     diff: '^3.2.0',
+      // usefull if you wanna ecode in hash text
+     base32: '0.0.7',
+     // compare npm pacakages  versions
+     '@types/semver': '6.0.1',
+     semver: '6.3.0',
+     // ------------------------------------------------------------
 
-      // ----- TRANSLATIONS
-      // angular apps translation
-      '@ngx-translate/core': '14.0.0',
-      '@ngx-translate/http-loader': '7.0.0',
-      // ------------------------------------------------------------
+     // ----- TRANSLATIONS
+     // angular apps translation
+     '@ngx-translate/core': '14.0.0',
+     '@ngx-translate/http-loader': '7.0.0',
+     // ------------------------------------------------------------
 
-      // ------- FLASHY UI EXTENSIONS ---------------------------------------
-      // awesome typing effect
-      'ngx-typed-js': '2.1.1',
-      // ------------------------------------------------------------
+     // ------- FLASHY UI EXTENSIONS ---------------------------------------
+     // awesome typing effect
+     'ngx-typed-js': '2.1.1',
+     // ------------------------------------------------------------
 
-      // ------- UI EXTENSIONS ---------------------------------------
-      // top right corner notifications
-      // 'ngx-toastr': '14.2.2',
-      '@ngneat/overview': '~3.0.0',
-      '@ngneat/hot-toast': '~4',
-      // top horizontal request progress bard, v9 dla angular 15 (inuse)
-      'ngx-progressbar': '~8.0.0',
-      // '@ngx-loading-bar/core':'6.0.2' ,
-      // '@ngx-loading-bar/http-client': '6.0.2',
-      // '@ngx-loading-bar/router': '6.0.2',
-      // slim scroll, v10 for angular 15
-      'ngx-scrollbar': '~9.0.2',
-      // check when element is being resized (jquery plugin)
-      "element-resize-detector": "1.1.15",
-      // easy rxjs destroy
-      '@ngneat/until-destroy': '9.2.3',
-      // handle bootstrap components
-      // 'ngx-bootstrap': '8.0.0',
-      // 'ng-bootstrap': '11.0.1', // bootstrap feels old
-      bootstrap: '^4.6.2',
-      // creating zips in browser/node!
-      jszip: '3.10.1',
-      // exporting zips from browser
-      'file-saver': '2.0.5',
-      // easy lazy loading
-      'ng-in-viewport': '13.0.1',
-      // use csss variable from js inside scss
-      "angular-material-css-vars": "~5.0.0",
-      // nice menu for mobile apps
-      '@angular-material-extensions/fab-menu': '6.1.0',
-      // additonal thing for material https://ng-matero.github.io/extensions/components/progress/overview
-      //  + data/grid table for materia pagination table (better than @swimlane/ngx-datatable)
-      //  + loading material button,
-      //  + checkbox arra group,
-      //  + datetime picker
-      //  + dialog wrapper for simple  yes/no/ok messages
-      //  + general big drawer -> perfect for side menus
-      //  + material loader for whole div
-      //  + progress bar with percentage number
-      //  + select/multiselect (chips)
-      //  + rating slider with numbers
-      //  + material split div panels similar to (https://github.com/angular-split/angular-split)
-      //  + tooltips
-      //  + color picker
-      "@ng-matero/extensions": "13.3.2",
-      // ------------------------------------------------------------------
+     // ------- UI EXTENSIONS ---------------------------------------
+     // top right corner notifications
+     // 'ngx-toastr': '14.2.2',
+     '@ngneat/overview': '~3.0.0',
+     '@ngneat/hot-toast': '~4',
+     // top horizontal request progress bard, v9 dla angular 15 (inuse)
+     'ngx-progressbar': '~8.0.0',
+     // '@ngx-loading-bar/core':'6.0.2' ,
+     // '@ngx-loading-bar/http-client': '6.0.2',
+     // '@ngx-loading-bar/router': '6.0.2',
+     // slim scroll, v10 for angular 15
+     'ngx-scrollbar': '~9.0.2',
+     // check when element is being resized (jquery plugin)
+     "element-resize-detector": "1.1.15",
+     // easy rxjs destroy
+     '@ngneat/until-destroy': '9.2.3',
+     // handle bootstrap components
+     // 'ngx-bootstrap': '8.0.0',
+     // 'ng-bootstrap': '11.0.1', // bootstrap feels old
+     bootstrap: '^4.6.2',
+     // creating zips in browser/node!
+     jszip: '3.10.1',
+     // exporting zips from browser
+     'file-saver': '2.0.5',
+     // easy lazy loading
+     'ng-in-viewport': '13.0.1',
+     // use csss variable from js inside scss
+     "angular-material-css-vars": "~5.0.0",
+     // nice menu for mobile apps
+     '@angular-material-extensions/fab-menu': '6.1.0',
+     // additonal thing for material https://ng-matero.github.io/extensions/components/progress/overview
+     //  + data/grid table for materia pagination table (better than @swimlane/ngx-datatable)
+     //  + loading material button,
+     //  + checkbox arra group,
+     //  + datetime picker
+     //  + dialog wrapper for simple  yes/no/ok messages
+     //  + general big drawer -> perfect for side menus
+     //  + material loader for whole div
+     //  + progress bar with percentage number
+     //  + select/multiselect (chips)
+     //  + rating slider with numbers
+     //  + material split div panels similar to (https://github.com/angular-split/angular-split)
+     //  + tooltips
+     //  + color picker
+     "@ng-matero/extensions": "13.3.2",
+     // ------------------------------------------------------------------
 
-      // ------ NOT NEEDED? ----------------------------------------------
-      // format html ..
-      prettier: '2.5.1',
-      // wrong types in current verison => replace with isomorphic-storage
-      'ngx-store': '3.1.1',
-      // ------------------------------------------------------------------
+     // ------ NOT NEEDED? ----------------------------------------------
+     // format html ..
+     prettier: '2.5.1',
+     // wrong types in current verison => replace with isomorphic-storage
+     'ngx-store': '3.1.1',
+     // ------------------------------------------------------------------
 
-      // ------ CHECK/EXPLORE ---------------------------------------------
-      // HANDLE HOT KEYS  @ngneat/hotkeys
-      // INPUT MASKS FOR EMIAL, IPs, ETC.  @ngneat/input-mask inputmask@5 @types/inputmask@5
-      // FAKE LOADING POST CONTENT https://github.com/ngneat/content-loader
-      // DOCS SERACH MENU cmd+k menu @ngneat/overview @ngneat/cmdk
-      // MOBILE DEEP MENU jQUERY PLUGIN https://github.com/alizahid/slinky -> create or find angular plugin
-      // -------
-      // PROPER CLASS INJECTIONS https://github.com/typestack/typedi => usefull for typescript-class-helpers
-      // PROPER CLASS MAPPIGN usefull => https://github.com/typestack/class-transformer
-    },
+     // ------ CHECK/EXPLORE ---------------------------------------------
+     // HANDLE HOT KEYS  @ngneat/hotkeys
+     // INPUT MASKS FOR EMIAL, IPs, ETC.  @ngneat/input-mask inputmask@5 @types/inputmask@5
+     // FAKE LOADING POST CONTENT https://github.com/ngneat/content-loader
+     // DOCS SERACH MENU cmd+k menu @ngneat/overview @ngneat/cmdk
+     // MOBILE DEEP MENU jQUERY PLUGIN https://github.com/alizahid/slinky -> create or find angular plugin
+     // -------
+     // PROPER CLASS INJECTIONS https://github.com/typestack/typedi => usefull for typescript-class-helpers
+     // PROPER CLASS MAPPIGN usefull => https://github.com/typestack/class-transformer
+   },
 
-    linkedFolders: []
+   linkedFolders: [],
+   npmFixes: [],
   },
 
   linkedProjects: [],

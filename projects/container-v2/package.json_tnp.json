@@ -119,7 +119,8 @@
       "socket.io": "~2.4.1",
       "sqlite3": null
     },
-    "linkedFolders": []
+    "linkedFolders": [],
+    "npmFixes": []
   },
   "linkedProjects": [],
   "linkedRepos": [],

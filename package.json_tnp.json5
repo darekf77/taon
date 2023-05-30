@@ -179,8 +179,10 @@
       "zone.js",
       "firedev-typeorm"
     ],
+
     ignoreDepsPattern: [],
     dependencies: {},
+    npmFixes: [],
   },
 
   linkedProjects: [],
