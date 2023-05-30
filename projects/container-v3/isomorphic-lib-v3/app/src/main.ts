@@ -20,7 +20,7 @@ if (environment.production) {
 
 async function init() {
   if (Helpers.isWebSQL) { // @ts-ignore
-    const initSqlJs = require('sql.js');
+    const { default: initSqlJs } = await import('sql.js');
     // or if you are in a browser:
     // const initSqlJs = window.initSqlJs;
 
