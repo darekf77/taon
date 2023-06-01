@@ -29,3 +29,8 @@
   // TODO QUICK_FIX for modal mode
   display: block !important;
 }
+
+// TODO QUICK FIX for weird chrome padding
+body {
+  margin: 0px !important;
+}

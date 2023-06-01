@@ -89,6 +89,7 @@
       "@angular/compiler": "~13.3.0",
       "@angular/core": "~13.3.0",
       "@angular/forms": "~13.3.0",
+      "@angular/elements": "~13.3.0",
       "@angular/material": "^13.3.9",
       "@angular/platform-browser": "~13.3.0",
       "@angular/platform-browser-dynamic": "~13.3.0",
@@ -164,6 +165,7 @@
       "base32": "0.0.7",
       "@types/semver": "6.0.1",
       "semver": "6.3.0",
+      "turndown": "7.1.2",
       "@ngx-translate/core": "14.0.0",
       "@ngx-translate/http-loader": "7.0.0",
       "ngx-typed-js": "2.1.1",
@@ -181,7 +183,11 @@
       "@angular-material-extensions/fab-menu": "6.1.0",
       "@ng-matero/extensions": "13.3.2",
       "prettier": "2.5.1",
-      "ngx-store": "3.1.1"
+      "ngx-store": "3.1.1",
+      "json5": "2.2.1",
+      "lodash": "4.17.20",
+      "moment": "2.29.3",
+      "copy-paste": "1.5.3"
     },
     "linkedFolders": [],
     "npmFixes": []

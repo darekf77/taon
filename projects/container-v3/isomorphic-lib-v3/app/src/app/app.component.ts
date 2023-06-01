@@ -27,6 +27,7 @@ export class AppComponent {
     removeElement('firedevpreloadertoremove');
     document.body.style.backgroundColor = "FIREDEV_TO_REPLACE_COLOR";
     this.removedPreloader = true;
+    // @ts-ignore
     await start();
     this.inited = true
   }
