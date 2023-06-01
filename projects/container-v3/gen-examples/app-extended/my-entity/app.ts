@@ -29,13 +29,8 @@ const routes: Routes = [
   templateUrl: './app.html',
 })
 export class MyEntityComponent implements OnInit {
-  constructor(
-    private ngZone: NgZone
-  ) { }
-
   async ngOnInit() {
-    Firedev.initNgZone(this.ngZone);
-    await start();
+
   }
 }
 //#endregion
