@@ -155,13 +155,12 @@ export class MorphiComponent implements AfterViewInit, OnInit {
   async ngAfterViewInit() { }
 
   async ngOnInit() {
-    await start();
+
     // const bookObj = (await Book.ctrl.getBook().received);
     // console.log({ bookObj });
     // console.log({ book: bookObj.body.json });
   }
 
-  constructor(ngzone: NgZone) { Firedev.initNgZone(ngzone); }
 }
 //#endregion
 //#endregion
