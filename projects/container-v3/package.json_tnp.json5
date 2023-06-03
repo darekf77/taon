@@ -313,9 +313,12 @@
     '@types/semver': '6.0.1',
 
     semver: '6.3.0',
-    'turndown': '7.1.2',
-
+    // 'turndown': '7.1.2',
+    'showdown': '2.1.0',
     // ------------------------------------------------------------
+
+    // CLI
+    // "commander": '10.0.1',
 
     // ----- TRANSLATIONS
     // angular apps translation
