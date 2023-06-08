@@ -1,0 +1,5 @@
+THIS FILE IS GENERATED.
+          Assets from this folder can be used in npm package "isomorphic-lib-v3@13.0.9"
+          created from this project.
+
+          
