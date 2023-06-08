@@ -127,6 +127,10 @@ export const commands: CommandType[] = ([
               label: 'Generate dummy Angular lazy routing module/component structure'
             },
             {
+              option: 'dummy-angular-lazy-module-container',
+              label: 'Generate dummy Angular lazy routing module/container structure'
+            },
+            {
               option: 'firedev-backend-frontend-module',
               label: 'Generate Firedev backend/frontend module structure'
             },
