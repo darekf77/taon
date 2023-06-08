@@ -226,7 +226,7 @@
     "tnp-config": "16.0.3",
     "tnp-core": "16.0.7",
     "tnp-db": "16.0.23",
-    "tnp-helpers": "16.0.1",
+    "tnp-helpers": "16.0.2",
     "tnp-models": "16.0.29",
     "ts-debug": "1.3.0",
     "ts-loader": "2.3.1",
