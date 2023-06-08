@@ -42,6 +42,7 @@ export class MyEntityComponent implements OnInit {
       useHash: true,
       preloadingStrategy: PreloadAllModules,
       enableTracing: false,
+      bindToComponentInputs: true
     }),
   ],
   exports: [MyEntityComponent],

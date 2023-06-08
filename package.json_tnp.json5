@@ -198,7 +198,7 @@
 
   smartContainerTarget: '',
   type: "isomorphic-lib",
-  version: "v3",
+  version: "v4",
   additionalNpmNames: ["firedev-framework"],
   scripts: {},
   description: "Part of firedev.io - framework for isomorphic (node/angular) apps",
