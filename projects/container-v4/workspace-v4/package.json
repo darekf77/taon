@@ -5,7 +5,7 @@
     ],
     "isCoreProject": true,
     "type": "workspace",
-    "version": "v3",
+    "version": "v4",
     "overrided": {
       "ignoreDepsPattern": [],
       "includeAsDev": [],

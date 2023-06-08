@@ -438,7 +438,7 @@
   smartContainerTarget: '',
   type: 'container',
   isCoreProject: true,
-  version: 'v3',
+  version: 'v4',
   license: 'UNLICENSED',
   private: true,
   workerPlugins: {}

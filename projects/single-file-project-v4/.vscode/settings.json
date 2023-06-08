@@ -1,0 +1,8 @@
+{
+  "files.exclude": {},
+  "workbench.colorTheme": "Default Light+",
+  "workbench.colorCustomizations": {
+    "activityBar.background": "#55bead",
+    "activityBar.foreground": "#000000"
+  }
+}

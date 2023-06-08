@@ -1,10 +1,5 @@
 {
-  "resources": [
-    "README.md"
-  ],
-  "isCoreProject": true,
-  "type": "workspace",
-  "version": "v4",
+  "resources": [],
   "overrided": {
     "ignoreDepsPattern": [],
     "includeAsDev": [],
@@ -13,16 +8,21 @@
     "linkedFolders": []
   },
   "linkedProjects": [],
+
   "libReleaseOptions": {
     "nodts": false,
     "obscure": false,
     "ugly": false
   },
-  "license": "UNLICENSED",
-  "private": true,
-  "engines": {
-    "node": ">=9.2.0",
-    "npm": ">=5.6.0"
+
+  "type": "isomorphic-lib",
+
+  "version": "v3",
+
+  'scripts': {
+    start: 'webpack-dev-server --config webpack.config.js',
   },
-  "workerPlugins": {}
+
+  "license": "MIT",
+  "private": false,
 }

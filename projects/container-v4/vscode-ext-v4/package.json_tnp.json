@@ -1,6 +1,6 @@
 {
   "resources": [],
-  "version": "v3",
+  "version": "v4",
   "type": "vscode-ext",
   "overrided": {
     "ignoreDepsPattern": [],
