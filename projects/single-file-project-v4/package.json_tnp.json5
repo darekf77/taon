@@ -1,23 +1,28 @@
 {
   "resources": [],
+
   "overrided": {
     "ignoreDepsPattern": [],
     "includeAsDev": [],
     "includeOnly": [],
     "dependencies": {},
-    "linkedFolders": []
+    "linkedFolders": [],
+    'npmFixes': [],
   },
+
   "linkedProjects": [],
+  'smartContainerBuildTarget': '',
+  'linkedRepos': [],
 
   "libReleaseOptions": {
     "nodts": false,
     "obscure": false,
-    "ugly": false
+    "ugly": false,
+    'includeNodeModules': false,
   },
 
   "type": "isomorphic-lib",
-
-  "version": "v3",
+  "version": "v4",
 
   'scripts': {
     start: 'webpack-dev-server --config webpack.config.js',

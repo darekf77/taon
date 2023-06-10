@@ -1,26 +1,16 @@
-const lodash = require('lodash');
+//#region @notForNpm
 
-async function start() {
-    console.log('HELLO');
-    console.log(lodash)
-}
-
-if (typeof window !== 'undefined') {
-  start()
-}
-
+//#region @browser
 import { NgModule } from '@angular/core';
-
 import { Component, OnInit } from '@angular/core';
 
-@Component({
-  selector: 'app-single-file-project-v3',
-  template: `
-hell nigga
-  `
-})
 
-export class NameComponent implements OnInit {
+@Component({
+  selector: 'app-single-file-project-v4',
+  template: 'hello from single-file-project-v4',
+  styles: [` body { margin: 0px !important; } `],
+})
+export class SingleFileProjectV4Component implements OnInit {
   constructor() { }
 
   ngOnInit() { }
@@ -28,11 +18,20 @@ export class NameComponent implements OnInit {
 
 @NgModule({
   imports: [],
-  exports: [NameComponent],
-  declarations: [NameComponent],
+  exports: [SingleFileProjectV4Component],
+  declarations: [SingleFileProjectV4Component],
   providers: [],
 })
-export class SingleFileProjectV3Module { }
+export class SingleFileProjectV4Module { }
+//#endregion
 
+
+async function start(port: number) {
+  console.log('hello world');
+}
 
 export default start;
+
+
+
+//#endregion
