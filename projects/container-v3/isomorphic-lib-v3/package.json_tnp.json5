@@ -26,7 +26,7 @@
   'smartContainerTarget': '',
   "type": "isomorphic-lib",
   "isCoreProject": true,
-  "useFramework": true,
+  "useFramework": false,
   "required": [],
   "version": "v3",
   "workerPlugins": {},
