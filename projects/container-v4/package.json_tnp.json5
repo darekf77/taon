@@ -354,6 +354,10 @@
 
      '@ngneat/hot-toast': '~5.0.1',
 
+      // beautifull modal / notifications
+     'sweetalert2': '~11.7.12',
+     '@sweetalert2/ngx-sweetalert2': '~12.1.0',
+
      // top horizontal request progress bard, v9 dla angular 15 (inuse)
      'ngx-progressbar': '~11.0.0',
 
@@ -386,7 +390,17 @@
      // use csss variable from js inside scss
      "angular-material-css-vars": "~5.0.2",
 
-     '@angular-material-extensions/fab-menu': '6.1.0',
+     // perfect lock for buttons when loading
+     'ng-lock': '~16.0.1',
+
+     // faster track by
+     'ng-for-track-by-property': '~16.0.1',
+
+     // scroll to the top button for angular
+     'ngx-scrolltop': '~6.0.0',
+
+     '@angular-material-extensions/password-strength': '~12.1.0',
+
 
      // nice menu for mobile apps (is based on deprecated flex layout)
      // '@angular-material-extensions/fab-menu': '6.1.0',
