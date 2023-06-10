@@ -1,4 +1,36 @@
 {
+  "tnp": {
+    "resources": [
+      "README.md"
+    ],
+    "overrided": {
+      "ignoreDepsPattern": [],
+      "includeAsDev": [],
+      "includeOnly": [],
+      "dependencies": {},
+      "linkedFolders": [],
+      "npmFixes": []
+    },
+    "linkedProjects": [],
+    "smartContainerBuildTarget": "",
+    "linkedRepos": [],
+    "libReleaseOptions": {
+      "nodts": false,
+      "obscure": false,
+      "ugly": false,
+      "includeNodeModules": false
+    },
+    "smartContainerTarget": "",
+    "type": "isomorphic-lib",
+    "isCoreProject": true,
+    "useFramework": true,
+    "required": [],
+    "version": "v4",
+    "workerPlugins": {},
+    "license": "UNLICENSED",
+    "private": true,
+    "main": "index.js"
+  },
   "name": "isomorphic-lib-v4",
   "version": "16.0.0",
   "license": "UNLICENSED",
@@ -244,6 +276,5 @@
     "zone.js": "~0.11.4"
   },
   "devDependencies": {},
-  "private": true,
-  "main": "index.js"
+  "private": true
 }
