@@ -28,7 +28,7 @@
   "isCoreProject": true,
   "useFramework": false,
   "required": [],
-  "version": "v4",
+  "version": "v3",
   "workerPlugins": {},
   "license": "UNLICENSED",
   "private": true,
