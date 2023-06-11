@@ -1,7 +1,7 @@
 import { Firedev } from 'firedev';
 import { _ } from 'tnp-core';
 import type { MyEntityController } from './my-entity.controller';
-import { defaultModelValues } from './my-entity.models';
+import { defaultModelValuesMyEntity as defaultModelValues } from './my-entity.models';
 @Firedev.Entity({
   className: 'MyEntity',
   defaultModelValues
