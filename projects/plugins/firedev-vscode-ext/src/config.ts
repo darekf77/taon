@@ -139,6 +139,10 @@ export const commands: CommandType[] = ([
               label: 'Generate NgRx container module structure'
             },
             {
+              option: 'ngrx-feature-container-module-for-lazy-routing',
+              label: 'Generate NgRx container module structure for lazy routing'
+            },
+            {
               option: 'generated-index-exports_custom',
               label: 'Generate in index.ts typescript exports from folders',
               skipNextVariableResolve: true
