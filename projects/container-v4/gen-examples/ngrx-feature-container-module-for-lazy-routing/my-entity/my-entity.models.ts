@@ -1,5 +1,5 @@
 //#region @browser
-export const myEntityFeatureKey = 'myentity';
+export const myEntityFeatureKey = 'myEntity';
 
 export interface MyEntityInitialState {
   myEntityArr: any[];
