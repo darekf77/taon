@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import * as myEntityActions from '../actions/my-entity.actions'
-import { switchMap, map, of } from "rxjs";
+import { switchMap, map, of, catchError } from "rxjs";
 import { MyEntityService } from '../services/my-entity.service';
 import { Store } from '@ngrx/store';
 import { MyEntityInitialState } from '../my-entity.models';
