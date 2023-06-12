@@ -23,5 +23,5 @@ const routes: Routes = [
   ],
   declarations: [MyEntityContainer],
 })
-export class MyEntityModule { }
+export class MyEntityContainerModule { }
 //#endregion

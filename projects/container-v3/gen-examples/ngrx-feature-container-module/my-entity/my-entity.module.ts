@@ -19,5 +19,5 @@ import { MyEntityService } from './services/my-entity.service';
   exports: [MyEntityContainer],
   providers: [MyEntityService],
 })
-export class MyEntityModule { }
+export class MyEntityContainerModule { }
 //#endregion

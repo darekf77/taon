@@ -33,5 +33,5 @@ const routes: Routes = [
   declarations: [MyEntityContainer],
   providers: [MyEntityService],
 })
-export class MyEntityModule { }
+export class MyEntityContainerModule { }
 //#endregion
