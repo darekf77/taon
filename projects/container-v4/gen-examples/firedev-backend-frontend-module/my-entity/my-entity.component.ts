@@ -6,15 +6,15 @@ import { FiredevFullMaterialModule } from 'firedev-ui';
 import { StaticColumnsModule } from 'static-columns';
 
 @Component({
-  selector: 'app-my-entity',
+  selector: 'my-entity',
   templateUrl: './my-entity.component.html',
   styleUrls: ['./my-entity.component.scss'],
   providers: [MyEntityService],
   standalone: true,
   imports: [
     CommonModule,
-    FiredevFullMaterialModule,
-    StaticColumnsModule,
+    // FiredevFullMaterialModule,
+    // StaticColumnsModule,
   ],
 })
 export class MyEntityComponent implements OnInit {
