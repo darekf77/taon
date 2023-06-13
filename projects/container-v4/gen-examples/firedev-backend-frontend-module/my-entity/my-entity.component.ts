@@ -1,15 +1,15 @@
 //#region @browser
-import { Component, OnInit } from '@angular/core';
-import { MyEntityService } from './my-entity.service';
+import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FiredevFullMaterialModule } from 'firedev-ui';
 import { StaticColumnsModule } from 'static-columns';
+import { MyEntityHelpers } from './my-entity.helpers';
+import { MyEntity } from './my-entity';
 
 @Component({
   selector: 'my-entity',
   templateUrl: './my-entity.component.html',
   styleUrls: ['./my-entity.component.scss'],
-  providers: [MyEntityService],
   standalone: true,
   imports: [
     CommonModule,
@@ -17,13 +17,10 @@ import { StaticColumnsModule } from 'static-columns';
     // StaticColumnsModule,
   ],
 })
-export class MyEntityComponent implements OnInit {
-
-  constructor(
-    protected service: MyEntityService
-  ) { }
-
+export class MyEntityComponent {
+  @Input() myEntity: MyEntity;
   ngOnInit() {
+    MyEntityHelpers.helloWorldMyEntity();
   }
 
 }
