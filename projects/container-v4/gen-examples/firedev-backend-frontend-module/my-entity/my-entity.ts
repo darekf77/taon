@@ -46,7 +46,7 @@ export class MyEntity extends Firedev.Base.Entity<any> {
   //#endregion
 
   //#region methods
-  clone(options?: { propsToOmit: keyof MyEntity[]; }): MyEntity {
+  clone(options?: { propsToOmit: (keyof MyEntity)[]; }): MyEntity {
     const { propsToOmit } = options || { propsToOmit: ['id', 'ctrl'] };
     return _.merge(new MyEntity(), _.omit(this, propsToOmit));
   }
