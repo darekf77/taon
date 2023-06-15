@@ -1,17 +1,8 @@
-# navi-vscode-ext 
-
-Navigator vscode extension:
+# Firedev
 
 INSTALLATION NOTES
 ------------------
-
-  1. To install extension in your vscode:
-- install  dependencies: 
+Firedev is required for this extension:
 ```
-npm i -g vsce typescript
+npm i -g firedev
 ```
-- use command: 
-```
-npm install && tsc && npm run build:install
-```
-  2. Reload your vscode. Done.

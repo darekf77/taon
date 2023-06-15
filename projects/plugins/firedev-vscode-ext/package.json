@@ -46,9 +46,10 @@
   },
   "name": "firedev-vscode-ext",
   "displayName": "firedev-vscode-ext",
-  "publisher": "firedev-io",
+  "icon": "logo-128.png",
+  "publisher": "firedev",
   "description": "",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "engines": {
     "vscode": "^1.30.0"
   },
@@ -216,7 +217,7 @@
   },
   "license": "MIT",
   "private": false,
-  "dependencies": {
+  "devDependencies": {
     "@angular-devkit/build-angular": "~13.3.9",
     "@angular-devkit/core": "~13.3.9",
     "@angular-material-extensions/fab-menu": "~6.1.0",
@@ -456,11 +457,10 @@
     "validator": "9.2.0",
     "video.js": "8.3.0",
     "vpn-split": "~13.1.23",
+    "vscode": "1.1.37",
     "watch": "1.0.2",
     "yup": "1.1.1",
     "zone.js": "~0.11.4"
   },
-  "devDependencies": {
-    "vscode": "1.1.37"
-  }
+  "dependencies": {}
 }
