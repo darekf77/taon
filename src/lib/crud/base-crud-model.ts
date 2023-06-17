@@ -13,6 +13,7 @@ import { FrameworkContext } from '../framework/framework-context';
 import { DbCrud } from './db-crud';
 declare const global: any;
 import { CrudHelpers } from './crud-helpers';
+import { MySqlQuerySource } from 'firedev-type-sql';
 //#endregion
 
 const log = Log.create('base crud model',
@@ -45,6 +46,7 @@ export abstract class BaseCRUD<T> {
 
   //#region @websql
   readonly db: DbCrud<T>;
+  readonly dbQuery: MySqlQuerySource;
   //#endregion
 
   private init() {
@@ -63,6 +65,8 @@ export abstract class BaseCRUD<T> {
       log.i(`Base CRUD inited for: ${(this.entity as any).name}`);
       // @ts-ignore
       this.db = DbCrud.from(this.connection, this.entity);
+      // @ts-ignore
+      this.dbQuery = new MySqlQuerySource(this.connection);
     } else {
       log.w(`Base CRUD NOT inited for: ${this.entity && (this.entity as any).name}`)
     }

@@ -150,7 +150,8 @@
         "watch",
         "webpack-cli",
         "zone.js",
-        "firedev-typeorm"
+        "firedev-typeorm",
+        "firedev-type-sql"
       ],
       "ignoreDepsPattern": [],
       "dependencies": {},
@@ -250,6 +251,7 @@
     "express-fileupload": "1.4.0",
     "express-session": "1.17.3",
     "file-loader": "1.1.5",
+    "firedev-type-sql": "~16.0.0",
     "firedev-typeorm": "~16.0.37",
     "font-awesome": "4.7.0",
     "fuzzy": "0.1.3",
@@ -438,7 +440,7 @@
     "tnp-core": "~16.0.10",
     "tnp-db": "~16.0.26",
     "tnp-helpers": "~16.0.6",
-    "tnp-models": "~16.0.34",
+    "tnp-models": "~16.0.35",
     "ts-debug": "1.3.0",
     "turndown": "7.1.2",
     "typescript-class-helpers": "~16.0.16",

@@ -1,6 +1,7 @@
 //#region @browser
 import { Component, EventEmitter, HostBinding, Input, OnInit, Output } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { _ } from 'tnp-core';
 
 @Component({
   selector: 'app-my-entity',
