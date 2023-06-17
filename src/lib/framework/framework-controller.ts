@@ -17,7 +17,7 @@ const updatedStaticWithCtrl = {};
 
 function getSing(target) {
   const context = FrameworkContext.findForTraget(target);
-  const res = context.getInstanceBy(target);;
+  const res = context.getInstanceBy(target);
   if (!res) {
     console.warn('[morphi][getSing] can not get instance by target', target);
   }
