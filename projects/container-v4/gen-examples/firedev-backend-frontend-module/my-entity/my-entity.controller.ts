@@ -1,16 +1,42 @@
 import { Firedev } from 'firedev';
 import { MyEntity } from './my-entity';
+import { _ } from 'tnp-core';
+import {
+  randUserName,
+  randAddress,
+} from '@ngneat/falso'; // faking data
+import { IMyEntity } from './my-entity.models';
 
 @Firedev.Controller({
   className: 'MyEntityController',
   entity: MyEntity
 })
 export class MyEntityController extends Firedev.Base.Controller<any> {
+  entity: typeof MyEntity;
 
   @Firedev.Http.GET()
   hello(): Firedev.Response<string> {
     return async () => {
       return 'Hello world';
+    }
+  }
+
+  @Firedev.Http.GET()
+  getListOfAll(): Firedev.Response<MyEntity[]> {
+    return async () => {
+      const entites = await this.repository.find();
+      return entites;
+    }
+  }
+
+  @Firedev.Http.POST()
+  createTestObjecttMyEntity(
+    @Firedev.Http.Param.Body('body') body: IMyEntity,
+  ): Firedev.Response<MyEntity> {
+    return async () => {
+      let item = this.entity.from(body);
+      item = await this.repository.save(item);
+      return item;
     }
   }
 

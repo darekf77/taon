@@ -1,7 +1,11 @@
 import { Firedev } from 'firedev';
 import { _ } from 'tnp-core';
 import type { MyEntityController } from './my-entity.controller';
-import { defaultModelValuesMyEntity as defaultModelValues } from './my-entity.models';
+import {
+  MyEntityNonColumnsKeys, MyEntityNonColumnsKeysArr,
+  defaultModelValuesMyEntity as defaultModelValues
+} from './my-entity.models';
+
 @Firedev.Entity({
   className: 'MyEntity',
   defaultModelValues
@@ -10,7 +14,8 @@ export class MyEntity extends Firedev.Base.Entity<any> {
 
   //#region static
   static ctrl: MyEntityController;
-  static from(obj: Omit<Partial<MyEntity>, 'ctrl'>) {
+  static from(obj: Omit<Partial<MyEntity>, MyEntityNonColumnsKeys>) {
+    obj = _.omit(obj, MyEntityNonColumnsKeysArr)
     return _.merge(new MyEntity(), obj) as MyEntity;
   }
   static getAll() {

@@ -8,11 +8,17 @@ const routes: Routes = [
   {
     path: '',
     component: MyEntityContainer,
+    // pathMatch: 'full' // => when using variables in other routers
   },
   // {
   //   path: 'anothermodulepath',
   //   loadChildren: () => import('anothermodule')
   //     .then(m => m.AnotherLazyModule),
+  // },
+  // {
+  //   path: 'other/:otherId',
+  //   loadChildren: () => import('othermodule')
+  //     .then(m => m.OtherLazyModule),
   // },
 ];
 

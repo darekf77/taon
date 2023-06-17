@@ -1,4 +1,3 @@
-//#region @notForNpm
 //#region imports
 import { Firedev } from 'firedev';
 const host = 'http://localhost:4199';
@@ -84,4 +83,4 @@ async function start() {
 //#endregion
 
 export default start;
-//#endregion
+

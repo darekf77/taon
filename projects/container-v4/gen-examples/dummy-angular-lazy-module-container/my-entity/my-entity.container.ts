@@ -9,6 +9,11 @@ import { Subscription } from 'rxjs';
 })
 export class MyEntityContainer implements OnInit {
 
+  // @Input() MyEntity = MyEntity;
+  // myEntity$ = this.MyEntity.ctrl.getAll().received.observable.pipe(map(data => {
+  //   return data.body.json;
+  // }))
+
   myId: number;
 
   @Input({

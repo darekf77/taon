@@ -1,11 +1,15 @@
 //#region @browser
 import { Component, EventEmitter, HostBinding, Input, OnInit, Output } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-my-entity',
   templateUrl: './my-entity.component.html',
-  styleUrls: ['./my-entity.component.scss']
+  styleUrls: ['./my-entity.component.scss'],
+  imports:[
+    CommonModule,
+  ]
 })
 export class MyEntityComponent implements OnInit {
 
