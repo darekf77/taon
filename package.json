@@ -251,7 +251,7 @@
     "express-fileupload": "1.4.0",
     "express-session": "1.17.3",
     "file-loader": "1.1.5",
-    "firedev-type-sql": "~16.0.0",
+    "firedev-type-sql": "~16.0.1",
     "firedev-typeorm": "~16.0.37",
     "font-awesome": "4.7.0",
     "fuzzy": "0.1.3",
