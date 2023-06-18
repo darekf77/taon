@@ -1,5 +1,6 @@
 //#region imports
 import { Firedev } from 'firedev';
+import { _ } from 'tnp-core';
 const host = 'http://localhost:4199';
 //#region @browser
 import { NgModule, NgZone, ViewEncapsulation } from '@angular/core';
