@@ -3,6 +3,8 @@ import { _ } from 'tnp-core';
 import type { MyEntityController } from './my-entity.controller';
 import {
   MyEntityNonColumnsKeys, MyEntityNonColumnsKeysArr,
+} from './my-entity.models';
+import {
   defaultModelValuesMyEntity as defaultModelValues
 } from './my-entity.models';
 
@@ -15,7 +17,7 @@ export class MyEntity extends Firedev.Base.Entity<any> {
   //#region static
   static ctrl: MyEntityController;
   static from(obj: Omit<Partial<MyEntity>, MyEntityNonColumnsKeys>) {
-    obj = _.omit(obj, MyEntityNonColumnsKeysArr)
+    obj = _.merge(defaultModelValues, _.omit(obj, MyEntityNonColumnsKeysArr))
     return _.merge(new MyEntity(), obj) as MyEntity;
   }
   static getAll() {
@@ -52,7 +54,7 @@ export class MyEntity extends Firedev.Base.Entity<any> {
 
   //#region methods
   clone(options?: { propsToOmit: (keyof MyEntity)[]; }): MyEntity {
-    const { propsToOmit } = options || { propsToOmit: ['id', 'ctrl'] };
+    const { propsToOmit } = options || { propsToOmit: MyEntityNonColumnsKeysArr };
     return _.merge(new MyEntity(), _.omit(this, propsToOmit));
   }
   //#endregion

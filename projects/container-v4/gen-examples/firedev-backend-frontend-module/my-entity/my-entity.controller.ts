@@ -6,6 +6,9 @@ import {
   randAddress,
 } from '@ngneat/falso'; // faking data
 import { IMyEntity } from './my-entity.models';
+//#region @websql
+import { MY_ENTITY } from './my-entity.models';
+//#endregion
 
 @Firedev.Controller({
   className: 'MyEntityController',
@@ -27,7 +30,10 @@ export class MyEntityController extends Firedev.Base.Controller<any> {
   getListOfAll(): Firedev.Response<MyEntity[]> {
     //#region @websqlFunc
     return async () => {
-      const entites = await this.repository.find();
+      const entites = await this.dbQuery
+        .from(MY_ENTITY)
+        .select<MyEntity>(MY_ENTITY.$all)
+        ;
       return entites;
     }
     //#endregion
@@ -63,7 +69,7 @@ export class MyEntityController extends Firedev.Base.Controller<any> {
   //#region @websql
   async initExampleDbData() {
     // const repo = this.connection.getRepository(MyEntity);
-    // await repo.save(new MyEntity())
+    // await repo.save(MyEntity.from({ description: 'hello world' }))
     // const all = await repo.find()
   }
   //#endregion

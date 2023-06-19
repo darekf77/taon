@@ -17,7 +17,7 @@ export const MyEntityNonColumnsKeysArr = [
 export type IMyEntity = Partial<MyEntity>;
 
 export const defaultModelValuesMyEntity: Omit<IMyEntity, MyEntityNonColumnsKeys> = {
-  description: '',
+  description: 'MyEntity example description',
 }
 
 //#region @websql
