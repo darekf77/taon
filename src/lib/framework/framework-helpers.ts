@@ -18,7 +18,7 @@ import { FrameworkContext } from './framework-context';
 //#region @websql
 export function tableNameFrom(entityClass: Function | BASE_ENTITY<any>) {
   entityClass = entityClass as Function;
-  return _.snakeCase(entityClass.name);
+  return _.snakeCase(entityClass.name).toUpperCase();
 }
 //#endregion
 

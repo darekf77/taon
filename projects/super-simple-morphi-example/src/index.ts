@@ -1,6 +1,6 @@
-import { Morphi } from 'morphi'
+import { Firedev } from 'firedev'
 
-@Morphi.Entity()
+@Firedev.Entity()
 export class USER {
 
   singYourName() {
@@ -10,11 +10,11 @@ export class USER {
 }
 
 
-@Morphi.Controller()
+@Firedev.Controller()
 class UserController {
 
-  @Morphi.Http.GET()
-  hello(@Morphi.Http.Param.Query('config') config?: any): Morphi.Response<string> {
+  @Firedev.Http.GET()
+  hello(@Firedev.Http.Param.Query('config') config?: any): Firedev.Response<string> {
     //#region @backendFunc
     return async () => {
 
@@ -23,8 +23,8 @@ class UserController {
     //#endregion
   }
 
-  @Morphi.Http.GET()
-  getEntity(): Morphi.Response<USER> {
+  @Firedev.Http.GET()
+  getEntity(): Firedev.Response<USER> {
     //#region @backendFunc
     return async () => {
       let u = new USER();
@@ -37,7 +37,7 @@ class UserController {
 }
 
 const host = 'http://localhost:3000'
-const controllers: Morphi.Base.Controller<any>[] = [UserController as any];
+const controllers: Firedev.Base.Controller<any>[] = [UserController as any];
 
 
 (async () => {
@@ -52,7 +52,7 @@ const controllers: Morphi.Base.Controller<any>[] = [UserController as any];
   } as any;
   //#endregion
 
-  Morphi.init({
+  Firedev.init({
     host,
     controllers,
     //#region @backend
@@ -60,7 +60,7 @@ const controllers: Morphi.Base.Controller<any>[] = [UserController as any];
     //#endregion
   })
 
-  if (Morphi.IsBrowser) {
+  if (Firedev.IsBrowser) {
 
     const body: HTMLElement = document.getElementsByTagName('body')[0];
     let test = new UserController()
