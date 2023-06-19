@@ -16,28 +16,34 @@ export class MyEntityController extends Firedev.Base.Controller<any> {
 
   @Firedev.Http.GET()
   hello(): Firedev.Response<string> {
+    //#region @websqlFunc
     return async () => {
       return 'Hello world';
     }
+    //#endregion
   }
 
   @Firedev.Http.GET()
   getListOfAll(): Firedev.Response<MyEntity[]> {
+    //#region @websqlFunc
     return async () => {
       const entites = await this.repository.find();
       return entites;
     }
+    //#endregion
   }
 
   @Firedev.Http.POST()
   createTestObjecttMyEntity(
     @Firedev.Http.Param.Body('body') body: IMyEntity,
   ): Firedev.Response<MyEntity> {
+    //#region @websqlFunc
     return async () => {
       let item = this.entity.from(body);
       item = await this.repository.save(item);
       return item;
     }
+    //#endregion
   }
 
   @Firedev.Http.GET(`/${Firedev.symbols.CRUD_TABLE_MODELS}`) // @ts-ignore
