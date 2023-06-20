@@ -140,10 +140,8 @@
         "ts-node",
         "tsickle",
         "tslib",
-        "tslint",
         "typeorm",
         "typescript",
-        "typescript-formatter",
         "uglifyjs-webpack-plugin",
         "underscore",
         "validator",
@@ -180,7 +178,7 @@
     "homepage": "https://github.com/darekf77/morphi#readme"
   },
   "name": "morphi",
-  "version": "16.0.5",
+  "version": "16.0.6",
   "description": "Part of firedev.io - framework for isomorphic (node/angular) apps",
   "scripts": {},
   "repository": {
@@ -306,7 +304,6 @@
     "tslib": "~2.3.0",
     "typeorm": "~0.3.10",
     "typescript": "~5.0.2",
-    "typescript-formatter": "~7.2.2",
     "underscore": "1.9.1",
     "validator": "9.2.0",
     "watch": "1.0.2",
@@ -408,7 +405,7 @@
     "ng-for-track-by-property": "16.0.1",
     "ng-in-viewport": "15.0.2",
     "ng-lock": "16.0.1",
-    "ng-talkback": "~13.1.19",
+    "ng-talkback": "~16.0.1",
     "ng2-logger": "~16.0.4",
     "ngx-ace-wrapper": "14.0.0",
     "ngx-highlightjs": "9.0.0",
@@ -417,7 +414,7 @@
     "ngx-scrolltop": "6.0.0",
     "ngx-store": "3.1.1",
     "ngx-typed-js": "2.1.1",
-    "node-cli-tester": "~13.1.19",
+    "node-cli-tester": "~16.0.2",
     "node-localstorage": "2.1.6",
     "open": "7.2.1",
     "pica": "9.0.1",
@@ -426,7 +423,7 @@
     "ps-node": "0.1.6",
     "q": "1.5.1",
     "randomcolor": "0.5.3",
-    "record-replay-req-res-scenario": "~13.1.20",
+    "record-replay-req-res-scenario": "~16.0.1",
     "rimraf": "2.6.2",
     "semver": "6.3.0",
     "sql.js": "1.8.0",
@@ -446,7 +443,7 @@
     "typescript-class-helpers": "~16.0.16",
     "uuid": "8.3.2",
     "video.js": "8.3.0",
-    "vpn-split": "~13.1.23",
+    "vpn-split": "~16.0.1",
     "yup": "1.1.1"
   }
 }
