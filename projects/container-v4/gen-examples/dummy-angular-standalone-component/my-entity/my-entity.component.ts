@@ -10,7 +10,8 @@ import { _ } from 'tnp-core';
   styleUrls: ['./my-entity.component.scss'],
   imports:[
     CommonModule,
-  ]
+  ],
+  standalone: true,
 })
 export class MyEntityComponent implements OnInit {
 
