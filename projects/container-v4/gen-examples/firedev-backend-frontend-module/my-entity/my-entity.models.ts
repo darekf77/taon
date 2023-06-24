@@ -1,8 +1,8 @@
 import type { MyEntity } from "./my-entity";
 import { _ } from 'tnp-core';
+import { MY_ENTITY_TABLE_NAME } from "./my-entity.constants";
 //#region @websql
 import { NumberColumn, PropsEntitySQL, QueryTable, StringColumn } from "firedev-type-sql";
-const myEntityTableName = _.snakeCase('myEntity').toUpperCase();
 //#endregion
 
 export type MyEntityNonColumnsKeys =
@@ -28,5 +28,5 @@ export class MyEntityTable extends QueryTable<MyEntity, number> implements IMyEn
   description = new StringColumn(this, 'description');
 }
 
-export const MY_ENTITY = new MyEntityTable(myEntityTableName);
+export const MY_ENTITY = new MyEntityTable(MY_ENTITY_TABLE_NAME);
 //#endregion

@@ -187,10 +187,14 @@
       '@ngrx/data': '^16.0.1',
 
       immutable: '4.3.0',
+      immer: '~10.0.2',
 
       // TESTING / MOCKING
       mocha: '~10.2.0',
       '@testdeck/mocha': '~0.3.3',
+      chai: '4.3.7',
+      sinon: '15.2.0',
+      supertest: '6.3.3',
       // jest test framework / runner
       jest: '~29.5.0',
       'jest-marbles': 'latest',
@@ -236,19 +240,21 @@
       // validation decorator based (https://github.com/typestack/class-validator)
       'class-validator': '~0.14.0',
 
-      // amazing schema validation
+      // amazing schema validation (decide betwwen yup vs joi)
       yup: '~1.1.1',
-
+      joi: '17.9.2',
       // validation function based
       validator: '^9.2.0',
+
+
 
       // ------------------------------------------------------------
 
       // -------- THREADS / WORKERS ---------------------------------
       // threads lib: (https://github.com/andywer/threads.js)
       threads: '~1.7.0',
-
       'task.js': '^0.1.5',
+      'file-type': '18.5.0',
 
       // ------------------------------------------------------------
 
@@ -403,6 +409,11 @@
       'image-focus': '1.2.1',
       'animate.css': '4.1.1 ',
 
+      'rallax.js': '2.0.4',
+
+
+
+
       // nice menu for mobile apps (is based on deprecated flex layout)
       // '@angular-material-extensions/fab-menu': '6.1.0',
 
@@ -448,7 +459,12 @@
       // -------
       // PROPER CLASS INJECTIONS https://github.com/typestack/typedi => usefull for typescript-class-helpers
       // PROPER CLASS MAPPIGN usefull => https://github.com/typestack/class-transformer
-      'copy-paste': '1.5.3'
+      'copy-paste': '1.5.3',
+
+      // ADD SOMEDAY
+      // cheerio: '1.0.0-rc.12',
+      // 'impress.js':'1.1.0',
+      // 'ng2-pdfjs-viewer': '15.0.0',
     },
 
     linkedFolders: [],

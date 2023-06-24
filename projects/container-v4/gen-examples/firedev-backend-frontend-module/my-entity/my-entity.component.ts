@@ -18,7 +18,11 @@ import { MyEntity } from './my-entity';
   ],
 })
 export class MyEntityComponent {
-  @Input() myEntity: MyEntity;
+  private api: typeof MyEntity = MyEntity;
+  @Input() set MyEntity(myEntity: typeof MyEntity) {
+    this.api = myEntity ? myEntity : this.api;
+  }
+
   ngOnInit() {
     MyEntityHelpers.helloWorldMyEntity();
   }
