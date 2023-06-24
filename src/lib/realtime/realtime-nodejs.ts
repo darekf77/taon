@@ -185,7 +185,7 @@ export class RealtimeNodejs {
         ? CLASS.getName(entityObjOrClass)
         : CLASS.getNameFromObject(entityObjOrClass);
 
-      Helpers.warn(`[Firedev][TrigggerEntityChanges] Entity "${className}' is not realtime`);
+      console.warn(`[Firedev][TrigggerEntityChanges] Entity "${className}' is not realtime`);
       return;
     }
     RealtimeNodejs.__TrigggerEntityChanges(context, entityObjOrClass as any, void 0, idToTrigger);
@@ -205,7 +205,7 @@ export class RealtimeNodejs {
         : CLASS.getNameFromObject(entityObjOrClass);
 
       // @ts-ignore
-      Helpers.warn(`[Firedev][TrigggerEntityPropertyChanges][property=${property}] Entity "${className}' is not realtime`);
+      console.warn(`[Firedev][TrigggerEntityPropertyChanges][property=${property}] Entity "${className}' is not realtime`);
       return;
     }
 
@@ -235,7 +235,7 @@ export class RealtimeNodejs {
     const context = FrameworkContext.findForTraget(entityClass);
     const className = CLASS.getName(entityClass)
     if (context.disabledRealtime) {
-      Helpers.warn(`[Firedev][TrigggerEntityTableChanges] Entity "${className}' is not realtime`);
+      console.warn(`[Firedev][TrigggerEntityTableChanges] Entity "${className}' is not realtime`);
       return;
     }
 
