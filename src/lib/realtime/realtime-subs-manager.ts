@@ -44,7 +44,7 @@ export class RealtimeSubsManager {
   startListenIfNotStarted(realtime: BroadcastApiIoMockClient) {
 
     if (this.options.context.disabledRealtime) {
-      console.warn(`[Firedev][startListenIfNotStarted] socket are disabled`)
+      console.warn(`[Firedev][startListenIfNotStarted] sockets are disabled`)
       return;
     }
 

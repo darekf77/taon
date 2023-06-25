@@ -48,7 +48,7 @@ function updateChain(entity: Function, target: Function) {
     })
   }
   if (updatedStaticWithCtrl[className]) {
-    console.warn(`[Firedev] Static property 'ctrl' already exist for ${className}`);
+    console.warn(`[Firedev] Static property 'ctrl' already exist for "${className}"`);
     try {
       Object.defineProperty(entity, 'ctrl', {
         get: function () {
