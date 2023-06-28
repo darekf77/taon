@@ -1,6 +1,7 @@
 //#region imports
 import { Firedev } from 'firedev';
 import { _ } from 'tnp-core';
+import { map } from 'rxjs';
 import type { MyEntityController } from './my-entity.controller';
 import {
   MyEntityNonColumnsKeys, MyEntityNonColumnsKeysArr,
@@ -28,7 +29,9 @@ export class MyEntity extends Firedev.Base.Entity<any> {
     return _.merge(new MyEntity(), obj) as MyEntity;
   }
   static $getAll() {
-    return this.ctrl.getAll().received?.observable;
+    return this.ctrl.getAll().received?.observable.pipe(
+      map(data => data.body.json)
+    );
   }
 
   static async getAll() {

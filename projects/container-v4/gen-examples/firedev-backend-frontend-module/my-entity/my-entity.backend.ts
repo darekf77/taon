@@ -21,7 +21,6 @@ export class MyEntityBackend {
   }
 
   async initExampleDbData() {
-    this.ctrl.entites
     // await this.repo.save(MyEntity.from({ description: 'hello world' }))
     // const all = await this.repo.find()
   }
