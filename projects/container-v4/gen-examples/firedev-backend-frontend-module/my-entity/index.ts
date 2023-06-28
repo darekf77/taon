@@ -8,4 +8,5 @@ export * from './my-entity.backend';
 //#endregion
 //#region @browser
 export * from './my-entity.component';
+export * from './my-entity.formly-field';
 //#endregion
