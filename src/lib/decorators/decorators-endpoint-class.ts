@@ -31,13 +31,13 @@ export function ENDPOINT(options?: {
 }) {
   return function (target: Function) {
 
-    let { path, auth, entity, additionalEntities } = options ? options : {} as any;
+    let { path, auth, entity } = options ? options : {} as any;
 
     const initFN = (function (target, targetPath, auth) {
       return function () {
         const context = FrameworkContext.findForTraget(target);
 
-        activateBaseCrud(target, entity, additionalEntities, context)
+        activateBaseCrud(target, entity, context)
 
         const configs = CLASS.getConfigs(target) as any[];
         // console.log(`Class config for ${CLASS.getName(target)}`, configs)
@@ -117,9 +117,9 @@ export function ENDPOINT(options?: {
             initMethodBrowser(target, type, methodConfig, expressPath)
           }
         });
-        
+
         console.groupEnd();
-        
+
 
       }
     })(target, path, auth);

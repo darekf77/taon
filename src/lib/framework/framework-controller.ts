@@ -143,12 +143,6 @@ export abstract class BASE_CONTROLLER<EntityType> extends BaseCRUD<EntityType>
   implements BASE_CONTROLLER_INIT
 //#endregion
 {
-  /**
-   * Controller entites
-   */
-  entites: Function[];
-
-
   //#region @websql
 
   // get db(): { [entities: string]: Repository<any> } {

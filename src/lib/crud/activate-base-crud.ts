@@ -11,7 +11,6 @@ const abstractClasses = ['BASE_CONTROLLER'];
 export function activateBaseCrud(
   target: Function,
   entity: Function,
-  entites: Function[],
   context: FrameworkContext) {
 
   if (_.isFunction(target) && MorphiHelpers.hasParentClassWithName(target, 'BaseCRUD') &&
@@ -42,7 +41,6 @@ export function activateBaseCrud(
     } else {
       // console.log(`Traget ${target.name} has parent BaseCrud`)
       target.prototype['entity'] = entity;
-      target.prototype['entites'] = [entity].concat(entites).filter(f => !!f);
     }
   } else {
     // console.log(`Traget ${target.name} don't have parent BaseCrud`)
