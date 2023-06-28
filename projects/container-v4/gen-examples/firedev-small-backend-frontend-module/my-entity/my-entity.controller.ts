@@ -6,11 +6,6 @@ import {
   randUserName,
   randAddress,
 } from '@ngneat/falso'; // faking data
-import { IMyEntity } from './my-entity.models';
-//#region @websql
-import { MY_ENTITY } from './my-entity.models';
-import { MyEntityBackend } from './my-entity.backend';
-//#endregion
 //#endregion
 
 /**
@@ -28,50 +23,6 @@ import { MyEntityBackend } from './my-entity.backend';
 export class MyEntityController extends Firedev.Base.Controller<any> {
   //#region fields
   entity: typeof MyEntity;
-  //#region @websql
-  readonly backend = MyEntityBackend.for(this);
-  //#endregion
-  //#endregion
-
-  //#region hello world
-  @Firedev.Http.GET()
-  hello(): Firedev.Response<string> {
-    //#region @websqlFunc
-    return async () => {
-      return 'Hello world';
-    }
-    //#endregion
-  }
-  //#endregion
-
-  //#region get list of all
-  @Firedev.Http.GET()
-  getListOfAll(): Firedev.Response<MyEntity[]> {
-    //#region @websqlFunc
-    return async () => {
-      const entites = await this.dbQuery
-        .from(MY_ENTITY)
-        .select<MyEntity>(MY_ENTITY.$all)
-        ;
-      return entites;
-    }
-    //#endregion
-  }
-  //#endregion
-
-  //#region create test object of my entity
-  @Firedev.Http.POST()
-  createTestObjectOfMyEntity(
-    @Firedev.Http.Param.Body('body') body: IMyEntity,
-  ): Firedev.Response<MyEntity> {
-    //#region @websqlFunc
-    return async () => {
-      let item = this.entity.from(body);
-      item = await this.repository.save(item);
-      return item;
-    }
-    //#endregion
-  }
   //#endregion
 
   //#region get all
@@ -93,7 +44,6 @@ export class MyEntityController extends Firedev.Base.Controller<any> {
   //#region init example data
   //#region @websql
   async initExampleDbData() {
-    await this.backend.initExampleDbData()
     // const repo = this.connection.getRepository(MyEntity);
     // await repo.save(MyEntity.from({ description: 'hello world' }))
     // const all = await repo.find()

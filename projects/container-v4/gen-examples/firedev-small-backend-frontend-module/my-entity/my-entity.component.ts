@@ -3,7 +3,6 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FiredevFullMaterialModule } from 'firedev-ui';
 import { StaticColumnsModule } from 'static-columns';
-import { MyEntityHelpers } from './my-entity.helpers';
 import { MyEntity } from './my-entity';
 //#endregion
 
@@ -16,8 +15,19 @@ import { MyEntity } from './my-entity';
 @Component({
   //#region component data
   selector: 'my-entity',
-  templateUrl: './my-entity.component.html',
-  styleUrls: ['./my-entity.component.scss'],
+  template: `
+    <p>
+      my-entity works!
+      <ng-container *ngIf="model">
+        {{ model.description }}
+      </ng-container>
+    </p>
+  `,
+  styles: [`
+    :host {
+      display: block;
+    }
+  `],
   standalone: true,
   imports: [
     CommonModule,
@@ -37,8 +47,7 @@ export class MyEntityComponent {
 
   //#region hooks
   ngOnInit() {
-    MyEntityHelpers.helloWorldMyEntity();
+
   }
   //#endregion
-
 }

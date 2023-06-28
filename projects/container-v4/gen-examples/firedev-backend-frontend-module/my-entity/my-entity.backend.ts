@@ -1,5 +1,7 @@
+//#region imports
 import { MyEntity } from './my-entity';
 import type { MyEntityController } from './my-entity.controller';
+//#endregion
 
 /**
  * Backend methods for MyEntity
@@ -16,13 +18,16 @@ export class MyEntityBackend {
   private constructor(private ctrl: MyEntityController) { }
   //#endregion
 
+  //#region count entities
   async countEntities() {
     await this.ctrl.repository.count();
   }
+  //#endregion
 
+  //#region init example data
   async initExampleDbData() {
     // await this.repo.save(MyEntity.from({ description: 'hello world' }))
     // const all = await this.repo.find()
   }
-
+  //#endregion
 }
