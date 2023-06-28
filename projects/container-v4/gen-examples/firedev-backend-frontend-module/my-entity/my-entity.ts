@@ -17,11 +17,15 @@ import {
  * + use static methods to for backend access encapsulation
  */
 @Firedev.Entity({
+  //#region entity options
   className: 'MyEntity',
-  defaultModelValues
+  defaultModelValues,
+  //#region @websql
+  createTable: false,
+  //#endregion
+  //#endregion
 })
 export class MyEntity extends Firedev.Base.Entity<any> {
-
   //#region static
   static ctrl: MyEntityController;
   static from(obj: Omit<Partial<MyEntity>, MyEntityNonColumnsKeys>) {
@@ -74,5 +78,4 @@ export class MyEntity extends Firedev.Base.Entity<any> {
     return _.merge(new MyEntity(), _.omit(this, propsToOmit));
   }
   //#endregion
-
 }
