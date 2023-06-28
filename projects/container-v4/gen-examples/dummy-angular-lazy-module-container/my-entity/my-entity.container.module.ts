@@ -1,10 +1,12 @@
-//#region @browser
+//#region imports
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { MyEntityContainer } from './my-entity.container';
+//#endregion
 
 const routes: Routes = [
+  //#region routes
   {
     path: '',
     component: MyEntityContainer,
@@ -20,14 +22,17 @@ const routes: Routes = [
   //   loadChildren: () => import('othermodule')
   //     .then(m => m.OtherLazyModule),
   // },
+  //#endregion
 ];
 
 @NgModule({
+  //#region container module options
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
   ],
   declarations: [MyEntityContainer],
+  //#endregion
 })
 export class MyEntityContainerModule { }
-//#endregion
+

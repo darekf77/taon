@@ -1,12 +1,15 @@
-//#region @browser
+//#region imports
 import { Component, Input, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { _ } from 'tnp-core';
+//#endregion
 
 @Component({
+  //#region component options
   selector: 'app-my-entity',
   templateUrl: './my-entity.container.html',
-  styleUrls: ['./my-entity.container.scss']
+  styleUrls: ['./my-entity.container.scss'],
+  //#endregion
 })
 export class MyEntityContainer implements OnInit {
 
@@ -30,4 +33,3 @@ export class MyEntityContainer implements OnInit {
   }
 
 }
-//#endregion
