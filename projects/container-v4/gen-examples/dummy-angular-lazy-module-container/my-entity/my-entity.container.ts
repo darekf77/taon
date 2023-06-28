@@ -11,7 +11,7 @@ import { _ } from 'tnp-core';
   styleUrls: ['./my-entity.container.scss'],
   //#endregion
 })
-export class MyEntityContainer implements OnInit {
+export class MyEntityContainer {
 
   // @Input() MyEntity = MyEntity;
   // myEntity$ = this.MyEntity.$getAll().pipe(map(data => {

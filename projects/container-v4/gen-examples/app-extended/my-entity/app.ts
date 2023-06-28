@@ -28,7 +28,7 @@ const routes: Routes = [
   styleUrls: ['./app.scss'],
   templateUrl: './app.html',
 })
-export class MyEntityComponent implements OnInit {
+export class MyEntityComponent {
   async ngOnInit() {
 
   }

@@ -11,7 +11,7 @@ import { _ } from 'tnp-core';
   styleUrls: ['./my-entity.component.scss']
   //#endregion
 })
-export class MyEntityComponent implements OnInit {
+export class MyEntityComponent {
   handlers: Subscription[] = [];
   constructor() { }
 
