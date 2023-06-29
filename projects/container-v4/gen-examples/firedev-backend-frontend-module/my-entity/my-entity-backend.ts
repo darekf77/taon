@@ -4,7 +4,7 @@ import type { MyEntityController } from './my-entity.controller';
 //#endregion
 
 /**
- * Backend methods for MyEntity
+ * Backend (websql also) methods for MyEntity
  *
  * + use entites injected controllers to access other backends
  * + don't use controllers methods/properties here
