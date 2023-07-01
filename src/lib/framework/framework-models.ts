@@ -49,7 +49,8 @@ export type ISessionExposed = {
 
 export type MiddlewareType = [Function, any[]];
 
-export type FrameworkMode = 'backend/frontend' |
+export type FrameworkMode =
+  'backend/frontend' |
   'remote-backend' |
   'tests' |
   'backend/frontend-worker' |
@@ -63,18 +64,45 @@ export interface StartOptions {
    */
   host: string;
 
+  /**
+   * Put firedev controllers here
+   */
   controllers?: BASE_CONTROLLER<any>[] | Function[];
+
+  /**
+   * Put firedev entities here
+   */
   entities?: BASE_ENTITY<any>[] | Function[];
+  /**
+   * Disable realtime/socket for this context
+   */
   disabledRealtime?: boolean;
+
+  /**
+   * @deprecated
+   */
   allowedHosts?: string[];
+  /**
+   * config for express http cookie sesison
+   */
   session?: ISessionExposed;
+
 
   //#region @websql
   mode?: FrameworkMode;
   config?: IConnectionOptionInit;
   middlewares?: MiddlewareType[];
+  /**
+   * @deprecated
+   */
   InitDataPrioritypublicAssets?: { path: string; location: string }[];
+  /**
+ * Put (some/all) firedev controllers here in data init priority order
+ */
   InitDataPriority?: BASE_CONTROLLER<any>[] | Function[];
+  /**
+   * @deprecated
+   */
   publicAssets?: { path: string; location: string; }[];
   //#endregion
 

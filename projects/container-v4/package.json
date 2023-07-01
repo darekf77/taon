@@ -359,7 +359,6 @@
     "file-loader": "1.1.5",
     "file-saver": "2.0.5",
     "file-type": "18.5.0",
-    "firedev": "^16",
     "firedev-crud": "16.0.54",
     "firedev-crud-deamon": "16.0.44",
     "firedev-ports": "16.0.49",
@@ -501,7 +500,8 @@
     "wait-on": "5.0.1",
     "watch": "1.0.2",
     "yup": "1.1.1",
-    "zone.js": "~0.13.0"
+    "zone.js": "~0.13.0",
+    "firedev": "^16"
   },
   "devDependencies": {},
   "license": "UNLICENSED",

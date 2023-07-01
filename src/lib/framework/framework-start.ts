@@ -9,7 +9,11 @@ import { CLASS } from 'typescript-class-helpers';
 // import type { FiredevAdmin } from 'firedev-ui'; // circural dependency DO NOT UNCOMMENT
 //#endregion
 
-export function start(options: StartOptions) {
+export function start(options: Omit<StartOptions,
+  'InitDataPrioritypublicAssets' |
+  'publicAssets' |
+  'allowedHosts'
+>) {
 
   //#region autodetecting ngzone in progress in progress
 
