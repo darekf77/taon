@@ -35,7 +35,7 @@ export class MyEntity extends Firedev.Base.Entity<any> {
   }
   static $getAll() {
     return this.ctrl.getAll().received?.observable.pipe(
-      map(data => data.body.json)
+      map(data => data.body?.json || [])
     );
   }
 

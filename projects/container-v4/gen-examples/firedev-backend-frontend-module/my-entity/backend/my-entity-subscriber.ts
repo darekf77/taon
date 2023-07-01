@@ -4,7 +4,7 @@ import {
   EntitySubscriberInterface, EventSubscriber, InsertEvent,
   RemoveEvent, UpdateEvent
 } from 'firedev-typeorm';
-import type { MyEntity } from './my-entity';
+import type { MyEntity } from '../my-entity';
 //#endregion
 
 /**

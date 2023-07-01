@@ -1,6 +1,6 @@
 //#region imports
-import { MyEntity } from './my-entity';
-import type { MyEntityController } from './my-entity.controller';
+import { MyEntity } from '../my-entity';
+import type { MyEntityController } from '../my-entity.controller';
 //#endregion
 
 /**

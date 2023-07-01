@@ -5,6 +5,8 @@ import { Helpers } from 'tnp-helpers';
 
 /**
  * Isomorphic backend/frontend helpers
+ *
+ * + helper can be used on backend/frontend
  */
 export namespace MyEntityHelpers {
 

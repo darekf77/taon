@@ -9,7 +9,7 @@ import {
 import { IMyEntity } from './my-entity.models';
 //#region @websql
 import { MY_ENTITY } from './my-entity.models';
-import { MyEntityBackend } from './my-entity.backend';
+import { MyEntityBackend } from './backend/my-entity-backend';
 //#endregion
 //#endregion
 
