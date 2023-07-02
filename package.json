@@ -178,7 +178,7 @@
     "homepage": "https://github.com/darekf77/morphi#readme"
   },
   "name": "morphi",
-  "version": "16.2.2",
+  "version": "16.2.3",
   "description": "Part of firedev.io - framework for isomorphic (node/angular) apps",
   "scripts": {},
   "repository": {
