@@ -37,7 +37,6 @@
     "tsconfig.json": true,
     "src/extension.ts": true,
     "src/helpers.ts": true,
-    "src/helpers-vscode.ts": true,
     "src/models.ts": true,
     "src/execute-command.ts": true,
     "src/progress-output.ts": true,

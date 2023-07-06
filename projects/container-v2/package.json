@@ -353,7 +353,7 @@
     "uglifyjs-webpack-plugin": "2.2.0",
     "underscore": "1.9.1",
     "uuid": "8.3.2",
-    "vpn-split": "16.0.1",
+    "vpn-split": "16.0.2",
     "vscode": "1.1.37",
     "wait-on": "7.0.1",
     "watch": "1.0.2",

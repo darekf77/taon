@@ -9,7 +9,7 @@ import {
   escapeStringForRegEx, deepClone, valueFromCommand, crossPlatformPath
 } from './helpers';
 
-const log = Log.instance(`execute-command`, 'logmsg');
+const log = Log.instance(`execute-command`, 'logmsg',true);
 
 export function executeCommand(registerName: string, commandToExecute: string | string[],
   pOptions?: ProcesOptions, isDefaultBuildCommand?: boolean, context?: vscode.ExtensionContext) {
