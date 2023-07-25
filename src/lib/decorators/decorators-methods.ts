@@ -1,4 +1,4 @@
-import { _ } from 'tnp-core';
+import { ContentType, _ } from 'tnp-core';
 import { Models } from '../models';
 import { CLASS } from 'typescript-class-helpers';
 import { Models as ModelsNg2Rest } from 'ng2-rest';
@@ -49,7 +49,7 @@ function metaReq(
 export interface FiredevHttpDecoratorOptions {
   path?: string;
   pathIsGlobal?: boolean;
-  overrideContentType?: Models.ContentType;
+  overrideContentType?: ContentType;
   overridResponseType?: ModelsNg2Rest.ResponseTypeAxios,
 }
 

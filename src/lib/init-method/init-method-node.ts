@@ -1,4 +1,5 @@
 //#region @websql
+//#region imports
 import { Helpers, _ } from 'tnp-core';
 import { Models } from '../models';
 import { MorphiHelpers } from '../helpers';
@@ -8,17 +9,21 @@ import { FrameworkContext } from '../framework/framework-context';
 //#region @backend
 import { Blob } from 'buffer';
 //#endregion
+//#endregion
+
 // TODO below thing needs to be there
 // @ts-ignore
 export function initMethodNodejs(
+  //#region parameters
   type: Models.Rest.HttpMethod,
   methodConfig: Models.Rest.MethodConfig,
   classConfig: Models.Rest.ClassConfig,
   expressPath: string,
   target: Function
+  //#endregion
 ): any {
 
-
+  //#region resolve variables
   const requestHandler = (methodConfig.requestHandler && typeof methodConfig.requestHandler === 'function')
     ? methodConfig.requestHandler : (req, res, next) => { next() };
 
@@ -29,25 +34,31 @@ export function initMethodNodejs(
   expressPath = url.pathname.startsWith('/') ? `${url.pathname}${expressPath}` : expressPath;
   expressPath = expressPath.replace(/\/\//g, '/')
   // console.log(`BACKEND: expressPath: ${expressPath}`)
+  //#endregion
 
+  //#region handle websql request mode
   //#region @websqlOnly
   if (!context.node.app) {
     // @ts-ignore
     context.node.app = {}
   }
   //#endregion
+  //#endregion
 
   if (!context.onlyForBackendRemoteServerAccess) {
+
+    //#region apply dummy websql express routers
     //#region @websql
     if (!context.node.app[type.toLowerCase()]) {
       context.node.app[type.toLowerCase()] = () => { }
     }
     console.log(`[${type.toUpperCase()}] ${expressPath}`);
     //#endregion
-
+    //#endregion
 
     context.node.app[type.toLowerCase()](expressPath, requestHandler, async (req, res) => {
 
+      //#region process params
       const args: any[] = [];
 
       let tBody = req.body;
@@ -134,9 +145,11 @@ export function initMethodNodejs(
           }
         }
       })
-      const resolvedParams = args.reverse().map(v => MorphiHelpers.tryTransformParam(v));
-      try {
+      //#endregion
 
+      const resolvedParams = args.reverse().map(v => MorphiHelpers.tryTransformParam(v));
+
+      try {
         const response: Models.Response<any> = methodConfig.descriptor.value.apply(
           /**
            * Context for method @GET,@PUT etc.
@@ -148,11 +161,9 @@ export function initMethodNodejs(
           resolvedParams
         );
         let result = await MorphiHelpers.getResponseValue(response, req, res);
-        // console.log({
-        //   result
-        // })
-        // debugger
+
         if (result instanceof Blob) {
+          //#region processs blob result type
           // res.type(blob.type)
           // blob.arrayBuffer().then((buf) => {
           //     res.send(Buffer.from(buf))
@@ -170,7 +181,9 @@ export function initMethodNodejs(
           // });
           // const buffer = await blob.arrayBuffer();
           // res.end(buffer);
+          //#endregion
         } else if (methodConfig.contentType && methodConfig.contentType !== 'multipart/form-data' && methodConfig.responseType) {
+          //#region process string buffer TODO refacetor
           // TODO handle buffor or blob instance reponse
           //#region @backend
           // SENDING BLOB (string)
@@ -189,12 +202,15 @@ export function initMethodNodejs(
           });
           res.end(file);
           //#endregion
+          //#endregion
         } else {
+          //#region process json request
           // console.log('REQUEST RESULT', result)
           await EntityProcess.init(result, res);
+          //#endregion
         }
-
       } catch (error) {
+        //#region process error
         if (_.isString(error)) {
           res.status(400).send(MorphiHelpers.JSON.stringify({
             message: `
@@ -220,10 +236,9 @@ export function initMethodNodejs(
           Helpers.error(`[Firedev] Bad result isomorphic method: ${error}`, true, false)
           res.status(400).send(MorphiHelpers.JSON.stringify(error))
         }
+        //#endregion
       }
-
     });
-
   }
 
   return {
@@ -233,15 +248,4 @@ export function initMethodNodejs(
 
 }
 
-//#region @backend
-function betterError(error) {
-  console.log(require('callsite-record')({
-    forError: error
-  }).renderSync({
-    // stackFilter(frame) {
-    //   return !frame.getFileName().includes('node_modules');
-    // }
-  }))
-}
-//#endregion
 //#endregion

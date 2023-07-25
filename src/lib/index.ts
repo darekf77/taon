@@ -7,7 +7,7 @@ import { Observable, Subject } from 'rxjs';
 
 export { Log, Level } from 'ng2-logger';
 
-import { _ } from 'tnp-core';
+import { _, Utils } from 'tnp-core';
 import * as crudMorph from './crud';
 import * as decoratorsMorphi from './decorators';
 import * as framework from './framework';
@@ -44,6 +44,7 @@ generate = () => { }
 
 //#region @websql
 import { Repository } from 'firedev-typeorm';
+import { ConfigModels } from 'tnp-config';
 //#endregion
 
 export class TypeormRepository<T>
@@ -209,7 +210,6 @@ export namespace Morphi {
       export import Success = models.Models.Rest.HttpResponse;
       export import Error = models.Models.Rest.HttpResponseError;
     }
-    export type ContentType = models.Models.ContentType;
   }
 
 
@@ -219,12 +219,6 @@ export namespace Morphi {
       window[sym.SYMBOL.WEBSQL_REST_PROGRESS_TIMEOUT] = miliseconds;
       //#endregion
     }
-  }
-
-  export namespace Files {
-    export type MimeType = keyof typeof models.Models.mimeTypes;
-    export const MimeTypesObj = models.Models.mimeTypes;
-    export type ContentType = models.Models.ContentType;
   }
 
   export namespace Auth {

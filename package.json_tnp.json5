@@ -179,6 +179,7 @@
       "zone.js",
       "firedev-typeorm",
       "firedev-type-sql",
+      "tnp-helpers",
     ],
 
     ignoreDepsPattern: [],

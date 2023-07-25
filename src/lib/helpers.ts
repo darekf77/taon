@@ -204,28 +204,6 @@ export class MorphiHelpers extends HelpersNg2Rest {
   //#endregion
   //#endregion
 
-  //#region static / get recrusive files from
-  //#region @websql
-  static getRecrusiveFilesFrom(dir): string[] {
-    //#region @backendFunc
-    let files = [];
-    const readed = fse.readdirSync(dir).map(f => {
-      const fullPath = crossPlatformPath(path.join(dir, crossPlatformPath(f)));
-      // console.log(`is direcotry ${fs.lstatSync(fullPath).isDirectory()} `, fullPath)
-      if (fse.lstatSync(fullPath).isDirectory()) {
-        this.getRecrusiveFilesFrom(fullPath).forEach(aa => files.push(aa))
-      }
-      return fullPath;
-    })
-    if (Array.isArray(readed)) {
-      readed.forEach(r => files.push(r))
-    }
-    return files;
-    //#endregion
-  }
-  //#endregion
-  //#endregion
-
   //#endregion
 
 }

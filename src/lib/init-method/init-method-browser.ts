@@ -1,17 +1,28 @@
+//#region imports
 import { SYMBOL } from '../symbols';
 import { _ } from 'tnp-core';
 import { Models } from '../models';
-import { Resource, RestHeaders } from 'ng2-rest';
+import { Resource, Rest, RestHeaders } from 'ng2-rest';
 import { Models as Ng2RestModels } from 'ng2-rest';
 import { Helpers } from 'tnp-core';
 import { MorphiHelpers } from '../helpers';
 import { FrameworkContext } from '../framework/framework-context';
 import { from, Observable, Subject } from 'rxjs';
 import { CLASS } from 'typescript-class-helpers';
+//#endregion
 
+export function initMethodBrowser(
+  //#region parameters
+  target: Function,
+  type: Models.Rest.HttpMethod,
+  methodConfig: Models.Rest.MethodConfig,
+  expressPath: string,
+  //#endregion
+)
+// : { received: any; /* Rest<any, any>  */ }
+ {
 
-
-export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodConfig: Models.Rest.MethodConfig, expressPath) {
+  //#region resolve storage
   let storage: any;
   if (Helpers.isBrowser) {
     storage = window;
@@ -21,12 +32,12 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
     storage = global;
   }
   //#endregion
+  //#endregion
 
   const context = FrameworkContext.findForTraget(target);
   const uri: URL = context.uri;
 
   //#region handling web sql request
-
   //#region @websqlOnly
 
   //#region resolve variables
@@ -138,7 +149,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
         );
 
         // @LAST blob should be blob not json
-        // console.log('NEXT', res);
+        console.log('NEXT', res);
         // target.prototype[methodConfig.methodName][subjectHandler].next(res);
 
         await periods();
@@ -156,11 +167,16 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
     });
     received['observable'] = from(received);
     // debugger
-    return {
-      received
+    if (Helpers.isWebSQL) {
+      return {
+        received
+      }
     }
+
   }
-  return;
+  if (Helpers.isWebSQL) {
+    return;
+  }
   //#endregion
 
   //#endregion
@@ -172,6 +188,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
     // console.log('[init method browser] FRONTEND expressPath', expressPath)
     // const productionMode = FrameworkContext.isProductionMode;
 
+    //#region resolve frontend parameters
 
     if (!storage[SYMBOL.ENDPOINT_META_CONFIG]) storage[SYMBOL.ENDPOINT_META_CONFIG] = {};
     if (!storage[SYMBOL.ENDPOINT_META_CONFIG][uri.href]) storage[SYMBOL.ENDPOINT_META_CONFIG][uri.href] = {};
@@ -221,7 +238,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
     let bodyObject = {};
     args.forEach((param, i) => {
       let currentParam: Models.Rest.ParamConfig;
-      //#region find param
+
       for (let pp in methodConfig.parameters) {
         let v = methodConfig.parameters[pp];
         if (v.index === i) {
@@ -324,6 +341,7 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
         SYMBOL.CIRCURAL_OBJECTS_MAP_QUERY_PARAM,
         JSON.stringify(circuralFromQueryParams))
     }
+    //#endregion
 
     return {
       received: isWithBody ? rest.model(pathPrams)[method](bodyObject, [queryParams]) : rest.model(pathPrams)[method]([queryParams])
@@ -337,12 +355,23 @@ export function initMethodBrowser(target, type: Models.Rest.HttpMethod, methodCo
 function websqlMocks(headers) {
 
   const response: Express.Response = {
+
+     status(status: any) {
+      // console.log({status})
+      return {
+        send(send: any) {
+          // console.log({status})
+        }
+      }
+    },
     setHeader(key: string, value: any) {
       // console.log('Dummy set header', arguments)
       headers[key] = value;
     }
   };
-  const request: Express.Request = {};
+  const request: Express.Request = {
+
+  };
   return { request, response }
 }
 //#endregion
