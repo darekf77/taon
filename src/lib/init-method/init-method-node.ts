@@ -6,6 +6,7 @@ import { MorphiHelpers } from '../helpers';
 import { SYMBOL } from '../symbols';
 import { EntityProcess } from './entity-process';
 import { FrameworkContext } from '../framework/framework-context';
+import { Models as ModelsNg2Rest } from 'ng2-rest';
 //#region @backend
 import { Blob } from 'buffer';
 //#endregion
@@ -162,32 +163,18 @@ export function initMethodNodejs(
         );
         let result = await MorphiHelpers.getResponseValue(response, req, res);
 
-        if (result instanceof Blob) {
+        if (result instanceof Blob && (methodConfig.responseType as ModelsNg2Rest.ResponseTypeAxios) === 'blob') {
           //#region processs blob result type
-          // res.type(blob.type)
-          // blob.arrayBuffer().then((buf) => {
-          //     res.send(Buffer.from(buf))
-          // }
-
-
           const blob = result as Blob;
-          res.type(blob.type);
-          const toSend = await blob.arrayBuffer();
-          res.send(toSend);
-
-          // res.writeHead(200, {
-          //   'Content-Type': blob.type,
-          //   'Content-Length': blob.size
-          // });
-          // const buffer = await blob.arrayBuffer();
-          // res.end(buffer);
+          const file = Buffer.from(await blob.arrayBuffer());
+          res.writeHead(200, {
+            'Content-Type': blob.type,
+            'Content-Length': file.length
+          });
+          res.end(file);
           //#endregion
-        } else if (methodConfig.contentType && methodConfig.contentType !== 'multipart/form-data' && methodConfig.responseType) {
+        } else if (_.isString(result) && (methodConfig.responseType as ModelsNg2Rest.ResponseTypeAxios) === 'blob') {
           //#region process string buffer TODO refacetor
-          // TODO handle buffor or blob instance reponse
-          //#region @backend
-          // SENDING BLOB (string)
-          // Extract image data
           const img_base64 = result;
           const m = /^data:(.+?);base64,(.+)$/.exec(img_base64)
           if (!m) {
@@ -201,7 +188,6 @@ export function initMethodNodejs(
             'Content-Length': file.length
           });
           res.end(file);
-          //#endregion
           //#endregion
         } else {
           //#region process json request

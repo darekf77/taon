@@ -237,7 +237,7 @@ export function initMethodBrowser(
     let queryParams = {};
     let bodyObject = {};
     args.forEach((param, i) => {
-      let currentParam: Models.Rest.ParamConfig;
+      let currentParam: Models.Rest.ParamConfig = void 0 as any;
 
       for (let pp in methodConfig.parameters) {
         let v = methodConfig.parameters[pp];
@@ -323,6 +323,7 @@ export function initMethodBrowser(
     if (typeof bodyObject === 'object' && (CLASS.getNameFromObject(bodyObject) !== 'FormData')) {
       let circuralFromItem = []
       bodyObject = MorphiHelpers.JSON.parse(MorphiHelpers.JSON.stringify(bodyObject, void 0, void 0, circs => {
+        // @ts-ignore
         circuralFromItem = circs;
       }))
       rest.headers.set(
@@ -334,6 +335,7 @@ export function initMethodBrowser(
     if (typeof queryParams === 'object') {
       let circuralFromQueryParams = []
       queryParams = MorphiHelpers.JSON.parse(MorphiHelpers.JSON.stringify(queryParams, void 0, void 0, circs => {
+        // @ts-ignore
         circuralFromQueryParams = circs;
       }))
 
