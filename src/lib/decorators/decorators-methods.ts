@@ -3,6 +3,8 @@ import { Models } from '../models';
 import { CLASS } from 'typescript-class-helpers';
 import { Models as ModelsNg2Rest } from 'ng2-rest';
 
+const defaultResponseType = 'text or JSON';
+
 function metaReq(
   method: Models.Rest.HttpMethod,
   path: string,
@@ -17,7 +19,7 @@ function metaReq(
   // }
   config.methods[propertyKey] = (
     !config.methods[propertyKey] ? new Models.Rest.MethodConfig() : config.methods[propertyKey]
-  );
+  ) as Models.Rest.MethodConfig;
   const methodConfig: Models.Rest.MethodConfig = config.methods[propertyKey];
 
   methodConfig.methodName = propertyKey;
@@ -42,9 +44,28 @@ function metaReq(
   methodConfig.global = pathIsGlobal;
   methodConfig.contentType = overrideContentType;
   methodConfig.responseType = overridResponseType;
+  checkIfMethodsWithReponseTYpeAlowed(_.values(config.methods).filter(f => f !== methodConfig), methodConfig)
 }
 
+function checkIfMethodsWithReponseTYpeAlowed(methods: Models.Rest.MethodConfig[], current: Models.Rest.MethodConfig) {
+  if (!current.responseType) {
+    return;
+  }
+  for (let index = 0; index < methods.length; index++) {
+    const m = methods[index];
+    if (m.path === current.path && m.responseType !== current.responseType) {
+      throw new Error(`
+[firedev] you can have 2 methods with same path but differetn reponseType-s
 
+        ${(m.methodName)}( ... path: ${m.path} )  -> responseType: ${m.responseType || defaultResponseType}
+        ${(current.methodName)}( ... path: ${current.path} ) -> responseType: ${current.responseType}
+
+  Please change path name on of the methods.
+
+      `)
+    }
+  }
+}
 
 export interface FiredevHttpDecoratorOptions {
   path?: string;

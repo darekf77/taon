@@ -40,7 +40,13 @@ export class FrameworkContextBrowserApp extends FrameworkContextBase {
         }
       })
       notFound.forEach(ctrl => {
-        throw `Decorator "@ENDPOINT(..)" is missing on class ${CLASS.getName(ctrl)}`;
+        throw `
+
+Decorator "@ENDPOINT(..)" is missing on class ${CLASS.getName(ctrl)}
+
+or you are trying to use Entity as Controller
+
+`;
       });
       providers.forEach(p => this.context.Providers.push(p))
     }
