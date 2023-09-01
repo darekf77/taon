@@ -3,7 +3,12 @@ import { Firedev } from 'firedev';  // <- this is to replace by firedev
 import { Morphi } from 'morphi';  // <- this is to replace by firedev
 // @ts-ignore
 import start from './---projectname---/app';
-import { FiredevFileController, FiredevFile, FiredevFileCss } from 'firedev-ui'; // <- this is to replace by firedev
+import {
+  FiredevFileController,
+  FiredevFile, FiredevFileCss,
+  FiredevBinaryFileController,
+  FiredevBinaryFile,
+} from 'firedev-ui'; // <- this is to replace by firedev
 
 @Component({
   selector: 'app-root',
@@ -20,7 +25,13 @@ export class AppComponent {
   ) {
     Firedev.initNgZone(ngzone);
     Morphi.initNgZone(ngzone);
-    this.buildIn = [FiredevFileController, FiredevFile, FiredevFileCss];
+    this.buildIn = [
+      FiredevFileController,
+      FiredevFile,
+      FiredevFileCss,
+      FiredevBinaryFileController,
+      FiredevBinaryFile,
+    ];
   }
 
   async ngOnInit() {

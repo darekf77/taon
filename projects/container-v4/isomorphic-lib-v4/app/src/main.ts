@@ -9,6 +9,7 @@ import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { Helpers } from 'tnp-core';  // <- this is to replace by firedev
 import { FiredevAdmin } from 'firedev-ui';  // <- this is to replace by firedev
+import { Stor } from 'firedev-storage';  // <- this is to replace by firedev
 import { AppModule } from './app/app.module';
 
 // @ts-ignore
@@ -43,6 +44,7 @@ async function init() {
   } else {
     console.log('WEBSQL NOT LOADED')
   }
+  await Stor.awaitPendingOperatios();
   platformBrowserDynamic().bootstrapModule(AppModule)
     .catch(err => console.error(err));
 }
