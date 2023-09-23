@@ -164,6 +164,7 @@ export function initMethodNodejs(
         let result = await MorphiHelpers.getResponseValue(response, req, res);
 
         if (result instanceof Blob && (methodConfig.responseType as ModelsNg2Rest.ResponseTypeAxios) === 'blob') {
+          console.log('INSTANCE OF BLOB')
           //#region processs blob result type
           const blob = result as Blob;
           const file = Buffer.from(await blob.arrayBuffer());
@@ -174,6 +175,7 @@ export function initMethodNodejs(
           res.end(file);
           //#endregion
         } else if (_.isString(result) && (methodConfig.responseType as ModelsNg2Rest.ResponseTypeAxios) === 'blob') {
+          console.log('BASE64')
           //#region process string buffer TODO refacetor
           const img_base64 = result;
           const m = /^data:(.+?);base64,(.+)$/.exec(img_base64)

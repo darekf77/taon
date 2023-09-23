@@ -1,5 +1,5 @@
 //#region imports
-import { _, crossPlatformPath } from 'tnp-core';
+import { Helpers, _, crossPlatformPath } from 'tnp-core';
 //#region @websql
 import { path } from 'tnp-core';
 //#endregion
@@ -171,8 +171,8 @@ export class MorphiHelpers extends HelpersNg2Rest {
           const result = await asyncResponse(req, res);
           resolve(result as any);
         } catch (e) {
-          console.error(e);
           console.error('[firedev] Bad async function call ')
+          Helpers.renderError(e);
           reject(e);
         }
       } else if (typeof response === 'object') {
@@ -184,8 +184,8 @@ export class MorphiHelpers extends HelpersNg2Rest {
             resolve(response.send as any)
           }
         } catch (error) {
-          console.error(error);
           console.error('[firedev] Bad synchonus function call ')
+          Helpers.renderError(error);
           reject(error);
         }
       } else reject(`[firedev] Not recognized type of reposne ${response}`);
