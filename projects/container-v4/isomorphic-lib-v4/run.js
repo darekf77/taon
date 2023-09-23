@@ -5,8 +5,8 @@ const _ = require('lodash');
 const fse = require('fs-extra');
 const { crossPlatformPath } = require('tnp-core');
 
-if(process.platform === 'win32') {
-    process.argv = process.argv.map( a => crossPlatformPath(a) )
+if (process.platform === 'win32') {
+  process.argv = process.argv.map(a => crossPlatformPath(a))
 }
 // console.log(`[run.js] process.argv`, process.argv)
 
@@ -24,42 +24,42 @@ const RELATIVEPATHoverride = argsMinimist.RELATIVEPATHoverride;
 // console.log(`[run.js] pathToDistApp: ${pathToDistApp}`)
 
 var sandbox = {
-    require,
-    global
+  require,
+  global
 }
 
 function assignENV() {
-    let ENV = '{}';
-    if (fse.existsSync(pathToTmpEnv)) {
-        ENV = fse.readFileSync(pathToTmpEnv, {
-            encoding: 'utf8'
-        });
-    } else {
-        console.warn('ENV will be not available... tmp-environment.json missing... ')
-    }
+  let ENV = '{}';
+  if (fse.existsSync(pathToTmpEnv)) {
+    ENV = fse.readFileSync(pathToTmpEnv, {
+      encoding: 'utf8'
+    });
+  } else {
+    console.warn('ENV will be not available... tmp-environment.json missing... ')
+  }
 
-    let { ENVoverride } = require('minimist')(process.argv);
-    if (ENVoverride) {
-        const stringJson = decodeURIComponent(ENVoverride);
-        ENVoverride = JSON.parse(stringJson);
-        ENV = JSON.parse(ENV);
-        Object.assign(ENV, ENVoverride);
-        ENV = JSON.stringify(ENV, null, 4);
+  let { ENVoverride } = require('minimist')(process.argv);
+  if (ENVoverride) {
+    const stringJson = decodeURIComponent(ENVoverride);
+    ENVoverride = JSON.parse(stringJson);
+    ENV = JSON.parse(ENV);
+    Object.assign(ENV, ENVoverride);
+    ENV = JSON.stringify(ENV, null, 4);
+  }
+  sandbox.ENV = ENV;
+  if (fse.existsSync(pathToPackageJson)) {
+    try {
+      ENV = JSON.parse(ENV)
+      var data = fse.readJSONSync(pathToPackageJson, { encoding: 'utf8' }) || {};
+    } catch (error) {
+      console.warn(`[run.js] not able to read package.json ${pathToPackageJson}`);
+      return;
     }
-    sandbox.ENV = ENV;
-    if (fse.existsSync(pathToPackageJson)) {
-        try {
-            ENV = JSON.parse(ENV)
-            var data = fse.readJSONSync(pathToPackageJson, { encoding: 'utf8' }) || {};
-        } catch (error) {
-            console.warn(`[run.js] not able to read package.json ${pathToPackageJson}`);
-            return;
-        }
-        const projects = _.get(ENV, 'workspace.projects', []);
-        const currentProj = projects.find(({ name }) => name === data.name);
-        const portFromWorkspaceSettings = currentProj && Number(currentProj.port);
-        return _.isNumber(portFromWorkspaceSettings) ? portFromWorkspaceSettings : void 0;
-    }
+    const projects = _.get(ENV, 'workspace.projects', []);
+    const currentProj = projects.find(({ name }) => name === data.name);
+    const portFromWorkspaceSettings = currentProj && Number(currentProj.port);
+    return _.isNumber(portFromWorkspaceSettings) ? portFromWorkspaceSettings : void 0;
+  }
 }
 
 let { port } = require('minimist')(process.argv);
@@ -69,51 +69,51 @@ const encoding = 'utf8';
 var secondsWaitAfterDistDetected = 5;
 
 function emptyDistFolder() {
-    return !(
-        fse.existsSync(pathToDist) &&
-        fse.lstatSync(pathToDist).isDirectory() &&
-        fse.existsSync(pathToDistApp) &&
-        fse.readFileSync(pathToDistApp, { encoding }).toString().search('default') !== -1
-    );
+  return !(
+    fse.existsSync(pathToDist) &&
+    fse.lstatSync(pathToDist).isDirectory() &&
+    fse.existsSync(pathToDistApp) &&
+    fse.readFileSync(pathToDistApp, { encoding }).toString().search('default') !== -1
+  );
 }
 
 if (!RELATIVEPATHoverride || RELATIVEPATHoverride.trim().length === 0) {
-    var messageWasShown = false;
-    while (emptyDistFolder()) {
-        var seconds = 2;
-        if (!messageWasShown) {
-            messageWasShown = true;
-            console.log(`Waiting for build process...`);
-        }
-        var waitTill = new Date(new Date().getTime() + seconds * 1000);
-        while (waitTill > new Date()) { }
+  var messageWasShown = false;
+  while (emptyDistFolder()) {
+    var seconds = 2;
+    if (!messageWasShown) {
+      messageWasShown = true;
+      console.log(`Waiting for build process...`);
     }
-    if (messageWasShown) {
-        var waitTill = new Date(new Date().getTime() + secondsWaitAfterDistDetected * 1000);
-        while (waitTill > new Date()) { }
-    }
+    var waitTill = new Date(new Date().getTime() + seconds * 1000);
+    while (waitTill > new Date()) { }
+  }
+  if (messageWasShown) {
+    var waitTill = new Date(new Date().getTime() + secondsWaitAfterDistDetected * 1000);
+    while (waitTill > new Date()) { }
+  }
 }
 
 const possiblePortFromWorkspace = assignENV();
 if (_.isNumber(possiblePortFromWorkspace) && !_.isNumber(port)) {
-    port = possiblePortFromWorkspace;
+  port = possiblePortFromWorkspace;
 }
 
-let relativePath = './dist/app';
+let relativePath = './tmp-local-copyto-proj-dist/node_modules/' + path.basename(__dirname)  + '/app';
 
 // console.log(`[run.js] RELATIVEPATHoverride: ${RELATIVEPATHoverride}`)
 if (RELATIVEPATHoverride) {
-    relativePath = RELATIVEPATHoverride.replace(/\.js$/, '')
+  relativePath = RELATIVEPATHoverride.replace(/\.js$/, '')
 }
 if (relativePath.startsWith('/')) {
-    relativePath = `.${relativePath}`;
+  relativePath = `.${relativePath}`;
 }
 if (!relativePath.startsWith('./')) {
-    relativePath = `./${relativePath}`;
+  relativePath = `./${relativePath}`;
 }
 
 if (isNaN(Number(port))) {
-    port = 4000;
+  port = 4000;
 }
 
 // console.log(`[run.js] relativePath: ${relativePath}`)
