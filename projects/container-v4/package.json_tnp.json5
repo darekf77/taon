@@ -356,6 +356,12 @@
       // wysig editor with copy / paste images
       'ngx-editor': '15.3.0',
 
+      // vscode link editor
+      'ngx-monaco-editor': '~12.0.0',
+
+      // photo editor with cropping
+      'ngx-photo-editor': '~0.4.4',
+
       // ------------------------------------------------------------
 
       // ------ STRING MANIPULATIONS  -------------------------------
