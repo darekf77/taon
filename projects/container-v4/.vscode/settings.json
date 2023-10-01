@@ -4,6 +4,11 @@
     "activityBar.foreground": "#000000",
     "statusBar.background": "#999694"
   },
+  "editor.rulers": [
+    100,
+    120
+  ],
   "workbench.colorTheme": "Default Light+",
+  "typescript.tsdk": "node_modules/typescript/lib",
   "files.exclude": {}
 }
