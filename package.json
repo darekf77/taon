@@ -179,7 +179,7 @@
     "homepage": "https://github.com/darekf77/morphi#readme"
   },
   "name": "morphi",
-  "version": "16.2.4",
+  "version": "16.2.5",
   "description": "Part of firedev.io - framework for isomorphic (node/angular) apps",
   "scripts": {},
   "repository": {
@@ -427,6 +427,8 @@
     "ng2-logger": "~16.0.9",
     "ngx-ace-wrapper": "14.0.0",
     "ngx-highlightjs": "9.0.0",
+    "ngx-monaco-editor": "12.0.0",
+    "ngx-photo-editor": "0.4.4",
     "ngx-progressbar": "11.0.0",
     "ngx-scrollbar": "12.0.0",
     "ngx-scrolltop": "6.0.0",
@@ -438,6 +440,7 @@
     "open": "7.2.1",
     "pica": "9.0.1",
     "prettier": "3.0.0",
+    "pretty-error": "4.0.0",
     "ps-list": "6.1.0",
     "ps-node": "0.1.6",
     "q": "1.5.1",
