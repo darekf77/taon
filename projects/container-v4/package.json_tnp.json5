@@ -486,6 +486,9 @@
       //  + tooltips
       //  + color picker
       '@ng-matero/extensions': '16.0.0',
+      "primeflex": "~3.3.1",
+      "primeicons": "~6.0.1",
+      "primeng": "~16.7.0",
 
       // ------------------------------------------------------------------
 
@@ -540,8 +543,6 @@
       // "google-libphonenumber": "^3.2.25",
       // "print-js": "^1.6.0",
       // '@ngx-formly/primeng':'~6.1.8',
-      // primeng: '16.0.2',
-      // primeicons: '6.0.1',
       // 'ng-swagger-gen': '2.3.1',
       'copy-paste': '1.5.3',
     },
