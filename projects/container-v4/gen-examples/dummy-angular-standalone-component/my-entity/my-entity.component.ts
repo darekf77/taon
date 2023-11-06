@@ -15,8 +15,6 @@ import { CommonModule } from '@angular/common';
 export class MyEntityComponent implements OnInit {
 
   @HostBinding('style.minHeight.px') @Input() height: number = 100;
-
-  handlers: Subscription[] = [];
   @Output() myEntityDataChanged = new EventEmitter();
   @Input() myEntityData: any = {};
 
@@ -24,9 +22,4 @@ export class MyEntityComponent implements OnInit {
 
   ngOnInit() {
   }
-
-  ngOnDestroy(): void {
-    this.handlers.forEach(h => h.unsubscribe());
-  }
-
 }

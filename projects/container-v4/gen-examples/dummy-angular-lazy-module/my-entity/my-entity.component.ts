@@ -12,15 +12,10 @@ import { _ } from 'tnp-core';
   //#endregion
 })
 export class MyEntityComponent {
-  handlers: Subscription[] = [];
   constructor() { }
 
   ngOnInit() {
-  }
 
-  ngOnDestroy(): void {
-    this.handlers.forEach(h => h.unsubscribe());
   }
-
 }
 

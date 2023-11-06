@@ -9,7 +9,6 @@ import { Subscription } from 'rxjs';
 })
 export class MyEntityComponent {
   @HostBinding('style.minHeight.px') @Input() height: number = 100;
-  handlers: Subscription[] = [];
   @Output() myEntityDataChanged = new EventEmitter();
   @Input() myEntityData: any = {};
 
@@ -17,10 +16,5 @@ export class MyEntityComponent {
 
   ngOnInit() {
   }
-
-  ngOnDestroy(): void {
-    this.handlers.forEach(h => h.unsubscribe());
-  }
-
 }
 
