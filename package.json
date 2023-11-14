@@ -179,7 +179,7 @@
     "homepage": "https://github.com/darekf77/morphi#readme"
   },
   "name": "morphi",
-  "version": "16.2.8",
+  "version": "16.2.9",
   "description": "Part of firedev.io - framework for isomorphic (node/angular) apps",
   "scripts": {},
   "repository": {
@@ -293,7 +293,7 @@
     "sort-package-json": "1.11.0",
     "systeminformation": "3.45.7",
     "task.js": "0.1.5",
-    "tnp-helpers": "~16.0.11",
+    "tnp-helpers": "~16.0.12",
     "ts-loader": "2.3.1",
     "ts-node": "10.9.1",
     "tslib": "~2.3.0",
@@ -441,6 +441,9 @@
     "pica": "9.0.1",
     "prettier": "3.0.0",
     "pretty-error": "4.0.0",
+    "primeflex": "3.3.1",
+    "primeicons": "6.0.1",
+    "primeng": "16.7.0",
     "ps-list": "6.1.0",
     "ps-node": "0.1.6",
     "q": "1.5.1",
@@ -469,7 +472,7 @@
     "typescript-formatter": "~7.2.2",
     "uuid": "8.3.2",
     "video.js": "8.3.0",
-    "vpn-split": "~16.0.3",
+    "vpn-split": "~16.0.5",
     "yup": "1.1.1"
   }
 }
