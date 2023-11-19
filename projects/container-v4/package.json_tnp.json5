@@ -495,6 +495,7 @@
       // ------ USE IT ----------------------------------------------
       // format html ..
       "prettier": "3.0.0",
+      "@parcel/watcher": "2.3.0",
 
       // "lint-staged": "13.2.2",
       // "@schuchard/prettier": "^5.1.0",

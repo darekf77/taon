@@ -296,7 +296,7 @@
     "chalk": "2.3.2",
     "check-node-version": "3.2.0",
     "cheerio": "1.0.0-rc.3",
-    "chokidar": "3.5.1",
+    "chokidar": "3.5.3",
     "circular-json": "0.5.1",
     "class-validator": "0.14.0",
     "command-exists": "1.2.2",
