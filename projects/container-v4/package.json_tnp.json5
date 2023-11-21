@@ -223,9 +223,10 @@
 
       // for e2e not tested yet but prepared
       // awesome e2e (https://docs.cypress.io/guides/getting-started/installing-cypress)
-      "@cypress/schematic": "^2.5.0",
-
-      "cypress": "latest",
+      // "@cypress/schematic": "^2.5.0",
+      // TODO issue on windows "The Cypress App could not be downloaded."
+      // ] Does your workplace require a proxy to be used to access the Internet?
+      // "cypress": "^13.5.1",
 
       // faking data (https://github.com/ngneat/falso)
       '@ngneat/falso': '6.4.0',
