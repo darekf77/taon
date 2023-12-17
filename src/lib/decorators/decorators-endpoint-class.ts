@@ -74,7 +74,14 @@ export function ENDPOINT(options?: {
           }
         })
 
-        console.groupCollapsed(`express routes [${classConfig.className}]`);
+        //#region @backend
+        if (!Helpers.isRunningIn.cliMode()) {
+          //#endregion
+          console.groupCollapsed(`express routes [${classConfig.className}]`);
+          //#region @backend
+        }
+        //#endregion
+
 
         Object.keys(classConfig.methods).forEach(methodName => {
           const methodConfig: Models.Rest.MethodConfig = classConfig.methods[methodName];
@@ -118,7 +125,13 @@ export function ENDPOINT(options?: {
           }
         });
 
-        console.groupEnd();
+        //#region @backend
+        if (!Helpers.isRunningIn.cliMode()) {
+          //#endregion
+          console.groupEnd();
+          //#region @backend
+        }
+        //#endregion
 
 
       }

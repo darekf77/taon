@@ -13,7 +13,8 @@ import * as methodOverride from 'method-override';
 import * as fileUpload from 'express-fileupload';
 import { Http2Server } from 'http2';
 //#endregion
-import { Helpers, _ } from 'tnp-core';
+import { _ } from 'tnp-core';
+import { Helpers } from 'tnp-helpers';
 //#region @websql
 import { path } from 'tnp-core';
 //#endregion
@@ -372,6 +373,8 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
       this.httpServer = h;
 
       if (!this.context.testMode) {
+        await Helpers.killProcessByPort(Number(this.context.uri.port), { silent: true });
+
         h.listen(this.context.uri.port, () => {
           Helpers.log(`Server listening on port: ${this.context.uri.port}, hostname: ${this.context.uri.pathname},
               env: ${this.app.settings.env}

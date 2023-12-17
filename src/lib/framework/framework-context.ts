@@ -93,7 +93,14 @@ export class FrameworkContext extends FrameworkContextBase {
       className = target;
     }
     if (!className) {
-      throw new Error(`[Firedev][findForTarget] incorrect class name: "${className}"`)
+      if (Helpers.isBrowser) {
+        throw new Error(`[Firedev][findForTarget] incorrect/missing class name: "${className}"`)
+      } else {
+        //#region @backend
+        Helpers.error(`[Firedev][findForTarget] incorrect/missing class name: "${className}"`, false, false)
+        //#endregion
+      }
+
     }
 
     const result = FrameworkContext.contextByClassName[className];
@@ -106,7 +113,14 @@ export class FrameworkContext extends FrameworkContextBase {
       //#endregion
       // console.log(`FrameworkContext.contexts.length: ${FrameworkContext.contexts.length}`)
       // console.trace('-' + className + '- context length: ' + FrameworkContext.contexts.length)
-      throw new Error(`[Firedev][findForTarget] not able to find target by name: "${className}"`)
+      if (Helpers.isBrowser) {
+        throw new Error(`[Firedev][findForTarget] not able to find target by name: "${className}"`)
+      } else {
+        //#region @backend
+        Helpers.error(`[Firedev][findForTarget] incorrect/missing class name: "${className}"`, false, false)
+        //#endregion
+      }
+
     }
     return result;
   }

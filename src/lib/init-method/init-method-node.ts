@@ -53,7 +53,15 @@ export function initMethodNodejs(
     if (!context.node.app[type.toLowerCase()]) {
       context.node.app[type.toLowerCase()] = () => { }
     }
-    console.log(`[${type.toUpperCase()}] ${expressPath}`);
+
+    //#region @backend
+    if (!Helpers.isRunningIn.cliMode()) {
+      //#endregion
+      console.log(`[${type.toUpperCase()}] ${expressPath}`);
+      //#region @backend
+    }
+    //#endregion
+
     //#endregion
     //#endregion
 
