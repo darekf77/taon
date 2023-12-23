@@ -1,6 +1,5 @@
 .vscode
 dist/
-src/
 /docs
 /preview
 /tests
