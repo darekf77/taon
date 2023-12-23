@@ -31,7 +31,7 @@ import { createConnections, getConnection, DataSource } from 'firedev-typeorm/sr
 import type {
   TransactionRollbackEvent, TransactionCommitEvent, TransactionStartEvent,
   RecoverEvent, SoftRemoveEvent, RemoveEvent, UpdateEvent, InsertEvent
-} from 'typeorm/src';
+} from 'firedev-typeorm/src';
 import { Connection } from 'firedev-typeorm/src';
 //#endregion
 import { CLASS } from 'typescript-class-helpers/src';
