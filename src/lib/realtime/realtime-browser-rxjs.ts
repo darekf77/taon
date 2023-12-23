@@ -1,10 +1,10 @@
-import { Level, Log } from "ng2-logger";
+import { Level, Log } from "ng2-logger/src";
 import { FrameworkContext } from "../framework/framework-context";
 import { SYMBOL } from "../symbols";
 import { RealtimeBase } from "./realtime";
-import { Helpers, _ } from 'tnp-core';
+import { Helpers, _ } from 'tnp-core/src';
 import * as ioClientIo from 'socket.io-client';
-import { CLASS } from "typescript-class-helpers";
+import { CLASS } from "typescript-class-helpers/src";
 import { Observable, Subscriber } from 'rxjs';
 import { RealtimeSubsManager, SubscribtionRealtime } from "./realtime-subs-manager";
 //#region @websql

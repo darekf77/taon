@@ -1,5 +1,5 @@
-import { _ } from 'tnp-core';
-import { Log, Level } from "ng2-logger";
+import { _ } from 'tnp-core/src';
+import { Log, Level } from "ng2-logger/src";
 import { Observable, Subject, Subscription } from "rxjs";
 //#region @backend
 import { URL } from 'url';

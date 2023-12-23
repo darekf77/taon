@@ -6,15 +6,15 @@ import {
   initMethodNodejs
 } from '../init-method';
 //#endregion
-export { CLASS } from 'typescript-class-helpers';
-import { CLASS } from 'typescript-class-helpers';
-import { _, Helpers } from 'tnp-core';
+export { CLASS } from 'typescript-class-helpers/src';
+import { CLASS } from 'typescript-class-helpers/src';
+import { _, Helpers } from 'tnp-core/src';
 import { SYMBOL } from '../symbols';
 import { MorphiHelpers } from '../helpers';
 import { activateBaseCrud } from '../crud/activate-base-crud';
 import { Models } from '../models';
 import { FrameworkContext } from '../framework/framework-context';
-export { Connection } from 'firedev-typeorm';
+export { Connection } from 'firedev-typeorm/src';
 
 export function __ENDPOINT(baseEntity?: Function): (...args: any[]) => any {
   return ENDPOINT();

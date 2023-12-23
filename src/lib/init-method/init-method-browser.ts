@@ -1,14 +1,14 @@
 //#region imports
 import { SYMBOL } from '../symbols';
-import { _ } from 'tnp-core';
+import { _ } from 'tnp-core/src';
 import { Models } from '../models';
-import { Resource, Rest, RestHeaders } from 'ng2-rest';
-import { Models as Ng2RestModels } from 'ng2-rest';
-import { Helpers } from 'tnp-core';
+import { Resource, Rest, RestHeaders } from 'ng2-rest/src';
+import { Models as Ng2RestModels } from 'ng2-rest/src';
+import { Helpers } from 'tnp-core/src';
 import { MorphiHelpers } from '../helpers';
 import { FrameworkContext } from '../framework/framework-context';
 import { from, Observable, Subject } from 'rxjs';
-import { CLASS } from 'typescript-class-helpers';
+import { CLASS } from 'typescript-class-helpers/src';
 //#endregion
 
 export function initMethodBrowser(

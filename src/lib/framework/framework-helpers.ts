@@ -2,15 +2,15 @@
 import 'reflect-metadata';
 //#endregion
 //#region @websql
-import { Repository } from 'firedev-typeorm';
-import { Connection } from 'firedev-typeorm';
-export { Connection } from 'firedev-typeorm';
+import { Repository } from 'firedev-typeorm/src';
+import { Connection } from 'firedev-typeorm/src';
+export { Connection } from 'firedev-typeorm/src';
 //#endregion
 import { SYMBOL } from '../symbols';
-import { CLASS } from 'typescript-class-helpers';
+import { CLASS } from 'typescript-class-helpers/src';
 
 
-import { _ } from 'tnp-core';
+import { _ } from 'tnp-core/src';
 import { BASE_ENTITY } from './framework-entity';
 import { BASE_REPOSITORY } from './framework-repository';
 import { FrameworkContext } from './framework-context';

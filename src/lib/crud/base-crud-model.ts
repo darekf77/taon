@@ -1,19 +1,19 @@
-import { _, Helpers } from 'tnp-core';
-import { CLASS } from 'typescript-class-helpers';
+import { _, Helpers } from 'tnp-core/src';
+import { CLASS } from 'typescript-class-helpers/src';
 import { SYMBOL } from '../symbols';
 import { __ENDPOINT } from '../decorators/decorators-endpoint-class';
 import { GET, PUT, DELETE, POST, HEAD, PATCH } from '../decorators/decorators-methods';
 import { Query, Path, Body } from '../decorators/decorators-params';
 import { Models } from '../models';
-import { Level, Log } from 'ng2-logger';
+import { Level, Log } from 'ng2-logger/src';
 
 //#region @websql
-import { Repository, Connection, Like } from 'firedev-typeorm';
+import { Repository, Connection, Like } from 'firedev-typeorm/src';
 import { FrameworkContext } from '../framework/framework-context';
 import { DbCrud } from './db-crud';
 declare const global: any;
 import { CrudHelpers } from './crud-helpers';
-import { MySqlQuerySource } from 'firedev-type-sql';
+import { MySqlQuerySource } from 'firedev-type-sql/src';
 //#endregion
 
 const log = Log.create('base crud model',

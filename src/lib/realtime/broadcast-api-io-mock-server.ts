@@ -1,7 +1,7 @@
 //#region import
-import { Level, Log } from 'ng2-logger';
-import { _ } from 'tnp-core';
-import { CLASS } from 'typescript-class-helpers';
+import { Level, Log } from 'ng2-logger/src';
+import { _ } from 'tnp-core/src';
+import { CLASS } from 'typescript-class-helpers/src';
 import { SYMBOL } from '../symbols';
 import type { BroadcastApiIoMockClient } from './broadcast-api-io-mock-client';
 import { BroadcastApiIoOptions } from './broadcast-api-io.models';
@@ -120,5 +120,3 @@ export const mockIoServer = (httpServer: any, options?: BroadcastApiIoOptions) =
   return new BroadcastApiIoMockServer(httpServer, options)
 };
 //#endregion
-
-

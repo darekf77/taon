@@ -1,15 +1,15 @@
 //#region @websql
 import {
   EventSubscriber
-} from 'firedev-typeorm';
+} from 'firedev-typeorm/src';
 //#endregion
 
-import { _ } from 'tnp-core';
+import { _ } from 'tnp-core/src';
 import { ENDPOINT, __ENDPOINT } from '../decorators/decorators-endpoint-class';
 import { BaseCRUD } from '../crud/base-crud-model';
 import { classNameVlidation } from './framework-helpers';
 import { Models } from '../models';
-import { CLASS } from 'typescript-class-helpers';
+import { CLASS } from 'typescript-class-helpers/src';
 import { FrameworkContext } from './framework-context';
 
 const updatedWithCtrl = {};

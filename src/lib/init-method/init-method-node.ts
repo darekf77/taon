@@ -1,12 +1,12 @@
 //#region @websql
 //#region imports
-import { Helpers, _ } from 'tnp-core';
+import { Helpers, _ } from 'tnp-core/src';
 import { Models } from '../models';
 import { MorphiHelpers } from '../helpers';
 import { SYMBOL } from '../symbols';
 import { EntityProcess } from './entity-process';
 import { FrameworkContext } from '../framework/framework-context';
-import { Models as ModelsNg2Rest } from 'ng2-rest';
+import { Models as ModelsNg2Rest } from 'ng2-rest/src';
 //#region @backend
 import { Blob } from 'buffer';
 //#endregion

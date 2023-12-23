@@ -1,10 +1,10 @@
-import { _ } from 'tnp-core';
+import { _ } from 'tnp-core/src';
 import { IConnectionOptions, StartOptions } from './framework-models';
 import { FrameworkContext } from './framework-context';
-import { Helpers } from 'tnp-helpers';
+import { Helpers } from 'tnp-helpers/src';
 import axios from 'axios';
 import { Subject } from 'rxjs';
-import { CLASS } from 'typescript-class-helpers';
+import { CLASS } from 'typescript-class-helpers/src';
 //#region notForNpm
 // import type { FiredevAdmin } from 'firedev-ui'; // circural dependency DO NOT UNCOMMENT
 //#endregion
@@ -132,11 +132,11 @@ export function start(options: Omit<StartOptions,
 
       // const { FiredevFileController, FiredevFile, FiredevFileCss } = await import('firedev-ui');
       //#region @backend
-      FiredevFileController = require('firedev-ui').FiredevFileController;
-      FiredevBinaryFileController = require('firedev-ui').FiredevBinaryFileController;
-      FiredevBinaryFile = require('firedev-ui').FiredevBinaryFile;
-      FiredevFile = require('firedev-ui').FiredevFile;
-      FiredevFileCss = require('firedev-ui').FiredevFileCss;
+      FiredevFileController = require('firedev-ui/src').FiredevFileController;
+      FiredevBinaryFileController = require('firedev-ui/src').FiredevBinaryFileController;
+      FiredevBinaryFile = require('firedev-ui/src').FiredevBinaryFile;
+      FiredevFile = require('firedev-ui/src').FiredevFile;
+      FiredevFileCss = require('firedev-ui/src').FiredevFileCss;
       // console.log({ FiredevFileController, FiredevFile, FiredevFileCss })
       //#endregion
       controllers.push(FiredevFileController as any);

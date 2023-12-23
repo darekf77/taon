@@ -1,6 +1,6 @@
 //#region @websql
-import { _ } from 'tnp-core';
-import { CLASS } from 'typescript-class-helpers';
+import { _ } from 'tnp-core/src';
+import { CLASS } from 'typescript-class-helpers/src';
 
 export function getTransformFunction(target: Function) {
   if (!target) {

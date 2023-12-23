@@ -5,23 +5,23 @@ export { FormlyHorizontalWrapper } from './crud/formly-group-wrapper-component';
 //#endregion
 import { Observable, Subject } from 'rxjs';
 
-export { Log, Level } from 'ng2-logger';
+export { Log, Level } from 'ng2-logger/src';
 
-import { _, Utils } from 'tnp-core';
+import { _, Utils } from 'tnp-core/src';
 import * as crudMorph from './crud';
 import * as decoratorsMorphi from './decorators';
 import * as framework from './framework';
 import * as realtime from './realtime';
 import * as models from './models';
 import * as sym from './symbols';
-import { Helpers } from 'tnp-core';
+import { Helpers } from 'tnp-core/src';
 import { FrameworkContext } from './framework/framework-context';
 export { FrameworkContext } from './framework/framework-context';
 import * as context from './framework/framework-context';
 import { MorphiHelpers } from './helpers';
 
 //#region @websql
-import * as tsorm from 'firedev-typeorm'
+import * as tsorm from 'firedev-typeorm/src'
 //#endregion
 
 //#region @backend
@@ -43,8 +43,8 @@ generate = () => { }
 
 
 //#region @websql
-import { Repository } from 'firedev-typeorm';
-import { ConfigModels } from 'tnp-config';
+import { Repository } from 'firedev-typeorm/src';
+import { ConfigModels } from 'tnp-config/src';
 //#endregion
 
 export class TypeormRepository<T>

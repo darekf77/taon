@@ -1,9 +1,9 @@
 import { FormlyFieldConfig } from '@ngx-formly/core';
-import { _ } from 'tnp-core';
-import { Mapping } from 'ng2-rest';
+import { _ } from 'tnp-core/src';
+import { Mapping } from 'ng2-rest/src';
 import { findTypeForEntity } from './type-from-entity';
-import { CLASS } from 'typescript-class-helpers';
-import { ConfigModels } from 'tnp-config';
+import { CLASS } from 'typescript-class-helpers/src';
+import { ConfigModels } from 'tnp-config/src';
 import { FormlyInputType } from './formly.models';
 
 export function getFromlyConfigFor(

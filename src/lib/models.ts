@@ -1,9 +1,9 @@
 import { Response, RequestHandler } from 'express';
 import { Response as ExpressResponse, Request as ExpressRequest } from 'express';
-import { Models as ModelsNg2Rest } from 'ng2-rest';
+import { Models as ModelsNg2Rest } from 'ng2-rest/src';
 
 
-import { CLASS } from 'typescript-class-helpers';
+import { CLASS } from 'typescript-class-helpers/src';
 
 
 export namespace Models {

@@ -1,5 +1,5 @@
-import { _ } from 'tnp-core';
-import { CLASS } from 'typescript-class-helpers';
+import { _ } from 'tnp-core/src';
+import { CLASS } from 'typescript-class-helpers/src';
 
 export function findTypeForEntity(entity: Function, isArray: boolean = false) {
   if (!_.isArray(RegisterComponentType.prototype.types)) {

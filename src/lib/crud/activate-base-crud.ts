@@ -1,6 +1,6 @@
-import { _ } from 'tnp-core';
+import { _ } from 'tnp-core/src';
 import { MorphiHelpers } from '../helpers';
-import { CLASS } from 'typescript-class-helpers';
+import { CLASS } from 'typescript-class-helpers/src';
 import type { FrameworkContext } from '../framework/framework-context';
 
 declare const global: any;

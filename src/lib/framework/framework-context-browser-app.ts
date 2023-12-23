@@ -1,8 +1,8 @@
 import type { FrameworkContext } from './framework-context';
-import { Helpers } from 'tnp-core';
+import { Helpers } from 'tnp-core/src';
 import { Models } from '../models';
 import { SYMBOL } from '../symbols';
-import { CLASS } from 'typescript-class-helpers';
+import { CLASS } from 'typescript-class-helpers/src';
 import { FrameworkContextBase } from './framework-context-base';
 import { RealtimeBrowserRxjs } from '../realtime/realtime-browser-rxjs';
 

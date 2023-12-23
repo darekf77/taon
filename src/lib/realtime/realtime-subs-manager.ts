@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
-import { Level, Log } from 'ng2-logger';
+import { Level, Log } from 'ng2-logger/src';
 import { Subscriber } from "rxjs";
-import { Helpers } from 'tnp-core';
+import { Helpers } from 'tnp-core/src';
 import { FrameworkContext } from "../framework/framework-context";
 import { SYMBOL } from "../symbols";
 import type { BroadcastApiIoMockClient } from './broadcast-api-io-mock-client';

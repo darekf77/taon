@@ -1,12 +1,12 @@
 //#region @websql
-import { _ } from 'tnp-core';
+import { _ } from 'tnp-core/src';
 import { MorphiHelpers } from '../helpers';
 import { getTransformFunction, singleTransform } from './transform-to-browser';
 import { SYMBOL } from '../symbols';
 import * as express from 'express';
-import { walk } from 'lodash-walk-object';
-import { CLASS } from 'typescript-class-helpers';
-import { config } from 'tnp-config';
+import { walk } from 'lodash-walk-object/src';
+import { CLASS } from 'typescript-class-helpers/src';
+import { config } from 'tnp-config/src';
 
 export class EntityProcess {
 

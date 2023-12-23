@@ -1,12 +1,12 @@
 //#region @notForNpm
-import { _ } from 'tnp-core';
+import { _ } from 'tnp-core/src';
 import { Morphi as Firedev } from './index';
 // console.log({ isE2E })
 //#region @browser
 import { NgModule, Component, OnInit, AfterViewInit, NgZone } from '@angular/core';
 //#endregion
-import { Log } from 'ng2-logger';
-import { CLASS } from 'typescript-class-helpers';
+import { Log } from 'ng2-logger/src';
+import { CLASS } from 'typescript-class-helpers/src';
 import { IsomorphicBroadCastChannel } from './lib/realtime/broadcast-channel-dummy';
 const log = Log.create('firedev framework app');
 

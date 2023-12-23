@@ -1,4 +1,4 @@
-import { _ } from 'tnp-core';
+import { _ } from 'tnp-core/src';
 
 export const SYMBOL = {
   HAS_TABLE_IN_DB: Symbol(),

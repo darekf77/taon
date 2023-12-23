@@ -1,7 +1,7 @@
-import { ContentType, _ } from 'tnp-core';
+import { ContentType, _ } from 'tnp-core/src';
 import { Models } from '../models';
-import { CLASS } from 'typescript-class-helpers';
-import { Models as ModelsNg2Rest } from 'ng2-rest';
+import { CLASS } from 'typescript-class-helpers/src';
+import { Models as ModelsNg2Rest } from 'ng2-rest/src';
 
 const defaultResponseType = 'text or JSON';
 

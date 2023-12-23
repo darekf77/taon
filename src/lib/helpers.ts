@@ -1,22 +1,22 @@
 //#region imports
-import { Helpers, _, crossPlatformPath } from 'tnp-core';
+import { Helpers, _, crossPlatformPath } from 'tnp-core/src';
 //#region @websql
-import { path } from 'tnp-core';
+import { path } from 'tnp-core/src';
 //#endregion
 //#region @backend
 import {
   fse
-} from 'tnp-core';
+} from 'tnp-core/src';
 //#endregion
 
 import * as JSON5 from 'json5';
-import { Helpers as HelpersNg2Rest } from 'ng2-rest';
+import { Helpers as HelpersNg2Rest } from 'ng2-rest/src';
 import { Models } from './models';
 
 //#region @websql
 import type { Response as ExpressResponse, Request as ExpressRequest } from 'express';
 //#endregion
-import { CLASS } from 'typescript-class-helpers';
+import { CLASS } from 'typescript-class-helpers/src';
 //#endregion
 
 export class MorphiHelpers extends HelpersNg2Rest {

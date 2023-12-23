@@ -1,6 +1,6 @@
 import type { BASE_CONTROLLER } from './framework-controller';
 import type { BASE_ENTITY } from './framework-entity';
-import { ConfigModels } from 'tnp-config';
+import { ConfigModels } from 'tnp-config/src';
 
 
 export interface IConnectionOptions {
@@ -107,4 +107,3 @@ export interface StartOptions {
   //#endregion
 
 }
-

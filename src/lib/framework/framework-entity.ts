@@ -1,16 +1,16 @@
-import { _ } from 'tnp-core';
-import { Log, Level } from 'ng2-logger';
+import { _ } from 'tnp-core/src';
+import { Log, Level } from 'ng2-logger/src';
 import { SYMBOL } from '../symbols';
 import { classNameVlidation } from './framework-helpers';
-import { Mapping, Models } from 'ng2-rest';
+import { Mapping, Models } from 'ng2-rest/src';
 
 //#region @websql
 import {
   Entity as TypeormEntity, Tree
-} from 'firedev-typeorm';
+} from 'firedev-typeorm/src';
 import { tableNameFrom } from './framework-helpers';
 //#endregion
-import { CLASS } from 'typescript-class-helpers';
+import { CLASS } from 'typescript-class-helpers/src';
 
 const log = Log.create('Framework entity',
   Level.__NOTHING

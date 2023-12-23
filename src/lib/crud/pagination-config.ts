@@ -1,5 +1,5 @@
-import { _ } from 'tnp-core';
-import { CLASS } from 'typescript-class-helpers';
+import { _ } from 'tnp-core/src';
+import { CLASS } from 'typescript-class-helpers/src';
 
 const DEFAULT_PAGE_SIZE = 10;
 
@@ -78,4 +78,3 @@ export class PaginationConfig<T = any> {
     return _.merge(new PaginationConfig(), _.cloneDeep(this));
   }
 }
-

@@ -1,7 +1,7 @@
-import { _, Helpers } from 'tnp-core';
+import { _, Helpers } from 'tnp-core/src';
 import { StartOptions, FrameworkMode, MiddlewareType } from './framework-models';
 import { FrameworkContextBrowserApp } from './framework-context-browser-app';
-import { CLASS } from 'typescript-class-helpers';
+import { CLASS } from 'typescript-class-helpers/src';
 import { IConnectionOptions } from './framework-models';
 import { FrameworkContextBase } from './framework-context-base';
 //#region @websql

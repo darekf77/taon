@@ -1,7 +1,7 @@
 import {
   Repository as TypeormRepository, EntityRepository
-} from 'firedev-typeorm';
-import { _ } from 'tnp-core';
+} from 'firedev-typeorm/src';
+import { _ } from 'tnp-core/src';
 
 export function Repository(entity: Function) {
   return function (target: any) {

@@ -1,5 +1,5 @@
 import type { FrameworkContext } from './framework-context';
-import { Log, Level } from 'ng2-logger';
+import { Log, Level } from 'ng2-logger/src';
 //#region @websql
 import type { Application } from 'express';
 //#endregion
@@ -13,28 +13,28 @@ import * as methodOverride from 'method-override';
 import * as fileUpload from 'express-fileupload';
 import { Http2Server } from 'http2';
 //#endregion
-import { _ } from 'tnp-core';
-import { Helpers } from 'tnp-helpers';
+import { _ } from 'tnp-core/src';
+import { Helpers } from 'tnp-helpers/src';
 //#region @websql
-import { path } from 'tnp-core';
+import { path } from 'tnp-core/src';
 //#endregion
 //#region @backend
 import {
   fse,
   http,
-} from 'tnp-core';
+} from 'tnp-core/src';
 //#endregion
 
 import { SYMBOL } from '../symbols';
 //#region @websql
-import { createConnections, getConnection, DataSource } from 'firedev-typeorm';
+import { createConnections, getConnection, DataSource } from 'firedev-typeorm/src';
 import type {
   TransactionRollbackEvent, TransactionCommitEvent, TransactionStartEvent,
   RecoverEvent, SoftRemoveEvent, RemoveEvent, UpdateEvent, InsertEvent
-} from 'typeorm';
-import { Connection } from 'firedev-typeorm';
+} from 'typeorm/src';
+import { Connection } from 'firedev-typeorm/src';
 //#endregion
-import { CLASS } from 'typescript-class-helpers';
+import { CLASS } from 'typescript-class-helpers/src';
 import { Models } from '../models';
 import { FrameworkContextBase } from './framework-context-base';
 import type { BASE_CONTROLLER } from './framework-controller';

@@ -2,13 +2,13 @@
 //#region @backend
 import * as ioSocketIo from 'socket.io';
 //#endregion
-import { _ } from 'tnp-core';
+import { _ } from 'tnp-core/src';
 import { SYMBOL } from '../symbols';
-import { Log, Level } from 'ng2-logger';
-import { Helpers } from 'tnp-core';
+import { Log, Level } from 'ng2-logger/src';
+import { Helpers } from 'tnp-core/src';
 import { BASE_ENTITY } from '../framework/framework-entity';
 import { RealtimeBase } from './realtime';
-import { CLASS } from 'typescript-class-helpers';
+import { CLASS } from 'typescript-class-helpers/src';
 import { FrameworkContext } from '../framework/framework-context';
 import { mockIoServer } from './broadcast-api-io-mock-server';
 //#endregion

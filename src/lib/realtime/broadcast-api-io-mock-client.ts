@@ -1,6 +1,6 @@
-import { Level, Log } from 'ng2-logger';
-import { _ } from 'tnp-core';
-import { CLASS } from 'typescript-class-helpers';
+import { Level, Log } from 'ng2-logger/src';
+import { _ } from 'tnp-core/src';
+import { CLASS } from 'typescript-class-helpers/src';
 import { SYMBOL } from '../symbols';
 import { BroadcastApiClient, BroadcastApiIoOptions, BroadcastApiIoOptionsClient } from './broadcast-api-io.models';
 import { IsomorphicBroadCastChannel } from './broadcast-channel-dummy';
