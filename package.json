@@ -306,7 +306,7 @@
   },
   "license": "MIT",
   "private": false,
-  "lastBuildTagHash": "27632d4986c4264e70895c18c93f37440f9185fd",
+  "lastBuildTagHash": "3cceffcf3cebd538aa4e1f23111e4c4e78fddb85",
   "devDependencies": {
     "@angular-devkit/build-angular": "~16.0.5",
     "@angular-devkit/core": "~16.0.5",
@@ -418,7 +418,7 @@
     "lodash-walk-object": "~16.5.5",
     "magic-renamer": "~16.5.5",
     "mkdirp": "0.5.1",
-    "morphi": "~16.5.4",
+    "morphi": "~16.5.5",
     "ng-for-track-by-property": "16.0.1",
     "ng-in-viewport": "15.0.2",
     "ng-lock": "16.0.1",
