@@ -339,7 +339,7 @@
     "tnp-config": "16.5.5",
     "tnp-core": "16.5.10",
     "tnp-db": "16.5.5",
-    "tnp-helpers": "16.5.5",
+    "tnp-helpers": "16.5.6",
     "tnp-models": "16.5.5",
     "tnp-tools": "0.0.58",
     "ts-loader": "7.0.4",
