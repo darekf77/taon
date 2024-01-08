@@ -1,6 +1,7 @@
 {
   "extends": "./tsconfig.isomorphic.json",
   "compilerOptions": {
+    "strictNullChecks": false,
      {{{ (ENV && ENV.customRootDir) || '' }}}
      {{{ (ENV && ENV.pathesTsconfig) || '' }}}
   #   "paths": {
