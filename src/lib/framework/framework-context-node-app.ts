@@ -88,7 +88,7 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
 
   private async initConnection() {
 
-    if (this.context.mode === 'backend/frontend' || this.context.mode === 'tests'
+    if (this.context.mode === 'backend/frontend' || this.context.mode === 'tests' // @LAST mode work
       //#region @websqlOnly
       ||
       this.context.mode === 'websql/backend-frontend'
