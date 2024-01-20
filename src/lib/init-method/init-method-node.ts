@@ -169,7 +169,7 @@ export function initMethodNodejs(
            */
           resolvedParams
         );
-        let result = await MorphiHelpers.getResponseValue(response, req, res);
+        let result = await MorphiHelpers.getResponseValue(response, { req, res });
 
         if (result instanceof Blob && (methodConfig.responseType as ModelsNg2Rest.ResponseTypeAxios) === 'blob') {
           console.log('INSTANCE OF BLOB')

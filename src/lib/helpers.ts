@@ -156,9 +156,10 @@ export class MorphiHelpers extends HelpersNg2Rest {
   //#region static / get response value
   //#region @websql
 
-  static getResponseValue<T>(response: Models.Response<T>, req: ExpressRequest, res: ExpressResponse): Promise<Models.SyncResponse<T>> {
+  static getResponseValue<T>(response: Models.Response<T>, options?: { req: ExpressRequest, res: ExpressResponse }): Promise<T> {
     //#region @websqlFunc
-    return new Promise<Models.SyncResponse<T>>(async (resolve, reject) => {
+    const { req, res } = options || {};
+    return new Promise<T>(async (resolve, reject) => {
       //#region @websql
       const resp: Models.__Response<T> = response;
       if (!response && response.send === undefined) {
