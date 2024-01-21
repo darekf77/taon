@@ -155,7 +155,6 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
           } else {
             Helpers.logWarn(`Not able to initializa typeorm`);
           }
-          process.exit(1)
         }
         //#region old way
         // try {
