@@ -60,8 +60,12 @@
     ".npmignore": true,
     ".babelrc": true,
     "package.json_devDependencies.json": true,
-    "docs": true,
     "logo.svg": true,
     "package.json_tnp.json": true
+  },
+  "search.exclude": {
+    "docs": true,
+    "projects": true,
+    "bin": true
   }
 }
