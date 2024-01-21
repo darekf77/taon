@@ -42,6 +42,7 @@ import type { BASE_CONTROLLER } from './framework-controller';
 import { RealtimeNodejs } from '../realtime';
 import { MorphiHelpers } from '../helpers';
 import { ISession, ISessionExposed } from './framework-models';
+import { config } from 'tnp-config/src';
 //#region notForNpm
 // import type { FiredevAdmin } from 'firedev-ui'; // circural dependency DO NOT UNCOMMENT
 //#endregion
@@ -148,7 +149,12 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
           log.i('this.connection.isInitialized', this.connection.isInitialized)
 
         } catch (error) {
-          Helpers.error(error, false, true)
+          if (config.frameworkName !== 'firedev') {
+            Helpers.error(error, false, true)
+            process.exit(1)
+          } else {
+            Helpers.logWarn(`Not able to initializa typeorm`);
+          }
           process.exit(1)
         }
         //#region old way
@@ -168,9 +174,12 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
         //#endregion
       }
     }
+
     if (!this.connection.isInitialized) {
-      console.log(this.connection);
-      Helpers.error('Something wrong with connection init', false, true)
+      if ((config.frameworkName !== 'firedev') || Helpers.isBrowser) {
+        console.log(this.connection);
+        Helpers.error('Something wrong with connection init', false, true)
+      }
     }
     log.info(`PREPARING TYPEORM CONNECTION DONE. initialize=${this.connection.isInitialized}`)
 
