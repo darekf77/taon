@@ -149,12 +149,7 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
           log.i('this.connection.isInitialized', this.connection.isInitialized)
 
         } catch (error) {
-          if (config.frameworkName !== 'firedev') {
-            Helpers.error(error, false, true)
-            process.exit(1)
-          } else {
-            Helpers.logWarn(`Not able to initializa typeorm`);
-          }
+          console.log(error);
         }
         //#region old way
         // try {
@@ -174,11 +169,9 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
       }
     }
 
-    if (!this.connection.isInitialized) {
-      if ((config.frameworkName !== 'firedev') || Helpers.isBrowser) {
-        console.log(this.connection);
-        Helpers.error('Something wrong with connection init', false, true)
-      }
+    if (!this.connection.isInitialized && this.context.mode !== 'remote-backend') {
+      console.log(this.connection);
+      Helpers.error(`Something wrong with connection init in ${this.context.mode}`, false, true);
     }
     log.info(`PREPARING TYPEORM CONNECTION DONE. initialize=${this.connection.isInitialized}`)
 
