@@ -134,7 +134,7 @@ export abstract class BaseCRUD<T> {
         );
 
         const [result, total] = data;
-        response.setHeader(SYMBOL.X_TOTAL_COUNT, total)
+        response?.setHeader(SYMBOL.X_TOTAL_COUNT, total)
         // const lastPage = Math.ceil(total / take);
         // const nextPage = page + 1 > lastPage ? null : page + 1;
         // const prevPage = page - 1 < 1 ? null : page - 1;
@@ -160,7 +160,7 @@ export abstract class BaseCRUD<T> {
     return async (request, response) => {
       if (this.repo) {
         const { models, totalCount } = await this.db.getAll();
-        response.setHeader(SYMBOL.X_TOTAL_COUNT, totalCount)
+        response?.setHeader(SYMBOL.X_TOTAL_COUNT, totalCount)
         return models;
       }
       return [];
