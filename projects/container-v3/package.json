@@ -329,7 +329,7 @@
     "firedev-crud-deamon": "~13.1.40",
     "firedev-ports": "~13.1.45",
     "firedev-storage": "~13.2.37",
-    "firedev-type-sql": "16.5.10",
+    "firedev-type-sql": "16.5.11",
     "firedev-typeorm": "~13.1.32",
     "firedev-ui": "~13.2.10",
     "fkill": "6.1.0",
