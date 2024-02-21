@@ -202,6 +202,9 @@ export class FrameworkContext extends FrameworkContextBase {
    * Get controller instace by name of class function
    */
   public getInstanceBy(ctrlClassOrName: Function | string) {
+    if (!ctrlClassOrName) {
+      return;
+    }
     const className = _.isString(ctrlClassOrName) ? ctrlClassOrName : CLASS.getName(ctrlClassOrName);
     if (!this.instances[className]) {
       this.instances[className] = new (ctrlClassOrName as any)();
@@ -333,10 +336,18 @@ class ${className}Extended extends ${className} {
       });
   }
 
+  private initAllControllersInstances() {
+    for (const c of this.context.controllers) {
+      // @ts-ignore
+      this.getInstanceBy(c);
+    }
+  }
+
   public async initNode() {
     //#region @websql
     this.node = new FrameworkContextNodeApp(this);
     await this.node.init();
+    this.initAllControllersInstances();
     //#endregion
   }
 
@@ -348,6 +359,7 @@ class ${className}Extended extends ${className} {
 
     this.browser = new FrameworkContextBrowserApp(this);
     this.browser.init();
+    this.initAllControllersInstances();
   }
 
   private initUrl() {

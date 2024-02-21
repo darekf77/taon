@@ -17,9 +17,10 @@ const updatedStaticWithCtrl = {};
 
 function getSing(target) {
   const context = FrameworkContext.findForTraget(target);
+  // console.log({context})
   const res = context.getInstanceBy(target);
   if (!res) {
-    console.warn('[morphi][getSing] can not get instance by target', target);
+    console.warn('[firedev][getSing] can not get instance by target', target);
   }
   return res;
 }
