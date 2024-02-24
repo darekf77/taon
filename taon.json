@@ -1,3 +1,15 @@
 {
-    
+    "name": "taon",
+    "version": "0.0.0",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "MIT",
+    "bin": {
+        "tnp": "bin/taon",
+        "tnp-debug": "bin/taon-debug",
+        "tnp-debug-brk": "bin/taon-debug-brk"
+    }
 }
