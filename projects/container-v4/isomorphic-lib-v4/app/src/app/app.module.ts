@@ -12,12 +12,12 @@ import { FiredevAdminModeConfigurationModule } from 'firedev-ui'; // <- this is 
   ],
   imports: [
     BrowserModule,
-    //bundleOnly ServiceWorkerModule.register('ngsw-worker.js', {
-      //bundleOnlyenabled: true,
-      //bundleOnly// Register the ServiceWorker as soon as the app is stable
-      //bundleOnly// or after 30 seconds (whichever comes first).
-      //bundleOnlyregistrationStrategy: 'registerWhenStable:30000'
-    //bundleOnly}),
+    //distReleaseOnly ServiceWorkerModule.register('ngsw-worker.js', {
+      //distReleaseOnlyenabled: true,
+      //distReleaseOnly// Register the ServiceWorker as soon as the app is stable
+      //distReleaseOnly// or after 30 seconds (whichever comes first).
+      //distReleaseOnlyregistrationStrategy: 'registerWhenStable:30000'
+    //distReleaseOnly}),
     BrowserAnimationsModule,
     FiredevAdminModeConfigurationModule,
     //<<<TO_REPLACE_MODULE>>>
