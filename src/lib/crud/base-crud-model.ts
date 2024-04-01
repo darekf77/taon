@@ -52,6 +52,7 @@ export abstract class BaseCRUD<T> {
   private init() {
     //#region @websql
     const context = FrameworkContext.findForTraget(this);
+    // console.log({ context, this: this })
     this.connection = context.connection;
 
     if (

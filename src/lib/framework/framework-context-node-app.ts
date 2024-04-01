@@ -415,6 +415,7 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
   }
 
   async reinitControllersData() {
+    // console.log(this.context.allControllersInstances)
     const instancesOfControllers: BASE_CONTROLLER<any>[] = this.context
       .allControllersInstances
       .filter(f => _.isFunction((f as any as BASE_CONTROLLER<any>).initExampleDbData)) as any;
