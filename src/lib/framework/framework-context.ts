@@ -59,10 +59,11 @@ export class FrameworkContext extends FrameworkContextBase {
       .keys(FrameworkContext.contextByClassName)
       .forEach(className => {
         const c = FrameworkContext.contextByClassName[className];
-        if (c === context) {
+        if (c.host === context.host) {
           delete FrameworkContext.contextByClassName[className];
         }
       });
+    debugger;
   }
 
   destroy() {
@@ -221,7 +222,7 @@ export class FrameworkContext extends FrameworkContextBase {
     return this.context.mode;
   }
 
-  public get connection() {
+  public get connection(): any {
     return this.node?.connection;
   }
 

@@ -7,7 +7,7 @@
       "name": "Launch Server standalone",
       "program": "${workspaceFolder}/run.js",
       "args": [
-        "port=4508",
+        "port=4505",
         "--ENVoverride=%7B%0A%20%20%20%20%22clientProjectName%22%3A%20%22morphi%22%0A%7D "
       ],
       "runtimeArgs": [
@@ -34,6 +34,23 @@
       }
     },
     {
+      "name": "Start electron app debug",
+      "type": "node",
+      "request": "launch",
+      "protocol": "inspector",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
+      "trace": "verbose",
+      "runtimeArgs": [
+        "--serve",
+        ".",
+        "--remote-debugging-port=9876"
+      ],
+      "windows": {
+        "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
+      }
+    },
+    {
       "type": "node",
       "request": "attach",
       "name": "Attach to global cli tool",
@@ -48,7 +65,8 @@
       "name": "Debug backend/frontend",
       "configurations": [
         "Launch Server standalone",
-        "Debugger with ng serve"
+        "Debugger with ng serve",
+        "Start electron app debug"
       ]
     }
   ]
