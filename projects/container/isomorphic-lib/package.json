@@ -21,6 +21,7 @@
       "ugly": false,
       "cliBuildNoDts": false,
       "cliBuildObscure": false,
+      "cliBuildUglify": false,
       "cliBuildIncludeNodeModules": false
     },
     "workerPlugins": {},
@@ -36,5 +37,6 @@
   "license": "UNLICENSED",
   "dependencies": {},
   "devDependencies": {},
-  "private": true
+  "private": true,
+  "main": "index.js"
 }

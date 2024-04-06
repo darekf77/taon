@@ -21,7 +21,8 @@
       "includeNodeModules": false,
       "cliBuildNoDts": false,
       "cliBuildObscure": false,
-      "cliBuildIncludeNodeModules": false
+      "cliBuildIncludeNodeModules": false,
+      "cliBuildUglify": false
     },
     "smartContainerTarget": "",
     "type": "isomorphic-lib",
@@ -292,5 +293,6 @@
     "zone.js": "~0.13.0"
   },
   "devDependencies": {},
-  "private": true
+  "private": true,
+  "main": "index.js"
 }
