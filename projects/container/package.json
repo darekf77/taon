@@ -20,6 +20,7 @@
       "includeNodeModules": false,
       "cliBuildNoDts": false,
       "cliBuildObscure": false,
+      "cliBuildUglify": false,
       "cliBuildIncludeNodeModules": false
     },
     "type": "container",
@@ -37,5 +38,6 @@
   "license": "UNLICENSED",
   "private": true,
   "name": "container",
-  "version": "0.0.0"
+  "version": "0.0.0",
+  "main": "dist/app.electron.js"
 }
