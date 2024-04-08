@@ -204,7 +204,8 @@
       "includeNodeModules": false,
       "cliBuildNoDts": false,
       "cliBuildObscure": false,
-      "cliBuildIncludeNodeModules": false
+      "cliBuildIncludeNodeModules": false,
+      "cliBuildUglify": false
     },
     "smartContainerTarget": "",
     "type": "container",
@@ -332,7 +333,7 @@
     "firedev-crud-deamon": "~13.1.40",
     "firedev-ports": "~13.1.45",
     "firedev-storage": "~13.2.37",
-    "firedev-type-sql": "16.5.13",
+    "firedev-type-sql": "16.5.14",
     "firedev-typeorm": "~13.1.32",
     "firedev-ui": "~13.2.10",
     "fkill": "6.1.0",
@@ -464,5 +465,6 @@
   "license": "UNLICENSED",
   "private": true,
   "name": "container-v3",
-  "version": "0.0.0"
+  "version": "0.0.0",
+  "main": "dist/app.electron.js"
 }
