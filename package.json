@@ -45,7 +45,7 @@
     "homepage": "https://github.com/darekf77/firedev#readme"
   },
   "name": "firedev",
-  "version": "16.5.27",
+  "version": "16.5.28",
   "description": "Isomorphic solution for backend and frontend",
   "scripts": {},
   "repository": {
@@ -62,11 +62,11 @@
     "ora": "3.4.0",
     "socket.io": "2.4.1",
     "tslib": "~2.3.0",
-    "tnp": "~16.5.29"
+    "tnp": "~16.5.30"
   },
   "license": "MIT",
   "private": false,
-  "lastBuildTagHash": "d39a025c86c744facfe8d291b44285c3fe6087d6",
+  "lastBuildTagHash": "5bcea29b682ea544a2a87ec0102bde8ddd89b8f7",
   "devDependencies": {
     "@angular-builders/custom-webpack": "~16.0.2-beta.2",
     "@angular-devkit/build-angular": "~16.0.5",
