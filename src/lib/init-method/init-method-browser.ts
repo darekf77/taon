@@ -5,7 +5,7 @@ import { Models } from '../models';
 import { Resource, Rest, RestHeaders } from 'ng2-rest/src';
 import { Models as Ng2RestModels } from 'ng2-rest/src';
 import { Helpers } from 'tnp-core/src';
-import { MorphiHelpers } from '../helpers';
+import { FiredevHelpers } from '../helpers';
 import { FrameworkContext } from '../framework/framework-context';
 import { from, Observable, Subject } from 'rxjs';
 import { CLASS } from 'typescript-class-helpers/src';
@@ -253,7 +253,7 @@ export function initMethodBrowser(
       }
       if (currentParam.paramType === 'Query') {
         if (currentParam.paramName) {
-          const mapping = MorphiHelpers.Mapping.decode(param, !FrameworkContext.isProductionMode);
+          const mapping = FiredevHelpers.Mapping.decode(param, !FrameworkContext.isProductionMode);
           if (mapping) {
             rest.headers.set(
               `${SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${currentParam.paramName}`,
@@ -261,7 +261,7 @@ export function initMethodBrowser(
           }
           queryParams[currentParam.paramName] = param;
         } else {
-          const mapping = MorphiHelpers.Mapping.decode(param, !FrameworkContext.isProductionMode);
+          const mapping = FiredevHelpers.Mapping.decode(param, !FrameworkContext.isProductionMode);
           if (mapping) {
             rest.headers.set(
               SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS,
@@ -301,7 +301,7 @@ export function initMethodBrowser(
             // ...
             `)
           }
-          const mapping = MorphiHelpers.Mapping.decode(param, !FrameworkContext.isProductionMode);
+          const mapping = FiredevHelpers.Mapping.decode(param, !FrameworkContext.isProductionMode);
           if (mapping) {
             rest.headers.set(
               `${SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS}${currentParam.paramName}`,
@@ -309,7 +309,7 @@ export function initMethodBrowser(
           }
           bodyObject[currentParam.paramName] = param;
         } else {
-          const mapping = MorphiHelpers.Mapping.decode(param, !FrameworkContext.isProductionMode);
+          const mapping = FiredevHelpers.Mapping.decode(param, !FrameworkContext.isProductionMode);
           if (mapping) {
             rest.headers.set(
               SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS,
@@ -322,7 +322,7 @@ export function initMethodBrowser(
 
     if (typeof bodyObject === 'object' && (CLASS.getNameFromObject(bodyObject) !== 'FormData')) {
       let circuralFromItem = []
-      bodyObject = MorphiHelpers.JSON.parse(MorphiHelpers.JSON.stringify(bodyObject, void 0, void 0, circs => {
+      bodyObject = FiredevHelpers.JSON.parse(FiredevHelpers.JSON.stringify(bodyObject, void 0, void 0, circs => {
         // @ts-ignore
         circuralFromItem = circs;
       }))
@@ -334,7 +334,7 @@ export function initMethodBrowser(
 
     if (typeof queryParams === 'object') {
       let circuralFromQueryParams = []
-      queryParams = MorphiHelpers.JSON.parse(MorphiHelpers.JSON.stringify(queryParams, void 0, void 0, circs => {
+      queryParams = FiredevHelpers.JSON.parse(FiredevHelpers.JSON.stringify(queryParams, void 0, void 0, circs => {
         // @ts-ignore
         circuralFromQueryParams = circs;
       }))

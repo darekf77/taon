@@ -54,8 +54,8 @@ export function classNameVlidation(className, target: Function) {
 //#region @websql
 export function repositoryFrom<E, R = Repository<E>>(connection: Connection, entityFN: Function, repoFn?: Function): R {
   if (!connection) {
-    console.error(`[Morphi][repositoryFrom] no connection!
-Please check your Morphi.Repository(...) decorators `, entityFN, repoFn)
+    console.error(`[Firedev][repositoryFrom] no connection!
+Please check your Firedev.Repository(...) decorators `, entityFN, repoFn)
     return
   }
   const context = FrameworkContext.findForTraget(entityFN);

@@ -2,7 +2,7 @@
 //#region imports
 import { Helpers, _ } from 'tnp-core/src';
 import { Models } from '../models';
-import { MorphiHelpers } from '../helpers';
+import { FiredevHelpers } from '../helpers';
 import { SYMBOL } from '../symbols';
 import { EntityProcess } from './entity-process';
 import { FrameworkContext } from '../framework/framework-context';
@@ -76,13 +76,13 @@ export function initMethodNodejs(
 
       if (req.headers[SYMBOL.CIRCURAL_OBJECTS_MAP_BODY]) {
         try {
-          tBody = MorphiHelpers.JSON.parse(JSON.stringify(tBody), JSON.parse(req.headers[SYMBOL.CIRCURAL_OBJECTS_MAP_BODY]));
+          tBody = FiredevHelpers.JSON.parse(JSON.stringify(tBody), JSON.parse(req.headers[SYMBOL.CIRCURAL_OBJECTS_MAP_BODY]));
         } catch (e) { }
       }
 
       if (req.headers[SYMBOL.CIRCURAL_OBJECTS_MAP_QUERY_PARAM]) {
         try {
-          tQuery = MorphiHelpers.JSON.parse(JSON.stringify(tQuery), JSON.parse(req.headers[SYMBOL.CIRCURAL_OBJECTS_MAP_QUERY_PARAM]));
+          tQuery = FiredevHelpers.JSON.parse(JSON.stringify(tQuery), JSON.parse(req.headers[SYMBOL.CIRCURAL_OBJECTS_MAP_QUERY_PARAM]));
         } catch (e) { }
       }
 
@@ -91,13 +91,13 @@ export function initMethodNodejs(
       if (req.headers[SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS]) {
         try {
           const entity = JSON.parse(req.headers[SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS]);
-          tBody = MorphiHelpers.Mapping.encode(tBody, entity);
+          tBody = FiredevHelpers.Mapping.encode(tBody, entity);
         } catch (e) { }
       } else {
         Object.keys(tBody).forEach(paramName => {
           try {
             const entityForParam = JSON.parse(req.headers[`${SYMBOL.MAPPING_CONFIG_HEADER_BODY_PARAMS}${paramName}`]);
-            tBody[paramName] = MorphiHelpers.Mapping.encode(tBody[paramName], entityForParam);
+            tBody[paramName] = FiredevHelpers.Mapping.encode(tBody[paramName], entityForParam);
           } catch (e) { }
         })
       }
@@ -108,7 +108,7 @@ export function initMethodNodejs(
 
         try {
           const entity = JSON.parse(req.headers[SYMBOL.MAPPING_CONFIG_HEADER_QUERY_PARAMS]);
-          tQuery = MorphiHelpers.parseJSONwithStringJSONs(MorphiHelpers.Mapping.encode(tQuery, entity));
+          tQuery = FiredevHelpers.parseJSONwithStringJSONs(FiredevHelpers.Mapping.encode(tQuery, entity));
         } catch (e) { }
       } else {
         Object.keys(tQuery).forEach(queryParamName => {
@@ -117,12 +117,12 @@ export function initMethodNodejs(
             let beforeTransofrm = tQuery[queryParamName];
             if (_.isString(beforeTransofrm)) {
               try {
-                const paresed = MorphiHelpers.tryTransformParam(beforeTransofrm)
+                const paresed = FiredevHelpers.tryTransformParam(beforeTransofrm)
                 beforeTransofrm = paresed;
               } catch (e) { }
             }
-            const afterEncoding = MorphiHelpers.Mapping.encode(beforeTransofrm, entityForParam);
-            tQuery[queryParamName] = MorphiHelpers.parseJSONwithStringJSONs(afterEncoding);
+            const afterEncoding = FiredevHelpers.Mapping.encode(beforeTransofrm, entityForParam);
+            tQuery[queryParamName] = FiredevHelpers.parseJSONwithStringJSONs(afterEncoding);
           } catch (e) { }
         });
       }
@@ -156,7 +156,7 @@ export function initMethodNodejs(
       })
       //#endregion
 
-      const resolvedParams = args.reverse().map(v => MorphiHelpers.tryTransformParam(v));
+      const resolvedParams = args.reverse().map(v => FiredevHelpers.tryTransformParam(v));
 
       try {
         const response: Models.Response<any> = methodConfig.descriptor.value.apply(
@@ -169,7 +169,7 @@ export function initMethodNodejs(
            */
           resolvedParams
         );
-        let result = await MorphiHelpers.getResponseValue(response, { req, res });
+        let result = await FiredevHelpers.getResponseValue(response, { req, res });
 
         if (result instanceof Blob && (methodConfig.responseType as ModelsNg2Rest.ResponseTypeAxios) === 'blob') {
           console.log('INSTANCE OF BLOB')
@@ -208,7 +208,7 @@ export function initMethodNodejs(
       } catch (error) {
         //#region process error
         if (_.isString(error)) {
-          res.status(400).send(MorphiHelpers.JSON.stringify({
+          res.status(400).send(FiredevHelpers.JSON.stringify({
             message: `
   Error inside: ${req.path}
 
@@ -219,18 +219,18 @@ export function initMethodNodejs(
         } else if (error instanceof Models.Errors) {
           Helpers.error(error, true, false)
           const err: Models.Errors = error;
-          res.status(400).send(MorphiHelpers.JSON.stringify(err))
+          res.status(400).send(FiredevHelpers.JSON.stringify(err))
         } else if (error instanceof Error) {
           const err: Error = error;
           Helpers.error(error, true, false)
-          res.status(400).send(MorphiHelpers.JSON.stringify({
+          res.status(400).send(FiredevHelpers.JSON.stringify({
             stack: err.stack,
             message: err.message
           }))
         } else {
           Helpers.log(error)
           Helpers.error(`[Firedev] Bad result isomorphic method: ${error}`, true, false)
-          res.status(400).send(MorphiHelpers.JSON.stringify(error))
+          res.status(400).send(FiredevHelpers.JSON.stringify(error))
         }
         //#endregion
       }

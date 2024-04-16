@@ -8,8 +8,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-morphi',
-  template: `hello from morphi<br>
+  selector: 'app-firedev',
+  template: `hello from firedev<br>
     <br>
     users from backend
     <ul>
@@ -18,7 +18,7 @@ import { CommonModule } from '@angular/common';
   `,
   styles: [` body { margin: 0px !important; } `],
 })
-export class MorphiComponent implements OnInit {
+export class FiredevComponent implements OnInit {
   users$: Observable<User[]> = User.ctrl.getAll().received.observable
     .pipe(map(data => data.body.json));
 
@@ -28,11 +28,11 @@ export class MorphiComponent implements OnInit {
 
 @NgModule({
   imports: [CommonModule],
-  exports: [MorphiComponent],
-  declarations: [MorphiComponent],
+  exports: [FiredevComponent],
+  declarations: [FiredevComponent],
   providers: [],
 })
-export class MorphiModule { }
+export class FiredevModule { }
 //#endregion
 
 @Firedev.Entity({ className: 'User' })

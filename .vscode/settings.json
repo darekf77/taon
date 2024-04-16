@@ -1,14 +1,4 @@
 {
-  "workbench.colorCustomizations": {
-    "activityBar.background": "#8b31d4"
-  },
-  "editor.rulers": [
-    100,
-    120
-  ],
-  "html.format.wrapAttributes": "force-aligned",
-  "workbench.colorTheme": "Default Light+",
-  "typescript.tsdk": "node_modules/typescript/lib",
   "files.exclude": {
     "**/*____ORIGINAL____.ts": true,
     "_changelog": true,
@@ -57,6 +47,21 @@
     "logo.svg": true,
     "package.json_tnp.json": true
   },
+  "workbench.colorCustomizations": {
+    "activityBar.background": "#e66a54",
+    "activityBar.foreground": "#000000",
+    "statusBar.debuggingBackground": "#e66a54",
+    "statusBar.background": "#e66a54"
+  },
+  "editor.rulers": [
+    100,
+    120
+  ],
+  "html.format.wrapAttributes": "force-aligned",
+  "workbench.colorTheme": "Default Light+",
+  "tslint.autoFixOnSave": true,
+  "eslint.enable": false,
+  "tslint.enable": false,
   "search.exclude": {
     "docs": true,
     "projects": true,

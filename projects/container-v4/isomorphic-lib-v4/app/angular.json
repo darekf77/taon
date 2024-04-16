@@ -162,10 +162,11 @@
         "build": {
           "builder": "@angular-builders/custom-webpack:browser",
           "options": {
+            "preserveSymlinks": true,
             "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
-            "tsConfig": "src/tsconfig.app.json",
+            "tsConfig": "tsconfig.app.json",
             "polyfills": "src/polyfills.ts",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -309,6 +310,7 @@
     }
   },
   "cli": {
+    "analytics": false,
     "schematicCollections": [
       "@cypress/schematic",
       "@schematics/angular"

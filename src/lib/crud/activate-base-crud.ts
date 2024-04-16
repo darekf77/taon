@@ -1,5 +1,5 @@
 import { _ } from 'tnp-core/src';
-import { MorphiHelpers } from '../helpers';
+import { FiredevHelpers } from '../helpers';
 import { CLASS } from 'typescript-class-helpers/src';
 import type { FrameworkContext } from '../framework/framework-context';
 
@@ -13,7 +13,7 @@ export function activateBaseCrud(
   entity: Function,
   context: FrameworkContext) {
 
-  if (_.isFunction(target) && MorphiHelpers.hasParentClassWithName(target, 'BaseCRUD') &&
+  if (_.isFunction(target) && FiredevHelpers.hasParentClassWithName(target, 'BaseCRUD') &&
     !abstractClasses.includes(CLASS.getName(target))) {
     if (_.isUndefined(entity)) {
       if (CLASS.getName(target) === CLASS.getName(target['__proto__'])) {

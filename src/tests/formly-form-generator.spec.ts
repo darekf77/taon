@@ -15,13 +15,13 @@
 // // if you used the '@types/mocha' method to install mocha type definitions, uncomment the following line
 // // import 'mocha';
 
-// import { Morphi } from '../index';
+// import { Firedev } from '../index';
 // import { Log } from 'ng2-logger';
 // import { walk } from 'lodash-walk-object';
 // const log = Log.create('formly')
 
 
-// @Morphi.Entity<Book>({
+// @Firedev.Entity<Book>({
 //   className: 'Book',
 //   defaultModelValues: {
 //     title: '- no book title -'
@@ -37,7 +37,7 @@
 
 // }
 
-// @Morphi.Entity<User>({
+// @Firedev.Entity<User>({
 //   className: 'User',
 //   // formly: {
 //   //   transformFn: (f) => f
@@ -67,7 +67,7 @@
 
 //   it('Should return nice full formly form config', () => {
 
-//     let config = Morphi.Formly.getFrom(User);
+//     let config = Firedev.Formly.getFrom(User);
 //     // console.log('')
 //     // log.i('config', config)
 //     fse.writeJSONSync(path.join(crossPlatformPath(__dirname), '..', '..', 'tmp-test-json1.json'), config, {
@@ -80,7 +80,7 @@
 
 //   it('Should exclude fields', () => {
 
-//     let config = Morphi.Formly.getFrom(User, {
+//     let config = Firedev.Formly.getFrom(User, {
 //       keysPathesToExclude: ['name']
 //     });
 //     // console.log('config', config)
@@ -91,7 +91,7 @@
 
 //   it('Should inlcude only fields', () => {
 
-//     let config = Morphi.Formly.getFrom(User, {
+//     let config = Firedev.Formly.getFrom(User, {
 //       keysPathesToInclude: ['name']
 //     });
 //     // console.log('config', config)

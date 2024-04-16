@@ -15,13 +15,13 @@
 // // if you used the '@types/mocha' method to install mocha type definitions, uncomment the following line
 // // import 'mocha';
 
-// import { Morphi } from '../index';
+// import { Firedev } from '../index';
 // import { Log } from 'ng2-logger';
 // import { walk } from 'lodash-walk-object';
 // const log = Log.create('formly')
 
 
-// @Morphi.Entity<Article>({
+// @Firedev.Entity<Article>({
 //   className: 'Article',
 //   defaultModelValues: {
 //     title: '- no book title -'
@@ -39,7 +39,7 @@
 
 // }
 
-// @Morphi.Entity<Person>({
+// @Firedev.Entity<Person>({
 //   className: 'Person',
 //   defaultModelValues: {
 //     id: 1
@@ -61,7 +61,7 @@
 
 //   it('Should handle circural references', () => {
 
-//     let config = Morphi.Formly.getFrom(Person);
+//     let config = Firedev.Formly.getFrom(Person);
 
 //     expect(config.length).to.be.gt(0)
 

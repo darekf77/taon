@@ -3,17 +3,17 @@
 // import { expect } from 'chai';
 // // import { BrowserDB } from '../browser-db/browser-db';
 // import * as jsonStrinigySafe from 'json-stringify-safe';
-// import { Morphi } from '../index';
+// import { Firedev } from '../index';
 // import { Helpers } from '../helpers';
 // import { Log } from 'ng2-logger'
 // const JSON10  = Helpers.JSON;
 // const log = Log.create('test ')
 
-// @Morphi.Entity()
+// @Firedev.Entity()
 // class Test {
 //   static id = 0;
 
-//   @Morphi.Orm.Column.Generated()
+//   @Firedev.Orm.Column.Generated()
 //   id: number;
 
 //   users: User[];
@@ -24,11 +24,11 @@
 //   }
 // }
 
-// @Morphi.Entity()
+// @Firedev.Entity()
 // class User {
 //   static id = 0;
 
-//   @Morphi.Orm.Column.Generated()
+//   @Firedev.Orm.Column.Generated()
 //   id: number;
 
 //   authors: User[];
@@ -39,12 +39,12 @@
 //   }
 // }
 
-// @Morphi.Controller()
+// @Firedev.Controller()
 // class SpecTestCtrl {
 
 
-//   @Morphi.Http.GET()
-//   getData(@Morphi.Http.Param.Path('name') name: string): Morphi.Response<User> {
+//   @Firedev.Http.GET()
+//   getData(@Firedev.Http.Param.Path('name') name: string): Firedev.Response<User> {
 
 //     return async () => {
 
@@ -69,7 +69,7 @@
 
 // }
 
-// Morphi.init({
+// Firedev.init({
 //   config: {
 //     "database": "tmp/test-db.sqlite3",
 //     "type": "sqlite",
@@ -238,7 +238,7 @@
 
 // // const instance = BrowserDB.instance;
 
-// describe('Morphi basic functions', () => {
+// describe('Firedev basic functions', () => {
 
 
 

@@ -1,0 +1,6 @@
+#!/usr/bin/env node --inspect --no-deprecation
+//#region @backend
+// --stack-trace-limit=10000
+require('./start');
+//#endregion
+

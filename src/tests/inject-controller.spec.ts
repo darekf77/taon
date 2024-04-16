@@ -11,14 +11,14 @@
 //   http, https,
 // } from 'tnp-core';
 
-// import { Morphi } from '../index';
+// import { Firedev } from '../index';
 // import { Log } from 'ng2-logger';
 
 // const log = Log.create('formly')
 
 
 
-// @Morphi.Entity<Article>({
+// @Firedev.Entity<Article>({
 //   className: 'Article',
 //   defaultModelValues: {
 //     title: '- no book title -'
@@ -29,7 +29,7 @@
 //   }
 // })
 // class Article {
-//   @Morphi.Orm.Column.Generated()
+//   @Firedev.Orm.Column.Generated()
 //   id: number;
 //   title: string;
 //   owner: Person;
@@ -37,7 +37,7 @@
 
 // }
 
-// @Morphi.Entity<Person>({
+// @Firedev.Entity<Person>({
 //   className: 'Person',
 //   defaultModelValues: {
 //     id: 1
@@ -55,7 +55,7 @@
 
 // }
 
-// @Morphi.Controller({
+// @Firedev.Controller({
 //   className: 'ArticlesController',
 //   entity: Article
 // })
@@ -71,7 +71,7 @@
 
 //     // let i = new ArticlesController()
 //     let p = new Article()
-//     await Morphi.init({
+//     await Firedev.init({
 //       host: 'http://localhost:8888',
 //       controllers: [ArticlesController],
 //       entities: [Article],

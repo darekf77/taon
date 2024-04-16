@@ -19,7 +19,7 @@ import type { Response as ExpressResponse, Request as ExpressRequest } from 'exp
 import { CLASS } from 'typescript-class-helpers/src';
 //#endregion
 
-export class MorphiHelpers extends HelpersNg2Rest {
+export class FiredevHelpers extends HelpersNg2Rest {
 
   //#region static
 
@@ -53,7 +53,7 @@ export class MorphiHelpers extends HelpersNg2Rest {
       .slice(configs, 1)
       .reverse()
       .map(bc => {
-        if (MorphiHelpers.isGoodPath(bc.path)) {
+        if (FiredevHelpers.isGoodPath(bc.path)) {
           return bc.path
         }
         return CLASS.getName(bc.classReference);

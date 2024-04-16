@@ -1,6 +1,6 @@
 //#region @websql
 import { _ } from 'tnp-core/src';
-import { MorphiHelpers } from '../helpers';
+import { FiredevHelpers } from '../helpers';
 import { getTransformFunction, singleTransform } from './transform-to-browser';
 import { SYMBOL } from '../symbols';
 import * as express from 'express';
@@ -87,8 +87,8 @@ export class EntityProcess {
     const doNothing = _.isNil(this.data) || ['Object', '', void 0, null].includes(className);
     // console.log('doNothing', doNothing)
     if (!doNothing) {
-      const cleaned = MorphiHelpers.JSON.cleaned(this.data, void 0, { breadthWalk: true, include })
-      this.entityMapping = MorphiHelpers.Mapping.decode(cleaned, !this.advancedManipulation);
+      const cleaned = FiredevHelpers.JSON.cleaned(this.data, void 0, { breadthWalk: true, include })
+      this.entityMapping = FiredevHelpers.Mapping.decode(cleaned, !this.advancedManipulation);
 
       this.response.set(SYMBOL.MAPPING_CONFIG_HEADER, JSON.stringify(this.entityMapping));
       if (this.advancedManipulation) {

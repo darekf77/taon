@@ -10,7 +10,7 @@ export { CLASS } from 'typescript-class-helpers/src';
 import { CLASS } from 'typescript-class-helpers/src';
 import { _, Helpers } from 'tnp-core/src';
 import { SYMBOL } from '../symbols';
-import { MorphiHelpers } from '../helpers';
+import { FiredevHelpers } from '../helpers';
 import { activateBaseCrud } from '../crud/activate-base-crud';
 import { Models } from '../models';
 import { FrameworkContext } from '../framework/framework-context';
@@ -47,13 +47,13 @@ export function ENDPOINT(options?: {
           .slice(configs, 1)
           .reverse()
           .map(bc => {
-            if (MorphiHelpers.isGoodPath(bc.path)) {
+            if (FiredevHelpers.isGoodPath(bc.path)) {
               return bc.path
             }
             return CLASS.getName(bc.classReference);
           }).join('/')
 
-        if (MorphiHelpers.isGoodPath(targetPath)) {
+        if (FiredevHelpers.isGoodPath(targetPath)) {
           classConfig.calculatedPath = targetPath;
         } else {
           classConfig.calculatedPath = `/${parentscalculatedPath}/${CLASS.getName(target)}`
@@ -88,7 +88,7 @@ export function ENDPOINT(options?: {
           const type: Models.Rest.HttpMethod = methodConfig.type;
           const expressPath = methodConfig.global
             ? `/${methodConfig.path?.replace(/\//, '')}`
-            : MorphiHelpers.getExpressPath(classConfig, methodConfig);
+            : FiredevHelpers.getExpressPath(classConfig, methodConfig);
 
           // console.log('initfn expressPath', expressPath)
           if (Helpers.isNode

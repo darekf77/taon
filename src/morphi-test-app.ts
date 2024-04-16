@@ -9,7 +9,7 @@
 //   http, https,
 // } from 'tnp-core';
 // //#endregion
-// import { Morphi as Firedev } from './index';
+// import { Firedev as Firedev } from './index';
 
 // @Firedev.Entity({ className: 'Book' })
 // class Book extends Firedev.Base.Entity<any> {

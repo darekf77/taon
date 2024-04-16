@@ -9,7 +9,7 @@ export { Log, Level } from 'ng2-logger/src';
 
 import { _, Utils } from 'tnp-core/src';
 import * as crudMorph from './crud';
-import * as decoratorsMorphi from './decorators';
+import * as decoratorsFiredev from './decorators';
 import * as framework from './framework';
 import * as realtime from './realtime';
 import * as models from './models';
@@ -18,7 +18,7 @@ import { Helpers } from 'tnp-core/src';
 import { FrameworkContext } from './framework/framework-context';
 export { FrameworkContext } from './framework/framework-context';
 import * as context from './framework/framework-context';
-import { MorphiHelpers } from './helpers';
+import { FiredevHelpers } from './helpers';
 
 //#region @websql
 import * as tsorm from 'firedev-typeorm/src'
@@ -55,7 +55,7 @@ export class TypeormRepository<T>
 }
 
 
-export namespace Morphi {
+export namespace Firedev {
   export const symbols = sym.SYMBOL;
   export const IsNode = Helpers.isNode;
   export const IsBrowser = Helpers.isBrowser;
@@ -99,7 +99,7 @@ export namespace Morphi {
   }
 
   export function getHttpPathBy<T = Function>(classFn: new () => T, port: number, method: (keyof T)) {
-    return `http://localhost:${port}${MorphiHelpers.getPathFor(classFn as any)}/${method as any}`;
+    return `http://localhost:${port}${FiredevHelpers.getPathFor(classFn as any)}/${method as any}`;
   }
 
   /**
@@ -133,7 +133,7 @@ export namespace Morphi {
 
   export import BASE_CONTROLLER_INIT = framework.BASE_CONTROLLER_INIT;
   export import Repository = framework.Repository;
-  export const getResponseValue = MorphiHelpers.getResponseValue;
+  export const getResponseValue = FiredevHelpers.getResponseValue;
 
   // export const authenticate = pass.authenticate
   //#endregion
@@ -192,18 +192,18 @@ export namespace Morphi {
   }
 
   export namespace Http {
-    export import GET = decoratorsMorphi.GET;
-    export import POST = decoratorsMorphi.POST;
-    export import PUT = decoratorsMorphi.PUT;
-    export import DELETE = decoratorsMorphi.DELETE;
-    export import PATCH = decoratorsMorphi.PATCH;
-    export import HEAD = decoratorsMorphi.HEAD;
+    export import GET = decoratorsFiredev.GET;
+    export import POST = decoratorsFiredev.POST;
+    export import PUT = decoratorsFiredev.PUT;
+    export import DELETE = decoratorsFiredev.DELETE;
+    export import PATCH = decoratorsFiredev.PATCH;
+    export import HEAD = decoratorsFiredev.HEAD;
     export namespace Param {
-      export import Query = decoratorsMorphi.Query;
-      export import Path = decoratorsMorphi.Path;
-      export import Body = decoratorsMorphi.Body;
-      export import Cookie = decoratorsMorphi.Cookie;
-      export import Header = decoratorsMorphi.Header;
+      export import Query = decoratorsFiredev.Query;
+      export import Path = decoratorsFiredev.Path;
+      export import Body = decoratorsFiredev.Body;
+      export import Cookie = decoratorsFiredev.Cookie;
+      export import Header = decoratorsFiredev.Header;
     }
     export namespace Resopnse {
       export import Success = models.Models.Rest.HttpResponse;

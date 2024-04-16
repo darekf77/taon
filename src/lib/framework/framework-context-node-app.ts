@@ -40,7 +40,7 @@ import { FrameworkContextBase } from './framework-context-base';
 import type { BASE_CONTROLLER } from './framework-controller';
 
 import { RealtimeNodejs } from '../realtime';
-import { MorphiHelpers } from '../helpers';
+import { FiredevHelpers } from '../helpers';
 import { ISession, ISessionExposed } from './framework-models';
 import { config } from 'tnp-config/src';
 //#region notForNpm
@@ -465,7 +465,7 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
       const context = contexts[index];
 
       const troutes = context.node.activeRoutes.map(({ method, routePath }) => {
-        return `${MorphiHelpers.string(method.toUpperCase() + ':').fillUpTo(10)}${context.uri.href.replace(/\/$/, '')}${routePath}`
+        return `${FiredevHelpers.string(method.toUpperCase() + ':').fillUpTo(10)}${context.uri.href.replace(/\/$/, '')}${routePath}`
       });
       const tinstanceClass = _.first(context.controllersClasses) as any;
       // const tinstance = tinstanceClass && context.getInstance(tinstanceClass as any) as any as BASE_CONTROLLER<any>;
