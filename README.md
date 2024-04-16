@@ -39,7 +39,7 @@
 ### Projects that are part of firedev:
 - firedev https://github.com/darekf77/firedev
     + framework library
-- tnp https://github.com/darekf77/tnp (no opensource yet - code refactor needed)
+- tnp https://github.com/darekf77/tnp
     + main cli / code structuring tool
 - firedev-core https://github.com/darekf77/tnp-core
     + essential/core helpers for all projects
