@@ -30,6 +30,9 @@ export class RealtimeBrowserRxjs {
   constructor(private context: FrameworkContext) {
 
     const base = RealtimeBase.by(context);
+    // if (Helpers.isElectron) {
+    //   return;
+    // }
     // Helpers.log('INITING SOCKETS')
     if (!context.disabledRealtime) {
 

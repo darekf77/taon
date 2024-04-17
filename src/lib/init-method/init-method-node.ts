@@ -9,6 +9,7 @@ import { FrameworkContext } from '../framework/framework-context';
 import { Models as ModelsNg2Rest } from 'ng2-rest/src';
 //#region @backend
 import { Blob } from 'buffer';
+
 //#endregion
 //#endregion
 
@@ -31,11 +32,42 @@ export function initMethodNodejs(
   const context = FrameworkContext.findForTraget(target);
   const url = context.uri;
 
+  //#region get result
+  const getResult = async (resolvedParams, req, res) => {
+    const response: Models.Response<any> = methodConfig.descriptor.value.apply(
+      /**
+       * Context for method @GET,@PUT etc.
+       */
+      context.getInstanceBy(target),
+      /**
+       * Params for metjod @GET, @PUT etc.
+       */
+      resolvedParams
+    );
+    let result = await FiredevHelpers.getResponseValue(response, { req, res });
+    return result;
+  }
+  //#endregion
+
   url.pathname = url.pathname.replace(/\/$/, '');
   expressPath = url.pathname.startsWith('/') ? `${url.pathname}${expressPath}` : expressPath;
   expressPath = expressPath.replace(/\/\//g, '/')
   // console.log(`BACKEND: expressPath: ${expressPath}`)
   //#endregion
+
+  if (Helpers.isElectron) {
+    //#region @backend
+    const ipcKeyName = FiredevHelpers.ipcKeyNameRequest(target, methodConfig, expressPath);
+    Helpers.ipcMain.on(ipcKeyName, async (event, paramsFromBrowser) => {
+      const responseJsonData = await getResult(paramsFromBrowser, void 0, void 0,)
+      event.sender.send(FiredevHelpers.ipcKeyNameResponse(target, methodConfig, expressPath), responseJsonData);
+    });
+    return {
+      routePath: expressPath,
+      method: methodConfig.type
+    }
+    //#endregion
+  }
 
   //#region handle websql request mode
   //#region @websqlOnly
@@ -159,17 +191,7 @@ export function initMethodNodejs(
       const resolvedParams = args.reverse().map(v => FiredevHelpers.tryTransformParam(v));
 
       try {
-        const response: Models.Response<any> = methodConfig.descriptor.value.apply(
-          /**
-           * Context for method @GET,@PUT etc.
-           */
-          context.getInstanceBy(target),
-          /**
-           * Params for metjod @GET, @PUT etc.
-           */
-          resolvedParams
-        );
-        let result = await FiredevHelpers.getResponseValue(response, { req, res });
+        let result = await getResult(resolvedParams, req, res);
 
         if (result instanceof Blob && (methodConfig.responseType as ModelsNg2Rest.ResponseTypeAxios) === 'blob') {
           console.log('INSTANCE OF BLOB')

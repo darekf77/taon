@@ -8,6 +8,9 @@ declare const global: any;
 
 const abstractClasses = ['BASE_CONTROLLER'];
 
+/**
+ * @deprecated
+ */
 export function activateBaseCrud(
   target: Function,
   entity: Function,

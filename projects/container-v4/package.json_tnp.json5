@@ -164,10 +164,10 @@
 
       // ------- DATABASES ------------------------------------------
       // outstanding crossplatform orm
-      typeorm: '^0.3.10',
+      // typeorm: '^0.3.10',
 
       // amazing sqlite drive without node-gyp
-      'better-sqlite3': '7.6.2',
+      'better-sqlite3': '9.5.0',
 
       // awesome sql in browser
       // indexeddb just like localstorage

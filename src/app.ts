@@ -1,11 +1,13 @@
-import { Firedev } from 'firedev';
-import { Observable, map } from 'rxjs';
+import { Firedev } from 'firedev/src';
+import { EMPTY, Observable, catchError, map, of, startWith } from 'rxjs';
+import { Helpers, _ } from 'tnp-core/src';
 //#region @notForNpm
 import { HOST_BACKEND_PORT } from './app.hosts';
 //#region @browser
 import { NgModule } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-firedev',
@@ -20,7 +22,9 @@ import { CommonModule } from '@angular/common';
 })
 export class FiredevComponent implements OnInit {
   users$: Observable<User[]> = User.ctrl.getAll().received.observable
-    .pipe(map(data => data.body.json));
+    .pipe(
+      map(data => data.body.json),
+    );
 
   constructor() { }
   ngOnInit() { }
@@ -37,27 +41,47 @@ export class FiredevModule { }
 
 @Firedev.Entity({ className: 'User' })
 class User extends Firedev.Base.Entity {
+  static from(user: Partial<User>) {
+    return _.merge(new User(), user);
+  }
   public static ctrl?: UserController;
   //#region @websql
   @Firedev.Orm.Column.Generated()
   //#endregion
   id?: string | number;
 
+  //#region @websql
+  @Firedev.Orm.Column.Custom({ type: 'varchar', length: 100 })
+  //#endregion
+  name?: string;
 }
 
 @Firedev.Controller({ className: 'UserController', entity: User })
 class UserController extends Firedev.Base.Controller<User> {
 
+  @Firedev.Http.PUT()
+  helloWorld(@Firedev.Http.Param.Query('id') id: string, @Firedev.Http.Param.Query('test') test: number): Firedev.Response<string> {
+    //#region @websqlFunc
+    return async () => {
+      console.log({ id, test })
+      return 'hello world from ' + (Helpers.isElectron && Helpers.isNode) ? 'ipc' : 'http';
+    }
+    //#endregion
+  }
+
   //#region @websql
   async initExampleDbData(): Promise<void> {
-    await this.repository.save(new User())
+    await this.repository.save(User.from({ name: 'Sam' }))
+    await this.repository.save(User.from({ name: 'Samuela' }))
   }
   //#endregion
 }
 
-async function start() {
-  console.log('hello world');
-  console.log('Your server will start on port '+ HOST_BACKEND_PORT);
+async function start(portForBackend?: string) {
+  console.log({ portForBackend })
+
+  console.log('Helpers.isElectron', Helpers.isElectron)
+  console.log('Your server will start on port ' + HOST_BACKEND_PORT);
   const host = 'http://localhost:' + HOST_BACKEND_PORT;
 
   const context = await Firedev.init({
@@ -80,9 +104,9 @@ async function start() {
   });
 
   if (Firedev.isBrowser) {
-    const users = (await User.ctrl.getAll().received).body.json;
+    const helloWorld = (await User.ctrl!.helloWorld('secrethashid', 444).received)!.body?.rawJson;
     console.log({
-      'users from backend': users
+      'helloWorld from backend': helloWorld
     })
   }
 }

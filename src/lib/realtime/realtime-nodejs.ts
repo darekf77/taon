@@ -29,6 +29,9 @@ export class RealtimeNodejs {
   constructor(private context: FrameworkContext) {
     //#region @websql
     const base = RealtimeBase.by(context);
+    // if (Helpers.isElectron) {
+    //   return;
+    // }
     if (!context.disabledRealtime) {
 
       // @ts-ignore;

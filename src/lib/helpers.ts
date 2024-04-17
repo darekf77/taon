@@ -21,7 +21,7 @@ import { CLASS } from 'typescript-class-helpers/src';
 
 export class FiredevHelpers extends HelpersNg2Rest {
 
-  //#region static
+
 
   //#region static / string operations
   static string(s: string) {
@@ -205,6 +205,61 @@ export class FiredevHelpers extends HelpersNg2Rest {
   //#endregion
   //#endregion
 
+  //#region static / get ipc key name
+  static ipcKeyNameResponse(
+    target: Function,
+    methodConfig: Models.Rest.MethodConfig,
+    expressPath: string,
+  ) {
+    return ([
+      'response',
+      CLASS.getName(target),
+      methodConfig.methodName,
+      methodConfig.type,
+      expressPath,
+    ].join('--'))
+  }
+  //#endregion
+
+  //#region static / get ipc key name
+  static ipcKeyNameRequest(
+    target: Function,
+    methodConfig: Models.Rest.MethodConfig,
+    expressPath: string,
+  ) {
+    return ([
+      'request',
+      CLASS.getName(target),
+      methodConfig.methodName,
+      methodConfig.type,
+      expressPath,
+    ].join('--'))
+  }
+  //#endregion
+
+  //#region websql mocl
+  static websqlMocks = (headers) => {
+
+    const response: Express.Response = {
+
+      status(status: any) {
+        // console.log({status})
+        return {
+          send(send: any) {
+            // console.log({status})
+          }
+        }
+      },
+      setHeader(key: string, value: any) {
+        // console.log('Dummy set header', arguments)
+        headers[key] = value;
+      }
+    };
+    const request: Express.Request = {
+
+    };
+    return { request, response }
+  }
   //#endregion
 
 }

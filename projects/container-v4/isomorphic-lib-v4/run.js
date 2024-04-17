@@ -1,3 +1,5 @@
+const process= require('process');
+process.removeAllListeners('warning');
 const util = require('util');
 const vm = require('vm');
 const path = require('path');

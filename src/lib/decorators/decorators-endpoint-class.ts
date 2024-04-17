@@ -82,7 +82,6 @@ export function ENDPOINT(options?: {
         }
         //#endregion
 
-
         Object.keys(classConfig.methods).forEach(methodName => {
           const methodConfig: Models.Rest.MethodConfig = classConfig.methods[methodName];
           const type: Models.Rest.HttpMethod = methodConfig.type;
@@ -113,6 +112,8 @@ export function ENDPOINT(options?: {
 
             //#endregion
           }
+
+
           if (Helpers.isBrowser
             //#region @backend
             || context.onlyForBackendRemoteServerAccess
@@ -121,6 +122,7 @@ export function ENDPOINT(options?: {
             || Helpers.isWebSQL
             //#endregion
           ) {
+
             initMethodBrowser(target, type, methodConfig, expressPath)
           }
         });

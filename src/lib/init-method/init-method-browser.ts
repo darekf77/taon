@@ -10,7 +10,6 @@ import { FrameworkContext } from '../framework/framework-context';
 import { from, Observable, Subject } from 'rxjs';
 import { CLASS } from 'typescript-class-helpers/src';
 //#endregion
-
 export function initMethodBrowser(
   //#region parameters
   target: Function,
@@ -20,7 +19,8 @@ export function initMethodBrowser(
   //#endregion
 )
 // : { received: any; /* Rest<any, any>  */ }
- {
+{
+  // console.log(`FRONTEND ${target.name} method on ${expressPath}`)
 
   //#region resolve storage
   let storage: any;
@@ -36,6 +36,52 @@ export function initMethodBrowser(
 
   const context = FrameworkContext.findForTraget(target);
   const uri: URL = context.uri;
+  const orgMethods = target.prototype[methodConfig.methodName];
+
+  //#region handle electron ipc request
+
+  if (Helpers.isElectron) {
+
+    target.prototype[methodConfig.methodName] = function (...args) {
+
+      const received = new Promise(async (resolve, reject) => {
+        const headers = {};
+        const { request, response } = FiredevHelpers.websqlMocks(headers);
+
+        Helpers.ipcRenderer.once(FiredevHelpers.ipcKeyNameResponse(target, methodConfig, expressPath), (event, responseData) => {
+          let res: any = responseData;
+          console.log({ responseData })
+          try {
+            const body = res;
+            res = new Ng2RestModels.HttpResponse({
+              body: void 0,
+              isArray: void 0 as any,
+              method: methodConfig.type,
+              url: `${uri.origin}${'' // TODO express path
+                }${methodConfig.path}`
+            },
+              (Helpers.isBlob(body) || _.isString(body)) ? body : JSON.stringify(body),
+              RestHeaders.from(headers),
+              void 0,
+              () => body,
+            );
+
+            resolve(res);
+          } catch (error) {
+            console.error(error)
+            reject(error);
+          }
+        })
+        Helpers.ipcRenderer.send(FiredevHelpers.ipcKeyNameRequest(target, methodConfig, expressPath), args);
+      });
+      received['observable'] = from(received);
+      return {
+        received
+      };
+    }
+    return;
+  }
+  //#endregion
 
   //#region handling web sql request
   //#region @websqlOnly
@@ -94,15 +140,13 @@ export function initMethodBrowser(
   }
   //#endregion
 
-  const orgMethods = target.prototype[methodConfig.methodName];
-
   target.prototype[methodConfig.methodName] = function (...args) {
     // if (!target.prototype[methodConfig.methodName][subjectHandler]) {
     //   target.prototype[methodConfig.methodName][subjectHandler] = new Subject();
     // }
     const received = new Promise(async (resolve, reject) => {
       const headers = {};
-      const { request, response } = websqlMocks(headers)
+      const { request, response } = FiredevHelpers.websqlMocks(headers)
 
       let res: any;
       try {
@@ -178,12 +222,9 @@ export function initMethodBrowser(
     return;
   }
   //#endregion
-
   //#endregion
 
-  // FRONTEND PATHES
-  // console.log(`FRONTEND ${target.name} method on ${expressPath}`)
-
+  //#region handl normal request
   target.prototype[methodConfig.methodName] = function (...args) {
     // console.log('[init method browser] FRONTEND expressPath', expressPath)
     // const productionMode = FrameworkContext.isProductionMode;
@@ -349,31 +390,7 @@ export function initMethodBrowser(
       received: isWithBody ? rest.model(pathPrams)[method](bodyObject, [queryParams]) : rest.model(pathPrams)[method]([queryParams])
     }
   };
+  //#endregion
 }
 
 
-
-//#region @websqlOnly
-function websqlMocks(headers) {
-
-  const response: Express.Response = {
-
-     status(status: any) {
-      // console.log({status})
-      return {
-        send(send: any) {
-          // console.log({status})
-        }
-      }
-    },
-    setHeader(key: string, value: any) {
-      // console.log('Dummy set header', arguments)
-      headers[key] = value;
-    }
-  };
-  const request: Express.Request = {
-
-  };
-  return { request, response }
-}
-//#endregion

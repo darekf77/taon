@@ -82,9 +82,26 @@ export function start(options: Omit<StartOptions,
 
       delete config.database;
     }
+
     // @ts-ignore
     // console.log('INITING LOCATION WEBSQL DB ' + config?.location)
     //#endregion
+
+    if (Helpers.isElectron) {
+      //#region @backend
+      // @ts-ignore
+      config.type = 'sqljs';
+      // @ts-ignore
+      config.autoSave = true;
+      // config['useLocalForage'] = !!window['localforage']
+
+      // @ts-ignore
+      config.location = (config.database || '').replace('.sqlite', '');
+
+      // delete config.database;
+      //#endregion
+    }
+
 
     // config['useLocalForage'] = false; // TODO REMOVE
     // console.log('USING LOCAL FORAGE', config['useLocalForage'])
@@ -146,7 +163,7 @@ export function start(options: Omit<StartOptions,
     context.initBrowser();
     // console.log('browser init done')
 
-    if (Helpers.isBrowser) {
+    if (Helpers.isBrowser && !Helpers.isElectron) {
       setTimeout(() => {
         // @ts-ignore
         let angularVer = _.first(getAllAngularRootElements()[0].attributes['ng-version']?.value?.split('.'));
@@ -155,21 +172,20 @@ export function start(options: Omit<StartOptions,
 
         if (!isNaN(verNum) && !FrameworkContext.isNgZoneInited) {
           Helpers.error(`
-  [Firedev] Angular ${verNum} version detected...
-  [Firedev] NgZone instance is not inited... please use:
+        [Firedev] Angular ${verNum} version detected...
+        [Firedev] NgZone instance is not inited... please use:
 
-  constructor(
-    ...
-    ngzone:NgZone
-    ...
-  ) {
-    Firedev.initNgZone(ngzone);
-  }
+        constructor(
+          ...
+          ngzone:NgZone
+          ...
+        ) {
+          Firedev.initNgZone(ngzone);
+        }
 
-          `, true, true)
+                `, true, true)
         }
       });
-
     }
 
     //#region @browser

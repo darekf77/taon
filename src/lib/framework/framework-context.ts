@@ -270,6 +270,10 @@ export class FrameworkContext extends FrameworkContextBase {
       // @ts-ignore
       this.disabledRealtime = true;
     }
+    if (Helpers.isElectron) {
+      // @ts-ignore
+      this.disabledRealtime = true;
+    }
     //#region @websql
     validateConfigAndAssignEntites(context.config as any, this.mode, this.entitiesClasses);
     //#endregion
