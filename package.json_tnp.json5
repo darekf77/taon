@@ -12,7 +12,7 @@
       'tslib',
       'ora',
       // TOOD better than chokidar, but doesn't work when globally installed npm package
-      '@parcel/watcher',
+      // '@parcel/watcher',
       // TOOD QUICK_FIX bundle socket io client has weird dependency resolver
       'socket.io',
     ],
