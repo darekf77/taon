@@ -6,7 +6,7 @@
     "email": "maxime.gris@gmail.com"
   },
   "version": "13.0.0",
-  "main": "bundled/index.js",
+  "main": "index.js",
   "private": true,
   "dependencies": {
   }
