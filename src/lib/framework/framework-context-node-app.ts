@@ -170,7 +170,7 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
     }
 
     if (!this.connection.isInitialized && this.context.mode !== 'remote-backend') {
-      console.log(this.connection);
+      // console.log(this.connection);
       Helpers.error(`Something wrong with connection init in ${this.context.mode}`, false, true);
     }
     log.info(`PREPARING TYPEORM CONNECTION DONE. initialize=${this.connection.isInitialized}`)
@@ -376,11 +376,19 @@ export class FrameworkContextNodeApp extends FrameworkContextBase {
       if (!this.context.testMode) {
         await Helpers.killProcessByPort(Number(this.context.uri.port), { silent: true });
 
-        h.listen(this.context.uri.port, () => {
-          Helpers.log(`Server listening on port: ${this.context.uri.port}, hostname: ${this.context.uri.pathname},
-              env: ${this.app.settings.env}
-              `);
-        });
+        if (
+          !(Helpers.isElectron &&
+            (this.context.mode === 'backend/frontend' || this.context.mode === 'websql/backend-frontend'))
+        ) {
+          h.listen(this.context.uri.port, () => {
+            Helpers.log(`Server listening on port: ${this.context.uri.port}, hostname: ${this.context.uri.pathname},
+                env: ${this.app.settings.env}
+                `);
+          });
+        } else {
+          Helpers.info('Ipc communication enable instead express/http request');
+        }
+
       }
       //#endregion
 

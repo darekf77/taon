@@ -31,7 +31,7 @@ async function init() {
       // @ts-ignore
       locateFile: file => {
 
-        const wasmPath = `${window.location.origin}${basename}/assets/${file}`;
+        const wasmPath = `${window.location.origin}${basename}assets/${file}`;
         // console.log(`Trying to get sql.js wasm from: ${wasmPath}`)
         return wasmPath;
         // return `https://sql.js.org/dist/${file}`

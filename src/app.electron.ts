@@ -35,12 +35,14 @@ function createWindow(): BrowserWindow {
     },
   });
 
+
   if (serve) {
     const debug = require('electron-debug');
     debug();
 
-    require('electron-reloader')(module);
+    /* @removeStart */ require('electron-reloader')(module); /* @removeEnd */
     win.webContents.openDevTools();
+
     win.loadURL('http://localhost:' + (websql ? CLIENT_DEV_WEBSQL_APP_PORT : CLIENT_DEV_NORMAL_APP_PORT));
   } else {
     // Path when running electron executable
@@ -75,12 +77,16 @@ async function startElectron() {
     // initialization and is ready to create browser windows.
     // Some APIs can only be used after this event occurs.
     // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
-    setTimeout(createWindow, 400)
+    // TOD maybe solution
     // app.removeAllListeners('ready')
+
+    setTimeout(createWindow, 400)
+    //#region proper way that do not work
     // app.on('ready', () => {
-    //   // createWindow()
+    //   createWindow()
     //   setTimeout(createWindow, 400)
     // });
+    //#endregion
 
     // Quit when all windows are closed.
     app.on('window-all-closed', () => {
