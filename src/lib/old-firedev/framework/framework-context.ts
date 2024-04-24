@@ -1,3 +1,4 @@
+//#region imports
 import { _, Helpers } from 'tnp-core/src';
 import { StartOptions, FrameworkMode, MiddlewareType } from './framework-models';
 import { FrameworkContextBrowserApp } from './framework-context-browser-app';
@@ -10,30 +11,18 @@ import { FrameworkContextNodeApp } from './framework-context-node-app';
 import { URL } from 'url';
 //#endregion
 //#endregion
-
 import type { BASE_CONTROLLER } from './framework-controller';
 import { BaseCRUD } from '../crud';
 import { SYMBOL } from '../symbols';
+//#endregion
 
 export class FrameworkContext extends FrameworkContextBase {
 
+  //#region static
   public static readonly initFunc: { initFN: Function, target: Function }[] = [];
-  get initFunc() {
-    return FrameworkContext.initFunc.filter(a => this.controllersClasses.includes(a.target));
-  }
-
-
-  // /**
-  //  * @deprecated
-  //  */
-  // public static get Providers() {
-  //   return _.sortedUniq(FrameworkContext.contexts.reduce((a, b) => {
-  //     return a.concat(b.Providers);
-  //   }, []))
-  // }
-  public readonly Providers: Function[] = [];
-
   private static readonly ngZoneInstance: any;
+  private static _isProductionModeAlreadySet = false;
+  private static readonly _isProductionMode = false;
 
   public static get isNgZoneInited() {
     return !!FrameworkContext.ngZoneInstance;
@@ -45,6 +34,22 @@ export class FrameworkContext extends FrameworkContextBase {
     }
   }
   private static contextByClassName: { [className in string]: FrameworkContext; } = {};
+
+  public static get isProductionMode() {
+    return FrameworkContext._isProductionMode;
+  }
+
+  public static set isProductionMode(v: boolean) {
+    if (!FrameworkContext._isProductionModeAlreadySet) {
+      FrameworkContext._isProductionModeAlreadySet = true;
+    } else {
+      throw `[Firedev] production mode already set`
+    }
+    // @ts-ignore
+    FrameworkContext._isProductionMode = v;
+  }
+
+
   public static get contexts(): FrameworkContext[] {
 
     const res = _.sortedUniq(Object
@@ -63,11 +68,6 @@ export class FrameworkContext extends FrameworkContextBase {
           delete FrameworkContext.contextByClassName[className];
         }
       });
-    debugger;
-  }
-
-  destroy() {
-    FrameworkContext.destroy(this);
   }
 
   public static findByHost(host: string) {
@@ -108,7 +108,7 @@ export class FrameworkContext extends FrameworkContextBase {
     if (!result) {
       //#region @websql
       if (FrameworkContext.contexts.length === 1 &&
-        _.first(FrameworkContext.contexts).mode === 'backend/frontend-worker') {
+        _.first(FrameworkContext.contexts).mode === 'backend-worker') {
         return _.first(FrameworkContext.contexts);
       }
       //#endregion
@@ -126,21 +126,11 @@ export class FrameworkContext extends FrameworkContextBase {
     return result;
   }
 
-  private static _isProductionModeAlreadySet = false;
-  private static readonly _isProductionMode = false;
-  public static get isProductionMode() {
-    return FrameworkContext._isProductionMode;
-  }
 
-  public static set isProductionMode(v: boolean) {
-    if (!FrameworkContext._isProductionModeAlreadySet) {
-      FrameworkContext._isProductionModeAlreadySet = true;
-    } else {
-      throw `[Firedev] production mode already set`
-    }
-    // @ts-ignore
-    FrameworkContext._isProductionMode = v;
-  }
+  //#endregion
+
+  //#region fields
+  public readonly Providers: Function[] = [];
 
   public readonly uri: URL;
   private readonly context: StartOptions;
@@ -151,6 +141,19 @@ export class FrameworkContext extends FrameworkContextBase {
   public node: FrameworkContextNodeApp;
   //#endregion
 
+  //#endregion
+
+  //#region methods & getters
+  get initFunc() {
+    return FrameworkContext.initFunc.filter(a => this.controllersClasses.includes(a.target));
+  }
+
+  destroy() {
+    FrameworkContext.destroy(this);
+  }
+
+
+
 
   public get ngZone() {
     return FrameworkContext.ngZoneInstance;
@@ -160,15 +163,17 @@ export class FrameworkContext extends FrameworkContextBase {
     return this.context.host;
   }
 
-  //#region @backend
   public get middlewares(): MiddlewareType[] {
+    //#region @backendFunc
     return this.context.middlewares || [];
+    //#endregion
   }
 
   public get session() {
+    //#region @backendFunc
     return this.context.session;
+    //#endregion
   }
-  //#endregion
 
   public get controllersClasses() {
     return [
@@ -243,7 +248,7 @@ export class FrameworkContext extends FrameworkContextBase {
   }
 
   get workerMode() {
-    return this.context.mode === 'backend/frontend-worker';
+    return this.context.mode === 'backend-worker';
   }
 
   get testMode() {
@@ -383,6 +388,8 @@ class ${className}Extended extends ${className} {
     }
   }
 
+  //#endregion
+
 }
 
 
@@ -432,4 +439,6 @@ Incorect value for property "entities" inside Firedev.Init(...)
 
 `
   }
+
+
 }

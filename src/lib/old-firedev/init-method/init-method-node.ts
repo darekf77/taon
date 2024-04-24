@@ -1,4 +1,3 @@
-//#region @websql
 //#region imports
 import { Helpers, _ } from 'tnp-core/src';
 import { Models } from '../models';
@@ -13,17 +12,8 @@ import { Blob } from 'buffer';
 //#endregion
 //#endregion
 
-// TODO below thing needs to be there
-// @ts-ignore
 export function initMethodNodejs(
-  //#region parameters
-  type: Models.Rest.HttpMethod,
-  methodConfig: Models.Rest.MethodConfig,
-  classConfig: Models.Rest.ClassConfig,
-  expressPath: string,
-  target: Function
-  //#endregion
-): any {
+  { type, methodConfig, expressPath, target }: { type: Models.Rest.HttpMethod; methodConfig: Models.Rest.MethodConfig; expressPath: string; target: Function; }): any {
 
   //#region resolve variables
   const requestHandler = (methodConfig.requestHandler && typeof methodConfig.requestHandler === 'function')
@@ -265,5 +255,3 @@ export function initMethodNodejs(
   }
 
 }
-
-//#endregion

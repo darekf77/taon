@@ -26,8 +26,8 @@ function createWindow(): BrowserWindow {
     x: 0,
     y: 0,
     autoHideMenuBar: true,
-    width: size.width,
-    height: size.height,
+    width: size.width * (3/4),
+    height: size.height * (3/4),
     webPreferences: {
       nodeIntegration: true,
       allowRunningInsecureContent: (serve),

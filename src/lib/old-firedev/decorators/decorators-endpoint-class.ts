@@ -100,7 +100,7 @@ export function ENDPOINT(options?: {
               methodConfig.requestHandler = auth(methodConfig.descriptor.value);
             }
 
-            const { routePath, method } = initMethodNodejs(type, methodConfig, classConfig, expressPath, target);
+            const { routePath, method } = initMethodNodejs({ type, methodConfig, expressPath, target });
             //#region @backend
             if (!context.onlyForBackendRemoteServerAccess) {
               context.node.activeRoutes.push({

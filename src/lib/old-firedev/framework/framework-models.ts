@@ -53,7 +53,7 @@ export type FrameworkMode =
   'backend/frontend' |
   'remote-backend' |
   'tests' |
-  'backend/frontend-worker' |
+  'backend-worker' |
   'websql/backend-frontend'
   ;
 
