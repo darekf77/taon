@@ -176,6 +176,8 @@
       localforage: '~1.10.0',
 
       // ------------------------------------------------------------
+      // TODO create awesome routers
+      'path-to-regexp':'~6.2.2',
 
       // NGRX
       '@ngrx/effects': '^16.0.1',
@@ -201,7 +203,7 @@
       sinon: '15.2.0',
 
       // 'sinon-chai': '3.7.0',
-      // ts-sinon: '2.0.2',
+      ts-sinon: null,
       supertest: '6.3.3',
 
       // jest test framework / runner
@@ -280,6 +282,7 @@
       //--------- VALIDATION ----------------------------------------
       // validation decorator based (https://github.com/typestack/class-validator)
       'class-validator': '~0.14.0',
+      'class-transformer': '~0.5.1',
 
       // amazing schema validation (decide betwwen yup vs joi)
       yup: '~1.1.1',

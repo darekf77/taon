@@ -1,12 +1,17 @@
 {
   "files.exclude": {
+    "**/*____ORIGINAL____.ts": true,
+    "_changelog": true,
+    "tsconfig.backend.dist.json": true,
+    "tsconfig.backend.dist.json.filetemplate": true,
     "node_modules": true,
-    "tnp-system-path.txt": true,
     "tmp*": true,
     "dist*": true,
     "bundle*": true,
     "browser": true,
     "browser*": true,
+    "websql": true,
+    "websql*": true,
     "module*": true,
     "backup": true,
     "module": true,
@@ -20,16 +25,14 @@
     ".npmrc": true,
     "tslint.json": true,
     ".editorconfig": true,
-    "environment.d.ts": true,
+    "index.js": true,
+    "index.d.ts": true,
+    "index.js.map": true,
     ".gitignore": true,
     ".npmignore": true,
     ".babelrc": true,
-    "docs": true,
-    "logo.svg": true,
-    "angular-client": true,
-    "ionic-client": true,
-    "isomorphic-lib": true,
-    "bin/db.json": false
+    "package.json_devDependencies.json": true,
+    "logo.svg": true
   },
   "workbench.colorCustomizations": {
     "activityBar.background": "#ce9243",
@@ -42,5 +45,10 @@
   "html.format.wrapAttributes": "force-aligned",
   "workbench.colorTheme": "Default Light+",
   "tslint.autoFixOnSave": true,
-  "tslint.enable": true
+  "tslint.enable": true,
+  "search.exclude": {
+    "docs": true,
+    "projects": true,
+    "bin": true
+  }
 }

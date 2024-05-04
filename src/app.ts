@@ -1,14 +1,19 @@
-import { Firedev } from 'firedev/src';
-import { EMPTY, Observable, catchError, map, of, startWith } from 'rxjs';
-import { Helpers, _ } from 'tnp-core/src';
 //#region @notForNpm
+//#region imports
+import { Firedev } from './lib/index';
+import { EMPTY, Observable, catchError, map, of, startWith } from 'rxjs';
+import { _ } from 'tnp-core/src';
+import { Helpers } from 'tnp-helpers/src';
 import { HOST_BACKEND_PORT } from './app.hosts';
 //#region @browser
 import { NgModule } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { EntityOptions } from 'firedev-typeorm/lib';
+//#endregion
+//#endregion
 
-
+//#region @browser
 @Component({
   selector: 'app-firedev',
   template: `hello from firedev<br>
@@ -21,13 +26,17 @@ import { CommonModule } from '@angular/common';
   styles: [` body { margin: 0px !important; } `],
 })
 export class FiredevComponent implements OnInit {
-  users$: Observable<User[]> = User.ctrl.getAll().received.observable
-    .pipe(
-      map(data => data.body.json),
-    );
+  // @LAST fix base crud
+  users$: Observable<User[]>;
 
   constructor() { }
-  ngOnInit() { }
+  ngOnInit() {
+    console.log('UserContext.types.entities.User.ctrl.getAll', UserContext.types.entities.User.ctrl.getAll());
+    this.users$ = UserContext.types.entities.User.ctrl.getAll().received.observable
+      .pipe(
+        map(data => data.body.json),
+      );
+  }
 }
 
 @NgModule({
@@ -39,76 +48,106 @@ export class FiredevComponent implements OnInit {
 export class FiredevModule { }
 //#endregion
 
-@Firedev.Entity({ className: 'User' })
-class User extends Firedev.Base.Entity {
-  static from(user: Partial<User>) {
-    return _.merge(new User(), user);
+//#region user
+@Firedev.Entity({
+  className: 'User'
+})
+class User extends Firedev.Base.AbstractEntity {
+  public static ctrl = Firedev.inject(() => UserContext.types.controllers.UserController);
+  public static from(obj: Partial<User>) {
+    return _.merge(new User(), obj) as User;
   }
-  public static ctrl?: UserController;
-  //#region @websql
-  @Firedev.Orm.Column.Generated()
-  //#endregion
-  id?: string | number;
 
   //#region @websql
-  @Firedev.Orm.Column.Custom({ type: 'varchar', length: 100 })
+  @Firedev.Orm.Column.String()
   //#endregion
-  name?: string;
+  firstName: string;
 }
 
-@Firedev.Controller({ className: 'UserController', entity: User })
-class UserController extends Firedev.Base.Controller<User> {
+@Firedev.Controller({
+  className: 'UserController',
+})
+class UserController extends Firedev.Base.CrudController<User> {
+  entity = () => UserContext.types.entities.User;
+  userProviers = this.inject(UserProvider);
+  async initExampleDbData(): Promise<void> {
+    //#region @websql
+    Helpers.info(this.userProviers.helloFromUserProvier());
+    await this.repo.save(UserContext.types.entities.User.from({ firstName: 'pierwszy' }));
+    await this.repo.save(UserContext.types.entities.User.from({ firstName: 'drugi' }));
+    console.log('all users', await this.repo.find());
+    //#endregion
+  }
 
-  @Firedev.Http.PUT()
-  helloWorld(@Firedev.Http.Param.Query('id') id: string, @Firedev.Http.Param.Query('test') test: number): Firedev.Response<string> {
+  @Firedev.Http.GET()
+  hello(@Firedev.Http.Param.Query('user') user: string): Firedev.Response<string> {
     //#region @websqlFunc
-    return async () => {
-      console.log({ id, test })
-      return 'hello world from ' + (Helpers.isElectron && Helpers.isNode) ? 'ipc' : 'http';
+    return async (req, res) => {
+      return 'hello from user controller my dear query params user "' + user + '" and ' + this.userProviers.helloFromUserProvier();
     }
     //#endregion
   }
 
-  //#region @websql
-  async initExampleDbData(): Promise<void> {
-    await this.repository.save(User.from({ name: 'Sam' }))
-    await this.repository.save(User.from({ name: 'Samuela' }))
-  }
-  //#endregion
 }
+
+@Firedev.Provider({
+  className: 'UserProvider',
+})
+class UserProvider extends Firedev.Base.Provider {
+
+  helloFromUserProvier() {
+    return 'hello from context ' + this.__endpoint_context__.contextName;
+  }
+
+}
+
+const UserContext = Firedev.createContext({
+  contextName: 'UserContext',
+  host: `http://localhost:${HOST_BACKEND_PORT}`,
+  entities: {
+    User,
+  },
+  controllers: {
+    UserController,
+  },
+  providers: {
+    UserProvider,
+  },
+  repositories: {
+    [Firedev.Base.Repository.name]: Firedev.Base.Repository,
+  },
+  database: true,
+});
+
+
+// const AppContext = Firedev.createContext({
+//   contextName: 'AppContext',
+//   host: `http://localhost:${HOST_BACKEND_PORT + 1}`,
+//   contexts: { UserContext },
+// });
+//#endregion
+
 
 async function start(portForBackend?: string) {
-  console.log({ portForBackend })
+  //#region @backend
+  await Helpers.killProcessByPort(HOST_BACKEND_PORT);
+  // await Helpers.killProcessByPort(HOST_BACKEND_PORT + 1);
+  //#endregion
 
-  console.log('Helpers.isElectron', Helpers.isElectron)
-  console.log('Your server will start on port ' + HOST_BACKEND_PORT);
-  const host = 'http://localhost:' + HOST_BACKEND_PORT;
+  // console.log({ portForBackend })
+  // console.log('Helpers.isElectron', Helpers.isElectron);
 
-  const context = await Firedev.init({
-    host,
-    controllers: [
-      UserController,
-      // PUT FIREDEV CONTORLLERS HERE
-    ],
-    entities: [
-      User,
-      // PUT FIREDEV ENTITIES HERE
-    ],
-    //#region @websql
-    config: {
-      type: 'better-sqlite3',
-      database: 'tmp-db.sqlite',
-      logging: false,
-    }
-    //#endregion
-  });
+  await UserContext.initialize();
+  // await AppContext.initialize();
 
-  if (Firedev.isBrowser) {
-    const helloWorld = (await User.ctrl!.helloWorld('secrethashid', 444).received)!.body?.rawJson;
-    console.log({
-      'helloWorld from backend': helloWorld
-    })
-  }
+
+  console.log('DONE')
+  // const s1 = Firedev.inject(SessionContext.controllers.SessionController);
+  // const s2 = Firedev.inject(UserContext.controllers.SessionController);
+  // console.log({ s1, s2 })
+  //#region @backend
+  process.stdin.resume()
+  //#endregion
 }
 
 export default start;

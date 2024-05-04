@@ -1,0 +1,44 @@
+import { Models } from "./models";
+import { Response as ExpressResponse, Request as ExpressRequest } from 'express';
+import { FiredevHelpers } from "./helpers/firedev-helpers";
+import { Helpers } from "tnp-core";
+
+export const getResponseValue = <T>(response: Models.Http.Response<T>, options?: { req: ExpressRequest, res: ExpressResponse }): Promise<T> => {
+  //#region @websqlFunc
+  const { req, res } = options || {};
+  return new Promise<T>(async (resolve, reject) => {
+    //#region @websql
+    const resp: Models.Http.__Response<T> = response;
+    if (!response && response.send === undefined) {
+      console.error('[firedev] Bad response value for function');
+      resolve(undefined);
+    }
+    else if (typeof response === 'function') {
+      const asyncResponse: Models.Http.AsyncResponse<T> = response as any;
+      try {
+        const result = await asyncResponse(req, res);
+        resolve(result as any);
+      } catch (e) {
+        console.error(e)
+        console.error('[firedev] Error during function call inside controller')
+        Helpers.renderError(e);
+        reject(e);
+      }
+    } else if (typeof response === 'object') {
+      try {
+        if (typeof response.send === 'function') {
+          const result = (response as any).send(req, res) as any
+          resolve(result)
+        } else {
+          resolve(response.send as any)
+        }
+      } catch (error) {
+        console.error('[firedev] Bad synchonus function call ')
+        Helpers.renderError(error);
+        reject(error);
+      }
+    } else reject(`[firedev] Not recognized type of reposne ${response}`);
+    //#endregion
+  });
+  //#endregion
+}

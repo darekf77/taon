@@ -12,9 +12,6 @@ import { FiredevAdmin } from 'firedev-ui';  // <- this is to replace by firedev
 import { Stor } from 'firedev-storage';  // <- this is to replace by firedev
 import { AppModule } from './app/app.module';
 
-// @ts-ignore
-window['firedev'] = new FiredevAdmin(window['ENV']);
-
 if (environment.production) {
   enableProdMode();
 }
