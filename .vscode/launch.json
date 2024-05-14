@@ -7,17 +7,14 @@
       "name": "Debug/Start Server",
       "program": "${workspaceFolder}/run.js",
       "args": [
-        "port=4504",
+        "port=4404",
         "--ENVoverride=%7B%0A%20%20%20%20%22clientProjectName%22%3A%20%22firedev%22%0A%7D "
       ],
       "outFiles": [
         "${workspaceFolder}/dist/**/*.js",
         "!**/node_modules/**",
         "c:/Users/darek/projects/npm/firedev-io/firedev/src/../dist/**/*.js",
-        "c:/Users/darek/projects/npm/firedev-io/tnp/src/../dist/**/*.js",
-        "c:/Users/darek/projects/npm/firedev-io/tnp-core/src/../dist/**/*.js",
-        "c:/Users/darek/projects/npm/firedev-io/tnp-helpers/src/../dist/**/*.js",
-        "c:/Users/darek/projects/npm/firedev-io/typescript-class-helpers/src/../dist/**/*.js"
+        "c:/Users/darek/projects/npm/firedev-io/tnp/tmp-dist-release/dist/project/tnp/src/../dist/**/*.js"
       ],
       "runtimeArgs": [
         "--nolazy",
