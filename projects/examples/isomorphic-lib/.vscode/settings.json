@@ -1,12 +1,18 @@
 {
   "files.exclude": {
+    "**/*____ORIGINAL____.ts": true,
+    "_changelog": true,
+    "tsconfig.backend.dist.json": true,
+    "tsconfig.backend.dist.json.filetemplate": true,
+    "webpack.backend-dist-build.js": true,
     "node_modules": true,
-    "tnp-system-path.txt": true,
     "tmp*": true,
     "dist*": true,
     "bundle*": true,
     "browser": true,
     "browser*": true,
+    "websql": true,
+    "websql*": true,
     "module*": true,
     "backup": true,
     "module": true,
@@ -17,23 +23,29 @@
     "npm-debug.log*": true,
     ".sass-cache": true,
     ".sourcemaps": true,
+    "tsconfig.isomorphic.json": true,
+    "tsconfig.isomorphic-flat-dist.json": true,
+    "tsconfig.browser.json": true,
+    "tsconfig.json": true,
+    ".npmrc": true,
     "tslint.json": true,
     ".editorconfig": true,
     "index.js": true,
     "index.d.ts": true,
     "index.js.map": true,
-    ".vscode/launch.json": true,
-    "tsconfig.json": true,
-    "tsconfig.browser.json": true,
     "webpack.config.js": true,
     "run.js": true,
-    "src/typings.d.ts": true,
-    "src/entities.ts": true,
-    "src/controllers.ts": true,
+    "run-org.js": true,
+    "tsconfig.isomorphic.json.filetemplate": true,
+    "tsconfig.isomorphic-flat-dist.json.filetemplate": true,
+    "tsconfig.browser.json.filetemplate": true,
+    "tsconfig.json.filetemplate": true,
     ".gitignore": true,
     ".npmignore": true,
-    ".npmrc": true,
-    ".babelrc": true
+    ".babelrc": true,
+    "package.json_devDependencies.json": true,
+    "logo.svg": true,
+    "package.json_tnp.json": true
   },
   "workbench.colorCustomizations": {
     "activityBar.background": "#3186d4"
@@ -44,5 +56,10 @@
     120
   ],
   "tslint.autoFixOnSave": true,
-  "tslint.enable": false
+  "tslint.enable": false,
+  "search.exclude": {
+    "docs": true,
+    "projects": true,
+    "bin": true
+  }
 }

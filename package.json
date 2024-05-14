@@ -44,7 +44,7 @@
     "homepage": "https://github.com/darekf77/firedev#readme"
   },
   "name": "firedev",
-  "version": "16.44.5",
+  "version": "16.100.0",
   "description": "Isomorphic solution for backend and frontend",
   "scripts": {},
   "repository": {

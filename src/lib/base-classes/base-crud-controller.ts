@@ -35,6 +35,14 @@ export abstract class BaseCrudController<Entity> extends BaseController {
     return this.crud?.repo;
     //#endregion
   }
+
+  get connection() {
+    //#region @websqlFunc
+    return this.crud?.connection;
+    //#endregion
+  }
+
+
   /**
    * Please provide entity as class propery entityClassFn:
    */

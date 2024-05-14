@@ -1,51 +1,21 @@
 {
-  "compileOnSave": true,
+  "extends": "./tsconfig.isomorphic.json",
   "compilerOptions": {
-    "declaration": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "allowSyntheticDefaultImports": true,
-    "importHelpers": true,
-    "module": "commonjs",
-    "skipLibCheck": true,
-    "sourceMap": true,
-    "target": "es5",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
-    "lib": [
-      "es2015",
-      "es2015.promise",
-      "es2015.generator",
-      "es2015.collection",
-      "es2015.core",
-      "es2015.reflect",
-      "es2016",
-      "dom"
-    ],
-    "types": [
-      "node"
-    ],
+    "strictNullChecks": false,
     "rootDir": "./src",
-    "outDir": "dist"
+    "paths": {
+      "isomorphic-lib": [
+        "./src/lib"
+      ],
+      "isomorphic-lib/*": [
+        "./src/lib/*"
+      ]
+    }
   },
   "include": [
     "src/**/*"
   ],
   "exclude": [
-    "node_modules",
-    "preview",
-    "docs",
-    "dist",
-    "bundle",
-    "example",
-    "examples",
-    "browser",
-    "module",
-    "tests",
-    "src/tests",
-    "src/**/*.spec.ts",
-    "tmp-src",
-    "tmp-site-src"
+    "src/assets"
   ]
 }
