@@ -18,7 +18,7 @@ export class BaseRepository<Entity extends { id?: any }> extends BaseClass {
   public entity: any;
   private __dbQuery: MySqlQuerySource;
 
-  protected get dbQuery(): MySqlQuerySource {
+  public get dbQuery(): MySqlQuerySource {
     if (!this.__dbQuery) {
       if (!this.__endpoint_context__) {
         throw new Error(`[BaseRepository] Context not inited for class ${ClassHelpers.getName(this)}`);

@@ -10,6 +10,7 @@ import * as models from './models';
 import * as coreHelpers from 'tnp-core/src';
 import * as injectFn from './inject';
 import * as endpointContext from './endpoint-context';
+import * as allSymbols from './symbols';
 //#region @browser
 import { NgZone } from '@angular/core';
 import { from } from 'form-data';
@@ -62,6 +63,28 @@ export namespace Firedev {
   //#region @browser
   export const initNgZone = (ngZone: NgZone) => {
     endpointContext.EndpointContext.initNgZone(ngZone);
+  }
+  export const symbols = allSymbols.Symbols.old;
+
+  /**
+   * @deprecated
+   * use createContext instead
+   */
+  export const init = async (options: {
+    host: string,
+    config: any,
+    entities: Function[],
+    controllers: Function[],
+  }) => {
+    const context = createContext({
+      contextName: 'default',
+      host: options.host,
+      database: options.config,
+      entities: Array.from(options.entities) as any,
+      controllers: Array.from(options.controllers) as any,
+    });
+
+    await context.initialize();
   }
   //#endregion
 }
