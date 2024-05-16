@@ -193,7 +193,6 @@
       "linkedFolders": [],
       "npmFixes": []
     },
-    "linkedProjects": [],
     "smartContainerBuildTarget": "",
     "linkedRepos": [],
     "libReleaseOptions": {
@@ -333,7 +332,7 @@
     "firedev-crud-deamon": "~13.1.40",
     "firedev-ports": "~13.1.45",
     "firedev-storage": "~13.2.37",
-    "firedev-type-sql": "16.100.1",
+    "firedev-type-sql": "16.100.2",
     "firedev-typeorm": "~13.1.32",
     "firedev-ui": "~13.2.10",
     "fkill": "6.1.0",
