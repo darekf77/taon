@@ -1,0 +1,48 @@
+{
+  "resources": [
+    "README.md", // readme for humans
+    "bin",
+  ],
+
+  "overrided": {
+    "linkedFolders": [],
+    "includeAsDev": [],
+    "includeOnly": [
+      "tnp",
+      "tslib",
+      "ora",
+      // TOOD better than chokidar, but doesn"t work when globally installed npm package
+      // "@parcel/watcher",
+      // TOOD QUICK_FIX bundle socket io client has weird dependency resolver
+      "socket.io",
+    ],
+    "ignoreDepsPattern": [],
+    "dependencies": {},
+    "npmFixes": [],
+  },
+
+  "smartContainerBuildTarget": "",
+  "linkedRepos": [],
+
+  "libReleaseOptions": {
+    "nodts": false,
+    "obscure": false,
+    "ugly": false,
+    "includeNodeModules": false,
+    "cliBuildNoDts": false,
+    "cliBuildObscure": false,
+    "cliBuildIncludeNodeModules": false,
+    "cliBuildUglify": false,
+  },
+
+  "smartContainerTarget": "",
+  "type": "isomorphic-lib",
+  "version": "v4",
+  "additionalNpmNames": ["firedev-io"],
+  "scripts": {},
+  "description": "Isomorphic solution for backend and frontend",
+  "license": "MIT",
+  "private": false,
+  "author": "Dariusz Filipiak",
+  "homepage": "https://github.com/darekf77/firedev#readme",
+}

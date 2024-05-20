@@ -11,25 +11,18 @@
       "includeAsDev": [],
       "includeOnly": [],
       "dependencies": {},
-      "linkedFolders": [],
-      "npmFixes": []
+      "linkedFolders": []
     },
+    "linkedProjects": [],
     "libReleaseOptions": {
       "nodts": false,
       "obscure": false,
-      "ugly": false,
-      "cliBuildNoDts": false,
-      "cliBuildObscure": false,
-      "cliBuildUglify": false,
-      "cliBuildIncludeNodeModules": false
+      "ugly": false
     },
     "workerPlugins": {},
     "license": "UNLICENSED",
     "private": true,
-    "main": "index.js",
-    "linkedRepos": [],
-    "smartContainerTarget": "",
-    "smartContainerBuildTarget": ""
+    "main": "index.js"
   },
   "name": "isomorphic-lib",
   "version": "0.0.0",
