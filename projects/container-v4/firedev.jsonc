@@ -157,6 +157,7 @@
       // indexeddb just like localstorage
       "sql.js": "^1.8.0",
       "localforage": "~1.10.0",
+      "lowdb": "~7.0.1",
       //#endregion
       //#region TODO create awesome routers
       "path-to-regexp": "~6.2.2",
@@ -387,7 +388,7 @@
       "primeng": "~16.7.0",
       //#endregion
       //#region USE IT
-      // format html ..
+      "ts-json-schema-generator": "~2.1.1",
       "prettier": "3.0.0",
       // can be installed with visual stdio as dependency on windows
       // "@parcel/watcher": "2.3.0",
