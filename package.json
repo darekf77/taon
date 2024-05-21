@@ -37,9 +37,7 @@
     "smartContainerTarget": "",
     "type": "isomorphic-lib",
     "version": "v4",
-    "additionalNpmNames": [
-      "firedev-io"
-    ],
+    "additionalNpmNames": [],
     "scripts": {},
     "description": "Isomorphic solution for backend and frontend",
     "license": "MIT",
@@ -48,7 +46,7 @@
     "homepage": "https://github.com/darekf77/firedev#readme"
   },
   "name": "firedev",
-  "version": "16.100.9",
+  "version": "16.100.10",
   "description": "Isomorphic solution for backend and frontend",
   "scripts": {},
   "repository": {
@@ -73,7 +71,7 @@
   },
   "license": "MIT",
   "private": false,
-  "lastBuildTagHash": "ce8eccc7ead987b5c5d44c7d5c35368e562be454",
+  "lastBuildTagHash": "897c022255df040a2784695bac99dae4241d4942",
   "devDependencies": {
     "@angular-builders/custom-webpack": "~16.0.2-beta.2",
     "@angular-devkit/build-angular": "~16.0.5",

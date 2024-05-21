@@ -43,7 +43,7 @@
   "smartContainerTarget": "",
   "type": "isomorphic-lib",
   "version": "v4",
-  "additionalNpmNames": ["firedev-io"],
+  "additionalNpmNames": [],
   "scripts": {},
   "description": "Isomorphic solution for backend and frontend",
   "license": "MIT",
