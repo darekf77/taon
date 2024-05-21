@@ -12,7 +12,8 @@
       ],
       "outFiles": [
         "${workspaceFolder}/dist/**/*.js",
-        "!**/node_modules/**"
+        "!**/node_modules/**",
+        "/Users/dfilipiak/npm/firedev-io/tnp/tmp-dist-release/dist/project/tnp/src/../dist/**/*.js"
       ],
       "runtimeArgs": [
         "--nolazy",

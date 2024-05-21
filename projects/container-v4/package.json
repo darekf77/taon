@@ -392,7 +392,6 @@
     "file-loader": "1.1.5",
     "file-saver": "2.0.5",
     "file-type": "18.5.0",
-    "firedev": "^16",
     "firedev-crud": "16.100.7",
     "firedev-crud-deamon": "16.100.6",
     "firedev-ports": "16.100.7",
@@ -522,7 +521,7 @@
     "tnp-config": "16.100.7",
     "tnp-core": "16.100.17",
     "tnp-db": "16.100.6",
-    "tnp-helpers": "16.100.7",
+    "tnp-helpers": "16.100.8",
     "tnp-models": "16.100.7",
     "ts-debug": "1.3.0",
     "ts-json-schema-generator": "2.1.1",
@@ -546,7 +545,8 @@
     "webpack-dev-middleware": "~6.0.2",
     "webpack-dev-server": "~4.13.2",
     "yup": "1.1.1",
-    "zone.js": "~0.13.0"
+    "zone.js": "~0.13.0",
+    "firedev": "^16"
   },
   "devDependencies": {},
   "license": "UNLICENSED",
