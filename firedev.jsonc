@@ -11,6 +11,11 @@
       "tnp",
       "tslib",
       "ora",
+      "ng2-rest",
+      "json10",
+      "lodash-walk-object",
+      "firedev-type-sql",
+      "firedev-typeorm",
       // TOOD better than chokidar, but doesn"t work when globally installed npm package
       // "@parcel/watcher",
       // TOOD QUICK_FIX bundle socket io client has weird dependency resolver
