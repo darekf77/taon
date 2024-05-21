@@ -430,11 +430,11 @@
       // ADD SOMEDAY
       // cheerio: "1.0.0-rc.12",
       // "impress.js":"1.1.0",
-      // "ng2-pdfjs-viewer": "15.0.0",
-      // "google-libphonenumber": "^3.2.25",
+      "ng2-pdfjs-viewer": "16.0.4",
+      "google-libphonenumber": "^3.2.25",
       // "print-js": "^1.6.0",
       // "@ngx-formly/primeng":"~6.1.8",
-      // "ng-swagger-gen": "2.3.1",
+      // "ng-swagger-gen": "~2.3.1",
       "copy-paste": "1.5.3",
       "@vercel/ncc": "~0.38.1",
       //#endregion
