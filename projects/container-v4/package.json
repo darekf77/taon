@@ -522,7 +522,7 @@
     "tnp-config": "16.100.8",
     "tnp-core": "16.100.19",
     "tnp-db": "16.100.7",
-    "tnp-helpers": "16.100.9",
+    "tnp-helpers": "16.100.11",
     "tnp-models": "16.100.8",
     "ts-debug": "1.3.0",
     "ts-json-schema-generator": "2.1.1",
