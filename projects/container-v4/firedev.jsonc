@@ -172,6 +172,10 @@
 
       "localforage": "~1.10.0",
       "lowdb": "~7.0.1",
+      // dependencies of typeorm
+      "cli-highlight": "^2.1.11",
+      "@sqltools/formatter": "^1.2.2",
+      "app-root-path": "^3.0.0",
 
       //#endregion
       //#region TODO create awesome routers
