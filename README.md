@@ -1,6 +1,6 @@
 <p style="text-align: center;"><img src="./__images/logo-header-bold.png" ></p>
 
-( BETA VERSION )
+( BETA VERSION - MAJOR REFACTOR IN PROGRESS )
 
 **Firedev** 🔥🔥🔥 is a solution (**global cli tool** & **framework**) for
 
@@ -30,9 +30,25 @@
 
 **[READ DOCUMENTATION](https://firedev.io/#/docs)**
 
+<br>
+<br>
 
-<br>
-<br>
+### Initial requirements of firedev
+1. Installed git/
+
+
+(for windows only git bash supported https://gitforwindows.org)
+
+
+2. (linux only) Increased memory limit:
+```
+export NODE_OPTIONS=--max_old_space_size=4096
+```
+3. (linux only) Increased watchers limit:
+```
+echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+```
+
 <br>
 <br>
 
@@ -69,3 +85,33 @@
     + iterate over deep properties in object
 - firedev-ui https://github.com/darekf77/firedev-ui
     + open source UI for firedev based projects
+
+
+
+### Global npm dependencies installed with firedev 
+Installation happens when you first time use firedev
+
+<pre>
+{ name: 'ncc', version: '0.36.0', installName: '@vercel/ncc' },
+{ name: 'extract-zip', version: '1.6.7' },
+{ name: 'cpr' },
+{ name: 'check-node-version' },
+{ name: 'npm-run', version: '4.1.2' },
+{ name: 'rimraf', version: '3.0.2' },
+{ name: 'mkdirp' },
+{ name: 'renamer', version: '2.0.1' },
+{ name: 'nodemon' },
+{ name: 'madge' },
+{ name: 'yarn' },
+{ name: 'firedev-http-server' },
+{ name: 'prettier' },
+{ name: 'fkill', installName: 'fkill-cli' },
+{ name: 'mocha' },
+{ name: 'jest' },
+{ name: 'ts-node' },
+{ name: 'firedev-vsce' },
+{ name: 'webpack-bundle-analyzer' },
+{ name: 'babel', installName: 'babel-cli' },
+{ name: 'javascript-obfuscator', version: '4' },
+{ name: 'uglifyjs', installName: 'uglify-js' },
+</pre>
