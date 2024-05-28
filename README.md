@@ -34,7 +34,7 @@
 <br>
 
 ### Initial requirements of firedev
-1. Installed git/
+1. Installed git
 
 
 (for windows only git bash supported https://gitforwindows.org)
