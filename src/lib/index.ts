@@ -14,6 +14,7 @@ import * as allSymbols from './symbols';
 //#region @browser
 import { NgZone } from '@angular/core';
 import { from } from 'form-data';
+
 //#endregion
 
 export { BaseRepository } from './base-classes/base-repository';
@@ -24,10 +25,11 @@ export { BaseContext } from './base-classes/base-context';
 export { createContext } from './create-context';
 export { inject } from './inject';
 export { Models } from './models';
+export * from './constants';
+export { ClassHelpers } from './helpers/class-helpers';
 // TODO export all things
 
 export namespace Firedev {
-
   export import Response = models.Models.Http.Response;
   export import Http = http.Http;
   export import Base = base.Base;
@@ -63,7 +65,7 @@ export namespace Firedev {
   //#region @browser
   export const initNgZone = (ngZone: NgZone) => {
     endpointContext.EndpointContext.initNgZone(ngZone);
-  }
+  };
   export const symbols = allSymbols.Symbols.old;
 
   /**
@@ -71,20 +73,24 @@ export namespace Firedev {
    * use createContext instead
    */
   export const init = async (options: {
-    host: string,
-    config: any,
-    entities: Function[],
-    controllers: Function[],
+    host: string;
+    config?: any;
+    entities: Function[];
+    controllers: Function[];
   }) => {
+    const BaseContext = (await import('./base-classes/base-context'))
+      .BaseContext;
     const context = createContext({
       contextName: 'default',
       host: options.host,
+      contexts: { BaseContext },
       database: options.config,
       entities: Array.from(options.entities) as any,
       controllers: Array.from(options.controllers) as any,
     });
 
     await context.initialize();
-  }
+    return context;
+  };
   //#endregion
 }

@@ -1,6 +1,6 @@
 //#region import
-import { Stor } from 'firedev-storage';
-import { _ } from 'tnp-core';
+import { Stor } from 'firedev-storage/src';
+import { _ } from 'tnp-core/src';
 import { Subject, take, takeUntil, tap } from 'rxjs';
 import { Helpers } from 'tnp-core/src';
 import { config } from 'tnp-config/src';

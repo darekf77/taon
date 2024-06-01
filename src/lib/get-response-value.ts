@@ -1,7 +1,7 @@
 import { Models } from "./models";
 import { Response as ExpressResponse, Request as ExpressRequest } from 'express';
 import { FiredevHelpers } from "./helpers/firedev-helpers";
-import { Helpers } from "tnp-core";
+import { Helpers } from "tnp-core/src";
 
 export const getResponseValue = <T>(response: Models.Http.Response<T>, options?: { req: ExpressRequest, res: ExpressResponse }): Promise<T> => {
   //#region @websqlFunc

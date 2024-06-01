@@ -5,6 +5,7 @@ import * as abstractEntity from './base-abstract-entity';
 import * as repository from './base-repository';
 import * as provider from './base-provider';
 import * as baseclass from './base-class';
+import * as baseContext from './base-context';
 
 export namespace Base {
   export import Controller = controller.BaseController;
@@ -14,4 +15,5 @@ export namespace Base {
   export import Provider = provider.BaseProvider;
   export import Class = baseclass.BaseClass;
   export import Repository = repository.BaseRepository;
+  export const Context = baseContext.BaseContext;
 }

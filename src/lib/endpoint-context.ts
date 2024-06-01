@@ -1,39 +1,49 @@
 //#region imports
-import { Models } from "./models";
-import { ClassHelpers } from "./helpers/class-helpers";
-import { Symbols } from "./symbols";
+import { Models } from './models';
+import { ClassHelpers } from './helpers/class-helpers';
+import { Symbols } from './symbols';
 import { _, Helpers } from 'tnp-core/src';
 import type { createContext } from './create-context';
-import { DIFiredevContainer } from "./dependency-injection/di-container";
-import { FiredevControllerOptions } from "./decorators/classes/controller-decorator";
-import { FiredevHelpers } from "./helpers/firedev-helpers";
-import { Mapping, Models as ModelsNg2Rest, Resource, RestHeaders } from 'ng2-rest/src';
+import { DIFiredevContainer } from './dependency-injection/di-container';
+import { FiredevControllerOptions } from './decorators/classes/controller-decorator';
+import { FiredevHelpers } from './helpers/firedev-helpers';
+import {
+  Mapping,
+  Models as ModelsNg2Rest,
+  Resource,
+  RestHeaders,
+} from 'ng2-rest/src';
 import { JSON10 } from 'json10/src';
 import { path } from 'tnp-core/src';
-import { from, Subject } from "rxjs";
-import { EntityProcess } from "./entity-process";
-import { getResponseValue } from "./get-response-value";
+import { from, Subject } from 'rxjs';
+import { EntityProcess } from './entity-process';
+import { getResponseValue } from './get-response-value';
 import type { Application } from 'express';
 import axios from 'axios';
-import type { NgZone } from "@angular/core";
-import { FiredevAdmin } from "./firedev-admin";
+import type { NgZone } from '@angular/core';
+import { FiredevAdmin } from './firedev-admin';
 import { DataSource, DataSourceOptions } from 'firedev-typeorm/src';
-import { RealtimeBrowserRxjs } from "./realtime";
-import { FiredevEntityOptions } from "./decorators/classes/entity-decorator";
+import { RealtimeBrowserRxjs } from './realtime';
+import { FiredevEntityOptions } from './decorators/classes/entity-decorator';
+import type { Server } from 'http';
 //#region @websql
 import type {
-  TransactionRollbackEvent, TransactionCommitEvent, TransactionStartEvent,
-  RecoverEvent, SoftRemoveEvent, RemoveEvent, UpdateEvent, InsertEvent
+  TransactionRollbackEvent,
+  TransactionCommitEvent,
+  TransactionStartEvent,
+  RecoverEvent,
+  SoftRemoveEvent,
+  RemoveEvent,
+  UpdateEvent,
+  InsertEvent,
 } from 'firedev-typeorm/src';
-import { RealtimeNodejs } from "./realtime";
-import {
-  Entity as TypeormEntity, Tree
-} from 'firedev-typeorm/src';
+import { RealtimeNodejs } from './realtime';
+import { Entity as TypeormEntity, Tree } from 'firedev-typeorm/src';
 //#endregion
 //#region @backend
 import * as express from 'express';
 import * as expressSession from 'express-session';
-import * as  cors from 'cors';
+import * as cors from 'cors';
 import * as bodyParser from 'body-parser';
 import * as cookieParser from 'cookie-parser';
 import * as methodOverride from 'method-override';
@@ -50,18 +60,17 @@ export class EndpointContext {
   //#region @browser
   private static ngZone: NgZone;
   //#endregion
-  static initNgZone(ngZone
-    //#region @browser
-    : NgZone
-    //#endregion
-  ) {
+  static initNgZone(ngZone: NgZone) {
     //#region @browser
     this.ngZone = ngZone;
     //#endregion
   }
   public static findForTraget(classFnOrObject: any): EndpointContext {
     const obj = ClassHelpers.getClassFnFromObject(classFnOrObject) || {};
-    return classFnOrObject[Symbols.ctxInClassOrClassObj] || obj[Symbols.ctxInClassOrClassObj];
+    return (
+      classFnOrObject[Symbols.ctxInClassOrClassObj] ||
+      obj[Symbols.ctxInClassOrClassObj]
+    );
   }
   //#endregion
 
@@ -73,15 +82,19 @@ export class EndpointContext {
   private readonly classInstancesByNameObj = {};
   private readonly objWithClassesInstancesArr = {};
 
-  public readonly activeRoutes: { routePath: string; method: Models.Http.Rest.HttpMethod }[] = [];
+  public readonly activeRoutes: {
+    routePath: string;
+    method: Models.Http.Rest.HttpMethod;
+  }[] = [];
 
-  private typesfromContexts = [Models.ClassType.CONTROLLER, Models.ClassType.PROVIDER, Models.ClassType.REPOSITORY];
+  private typesfromContexts = [
+    Models.ClassType.CONTROLLER,
+    Models.ClassType.PROVIDER,
+    Models.ClassType.REPOSITORY,
+  ];
 
   public readonly expressApp: Application = {} as any;
-  public readonly serverTcpUdp
-    //#region @backend
-    : | http.Server;
-  //#endregion
+  public readonly serverTcpUdp: Server;
 
   //#endregion
 
@@ -100,11 +113,11 @@ export class EndpointContext {
   //#region @websql
   readonly realtimeNodeJs: RealtimeNodejs;
   //#endregion
-  constructor(
-    private config: Models.ContextOptions<any, any, any, any, any>
-  ) {
+  constructor(private config: Models.ContextOptions<any, any, any, any, any>) {
     this.config = config;
-    this.displayServerLogs = !_.isUndefined(config.serverLogs) ? config.serverLogs : !config.productionMode;
+    this.displayServerLogs = !_.isUndefined(config.serverLogs)
+      ? config.serverLogs
+      : !config.productionMode;
 
     //#region resolve mode
     if (config.host) {
@@ -115,9 +128,13 @@ export class EndpointContext {
     }
     if (config.remoteHost) {
       if (config.host) {
-        Helpers.error(`[firedev] You can't have remoteHost and host at the same time`, false, true);
+        Helpers.error(
+          `[firedev] You can't have remoteHost and host at the same time`,
+          false,
+          true,
+        );
       }
-      this.mode = 'remote-backend(tcp+udp)'
+      this.mode = 'remote-backend(tcp+udp)';
     }
 
     if (config.useIpcWhenElectron && Helpers.isElectron) {
@@ -125,7 +142,11 @@ export class EndpointContext {
     }
 
     if (!this.mode && !config.abstract) {
-      Helpers.error(`[firedev] Context "${this.contextName}": You need to provide host or remoteHost or useIpcWhenElectron`, false, true);
+      Helpers.error(
+        `[firedev] Context "${this.contextName}": You need to provide host or remoteHost or useIpcWhenElectron`,
+        false,
+        true,
+      );
     }
     //#endregion
 
@@ -133,7 +154,9 @@ export class EndpointContext {
     if (config.database === true) {
       this.databaseConfig = this.getAutoGeneratedConfig();
     } else if (_.isObject(config.database)) {
-      this.databaseConfig = _.cloneDeep(config.database) as Models.DatabaseConfig;
+      this.databaseConfig = _.cloneDeep(
+        config.database,
+      ) as Models.DatabaseConfig;
     }
     //#endregion
 
@@ -157,16 +180,28 @@ export class EndpointContext {
     config.providers = config.providers || {};
 
     config.entities = this.cloneClassesObjWithNewMetadata({
-      classesInput: config.entities, config, ctx: this, classType: Models.ClassType.ENTITY,
+      classesInput: config.entities,
+      config,
+      ctx: this,
+      classType: Models.ClassType.ENTITY,
     });
     config.controllers = this.cloneClassesObjWithNewMetadata({
-      classesInput: config.controllers, config, ctx: this, classType: Models.ClassType.CONTROLLER,
+      classesInput: config.controllers,
+      config,
+      ctx: this,
+      classType: Models.ClassType.CONTROLLER,
     });
     config.repositories = this.cloneClassesObjWithNewMetadata({
-      classesInput: config.repositories, config, ctx: this, classType: Models.ClassType.REPOSITORY,
+      classesInput: config.repositories,
+      config,
+      ctx: this,
+      classType: Models.ClassType.REPOSITORY,
     });
     config.providers = this.cloneClassesObjWithNewMetadata({
-      classesInput: config.providers, config, ctx: this, classType: Models.ClassType.PROVIDER,
+      classesInput: config.providers,
+      config,
+      ctx: this,
+      classType: Models.ClassType.PROVIDER,
     });
     //#endregion
 
@@ -180,7 +215,6 @@ export class EndpointContext {
     this.createInstances(config.controllers, Models.ClassType.CONTROLLER);
     this.createInstances(config.repositories, Models.ClassType.REPOSITORY);
 
-
     //#endregion
 
     //#region prepares server
@@ -189,12 +223,20 @@ export class EndpointContext {
       this.expressApp = express();
 
       this.initMidleware();
-      this.serverTcpUdp = this.isHttpServer ? (new https.Server({
-        key: config.https?.key,
-        cert: config.https?.cert
-      }, this.expressApp)) : (new http.Server(this.expressApp));
+      this.serverTcpUdp = this.isHttpServer
+        ? new https.Server(
+            {
+              key: config.https?.key,
+              cert: config.https?.cert,
+            },
+            this.expressApp,
+          )
+        : new http.Server(this.expressApp);
       this.publicAssets.forEach(asset => {
-        this.expressApp.use(asset.serverPath, express.static(asset.locationOnDisk))
+        this.expressApp.use(
+          asset.serverPath,
+          express.static(asset.locationOnDisk),
+        );
       });
       //#endregion
     }
@@ -228,13 +270,14 @@ export class EndpointContext {
         logging: true,
         databasePort: 3306,
         databaseHost: 'localhost',
-        databaseUsername: "root",
-        databasePassword: "admin",
-      }
+        databaseUsername: 'root',
+        databasePassword: 'admin',
+      };
     } else {
-      Helpers.info(`[firedev][database] Automatically resolving database config for mode ${this.mode}`);
+      Helpers.info(
+        `[firedev][database] Automatically resolving database config for mode ${this.mode}`,
+      );
       switch (this.mode) {
-
         //#region resolve database config for mode backend-frontend(tcp+udp)
         case 'backend-frontend(ipc-electron)':
           return {
@@ -244,7 +287,7 @@ export class EndpointContext {
             synchronize: true,
             dropSchema: true,
             logging: false,
-          }
+          };
           break;
         //#endregion
 
@@ -253,7 +296,7 @@ export class EndpointContext {
           databaseConfig = {
             location: `tmp-db-${_.kebabCase(this.contextName)}.sqljs`,
             type: 'sqljs',
-            useLocalForage: !!window['localforage'],
+            useLocalForage: true, // !!window['localforage'], // TODO this need to be checked in runtime
             autoSave: true,
             synchronize: true,
             dropSchema: true,
@@ -262,7 +305,7 @@ export class EndpointContext {
 
           if (FiredevAdmin.Instance.keepWebsqlDbDataAfterReload) {
             databaseConfig.dropSchema = false;
-            delete databaseConfig.synchronize // false is not auto synchonize - from what I understand
+            delete databaseConfig.synchronize; // false is not auto synchonize - from what I understand
           } else {
             databaseConfig.dropSchema = true;
             databaseConfig.synchronize = true;
@@ -280,7 +323,7 @@ export class EndpointContext {
             synchronize: true,
             dropSchema: true,
             logging: false,
-          }
+          };
           break;
         //#endregion
       }
@@ -323,7 +366,8 @@ export class EndpointContext {
     const routes = [];
 
     app._router?.stack.forEach(function (middleware) {
-      if (middleware.route) { // routes registered directly on the app
+      if (middleware.route) {
+        // routes registered directly on the app
         const methods = [];
         for (let method in middleware.route.methods) {
           if (middleware.route.methods[method]) {
@@ -331,7 +375,8 @@ export class EndpointContext {
           }
         }
         routes.push({ path: middleware.route.path, methods: methods });
-      } else if (middleware.name === 'router') { // router middleware
+      } else if (middleware.name === 'router') {
+        // router middleware
         middleware.handle.stack.forEach(function (handler) {
           const methods = [];
           for (let method in handler.route.methods) {
@@ -351,12 +396,18 @@ export class EndpointContext {
 
   //#region methods & getters / mode allows database creation
   get modeAllowsDatabaseCreation() {
-    return this.mode === 'backend-frontend(tcp+udp)' || this.mode === 'backend-frontend(websql)' || this.mode === 'backend-frontend(ipc-electron)';
+    return (
+      this.mode === 'backend-frontend(tcp+udp)' ||
+      this.mode === 'backend-frontend(websql)' ||
+      this.mode === 'backend-frontend(ipc-electron)'
+    );
   }
   //#endregion
 
   //#region methods & getters / clone class
-  private cloneClassWithNewMetadata = <T extends { new(...args: any[]): any }>({
+  private cloneClassWithNewMetadata = <
+    T extends { new (...args: any[]): any },
+  >({
     BaseClass,
     className,
     config,
@@ -366,8 +417,8 @@ export class EndpointContext {
     BaseClass: T;
     className: string;
     config: Models.ContextOptions<any, any, any, any, any>;
-    ctx: EndpointContext,
-    classType: Models.ClassType,
+    ctx: EndpointContext;
+    classType: Models.ClassType;
   }): T => {
     // Return a new class that extends the base class
     return class extends BaseClass {
@@ -377,7 +428,7 @@ export class EndpointContext {
       // You can override prototype properties or methods here if needed
       // static properties override allowed
     };
-  }
+  };
 
   //#endregion
 
@@ -390,15 +441,18 @@ export class EndpointContext {
   }: {
     classesInput: any;
     config: Models.ContextOptions<any, any, any, any, any>;
-    ctx: EndpointContext,
-    classType: Models.ClassType,
+    ctx: EndpointContext;
+    classType: Models.ClassType;
   }) => {
     const classes = {};
     // console.log(Object.keys(classesInput))
     for (const key of Object.keys(classesInput || {})) {
       const BaseClass = classesInput[key];
 
-      let className = Reflect.getMetadata(Symbols.metadata.className, BaseClass);
+      let className = Reflect.getMetadata(
+        Symbols.metadata.className,
+        BaseClass,
+      );
       // console.log('Metadata className', className, BaseClass);
       className = className || key;
       BaseClass[Symbols.classNameStaticProperty] = className;
@@ -413,16 +467,26 @@ export class EndpointContext {
       classes[className] = clonedClass;
     }
     return classes;
-  }
+  };
   //#endregion
 
   //#region methods & getters / get recrusive classes from contexts
-  private getRecrusiveClassesfromContexts(classType: Models.ClassType, arr = []) {
-    for (const ctx of Object.values(this.config.contexts || {}) as ReturnType<typeof createContext>[]) {
+  private getRecrusiveClassesfromContexts(
+    classType: Models.ClassType,
+    arr = [],
+  ) {
+    for (const ctx of Object.values(this.config.contexts || {}) as ReturnType<
+      typeof createContext
+    >[]) {
       const classesInput = ctx.ref.getClassFunBy(classType);
-      const clonedClasses = Object.values(this.cloneClassesObjWithNewMetadata({
-        classesInput, config: this.config, ctx: this, classType,
-      }));
+      const clonedClasses = Object.values(
+        this.cloneClassesObjWithNewMetadata({
+          classesInput,
+          config: this.config,
+          ctx: this,
+          classType,
+        }),
+      );
       // console.log('clonedClasses', clonedClasses);
       clonedClasses.forEach(c => arr.push(c));
 
@@ -462,13 +526,13 @@ export class EndpointContext {
   getClassFunBy(classType: Models.ClassType) {
     switch (classType) {
       case Models.ClassType.CONTROLLER:
-        return this.config.controllers
+        return this.config.controllers;
       case Models.ClassType.ENTITY:
-        return this.config.entities
+        return this.config.entities;
       case Models.ClassType.PROVIDER:
-        return this.config.providers
+        return this.config.providers;
       case Models.ClassType.REPOSITORY:
-        return this.config.repositories
+        return this.config.repositories;
     }
   }
 
@@ -479,11 +543,15 @@ export class EndpointContext {
 
   //#region methods & getters / create class instances
   private createInstances(classes: any, classType: Models.ClassType) {
-    const recrusiveValuesFromContext = this.getRecrusiveClassesfromContexts(classType);
+    const recrusiveValuesFromContext =
+      this.getRecrusiveClassesfromContexts(classType);
     // console.log(this.config.contexts);
     // console.log('recrusiveValuesFromContext', recrusiveValuesFromContext);
 
-    for (const classFn of [...recrusiveValuesFromContext, ...Object.values(classes)]) {
+    for (const classFn of [
+      ...recrusiveValuesFromContext,
+      ...Object.values(classes),
+    ]) {
       const instance = DIFiredevContainer.resolve(classFn as any) as any;
       const classInstancesByNameObj = this.classInstancesByNameObj[classType];
       const className = ClassHelpers.getName(classFn);
@@ -499,62 +567,78 @@ export class EndpointContext {
 
   //#region methods & getters / reinit controllers db example data
   async reinitControllers() {
-    for (const ctrl of this.getClassesInstancesArrBy(Models.ClassType.CONTROLLER)) {
+    for (const ctrl of this.getClassesInstancesArrBy(
+      Models.ClassType.CONTROLLER,
+    )) {
       if (_.isFunction(ctrl.initExampleDbData)) {
         await Helpers.runSyncOrAsync({
           functionFn: ctrl.initExampleDbData,
-          context: ctrl
+          context: ctrl,
         });
       }
     }
   }
   async initClasses() {
-    for (const classTypeName of [Models.ClassType.PROVIDER, Models.ClassType.REPOSITORY, , Models.ClassType.CONTROLLER, Models.ClassType.ENTITY]) {
+    for (const classTypeName of [
+      Models.ClassType.PROVIDER,
+      Models.ClassType.REPOSITORY,
+      ,
+      Models.ClassType.CONTROLLER,
+      Models.ClassType.ENTITY,
+    ]) {
       //#region init class staict _ property
       for (const classFun of this.getClassFunByArr(classTypeName) as any[]) {
         if (_.isFunction(classFun._)) {
           await Helpers.runSyncOrAsync({
             functionFn: classFun._,
-            context: classFun
+            context: classFun,
           });
         }
       }
       //#endregion
     }
 
-    for (const classTypeName of [Models.ClassType.PROVIDER, Models.ClassType.REPOSITORY, Models.ClassType.CONTROLLER]) {
+    for (const classTypeName of [
+      Models.ClassType.PROVIDER,
+      Models.ClassType.REPOSITORY,
+      Models.ClassType.CONTROLLER,
+    ]) {
       //#region init providers, repositories  _ property
       for (const ctrl of this.getClassesInstancesArrBy(classTypeName)) {
         if (_.isFunction(ctrl._)) {
           await Helpers.runSyncOrAsync({
             functionFn: ctrl._,
-            context: ctrl
+            context: ctrl,
           });
         }
       }
       //#endregion
     }
-
   }
   //#endregion
 
   //#region methods & getters / is active on
   isActiveOn(classInstance: object): boolean {
-    let contextRef: EndpointContext = classInstance[Symbols.ctxInClassOrClassObj];
+    let contextRef: EndpointContext =
+      classInstance[Symbols.ctxInClassOrClassObj];
     return this === contextRef;
   }
   //#endregion
 
   //#region methods & getters / uri
   get uri() {
-    const url = this.host ? new URL(this.host) : (this.remoteHost ? new URL(this.remoteHost) : void 0);
+    const url = this.host
+      ? new URL(this.host)
+      : this.remoteHost
+        ? new URL(this.remoteHost)
+        : void 0;
     return url;
   }
   //#endregion
 
   //#region methods & getters / is https server
   get isHttpServer() {
-    return (this.uri.protocol === 'https:');
+    return this.uri.protocol === 'https:';
   }
   //#endregion
 
@@ -614,144 +698,129 @@ export class EndpointContext {
       //#region sub
       const sub = {
         listenTo() {
-          return Entity
+          return Entity;
         },
         /**
          * Called after entity is loaded.
          */
-        afterLoad(entity: any) { // TOOD this triggers too much
+        afterLoad(entity: any) {
+          // TOOD this triggers too much
           // notifyFn(`AFTER ENTITY LOADED: `, entity)
-        }
+        },
 
         /**
          * Called before post insertion.
-         */,
-        beforeInsert(event: InsertEvent<any>) {
-          notifyFn(`BEFORE POST INSERTED: `, event.entity)
-        }
+         */ beforeInsert(event: InsertEvent<any>) {
+          notifyFn(`BEFORE POST INSERTED: `, event.entity);
+        },
 
         /**
          * Called after entity insertion.
-         */,
-        afterInsert(event: InsertEvent<any>) {
-          notifyFn(`AFTER ENTITY INSERTED: `, event.entity)
-        }
+         */ afterInsert(event: InsertEvent<any>) {
+          notifyFn(`AFTER ENTITY INSERTED: `, event.entity);
+        },
 
         /**
          * Called before entity update.
-         */,
-        beforeUpdate(event: UpdateEvent<any>) {
-          notifyFn(`BEFORE ENTITY UPDATED: `, event.entity)
-        }
+         */ beforeUpdate(event: UpdateEvent<any>) {
+          notifyFn(`BEFORE ENTITY UPDATED: `, event.entity);
+        },
 
         /**
          * Called after entity update.
-         */,
-        afterUpdate(event: UpdateEvent<any>) {
-          notifyFn(`AFTER ENTITY UPDATED: `, event.entity)
-        }
+         */ afterUpdate(event: UpdateEvent<any>) {
+          notifyFn(`AFTER ENTITY UPDATED: `, event.entity);
+        },
 
         /**
          * Called before entity removal.
-         */,
-        beforeRemove(event: RemoveEvent<any>) {
+         */ beforeRemove(event: RemoveEvent<any>) {
           notifyFn(
             `BEFORE ENTITY WITH ID ${event.entityId} REMOVED: `,
             event.entity,
-          )
-        }
+          );
+        },
 
         /**
          * Called after entity removal.
-         */,
-        afterRemove(event: RemoveEvent<any>) {
+         */ afterRemove(event: RemoveEvent<any>) {
           notifyFn(
             `AFTER ENTITY WITH ID ${event.entityId} REMOVED: `,
             event.entity,
-          )
-        }
+          );
+        },
 
         /**
          * Called before entity removal.
-         */,
-        beforeSoftRemove(event: SoftRemoveEvent<any>) {
+         */ beforeSoftRemove(event: SoftRemoveEvent<any>) {
           notifyFn(
             `BEFORE ENTITY WITH ID ${event.entityId} SOFT REMOVED: `,
             event.entity,
-          )
-        }
+          );
+        },
 
         /**
          * Called after entity removal.
-         */,
-        afterSoftRemove(event: SoftRemoveEvent<any>) {
+         */ afterSoftRemove(event: SoftRemoveEvent<any>) {
           notifyFn(
             `AFTER ENTITY WITH ID ${event.entityId} SOFT REMOVED: `,
             event.entity,
-          )
-        }
+          );
+        },
 
         /**
          * Called before entity recovery.
-         */,
-        beforeRecover(event: RecoverEvent<any>) {
+         */ beforeRecover(event: RecoverEvent<any>) {
           notifyFn(
             `BEFORE ENTITY WITH ID ${event.entityId} RECOVERED: `,
             event.entity,
-          )
-        }
+          );
+        },
 
         /**
          * Called after entity recovery.
-         */,
-        afterRecover(event: RecoverEvent<any>) {
+         */ afterRecover(event: RecoverEvent<any>) {
           notifyFn(
             `AFTER ENTITY WITH ID ${event.entityId} RECOVERED: `,
             event.entity,
-          )
-        }
+          );
+        },
 
         /**
          * Called before transaction start.
-         */,
-        beforeTransactionStart(event: TransactionStartEvent) {
-          notifyFn(`BEFORE TRANSACTION STARTED: `, event)
-        }
+         */ beforeTransactionStart(event: TransactionStartEvent) {
+          notifyFn(`BEFORE TRANSACTION STARTED: `, event);
+        },
 
         /**
          * Called after transaction start.
-         */,
-        afterTransactionStart(event: TransactionStartEvent) {
-          notifyFn(`AFTER TRANSACTION STARTED: `, event)
-        }
+         */ afterTransactionStart(event: TransactionStartEvent) {
+          notifyFn(`AFTER TRANSACTION STARTED: `, event);
+        },
 
         /**
          * Called before transaction commit.
-         */,
-        beforeTransactionCommit(event: TransactionCommitEvent) {
-          notifyFn(`BEFORE TRANSACTION COMMITTED: `, event)
-        }
+         */ beforeTransactionCommit(event: TransactionCommitEvent) {
+          notifyFn(`BEFORE TRANSACTION COMMITTED: `, event);
+        },
 
         /**
          * Called after transaction commit.
-         */,
-        afterTransactionCommit(event: TransactionCommitEvent) {
-          notifyFn(`AFTER TRANSACTION COMMITTED: `, event)
-        }
+         */ afterTransactionCommit(event: TransactionCommitEvent) {
+          notifyFn(`AFTER TRANSACTION COMMITTED: `, event);
+        },
 
         /**
          * Called before transaction rollback.
-         */,
-        beforeTransactionRollback(event: TransactionRollbackEvent) {
-          notifyFn(`BEFORE TRANSACTION ROLLBACK: `, event)
-        }
+         */ beforeTransactionRollback(event: TransactionRollbackEvent) {
+          notifyFn(`BEFORE TRANSACTION ROLLBACK: `, event);
+        },
 
         /**
          * Called after transaction rollback.
-         */,
-        afterTransactionRollback(event: TransactionRollbackEvent) {
-          notifyFn(`AFTER TRANSACTION ROLLBACK: `, event)
-        }
+         */ afterTransactionRollback(event: TransactionRollbackEvent) {
+          notifyFn(`AFTER TRANSACTION ROLLBACK: `, event);
+        },
       };
       //#endregion
 
@@ -766,12 +835,19 @@ export class EndpointContext {
     //#region @websql
     const entities = this.getClassFunByArr(Models.ClassType.ENTITY);
     for (const entity of entities) {
-      const options = Reflect.getMetadata(Symbols.metadata.options.entity, entity) as FiredevEntityOptions;
-      const createTable = _.isUndefined(options.createTable) ? true : options.createTable;
+      const options = Reflect.getMetadata(
+        Symbols.metadata.options.entity,
+        entity,
+      ) as FiredevEntityOptions;
+      const createTable = _.isUndefined(options.createTable)
+        ? true
+        : options.createTable;
       const nameForEntity = ClassHelpers.getName(entity);
-      Helpers.info(`[firedev][typeorm] create table for entity  ${nameForEntity} ? '${createTable}'`);
+      Helpers.info(
+        `[firedev][typeorm] create table for entity  ${nameForEntity} ? '${createTable}'`,
+      );
       if (_.isUndefined(options.createTable) ? true : options.createTable) {
-        TypeormEntity(nameForEntity)(entity)
+        TypeormEntity(nameForEntity)(entity);
       }
     }
     //#endregion
@@ -783,24 +859,28 @@ export class EndpointContext {
   async initDatabaseConnection() {
     //#region @websqlFunc
     const entities = this.getClassFunByArr(Models.ClassType.ENTITY);
-    const dataSourceDbConfig = _.isObject(this.databaseConfig) ? ({
-      type: this.databaseConfig.type,
-      port: this.databaseConfig.databasePort,
-      host: this.databaseConfig.databaseHost,
-      database: this.databaseConfig.database as any,
-      username: this.databaseConfig.databaseUsername,
-      password: this.databaseConfig.databasePassword,
-      entities,
-      synchronize: this.databaseConfig.synchronize,
-      autoSave: this.databaseConfig.autoSave,
-      dropSchema: this.databaseConfig.dropSchema,
-      logging: !!this.databaseConfig.logging,
-      location: this.databaseConfig.location,
-    } as DataSourceOptions) : {} as DataSourceOptions;
+    const dataSourceDbConfig = _.isObject(this.databaseConfig)
+      ? ({
+          type: this.databaseConfig.type,
+          port: this.databaseConfig.databasePort,
+          host: this.databaseConfig.databaseHost,
+          database: this.databaseConfig.database as any,
+          username: this.databaseConfig.databaseUsername,
+          password: this.databaseConfig.databasePassword,
+          useLocalForage: this.databaseConfig.useLocalForage,
+          entities,
+          synchronize: this.databaseConfig.synchronize,
+          autoSave: this.databaseConfig.autoSave,
+          dropSchema: this.databaseConfig.dropSchema,
+          logging: !!this.databaseConfig.logging,
+          location: this.databaseConfig.location,
+        } as DataSourceOptions)
+      : ({} as DataSourceOptions);
 
     if (this.modeAllowsDatabaseCreation && this.databaseConfig) {
       Helpers.info('[firedev][database] prepare typeorm connection...');
       try {
+
         const connection = new DataSource(dataSourceDbConfig);
         this.connection = connection;
         await this.connection.initialize();
@@ -809,12 +889,15 @@ export class EndpointContext {
       }
 
       if (!this.connection?.isInitialized) {
+        console.log('CONFIG', dataSourceDbConfig);
         throw new Error(`Something wrong with connection init in ${this.mode}`);
         //#region @backend
         process.exit(1);
         //#endregion
       }
-      Helpers.info(`[firedev][typeorm] db prepration done.. db initialize=${this.connection?.isInitialized}`);
+      Helpers.info(
+        `[firedev][typeorm] db prepration done.. db initialize=${this.connection?.isInitialized}`,
+      );
     } else {
       Helpers.info(`[firedev][typeorm] Not initing db for mode ${this.mode}`);
     }
@@ -828,63 +911,64 @@ export class EndpointContext {
     const allControllers = this.getClassFunByArr(Models.ClassType.CONTROLLER);
     // console.log('allControllers', allControllers)11
     for (const controllerClassFn of allControllers) {
-
       const configs = ClassHelpers.getControllerConfigs(controllerClassFn);
       // console.log(`Class config for ${ClassHelpers.getName(controllerClassFn)}`, configs)
       const classConfig: Models.RuntimeControllerConfig = configs[0];
 
-      const parentscalculatedPath = _
-        .slice(configs, 1)
+      const parentscalculatedPath = _.slice(configs, 1)
         .reverse()
         .map(bc => {
           if (FiredevHelpers.isGoodPath(bc.path)) {
-            return bc.path
+            return bc.path;
           }
           return bc.className;
         })
-        .join('/')
+        .join('/');
 
       if (FiredevHelpers.isGoodPath(classConfig.path)) {
         classConfig.calculatedPath = classConfig.path;
       } else {
-        classConfig.calculatedPath = `${parentscalculatedPath}/${ClassHelpers.getName(controllerClassFn)}`
-          .replace(/\/\//g, '/').split('/').reduce((acc, bc) => {
-            return _.last(acc) === bc ? acc : [...acc, bc];
-          }, []).join('/');
+        classConfig.calculatedPath =
+          `${parentscalculatedPath}/${ClassHelpers.getName(controllerClassFn)}`
+            .replace(/\/\//g, '/')
+            .split('/')
+            .reduce((acc, bc) => {
+              return _.last(acc) === bc ? acc : [...acc, bc];
+            }, [])
+            .join('/');
       }
 
       _.slice(configs, 1).forEach(bc => {
         const alreadyIs = classConfig.methods;
-        const toMerge = _.cloneDeep(bc.methods)
+        const toMerge = _.cloneDeep(bc.methods);
         for (const key in toMerge) {
           if (toMerge.hasOwnProperty(key) && !alreadyIs[key]) {
             const element = toMerge[key];
             alreadyIs[key] = element;
           }
         }
-      })
+      });
 
       //#region @backend
       if (!Helpers.isRunningIn.cliMode()) {
         //#endregion
-        console.groupCollapsed(`[firedev][express-server] routes [${classConfig.className}]`);
+        console.groupCollapsed(
+          `[firedev][express-server] routes [${classConfig.className}]`,
+        );
         //#region @backend
       }
       //#endregion
 
       Object.keys(classConfig.methods).forEach(methodName => {
-        const methodConfig: Models.MethodConfig = classConfig.methods[methodName];
+        const methodConfig: Models.MethodConfig =
+          classConfig.methods[methodName];
         const type: Models.Http.Rest.HttpMethod = methodConfig.type;
         const expressPath = methodConfig.global
           ? `/${methodConfig.path?.replace(/\//, '')}`
           : FiredevHelpers.getExpressPath(classConfig, methodConfig);
 
         // console.log({ expressPath })
-        if (Helpers.isNode
-          //#region @websqlOnly
-          || Helpers.isWebSQL
-          //#endregion
-        ) {
+        if (Helpers.isNode || Helpers.isWebSQL) {
           //#region @websql
 
           const { routePath, method } = this.initServer(
@@ -897,20 +981,13 @@ export class EndpointContext {
 
           this.activeRoutes.push({
             routePath,
-            method
+            method,
           });
           //#endregion
         }
 
-        if (Helpers.isBrowser
-          //#region @backend
-          || this.remoteHost
-          //#endregion
-          //#region @websqlOnly
-          || Helpers.isWebSQL
-          //#endregion
-        ) {
-          this.initClient(controllerClassFn, type, methodConfig, expressPath)
+        if (Helpers.isBrowser || this.remoteHost || Helpers.isWebSQL) {
+          this.initClient(controllerClassFn, type, methodConfig, expressPath);
         }
       });
 
@@ -921,8 +998,6 @@ export class EndpointContext {
         //#region @backend
       }
       //#endregion
-
-
     }
   }
   //#endregion
@@ -933,29 +1008,32 @@ export class EndpointContext {
     //#region @websql
 
     const troutes = this.activeRoutes.map(({ method, routePath }) => {
-      return FiredevHelpers.fillUpTo(method.toUpperCase() + ':', 10)
-        + this.uri.href.replace(/\/$/, '') + routePath;
+      return (
+        FiredevHelpers.fillUpTo(method.toUpperCase() + ':', 10) +
+        this.uri.href.replace(/\/$/, '') +
+        routePath
+      );
 
       // return `${FiredevHelpers.string(method.toUpperCase() + ':')
       // .fillUpTo(10)}${context.uri.href.replace(/\/$/, '')}${routePath}`
     });
     const routes = [
-      ...(['', `---------- FOR HOST ${this.uri.href} ----------`]),
+      ...['', `---------- FOR HOST ${this.uri.href} ----------`],
       ...troutes,
     ];
     const fileName = path.join(
       //#region @backend
       process.cwd(),
       //#endregion
-      `tmp-routes-${_.kebabCase(this.config.contextName)}.json`
-    )
+      `tmp-routes-${_.kebabCase(this.config.contextName)}.json`,
+    );
 
-    Helpers.log(`[firedev] routes file: ${fileName} `)
+    Helpers.log(`[firedev] routes file: ${fileName} `);
     // Helpers.log(JSON.stringify(routes, null, 4))
     //#region @backend
     fse.writeJSONSync(fileName, routes, {
       spaces: 2,
-      encoding: 'utf8'
+      encoding: 'utf8',
     });
     //#endregion
     //#endregion
@@ -985,37 +1063,43 @@ export class EndpointContext {
       res.send(`Hello, world from context ${this.contextName}`);
     });
 
-    app.use(fileUpload())
+    app.use(fileUpload());
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(bodyParser.json());
     app.use(methodOverride());
     app.use(cookieParser());
 
     if (this.session) {
-      Helpers.info('[firedev][express-server] session enabled for this context ' + this.contextName);
+      Helpers.info(
+        '[firedev][express-server] session enabled for this context ' +
+          this.contextName,
+      );
       const { frontendHost, cookieMaxAge } = this.session;
 
       const sessionObj = {
         frontendHost,
-        secret: "mysecretsessioncookithing",
+        secret: 'mysecretsessioncookithing',
         saveUninitialized: true,
         cookieMaxAge,
         secure: frontendHost.startsWith('https://'),
         resave: false,
       } as Models.ISession;
 
-      app.use(cors({
-        credentials: true,
-        origin: this.session.frontendHost,
-      }));
+      app.use(
+        cors({
+          credentials: true,
+          origin: this.session.frontendHost,
+        }),
+      );
       app.use(expressSession(sessionObj));
     } else {
-      Helpers.info(`[firedev][express-server] session not enabled for this context '${this.contextName}'`);
-      app.use(cors())
+      Helpers.info(
+        `[firedev][express-server] session not enabled for this context '${this.contextName}'`,
+      );
+      app.use(cors());
     }
 
     (() => {
-
       app.use((req, res, next) => {
         //#region good for cors session obj
         // if (this.context.session) {
@@ -1031,7 +1115,8 @@ export class EndpointContext {
         // }
         //#endregion
 
-        res.set('Access-Control-Expose-Headers',
+        res.set(
+          'Access-Control-Expose-Headers',
           [
             'Content-Type',
             'Authorization',
@@ -1039,11 +1124,12 @@ export class EndpointContext {
             Symbols.old.X_TOTAL_COUNT,
             Symbols.old.MAPPING_CONFIG_HEADER,
             Symbols.old.CIRCURAL_OBJECTS_MAP_BODY,
-            Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM
-          ].join(', '))
+            Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM,
+          ].join(', '),
+        );
         next();
       });
-    })()
+    })();
     //#endregion
   }
   //#endregion
@@ -1055,64 +1141,79 @@ export class EndpointContext {
     methodConfig: Models.MethodConfig,
     classConfig: Models.RuntimeControllerConfig,
     expressPath: string,
-    target: Function
+    target: Function,
     //#endregion
   ): any {
-
-
     //#region resolve variables
     //#region @websql
-    const requestHandler = (methodConfig.requestHandler && typeof methodConfig.requestHandler === 'function')
-      ? methodConfig.requestHandler : (req, res, next) => { next() };
+    const requestHandler =
+      methodConfig.requestHandler &&
+      typeof methodConfig.requestHandler === 'function'
+        ? methodConfig.requestHandler
+        : (req, res, next) => {
+            next();
+          };
     //#endregion
-
 
     const url = this.uri;
 
     //#region get result
     const getResult = async (resolvedParams, req, res) => {
-      const response: Models.Http.Response<any> = methodConfig.descriptor.value.apply(
-        /**
-         * Context for method @GET,@PUT etc.
-         */
-        this.getInstanceBy(target as any),
-        /**
-         * Params for metjod @GET, @PUT etc.
-         */
-        resolvedParams
-      );
+      const response: Models.Http.Response<any> =
+        methodConfig.descriptor.value.apply(
+          /**
+           * Context for method @GET,@PUT etc.
+           */
+          this.getInstanceBy(target as any),
+          /**
+           * Params for metjod @GET, @PUT etc.
+           */
+          resolvedParams,
+        );
       let result = await getResponseValue(response, { req, res });
       return result;
-    }
+    };
     //#endregion
 
     url.pathname = url.pathname.replace(/\/$/, '');
-    expressPath = url.pathname.startsWith('/') ? `${url.pathname}${expressPath}` : expressPath;
-    expressPath = expressPath.replace(/\/\//g, '/')
+    expressPath = url.pathname.startsWith('/')
+      ? `${url.pathname}${expressPath}`
+      : expressPath;
+    expressPath = expressPath.replace(/\/\//g, '/');
     // console.log(`BACKEND: expressPath: ${ expressPath } `)
     //#endregion
 
     if (Helpers.isElectron) {
       //#region @backend
-      const ipcKeyName = FiredevHelpers.ipcKeyNameRequest(target, methodConfig, expressPath);
+      const ipcKeyName = FiredevHelpers.ipcKeyNameRequest(
+        target,
+        methodConfig,
+        expressPath,
+      );
       Helpers.ipcMain.on(ipcKeyName, async (event, paramsFromBrowser) => {
-        const responseJsonData = await getResult(paramsFromBrowser, void 0, void 0,)
-        event.sender.send(FiredevHelpers.ipcKeyNameResponse(target, methodConfig, expressPath), responseJsonData);
+        const responseJsonData = await getResult(
+          paramsFromBrowser,
+          void 0,
+          void 0,
+        );
+        event.sender.send(
+          FiredevHelpers.ipcKeyNameResponse(target, methodConfig, expressPath),
+          responseJsonData,
+        );
       });
       return {
         routePath: expressPath,
-        method: methodConfig.type
-      }
+        method: methodConfig.type,
+      };
       //#endregion
     }
 
     if (!this.remoteHost) {
-
       //#region apply dummy websql express routers
       //#region @websql
       if (Helpers.isWebSQL) {
         if (!this.expressApp[type.toLowerCase()]) {
-          this.expressApp[type.toLowerCase()] = () => { }
+          this.expressApp[type.toLowerCase()] = () => {};
         }
       }
       //#endregion
@@ -1120,173 +1221,226 @@ export class EndpointContext {
 
       //#region @backend
       console.log(`[${type.toUpperCase()}] ${expressPath} `);
-      this.expressApp[type.toLowerCase()](expressPath, requestHandler, async (req, res) => {
-        // console.log(`[${type.toUpperCase()}] ${expressPath} `);
-        //#region process params
-        const args: any[] = [];
+      this.expressApp[type.toLowerCase()](
+        expressPath,
+        requestHandler,
+        async (req, res) => {
+          // console.log(`[${type.toUpperCase()}] ${expressPath} `);
+          //#region process params
+          const args: any[] = [];
 
-        let tBody = req.body;
-        let tParams = req.params;
-        let tQuery = req.query;
+          let tBody = req.body;
+          let tParams = req.params;
+          let tQuery = req.query;
 
-        if (req.headers[Symbols.old.CIRCURAL_OBJECTS_MAP_BODY]) {
-          try {
-            tBody = JSON.parse(JSON.stringify(tBody), JSON.parse(req.headers[Symbols.old.CIRCURAL_OBJECTS_MAP_BODY]));
-          } catch (e) { }
-        }
-
-        if (req.headers[Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM]) {
-          try {
-            tQuery = JSON.parse(JSON.stringify(tQuery), JSON.parse(req.headers[Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM]));
-          } catch (e) { }
-        }
-
-        // make class instance from body
-        // console.log('req.headers', req.headers)
-        if (req.headers[Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS]) {
-          try {
-            const entity = JSON.parse(req.headers[Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS]);
-            tBody = Mapping.encode(tBody, entity);
-          } catch (e) { }
-        } else {
-          Object.keys(tBody).forEach(paramName => {
+          if (req.headers[Symbols.old.CIRCURAL_OBJECTS_MAP_BODY]) {
             try {
-              const entityForParam = JSON.parse(req.headers[`${Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS}${paramName} `]);
-              tBody[paramName] = Mapping.encode(tBody[paramName], entityForParam);
-            } catch (e) { }
-          })
-        }
+              tBody = JSON.parse(
+                JSON.stringify(tBody),
+                JSON.parse(req.headers[Symbols.old.CIRCURAL_OBJECTS_MAP_BODY]),
+              );
+            } catch (e) {}
+          }
 
-        // make class instance from query params
-        // console.log('req.headers', tQuery)
-        if (req.headers[Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS]) {
-
-          try {
-            const entity = JSON.parse(req.headers[Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS]);
-            tQuery = FiredevHelpers.parseJSONwithStringJSONs(Mapping.encode(tQuery, entity));
-          } catch (e) { }
-        } else {
-          Object.keys(tQuery).forEach(queryParamName => {
+          if (req.headers[Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM]) {
             try {
-              const entityForParam = JSON.parse(req.headers[`${Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${queryParamName} `]);
-              let beforeTransofrm = tQuery[queryParamName];
-              if (_.isString(beforeTransofrm)) {
-                try {
-                  const paresed = FiredevHelpers.tryTransformParam(beforeTransofrm)
-                  beforeTransofrm = paresed;
-                } catch (e) { }
-              }
-              const afterEncoding = Mapping.encode(beforeTransofrm, entityForParam);
-              tQuery[queryParamName] = FiredevHelpers.parseJSONwithStringJSONs(afterEncoding);
-            } catch (e) { }
-          });
-        }
-
-        Object.keys(methodConfig.parameters).forEach(paramName => {
-          let p: Models.Http.Rest.ParamConfig = methodConfig.parameters[paramName];
-          if (p.paramType === 'Path' && tParams) {
-            args.push(tParams[p.paramName])
-          }
-          if (p.paramType === 'Query' && tQuery) {
-            if (p.paramName) {
-              args.push(tQuery[p.paramName])
-            } else {
-              args.push(tQuery);
-            }
+              tQuery = JSON.parse(
+                JSON.stringify(tQuery),
+                JSON.parse(
+                  req.headers[Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM],
+                ),
+              );
+            } catch (e) {}
           }
 
-          if (p.paramType === 'Header' && req.headers) {
-            args.push(req.headers[p.paramName.toLowerCase()])
-          }
-          if (p.paramType === 'Cookie' && req.cookies) {
-            args.push(req.cookies[p.paramName])
-          }
-          if (p.paramType === 'Body' && tBody) {
-            if (p.paramName && typeof tBody === 'object') {
-              args.push(tBody[p.paramName])
-            } else {
-              args.push(tBody)
-            }
-          }
-        })
-        //#endregion
-
-        const resolvedParams = args.reverse().map(v => FiredevHelpers.tryTransformParam(v));
-
-        try {
-          let result = await getResult(resolvedParams, req, res);
-
-          if (result instanceof Blob && (methodConfig.responseType as ModelsNg2Rest.ResponseTypeAxios) === 'blob') {
-            // console.log('INSTANCE OF BLOB')
-            //#region processs blob result type
-            const blob = result as Blob;
-            const file = Buffer.from(await blob.arrayBuffer());
-            res.writeHead(200, {
-              'Content-Type': blob.type,
-              'Content-Length': file.length
-            });
-            res.end(file);
-            //#endregion
-          } else if (_.isString(result) && (methodConfig.responseType as ModelsNg2Rest.ResponseTypeAxios) === 'blob') {
-            // console.log('BASE64')
-            //#region process string buffer TODO refacetor
-            const img_base64 = result;
-            const m = /^data:(.+?);base64,(.+)$/.exec(img_base64)
-            if (!m) {
-              throw new Error(`[firedev - framework] Not a base64 image[${img_base64}]`)
-            }
-            const [_, content_type, file_base64] = m
-            const file = Buffer.from(file_base64, 'base64')
-
-            res.writeHead(200, {
-              'Content-Type': content_type,
-              'Content-Length': file.length
-            });
-            res.end(file);
-            //#endregion
+          // make class instance from body
+          // console.log('req.headers', req.headers)
+          if (req.headers[Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS]) {
+            try {
+              const entity = JSON.parse(
+                req.headers[Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS],
+              );
+              tBody = Mapping.encode(tBody, entity);
+            } catch (e) {}
           } else {
-            //#region process json request
-            await EntityProcess.init(result, res);
-            //#endregion
+            Object.keys(tBody).forEach(paramName => {
+              try {
+                const entityForParam = JSON.parse(
+                  req.headers[
+                    `${Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS}${paramName} `
+                  ],
+                );
+                tBody[paramName] = Mapping.encode(
+                  tBody[paramName],
+                  entityForParam,
+                );
+              } catch (e) {}
+            });
           }
-        } catch (error) {
-          //#region process error
-          if (_.isString(error)) {
-            res.status(400).send(JSON10.stringify({
-              message: `
+
+          // make class instance from query params
+          // console.log('req.headers', tQuery)
+          if (req.headers[Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS]) {
+            try {
+              const entity = JSON.parse(
+                req.headers[Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS],
+              );
+              tQuery = FiredevHelpers.parseJSONwithStringJSONs(
+                Mapping.encode(tQuery, entity),
+              );
+            } catch (e) {}
+          } else {
+            Object.keys(tQuery).forEach(queryParamName => {
+              try {
+                const entityForParam = JSON.parse(
+                  req.headers[
+                    `${Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${queryParamName} `
+                  ],
+                );
+                let beforeTransofrm = tQuery[queryParamName];
+                if (_.isString(beforeTransofrm)) {
+                  try {
+                    const paresed =
+                      FiredevHelpers.tryTransformParam(beforeTransofrm);
+                    beforeTransofrm = paresed;
+                  } catch (e) {}
+                }
+                const afterEncoding = Mapping.encode(
+                  beforeTransofrm,
+                  entityForParam,
+                );
+                tQuery[queryParamName] =
+                  FiredevHelpers.parseJSONwithStringJSONs(afterEncoding);
+              } catch (e) {}
+            });
+          }
+
+          Object.keys(methodConfig.parameters).forEach(paramName => {
+            let p: Models.Http.Rest.ParamConfig =
+              methodConfig.parameters[paramName];
+            if (p.paramType === 'Path' && tParams) {
+              args.push(tParams[p.paramName]);
+            }
+            if (p.paramType === 'Query' && tQuery) {
+              if (p.paramName) {
+                args.push(tQuery[p.paramName]);
+              } else {
+                args.push(tQuery);
+              }
+            }
+
+            if (p.paramType === 'Header' && req.headers) {
+              args.push(req.headers[p.paramName.toLowerCase()]);
+            }
+            if (p.paramType === 'Cookie' && req.cookies) {
+              args.push(req.cookies[p.paramName]);
+            }
+            if (p.paramType === 'Body' && tBody) {
+              if (p.paramName && typeof tBody === 'object') {
+                args.push(tBody[p.paramName]);
+              } else {
+                args.push(tBody);
+              }
+            }
+          });
+          //#endregion
+
+          const resolvedParams = args
+            .reverse()
+            .map(v => FiredevHelpers.tryTransformParam(v));
+
+          try {
+            let result = await getResult(resolvedParams, req, res);
+
+            if (
+              result instanceof Blob &&
+              (methodConfig.responseType as ModelsNg2Rest.ResponseTypeAxios) ===
+                'blob'
+            ) {
+              // console.log('INSTANCE OF BLOB')
+              //#region processs blob result type
+              const blob = result as Blob;
+              const file = Buffer.from(await blob.arrayBuffer());
+              res.writeHead(200, {
+                'Content-Type': blob.type,
+                'Content-Length': file.length,
+              });
+              res.end(file);
+              //#endregion
+            } else if (
+              _.isString(result) &&
+              (methodConfig.responseType as ModelsNg2Rest.ResponseTypeAxios) ===
+                'blob'
+            ) {
+              // console.log('BASE64')
+              //#region process string buffer TODO refacetor
+              const img_base64 = result;
+              const m = /^data:(.+?);base64,(.+)$/.exec(img_base64);
+              if (!m) {
+                throw new Error(
+                  `[firedev - framework] Not a base64 image[${img_base64}]`,
+                );
+              }
+              const [_, content_type, file_base64] = m;
+              const file = Buffer.from(file_base64, 'base64');
+
+              res.writeHead(200, {
+                'Content-Type': content_type,
+                'Content-Length': file.length,
+              });
+              res.end(file);
+              //#endregion
+            } else {
+              //#region process json request
+              await EntityProcess.init(result, res);
+              //#endregion
+            }
+          } catch (error) {
+            //#region process error
+            if (_.isString(error)) {
+              res.status(400).send(
+                JSON10.stringify({
+                  message: `
     Error inside: ${req.path}
 
     ${error}
 
-`
-            }))
-          } else if (error instanceof Models.Http.Errors) {
-            Helpers.error(error, true, false)
-            const err: Models.Http.Errors = error;
-            res.status(400).send(JSON10.stringify(err))
-          } else if (error instanceof Error) {
-            const err: Error = error;
-            Helpers.error(error, true, false)
-            res.status(400).send(JSON10.stringify({
-              stack: err.stack,
-              message: err.message
-            }))
-          } else {
-            Helpers.log(error)
-            Helpers.error(`[Firedev] Bad result isomorphic method: ${error} `, true, false)
-            res.status(400).send(JSON10.stringify(error))
+`,
+                }),
+              );
+            } else if (error instanceof Models.Http.Errors) {
+              Helpers.error(error, true, false);
+              const err: Models.Http.Errors = error;
+              res.status(400).send(JSON10.stringify(err));
+            } else if (error instanceof Error) {
+              const err: Error = error;
+              Helpers.error(error, true, false);
+              res.status(400).send(
+                JSON10.stringify({
+                  stack: err.stack,
+                  message: err.message,
+                }),
+              );
+            } else {
+              Helpers.log(error);
+              Helpers.error(
+                `[Firedev] Bad result isomorphic method: ${error} `,
+                true,
+                false,
+              );
+              res.status(400).send(JSON10.stringify(error));
+            }
+            //#endregion
           }
-          //#endregion
-        }
-      });
+        },
+      );
       //#endregion
     }
 
     return {
       routePath: expressPath,
-      method: methodConfig.type
-    }
-
+      method: methodConfig.type,
+    };
   }
   //#endregion
 
@@ -1301,10 +1455,10 @@ export class EndpointContext {
     methodConfig: Models.Http.Rest.MethodConfig,
     expressPath: string,
     //#endregion
-  )
-  // : { received: any; /* Rest<any, any>  */ }
-  {
-    console.log(`FRONTEND ${target.name} method on ${expressPath} `)
+  ) {
+    const ctx = this;
+    // : { received: any; /* Rest<any, any>  */ }
+    console.log(`${type?.toUpperCase()} ${expressPath} `);
 
     //#region resolve storage
     let storage: any;
@@ -1318,50 +1472,61 @@ export class EndpointContext {
     //#endregion
     //#endregion
 
-
     const orgMethods = target.prototype[methodConfig.methodName];
 
     //#region handle electron ipc request
 
     if (Helpers.isElectron) {
-
       target.prototype[methodConfig.methodName] = function (...args) {
-
         const received = new Promise(async (resolve, reject) => {
           const headers = {};
           const { request, response } = FiredevHelpers.websqlMocks(headers);
 
-          Helpers.ipcRenderer.once(FiredevHelpers.ipcKeyNameResponse(target, methodConfig, expressPath), (event, responseData) => {
-            let res: any = responseData;
-            console.log({ responseData })
-            try {
-              const body = res;
-              res = new ModelsNg2Rest.HttpResponse({
-                body: void 0,
-                isArray: void 0 as any,
-                method: methodConfig.type,
-                url: `${this.uri.origin}${'' // TODO express path
-                  }${methodConfig.path} `
-              },
-                (Helpers.isBlob(body) || _.isString(body)) ? body : JSON.stringify(body),
-                RestHeaders.from(headers),
-                void 0,
-                () => body,
-              );
+          Helpers.ipcRenderer.once(
+            FiredevHelpers.ipcKeyNameResponse(
+              target,
+              methodConfig,
+              expressPath,
+            ),
+            (event, responseData) => {
+              let res: any = responseData;
+              console.log({ responseData });
+              try {
+                const body = res;
+                res = new ModelsNg2Rest.HttpResponse(
+                  {
+                    body: void 0,
+                    isArray: void 0 as any,
+                    method: methodConfig.type,
+                    url: `${ctx.uri.origin}${
+                      '' // TODO express path
+                    }${methodConfig.path} `,
+                  },
+                  Helpers.isBlob(body) || _.isString(body)
+                    ? body
+                    : JSON.stringify(body),
+                  RestHeaders.from(headers),
+                  void 0,
+                  () => body,
+                );
 
-              resolve(res);
-            } catch (error) {
-              console.error(error)
-              reject(error);
-            }
-          })
-          Helpers.ipcRenderer.send(FiredevHelpers.ipcKeyNameRequest(target, methodConfig, expressPath), args);
+                resolve(res);
+              } catch (error) {
+                console.error(error);
+                reject(error);
+              }
+            },
+          );
+          Helpers.ipcRenderer.send(
+            FiredevHelpers.ipcKeyNameRequest(target, methodConfig, expressPath),
+            args,
+          );
         });
         received['observable'] = from(received);
         return {
-          received
+          received,
         };
-      }
+      };
       return;
     }
     //#endregion
@@ -1372,21 +1537,25 @@ export class EndpointContext {
     //#region resolve variables
     const MIN_TIMEOUT = 500;
     const MIN_TIMEOUT_STEP = 200;
-    const timeout = window[Symbols.old.WEBSQL_REST_PROGRESS_TIMEOUT] || MIN_TIMEOUT;
+    const timeout =
+      window[Symbols.old.WEBSQL_REST_PROGRESS_TIMEOUT] || MIN_TIMEOUT;
 
-    let updateFun: Subject<number> = window[Symbols.old.WEBSQL_REST_PROGRESS_FUN];
+    let updateFun: Subject<number> =
+      window[Symbols.old.WEBSQL_REST_PROGRESS_FUN];
     if (!window[Symbols.old.WEBSQL_REST_PROGRESS_FUN]) {
       window[Symbols.old.WEBSQL_REST_PROGRESS_FUN] = new Subject();
     }
     updateFun = window[Symbols.old.WEBSQL_REST_PROGRESS_FUN];
 
-    let startFun: Subject<void> = window[Symbols.old.WEBSQL_REST_PROGRESS_FUN_START];
+    let startFun: Subject<void> =
+      window[Symbols.old.WEBSQL_REST_PROGRESS_FUN_START];
     if (!window[Symbols.old.WEBSQL_REST_PROGRESS_FUN_START]) {
       window[Symbols.old.WEBSQL_REST_PROGRESS_FUN_START] = new Subject();
     }
     startFun = window[Symbols.old.WEBSQL_REST_PROGRESS_FUN_START];
 
-    let doneFun: Subject<void> = window[Symbols.old.WEBSQL_REST_PROGRESS_FUN_DONE];
+    let doneFun: Subject<void> =
+      window[Symbols.old.WEBSQL_REST_PROGRESS_FUN_DONE];
     if (!window[Symbols.old.WEBSQL_REST_PROGRESS_FUN_DONE]) {
       window[Symbols.old.WEBSQL_REST_PROGRESS_FUN_DONE] = new Subject();
     }
@@ -1415,12 +1584,12 @@ export class EndpointContext {
         await new Promise((resolve, reject) => {
           setTimeout(() => {
             resolve(void 0);
-          }, MIN_TIMEOUT_STEP)
-        })
+          }, MIN_TIMEOUT_STEP);
+        });
         // console.log('pong')
       }
       doneFun.next();
-    }
+    };
     //#endregion
 
     target.prototype[methodConfig.methodName] = function (...args) {
@@ -1429,21 +1598,21 @@ export class EndpointContext {
       // }
       const received = new Promise(async (resolve, reject) => {
         const headers = {};
-        const { request, response } = FiredevHelpers.websqlMocks(headers)
+        const { request, response } = FiredevHelpers.websqlMocks(headers);
 
         let res: any;
         try {
           res = await Helpers.runSyncOrAsync({
             functionFn: orgMethods,
             context: this,
-            arrayOfParams: args
+            arrayOfParams: args,
           });
           // console.log({ res1: res })
           if (typeof res === 'function') {
             res = await Helpers.runSyncOrAsync({
               functionFn: res,
               context: this,
-              arrayOfParams: [request, response]
+              arrayOfParams: [request, response],
             });
           }
           // console.log({ res2: res })
@@ -1451,25 +1620,29 @@ export class EndpointContext {
             res = await Helpers.runSyncOrAsync({
               functionFn: res,
               context: this,
-              arrayOfParams: [request, response]
+              arrayOfParams: [request, response],
             });
           }
           // console.log({ res3: res })
 
-          if ((typeof res === 'object') && res?.received) {
+          if (typeof res === 'object' && res?.received) {
             res = await res.received;
           }
 
           const body = res;
 
-          res = new ModelsNg2Rest.HttpResponse({
-            body: void 0,
-            isArray: void 0 as any,
-            method: methodConfig.type,
-            url: `${this.uri.origin}${'' // TODO express path
-              }${methodConfig.path} `
-          },
-            (Helpers.isBlob(body) || _.isString(body)) ? body : JSON.stringify(body),
+          res = new ModelsNg2Rest.HttpResponse(
+            {
+              body: void 0,
+              isArray: void 0 as any,
+              method: methodConfig.type,
+              url: `${ctx.uri.origin}${
+                '' // TODO express path
+              }${methodConfig.path} `,
+            },
+            Helpers.isBlob(body) || _.isString(body)
+              ? body
+              : JSON.stringify(body),
             RestHeaders.from(headers),
             void 0,
             () => body,
@@ -1483,24 +1656,21 @@ export class EndpointContext {
           resolve(res);
         } catch (error) {
           await periods();
-          console.error(error)
+          console.error(error);
           // error = new Ng2RestModels.HttpResponseError('Error during websql request',
           //   JSON.stringify(error));
           // target.prototype[methodConfig.methodName][subjectHandler].error(error);
           reject(error);
-
-
         }
       });
       received['observable'] = from(received);
       // debugger
       if (Helpers.isWebSQL) {
         return {
-          received
-        }
+          received,
+        };
       }
-
-    }
+    };
     if (Helpers.isWebSQL) {
       return;
     }
@@ -1508,45 +1678,59 @@ export class EndpointContext {
     //#endregion
 
     //#region handl normal request
-    const ctx = this;
+
     target.prototype[methodConfig.methodName] = function (this: {}, ...args) {
       // console.log('[init method browser] FRONTEND expressPath', expressPath)
       // const productionMode = FrameworkContext.isProductionMode;
 
       //#region resolve frontend parameters
 
-      if (!storage[Symbols.old.ENDPOINT_META_CONFIG]) storage[Symbols.old.ENDPOINT_META_CONFIG] = {};
-      if (!storage[Symbols.old.ENDPOINT_META_CONFIG][ctx.uri.href]) storage[Symbols.old.ENDPOINT_META_CONFIG][ctx.uri.href] = {};
+      if (!storage[Symbols.old.ENDPOINT_META_CONFIG])
+        storage[Symbols.old.ENDPOINT_META_CONFIG] = {};
+      if (!storage[Symbols.old.ENDPOINT_META_CONFIG][ctx.uri.href])
+        storage[Symbols.old.ENDPOINT_META_CONFIG][ctx.uri.href] = {};
       const endpoints = storage[Symbols.old.ENDPOINT_META_CONFIG];
       let rest: ModelsNg2Rest.ResourceModel<any, any>;
       if (!endpoints[ctx.uri.href][expressPath]) {
         let headers = {};
         if (methodConfig.contentType && !methodConfig.responseType) {
-          rest = Resource.create(ctx.uri.href, expressPath, Symbols.old.MAPPING_CONFIG_HEADER as any,
+          rest = Resource.create(
+            ctx.uri.href,
+            expressPath,
+            Symbols.old.MAPPING_CONFIG_HEADER as any,
             Symbols.old.CIRCURAL_OBJECTS_MAP_BODY as any,
             RestHeaders.from({
               'Content-Type': methodConfig.contentType,
-              'Accept': methodConfig.contentType,
+              Accept: methodConfig.contentType,
             }),
           );
         } else if (methodConfig.contentType && methodConfig.responseType) {
-          rest = Resource.create(ctx.uri.href, expressPath, Symbols.old.MAPPING_CONFIG_HEADER as any,
+          rest = Resource.create(
+            ctx.uri.href,
+            expressPath,
+            Symbols.old.MAPPING_CONFIG_HEADER as any,
             Symbols.old.CIRCURAL_OBJECTS_MAP_BODY as any,
             RestHeaders.from({
               'Content-Type': methodConfig.contentType,
-              'Accept': methodConfig.contentType,
-              'responsetypeaxios': methodConfig.responseType
+              Accept: methodConfig.contentType,
+              responsetypeaxios: methodConfig.responseType,
             }),
           );
         } else if (!methodConfig.contentType && methodConfig.responseType) {
-          rest = Resource.create(ctx.uri.href, expressPath, Symbols.old.MAPPING_CONFIG_HEADER as any,
+          rest = Resource.create(
+            ctx.uri.href,
+            expressPath,
+            Symbols.old.MAPPING_CONFIG_HEADER as any,
             Symbols.old.CIRCURAL_OBJECTS_MAP_BODY as any,
             RestHeaders.from({
-              'responsetypeaxios': methodConfig.responseType
+              responsetypeaxios: methodConfig.responseType,
             }),
           );
         } else {
-          rest = Resource.create(ctx.uri.href, expressPath, Symbols.old.MAPPING_CONFIG_HEADER as any,
+          rest = Resource.create(
+            ctx.uri.href,
+            expressPath,
+            Symbols.old.MAPPING_CONFIG_HEADER as any,
             Symbols.old.CIRCURAL_OBJECTS_MAP_BODY as any,
           );
         }
@@ -1557,7 +1741,7 @@ export class EndpointContext {
       }
 
       const method = type.toLowerCase();
-      const isWithBody = (method === 'put' || method === 'post');
+      const isWithBody = method === 'put' || method === 'post';
       const pathPrams = {};
       let queryParams = {};
       let bodyObject = {};
@@ -1581,7 +1765,8 @@ export class EndpointContext {
             if (mapping) {
               rest.headers.set(
                 `${Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${currentParam.paramName} `,
-                JSON.stringify(mapping))
+                JSON.stringify(mapping),
+              );
             }
             queryParams[currentParam.paramName] = param;
           } else {
@@ -1589,26 +1774,35 @@ export class EndpointContext {
             if (mapping) {
               rest.headers.set(
                 Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS,
-                JSON.stringify(mapping))
+                JSON.stringify(mapping),
+              );
             }
             queryParams = _.cloneDeep(param);
           }
         }
         if (currentParam.paramType === 'Header') {
           if (currentParam.paramName) {
-            if (currentParam.paramName === Symbols.old.MDC_KEY) { // parese MDC
-              rest.headers.set(currentParam.paramName, encodeURIComponent(JSON.stringify(param)))
+            if (currentParam.paramName === Symbols.old.MDC_KEY) {
+              // parese MDC
+              rest.headers.set(
+                currentParam.paramName,
+                encodeURIComponent(JSON.stringify(param)),
+              );
             } else {
-              rest.headers.set(currentParam.paramName, param)
+              rest.headers.set(currentParam.paramName, param);
             }
           } else {
             for (let header in param) {
-              rest.headers.set(header, param[header])
+              rest.headers.set(header, param[header]);
             }
           }
         }
         if (currentParam.paramType === 'Cookie') {
-          Resource.Cookies.write(currentParam.paramName, param, currentParam.expireInSeconds);
+          Resource.Cookies.write(
+            currentParam.paramName,
+            param,
+            currentParam.expireInSeconds,
+          );
         }
         if (currentParam.paramType === 'Body') {
           if (currentParam.paramName) {
@@ -1623,13 +1817,14 @@ instead
   // ...
   (@Firedev.Http.Param.Body('${currentParam.paramName}') formData: FormData) ...
 // ...
-`)
+`);
             }
             const mapping = Mapping.decode(param, !ctx.isProductionMode);
             if (mapping) {
               rest.headers.set(
                 `${Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS}${currentParam.paramName} `,
-                JSON.stringify(mapping))
+                JSON.stringify(mapping),
+              );
             }
             bodyObject[currentParam.paramName] = param;
           } else {
@@ -1637,42 +1832,52 @@ instead
             if (mapping) {
               rest.headers.set(
                 Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS,
-                JSON.stringify(mapping))
+                JSON.stringify(mapping),
+              );
             }
             bodyObject = param;
           }
         }
       });
 
-      if (typeof bodyObject === 'object' && (ClassHelpers.getName(bodyObject) !== 'FormData')) {
-        let circuralFromItem = []
-        bodyObject = JSON10.parse(JSON10.stringify(bodyObject, void 0, void 0, circs => {
-          circuralFromItem = circs;
-        }))
+      if (
+        typeof bodyObject === 'object' &&
+        ClassHelpers.getName(bodyObject) !== 'FormData'
+      ) {
+        let circuralFromItem = [];
+        bodyObject = JSON10.parse(
+          JSON10.stringify(bodyObject, void 0, void 0, circs => {
+            circuralFromItem = circs;
+          }),
+        );
         rest.headers.set(
           Symbols.old.CIRCURAL_OBJECTS_MAP_BODY,
-          JSON10.stringify(circuralFromItem)
-        )
+          JSON10.stringify(circuralFromItem),
+        );
       }
 
       if (typeof queryParams === 'object') {
-        let circuralFromQueryParams = []
-        queryParams = JSON10.parse(JSON10.stringify(queryParams, void 0, void 0, circs => {
-          circuralFromQueryParams = circs;
-        }))
+        let circuralFromQueryParams = [];
+        queryParams = JSON10.parse(
+          JSON10.stringify(queryParams, void 0, void 0, circs => {
+            circuralFromQueryParams = circs;
+          }),
+        );
 
         rest.headers.set(
           Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM,
-          JSON10.stringify(circuralFromQueryParams))
+          JSON10.stringify(circuralFromQueryParams),
+        );
       }
       //#endregion
 
       return {
-        received: isWithBody ? rest.model(pathPrams)[method](bodyObject, [queryParams]) : rest.model(pathPrams)[method]([queryParams])
-      }
+        received: isWithBody
+          ? rest.model(pathPrams)[method](bodyObject, [queryParams])
+          : rest.model(pathPrams)[method]([queryParams]),
+      };
     };
     //#endregion
   }
   //#endregion
 }
-

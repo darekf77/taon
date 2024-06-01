@@ -8,6 +8,6 @@ import { BaseClass } from "./base-class";
 //#region @websql
 @Entity()
 //#endregion
-export abstract class BaseEntity extends BaseClass {
+export abstract class BaseEntity<EntitInterface=Partial<BaseClass>> extends BaseClass {
 
 }

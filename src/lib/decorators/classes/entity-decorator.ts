@@ -1,7 +1,7 @@
 import { Mapping } from "ng2-rest/src";
 import { ClassHelpers } from "../../helpers/class-helpers";
 import { Symbols } from "../../symbols";
-import { _ } from 'tnp-core';
+import { _ } from 'tnp-core/src';
 import { Models } from "../../models";
 
 

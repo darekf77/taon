@@ -9,7 +9,7 @@ import { Models } from '../models';
 import { Helpers, _ } from 'tnp-core/src';
 import { FiredevController, FiredevControllerOptions } from '../decorators/classes/controller-decorator';
 import { ClassHelpers } from "../helpers/class-helpers";
-import { Entity } from "firedev-typeorm/lib";
+import { Entity } from "firedev-typeorm/src";
 import { Validators } from "../validators";
 import { FiredevEntityOptions } from "../decorators/classes/entity-decorator";
 //#endregion

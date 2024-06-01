@@ -1,6 +1,6 @@
 import { Symbols } from '../symbols';
 import { Validators } from '../validators';
-import { _ } from 'tnp-core';
+import { _ } from 'tnp-core/src';
 import { Models } from '../models';
 import { FiredevControllerOptions } from '../decorators/classes/controller-decorator';
 import { FiredevHelpers } from './firedev-helpers';
