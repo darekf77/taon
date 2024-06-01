@@ -1,6 +1,8 @@
 .vscode
 /dist
 /src
+/app
+/source
 /docs
 /preview
 /tests
