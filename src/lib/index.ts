@@ -74,7 +74,6 @@ export namespace Firedev {
    */
   export const init = async (options: {
     host: string;
-    config?: any;
     entities: Function[];
     controllers: Function[];
   }) => {
@@ -84,7 +83,7 @@ export namespace Firedev {
       contextName: 'default',
       host: options.host,
       contexts: { BaseContext },
-      database: options.config,
+      database: true,
       entities: Array.from(options.entities) as any,
       controllers: Array.from(options.controllers) as any,
     });
