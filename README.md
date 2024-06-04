@@ -40,7 +40,7 @@
 (for windows only git bash supported https://gitforwindows.org)
 
 
-2. (linux only) Increased memory limit:
+2. Increased memory limit:
 ```
 export NODE_OPTIONS=--max_old_space_size=4096
 ```

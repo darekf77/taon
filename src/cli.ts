@@ -1,4 +1,5 @@
-let tnpStart = require('tnp/src').start;
+// @firedev-ignore
+let tnpStart = require('tnp/cli').start;
 //#region @notForNpm
 let tnpStartLocal = require('tnp/src').start;
 //#endregion
