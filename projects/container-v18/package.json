@@ -241,6 +241,7 @@
         "eslint-plugin-jsdoc": "latest",
         "eslint-plugin-prefer-arrow": "latest",
         "eslint-plugin-react": "latest",
+        "tslint": "5.9.1",
         "ts-json-schema-generator": "~2.1.1",
         "ngx-store": "3.1.1",
         "json5": "2.2.1",
