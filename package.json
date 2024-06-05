@@ -46,7 +46,7 @@
     "homepage": "https://github.com/darekf77/firedev#readme"
   },
   "name": "firedev",
-  "version": "16.100.18",
+  "version": "16.100.19",
   "description": "Isomorphic solution for backend and frontend",
   "scripts": {},
   "repository": {
@@ -67,11 +67,11 @@
     "ora": "3.4.0",
     "socket.io": "2.4.1",
     "tslib": "~2.3.0",
-    "tnp": "~16.100.32"
+    "tnp": "~16.100.33"
   },
   "license": "MIT",
   "private": false,
-  "lastBuildTagHash": "eb0ba2a23585a08bbb2282998a108b94b122b36d",
+  "lastBuildTagHash": "74a18b1de6a8bc8517520adf3f9319b56317f8b7",
   "devDependencies": {
     "@angular-builders/custom-webpack": "~16.0.2-beta.2",
     "@angular-devkit/build-angular": "~16.0.5",
@@ -336,7 +336,7 @@
     "tnp-config": "16.100.10",
     "tnp-core": "16.100.23",
     "tnp-db": "16.100.9",
-    "tnp-helpers": "16.100.25",
+    "tnp-helpers": "16.100.31",
     "tnp-models": "16.100.10",
     "ts-debug": "1.3.0",
     "ts-json-schema-generator": "2.1.1",
