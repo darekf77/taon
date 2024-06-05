@@ -29,5 +29,6 @@
   "ng-talkback@13": "~13.1.19",
   "record-replay-req-res-scenario@13": "~13.1.20",
   "vpn-split@13": "~13.1.23",
-  "node-cli-tester@13": "~13.1.19"
+  "node-cli-tester@13": "~13.1.19",
+  "firedev@16": "~16.100.19"
 }

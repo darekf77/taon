@@ -1,7 +1,7 @@
 {
   "tnp": {
     "resources": [],
-    "version": "v4",
+    "version": "v18",
     "type": "vscode-ext",
     "overrided": {
       "ignoreDepsPattern": [],
@@ -44,7 +44,7 @@
     "smartContainerBuildTarget": "",
     "linkedRepos": []
   },
-  "name": "vscode-ext-v4",
+  "name": "vscode-ext-v18",
   "displayName": "tnp-vscode-ext",
   "publisher": "morphi-io",
   "description": "",

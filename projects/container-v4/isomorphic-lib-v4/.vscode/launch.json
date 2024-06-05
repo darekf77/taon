@@ -1,0 +1,60 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug/Start Server",
+      "program": "${workspaceFolder}/run.js",
+      "args": [
+        "port=4404",
+        "--ENVoverride=%7B%0A%20%20%20%20%22clientProjectName%22%3A%20%22isomorphic-lib-v4%22%0A%7D "
+      ],
+      "outFiles": [
+        "${workspaceFolder}/dist/**/*.js",
+        "!**/node_modules/**"
+      ],
+      "runtimeArgs": [
+        "--nolazy",
+        "-r",
+        "ts-node/register",
+        "--experimental-worker"
+      ]
+    },
+    {
+      "name": "Debug/Start Electron",
+      "type": "node",
+      "request": "launch",
+      "protocol": "inspector",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
+      "trace": "verbose",
+      "runtimeArgs": [
+        "--serve",
+        ".",
+        "--remote-debugging-port=9880"
+      ],
+      "windows": {
+        "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
+      }
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Attach to global cli tool",
+      "port": 9229,
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Debug/Start (Server + Electron)",
+      "configurations": [
+        "Debug/Start Server",
+        "Debug/Start Electron"
+      ]
+    }
+  ]
+}

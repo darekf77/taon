@@ -17,11 +17,7 @@
       "nodts": false,
       "obscure": false,
       "ugly": false,
-      "includeNodeModules": false,
-      "cliBuildNoDts": false,
-      "cliBuildObscure": false,
-      "cliBuildUglify": false,
-      "cliBuildIncludeNodeModules": false
+      "includeNodeModules": false
     },
     "type": "container",
     "isCoreProject": true,

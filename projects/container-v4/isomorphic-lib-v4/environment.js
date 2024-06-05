@@ -4,7 +4,7 @@ var { config } = { config: {} };
 
 config = {
 
-    domain: 'isomorphic-lib-v3.example.domain.com',
+    domain: 'isomorphic-lib-v4.example.domain.com',
 
 
 }
