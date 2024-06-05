@@ -25,6 +25,7 @@
       "html-webpack-plugin": null,
       "sw-toolbox": null,
       "gulp-inline-ng2-template": null,
+      "gulp": "^3.9.1",
       "autoprefixer": null,
       "circular-dependency-plugin": null,
       "copy-webpack-plugin": null,
