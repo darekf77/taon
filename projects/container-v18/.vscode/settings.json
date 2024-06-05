@@ -1,0 +1,55 @@
+{
+  "workbench.colorCustomizations": {
+    "activityBar.background": "#8a5c3e",
+    "activityBar.foreground": "#000000",
+    "statusBar.background": "#999694"
+  },
+  "editor.rulers": [
+    80,
+    120
+  ],
+  "workbench.colorTheme": "Default Light+",
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "files.exclude": {},
+  "search.exclude": {
+    "docs": true,
+    "projects": true,
+    "bin": true
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[json5]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "eslint.migration.2_x": "off",
+  "eslint.enable": true,
+  "prettier.enable": true,
+  "editor.suggest.snippetsPreventQuickSuggestions": false,
+  "editor.inlineSuggest.enabled": true,
+  "tslint.autoFixOnSave": false,
+  "tslint.enable": false,
+  "tslint.alwaysShowRuleFailuresAsWarnings": false
+}

@@ -1,0 +1,38 @@
+{
+  "asar": true,
+  "directories": {
+    "output": "release/"
+  },
+  "files": [
+    "**/*",
+    "!**/*.ts",
+    "!*.map",
+    "!package.json",
+    "!package-lock.json",
+    {
+      "from": "../electron",
+      "filter": ["**/*"]
+    }
+  ],
+  "win": {
+    "icon": "src/assets/icons",
+    "target": [
+      "portable"
+    ]
+  },
+  "portable": {
+    "splashImage": "src/assets/icons/electron/electron.bmp"
+  },
+  "mac": {
+    "icon": "src/assets/icons/electron",
+    "target": [
+      "dmg"
+    ]
+  },
+  "linux": {
+    "icon": "src/assets/icons/electron",
+    "target": [
+      "AppImage"
+    ]
+  }
+}

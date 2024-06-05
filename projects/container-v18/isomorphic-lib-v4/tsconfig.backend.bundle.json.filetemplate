@@ -1,0 +1,24 @@
+{
+  "extends": "./tsconfig.isomorphic.json",
+  "compilerOptions": {
+     "rootDir": "./tmp-source-bundle",
+     {{{ (ENV && ENV.pathesTsconfigSourceBundle) || '' }}}
+  #   "paths": {
+   #    "codete-ngrx-quick-start": [
+    #    "./dist/browser/{{{ (ENV && ENV.currentProjectName) }}}/{{{ (ENV && ENV.currentProjectName) }}}",
+     #   "./dist/browser/{{{ (ENV && ENV.currentProjectName) }}}"
+     # ]
+    # },
+     # "baseUrl": "./", // this is too deep change
+  # "paths": {
+# {{{ENV.currentProjectTsConfigPathes ? ENV.currentProjectTsConfigPathes: ''}}}
+#      }
+  },
+#  {{{ (ENV && ENV.exclusion) }}},
+  "include": [
+    "tmp-source-bundle/**/*"
+  ],
+  "exclude": [
+    "tmp-source-bundle/assets"
+  ]
+}

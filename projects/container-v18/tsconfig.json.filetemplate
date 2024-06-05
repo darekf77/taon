@@ -1,0 +1,46 @@
+{
+  "compilerOptions": {
+     # {{{ (ENV && ENV.customRootDir) || '' }}}
+     {{{ (ENV && ENV.pathesTsconfig) || '' }}}
+     "baseUrl": ".",
+     "outDir": "./tmp-nonsens/out-tsc",
+      "forceConsistentCasingInFileNames": true,
+      "strict": false,
+      "strictNullChecks": false,
+      "noImplicitOverride": false,
+      "noPropertyAccessFromIndexSignature": false,
+      "noImplicitReturns": false,
+      "noFallthroughCasesInSwitch": true,
+      "sourceMap": true,
+      "declaration": true,
+      "downlevelIteration": true,
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true,
+      "moduleResolution": "node",
+      "importHelpers": true,
+      "target": "ES2022",
+      "module": "ES2022",
+      "useDefineForClassFields": false,
+      "lib": [
+        "ES2022",
+        "dom"
+      ],
+  #   "paths": {
+   #    "codete-ngrx-quick-start": [
+    #    "./dist/browser/{{{ (ENV && ENV.currentProjectName) }}}/{{{ (ENV && ENV.currentProjectName) }}}",
+     #   "./dist/browser/{{{ (ENV && ENV.currentProjectName) }}}"
+     # ]
+    # },
+     # "baseUrl": "./", // this is too deep change
+  # "paths": {
+# {{{ENV.currentProjectTsConfigPathes ? ENV.currentProjectTsConfigPathes: ''}}}
+#      }
+  },
+#  {{{ (ENV && ENV.exclusion) }}},
+  "include": [ {{{ (ENV && ENV.includeForContainer) }}} ],
+  "exclude": [ "node_modules", "tmp*"],
+  "angularCompilerOptions": {
+    "preserveWhitespaces": false,
+    "fullTemplateTypeCheck": true
+  }
+}
