@@ -1,6 +1,46 @@
 import * as vscode from 'vscode';
 import * as child from 'child_process';
+import * as fse from 'fs';
 import { ProcesOptions } from './models';
+
+function findGitBash() {
+  const possiblePaths = [
+    'C:\\Program Files\\Git\\bin\\bash.exe',
+    'C:\\Program Files (x86)\\Git\\bin\\bash.exe',
+    `${process.env.ProgramW6432}\\Git\\bin\\bash.exe`,
+    `${process.env.ProgramFiles}\\Git\\bin\\bash.exe`,
+    `${process.env['ProgramFiles(x86)']}\\Git\\bin\\bash.exe`
+  ];
+
+  for (const gitBashPath of possiblePaths) {
+    if (fse.existsSync(gitBashPath)) {
+      return gitBashPath;
+    }
+  }
+
+  console.error('Git Bash not found. Please install Git Bash.');
+  process.exit(1);
+}
+
+
+function getShell() {
+  if (process.platform === 'win32') {
+    // Windows platform
+    const gitBashPath = findGitBash();
+    if (fse.existsSync(gitBashPath)) {
+      return gitBashPath;
+    } else {
+      console.error('Git Bash not found. Please install Git Bash.');
+      process.exit(1);
+    }
+  } else {
+    // Unix-like platform (Linux, macOS)
+    return undefined; // '/bin/bash';
+  }
+}
+
+export const shell = getShell();
+
 
 export function valueFromCommand({
   command,
@@ -12,7 +52,7 @@ export function valueFromCommand({
   bigBuffer?: boolean,
 }) {
   const decode = true
-  let res = child.execSync(command, { cwd, encoding: 'utf8', maxBuffer: bigBuffer ? (50 * 1024 * 1024) : void 0 }).toString().trim();
+  let res = child.execSync(command, { cwd, shell, encoding: 'utf8', maxBuffer: bigBuffer ? (50 * 1024 * 1024) : void 0 }).toString().trim();
   const splited = (res || '').split('\n');
   res = splited.pop() || '';
   if (decode) {
