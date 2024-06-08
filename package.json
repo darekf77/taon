@@ -15,7 +15,6 @@
         "json10",
         "lodash-walk-object",
         "firedev-type-sql",
-        "firedev-typeorm",
         "socket.io"
       ],
       "ignoreDepsPattern": [],
