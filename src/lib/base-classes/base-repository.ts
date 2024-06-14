@@ -1,18 +1,17 @@
 //#region @websql
-import { DataSource, Repository } from "firedev-typeorm/src";
+import { DataSource, Repository } from 'firedev-typeorm/src';
 //#endregion
-import { EndpointContext } from "../endpoint-context";
-import { Symbols } from "../symbols";
-import { BaseClass } from "./base-class";
-import { Helpers } from "tnp-core/src";
-import { _ } from "tnp-core/src";
-import { ClassHelpers } from "../helpers/class-helpers";
-import { Validators } from "../validators";
-import { MySqlQuerySource } from "firedev-type-sql/src";
+import type { DataSource as DataSourceType } from 'firedev-typeorm/src';
+import { EndpointContext } from '../endpoint-context';
+import { Symbols } from '../symbols';
+import { BaseClass } from './base-class';
+import { Helpers } from 'tnp-core/src';
+import { _ } from 'tnp-core/src';
+import { ClassHelpers } from '../helpers/class-helpers';
+import { Validators } from '../validators';
+import { MySqlQuerySource } from 'firedev-type-sql/src';
 
-const INDEX_KEYS_NO_FOR_UPDATE = [
-  'id',
-];
+const INDEX_KEYS_NO_FOR_UPDATE = ['id'];
 
 export class BaseRepository<Entity extends { id?: any }> extends BaseClass {
   public entity: any;
@@ -21,27 +20,26 @@ export class BaseRepository<Entity extends { id?: any }> extends BaseClass {
   public get dbQuery(): MySqlQuerySource {
     if (!this.__dbQuery) {
       if (!this.__endpoint_context__) {
-        throw new Error(`[BaseRepository] Context not inited for class ${ClassHelpers.getName(this)}`);
+        throw new Error(
+          `[BaseRepository] Context not inited for class ${ClassHelpers.getName(this)}`,
+        );
       }
       const connection = this.__endpoint_context__?.connection;
       if (!connection) {
-        throw new Error(`[BaseRepository] Database not inited for context ${this.__endpoint_context__?.contextName}`);
+        throw new Error(
+          `[BaseRepository] Database not inited for context ${this.__endpoint_context__?.contextName}`,
+        );
       }
       this.__dbQuery = new MySqlQuerySource(connection);
     }
     return this.__dbQuery;
   }
 
-  public get connection()
-    //#region @websql
-    : DataSource
-  //#endregion
-  {
+  public get connection(): DataSourceType {
     //#region @websqlFunc
     return this.__endpoint_context__.connection;
     //#endregion
   }
-
 
   //#region repository
   //#region @websql
@@ -66,15 +64,12 @@ export class BaseRepository<Entity extends { id?: any }> extends BaseClass {
     //#region @websql
     // if (!this.entityClassFn) {
     //   Helpers.error(`Entity class not provided for repository ${ClassHelpers.getName(this)}.
-
     //   Please provide entity as class property entityClassFn:
-
     //   class ${ClassHelpers.getName(this)} extends BaseRepository<Entity> {
     //     // ...
     //     entityClassFn = MyEntityClass;
     //     // ...
     //   }
-
     //   `);
     // }
     //#endregion
@@ -84,7 +79,7 @@ export class BaseRepository<Entity extends { id?: any }> extends BaseClass {
     //#region @websqlFunc
     const totalCount = await this.repo.count();
     const models = await this.repo.find();
-    this.prepareData(models)
+    this.prepareData(models);
     return { models, totalCount };
     //#endregion
   }
@@ -92,7 +87,7 @@ export class BaseRepository<Entity extends { id?: any }> extends BaseClass {
   async getBy(id: number | string) {
     //#region @websqlFunc
     const model = await await this.repo.findOne({
-      where: { id } as any
+      where: { id } as any,
     });
 
     this.prepareData(model, id);
@@ -112,9 +107,12 @@ export class BaseRepository<Entity extends { id?: any }> extends BaseClass {
     const allowedPropsToUpdate = [];
     for (const key in item) {
       if (
-        _.isObject(item) && item.hasOwnProperty(key)
-        && typeof item[key] !== 'object'
-        && !_.isUndefined(this.repo.metadata.ownColumns.find(c => c.propertyName === key))
+        _.isObject(item) &&
+        item.hasOwnProperty(key) &&
+        typeof item[key] !== 'object' &&
+        !_.isUndefined(
+          this.repo.metadata.ownColumns.find(c => c.propertyName === key),
+        )
       ) {
         allowedPropsToUpdate.push(key);
       }
@@ -127,11 +125,14 @@ export class BaseRepository<Entity extends { id?: any }> extends BaseClass {
         const toSet = item[key];
         // const tableName = tableNameFrom(this.entity as any);
 
-        await this.repo.update({
-          id
-        } as any, {
-          [key]: toSet
-        } as any);
+        await this.repo.update(
+          {
+            id,
+          } as any,
+          {
+            [key]: toSet,
+          } as any,
+        );
         //         await this.repo.query(
         //           `UPDATE '${tableName}' as ${table}
         // SET ${key}=${toSet}
@@ -140,7 +141,7 @@ export class BaseRepository<Entity extends { id?: any }> extends BaseClass {
       }
     }
     let model = await this.repo.findOne({
-      where: { id } as any
+      where: { id } as any,
     });
 
     this.prepareData(model, id);
@@ -164,7 +165,7 @@ export class BaseRepository<Entity extends { id?: any }> extends BaseClass {
   async deleteById(id: number | string) {
     //#region @websqlFunc
     const deletedEntity = await this.repo.findOne({
-      where: { id } as any
+      where: { id } as any,
     });
 
     const idCopy = deletedEntity.id;
@@ -190,13 +191,13 @@ export class BaseRepository<Entity extends { id?: any }> extends BaseClass {
   async create(item: Entity) {
     //#region @websqlFunc
 
-    let model = await this.repo.create(item)
+    let model = await this.repo.create(item);
 
     model = await this.repo.save(model);
     const { id } = model as any;
 
     model = await this.repo.findOne({
-      where: { id } as any
+      where: { id } as any,
     });
 
     this.prepareData(model as any, id);
@@ -224,5 +225,4 @@ export class BaseRepository<Entity extends { id?: any }> extends BaseClass {
     Validators.preventUndefinedModel(data, id);
     //#endregion
   }
-
 }

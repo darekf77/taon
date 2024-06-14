@@ -2,8 +2,6 @@ import { CoreModels, _ } from 'tnp-core/src';
 import { Models } from '../../models';
 import { Symbols } from '../../symbols';
 import { Models as ModelsNg2Rest } from 'ng2-rest/src';
-;
-
 const metaReq = (
   method: Models.Http.Rest.HttpMethod,
   path: string,
@@ -13,7 +11,6 @@ const metaReq = (
   pathOrOptions: string | FiredevHttpDecoratorOptions,
   pathIsGlobal: boolean,
 ) => {
-
   let options: FiredevHttpDecoratorOptions;
   if (typeof pathOrOptions === 'object') {
     options = pathOrOptions;
@@ -25,10 +22,19 @@ const metaReq = (
 
   const { overrideContentType, overridResponseType } = options;
 
-  let methodConfig: Models.MethodConfig = Reflect.getMetadata(Symbols.metadata.options.controllerMethod, target.constructor, propertyKey);
+  let methodConfig: Models.MethodConfig = Reflect.getMetadata(
+    Symbols.metadata.options.controllerMethod,
+    target.constructor,
+    propertyKey,
+  );
   if (!methodConfig) {
     methodConfig = new Models.MethodConfig();
-    Reflect.defineMetadata(Symbols.metadata.options.controllerMethod, methodConfig, target.constructor, propertyKey);
+    Reflect.defineMetadata(
+      Symbols.metadata.options.controllerMethod,
+      methodConfig,
+      target.constructor,
+      propertyKey,
+    );
   }
 
   methodConfig.methodName = propertyKey;
@@ -38,8 +44,12 @@ const metaReq = (
     for (const key in methodConfig.parameters) {
       if (methodConfig.parameters.hasOwnProperty(key)) {
         const element = methodConfig.parameters[key];
-        if (element.paramType === 'Path' && _.isString(element.paramName) && element.paramName.trim().length > 0) {
-          paramsPathConcatedPath += `/${element.paramName}/:${element.paramName}`
+        if (
+          element.paramType === 'Path' &&
+          _.isString(element.paramName) &&
+          element.paramName.trim().length > 0
+        ) {
+          paramsPathConcatedPath += `/${element.paramName}/:${element.paramName}`;
         }
       }
     }
@@ -52,53 +62,144 @@ const metaReq = (
   methodConfig.global = pathIsGlobal;
   methodConfig.contentType = overrideContentType;
   methodConfig.responseType = overridResponseType;
-  Reflect.defineMetadata(Symbols.metadata.options.controllerMethod, methodConfig, target.constructor, propertyKey);
+  Reflect.defineMetadata(
+    Symbols.metadata.options.controllerMethod,
+    methodConfig,
+    target.constructor,
+    propertyKey,
+  );
   // console.log('methods updated', methodConfig);
-}
-
+};
 
 export interface FiredevHttpDecoratorOptions {
   path?: string;
   pathIsGlobal?: boolean;
   overrideContentType?: CoreModels.ContentType;
-  overridResponseType?: ModelsNg2Rest.ResponseTypeAxios,
+  overridResponseType?: ModelsNg2Rest.ResponseTypeAxios;
 }
 
-
-export function GET(pathOrOptions?: string | FiredevHttpDecoratorOptions, pathIsGlobal = false) {
-  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    metaReq('get', pathOrOptions as string, target, propertyKey, descriptor, pathOrOptions, pathIsGlobal);
-  }
+export function GET(
+  pathOrOptions?: string | FiredevHttpDecoratorOptions,
+  pathIsGlobal = false,
+) {
+  return function (
+    target: any,
+    propertyKey: string,
+    descriptor: PropertyDescriptor,
+  ) {
+    metaReq(
+      'get',
+      pathOrOptions as string,
+      target,
+      propertyKey,
+      descriptor,
+      pathOrOptions,
+      pathIsGlobal,
+    );
+  };
 }
 
-export function HEAD(pathOrOptions?: string | FiredevHttpDecoratorOptions, pathIsGlobal = false) {
-  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    metaReq('head', pathOrOptions as string, target, propertyKey, descriptor, pathOrOptions, pathIsGlobal);
-  }
+export function HEAD(
+  pathOrOptions?: string | FiredevHttpDecoratorOptions,
+  pathIsGlobal = false,
+) {
+  return function (
+    target: any,
+    propertyKey: string,
+    descriptor: PropertyDescriptor,
+  ) {
+    metaReq(
+      'head',
+      pathOrOptions as string,
+      target,
+      propertyKey,
+      descriptor,
+      pathOrOptions,
+      pathIsGlobal,
+    );
+  };
 }
 
-export function POST(pathOrOptions?: string | FiredevHttpDecoratorOptions, pathIsGlobal = false) {
-  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    metaReq('post', pathOrOptions as string, target, propertyKey, descriptor, pathOrOptions, pathIsGlobal);
-  }
+export function POST(
+  pathOrOptions?: string | FiredevHttpDecoratorOptions,
+  pathIsGlobal = false,
+) {
+  return function (
+    target: any,
+    propertyKey: string,
+    descriptor: PropertyDescriptor,
+  ) {
+    metaReq(
+      'post',
+      pathOrOptions as string,
+      target,
+      propertyKey,
+      descriptor,
+      pathOrOptions,
+      pathIsGlobal,
+    );
+  };
 }
 
-export function PUT(pathOrOptions?: string | FiredevHttpDecoratorOptions, pathIsGlobal = false) {
-
-  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    metaReq('put', pathOrOptions as string, target, propertyKey, descriptor, pathOrOptions, pathIsGlobal);
-  }
+export function PUT(
+  pathOrOptions?: string | FiredevHttpDecoratorOptions,
+  pathIsGlobal = false,
+) {
+  return function (
+    target: any,
+    propertyKey: string,
+    descriptor: PropertyDescriptor,
+  ) {
+    metaReq(
+      'put',
+      pathOrOptions as string,
+      target,
+      propertyKey,
+      descriptor,
+      pathOrOptions,
+      pathIsGlobal,
+    );
+  };
 }
 
-export function PATCH(pathOrOptions?: string | FiredevHttpDecoratorOptions, pathIsGlobal = false) {
-  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    metaReq('patch', pathOrOptions as string, target, propertyKey, descriptor, pathOrOptions, pathIsGlobal);
-  }
+export function PATCH(
+  pathOrOptions?: string | FiredevHttpDecoratorOptions,
+  pathIsGlobal = false,
+) {
+  return function (
+    target: any,
+    propertyKey: string,
+    descriptor: PropertyDescriptor,
+  ) {
+    metaReq(
+      'patch',
+      pathOrOptions as string,
+      target,
+      propertyKey,
+      descriptor,
+      pathOrOptions,
+      pathIsGlobal,
+    );
+  };
 }
 
-export function DELETE(pathOrOptions?: string | FiredevHttpDecoratorOptions, pathIsGlobal = false) {
-  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    metaReq('delete', pathOrOptions as string, target, propertyKey, descriptor, pathOrOptions, pathIsGlobal);
-  }
+export function DELETE(
+  pathOrOptions?: string | FiredevHttpDecoratorOptions,
+  pathIsGlobal = false,
+) {
+  return function (
+    target: any,
+    propertyKey: string,
+    descriptor: PropertyDescriptor,
+  ) {
+    metaReq(
+      'delete',
+      pathOrOptions as string,
+      target,
+      propertyKey,
+      descriptor,
+      pathOrOptions,
+      pathIsGlobal,
+    );
+  };
 }
-

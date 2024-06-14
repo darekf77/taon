@@ -11,5 +11,5 @@ startFn = tnpStartLocal; // locally I wanna use compiled tnp code / inside minif
 
 export const start = async (args, frameworkName, mode) => {
   await (startFn as any)(args, frameworkName, mode);
-}
+};
 // DONT CHANGE THIS FILE!

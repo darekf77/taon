@@ -1,5 +1,3 @@
-
-
 // class Pilot {
 
 //   id: string;
@@ -13,17 +11,11 @@
 //   secondPilot: Pilot;
 // }
 
-
 // const pilot: Pilot = void 0;
 // pilot.airplane
 //   /* */
 //   .secondPilot
 //   .name
-
-
-
-
-
 
 // import { QueryBuilder, SelectQueryBuilder } from 'firedev-typeorm'
 
@@ -43,12 +35,10 @@
 //     return
 //   }
 
-
 // }
 
 // const c: BrowserQueryBuilder<Pilot>;
 // c.select('').delete('')
-
 
 // import { of, delay, map, delayWhen, Observable, from } from 'rxjs';
 
@@ -65,7 +55,6 @@
 // }
 
 // type Operator = '<=' | '>=' | '=';
-
 
 // class QueryBuilder<T> {
 
@@ -87,8 +76,6 @@
 //   queryParams: string;
 // }
 
-
-
 // function RestQuery<T = any, KEY = keyof T>(queryParams?: any) {
 //   const self = this;
 //   const res = {
@@ -108,7 +95,6 @@
 //   return res;
 // }
 
-
 // RestQuery<Airplane>().select('pilot').where('secondPilot <= secondPilot')
 
 // // const asd = gql`
@@ -119,9 +105,7 @@
 
 //   graphql: string;
 
-
 // }
-
 
 // const AirplaneEntity = {};
 
@@ -132,10 +116,8 @@
 
 // }
 
-
 // // function joinWith(entity) {
 // //   return function <T>(fn: (entity: T) => Info) {
-
 
 // //   }
 // // }
@@ -225,5 +207,3 @@
 // //   fn9: UnaryFunction<H, I>,
 // //   ...fns: UnaryFunction<any, any>[]
 // // ): UnaryFunction<T, unknown>;
-
-

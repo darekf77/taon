@@ -14,26 +14,37 @@ DON'T FORGET
 
 */
 
-
 @Component({
   selector: 'formly-repeat-section',
   template: `
-    <div  *ngIf="field.fieldGroup && field.fieldGroup.length === 0" >
+    <div *ngIf="field.fieldGroup && field.fieldGroup.length === 0">
       Press button to add new element...
     </div>
-    <div *ngFor="let field of field.fieldGroup; let i = index;" class="firedev-formly-array"  >
+    <div
+      *ngFor="let field of field.fieldGroup; let i = index"
+      class="firedev-formly-array">
       <formly-group
         [model]="model[i]"
         [field]="field"
         [options]="options"
         [form]="formControl">
         <div>
-          <button class="btn btn-danger" type="button" (click)="remove(i)">Remove</button>
+          <button
+            class="btn btn-danger"
+            type="button"
+            (click)="remove(i)">
+            Remove
+          </button>
         </div>
       </formly-group>
     </div>
     <div>
-      <button class="btn btn-primary" type="button" (click)="add()">{{ labelTemplate }}</button>
+      <button
+        class="btn btn-primary"
+        type="button"
+        (click)="add()">
+        {{ labelTemplate }}
+      </button>
     </div>
   `,
   styles: [
@@ -56,16 +67,16 @@ DON'T FORGET
         padding: 5px;
         background: white;
       }
-
-    `
-  ]
+    `,
+  ],
 })
 export class RepeatTypeComponent extends FieldArrayType {
   get labelTemplate() {
     // @ts-ignore
     return this.field.fieldArray.templateOptions.label; // TODO QUICK_FIX @LAST
   }
-  constructor(builder: FormlyFormBuilder) { // TODO QUICK_FIX
+  constructor(builder: FormlyFormBuilder) {
+    // TODO QUICK_FIX
     // @ts-ignore
     super(builder);
   }

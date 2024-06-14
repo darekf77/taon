@@ -1,17 +1,27 @@
 //#region imports
-import { Symbols } from "../symbols";
-import { BaseController } from "./base-controller";
-import { BaseRepository } from "./base-repository";
-import { GET, PUT, DELETE, POST, HEAD, PATCH } from '../decorators/http/http-methods-decorators';
+import { Symbols } from '../symbols';
+import { BaseController } from './base-controller';
+import { BaseRepository } from './base-repository';
+import {
+  GET,
+  PUT,
+  DELETE,
+  POST,
+  HEAD,
+  PATCH,
+} from '../decorators/http/http-methods-decorators';
 import { Query, Path, Body } from '../decorators/http/http-params-decorators';
 import { MySqlQuerySource } from 'firedev-type-sql/src';
 import { Models } from '../models';
 import { Helpers, _ } from 'tnp-core/src';
-import { FiredevController, FiredevControllerOptions } from '../decorators/classes/controller-decorator';
-import { ClassHelpers } from "../helpers/class-helpers";
-import { Entity } from "firedev-typeorm/src";
-import { Validators } from "../validators";
-import { FiredevEntityOptions } from "../decorators/classes/entity-decorator";
+import {
+  FiredevController,
+  FiredevControllerOptions,
+} from '../decorators/classes/controller-decorator';
+import { ClassHelpers } from '../helpers/class-helpers';
+import { Entity } from 'firedev-typeorm/src';
+import { Validators } from '../validators';
+import { FiredevEntityOptions } from '../decorators/classes/entity-decorator';
 //#endregion
 
 /**
@@ -19,7 +29,6 @@ import { FiredevEntityOptions } from "../decorators/classes/entity-decorator";
  */
 @FiredevController({ className: 'BaseCrudController' })
 export abstract class BaseCrudController<Entity> extends BaseController {
-
   //#region fields
   crud?: BaseRepository<Entity> = this.inject(BaseRepository<Entity>);
   /**
@@ -48,7 +57,6 @@ export abstract class BaseCrudController<Entity> extends BaseController {
     //#endregion
   }
 
-
   /**
    * Please provide entity as class propery entityClassFn:
    */
@@ -59,9 +67,14 @@ export abstract class BaseCrudController<Entity> extends BaseController {
   async _() {
     const entityClassFn = this.entity();
     if (entityClassFn) {
-      const configEntity = Reflect.getMetadata(Symbols.metadata.options.entity, ClassHelpers.getClassFnFromObject(this)) as FiredevEntityOptions;
+      const configEntity = Reflect.getMetadata(
+        Symbols.metadata.options.entity,
+        ClassHelpers.getClassFnFromObject(this),
+      ) as FiredevEntityOptions;
       if (configEntity?.createTable === false) {
-        Helpers.warn(`Table for entity ${ClassHelpers.getName(entityClassFn)} will not be created. Crud will not work properly.`);
+        Helpers.warn(
+          `Table for entity ${ClassHelpers.getName(entityClassFn)} will not be created. Crud will not work properly.`,
+        );
       }
       this.crud.entity = entityClassFn;
     } else {
@@ -77,27 +90,25 @@ export abstract class BaseCrudController<Entity> extends BaseController {
 
       `);
     }
-
   }
   //#endregion
 
   //#region bufferd changes
-  @GET(`/${Symbols.old.CRUD_TABLE_MODEL}/:id/property/:property`)
+  @GET(`/:id/property/:property`)
   bufforedChanges(
     @Path(`id`) id: number | string,
     @Path(`property`) property: string,
-    @Query('alreadyLength') alreadyLength?: number
+    @Query('alreadyLength') alreadyLength?: number,
   ): Models.Http.Response<string | any[]> {
     //#region @websqlFunc
     return async (request, response) => {
-
       const model = await this.crud.repo.findOne({
-        where: { id } as any
-      })
+        where: { id } as any,
+      });
       if (model === void 0) {
         return;
       }
-      Validators.preventUndefinedModel(model, id)
+      Validators.preventUndefinedModel(model, id);
       let value = model[property];
       let result: any;
       if (_.isString(value) || _.isArray(value)) {
@@ -105,13 +116,13 @@ export abstract class BaseCrudController<Entity> extends BaseController {
       }
 
       return result;
-    }
+    };
     //#endregion
   }
   //#endregion
 
   //#region pagintation
-  @GET(`/${Symbols.old.CRUD_TABLE_MODELS}-pagination`)
+  @GET()
   pagination(
     @Query('pageNumber') pageNumber: number = 1,
     @Query('pageSize') pageSize: number = 10,
@@ -120,7 +131,6 @@ export abstract class BaseCrudController<Entity> extends BaseController {
     //#region @websqlFunc
     return async (request, response) => {
       if (this.crud.repository) {
-
         const query = {
           page: pageNumber,
           take: pageSize,
@@ -130,22 +140,19 @@ export abstract class BaseCrudController<Entity> extends BaseController {
         //   query
         // })
 
-        const take = query.take || 10
+        const take = query.take || 10;
         const page = query.page || 1;
         const skip = (page - 1) * take;
-        const keyword = query.keyword || ''
+        const keyword = query.keyword || '';
 
-        const [result, total] = await this.crud.repo.findAndCount(
-          {
-            // where: { name: Like('%' + keyword + '%') },
-            // order: { name: "DESC" },
-            take: take,
-            skip: skip
-          }
-        );
+        const [result, total] = await this.crud.repo.findAndCount({
+          // where: { name: Like('%' + keyword + '%') },
+          // order: { name: "DESC" },
+          take: take,
+          skip: skip,
+        });
 
-
-        response?.setHeader(Symbols.old.X_TOTAL_COUNT, total)
+        response?.setHeader(Symbols.old.X_TOTAL_COUNT, total);
         // const lastPage = Math.ceil(total / take);
         // const nextPage = page + 1 > lastPage ? null : page + 1;
         // const prevPage = page - 1 < 1 ? null : page - 1;
@@ -157,115 +164,134 @@ export abstract class BaseCrudController<Entity> extends BaseController {
 
         return result as Entity[];
       }
-      return []
-    }
+      return [];
+    };
     //#endregion
   }
   //#endregion
 
   //#region get all
-  @GET(`/${Symbols.old.CRUD_TABLE_MODELS}`)
+  @GET()
   getAll(): Models.Http.Response<Entity[]> {
     //#region @websqlFunc
     return async (request, response) => {
       if (this.crud.repository) {
         const { models, totalCount } = await this.crud.getAll();
-        response?.setHeader(Symbols.old.X_TOTAL_COUNT, totalCount)
+        response?.setHeader(Symbols.old.X_TOTAL_COUNT, totalCount);
         return models;
       }
       return [];
-    }
+    };
     //#endregion
   }
   //#endregion
 
   //#region get by id
-  @GET(`/${Symbols.old.CRUD_TABLE_MODEL}/:id`)
+  @GET(`/:id`)
   getBy(@Path(`id`) id: number | string): Models.Http.Response<Entity> {
     //#region @websqlFunc
     return async () => {
       const { model } = await this.crud.getBy(id);
       return model;
-    }
+    };
     //#endregion
   }
   //#endregion
 
   //#region update by id
-  @PUT(`/${Symbols.old.CRUD_TABLE_MODEL}/:id`)
-  updateById(@Path(`id`) id: number | string, @Body() item: Entity): Models.Http.Response<Entity> {
+  @PUT(`/:id`)
+  updateById(
+    @Path(`id`) id: number | string,
+    @Body() item: Entity,
+  ): Models.Http.Response<Entity> {
     //#region @websqlFunc
 
     return async () => {
       const { model } = await this.crud.updateById(id, item as any);
       return model;
+    };
+    //#endregion
+  }
+  //#endregion
 
-    }
+  //#region patch by id
+  @PATCH(`/:id`)
+  patchById(
+    @Path(`id`) id: number | string,
+    @Body() item: Entity,
+  ): Models.Http.Response<Entity> {
+    //#region @websqlFunc
+
+    return async () => {
+      const { model } = await this.crud.updateById(id, item as any);
+      return model;
+    };
     //#endregion
   }
   //#endregion
 
   //#region bulk update
-  @PUT(`/bulk/${Symbols.old.CRUD_TABLE_MODELS}`)
+  @PUT()
   bulkUpdate(@Body() items: Entity[]): Models.Http.Response<Entity[]> {
     //#region @websqlFunc
     return async () => {
-      if (!Array.isArray(items) || (items?.length === 0)) {
+      if (!Array.isArray(items) || items?.length === 0) {
         return [];
       }
       const { models } = await this.crud.bulkUpdate(items);
       return models;
-    }
+    };
     //#endregion
   }
   //#endregion
 
   //#region delete by id
-  @DELETE(`/${Symbols.old.CRUD_TABLE_MODEL}/:id`)
+  @DELETE(`/:id`)
   deleteById(@Path(`id`) id: number): Models.Http.Response<Entity> {
     //#region @websqlFunc
     return async () => {
       const { model } = await this.crud.deleteById(id);
       return model;
-    }
+    };
     //#endregion
   }
   //#endregion
 
   //#region bulk delete
-  @DELETE(`/bulk/${Symbols.old.CRUD_TABLE_MODELS}/:ids`)
-  bulkDelete(@Path(`ids`) ids: (number | string)[]): Models.Http.Response<(number | string | Entity)[]> {
+  @DELETE(`/bulkDelete/:ids`)
+  bulkDelete(
+    @Path(`ids`) ids: (number | string)[],
+  ): Models.Http.Response<(number | string | Entity)[]> {
     //#region @websqlFunc
     return async () => {
       const { models } = await this.crud.bulkDelete(ids);
       return models;
-    }
+    };
     //#endregion
   }
   //#endregion
 
   //#region create
-  @POST(`/${Symbols.old.CRUD_TABLE_MODEL}/`)
+  @POST()
   create(@Body() item: Entity): Models.Http.Response<Entity> {
     //#region @websqlFunc
     return async () => {
       const { model } = await this.crud.create(item as any);
       return model as Entity;
-    }
+    };
     //#endregion
   }
   //#endregion
 
   //#region bulk create
-  @POST(`/bulk/${Symbols.old.CRUD_TABLE_MODELS}/`)
+  @POST()
   bulkCreate(@Body() items: Entity): Models.Http.Response<Entity[]> {
     //#region @websqlFunc
     return async () => {
       const { models } = await this.crud.bulkCreate(items as any);
       return models as Entity[];
-    }
+    };
     //#endregion
   }
   //#endregion
-
 }

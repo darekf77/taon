@@ -880,7 +880,6 @@ export class EndpointContext {
     if (this.modeAllowsDatabaseCreation && this.databaseConfig) {
       Helpers.info('[firedev][database] prepare typeorm connection...');
       try {
-
         const connection = new DataSource(dataSourceDbConfig);
         this.connection = connection;
         await this.connection.initialize();

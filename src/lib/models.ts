@@ -1,24 +1,27 @@
-import { CoreModels } from "tnp-core/src";
+import { CoreModels } from 'tnp-core/src';
 import { Response, RequestHandler } from 'express';
-import { Response as ExpressResponse, Request as ExpressRequest } from 'express';
+import {
+  Response as ExpressResponse,
+  Request as ExpressRequest,
+} from 'express';
 import { Models as ModelsNg2Rest } from 'ng2-rest/src';
-import { ClassHelpers } from "./helpers/class-helpers";
-import type { FiredevControllerOptions } from "./decorators/classes/controller-decorator";
-import type { FiredevEntityOptions } from "./decorators/classes/entity-decorator";
-
+import { ClassHelpers } from './helpers/class-helpers';
+import type { FiredevControllerOptions } from './decorators/classes/controller-decorator';
+import type { FiredevEntityOptions } from './decorators/classes/entity-decorator';
 
 export namespace Models {
-
   export type FrameworkMode =
-    'backend-frontend(tcp+udp)' |
-    'remote-backend(tcp+udp)' |
-    'backend-frontend(ipc-electron)' |
-    'backend-frontend(websql)'
-    ;
+    | 'backend-frontend(tcp+udp)'
+    | 'remote-backend(tcp+udp)'
+    | 'backend-frontend(ipc-electron)'
+    | 'backend-frontend(websql)';
 
   //#region models / class types
   export enum ClassType {
-    ENTITY = 'ENTITY', CONTROLLER = 'CONTROLLER', REPOSITORY = 'REPOSITORY', PROVIDER = 'PROVIDER'
+    ENTITY = 'ENTITY',
+    CONTROLLER = 'CONTROLLER',
+    REPOSITORY = 'REPOSITORY',
+    PROVIDER = 'PROVIDER',
   }
 
   export const ClassTypeKey = {
@@ -26,7 +29,7 @@ export namespace Models {
     [ClassType.CONTROLLER]: 'controllers',
     [ClassType.REPOSITORY]: 'repositories',
     [ClassType.PROVIDER]: 'providers',
-  } as { [key in ClassType]: keyof ContextOptions<any, any, any, any, any>; };
+  } as { [key in ClassType]: keyof ContextOptions<any, any, any, any, any> };
 
   //#endregion
 
@@ -57,8 +60,8 @@ export namespace Models {
 
     databasePort?: number;
     databaseHost?: string;
-    databaseUsername?: string,
-    databasePassword?: string,
+    databaseUsername?: string;
+    databasePassword?: string;
   }
   //#endregion
 
@@ -66,24 +69,30 @@ export namespace Models {
 
   export type ISession = {
     /**
-       * frontend host only needed when we are using
-       * withCredentials for axios
-       * and session cookie
-       */
+     * frontend host only needed when we are using
+     * withCredentials for axios
+     * and session cookie
+     */
     frontendHost?: string;
-    secret?: string,
-    saveUninitialized?: boolean,
+    secret?: string;
+    saveUninitialized?: boolean;
     /**
-       * max age of session
-       */
+     * max age of session
+     */
     cookieMaxAge?: number;
     secure?: boolean;
     resave?: boolean;
-  }
+  };
   //#endregion
 
   //#region models / context options
-  export interface ContextOptions<CONTEXTS, CONTROLLERS, ENTITIES, REPOSITORIES, PROVIDERS> {
+  export interface ContextOptions<
+    CONTEXTS,
+    CONTROLLERS,
+    ENTITIES,
+    REPOSITORIES,
+    PROVIDERS,
+  > {
     contextName: string;
     host?: string;
     remoteHost?: string;
@@ -106,12 +115,10 @@ export namespace Models {
       key: string;
       cert: string;
     };
-    publicAssets?: { serverPath: string; locationOnDisk: string; }[];
+    publicAssets?: { serverPath: string; locationOnDisk: string }[];
     middlewares?: MiddlewareType[];
-
   }
   //#endregion
-
 
   //#region models / decorator abstract options
   export class DecoratorAbstractOpt {
@@ -156,7 +163,6 @@ export namespace Models {
 
   //#region models / controller config
   export class ControllerConfig extends DecoratorAbstractOpt {
-
     realtime?: boolean;
     path: string;
     uniqueKey?: string;
@@ -171,27 +177,32 @@ export namespace Models {
   }
   //#endregion
 
-
-
   //#region models / http
   export namespace Http {
-
     export import Rest = ModelsNg2Rest;
 
-    export type ContextENDPOINT = { target: Function; initFN: Function; };
+    export type ContextENDPOINT = { target: Function; initFN: Function };
 
     export type FormlyFromType = 'material' | 'bootstrap';
 
-
-    export type ExpressContext<T> = (req: ExpressRequest, res: ExpressResponse) => T;
+    export type ExpressContext<T> = (
+      req: ExpressRequest,
+      res: ExpressResponse,
+    ) => T;
 
     export type SyncResponse<T> = string | T;
 
     export type ResponseFuncOpt<T> = {
-      limitSize?: (enties: Function | Function[], include: string[], exclude: string[]) => void;
-    }
+      limitSize?: (
+        enties: Function | Function[],
+        include: string[],
+        exclude: string[],
+      ) => void;
+    };
 
-    export type SyncResponseFunc<T> = (options?: ResponseFuncOpt<T>) => SyncResponse<T>;
+    export type SyncResponseFunc<T> = (
+      options?: ResponseFuncOpt<T>,
+    ) => SyncResponse<T>;
     export type MixResponse<T> = SyncResponse<T> | ExpressContext<T>;
 
     export interface ClientAction<T> {
@@ -205,33 +216,45 @@ export namespace Models {
     }
 
     export interface AsyncResponse<T> {
-      (req?: ExpressRequest, res?: ExpressResponse): Promise<SyncResponse<T> | SyncResponseFunc<T>>;
+      (
+        req?: ExpressRequest,
+        res?: ExpressResponse,
+      ): Promise<SyncResponse<T> | SyncResponseFunc<T>>;
     }
 
-    export type Response<T = string> = (__Response<T> | AsyncResponse<T>) & ClientAction<T> & __Response<T>;
+    export type Response<T = string> = (__Response<T> | AsyncResponse<T>) &
+      ClientAction<T> &
+      __Response<T>;
 
     export class Errors {
-
       public toString = (): string => {
-        return this.message
-      }
+        return this.message;
+      };
 
-      private constructor(public message: string, private code: ModelsNg2Rest.HttpCode = 400) {
+      private constructor(
+        public message: string,
+        private code: ModelsNg2Rest.HttpCode = 400,
+      ) {}
 
-      }
-
-      private static create(message: string, code: ModelsNg2Rest.HttpCode = 400) {
+      private static create(
+        message: string,
+        code: ModelsNg2Rest.HttpCode = 400,
+      ) {
         return new Errors(message, code);
       }
 
       public static entityNotFound(entity?: Function) {
-        return Errors.create(`Entity ${ClassHelpers.getName(entity)} not found`);
+        return Errors.create(
+          `Entity ${ClassHelpers.getName(entity)} not found`,
+        );
       }
 
-      public static custom(message: string, code: ModelsNg2Rest.HttpCode = 400) {
+      public static custom(
+        message: string,
+        code: ModelsNg2Rest.HttpCode = 400,
+      ) {
         return Errors.create(message, code);
       }
-
     }
 
     //#region @websql
@@ -240,11 +263,6 @@ export namespace Models {
     }
 
     //#endregion
-
   }
   //#endregion
-
-
 }
-
-

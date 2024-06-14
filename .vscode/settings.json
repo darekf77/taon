@@ -106,5 +106,6 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": false
   },
-  "prettier.endOfLine": "auto"
+  "prettier.endOfLine": "auto",
+  "prettier.prettierPath": "./node_modules/prettier"
 }

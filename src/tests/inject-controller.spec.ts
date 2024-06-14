@@ -16,8 +16,6 @@
 
 // const log = Log.create('formly')
 
-
-
 // @Firedev.Entity<Article>({
 //   className: 'Article',
 //   defaultModelValues: {
@@ -66,8 +64,6 @@
 // describe('Inject ctrl', () => {
 
 //   it('Should inject controller to entity', async () => {
-
-
 
 //     // let i = new ArticlesController()
 //     let p = new Article()

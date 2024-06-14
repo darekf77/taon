@@ -4,7 +4,6 @@ import { Models } from '../models';
 import { ClassHelpers } from './class-helpers';
 
 export namespace FiredevHelpers {
-
   //#region fillUpTo string
   export const fillUpTo = (s: string, nCharacters: number) => {
     return _.times(nCharacters, n => {
@@ -12,18 +11,18 @@ export namespace FiredevHelpers {
         return s.charAt(n);
       }
       return ' ';
-    }).join('')
-  }
+    }).join('');
+  };
   //#endregion
 
   //#region is good path
   export const isGoodPath = (p: string) => {
     return p && typeof p === 'string' && p.trim() !== '';
-  }
+  };
   //#endregion
 
   //#region try transform params
-  export const tryTransformParam = (param) => {
+  export const tryTransformParam = param => {
     if (typeof param === 'string') {
       let n = Number(param);
       if (!isNaN(n)) return n;
@@ -42,34 +41,44 @@ export namespace FiredevHelpers {
       }
     }
     return param;
-  }
+  };
   //#endregion
 
   //#region get expores path
-  export const getExpressPath = (c: Models.RuntimeControllerConfig, pathOrClassConfig: Models.MethodConfig) => {
-    if (typeof pathOrClassConfig === 'string') return `${c.calculatedPath}${pathOrClassConfig}`.replace(/\/$/, '')
-    return `${c.calculatedPath}${pathOrClassConfig.path}`.replace(/\/$/, '')
-  }
+  export const getExpressPath = (
+    c: Models.RuntimeControllerConfig,
+    pathOrClassConfig: Models.MethodConfig,
+  ) => {
+    if (typeof pathOrClassConfig === 'string')
+      return `${c.calculatedPath}${pathOrClassConfig}`.replace(/\/$/, '');
+    return `${c.calculatedPath}${pathOrClassConfig.path}`.replace(/\/$/, '');
+  };
   //#endregion
 
   //#region get default value tyep
-  export const defaultType = (value) => {
+  export const defaultType = value => {
     if (typeof value === 'string') return '';
     if (typeof value === 'boolean') return false;
     if (Array.isArray(value)) return {};
     if (typeof value === 'object') return {};
-  }
+  };
   //#endregion
 
   //#region parse json with string jsons
-  export const parseJSONwithStringJSONs = (object: Object, waring = false): Object => {
+  export const parseJSONwithStringJSONs = (
+    object: Object,
+    waring = false,
+  ): Object => {
     // console.log('checking object', object)
     if (!_.isObject(object)) {
       if (waring) {
-        console.error(`
+        console.error(
+          `
         parseJSONwithStringJSONs(...)
         Parameter should be a object, but is ${typeof object}
-        `, object)
+        `,
+          object,
+        );
       }
 
       return object;
@@ -88,18 +97,18 @@ export namespace FiredevHelpers {
       }
       // console.log(`key ${key} is json `, isJson)
       if (isJson) {
-        res[key] = parseJSONwithStringJSONs(res[key], false)
+        res[key] = parseJSONwithStringJSONs(res[key], false);
       }
     });
 
     return res;
-  }
+  };
   //#endregion
 
   //#region is plain file or folder
-  export const isPlainFileOrFolder = (filePath) => {
+  export const isPlainFileOrFolder = filePath => {
     return /^([a-zA-Z]|\-|\_|\@|\#|\$|\!|\^|\&|\*|\(|\))+$/.test(filePath);
-  }
+  };
   //#endregion
 
   //#region ips key name repsonse
@@ -108,13 +117,13 @@ export namespace FiredevHelpers {
     methodConfig: Models.MethodConfig,
     expressPath: string,
   ) => {
-    return ([
+    return [
       'response',
       ClassHelpers.getName(target),
       methodConfig.methodName,
       methodConfig.type,
       expressPath,
-    ].join('--'))
+    ].join('--');
   };
   //#endregion
 
@@ -124,40 +133,34 @@ export namespace FiredevHelpers {
     methodConfig: Models.MethodConfig,
     expressPath: string,
   ) => {
-    return ([
+    return [
       'request',
       ClassHelpers.getName(target),
       methodConfig.methodName,
       methodConfig.type,
       expressPath,
-    ].join('--'))
+    ].join('--');
   };
   //#endregion
 
   //#region websql mocks
-  export const websqlMocks = (headers) => {
-
+  export const websqlMocks = headers => {
     const response: Express.Response = {
-
       status(status: any) {
         // console.log({status})
         return {
           send(send: any) {
             // console.log({status})
-          }
-        }
+          },
+        };
       },
       setHeader(key: string, value: any) {
         // console.log('Dummy set header', arguments)
         headers[key] = value;
-      }
+      },
     };
-    const request: Express.Request = {
-
-    };
-    return { request, response }
+    const request: Express.Request = {};
+    return { request, response };
   };
   //#endregion
 }
-
-

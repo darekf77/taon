@@ -4,20 +4,14 @@ export class BroadcastApiClient {
     return ins;
   }
 
-  constructor(
-    protected callback: () => any,
-  ) {
-
-  }
+  constructor(protected callback: () => any) {}
 }
 
 export interface BroadcastApiIoOptionsClient {
-  path: string,
+  path: string;
 }
 
-
 export interface BroadcastApiIoOptions extends BroadcastApiIoOptionsClient {
-
   //#region @browser
   /**
    * only for websql mode

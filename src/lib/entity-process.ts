@@ -29,35 +29,36 @@ export const getTransformFunction = (target: Function) => {
       }
     })
     .filter(f => _.isFunction(f));
-  return (functions.length === 0) ? (void 0) : function (entity) {
-
-    for (let index = functions.length - 1; index >= 0; index--) {
-      const transformFun = functions[index];
-      transformFun(entity)
-    }
-    return entity;
-  }
-}
+  return functions.length === 0
+    ? void 0
+    : function (entity) {
+        for (let index = functions.length - 1; index >= 0; index--) {
+          const transformFun = functions[index];
+          transformFun(entity);
+        }
+        return entity;
+      };
+};
 
 export const singleTransform = (json: any) => {
-
   let ptarget = ClassHelpers.getClassFnFromObject(json);
   let pbrowserTransformFn = getTransformFunction(ptarget);
   if (pbrowserTransformFn) {
-    const newValue = pbrowserTransformFn(json)
+    const newValue = pbrowserTransformFn(json);
     if (!_.isObject(newValue)) {
-      console.error(`Please return object in transform function for class: ${ClassHelpers.getName(json)}`)
+      console.error(
+        `Please return object in transform function for class: ${ClassHelpers.getName(json)}`,
+      );
     } else {
       json = newValue;
     }
   }
   return json;
-}
+};
 
 export class EntityProcess {
-
   static async init(result: any, response: Response) {
-    return await (new EntityProcess(result, response).run());
+    return await new EntityProcess(result, response).run();
   }
 
   /**
@@ -71,9 +72,7 @@ export class EntityProcess {
      */
     private result: any,
     private response: Response,
-  ) {
-
-  }
+  ) {}
 
   /**
    * Say yes to:
@@ -84,7 +83,7 @@ export class EntityProcess {
   private checkAdvancedManiupulation() {
     if (_.isFunction(this.result)) {
       this.advancedManipulation = true;
-      this.result = this.result()
+      this.result = this.result();
     }
   }
 
@@ -92,36 +91,42 @@ export class EntityProcess {
   private circural = [];
 
   public async run() {
-    this.checkAdvancedManiupulation()
+    this.checkAdvancedManiupulation();
     this.data = this.result;
 
     if (_.isObject(this.result)) {
       if (this.advancedManipulation) {
-        this.applayTransformFn()
+        this.applayTransformFn();
       }
 
-      this.setHeaders()
+      this.setHeaders();
     }
-    this.send()
+    this.send();
   }
-
 
   applayTransformFn() {
     if (_.isObject(this.data) && !_.isArray(this.data)) {
-      this.data = singleTransform(this.data)
+      this.data = singleTransform(this.data);
     }
     const { include } = { include: [] };
-    walk.Object(this.data, (value, lodashPath, changeValue, { skipObject, isCircural }) => {
-      // console.log(`${isCircural ? 'CIR' : 'NOT'} : ${lodashPath}`)
-      if (!isCircural) {
-        if (!_.isArray(value) && _.isObject(value)) {
-          changeValue(singleTransform(value))
+    walk.Object(
+      this.data,
+      (value, lodashPath, changeValue, { skipObject, isCircural }) => {
+        // console.log(`${isCircural ? 'CIR' : 'NOT'} : ${lodashPath}`)
+        if (!isCircural) {
+          if (!_.isArray(value) && _.isObject(value)) {
+            changeValue(singleTransform(value));
+          }
         }
-      }
+      },
+      { checkCircural: true, breadthWalk: true, include },
+    );
 
-    }, { checkCircural: true, breadthWalk: true, include })
-
-    const { circs } = walk.Object(this.data, void 0, { checkCircural: true, breadthWalk: true, include })
+    const { circs } = walk.Object(this.data, void 0, {
+      checkCircural: true,
+      breadthWalk: true,
+      include,
+    });
     this.circural = circs;
   }
 
@@ -129,90 +134,110 @@ export class EntityProcess {
     const { include } = { include: [] };
 
     const className = ClassHelpers.getName(this.data);
-    const doNothing = _.isNil(this.data) || ['Object', '', void 0, null].includes(className);
+    const doNothing =
+      _.isNil(this.data) || ['Object', '', void 0, null].includes(className);
     // console.log('doNothing', doNothing)
     if (!doNothing) {
-      const cleaned = JSON10.cleaned(this.data, void 0, { breadthWalk: true, include })
+      const cleaned = JSON10.cleaned(this.data, void 0, {
+        breadthWalk: true,
+        include,
+      });
       this.entityMapping = Mapping.decode(cleaned, !this.advancedManipulation);
 
-      this.response.set(Symbols.old.MAPPING_CONFIG_HEADER, JSON.stringify(this.entityMapping));
+      this.response.set(
+        Symbols.old.MAPPING_CONFIG_HEADER,
+        JSON.stringify(this.entityMapping),
+      );
       if (this.advancedManipulation) {
-        this.response.set(Symbols.old.CIRCURAL_OBJECTS_MAP_BODY, JSON.stringify(this.circural));
+        this.response.set(
+          Symbols.old.CIRCURAL_OBJECTS_MAP_BODY,
+          JSON.stringify(this.circural),
+        );
       }
     }
   }
-
 
   send() {
     if (!_.isObject(this.data)) {
       if (_.isNumber(this.data)) {
         this.response.send(this.data.toString());
       } else {
-        this.response.send(this.data)
+        this.response.send(this.data);
       }
-      return
+      return;
     }
     if (this.advancedManipulation) {
-
       const browserKey = config.folder.browser;
       let toSend = _.isArray(this.data) ? [] : {};
 
-
       const { include = [], exclude = [] } = { include: [], exclude: [] };
 
-      walk.Object(this.data, (value, lodashPath, changeVAlue, { isCircural, skipObject }) => {
-        // console.log(`${isCircural ? 'CIR' : 'NOT'} ${lodashPath}`)
-        if (isCircural) {
-          _.set(toSend, lodashPath, null);
-        } else {
-          const fun = getTransformFunction(ClassHelpers.getClassFnFromObject(value));
-
-          if (_.isFunction(fun)) {
-            _.set(toSend, `${lodashPath}.${browserKey}`, value[browserKey]);
-            const indexProp = ClassHelpers.getUniquKey(value);
-            _.set(toSend, `${lodashPath}.${indexProp}`, value[indexProp]);
-            // skipObject()
+      walk.Object(
+        this.data,
+        (value, lodashPath, changeVAlue, { isCircural, skipObject }) => {
+          // console.log(`${isCircural ? 'CIR' : 'NOT'} ${lodashPath}`)
+          if (isCircural) {
+            _.set(toSend, lodashPath, null);
           } else {
-            _.set(toSend, lodashPath, value);
-          }
+            const fun = getTransformFunction(
+              ClassHelpers.getClassFnFromObject(value),
+            );
 
-        }
-      }, { checkCircural: true, breadthWalk: true, include })
+            if (_.isFunction(fun)) {
+              _.set(toSend, `${lodashPath}.${browserKey}`, value[browserKey]);
+              const indexProp = ClassHelpers.getUniquKey(value);
+              _.set(toSend, `${lodashPath}.${indexProp}`, value[indexProp]);
+              // skipObject()
+            } else {
+              _.set(toSend, lodashPath, value);
+            }
+          }
+        },
+        { checkCircural: true, breadthWalk: true, include },
+      );
 
       if (!_.isArray(this.data)) {
-        let funParent = getTransformFunction(ClassHelpers.getClassFnFromObject(this.data));
+        let funParent = getTransformFunction(
+          ClassHelpers.getClassFnFromObject(this.data),
+        );
         // if (this.mdc && this.mdc.exclude && this.mdc.exclude.length > 0) {
         //   console.log(`funParent !!! have fun? ${!!funParent} `)
         // }
         if (_.isFunction(funParent)) {
           toSend = {
-            [browserKey]: toSend[browserKey]
+            [browserKey]: toSend[browserKey],
           };
         }
         Object.keys(this.data).forEach(prop => {
           if (prop !== browserKey) {
             const v = this.data[prop];
-            if (!(
-              ((include.length > 0) && !include.includes(prop)) ||
-              ((exclude.length > 0) && exclude.includes(prop))
-            )) {
-              if (ClassHelpers.isContextClassObject(v) &&
-                _.isFunction(getTransformFunction(ClassHelpers.getClassFnFromObject(v)))) {
+            if (
+              !(
+                (include.length > 0 && !include.includes(prop)) ||
+                (exclude.length > 0 && exclude.includes(prop))
+              )
+            ) {
+              if (
+                ClassHelpers.isContextClassObject(v) &&
+                _.isFunction(
+                  getTransformFunction(ClassHelpers.getClassFnFromObject(v)),
+                )
+              ) {
                 toSend[prop] = {
-                  [browserKey]: v[browserKey]
-                }
+                  [browserKey]: v[browserKey],
+                };
                 const indexProp = ClassHelpers.getUniquKey(v);
-                toSend[prop][indexProp] = this.data[prop][indexProp]
+                toSend[prop][indexProp] = this.data[prop][indexProp];
                 for (const key in v) {
-                  if (_.isObject(v) && v.hasOwnProperty(key) &&
+                  if (
+                    _.isObject(v) &&
+                    v.hasOwnProperty(key) &&
                     ![indexProp, config.folder.browser].includes(key) &&
-                    (
-                      _.isString(v[key]) ||
+                    (_.isString(v[key]) ||
                       _.isNumber(v[key]) ||
                       _.isDate(v[key]) ||
                       _.isNull(v[key]) ||
-                      _.isBoolean(v[key])
-                    )
+                      _.isBoolean(v[key]))
                   ) {
                     toSend[prop][key] = v[key];
                   }
@@ -223,18 +248,14 @@ export class EntityProcess {
             }
           }
         });
-
       }
 
-
-
       // toSend = Helpers.JSON.cleaned(toSend, void 0, { breadthWalk: true })
-      this.response.json(toSend)
+      this.response.json(toSend);
     } else {
-      this.response.json(this.data)
+      this.response.json(this.data);
     }
   }
-
 }
 
 //#endregion

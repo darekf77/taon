@@ -1,5 +1,5 @@
 //#region @websql
-import * as tsorm from 'firedev-typeorm/src'
+import * as tsorm from 'firedev-typeorm/src';
 //#endregion
 
 //#region orm
@@ -30,17 +30,20 @@ export namespace Orm {
     export import Primary = tsorm.PrimaryColumn;
     export import Index = tsorm.Index;
     export import CreateDate = tsorm.CreateDateColumn;
-    export import UpdateDate = tsorm.UpdateDateColumn
-    export import DeleteDate = tsorm.DeleteDateColumn
+    export import UpdateDate = tsorm.UpdateDateColumn;
+    export import DeleteDate = tsorm.DeleteDateColumn;
     export import Custom = tsorm.Column;
 
     /**
      * 100 characters varchar
      */
-    export const String = () => tsorm.Column({ type: 'varchar', length: 100, nullable: true });
-    export const SimpleJson = () => tsorm.Column({ type: 'simple-json', nullable: true });
+    export const String = () =>
+      tsorm.Column({ type: 'varchar', length: 100, nullable: true });
+    export const SimpleJson = () =>
+      tsorm.Column({ type: 'simple-json', nullable: true });
 
-    export const Boolean = (defaultValue: boolean) => tsorm.Column({ type: 'boolean', default: defaultValue });
+    export const Boolean = (defaultValue: boolean) =>
+      tsorm.Column({ type: 'boolean', default: defaultValue });
 
     // TODO has limitation => comma in name
     // export const SimpleArray = () => tsorm.Column({ type: 'simple-array', nullable: true });

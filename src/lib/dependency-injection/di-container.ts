@@ -1,4 +1,3 @@
-
 export class DIFiredevContainer {
   private static instances = new Map();
 
@@ -16,17 +15,25 @@ export class DIFiredevContainer {
   }
 
   static inject<T>(target: new (...args: any[]) => T): T {
-    return new Proxy({}, {
-      get: (_, propName) => {
-        let instance: T = DIFiredevContainer.instances.get(target) || DIFiredevContainer.resolve(target);
-        return typeof instance[propName] === 'function' ? instance[propName].bind(instance) : instance[propName];
+    return new Proxy(
+      {},
+      {
+        get: (_, propName) => {
+          let instance: T =
+            DIFiredevContainer.instances.get(target) ||
+            DIFiredevContainer.resolve(target);
+          return typeof instance[propName] === 'function'
+            ? instance[propName].bind(instance)
+            : instance[propName];
+        },
+        set: (_, propName, value) => {
+          let instance: T =
+            DIFiredevContainer.instances.get(target) ||
+            DIFiredevContainer.resolve(target);
+          instance[propName] = value;
+          return true;
+        },
       },
-      set: (_, propName, value) => {
-        let instance: T = DIFiredevContainer.instances.get(target) || DIFiredevContainer.resolve(target);
-        instance[propName] = value;
-        return true;
-      }
-    }) as T;
+    ) as T;
   }
 }
-

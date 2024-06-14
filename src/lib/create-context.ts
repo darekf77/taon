@@ -1,16 +1,16 @@
-import { Helpers } from "tnp-core/src";
-import { EndpointContext } from "./endpoint-context";
-import { Models } from "./models";
-import { FiredevAdmin } from "./firedev-admin";
+import { Helpers } from 'tnp-core/src';
+import { EndpointContext } from './endpoint-context';
+import { Models } from './models';
+import { FiredevAdmin } from './firedev-admin';
 
 export const createContext = <
   CTX extends Record<string, object>,
   CTRL extends Record<string, new (...args: any[]) => any>,
   ENTITY extends Record<string, new (...args: any[]) => any>,
   REPO extends Record<string, new (...args: any[]) => any>,
-  PROVIDER extends Record<string, new (...args: any[]) => any>
+  PROVIDER extends Record<string, new (...args: any[]) => any>,
 >(
-  config: Models.ContextOptions<CTX, CTRL, ENTITY, REPO, PROVIDER>
+  config: Models.ContextOptions<CTX, CTRL, ENTITY, REPO, PROVIDER>,
 ) => {
   const ref = new EndpointContext(config);
 
@@ -43,7 +43,10 @@ export const createContext = <
       //#endregion
 
       await ref.initClasses();
-      if (FiredevAdmin.Instance.keepWebsqlDbDataAfterReload && !Helpers.isNode) {
+      if (
+        FiredevAdmin.Instance.keepWebsqlDbDataAfterReload &&
+        !Helpers.isNode
+      ) {
         Helpers.info(`[firedev] Keep websql data after reload`);
       } else {
         await ref.reinitControllers();
@@ -55,12 +58,14 @@ export const createContext = <
     Helpers.info(`[firedev] Create abstract context: ${ref.contextName}`);
   } else {
     if (ref.remoteHost) {
-      Helpers.info(`[firedev] Create context for remote host: ${ref.remoteHost}`);
+      Helpers.info(
+        `[firedev] Create context for remote host: ${ref.remoteHost}`,
+      );
     } else {
       Helpers.info(`[firedev] Create context for host: ${ref.host}`);
     }
   }
 
   return res;
-}
+};
 //#endregion

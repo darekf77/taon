@@ -29,11 +29,11 @@ export class FiredevAdmin {
   //#region @browser
   enabledTabs = [];
 
-  private onEditMode = new Subject()
+  private onEditMode = new Subject();
   onEditMode$ = this.onEditMode.asObservable();
 
   @Stor.property.in.localstorage.for(FiredevAdmin).withDefaultValue('')
-  selectedFileSrc: string
+  selectedFileSrc: string;
 
   //#region fields & getters / files edit mode
   /**
@@ -58,17 +58,12 @@ export class FiredevAdmin {
   public draggablePopupModeFullScreen: boolean;
   //#endregion
 
-
-
   //#region methods / set edit mode
   setEditMode(value: boolean) {
     this.filesEditMode = value;
     this.onEditMode.next(value);
   }
   //#endregion
-
-
-
 
   hide() {
     this.draggablePopupMode = false;

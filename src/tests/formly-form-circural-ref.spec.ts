@@ -20,7 +20,6 @@
 // import { walk } from 'lodash-walk-object';
 // const log = Log.create('formly')
 
-
 // @Firedev.Entity<Article>({
 //   className: 'Article',
 //   defaultModelValues: {

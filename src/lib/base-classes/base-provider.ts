@@ -1,8 +1,5 @@
-import { EndpointContext } from "../endpoint-context";
-import { Symbols } from "../symbols";
-import { BaseClass } from "./base-class";
+import { EndpointContext } from '../endpoint-context';
+import { Symbols } from '../symbols';
+import { BaseClass } from './base-class';
 
-
-export class BaseProvider extends BaseClass {
-
-}
+export class BaseProvider extends BaseClass {}

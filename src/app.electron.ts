@@ -1,14 +1,16 @@
-
 //#region @notForNpm
-import { CLIENT_DEV_NORMAL_APP_PORT, CLIENT_DEV_WEBSQL_APP_PORT } from './app.hosts';
+import {
+  CLIENT_DEV_NORMAL_APP_PORT,
+  CLIENT_DEV_WEBSQL_APP_PORT,
+} from './app.hosts';
 import {
   path,
   //#region @backend
   fse,
-  Helpers
+  Helpers,
   //#endregion
 } from 'tnp-core/src';
-Helpers.hideNodeWarnings()
+Helpers.hideNodeWarnings();
 //#region @backend
 import { app, BrowserWindow, screen } from 'electron';
 import start from './app';
@@ -18,7 +20,6 @@ const serve = args.some(val => val === '--serve');
 const websql = args.some(val => val === '--websql');
 
 function createWindow(): BrowserWindow {
-
   const size = screen.getPrimaryDisplay().workAreaSize;
 
   // Create the browser window.
@@ -26,15 +27,14 @@ function createWindow(): BrowserWindow {
     x: 0,
     y: 0,
     autoHideMenuBar: true,
-    width: size.width * (3/4),
-    height: size.height * (3/4),
+    width: size.width * (3 / 4),
+    height: size.height * (3 / 4),
     webPreferences: {
       nodeIntegration: true,
-      allowRunningInsecureContent: (serve),
+      allowRunningInsecureContent: serve,
       contextIsolation: false,
     },
   });
-
 
   if (serve) {
     const debug = require('electron-debug');
@@ -43,7 +43,10 @@ function createWindow(): BrowserWindow {
     /* @removeStart */ require('electron-reloader')(module); /* @removeEnd */
     win.webContents.openDevTools();
 
-    win.loadURL('http://localhost:' + (websql ? CLIENT_DEV_WEBSQL_APP_PORT : CLIENT_DEV_NORMAL_APP_PORT));
+    win.loadURL(
+      'http://localhost:' +
+        (websql ? CLIENT_DEV_WEBSQL_APP_PORT : CLIENT_DEV_NORMAL_APP_PORT),
+    );
   } else {
     // Path when running electron executable
     let pathIndex = './index.html';
@@ -72,7 +75,6 @@ async function startElectron() {
   await start();
 
   try {
-
     // This method will be called when Electron has finished
     // initialization and is ready to create browser windows.
     // Some APIs can only be used after this event occurs.
@@ -80,7 +82,7 @@ async function startElectron() {
     // TOD maybe solution
     // app.removeAllListeners('ready')
 
-    setTimeout(createWindow, 400)
+    setTimeout(createWindow, 400);
     //#region proper way that do not work
     // app.on('ready', () => {
     //   createWindow()
@@ -90,7 +92,7 @@ async function startElectron() {
 
     // Quit when all windows are closed.
     app.on('window-all-closed', () => {
-      console.log('QUIT!')
+      console.log('QUIT!');
       // On OS X it is common for applications and their menu bar
       // to stay active until the user quits explicitly with Cmd + Q
       if (process.platform !== 'darwin') {
@@ -101,12 +103,11 @@ async function startElectron() {
     app.on('activate', () => {
       // On OS X it's common to re-create a window in the app when the
       // dock icon is clicked and there are no other windows open.
-      console.log('WIN ACTIVATED')
+      console.log('WIN ACTIVATED');
       if (win === null) {
         createWindow();
       }
     });
-
   } catch (e) {
     // Catch Error
     throw e;

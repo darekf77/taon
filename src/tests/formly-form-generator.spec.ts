@@ -20,7 +20,6 @@
 // import { walk } from 'lodash-walk-object';
 // const log = Log.create('formly')
 
-
 // @Firedev.Entity<Book>({
 //   className: 'Book',
 //   defaultModelValues: {
@@ -77,7 +76,6 @@
 
 //   });
 
-
 //   it('Should exclude fields', () => {
 
 //     let config = Firedev.Formly.getFrom(User, {
@@ -100,10 +98,7 @@
 //     expect(config.length).to.be.eq(1)
 //   });
 
-
-
 // });
-
 
 // function jsonData() {
 //   let res = [

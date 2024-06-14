@@ -6,14 +6,13 @@ import type { BroadcastApiIoMockClient } from './broadcast-api-io-mock-client';
 import { EndpointContext } from '../endpoint-context';
 
 export class RealtimeBase {
-
   private static contexts = [];
   private static instances = [];
   public static by(context: EndpointContext): RealtimeBase {
     const indexContext = this.contexts.findIndex(c => c === context);
     if (indexContext === -1) {
       this.contexts.push(context);
-      const instance = new RealtimeBase(context)
+      const instance = new RealtimeBase(context);
       this.instances.push(instance);
       return instance;
     } else {
@@ -28,10 +27,7 @@ export class RealtimeBase {
   public BE_REALTIME: BroadcastApiIoMockServer; // socketio.Namespace;
   //#endregion
 
-
-  private constructor(protected context: EndpointContext) {
-
-  }
+  private constructor(protected context: EndpointContext) {}
 
   public pathFor(namespace?: string) {
     const uri = this.context.uri;
@@ -42,5 +38,4 @@ export class RealtimeBase {
     // console.log(`HREF: ${href}`)
     return new URL(href) as URL;
   }
-
 }
