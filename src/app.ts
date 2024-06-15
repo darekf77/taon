@@ -123,7 +123,7 @@ class UserProvider extends Firedev.Base.Provider {
   }
 }
 
-const UserContext = Firedev.createContext({
+const UserContext = Firedev.createContext(() => ({
   contextName: 'UserContext',
   host: `http://localhost:${HOST_BACKEND_PORT}`,
   entities: {
@@ -139,7 +139,9 @@ const UserContext = Firedev.createContext({
     [Firedev.Base.Repository.name]: Firedev.Base.Repository,
   },
   database: true,
-});
+}));
+
+
 
 // const AppContext = Firedev.createContext({
 //   contextName: 'AppContext',

@@ -1,71 +1,131 @@
+//#region imports
 import { Helpers } from 'tnp-core/src';
 import { EndpointContext } from './endpoint-context';
 import { Models } from './models';
 import { FiredevAdmin } from './firedev-admin';
+import { ENV } from './env';
+import type { BaseClass } from './base-classes/base-class';
+import { Firedev } from 'firedev/src';
+//#endregion
 
 export const createContext = <
-  CTX extends Record<string, object>,
+  //#region context generic args
+  CTX extends Record<string,  object>,
   CTRL extends Record<string, new (...args: any[]) => any>,
   ENTITY extends Record<string, new (...args: any[]) => any>,
   REPO extends Record<string, new (...args: any[]) => any>,
   PROVIDER extends Record<string, new (...args: any[]) => any>,
+  //#endregion
 >(
-  config: Models.ContextOptions<CTX, CTRL, ENTITY, REPO, PROVIDER>,
+  configFn: (
+    env: any,
+  ) => Models.ContextOptions<CTX, CTRL, ENTITY, REPO, PROVIDER>,
 ) => {
-  const ref = new EndpointContext(config);
+  let config = configFn(ENV);
+  // if (config.logFramework) {
+  //   console.log(`[firedev][${config.contextName}] framework config`, {
+  //     config,
+  //   });
+  // }
+  const endpointContextRef = new EndpointContext(config, configFn);
+  const entitiesCache = {};
+  const controllersCache = {};
 
   const res = {
+    //#region types
     types: {
-      entities: config.entities,
-      controllers: config.controllers,
-      repositories: config.repositories,
-      providers: config.providers,
+      get entities() {
+        return config.entities;
+      },
+      entitiesFor(classInstace:BaseClass ) {
+        const ctx = classInstace.__endpoint_context__;
+         if(!entitiesCache[ctx.contextName]) {
+          entitiesCache[ctx.contextName] = {}
+          for (const entityClassName of Object.keys(config.entities)) {
+            entitiesCache[ctx.contextName][entityClassName] = config.entities[entityClassName][Firedev.symbols.orignalClassClonesObj][ctx.contextName];
+          }
+         }
+        return entitiesCache[ctx.contextName] as typeof config.entities;
+      },
+      get controllers() {
+        return config.controllers;
+      },
+      controllesFor(classInstace?:BaseClass  ) {
+        const ctx = classInstace.__endpoint_context__ || endpointContextRef;
+         if(!controllersCache[ctx.contextName]) {
+          controllersCache[ctx.contextName] = {}
+          for (const controllerName of Object.keys(config.controllers)) {
+            controllersCache[ctx.contextName][controllerName] = config.controllers[controllerName][Firedev.symbols.orignalClassClonesObj][ctx.contextName];
+          }
+         }
+        return controllersCache[ctx.contextName] as typeof config.controllers;
+      },
+      get repositories() {
+        return config.repositories;
+      },
+      get providers() {
+        return config.providers;
+      },
     },
-    contexts: config.contexts,
-    get ref() {
-      return ref;
+    //#endregion
+    //#region contexts
+    get contexts() {
+      return config.contexts;
     },
+    get contextName() {
+      return config.contextName;
+    },
+    //#endregion
+    //#region context
+    /**
+     * - get reference to internal context
+     */
+    async ref() {
+      if (!endpointContextRef.inited) {
+        await endpointContextRef.init({ initFromRecrusiveContextResovle: true });
+      }
+      return endpointContextRef;
+    },
+    get refSync() {
+      return endpointContextRef;
+    },
+    //#endregion
+    //#region initialize
     /**
      * - create controller instances for context
      * - init database (if enable) + migation scripts
      */
-    initialize: async () => {
-      if (config.abstract) {
-        throw new Error(`Abstract context can not be initialized`);
-      }
-      await ref.initEntities();
-      await ref.initDatabaseConnection();
-      await ref.initSubscribers();
-      ref.initMetadata();
-      ref.startServer();
-      //#region @websql
-      ref.writeActiveRoutes();
-      //#endregion
+    initialize: async (): Promise<EndpointContext> => {
+      return await new Promise(async (resolve, reject) => {
+        setTimeout(async () => {
+          await endpointContextRef.init();
+          if (config.abstract) {
+            throw new Error(`Abstract context can not be initialized`);
+          }
+          await endpointContextRef.initEntities();
+          await endpointContextRef.initDatabaseConnection();
+          await endpointContextRef.initSubscribers();
+          endpointContextRef.initMetadata();
+          endpointContextRef.startServer();
+          //#region @websql
+          endpointContextRef.writeActiveRoutes();
+          //#endregion
 
-      await ref.initClasses();
-      if (
-        FiredevAdmin.Instance.keepWebsqlDbDataAfterReload &&
-        !Helpers.isNode
-      ) {
-        Helpers.info(`[firedev] Keep websql data after reload`);
-      } else {
-        await ref.reinitControllers();
-      }
+          await endpointContextRef.initClasses();
+          if (
+            FiredevAdmin.Instance.keepWebsqlDbDataAfterReload &&
+            !Helpers.isNode
+          ) {
+            Helpers.info(`[firedev] Keep websql data after reload`);
+          } else {
+            await endpointContextRef.reinitControllers();
+          }
+          resolve(endpointContextRef);
+        });
+      });
     },
+    //#endregion
   };
-  // console.log({ ref })
-  if (config.abstract) {
-    Helpers.info(`[firedev] Create abstract context: ${ref.contextName}`);
-  } else {
-    if (ref.remoteHost) {
-      Helpers.info(
-        `[firedev] Create context for remote host: ${ref.remoteHost}`,
-      );
-    } else {
-      Helpers.info(`[firedev] Create context for host: ${ref.host}`);
-    }
-  }
-
   return res;
 };
 //#endregion

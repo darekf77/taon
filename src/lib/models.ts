@@ -109,6 +109,10 @@ export namespace Models {
      * Display server logs (default true for development mode, false for production mode)
      */
     serverLogs?: boolean;
+    /**
+     * framework steps logs
+     */
+    logFramework?: boolean;
     database?: boolean | DatabaseConfig;
     disabledRealtime?: boolean;
     https?: {

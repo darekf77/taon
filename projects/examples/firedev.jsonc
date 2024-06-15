@@ -1,0 +1,26 @@
+{
+  "resources": ["README.md"],
+  "type": "container",
+  "monorepo": true,
+  "version": "v4",
+
+  "overrided": {
+    "dependencies": {},
+    "ignoreDepsPattern": [],
+    "includeAsDev": [],
+    "includeOnly": [],
+    "linkedFolders": [],
+    "npmFixes": []
+  },
+
+  "linkedProjects": ["electron-remote-service"],
+  "smartContainerBuildTarget": "",
+  "linkedRepos": [],
+
+  "libReleaseOptions": {
+    "cliBuildNoDts": false,
+    "cliBuildObscure": false,
+    "cliBuildUglify": false,
+    "cliBuildIncludeNodeModules": false
+  }
+}

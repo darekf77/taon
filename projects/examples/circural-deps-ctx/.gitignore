@@ -14,7 +14,7 @@ testem.log
 app.hosts.ts
 /linked-repos
 
-
+/tests-environments
 /src/lib/lib-info.md
 /src/migrations/migrations-info.md
 /src/tests/mocha-tests-info.md
@@ -43,13 +43,24 @@ Thumbs.db
 /npm-debug.log*
 /.sass-cache
 /.sourcemaps
+/tsconfig.isomorphic.json
+/tsconfig.isomorphic-flat-dist.json
+/tsconfig.browser.json
+/tsconfig.json
 /tsconfig.backend.dist.json
-# container/workspace git projects
-# PREFIX
-
-# LINKED PROJECTS
-
-
+/index.js
+/index.d.ts
+/index.js.map
+/webpack.config.js
+/webpack.backend-dist-build.js
+/run.js
+/run-org.js
+/tsconfig.isomorphic.json.filetemplate
+/tsconfig.isomorphic-flat-dist.json.filetemplate
+/tsconfig.browser.json.filetemplate
+/tsconfig.json.filetemplate
+/tsconfig.backend.dist.json.filetemplate
+/tsconfig.backend.dist.json
 # =====================
 !firedev.json
 !firedev.jsonc

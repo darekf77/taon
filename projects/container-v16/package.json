@@ -515,6 +515,7 @@
     "file-loader": "1.1.5",
     "file-saver": "2.0.5",
     "file-type": "18.5.0",
+    "firedev": "^16",
     "firedev-crud": "16.444.1",
     "firedev-crud-deamon": "16.444.1",
     "firedev-ports": "16.444.1",
@@ -669,8 +670,7 @@
     "webpack-dev-middleware": "~6.0.2",
     "webpack-dev-server": "~4.13.2",
     "yup": "1.1.1",
-    "zone.js": "~0.13.0",
-    "firedev": "~16.100.19"
+    "zone.js": "~0.13.0"
   },
   "devDependencies": {},
   "license": "UNLICENSED",

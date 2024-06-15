@@ -66,6 +66,14 @@ export abstract class BaseCrudController<Entity> extends BaseController {
   //#region init
   async _() {
     const entityClassFn = this.entity();
+    // console.log(`
+    // INITING CRUD CONTROLLER ${ClassHelpers.getName(this)}
+    // entityClassFn: ${ClassHelpers.getName(entityClassFn)}
+    // connection: ${!!this.connection}
+    // entities: ${this.connection?.options?.entities?.length}
+
+    // `);
+
     if (entityClassFn) {
       const configEntity = Reflect.getMetadata(
         Symbols.metadata.options.entity,
@@ -73,12 +81,20 @@ export abstract class BaseCrudController<Entity> extends BaseController {
       ) as FiredevEntityOptions;
       if (configEntity?.createTable === false) {
         Helpers.warn(
-          `Table for entity ${ClassHelpers.getName(entityClassFn)} will not be created. Crud will not work properly.`,
+          `Table for entity ${ClassHelpers.getName(
+            entityClassFn,
+          )} will not be created. Crud will not work properly.`,
         );
       }
-      this.crud.entity = entityClassFn;
+      const crud = this.crud;
+      // console.log(crud.__endpoint_context__)
+      crud.entity = entityClassFn;
+      // debugger;
+      await this.crud.__init_repository__(this.__endpoint_context__);
     } else {
-      Helpers.error(`Entity class not provided for controller ${ClassHelpers.getName(this)}.
+      Helpers.error(`Entity class not provided for controller ${ClassHelpers.getName(
+        this,
+      )}.
 
       Please provide entity as class propery entityClassFn:
 

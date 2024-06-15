@@ -3,6 +3,9 @@ import { _ } from 'tnp-core/src';
 export namespace Symbols {
   export const ctxInClassOrClassObj = Symbol();
   export const classNameStaticProperty = '$$className$$';
+  export const fullClassNameStaticProperty = '$$fullclassName$$';
+  export const orignalClass = '$$originalClass$$';
+  export const orignalClassClonesObj = '$$originalClassClonesObj$$';
 
   export const metadata = {
     className: 'class:realname',

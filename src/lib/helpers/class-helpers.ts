@@ -78,6 +78,7 @@ export namespace ClassHelpers {
 
   //#region get name
   export const setName = (target: Function, className: string): void => {
+    // console.log('setName', className, target.name)
     Validators.classNameVlidation(className, target);
     target[Symbols.classNameStaticProperty] = className;
   };

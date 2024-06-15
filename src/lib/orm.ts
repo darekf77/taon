@@ -39,6 +39,14 @@ export namespace Orm {
      */
     export const String = () =>
       tsorm.Column({ type: 'varchar', length: 100, nullable: true });
+
+    export const Number = () =>
+      tsorm.Column({ type: 'int',  nullable: true });
+
+    export const DecimalNumber = () =>
+      tsorm.Column({ type: 'float',  nullable: true });
+
+
     export const SimpleJson = () =>
       tsorm.Column({ type: 'simple-json', nullable: true });
 

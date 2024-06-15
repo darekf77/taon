@@ -66,7 +66,9 @@ export namespace Firedev {
   export const initNgZone = (ngZone: NgZone) => {
     endpointContext.EndpointContext.initNgZone(ngZone);
   };
-  export const symbols = allSymbols.Symbols.old;
+  //#endregion
+
+  export const symbols = allSymbols.Symbols;
 
   /**
    * @deprecated
@@ -79,17 +81,16 @@ export namespace Firedev {
   }) => {
     const BaseContext = (await import('./base-classes/base-context'))
       .BaseContext;
-    const context = createContext({
+    const context = createContext(() => ({
       contextName: 'default',
       host: options.host,
       contexts: { BaseContext },
       database: true,
       entities: Array.from(options.entities) as any,
       controllers: Array.from(options.controllers) as any,
-    });
+    }));
 
     await context.initialize();
     return context;
   };
-  //#endregion
 }
