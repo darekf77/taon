@@ -35,10 +35,29 @@ export namespace ClassHelpers {
     if (classFnOrObject instanceof FormData) {
       return 'FormData';
     }
+    if (!classFnOrObject) {
+      throw new Error(`Cannot get name from: ${classFnOrObject}`);
+    }
     return (
       (classFnOrObject[Symbols.classNameStaticProperty]
         ? classFnOrObject[Symbols.classNameStaticProperty]
         : classFnOrObject?.constructor[Symbols.classNameStaticProperty]) ||
+      void 0
+    );
+  };
+  //#endregion
+
+  //#region get full internal name
+  export const getFullInternalName = (classFnOrObject: any): string => {
+    // exception for FormData
+
+    if (!classFnOrObject) {
+      throw new Error(`Cannot get name from: ${classFnOrObject}`);
+    }
+    return (
+      (classFnOrObject[Symbols.fullClassNameStaticProperty]
+        ? classFnOrObject[Symbols.fullClassNameStaticProperty]
+        : classFnOrObject?.constructor[Symbols.fullClassNameStaticProperty]) ||
       void 0
     );
   };

@@ -82,18 +82,18 @@ class User extends Firedev.Base.AbstractEntity {
   className: 'UserController',
 })
 class UserController extends Firedev.Base.CrudController<User> {
-  entity = () => UserContext.types.entities.User;
+  entityClassResolveFn = () => User;
   userProviers = this.inject(UserProvider);
   async initExampleDbData(): Promise<void> {
     //#region @websql
     Helpers.info(this.userProviers.helloFromUserProvier());
-    await this.repo.save(
+    await this.backend.repo.save(
       UserContext.types.entities.User.from({ firstName: 'pierwszy' }),
     );
-    await this.repo.save(
+    await this.backend.repo.save(
       UserContext.types.entities.User.from({ firstName: 'drugi' }),
     );
-    console.log('all users', await this.repo.find());
+    console.log('all users', await this.backend.repo.find());
     //#endregion
   }
 

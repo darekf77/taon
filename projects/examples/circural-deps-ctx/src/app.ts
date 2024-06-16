@@ -48,10 +48,9 @@ async function start() {
 
   const userController = AppContext.refSync.inject(UserController);
 
+  // TODO @LAST base crud controller is singleton and it should not be
   // TODO @LAST session is for all crud.repo -> fix this
-  const repo = await userController.connection.getRepository(
-    AppContext.contexts.SharedContext.types.entitiesFor(userController).User,
-  );
+  const repo = await userController.backend.repo;
   const all = await repo.find(); // TODO @LAST same repo different results in UserContoller
   console.log('All users', all);
   console.log('Context initialized', { AppContext });

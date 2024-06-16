@@ -19,7 +19,7 @@ import {
   FiredevControllerOptions,
 } from '../decorators/classes/controller-decorator';
 import { ClassHelpers } from '../helpers/class-helpers';
-import { Entity } from 'firedev-typeorm/src';
+
 import { Validators } from '../validators';
 import { FiredevEntityOptions } from '../decorators/classes/entity-decorator';
 //#endregion
@@ -30,42 +30,28 @@ import { FiredevEntityOptions } from '../decorators/classes/entity-decorator';
 @FiredevController({ className: 'BaseCrudController' })
 export abstract class BaseCrudController<Entity> extends BaseController {
   //#region fields
-  crud?: BaseRepository<Entity> = this.inject(BaseRepository<Entity>);
-  /**
-   * alias for repository
-   */
-  get repo() {
-    //#region @websqlFunc
-    return this.crud?.repo;
-    //#endregion
-  }
-  get repository() {
-    //#region @websqlFunc
-    return this.crud?.repo;
-    //#endregion
-  }
-
-  get connection() {
-    //#region @websqlFunc
-    return this.crud?.connection;
-    //#endregion
-  }
-
-  get dbQuery() {
-    //#region @websqlFunc
-    return this.crud?.dbQuery;
-    //#endregion
-  }
+  backend?: BaseRepository<Entity>; // TODO @LAST inject local instance does not work
 
   /**
    * Please provide entity as class propery entityClassFn:
+   * @returns class function
+   *
    */
-  abstract entity();
+  abstract entityClassResolveFn: () => any;
   //#endregion
 
   //#region init
   async _() {
-    const entityClassFn = this.entity();
+    if (!_.isFunction(this.entityClassResolveFn)) {
+      Helpers.warn(
+        `Skipping initing CRUD controller ${ClassHelpers.getName(
+          this,
+        )} because entityClassFn is not provided.`,
+      );
+      return;
+    }
+
+    let entityClassFn = this.entityClassResolveFn();
     // console.log(`
     // INITING CRUD CONTROLLER ${ClassHelpers.getName(this)}
     // entityClassFn: ${ClassHelpers.getName(entityClassFn)}
@@ -73,6 +59,13 @@ export abstract class BaseCrudController<Entity> extends BaseController {
     // entities: ${this.connection?.options?.entities?.length}
 
     // `);
+
+    entityClassFn = this.__endpoint_context__.getClassFunByClass(entityClassFn);
+
+    const baseRepoClass =
+      this.__endpoint_context__.getClassFunByClass(BaseRepository);
+
+    this.backend = new (baseRepoClass as any)();
 
     if (entityClassFn) {
       const configEntity = Reflect.getMetadata(
@@ -86,11 +79,12 @@ export abstract class BaseCrudController<Entity> extends BaseController {
           )} will not be created. Crud will not work properly.`,
         );
       }
-      const crud = this.crud;
-      // console.log(crud.__endpoint_context__)
-      crud.entity = entityClassFn;
-      // debugger;
-      await this.crud.__init_repository__(this.__endpoint_context__);
+
+      await this.backend.__init_repository__(
+        this.__endpoint_context__,
+        entityClassFn,
+      );
+      // const crud = this.backend.huj;
     } else {
       Helpers.error(`Entity class not provided for controller ${ClassHelpers.getName(
         this,
@@ -100,7 +94,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
 
       class ${ClassHelpers.getName(this)} extends BaseCrudController<Entity> {
         // ...
-        entityClassFn = MyEntityClass;
+        entityClassResolveFn = ()=> MyEntityClass;
         // ...
       }
 
@@ -118,7 +112,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
   ): Models.Http.Response<string | any[]> {
     //#region @websqlFunc
     return async (request, response) => {
-      const model = await this.crud.repo.findOne({
+      const model = await this.backend.repo.findOne({
         where: { id } as any,
       });
       if (model === void 0) {
@@ -146,7 +140,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
   ): Models.Http.Response<Entity[]> {
     //#region @websqlFunc
     return async (request, response) => {
-      if (this.crud.repository) {
+      if (this.backend.repository) {
         const query = {
           page: pageNumber,
           take: pageSize,
@@ -161,7 +155,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
         const skip = (page - 1) * take;
         const keyword = query.keyword || '';
 
-        const [result, total] = await this.crud.repo.findAndCount({
+        const [result, total] = await this.backend.repo.findAndCount({
           // where: { name: Like('%' + keyword + '%') },
           // order: { name: "DESC" },
           take: take,
@@ -191,8 +185,8 @@ export abstract class BaseCrudController<Entity> extends BaseController {
   getAll(): Models.Http.Response<Entity[]> {
     //#region @websqlFunc
     return async (request, response) => {
-      if (this.crud.repository) {
-        const { models, totalCount } = await this.crud.getAll();
+      if (this.backend.repository) {
+        const { models, totalCount } = await this.backend.getAll();
         response?.setHeader(Symbols.old.X_TOTAL_COUNT, totalCount);
         return models;
       }
@@ -207,7 +201,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
   getBy(@Path(`id`) id: number | string): Models.Http.Response<Entity> {
     //#region @websqlFunc
     return async () => {
-      const { model } = await this.crud.getBy(id);
+      const { model } = await this.backend.getBy(id);
       return model;
     };
     //#endregion
@@ -223,7 +217,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
     //#region @websqlFunc
 
     return async () => {
-      const { model } = await this.crud.updateById(id, item as any);
+      const { model } = await this.backend.updateById(id, item as any);
       return model;
     };
     //#endregion
@@ -239,7 +233,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
     //#region @websqlFunc
 
     return async () => {
-      const { model } = await this.crud.updateById(id, item as any);
+      const { model } = await this.backend.updateById(id, item as any);
       return model;
     };
     //#endregion
@@ -254,7 +248,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
       if (!Array.isArray(items) || items?.length === 0) {
         return [];
       }
-      const { models } = await this.crud.bulkUpdate(items);
+      const { models } = await this.backend.bulkUpdate(items);
       return models;
     };
     //#endregion
@@ -266,7 +260,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
   deleteById(@Path(`id`) id: number): Models.Http.Response<Entity> {
     //#region @websqlFunc
     return async () => {
-      const { model } = await this.crud.deleteById(id);
+      const { model } = await this.backend.deleteById(id);
       return model;
     };
     //#endregion
@@ -280,7 +274,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
   ): Models.Http.Response<(number | string | Entity)[]> {
     //#region @websqlFunc
     return async () => {
-      const { models } = await this.crud.bulkDelete(ids);
+      const { models } = await this.backend.bulkDelete(ids);
       return models;
     };
     //#endregion
@@ -292,7 +286,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
   create(@Body() item: Entity): Models.Http.Response<Entity> {
     //#region @websqlFunc
     return async () => {
-      const { model } = await this.crud.create(item as any);
+      const { model } = await this.backend.create(item as any);
       return model as Entity;
     };
     //#endregion
@@ -304,7 +298,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
   bulkCreate(@Body() items: Entity): Models.Http.Response<Entity[]> {
     //#region @websqlFunc
     return async () => {
-      const { models } = await this.crud.bulkCreate(items as any);
+      const { models } = await this.backend.bulkCreate(items as any);
       return models as Entity[];
     };
     //#endregion

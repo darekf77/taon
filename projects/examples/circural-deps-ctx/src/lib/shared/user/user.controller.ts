@@ -1,18 +1,17 @@
-import { Firedev } from 'firedev/src';
+import { ClassHelpers, Firedev } from 'firedev/src';
 import { SharedContext } from '../shared.context';
-import type { User } from './user';
+import { User } from './user';
 
 @Firedev.Controller({
   className: 'UserController',
 })
 export class UserController extends Firedev.Base.CrudController<User> {
-  entity() {
-    return SharedContext.types.entities.User;
-  }
+  entityClassResolveFn = () => User;
 
   currentRepo: any;
   currentConnection: any;
   async initExampleDbData(): Promise<any> {
+    //#region @websqlFunc
     const admin = new (SharedContext.types.entitiesFor(this).User)();
     admin.name = 'admin';
     admin.email = 'admin@admin.pl';
@@ -23,15 +22,21 @@ export class UserController extends Firedev.Base.CrudController<User> {
     user.email = 'test@test.pl';
     user.password = 'test';
 
-    await this.repo.save([admin, user]);
-    const all = await this.repo.find();
-  console.log('All users', all);
-    console.log(`
+    console.log(ClassHelpers.getFullInternalName(this));
+    this.backend.repo.create(admin);
+
+    await this.backend.repo.save([admin, user]);
+    const all = await this.backend.repo.find();
+    console.log('All users', all);
+    console.log(
+      `
 
     Example data saved
 
 
-    `,{all});
-    // // @LAST change order of crud/controller provider prepositories
+    `,
+      { all },
+    );
+    //#endregion
   }
 }

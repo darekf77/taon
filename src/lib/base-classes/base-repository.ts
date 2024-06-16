@@ -15,13 +15,10 @@ import type { BaseEntity } from 'firedev/src';
 const INDEX_KEYS_NO_FOR_UPDATE = ['id'];
 
 export class BaseRepository<Entity extends { id?: any }> extends BaseClass {
-  /**
-   * Entity class
-   */
-  public entity: typeof BaseEntity;
   private __dbQuery: MySqlQuerySource;
 
   public get dbQuery(): MySqlQuerySource {
+    //#region @websqlFunc
     if (!this.__dbQuery) {
       if (!this.__endpoint_context__) {
         throw new Error(
@@ -39,6 +36,7 @@ export class BaseRepository<Entity extends { id?: any }> extends BaseClass {
       this.__dbQuery = new MySqlQuerySource(connection);
     }
     return this.__dbQuery;
+    //#endregion
   }
 
   public get connection(): DataSourceType {
@@ -61,40 +59,51 @@ export class BaseRepository<Entity extends { id?: any }> extends BaseClass {
 
   async __init_repository__(
     ctx: EndpointContext, // TODO QUICK_FIX
+    entityClassFn: any,
   ) {
     //#region @websql
-    // const ctx = this.__endpoint_context__;
+
     const connection = ctx.connection;
-    let entityClassFN = this.entity;
-    entityClassFN =
-      entityClassFN[Symbols.orignalClassClonesObj][ctx.contextName];
-    // console.log(`Trying to init repo for ${ctx.contextName}/${ClassHelpers.getName(this)}`);
-    if (!entityClassFN || !connection) {
-      // console.log({ entity: this.entity });
-      // console.log({ connection: connection });
+
+    if (!connection) {
+      throw new Error(`Connection not found for context ${ctx.contextName}`);
+    }
+
+    entityClassFn = this.__endpoint_context__.getClassFunByClass(entityClassFn);
+
+    if (!entityClassFn) {
+      Helpers.warn(
+        `Entity class not found for repository ${ClassHelpers.getName(this)}`,
+      );
       return;
     }
 
-    // this.repository = await connection.getRepository(entityClassFN[Symbols.orignalClass]);/
-    this.repository = (await connection.getRepository(entityClassFN)) as any;
-    // debugger;
-    // console.log(entityClassFN[Symbols.orignalClassClonesObj][ctx.contextName]);
-    console.log(
-      `Inited repository for` +
-        ` ${ctx.contextName}/${ClassHelpers.getName(this)}/${
-          entityClassFN[Symbols.fullClassNameStaticProperty]
-        }`,
-    );
-    // if (!this.entityClassFn) {
-    //   Helpers.error(`Entity class not provided for repository ${ClassHelpers.getName(this)}.
-    //   Please provide entity as class property entityClassFn:
-    //   class ${ClassHelpers.getName(this)} extends BaseRepository<Entity> {
-    //     // ...
-    //     entityClassFn = MyEntityClass;
-    //     // ...
-    //   }
-    //   `);
-    // }
+    const entityObj = entityClassFn[Symbols.orignalClassClonesObj];
+    if (!entityObj) {
+      console.error(
+        `Cannot init base repository for ` +
+          ` ${ctx.contextName}/${ClassHelpers.getName(this)}/${
+            entityClassFn[Symbols.fullClassNameStaticProperty]
+          }`,
+      );
+      return;
+    }
+    entityClassFn = entityObj[ctx.contextName];
+
+    // console.log(
+    //   `Trying to init repo for ${ctx.contextName}/` +
+    //     `${ClassHelpers.getName(this)}/` +
+    //     `${entityClassFn[Symbols.fullClassNameStaticProperty]}`,
+    // );
+
+    this.repository = (await connection.getRepository(entityClassFn)) as any;
+    // console.log(
+    //   `Inited repository for (${ClassHelpers.getFullInternalName(this)}) ` +
+    //     ` ${ctx.contextName}/${ClassHelpers.getName(this)}/${
+    //       entityClassFn[Symbols.fullClassNameStaticProperty]
+    //     }`,
+    //   this.repository,
+    // );
     //#endregion
   }
 

@@ -6,7 +6,5 @@ import { GroupContext } from './group.context';
   className: 'GroupController',
 })
 export class GroupController extends Firedev.Base.CrudController<Group> {
-  entity() {
-    return GroupContext.types.entities.Group;
-  }
+  entityClassResolveFn = () => Group;
 }

@@ -24,23 +24,34 @@ export class BaseClass {
    * Inject: Controllers, Providers, Repositories, Services, etc.
    * TODO  addd nest js injecting
    */
-  inject<T>(ctor: new (...args: any[]) => T): T {
+  inject<T>(
+    ctor: new (...args: any[]) => T,
+    options?: {
+      //  localInstance: boolean
+    },
+  ): T {
     return new Proxy(
       {},
       {
         get: (_, propName) => {
           const contextFromClass = ctor[Symbols.ctxInClassOrClassObj];
-          const resultContext = contextFromClass
+          const resultContext: EndpointContext = contextFromClass
             ? contextFromClass
             : this.__endpoint_context__;
           if (resultContext) {
-            var instance: T = resultContext.inject(ctor);
+            var instance: T = resultContext.inject(ctor, options);
             if (!instance) {
               throw new Error(
-                `Not able to inject "${ClassHelpers.getName(ctor) || ctor.name}" inside ` +
-                  `property "${propName?.toString()}" on  class "${ClassHelpers.getName(this)}".
+                `Not able to inject "${
+                  ClassHelpers.getName(ctor) || ctor.name
+                }" inside ` +
+                  `property "${propName?.toString()}" on  class "${ClassHelpers.getName(
+                    this,
+                  )}".
 
-              Please add "${ClassHelpers.getName(ctor) || ctor.name}" to (entites or contorllers or providers or repositories)
+              Please add "${
+                ClassHelpers.getName(ctor) || ctor.name
+              }" to (entites or contorllers or providers or repositories)
 
               `,
               );
@@ -62,10 +73,16 @@ export class BaseClass {
             var instance: T = resultContext.inject(ctor);
             if (!instance) {
               throw new Error(
-                `Not able to inject "${ClassHelpers.getName(ctor) || ctor.name}" inside ` +
-                  `property "${propName?.toString()}" on  class "${ClassHelpers.getName(this)}".
+                `Not able to inject "${
+                  ClassHelpers.getName(ctor) || ctor.name
+                }" inside ` +
+                  `property "${propName?.toString()}" on  class "${ClassHelpers.getName(
+                    this,
+                  )}".
 
-              Please add "${ClassHelpers.getName(ctor) || ctor.name}" to (entites or contorllers or providers or repositories)
+              Please add "${
+                ClassHelpers.getName(ctor) || ctor.name
+              }" to (entites or contorllers or providers or repositories)
 
               `,
               );
