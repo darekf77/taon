@@ -755,6 +755,7 @@ export class EndpointContext {
     options?: {
       localInstance?: boolean;
       contextClassInstance?: BaseClass;
+      locaInstanceConstructorArgs?: ConstructorParameters<typeof ctor>;
     },
   ): T {
     if (!options) {
@@ -788,7 +789,8 @@ export class EndpointContext {
 
         `);
       }
-      const res = new (ctxClassFn as any)();
+      const locaInstanceConstructorArgs = options.locaInstanceConstructorArgs || [];
+      const res = new (ctxClassFn as any)(...locaInstanceConstructorArgs);
       contextClassInstance[this.localInstaceObjSymbol][className] = res;
       // console.log(`[firedev] Creating local instance for ${className}  `+`on ${ClassHelpers.getFullInternalName(contextClassInstance)}`, res);
       return res;

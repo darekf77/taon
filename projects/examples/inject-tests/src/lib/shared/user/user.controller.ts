@@ -9,10 +9,7 @@ import { UserRepository } from './user.repository';
 export class UserController extends Firedev.Base.CrudController<User> {
   entityClassResolveFn = () => User;
 
-  backend?: UserRepository = this.inject<UserRepository>(UserRepository);
-
-  currentRepo: any;
-  currentConnection: any;
+  backend?: UserRepository = this.injectCustomRepo(UserRepository);
   async initExampleDbData(): Promise<any> {
     //#region @websqlFunc
     const admin = new (SharedContext.types.entitiesFor(this).User)();
@@ -28,10 +25,10 @@ export class UserController extends Firedev.Base.CrudController<User> {
     user.theme = 'dark';
 
     // console.log(ClassHelpers.getFullInternalName(this));
-    this.backend.repo.create(admin);
+    await this.backend.create(admin);
 
-    await this.backend.repo.save([admin, user]);
-    const all = await this.backend.repo.find();
+    await this.backend.bulkCreate([admin, user]);
+    const all = await this.backend.getAll();
     const findByEmail = await this.backend.findByEmail('test@test.pl');
     console.log(
       `amCustomRepository `,
@@ -39,14 +36,6 @@ export class UserController extends Firedev.Base.CrudController<User> {
       findByEmail,
     );
     console.log('All users', all);
-    // console.log(
-    //   `
-
-    // Example data saved KURWA
-
-    // `,
-    //   { all },
-    // );
     //#endregion
   }
 }

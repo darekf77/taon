@@ -1,6 +1,7 @@
 //#region @notForNpm
 //#region imports
 import { Firedev } from './lib/index';
+
 import { EMPTY, Observable, catchError, map, of, startWith } from 'rxjs';
 import { _ } from 'tnp-core/src';
 import { Helpers } from 'tnp-helpers/src';
@@ -65,9 +66,9 @@ export class FiredevModule {}
   className: 'User',
 })
 class User extends Firedev.Base.AbstractEntity {
-  public static ctrl = Firedev.inject(
-    () => UserContext.types.controllers.UserController,
-  );
+  // public static ctrl = Firedev.inject(
+  //   () => UserContext.types.controllers.UserController,
+  // );
   public static from(obj: Partial<User>) {
     return _.merge(new User(), obj) as User;
   }
@@ -83,17 +84,17 @@ class User extends Firedev.Base.AbstractEntity {
 })
 class UserController extends Firedev.Base.CrudController<User> {
   entityClassResolveFn = () => User;
-  userProviers = this.inject(UserProvider);
+  userProviers = this.injectGlobalProvider(UserProvider);
   async initExampleDbData(): Promise<void> {
     //#region @websql
-    Helpers.info(this.userProviers.helloFromUserProvier());
-    await this.backend.repo.save(
-      UserContext.types.entities.User.from({ firstName: 'pierwszy' }),
-    );
-    await this.backend.repo.save(
-      UserContext.types.entities.User.from({ firstName: 'drugi' }),
-    );
-    console.log('all users', await this.backend.repo.find());
+    // Helpers.info(this.userProviers.helloFromUserProvier());
+    // await this.backend.create(
+    //   UserContext.types.entities.User.from({ firstName: 'pierwszy' }),
+    // );
+    // await this.backend.create(
+    //   UserContext.types.entities.User.from({ firstName: 'drugi' }),
+    // );
+    // console.log('all users', await this.backend.getAll());
     //#endregion
   }
 
@@ -123,25 +124,21 @@ class UserProvider extends Firedev.Base.Provider {
   }
 }
 
-const UserContext = Firedev.createContext(() => ({
-  contextName: 'UserContext',
-  host: `http://localhost:${HOST_BACKEND_PORT}`,
-  entities: {
-    User,
-  },
-  controllers: {
-    UserController,
-  },
-  providers: {
-    UserProvider,
-  },
-  repositories: {
-    [Firedev.Base.Repository.name]: Firedev.Base.Repository,
-  },
-  database: true,
-}));
-
-
+// const UserContext = Firedev.createContext(() => ({
+//   contextName: 'UserContext',
+//   host: `http://localhost:${HOST_BACKEND_PORT}`,
+//   contexts: { BaseContext },
+//   entities: {
+//     User,
+//   },
+//   controllers: {
+//     UserController,
+//   },
+//   providers: {
+//     UserProvider,
+//   },
+//   database: true,
+// }));
 
 // const AppContext = Firedev.createContext({
 //   contextName: 'AppContext',
@@ -159,7 +156,7 @@ async function start(portForBackend?: string) {
   // console.log({ portForBackend })
   // console.log('Helpers.isElectron', Helpers.isElectron);
 
-  await UserContext.initialize();
+  // await UserContext.initialize();
   // await AppContext.initialize();
 
   console.log('DONE');

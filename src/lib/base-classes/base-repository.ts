@@ -16,33 +16,18 @@ import { FiredevRepository } from '../decorators/classes/repository-decorator';
 const INDEX_KEYS_NO_FOR_UPDATE = ['id'];
 
 @FiredevRepository({ className: 'BaseRepository' })
-export class BaseRepository<Entity extends { id?: any }> extends BaseClass {
+export abstract class BaseRepository<Entity extends { id?: any }> extends BaseClass {
   // static ids:number  = 0;
   // id:number  = BaseRepository.ids++;
 
-  //#region entity class resovle fn
-  __entityClassResolveFn: () => any;
-  get entityClassResolveFn() {
-    // console.log(`ACCESSING entityClassResolveFn entity for repo "${ClassHelpers.getName(this)}"`);
-    if (!_.isFunction(this.__entityClassResolveFn)) {
-      throw new Error(`Entity class not provided for repository "${ClassHelpers.getName(
-        this,
-      )}".
-      Please fix it by adding entityClassResolveFn property to class like this:
-        ...
-        entityClassResolveFn = () => YourEntityClass;
-        ..
-          `);
-    }
-    return this.__entityClassResolveFn;
+  abstract entityClassResolveFn: () => any
+  constructor(
+    public __entityClassResolveFn: () => any
+  ) {
+    super();
+    // @ts-ignore
+    this.entityClassResolveFn = __entityClassResolveFn;
   }
-
-  set entityClassResolveFn(fn: () => any) {
-    // console.log(`SETTING entityClassResolveFn with entity "${ClassHelpers.getName(fn())}" for repo "${ClassHelpers.getName(this)}"`);
-    this.__entityClassResolveFn = fn;
-  }
-
-  //#endregion
 
   //#region db query
   private __dbQuery: MySqlQuerySource;
@@ -80,21 +65,25 @@ export class BaseRepository<Entity extends { id?: any }> extends BaseClass {
 
   //#region repository
   //#region @websql
-  public __repository: Repository<Entity>;
-  public get repository() {
+  protected __repository: Repository<Entity>;
+  protected get repository() {
     return this.__repository;
   }
 
   /**
    * aliast to repository
    */
-  public get repo() {
+  protected get repo() {
     return this.repository;
+  }
+
+  get repositoryExists():boolean {
+    return !!this.__repository;
   }
   //#endregion
   //#endregion
 
-  async __init_repository__() {
+  async init() {
     //#region @websql
     let entityClassFn: any = this.entityClassResolveFn();
     const ctx: EndpointContext = this.__endpoint_context__;
@@ -149,6 +138,17 @@ export class BaseRepository<Entity extends { id?: any }> extends BaseClass {
     this.prepareData(models);
     return { models, totalCount };
     //#endregion
+  }
+
+  async findAndCount(options: { take: number; skip: number}) {
+    const { take, skip } = options;
+    const [result, total] = await this.repo.findAndCount({
+      // where: { name: Like('%' + keyword + '%') },
+      // order: { name: "DESC" },
+      take: take,
+      skip: skip,
+    });
+    return { result, total };
   }
 
   async getBy(id: number | string) {

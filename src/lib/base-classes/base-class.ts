@@ -2,6 +2,7 @@ import { Helpers } from 'tnp-core/src';
 import { EndpointContext } from '../endpoint-context';
 import { Symbols } from '../symbols';
 import { ClassHelpers } from '../helpers/class-helpers';
+import type { BaseRepository } from './base-repository';
 //#region @browser
 import { inject } from '@angular/core';
 //#endregion
@@ -21,10 +22,59 @@ export class BaseClass {
   }
 
   /**
+   * inject crud repo for entity
+   */
+  injectRepo<T>(entityForCrud: T): BaseRepository<T> {
+    // return this.injectCustomRepository(BaseRepository as any, () => entity);
+    const baseRepoClass = require('./base-repository').BaseRepository;
+    return this.inject(baseRepoClass as any, {
+      localInstance: true,
+      locaInstanceConstructorArgs: [() => entityForCrud],
+    });
+  }
+
+  injectCustomRepository<T>(
+    cutomRepositoryClass: new (...args: any[]) => T,
+  ): T {
+    return this.inject<T>(cutomRepositoryClass, {
+      localInstance: true,
+      locaInstanceConstructorArgs: [
+        () => cutomRepositoryClass.prototype.entityClassResolveFn,
+      ],
+    });
+  }
+
+  /**
+   * aliast to .injectRepository()
+   */
+  injectCustomRepo<T>(cutomRepositoryClass: new (...args: any[]) => T): T {
+    return this.injectCustomRepository<T>(cutomRepositoryClass);
+  }
+
+  injectController<T>(ctor: new (...args: any[]) => T): T {
+    return this.inject<T>(ctor, { localInstance: false });
+  }
+
+  /**
+   * aliast to .injectController()
+   */
+  injectCtrl<T>(ctor: new (...args: any[]) => T): T {
+    return this.injectController<T>(ctor);
+  }
+
+  injectGlobalProvider<T>(ctor: new (...args: any[]) => T): T {
+    return this.inject<T>(ctor, { localInstance: false });
+  }
+
+  injectLocalProvider<T>(ctor: new (...args: any[]) => T): T {
+    return this.inject<T>(ctor, { localInstance: false });
+  }
+
+  /**
    * Inject: Controllers, Providers, Repositories, Services, etc.
    * TODO  addd nest js injecting
    */
-  inject<T>(
+  private inject<T>(
     ctor: new (...args: any[]) => T,
     options?: {
       /**
@@ -33,7 +83,7 @@ export class BaseClass {
        * controllers, providers can be local or global
        */
       localInstance: boolean;
-      //  instanceArgs?: ConstructorParameters<typeof ctor>; .. TODO
+      locaInstanceConstructorArgs?: ConstructorParameters<typeof ctor>;
     },
   ): T {
     if (!options) {

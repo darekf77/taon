@@ -5,6 +5,7 @@ const BaseContext = createContext(() => ({
   contextName: 'BaseContext',
   abstract: true,
   repositories: {
+    // @ts-ignore
     BaseRepository,
   },
 }));

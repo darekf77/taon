@@ -30,7 +30,9 @@ import { FiredevEntityOptions } from '../decorators/classes/entity-decorator';
 @FiredevController({ className: 'BaseCrudController' })
 export abstract class BaseCrudController<Entity> extends BaseController {
   //#region fields
-  backend?: BaseRepository<Entity> = this.inject(BaseRepository<Entity>);
+  backend?: BaseRepository<Entity> = this.injectCustomRepo(
+    BaseRepository<Entity> as any,
+  );
 
   /**
    * Please provide entity as class propery entityClassFn:
@@ -80,7 +82,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
         );
       }
 
-      await this.backend.__init_repository__();
+      await this.backend.init();
     } else {
       Helpers.error(`Entity class not provided for controller ${ClassHelpers.getName(
         this,
@@ -108,9 +110,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
   ): Models.Http.Response<string | any[]> {
     //#region @websqlFunc
     return async (request, response) => {
-      const model = await this.backend.repo.findOne({
-        where: { id } as any,
-      });
+      const model = await this.backend.getBy(id);
       if (model === void 0) {
         return;
       }
@@ -136,7 +136,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
   ): Models.Http.Response<Entity[]> {
     //#region @websqlFunc
     return async (request, response) => {
-      if (this.backend.repository) {
+      if (this.backend.repositoryExists) {
         const query = {
           page: pageNumber,
           take: pageSize,
@@ -151,7 +151,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
         const skip = (page - 1) * take;
         const keyword = query.keyword || '';
 
-        const [result, total] = await this.backend.repo.findAndCount({
+        const { result, total } = await this.backend.findAndCount({
           // where: { name: Like('%' + keyword + '%') },
           // order: { name: "DESC" },
           take: take,
@@ -181,7 +181,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
   getAll(): Models.Http.Response<Entity[]> {
     //#region @websqlFunc
     return async (request, response) => {
-      if (this.backend.repository) {
+      if (this.backend.repositoryExists) {
         const { models, totalCount } = await this.backend.getAll();
         response?.setHeader(Symbols.old.X_TOTAL_COUNT, totalCount);
         return models;

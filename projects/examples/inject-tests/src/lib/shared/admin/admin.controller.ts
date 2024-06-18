@@ -10,8 +10,7 @@ import { UserController } from '../user/user.controller';
 export class AdminController extends UserController {
   entityClassResolveFn = () => Admin;
 
-  currentRepo: any;
-  currentConnection: any;
+  helloWorldFromAdmin = 'hello world from admin';
   async initExampleDbData(): Promise<any> {
     //#region @websqlFunc
 
