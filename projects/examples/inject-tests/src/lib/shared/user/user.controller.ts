@@ -10,8 +10,11 @@ export class UserController extends Firedev.Base.CrudController<User> {
   entityClassResolveFn = () => User;
 
   backend?: UserRepository = this.injectCustomRepo(UserRepository);
+  back = this.injectRepo(User);
+
   async initExampleDbData(): Promise<any> {
     //#region @websqlFunc
+
     const admin = new (SharedContext.types.entitiesFor(this).User)();
     admin.name = 'admin';
     admin.email = 'admin@admin.pl';

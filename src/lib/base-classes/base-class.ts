@@ -24,7 +24,7 @@ export class BaseClass {
   /**
    * inject crud repo for entity
    */
-  injectRepo<T>(entityForCrud: T): BaseRepository<T> {
+  injectRepo<T>(entityForCrud: new () => T): BaseRepository<T> {
     // return this.injectCustomRepository(BaseRepository as any, () => entity);
     const baseRepoClass = require('./base-repository').BaseRepository;
     return this.inject(baseRepoClass as any, {
