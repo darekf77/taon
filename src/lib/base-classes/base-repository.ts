@@ -17,8 +17,8 @@ const INDEX_KEYS_NO_FOR_UPDATE = ['id'];
 
 @FiredevRepository({ className: 'BaseRepository' })
 export class BaseRepository<Entity extends { id?: any }> extends BaseClass {
-  static ids:number  = 0;
-  id:number  = BaseRepository.ids++;
+  // static ids:number  = 0;
+  // id:number  = BaseRepository.ids++;
 
   //#region entity class resovle fn
   __entityClassResolveFn: () => any;

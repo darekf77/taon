@@ -757,11 +757,17 @@ export class EndpointContext {
       contextClassInstance?: BaseClass;
     },
   ): T {
+    if (!options) {
+      options = {} as any;
+    }
     const className = ClassHelpers.getName(ctor);
     // TODO not working local instance
 
-    if (options?.localInstance) {
+    if (this.isCLassType(Models.ClassType.REPOSITORY, ctor)) {
+      options.localInstance = true;
+    }
 
+    if (options?.localInstance) {
       const ctxClassFn = this.getClassFunByClassName(className);
       const contextClassInstance = options?.contextClassInstance;
       // console.log(`Local instance of "${className}" `
@@ -810,6 +816,10 @@ export class EndpointContext {
       case Models.ClassType.REPOSITORY:
         return this.config.repositories;
     }
+  }
+
+  isCLassType(classType: Models.ClassType, classFn: Function): boolean {
+    return this.getClassFunBy(classType)[ClassHelpers.getName(classFn)];
   }
 
   /**

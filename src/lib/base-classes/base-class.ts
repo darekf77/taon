@@ -27,20 +27,36 @@ export class BaseClass {
   inject<T>(
     ctor: new (...args: any[]) => T,
     options?: {
-       localInstance: boolean
+      /**
+       * (repositories are ONLY/ALWAYS local instances)
+       * If true, then local instance will be created
+       * controllers, providers can be local or global
+       */
+      localInstance: boolean;
+      //  instanceArgs?: ConstructorParameters<typeof ctor>; .. TODO
     },
   ): T {
+    if (!options) {
+      options = {} as any;
+    }
+
     const contextClassInstance = this;
     return new Proxy(
       {},
       {
         get: (_, propName) => {
-          const contextFromClass = ctor[Symbols.ctxInClassOrClassObj];
+          const contextFromClass: EndpointContext =
+            ctor[Symbols.ctxInClassOrClassObj];
+
           const resultContext: EndpointContext = contextFromClass
             ? contextFromClass
             : this.__endpoint_context__;
+
           if (resultContext) {
-            var instance: T = resultContext.inject(ctor, {...options, contextClassInstance} );
+            var instance: T = resultContext.inject(ctor, {
+              ...options,
+              contextClassInstance,
+            });
             if (!instance) {
               throw new Error(
                 `Not able to inject "${
@@ -58,12 +74,13 @@ export class BaseClass {
               );
             }
 
-            const result = typeof instance[propName] === 'function'
-              ? instance[propName].bind(instance)
-              : instance[propName];
+            const result =
+              typeof instance[propName] === 'function'
+                ? instance[propName].bind(instance)
+                : instance[propName];
 
-              // console.log(`Accessing injected "${propName?.toString()}" from "${ClassHelpers.getName(ctor) || ctor.name}"`,result)
-              return result;
+            // console.log(`Accessing injected "${propName?.toString()}" from "${ClassHelpers.getName(ctor) || ctor.name}"`,result)
+            return result;
           }
           //#region @browser
           return inject(ctor)[propName];
@@ -75,7 +92,10 @@ export class BaseClass {
             ? contextFromClass
             : this.__endpoint_context__;
           if (resultContext) {
-            var instance: T = resultContext.inject(ctor, {...options, contextClassInstance} );
+            var instance: T = resultContext.inject(ctor, {
+              ...options,
+              contextClassInstance,
+            });
             if (!instance) {
               throw new Error(
                 `Not able to inject "${
