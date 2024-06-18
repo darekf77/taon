@@ -31,6 +31,7 @@ import { RealtimeBrowserRxjs } from './realtime';
 import { FiredevEntityOptions } from './decorators/classes/entity-decorator';
 import type { Server } from 'http';
 import { ENV } from './env';
+import type { BaseClass } from './base-classes/base-class';
 //#region @websql
 import type {
   TransactionRollbackEvent,
@@ -90,6 +91,8 @@ export class EndpointContext {
    */
   public inited: boolean = false;
   //#endregion
+
+  private readonly localInstaceObjSymbol = Symbol('localInstaceObjSymbol');
 
   //#region fields / all instances of classes from context
   /**
@@ -750,22 +753,40 @@ export class EndpointContext {
   inject<T>(
     ctor: new (...args: any[]) => T,
     options?: {
-      // localInstance: boolean
+      localInstance?: boolean;
+      contextClassInstance?: BaseClass;
     },
   ): T {
     const className = ClassHelpers.getName(ctor);
     // TODO not working local instance
-    // if (options?.localInstance) {
-    //   const ctxClassFn = this.getClassFunByClassName(className);
-    //   if (!ctxClassFn) {
-    //     throw new Error(`Not able to inject "${className}" inside context "${this.contextName}"
 
-    //     Make sure they share the same context or import context where "${className}" is defined.
+    if (options?.localInstance) {
 
-    //     `);
-    //   }
-    //   return new ctxClassFn();
-    // }
+      const ctxClassFn = this.getClassFunByClassName(className);
+      const contextClassInstance = options?.contextClassInstance;
+      // console.log(`Local instance of "${className}" `
+      // +`on ${ClassHelpers.getFullInternalName(contextClassInstance)}`)
+      if (!contextClassInstance[this.localInstaceObjSymbol]) {
+        contextClassInstance[this.localInstaceObjSymbol] = {};
+      }
+      const existed =
+        contextClassInstance[this.localInstaceObjSymbol][className];
+      if (existed) {
+        return existed;
+      }
+
+      if (!ctxClassFn) {
+        throw new Error(`Not able to inject "${className}" inside context "${this.contextName}"
+
+        Make sure they share the same context or import context where "${className}" is defined.
+
+        `);
+      }
+      const res = new (ctxClassFn as any)();
+      contextClassInstance[this.localInstaceObjSymbol][className] = res;
+      // console.log(`[firedev] Creating local instance for ${className}  `+`on ${ClassHelpers.getFullInternalName(contextClassInstance)}`, res);
+      return res;
+    }
     return this.allClassesInstances[className];
   }
 
@@ -773,7 +794,7 @@ export class EndpointContext {
    * alias for inject
    */
   getInstanceBy<T>(ctor: new (...args: any[]) => T): T {
-    return this.inject(ctor);
+    return this.inject(ctor, { localInstance: false });
   }
   //#endregion
 
@@ -806,7 +827,7 @@ export class EndpointContext {
     }
   }
 
-  getClassFunByClass(classFunction: Function):Function {
+  getClassFunByClass(classFunction: Function): Function {
     const className = ClassHelpers.getName(classFunction);
     return this.getClassFunByClassName(className);
   }
@@ -924,8 +945,8 @@ export class EndpointContext {
     const url = this.host
       ? new URL(this.host)
       : this.remoteHost
-      ? new URL(this.remoteHost)
-      : void 0;
+        ? new URL(this.remoteHost)
+        : void 0;
     return url;
   }
   //#endregion
@@ -1176,7 +1197,7 @@ export class EndpointContext {
         } as DataSourceOptions)
       : ({} as DataSourceOptions);
 
-    console.log(`[${this.contextName}]dataSourceDbConfig`, dataSourceDbConfig);
+    // console.log(`[${this.contextName}]dataSourceDbConfig`, dataSourceDbConfig);
 
     if (this.modeAllowsDatabaseCreation && this.databaseConfig) {
       Helpers.info('[firedev][database] prepare typeorm connection...');
@@ -1195,8 +1216,8 @@ export class EndpointContext {
         process.exit(1);
         //#endregion
       }
-
-      Helpers.info(
+      // console.clear();// TOOD @LAST @UNCOMMENT
+      console.info(
         `
 
         CONTECTION OK for ${this.contextName} - ${this.mode}
@@ -1205,6 +1226,7 @@ export class EndpointContext {
 
 
         `,
+        dataSourceDbConfig,
       );
       //     const entityMetadata = getMetadataArgsStorage();
       //     console.log(
@@ -1411,9 +1433,11 @@ export class EndpointContext {
       );
       app.use(expressSession(sessionObj));
     } else {
+      // if(this.config?.serverLogs) {
       Helpers.info(
         `[firedev][express-server] session not enabled for this context '${this.contextName}'`,
       );
+      // }
       app.use(cors());
     }
 

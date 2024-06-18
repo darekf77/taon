@@ -11,10 +11,40 @@ import { ClassHelpers } from '../helpers/class-helpers';
 import { Validators } from '../validators';
 import { MySqlQuerySource } from 'firedev-type-sql/src';
 import type { BaseEntity } from 'firedev/src';
+import { FiredevRepository } from '../decorators/classes/repository-decorator';
 
 const INDEX_KEYS_NO_FOR_UPDATE = ['id'];
 
+@FiredevRepository({ className: 'BaseRepository' })
 export class BaseRepository<Entity extends { id?: any }> extends BaseClass {
+  static ids:number  = 0;
+  id:number  = BaseRepository.ids++;
+
+  //#region entity class resovle fn
+  __entityClassResolveFn: () => any;
+  get entityClassResolveFn() {
+    // console.log(`ACCESSING entityClassResolveFn entity for repo "${ClassHelpers.getName(this)}"`);
+    if (!_.isFunction(this.__entityClassResolveFn)) {
+      throw new Error(`Entity class not provided for repository "${ClassHelpers.getName(
+        this,
+      )}".
+      Please fix it by adding entityClassResolveFn property to class like this:
+        ...
+        entityClassResolveFn = () => YourEntityClass;
+        ..
+          `);
+    }
+    return this.__entityClassResolveFn;
+  }
+
+  set entityClassResolveFn(fn: () => any) {
+    // console.log(`SETTING entityClassResolveFn with entity "${ClassHelpers.getName(fn())}" for repo "${ClassHelpers.getName(this)}"`);
+    this.__entityClassResolveFn = fn;
+  }
+
+  //#endregion
+
+  //#region db query
   private __dbQuery: MySqlQuerySource;
 
   public get dbQuery(): MySqlQuerySource {
@@ -38,16 +68,23 @@ export class BaseRepository<Entity extends { id?: any }> extends BaseClass {
     return this.__dbQuery;
     //#endregion
   }
+  //#endregion
 
+  //#region connection
   public get connection(): DataSourceType {
     //#region @websqlFunc
     return this.__endpoint_context__.connection;
     //#endregion
   }
+  //#endregion
 
   //#region repository
   //#region @websql
-  public repository: Repository<Entity>;
+  public __repository: Repository<Entity>;
+  public get repository() {
+    return this.__repository;
+  }
+
   /**
    * aliast to repository
    */
@@ -57,12 +94,10 @@ export class BaseRepository<Entity extends { id?: any }> extends BaseClass {
   //#endregion
   //#endregion
 
-  async __init_repository__(
-    ctx: EndpointContext, // TODO QUICK_FIX
-    entityClassFn: any,
-  ) {
+  async __init_repository__() {
     //#region @websql
-
+    let entityClassFn: any = this.entityClassResolveFn();
+    const ctx: EndpointContext = this.__endpoint_context__;
     const connection = ctx.connection;
 
     if (!connection) {
@@ -96,7 +131,7 @@ export class BaseRepository<Entity extends { id?: any }> extends BaseClass {
     //     `${entityClassFn[Symbols.fullClassNameStaticProperty]}`,
     // );
 
-    this.repository = (await connection.getRepository(entityClassFn)) as any;
+    this.__repository = (await connection.getRepository(entityClassFn)) as any;
     // console.log(
     //   `Inited repository for (${ClassHelpers.getFullInternalName(this)}) ` +
     //     ` ${ctx.contextName}/${ClassHelpers.getName(this)}/${

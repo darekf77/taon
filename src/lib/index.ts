@@ -4,6 +4,7 @@ import * as base from './base-classes/base';
 import * as controllerDecorator from './decorators/classes/controller-decorator';
 import * as entityDecorator from './decorators/classes/entity-decorator';
 import * as providerDecorator from './decorators/classes/provider-decorator';
+import * as repositoryDecorator from './decorators/classes/repository-decorator';
 import * as createContextFn from './create-context';
 import * as orm from './orm';
 import * as models from './models';
@@ -39,6 +40,7 @@ export namespace Firedev {
   export import Controller = controllerDecorator.FiredevController;
   export import Entity = entityDecorator.FiredevEntity;
   export import Provider = providerDecorator.FiredevProvider;
+  export import Repository = repositoryDecorator.FiredevRepository;
   //#endregion
   //#region aliases to helpers
   /**

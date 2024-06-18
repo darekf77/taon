@@ -27,9 +27,10 @@ export class BaseClass {
   inject<T>(
     ctor: new (...args: any[]) => T,
     options?: {
-      //  localInstance: boolean
+       localInstance: boolean
     },
   ): T {
+    const contextClassInstance = this;
     return new Proxy(
       {},
       {
@@ -39,7 +40,7 @@ export class BaseClass {
             ? contextFromClass
             : this.__endpoint_context__;
           if (resultContext) {
-            var instance: T = resultContext.inject(ctor, options);
+            var instance: T = resultContext.inject(ctor, {...options, contextClassInstance} );
             if (!instance) {
               throw new Error(
                 `Not able to inject "${
@@ -56,9 +57,13 @@ export class BaseClass {
               `,
               );
             }
-            return typeof instance[propName] === 'function'
+
+            const result = typeof instance[propName] === 'function'
               ? instance[propName].bind(instance)
               : instance[propName];
+
+              // console.log(`Accessing injected "${propName?.toString()}" from "${ClassHelpers.getName(ctor) || ctor.name}"`,result)
+              return result;
           }
           //#region @browser
           return inject(ctor)[propName];
@@ -66,11 +71,11 @@ export class BaseClass {
         },
         set: (_, propName, value) => {
           const contextFromClass = ctor[Symbols.ctxInClassOrClassObj];
-          const resultContext = contextFromClass
+          const resultContext: EndpointContext = contextFromClass
             ? contextFromClass
             : this.__endpoint_context__;
           if (resultContext) {
-            var instance: T = resultContext.inject(ctor);
+            var instance: T = resultContext.inject(ctor, {...options, contextClassInstance} );
             if (!instance) {
               throw new Error(
                 `Not able to inject "${

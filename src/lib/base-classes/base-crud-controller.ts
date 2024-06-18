@@ -30,7 +30,7 @@ import { FiredevEntityOptions } from '../decorators/classes/entity-decorator';
 @FiredevController({ className: 'BaseCrudController' })
 export abstract class BaseCrudController<Entity> extends BaseController {
   //#region fields
-  backend?: BaseRepository<Entity>; // TODO @LAST inject local instance does not work
+  backend?: BaseRepository<Entity> = this.inject(BaseRepository<Entity>,{ localInstance: true});
 
   /**
    * Please provide entity as class propery entityClassFn:
@@ -50,22 +50,22 @@ export abstract class BaseCrudController<Entity> extends BaseController {
       );
       return;
     }
-
+    this.backend.entityClassResolveFn = this.entityClassResolveFn;
     let entityClassFn = this.entityClassResolveFn();
     // console.log(`
     // INITING CRUD CONTROLLER ${ClassHelpers.getName(this)}
     // entityClassFn: ${ClassHelpers.getName(entityClassFn)}
-    // connection: ${!!this.connection}
-    // entities: ${this.connection?.options?.entities?.length}
+    // connection: ${!!this.backend?.connection}
+    // entities: ${this.backend?.connection?.options?.entities?.length}
 
     // `);
 
     entityClassFn = this.__endpoint_context__.getClassFunByClass(entityClassFn);
 
-    const baseRepoClass =
-      this.__endpoint_context__.getClassFunByClass(BaseRepository);
+    // const baseRepoClass =
+    //   this.__endpoint_context__.getClassFunByClass(BaseRepository);
 
-    this.backend = new (baseRepoClass as any)();
+    // this.backend = new (baseRepoClass as any)();
 
     if (entityClassFn) {
       const configEntity = Reflect.getMetadata(
@@ -80,11 +80,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
         );
       }
 
-      await this.backend.__init_repository__(
-        this.__endpoint_context__,
-        entityClassFn,
-      );
-      // const crud = this.backend.huj;
+      await this.backend.__init_repository__();
     } else {
       Helpers.error(`Entity class not provided for controller ${ClassHelpers.getName(
         this,
