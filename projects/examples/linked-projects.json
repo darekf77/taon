@@ -3,5 +3,9 @@
     deafultBranch: "master",
     relativeClonePath: "circural-deps-ctx",
     repoUrl: "https://github.com/darekf77/circural-deps-ctx.git",
+  }, {
+    deafultBranch: "master",
+    relativeClonePath: "inject-tests",
+    repoUrl: "https://github.com/darekf77/inject-tests.git",
   }]
 }

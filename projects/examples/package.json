@@ -169,7 +169,7 @@
     "file-loader": "1.1.5",
     "file-saver": "2.0.5",
     "file-type": "18.5.0",
-    "firedev": "^16",
+    "firedev": "~16.100.19",
     "firedev-crud": "16.444.1",
     "firedev-crud-deamon": "16.444.1",
     "firedev-ports": "16.444.1",
