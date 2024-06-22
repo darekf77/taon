@@ -8,6 +8,7 @@ export const inject = <T>(entity: () => new (...args: any[]) => T): T => {
     {},
     {
       get: (_, propName) => {
+
         const ctor = entity();
         const contextFromClass = ctor[Symbols.ctxInClassOrClassObj];
         const resultContext = contextFromClass;

@@ -1,10 +1,10 @@
 import { _ } from 'tnp-core/src';
-
+import { OrignalClassKey } from 'firedev-typeorm/src';
 export namespace Symbols {
   export const ctxInClassOrClassObj = Symbol();
   export const classNameStaticProperty = '$$className$$';
   export const fullClassNameStaticProperty = '$$fullclassName$$';
-  export const orignalClass = '$$originalClass$$';
+  export const orignalClass = OrignalClassKey;
   export const orignalClassClonesObj = '$$originalClassClonesObj$$';
 
   export const metadata = {

@@ -84,7 +84,6 @@ export class EndpointContext {
 
   //#region fields / flags
   disabledRealtime: boolean = false;
-  displayServerLogs: boolean = false;
   /**
    * check whether context is inited
    * (with init() function )
@@ -173,6 +172,29 @@ export class EndpointContext {
   public config: Models.ContextOptions<any, any, any, any, any>;
   //#endregion
 
+  //#region fields / logs
+  get logServer(): boolean {
+    if (_.isObject(this.config?.logs)) {
+      return !!(this.config.logs as Models.ContectionOptionsLogs).server;
+    }
+    return this.config?.logs === true;
+  }
+
+  get logFramework(): boolean {
+    if (_.isObject(this.config?.logs)) {
+      return !!(this.config.logs as Models.ContectionOptionsLogs).framework;
+    }
+    return this.config?.logs === true;
+  }
+
+  get logDb(): boolean {
+    if (_.isObject(this.config?.logs)) {
+      return !!(this.config.logs as Models.ContectionOptionsLogs).db;
+    }
+    return this.config?.logs === true;
+  }
+  //#endregion
+
   //#endregion
 
   //#region constructor
@@ -218,10 +240,6 @@ export class EndpointContext {
     //   );
     // }
     //#endregion
-
-    this.displayServerLogs = !_.isUndefined(this.config.serverLogs)
-      ? this.config.serverLogs
-      : !this.config.productionMode;
 
     //#region resolve mode
     if (this.config.host) {
@@ -431,16 +449,17 @@ export class EndpointContext {
         autoSave: true,
         synchronize: true,
         dropSchema: true,
-        logging: true,
+        logging: this.logDb,
         databasePort: 3306,
         databaseHost: 'localhost',
         databaseUsername: 'root',
         databasePassword: 'admin',
       };
     } else {
-      Helpers.info(
-        `[firedev][database] Automatically resolving database config for mode ${this.mode}`,
-      );
+      this.logFramework &&
+        Helpers.info(
+          `[firedev][database] Automatically resolving database config for mode ${this.mode}`,
+        );
       switch (this.mode) {
         //#region resolve database config for mode backend-frontend(tcp+udp)
         case 'backend-frontend(ipc-electron)':
@@ -450,7 +469,7 @@ export class EndpointContext {
             autoSave: true,
             synchronize: true,
             dropSchema: true,
-            logging: false,
+            logging: this.logDb,
           };
           break;
         //#endregion
@@ -464,7 +483,7 @@ export class EndpointContext {
             autoSave: true,
             synchronize: true,
             dropSchema: true,
-            logging: false,
+            logging: this.logDb,
           };
 
           if (FiredevAdmin.Instance.keepWebsqlDbDataAfterReload) {
@@ -486,7 +505,7 @@ export class EndpointContext {
             autoSave: true,
             synchronize: true,
             dropSchema: true,
-            logging: false,
+            logging: this.logDb,
           };
           break;
         //#endregion
@@ -569,6 +588,7 @@ export class EndpointContext {
   //#endregion
 
   //#region methods & getters / clone class
+  // eslint-disable-next-line @typescript-eslint/typedef
   private cloneClassWithNewMetadata = <
     T extends { new (...args: any[]): any },
   >({
@@ -593,10 +613,15 @@ export class EndpointContext {
         return BaseClass;
       }
       return class extends BaseClass {
+        // eslint-disable-next-line @typescript-eslint/typedef
         static [Symbols.orignalClass] = BaseClass;
+        // eslint-disable-next-line @typescript-eslint/typedef
         static [Symbols.fullClassNameStaticProperty] = `${ctx.contextName}.${className}`;
+        // eslint-disable-next-line @typescript-eslint/typedef
         static [Symbols.classNameStaticProperty] = className;
+        // eslint-disable-next-line @typescript-eslint/typedef
         static [Symbols.ctxInClassOrClassObj] = ctx;
+        // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/typedef
         static __getFullPathForClass__(arr = []) {
           const name = this[Symbols.fullClassNameStaticProperty];
           arr.push(name);
@@ -610,7 +635,7 @@ export class EndpointContext {
           }
           return arr.join('/');
         }
-        static get fullPathForClass() {
+        static get fullPathForClass(): string {
           return this.__getFullPathForClass__();
         }
         [Symbols.ctxInClassOrClassObj] = ctx;
@@ -761,7 +786,7 @@ export class EndpointContext {
     if (!options) {
       options = {} as any;
     }
-    const className = ClassHelpers.getName(ctor);
+    const className = ClassHelpers.getName(ctor) || ctor.name;
     // TODO not working local instance
 
     if (this.isCLassType(Models.ClassType.REPOSITORY, ctor)) {
@@ -789,7 +814,8 @@ export class EndpointContext {
 
         `);
       }
-      const locaInstanceConstructorArgs = options.locaInstanceConstructorArgs || [];
+      const locaInstanceConstructorArgs =
+        options.locaInstanceConstructorArgs || [];
       const res = new (ctxClassFn as any)(...locaInstanceConstructorArgs);
       contextClassInstance[this.localInstaceObjSymbol][className] = res;
       // console.log(`[firedev] Creating local instance for ${className}  `+`on ${ClassHelpers.getFullInternalName(contextClassInstance)}`, res);
@@ -1170,11 +1196,19 @@ export class EndpointContext {
         ? true
         : options.createTable;
       const nameForEntity = ClassHelpers.getName(entity);
-      Helpers.info(
-        `[firedev][typeorm] create table for entity  ${nameForEntity} ? '${createTable}'`,
-      );
+
       if (_.isUndefined(options.createTable) ? true : options.createTable) {
+        this.logDb &&
+          console.info(
+            `[firedev][typeorm] create table for entity "${nameForEntity}" ? '${createTable}'`,
+          );
+        // console.log('TypeormEntity', { TypeormEntity });
         TypeormEntity(nameForEntity)(entity);
+      } else {
+        this.logDb &&
+          console.info(
+            `[firedev][typeorm] create table for entity "${nameForEntity}" ? '${createTable}'`,
+          );
       }
     }
     //#endregion
@@ -1185,7 +1219,9 @@ export class EndpointContext {
   //#region methods & getters / init connection
   async initDatabaseConnection() {
     //#region @websqlFunc
-    const entities = this.getClassFunByArr(Models.ClassType.ENTITY);
+    const entities = this.config.override?.entities
+      ? this.config.override.entities
+      : this.getClassFunByArr(Models.ClassType.ENTITY);
     // .map(
     //   entityFn => {
     //     return entityFn[Symbols.orignalClass];
@@ -1304,9 +1340,10 @@ export class EndpointContext {
       //#region @backend
       if (!Helpers.isRunningIn.cliMode()) {
         //#endregion
-        console.groupCollapsed(
-          `[firedev][express-server] routes [${classConfig.className}]`,
-        );
+        this.logServer &&
+          console.groupCollapsed(
+            `[firedev][express-server] routes [${classConfig.className}]`,
+          );
         //#region @backend
       }
       //#endregion
@@ -1346,7 +1383,7 @@ export class EndpointContext {
       //#region @backend
       if (!Helpers.isRunningIn.cliMode()) {
         //#endregion
-        console.groupEnd();
+        this.logServer && console.groupEnd();
         //#region @backend
       }
       //#endregion
@@ -1446,9 +1483,10 @@ export class EndpointContext {
       app.use(expressSession(sessionObj));
     } else {
       // if(this.config?.serverLogs) {
-      Helpers.info(
-        `[firedev][express-server] session not enabled for this context '${this.contextName}'`,
-      );
+      this.logServer &&
+        Helpers.info(
+          `[firedev][express-server] session not enabled for this context '${this.contextName}'`,
+        );
       // }
       app.use(cors());
     }
@@ -1574,7 +1612,7 @@ export class EndpointContext {
       //#endregion
 
       //#region @backend
-      console.log(`[${type.toUpperCase()}] ${expressPath} `);
+      this.logServer && console.log(`[${type.toUpperCase()}] ${expressPath} `);
       this.expressApp[type.toLowerCase()](
         expressPath,
         requestHandler,
@@ -1812,7 +1850,7 @@ export class EndpointContext {
   ) {
     const ctx = this;
     // : { received: any; /* Rest<any, any>  */ }
-    console.log(`${type?.toUpperCase()} ${expressPath} `);
+    this.logServer && console.log(`${type?.toUpperCase()} ${expressPath} `);
 
     //#region resolve storage
     let storage: any;

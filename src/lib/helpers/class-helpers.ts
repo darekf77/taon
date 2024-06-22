@@ -36,7 +36,8 @@ export namespace ClassHelpers {
       return 'FormData';
     }
     if (!classFnOrObject) {
-      throw new Error(`Cannot get name from: ${classFnOrObject}`);
+      console.error('OBJECT OR CLASS', classFnOrObject);
+      throw new Error(`Cannot get name from this object or class.`);
     }
     return (
       (classFnOrObject[Symbols.classNameStaticProperty]

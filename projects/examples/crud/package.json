@@ -4,7 +4,7 @@
     "version": "v16",
     "type": "isomorphic-lib"
   },
-  "name": "inject-tests",
+  "name": "crud",
   "version": "0.0.0",
   "private": true,
   "devDependencies": {

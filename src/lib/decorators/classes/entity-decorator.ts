@@ -3,6 +3,9 @@ import { ClassHelpers } from '../../helpers/class-helpers';
 import { Symbols } from '../../symbols';
 import { _ } from 'tnp-core/src';
 import { Models } from '../../models';
+//#region @websql
+import { Entity as TypeormEntity, Tree } from 'firedev-typeorm/src';
+//#endregion
 
 export function FiredevEntity<T = any>(options?: FiredevEntityOptions<T>) {
   return function (constructor: Function) {
@@ -31,6 +34,9 @@ export function FiredevEntity<T = any>(options?: FiredevEntityOptions<T>) {
       options?.className || constructor.name,
       constructor,
     );
+    //#region @websql
+    TypeormEntity(options?.className)(constructor);
+    //#endregion
   };
 }
 

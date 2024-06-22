@@ -86,6 +86,7 @@ export namespace Models {
   //#endregion
 
   //#region models / context options
+  export type ContectionOptionsLogs = { server: boolean; framework: boolean; db: boolean };
   export interface ContextOptions<
     CONTEXTS,
     CONTROLLERS,
@@ -105,14 +106,7 @@ export namespace Models {
     session?: ISession;
     productionMode?: boolean;
     abstract?: boolean;
-    /**
-     * Display server logs (default true for development mode, false for production mode)
-     */
-    serverLogs?: boolean;
-    /**
-     * framework steps logs
-     */
-    logFramework?: boolean;
+    logs?: boolean | ContectionOptionsLogs;
     database?: boolean | DatabaseConfig;
     disabledRealtime?: boolean;
     https?: {
@@ -121,6 +115,14 @@ export namespace Models {
     };
     publicAssets?: { serverPath: string; locationOnDisk: string }[];
     middlewares?: MiddlewareType[];
+    //#region @notForNpm
+    /**
+     * only for debugging purpose
+     */
+    override?: {
+      entities?: Function[]
+    }
+    //#endregion
   }
   //#endregion
 

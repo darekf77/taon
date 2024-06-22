@@ -1,5 +1,4 @@
 
-       #  circural-deps-ctx
+  #  circural-deps-ctx
 
-       I am standalone project.
-       
+STATUS: OK

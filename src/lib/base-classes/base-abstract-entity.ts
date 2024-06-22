@@ -3,11 +3,21 @@ import { Entity } from 'firedev-typeorm/src';
 //#endregion
 import { Orm } from '../orm';
 import { BaseEntity } from './base-entity';
+import type { BaseClass } from './base-class';
+
+// empty decorator
+let EntityDecorator = () => {
+  return (target: any) => {};
+};
 
 //#region @websql
-@Entity()
+EntityDecorator = Entity;
 //#endregion
-export abstract class BaseAbstractEntity extends BaseEntity {
+
+@EntityDecorator()
+export abstract class BaseAbstractEntity<
+  CloneT extends BaseClass = any,
+> extends BaseEntity<CloneT> {
   //#region @websql
   @Orm.Column.Generated()
   //#endregion

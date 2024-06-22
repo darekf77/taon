@@ -10,7 +10,7 @@ import { Firedev } from 'firedev/src';
 
 export const createContext = <
   //#region context generic args
-  CTX extends Record<string,  object>,
+  CTX extends Record<string, object>,
   CTRL extends Record<string, new (...args: any[]) => any>,
   ENTITY extends Record<string, new (...args: any[]) => any>,
   REPO extends Record<string, new (...args: any[]) => any>,
@@ -37,27 +37,33 @@ export const createContext = <
       get entities() {
         return config.entities;
       },
-      entitiesFor(classInstace:BaseClass ) {
+      entitiesFor(classInstace: BaseClass) {
         const ctx = classInstace.__endpoint_context__;
-         if(!entitiesCache[ctx.contextName]) {
-          entitiesCache[ctx.contextName] = {}
+        if (!entitiesCache[ctx.contextName]) {
+          entitiesCache[ctx.contextName] = {};
           for (const entityClassName of Object.keys(config.entities)) {
-            entitiesCache[ctx.contextName][entityClassName] = config.entities[entityClassName][Firedev.symbols.orignalClassClonesObj][ctx.contextName];
+            entitiesCache[ctx.contextName][entityClassName] =
+              config.entities[entityClassName][
+                Firedev.symbols.orignalClassClonesObj
+              ][ctx.contextName];
           }
-         }
+        }
         return entitiesCache[ctx.contextName] as typeof config.entities;
       },
       get controllers() {
         return config.controllers;
       },
-      controllesFor(classInstace?:BaseClass  ) {
+      controllesFor(classInstace?: BaseClass) {
         const ctx = classInstace.__endpoint_context__ || endpointContextRef;
-         if(!controllersCache[ctx.contextName]) {
-          controllersCache[ctx.contextName] = {}
+        if (!controllersCache[ctx.contextName]) {
+          controllersCache[ctx.contextName] = {};
           for (const controllerName of Object.keys(config.controllers)) {
-            controllersCache[ctx.contextName][controllerName] = config.controllers[controllerName][Firedev.symbols.orignalClassClonesObj][ctx.contextName];
+            controllersCache[ctx.contextName][controllerName] =
+              config.controllers[controllerName][
+                Firedev.symbols.orignalClassClonesObj
+              ][ctx.contextName];
           }
-         }
+        }
         return controllersCache[ctx.contextName] as typeof config.controllers;
       },
       get repositories() {
@@ -82,7 +88,9 @@ export const createContext = <
      */
     async ref() {
       if (!endpointContextRef.inited) {
-        await endpointContextRef.init({ initFromRecrusiveContextResovle: true });
+        await endpointContextRef.init({
+          initFromRecrusiveContextResovle: true,
+        });
       }
       return endpointContextRef;
     },

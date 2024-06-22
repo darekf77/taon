@@ -30,7 +30,7 @@ import { FiredevEntityOptions } from '../decorators/classes/entity-decorator';
 @FiredevController({ className: 'BaseCrudController' })
 export abstract class BaseCrudController<Entity> extends BaseController {
   //#region fields
-  backend?: BaseRepository<Entity> = this.injectCustomRepo(
+  public db?: BaseRepository<Entity> = this.injectCustomRepo(
     BaseRepository<Entity> as any,
   );
 
@@ -44,21 +44,23 @@ export abstract class BaseCrudController<Entity> extends BaseController {
 
   //#region init
   async _() {
+
     if (!_.isFunction(this.entityClassResolveFn)) {
+
       Helpers.warn(
         `Skipping initing CRUD controller ${ClassHelpers.getName(
           this,
-        )} because entityClassFn is not provided.`,
+        )} because entityClassResolveFn is not provided.`,
       );
       return;
     }
-    this.backend.entityClassResolveFn = this.entityClassResolveFn;
+    this.db.entityClassResolveFn = this.entityClassResolveFn;
     let entityClassFn = this.entityClassResolveFn();
     // console.log(`
     // INITING CRUD CONTROLLER ${ClassHelpers.getName(this)}
     // entityClassFn: ${ClassHelpers.getName(entityClassFn)}
-    // connection: ${!!this.backend?.connection}
-    // entities: ${this.backend?.connection?.options?.entities?.length}
+    // connection: ${!!this.db?.connection}
+    // entities: ${this.db?.connection?.options?.entities?.length}
 
     // `);
 
@@ -82,7 +84,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
         );
       }
 
-      await this.backend.init();
+      await this.db.__init();
     } else {
       Helpers.error(`Entity class not provided for controller ${ClassHelpers.getName(
         this,
@@ -110,7 +112,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
   ): Models.Http.Response<string | any[]> {
     //#region @websqlFunc
     return async (request, response) => {
-      const model = await this.backend.getBy(id);
+      const model = await this.db.getBy(id);
       if (model === void 0) {
         return;
       }
@@ -136,7 +138,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
   ): Models.Http.Response<Entity[]> {
     //#region @websqlFunc
     return async (request, response) => {
-      if (this.backend.repositoryExists) {
+      if (this.db.repositoryExists) {
         const query = {
           page: pageNumber,
           take: pageSize,
@@ -151,7 +153,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
         const skip = (page - 1) * take;
         const keyword = query.keyword || '';
 
-        const { result, total } = await this.backend.findAndCount({
+        const [result, total] = await this.db.findAndCount({
           // where: { name: Like('%' + keyword + '%') },
           // order: { name: "DESC" },
           take: take,
@@ -181,8 +183,8 @@ export abstract class BaseCrudController<Entity> extends BaseController {
   getAll(): Models.Http.Response<Entity[]> {
     //#region @websqlFunc
     return async (request, response) => {
-      if (this.backend.repositoryExists) {
-        const { models, totalCount } = await this.backend.getAll();
+      if (this.db.repositoryExists) {
+        const { models, totalCount } = await this.db.getAll();
         response?.setHeader(Symbols.old.X_TOTAL_COUNT, totalCount);
         return models;
       }
@@ -197,7 +199,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
   getBy(@Path(`id`) id: number | string): Models.Http.Response<Entity> {
     //#region @websqlFunc
     return async () => {
-      const { model } = await this.backend.getBy(id);
+      const model = await this.db.getBy(id);
       return model;
     };
     //#endregion
@@ -213,7 +215,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
     //#region @websqlFunc
 
     return async () => {
-      const { model } = await this.backend.updateById(id, item as any);
+      const model = await this.db.updateById(id, item as any);
       return model;
     };
     //#endregion
@@ -229,7 +231,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
     //#region @websqlFunc
 
     return async () => {
-      const { model } = await this.backend.updateById(id, item as any);
+      const model = await this.db.updateById(id, item as any);
       return model;
     };
     //#endregion
@@ -244,7 +246,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
       if (!Array.isArray(items) || items?.length === 0) {
         return [];
       }
-      const { models } = await this.backend.bulkUpdate(items);
+      const { models } = await this.db.bulkUpdate(items);
       return models;
     };
     //#endregion
@@ -256,7 +258,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
   deleteById(@Path(`id`) id: number): Models.Http.Response<Entity> {
     //#region @websqlFunc
     return async () => {
-      const { model } = await this.backend.deleteById(id);
+      const model = await this.db.deleteById(id);
       return model;
     };
     //#endregion
@@ -270,7 +272,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
   ): Models.Http.Response<(number | string | Entity)[]> {
     //#region @websqlFunc
     return async () => {
-      const { models } = await this.backend.bulkDelete(ids);
+      const models = await this.db.bulkDelete(ids);
       return models;
     };
     //#endregion
@@ -282,7 +284,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
   create(@Body() item: Entity): Models.Http.Response<Entity> {
     //#region @websqlFunc
     return async () => {
-      const { model } = await this.backend.create(item as any);
+      const model = await this.db.create(item as any);
       return model as Entity;
     };
     //#endregion
@@ -294,7 +296,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
   bulkCreate(@Body() items: Entity): Models.Http.Response<Entity[]> {
     //#region @websqlFunc
     return async () => {
-      const { models } = await this.backend.bulkCreate(items as any);
+      const models = await this.db.bulkCreate(items as any);
       return models as Entity[];
     };
     //#endregion
