@@ -115,14 +115,16 @@ export namespace Models {
     };
     publicAssets?: { serverPath: string; locationOnDisk: string }[];
     middlewares?: MiddlewareType[];
-    //#region @notForNpm
     /**
+     * @deprecated
      * only for debugging purpose
      */
     override?: {
-      entities?: Function[]
+      entities?: Function[],
+      controllers?: Function[],
+      repositories?: Function[],
+      providers?: Function[],
     }
-    //#endregion
   }
   //#endregion
 
