@@ -881,10 +881,15 @@ export abstract class BaseRepository<
   //#endregion
 
   //#region crud operations / get all
+  /**
+   * @deprecated use findAndCount instead
+   */
   async getAll() {
     //#region @websqlFunc
     const totalCount = await this.repo.count();
     const models = await this.repo.find();
+    // console.log('models', models);
+    // console.log('totalCount', totalCount);
     return { models, totalCount };
     //#endregion
   }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/typedef */
 //#region imports
 import { Models } from './models';
 import { ClassHelpers } from './helpers/class-helpers';
@@ -614,10 +615,13 @@ export class EndpointContext {
       }
       return class extends BaseClass {
         // eslint-disable-next-line @typescript-eslint/typedef
+        // @ts-ignore
         static [Symbols.orignalClass] = BaseClass;
         // eslint-disable-next-line @typescript-eslint/typedef
+        // @ts-ignore
         static [Symbols.fullClassNameStaticProperty] = `${ctx.contextName}.${className}`;
         // eslint-disable-next-line @typescript-eslint/typedef
+        // @ts-ignore
         static [Symbols.classNameStaticProperty] = className;
         // eslint-disable-next-line @typescript-eslint/typedef
         static [Symbols.ctxInClassOrClassObj] = ctx;
@@ -668,6 +672,7 @@ export class EndpointContext {
   //#endregion
 
   //#region methods & getters / clone classes obj with new metadata
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private cloneClassesObjWithNewMetadata = ({
     classesInput,
     config,
@@ -1219,14 +1224,16 @@ export class EndpointContext {
   //#region methods & getters / init connection
   async initDatabaseConnection() {
     //#region @websqlFunc
-    const entities = this.config.override?.entities
-      ? this.config.override.entities
-      : this.getClassFunByArr(Models.ClassType.ENTITY);
-    // .map(
-    //   entityFn => {
-    //     return entityFn[Symbols.orignalClass];
-    //   },
-    // ); // TODO @LAST get things recrusively
+    const entities = (
+      this.config.override?.entities
+        ? this.config.override.entities
+        : this.getClassFunByArr(Models.ClassType.ENTITY)
+    ).map(entityFn => {
+      //#region @websqlOnly
+      return entityFn[Symbols.orignalClass]; // TODO probably this OK also for backend nodejs
+      //#endregion
+      return entityFn;
+    });
     const dataSourceDbConfig = _.isObject(this.databaseConfig)
       ? ({
           type: this.databaseConfig.type,
@@ -1743,7 +1750,6 @@ export class EndpointContext {
 
           try {
             let result = await getResult(resolvedParams, req, res);
-
             if (
               result instanceof Blob &&
               (methodConfig.responseType as ModelsNg2Rest.ResponseTypeAxios) ===

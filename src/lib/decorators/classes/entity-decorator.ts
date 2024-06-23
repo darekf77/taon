@@ -1,5 +1,6 @@
 import { Mapping } from 'ng2-rest/src';
 import { ClassHelpers } from '../../helpers/class-helpers';
+import { CLASS } from 'typescript-class-helpers/src';
 import { Symbols } from '../../symbols';
 import { _ } from 'tnp-core/src';
 import { Models } from '../../models';
@@ -37,6 +38,7 @@ export function FiredevEntity<T = any>(options?: FiredevEntityOptions<T>) {
     //#region @websql
     TypeormEntity(options?.className)(constructor);
     //#endregion
+    CLASS.setName(constructor, options?.className); // TODO QUICK_FIX for ng2-rest
   };
 }
 

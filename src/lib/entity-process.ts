@@ -9,6 +9,10 @@ import { Mapping } from 'ng2-rest/src';
 import { Response } from 'express';
 //#endregion
 
+//#region get transform function
+/**
+ * @deprecated
+ */
 export const getTransformFunction = (target: Function) => {
   if (!target) {
     return;
@@ -39,7 +43,12 @@ export const getTransformFunction = (target: Function) => {
         return entity;
       };
 };
+//#endregion
 
+//#region single transform
+/**
+ * @deprecated
+ */
 export const singleTransform = (json: any) => {
   let ptarget = ClassHelpers.getClassFnFromObject(json);
   let pbrowserTransformFn = getTransformFunction(ptarget);
@@ -47,7 +56,8 @@ export const singleTransform = (json: any) => {
     const newValue = pbrowserTransformFn(json);
     if (!_.isObject(newValue)) {
       console.error(
-        `Please return object in transform function for class: ${ClassHelpers.getName(json)}`,
+        `Please return object in transform function for class: ` +
+          `${ClassHelpers.getName(json)}`,
       );
     } else {
       json = newValue;
@@ -55,17 +65,32 @@ export const singleTransform = (json: any) => {
   }
   return json;
 };
+//#endregion
 
 export class EntityProcess {
+  //#region init
   static async init(result: any, response: Response) {
     return await new EntityProcess(result, response).run();
   }
+  //#endregion
 
+  //#region fields
   /**
    * Data to send
    */
   data: any;
 
+  /**
+   * Say yes to:
+   * - circural object
+   * - transform browser fn in decorator
+   */
+  private advancedManipulation: boolean = false;
+  private entityMapping: any;
+  private circural = [];
+  //#endregion
+
+  //#region constructor
   constructor(
     /**
      * Data from backend
@@ -73,23 +98,18 @@ export class EntityProcess {
     private result: any,
     private response: Response,
   ) {}
+  //#endregion
 
-  /**
-   * Say yes to:
-   * - circural object
-   * - transform browser fn in decorator
-   */
-  private advancedManipulation = false;
+  //#region check advanced manipulation
   private checkAdvancedManiupulation() {
     if (_.isFunction(this.result)) {
       this.advancedManipulation = true;
       this.result = this.result();
     }
   }
+  //#endregion
 
-  private entityMapping: any;
-  private circural = [];
-
+  //#region run
   public async run() {
     this.checkAdvancedManiupulation();
     this.data = this.result;
@@ -103,7 +123,9 @@ export class EntityProcess {
     }
     this.send();
   }
+  //#endregion
 
+  //#region apply transform function
   applayTransformFn() {
     if (_.isObject(this.data) && !_.isArray(this.data)) {
       this.data = singleTransform(this.data);
@@ -129,13 +151,20 @@ export class EntityProcess {
     });
     this.circural = circs;
   }
+  //#endregion
 
-  setHeaders() {
+  //#region set headers
+  setHeaders(): void {
     const { include } = { include: [] };
 
     const className = ClassHelpers.getName(this.data);
     const doNothing =
-      _.isNil(this.data) || ['Object', '', void 0, null].includes(className);
+      _.isNil(this.data) ||
+      [
+        'Object',
+        '',
+        //  void 0, null // TODO @LAST not sure about commenting this
+      ].includes(className);
     // console.log('doNothing', doNothing)
     if (!doNothing) {
       const cleaned = JSON10.cleaned(this.data, void 0, {
@@ -156,7 +185,9 @@ export class EntityProcess {
       }
     }
   }
+  //#endregion
 
+  //#region send
   send() {
     if (!_.isObject(this.data)) {
       if (_.isNumber(this.data)) {
@@ -256,6 +287,5 @@ export class EntityProcess {
       this.response.json(this.data);
     }
   }
+  //#endregion
 }
-
-//#endregion

@@ -84,7 +84,7 @@ class UserController extends Firedev.Base.CrudController<User> {
 
   async initExampleDbData(): Promise<void> {
     //#region @websql
-    await this.db.save(new (User)());
+    await this.db.save(new (User)().clone({ name: 'Dariusz' }));
     //#endregion
   }
 }
@@ -107,10 +107,10 @@ var Context = Firedev.createContext(() => ({
     // PUT FIREDEV ENTITIES HERE
   },
   database: true,
-  logs: true,
-  override: {
-    entities: [User],
-  },
+  // logs: true,
+  // override: {
+  //   entities:[User]
+  // }
 }));
 
 async function start() {
