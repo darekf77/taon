@@ -646,6 +646,7 @@ export class EndpointContext {
 
     //#region gather all instances for all contexts
     // TODO this is not needed anymore - for typeorm I use normal entities
+    // this thinng belowe is nice for debugging purpose
     // if (_.isUndefined(cloneClassFunction[Symbols.orignalClassClonesObj])) {
     //   cloneClassFunction[Symbols.orignalClassClonesObj] = {};
     // }

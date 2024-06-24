@@ -4,6 +4,7 @@ import { EndpointContext } from './endpoint-context';
 import { Models } from './models';
 import { FiredevAdmin } from './firedev-admin';
 import { ENV } from './env';
+// import { Symbols } from './symbols';
 // import { Firedev } from 'firedev/src';
 //#endregion
 
@@ -97,9 +98,22 @@ export const createContext = <
       return endpointContextRef;
     },
     get<T>(ctor:  new (...args: any[]) => T): new (...args: any[]) => T {
-      return endpointContextRef.getClassFunByClass(
+      const classFun = endpointContextRef.getClassFunByClass(
         ctor,
-      )  as any;
+      );
+      return classFun as any;
+
+      // TODO hmmmm for now context for controller inside api service
+      // const allContexts = Object.values(classFun[Symbols.orignalClassClonesObj] || {}).map(classFn => {
+      //   return {
+      //     ctx: classFn[Symbols.ctxInClassOrClassObj] as EndpointContext,
+      //     classFn,
+      //   }
+      // })
+      // const activeContext = allContexts.find(c => c.ctx.inited);
+      // debugger
+      // console.log('activeContext', activeContext.ctx.contextName);
+      // return activeContext.ctx.getClassFunByClass(ctor) as any;
     },
     //#endregion
     //#region initialize
