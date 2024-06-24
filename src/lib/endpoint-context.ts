@@ -607,6 +607,7 @@ export class EndpointContext {
         return BaseClass;
       }
       return class extends BaseClass {
+        // static ['_'] = BaseClass['_'];
         // eslint-disable-next-line @typescript-eslint/typedef
         // @ts-ignore
         static [Symbols.orignalClass] = BaseClass;
@@ -644,19 +645,20 @@ export class EndpointContext {
     const cloneClassFunction = cloneClass();
 
     //#region gather all instances for all contexts
-    if (_.isUndefined(cloneClassFunction[Symbols.orignalClassClonesObj])) {
-      cloneClassFunction[Symbols.orignalClassClonesObj] = {};
-    }
-    if (_.isUndefined(BaseClass[Symbols.orignalClassClonesObj])) {
-      BaseClass[Symbols.orignalClassClonesObj] = {};
-    }
-    const all = {
-      ...BaseClass[Symbols.orignalClassClonesObj],
-      ...cloneClassFunction[Symbols.orignalClassClonesObj],
-    };
-    all[ctx.contextName] = cloneClassFunction;
-    cloneClassFunction[Symbols.orignalClassClonesObj] = all;
-    BaseClass[Symbols.orignalClassClonesObj] = all;
+    // TODO this is not needed anymore - for typeorm I use normal entities
+    // if (_.isUndefined(cloneClassFunction[Symbols.orignalClassClonesObj])) {
+    //   cloneClassFunction[Symbols.orignalClassClonesObj] = {};
+    // }
+    // if (_.isUndefined(BaseClass[Symbols.orignalClassClonesObj])) {
+    //   BaseClass[Symbols.orignalClassClonesObj] = {};
+    // }
+    // const all = {
+    //   ...BaseClass[Symbols.orignalClassClonesObj],
+    //   ...cloneClassFunction[Symbols.orignalClassClonesObj],
+    // };
+    // all[ctx.contextName] = cloneClassFunction;
+    // cloneClassFunction[Symbols.orignalClassClonesObj] = all;
+    // BaseClass[Symbols.orignalClassClonesObj] = all;
     //#endregion
 
     return cloneClassFunction;
@@ -785,6 +787,7 @@ export class EndpointContext {
       options = {} as any;
     }
     const className = ClassHelpers.getName(ctor);
+
     const locaInstanceConstructorArgs =
       options.locaInstanceConstructorArgs || [];
 
@@ -809,6 +812,7 @@ export class EndpointContext {
       const existed =
         options.contextClassInstance[this.localInstaceObjSymbol][instanceKey];
       if (existed) {
+        // console.log(`exited `, existed)
         return existed;
       }
 
@@ -825,11 +829,15 @@ export class EndpointContext {
       );
       options.contextClassInstance[this.localInstaceObjSymbol][instanceKey] =
         injectedInstance;
-
+      // console.log(`injectedInstance `, existed)
       return injectedInstance;
     }
 
-    return this.allClassesInstances[className];
+    const contextScopeInstance = this.allClassesInstances[className];
+    // if (className === 'TopicController') {
+    //   debugger;
+    // }
+    return contextScopeInstance;
   }
 
   /**
@@ -945,6 +953,12 @@ export class EndpointContext {
             functionFn: classFun._,
             context: classFun,
           });
+          // const orgClass = ClassHelpers.getOrginalClass(classFun);
+          // // orgClass['ctrl'] = classFun['ctrl'];
+          // await Helpers.runSyncOrAsync({
+          //   functionFn: orgClass._,
+          //   context: orgClass,
+          // });
         }
       }
       // Helpers.taskStarted(
@@ -1307,6 +1321,8 @@ export class EndpointContext {
     const allControllers = this.getClassFunByArr(Models.ClassType.CONTROLLER);
     // console.log('allControllers', allControllers)11
     for (const controllerClassFn of allControllers) {
+      controllerClassFn[Symbols.classMethodsNames] =
+        ClassHelpers.getMethodsNames(controllerClassFn);
       const configs = ClassHelpers.getControllerConfigs(controllerClassFn);
       // console.log(`Class config for ${ClassHelpers.getName(controllerClassFn)}`, configs)
       const classConfig: Models.RuntimeControllerConfig = configs[0];
@@ -1356,6 +1372,7 @@ export class EndpointContext {
       }
       //#endregion
 
+      console.log('methods', classConfig.methods);
       Object.keys(classConfig.methods).forEach(methodName => {
         const methodConfig: Models.MethodConfig =
           classConfig.methods[methodName];
@@ -1383,7 +1400,17 @@ export class EndpointContext {
           //#endregion
         }
 
-        if (Helpers.isBrowser || this.remoteHost || Helpers.isWebSQL) {
+        const shouldInitClient =
+          Helpers.isBrowser || this.remoteHost || Helpers.isWebSQL;
+        // console.log('shouldInitClient', shouldInitClient);
+        if (shouldInitClient) {
+          // console.log(
+          //   'initClient',
+          //   ClassHelpers.getFullInternalName(controllerClassFn),
+          //   type,
+          //   methodConfig,
+          //   expressPath,
+          // );
           this.initClient(controllerClassFn, type, methodConfig, expressPath);
         }
       });
@@ -1858,7 +1885,7 @@ export class EndpointContext {
     const ctx = this;
     // : { received: any; /* Rest<any, any>  */ }
     this.logServer && console.log(`${type?.toUpperCase()} ${expressPath} `);
-
+    // console.log('INITING', methodConfig); // @LAST inject in static
     //#region resolve storage
     let storage: any;
     if (Helpers.isBrowser) {
@@ -2270,11 +2297,12 @@ instead
       }
       //#endregion
 
-      return {
+      const httpResultObj = {
         received: isWithBody
           ? rest.model(pathPrams)[method](bodyObject, [queryParams])
           : rest.model(pathPrams)[method]([queryParams]),
       };
+      return httpResultObj;
     };
     //#endregion
   }

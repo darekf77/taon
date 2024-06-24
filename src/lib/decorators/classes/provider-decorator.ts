@@ -14,6 +14,7 @@ export function FiredevProvider<T = any>(options?: FiredevProviderOptions<T>) {
       options?.className || constructor.name,
       constructor,
     );
+    ClassHelpers.setName(constructor, options?.className || constructor.name);
   };
 }
 

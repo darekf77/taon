@@ -1,10 +1,8 @@
 import { FiredevController } from '../decorators/classes/controller-decorator';
-import { EndpointContext } from '../endpoint-context';
-import { Symbols } from '../symbols';
-import { BaseClass } from './base-class';
+import { BaseInjector } from './base-injector';
 
 @FiredevController({ className: 'BaseController' })
-export class BaseController extends BaseClass {
+export class BaseController extends BaseInjector {
   /**
    * init example data for db
    */

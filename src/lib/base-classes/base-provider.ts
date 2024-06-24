@@ -1,5 +1,3 @@
-import { EndpointContext } from '../endpoint-context';
-import { Symbols } from '../symbols';
-import { BaseClass } from './base-class';
+import { BaseInjector } from './base-injector';
 
-export class BaseProvider extends BaseClass {}
+export class BaseProvider extends BaseInjector {}

@@ -12,9 +12,9 @@ import * as coreHelpers from 'tnp-core/src';
 import * as injectFn from './inject';
 import * as endpointContext from './endpoint-context';
 import * as allSymbols from './symbols';
+import * as getResponse from './get-response-value';
 //#region @browser
 import { NgZone } from '@angular/core';
-import { from } from 'form-data';
 
 //#endregion
 
@@ -35,6 +35,8 @@ export namespace Firedev {
   export import Http = http.Http;
   export import Base = base.Base;
   export import Orm = orm.Orm;
+
+  export const getResponseValue  = getResponse.getResponseValue;
 
   //#region class decorators
   export import Controller = controllerDecorator.FiredevController;

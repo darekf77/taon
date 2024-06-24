@@ -4,8 +4,7 @@ import { EndpointContext } from './endpoint-context';
 import { Models } from './models';
 import { FiredevAdmin } from './firedev-admin';
 import { ENV } from './env';
-import type { BaseClass } from './base-classes/base-class';
-import { Firedev } from 'firedev/src';
+// import { Firedev } from 'firedev/src';
 //#endregion
 
 export const createContext = <
@@ -28,44 +27,44 @@ export const createContext = <
   //   });
   // }
   const endpointContextRef = new EndpointContext(config, configFn);
-  const entitiesCache = {};
-  const controllersCache = {};
+  // const entitiesCache = {};
+  // const controllersCache = {};
 
   const res = {
     //#region types
     types: {
-      get entities() {
-        return config.entities;
-      },
-      entitiesFor(classInstace: BaseClass) {
-        const ctx = classInstace.__endpoint_context__;
-        if (!entitiesCache[ctx.contextName]) {
-          entitiesCache[ctx.contextName] = {};
-          for (const entityClassName of Object.keys(config.entities)) {
-            entitiesCache[ctx.contextName][entityClassName] =
-              config.entities[entityClassName][
-                Firedev.symbols.orignalClassClonesObj
-              ][ctx.contextName];
-          }
-        }
-        return entitiesCache[ctx.contextName] as typeof config.entities;
-      },
+      // get entities() {
+      //   return config.entities;
+      // },
+      // entitiesFor(classInstace: BaseInjector) {
+      //   const ctx = classInstace.__endpoint_context__;
+      //   if (!entitiesCache[ctx.contextName]) {
+      //     entitiesCache[ctx.contextName] = {};
+      //     for (const entityClassName of Object.keys(config.entities)) {
+      //       entitiesCache[ctx.contextName][entityClassName] =
+      //         config.entities[entityClassName][
+      //           Firedev.symbols.orignalClassClonesObj
+      //         ][ctx.contextName];
+      //     }
+      //   }
+      //   return entitiesCache[ctx.contextName] as typeof config.entities;
+      // },
       get controllers() {
         return config.controllers;
       },
-      controllesFor(classInstace?: BaseClass) {
-        const ctx = classInstace.__endpoint_context__ || endpointContextRef;
-        if (!controllersCache[ctx.contextName]) {
-          controllersCache[ctx.contextName] = {};
-          for (const controllerName of Object.keys(config.controllers)) {
-            controllersCache[ctx.contextName][controllerName] =
-              config.controllers[controllerName][
-                Firedev.symbols.orignalClassClonesObj
-              ][ctx.contextName];
-          }
-        }
-        return controllersCache[ctx.contextName] as typeof config.controllers;
-      },
+      // controllesFor(classInstace?: BaseInjector) {
+      //   const ctx = classInstace.__endpoint_context__ || endpointContextRef;
+      //   if (!controllersCache[ctx.contextName]) {
+      //     controllersCache[ctx.contextName] = {};
+      //     for (const controllerName of Object.keys(config.controllers)) {
+      //       controllersCache[ctx.contextName][controllerName] =
+      //         config.controllers[controllerName][
+      //           Firedev.symbols.orignalClassClonesObj
+      //         ][ctx.contextName];
+      //     }
+      //   }
+      //   return controllersCache[ctx.contextName] as typeof config.controllers;
+      // },
       get repositories() {
         return config.repositories;
       },
@@ -96,6 +95,11 @@ export const createContext = <
     },
     get refSync() {
       return endpointContextRef;
+    },
+    get<T>(ctor:  new (...args: any[]) => T): new (...args: any[]) => T {
+      return endpointContextRef.getClassFunByClass(
+        ctor,
+      )  as any;
     },
     //#endregion
     //#region initialize

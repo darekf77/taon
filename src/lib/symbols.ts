@@ -7,6 +7,7 @@ export namespace Symbols {
   export const fullClassNameStaticProperty: string = '$$fullclassName$$';
   export const orignalClass: string = OrignalClassKey;
   export const orignalClassClonesObj: string = '$$originalClassClonesObj$$';
+  export const classMethodsNames: string = '$$classMethodsNames$$';
 
   export const metadata = {
     className: 'class:realname',

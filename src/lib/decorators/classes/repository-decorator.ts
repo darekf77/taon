@@ -19,6 +19,7 @@ export function FiredevRepository(options: FiredevRepositoryOptions) {
       options?.className || constructor.name,
       constructor,
     );
+    ClassHelpers.setName(constructor, options?.className);
   };
 }
 

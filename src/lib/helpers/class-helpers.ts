@@ -105,6 +105,7 @@ export namespace ClassHelpers {
   //#endregion
 
   //#region get name
+
   export const setName = (target: Function, className: string): void => {
     // console.log('setName', className, target.name)
     Validators.classNameVlidation(className, target);
@@ -243,7 +244,8 @@ export namespace ClassHelpers {
 
     let config: Models.RuntimeControllerConfig;
     const parentClass = Object.getPrototypeOf(target);
-    const isValidParent = _.isFunction(parentClass) && parentClass.name !== '';
+    const parentName = parentClass ? ClassHelpers.getName(parentClass) : void 0;
+    const isValidParent = _.isFunction(parentClass) && parentName !== '';
 
     config = getControllerConfig(target);
 

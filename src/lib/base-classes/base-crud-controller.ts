@@ -52,7 +52,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
     }
 
     let entityClassFn = this.entityClassResolveFn();
-    this.db = this.injectRepo(this.entityClassResolveFn as any);
+    this.db = this.injectRepo(entityClassFn);
 
     if (entityClassFn) {
       const configEntity = Reflect.getMetadata(

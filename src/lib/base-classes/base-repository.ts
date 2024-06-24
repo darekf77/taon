@@ -22,14 +22,12 @@ import type { UpsertOptions } from 'firedev-typeorm/lib/typeorm/repository/Upser
 
 import type { DataSource as DataSourceType } from 'firedev-typeorm/src';
 import { EndpointContext } from '../endpoint-context';
-import { Symbols } from '../symbols';
-import { BaseClass } from './base-class';
 import { Helpers } from 'tnp-core/src';
 import { _ } from 'tnp-core/src';
 import { ClassHelpers } from '../helpers/class-helpers';
-import { Validators } from '../validators';
 import { MySqlQuerySource } from 'firedev-type-sql/src';
 import { FiredevRepository } from '../decorators/classes/repository-decorator';
+import { BaseInjector } from './base-injector';
 //#endregion
 
 const INDEX_KEYS_NO_FOR_UPDATE = ['id'];
@@ -37,7 +35,7 @@ const INDEX_KEYS_NO_FOR_UPDATE = ['id'];
 @FiredevRepository({ className: 'BaseRepository' })
 export abstract class BaseRepository<
   Entity extends { id?: any },
-> extends BaseClass {
+> extends BaseInjector {
   //#region dummy fields
   // static ids:number  = 0;
   // id:number  = BaseRepository.ids++;
@@ -62,6 +60,7 @@ export abstract class BaseRepository<
     //#region @websqlFunc
     if (!this.__dbQuery) {
       if (!this.__endpoint_context__) {
+        return; // TODO
         throw new Error(
           `[BaseRepository] Context not inited for class ${ClassHelpers.getName(
             this,
@@ -84,7 +83,7 @@ export abstract class BaseRepository<
   //#region connection
   public get connection(): DataSourceType {
     //#region @websqlFunc
-    return this.__endpoint_context__.connection;
+    return this.__endpoint_context__?.connection;
     //#endregion
   }
   //#endregion
@@ -127,7 +126,7 @@ export abstract class BaseRepository<
 
   //#region init
 
-  async __init() {
+  async __init(context?:any) {
     //#region @websql
     if (this.__repository) {
       return;
@@ -135,7 +134,9 @@ export abstract class BaseRepository<
     let entityClassFn: any = this.entityClassResolveFn();
     if (!entityClassFn) {
       Helpers.warn(
-        `Entity class not provided for repository ${ClassHelpers.getName(this)}`,
+        `Entity class not provided for repository ${ClassHelpers.getName(
+          this,
+        )}`,
       );
       return;
     }
@@ -891,6 +892,11 @@ export abstract class BaseRepository<
    */
   async getAll() {
     //#region @websqlFunc
+    // console.log('repo', this.__repository);
+    // console.log(
+    //   `repo taget name "${ClassHelpers.getName(this.__repository.target)}"`,
+    // );
+    // debugger;
     const totalCount = await this.repo.count();
     const models = await this.repo.find();
     // console.log('models', models);
