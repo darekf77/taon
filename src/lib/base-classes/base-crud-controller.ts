@@ -30,9 +30,7 @@ import { FiredevEntityOptions } from '../decorators/classes/entity-decorator';
 @FiredevController({ className: 'BaseCrudController' })
 export abstract class BaseCrudController<Entity> extends BaseController {
   //#region fields
-  public db?: BaseRepository<Entity> = this.injectCustomRepo(
-    BaseRepository<Entity> as any,
-  );
+  public db?: BaseRepository<Entity>;
 
   /**
    * Please provide entity as class propery entityClassFn:
@@ -44,9 +42,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
 
   //#region init
   async _() {
-
     if (!_.isFunction(this.entityClassResolveFn)) {
-
       Helpers.warn(
         `Skipping initing CRUD controller ${ClassHelpers.getName(
           this,
@@ -54,22 +50,9 @@ export abstract class BaseCrudController<Entity> extends BaseController {
       );
       return;
     }
-    this.db.entityClassResolveFn = this.entityClassResolveFn;
+
     let entityClassFn = this.entityClassResolveFn();
-    // console.log(`
-    // INITING CRUD CONTROLLER ${ClassHelpers.getName(this)}
-    // entityClassFn: ${ClassHelpers.getName(entityClassFn)}
-    // connection: ${!!this.db?.connection}
-    // entities: ${this.db?.connection?.options?.entities?.length}
-
-    // `);
-
-    entityClassFn = this.__endpoint_context__.getClassFunByClass(entityClassFn);
-
-    // const baseRepoClass =
-    //   this.__endpoint_context__.getClassFunByClass(BaseRepository);
-
-    // this.backend = new (baseRepoClass as any)();
+    this.db = this.injectRepo(this.entityClassResolveFn as any);
 
     if (entityClassFn) {
       const configEntity = Reflect.getMetadata(
@@ -83,8 +66,6 @@ export abstract class BaseCrudController<Entity> extends BaseController {
           )} will not be created. Crud will not work properly.`,
         );
       }
-
-      await this.db.__init();
     } else {
       Helpers.error(`Entity class not provided for controller ${ClassHelpers.getName(
         this,
@@ -100,6 +81,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
 
       `);
     }
+    await super._();
   }
   //#endregion
 

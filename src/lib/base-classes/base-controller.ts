@@ -11,4 +11,6 @@ export class BaseController extends BaseClass {
   initExampleDbData(): Promise<any> {
     return void 0;
   }
+
+
 }

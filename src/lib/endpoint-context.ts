@@ -337,13 +337,6 @@ export class EndpointContext {
     //#endregion
 
     //#region prepare classes instances/funcitons clones
-    this.config.entities = this.cloneClassesObjWithNewMetadata({
-      classesInput: this.config.entities,
-      config: this.config,
-      ctx: this,
-      classType: Models.ClassType.ENTITY,
-    });
-
     this.config.controllers = this.cloneClassesObjWithNewMetadata({
       classesInput: this.config.controllers,
       config: this.config,
@@ -791,8 +784,9 @@ export class EndpointContext {
     if (!options) {
       options = {} as any;
     }
-    const className = ClassHelpers.getName(ctor) || ctor.name;
-    // TODO not working local instance
+    const className = ClassHelpers.getName(ctor);
+    const locaInstanceConstructorArgs =
+      options.locaInstanceConstructorArgs || [];
 
     if (this.isCLassType(Models.ClassType.REPOSITORY, ctor)) {
       options.localInstance = true;
@@ -800,14 +794,20 @@ export class EndpointContext {
 
     if (options?.localInstance) {
       const ctxClassFn = this.getClassFunByClassName(className);
-      const contextClassInstance = options?.contextClassInstance;
-      // console.log(`Local instance of "${className}" `
-      // +`on ${ClassHelpers.getFullInternalName(contextClassInstance)}`)
-      if (!contextClassInstance[this.localInstaceObjSymbol]) {
-        contextClassInstance[this.localInstaceObjSymbol] = {};
+      let entityName: string = '';
+
+      if (className === 'BaseRepository') {
+        const entityFn = locaInstanceConstructorArgs[0];
+        const entity = entityFn && entityFn();
+        entityName = entity && ClassHelpers.getName(entity);
       }
+
+      if (!options.contextClassInstance[this.localInstaceObjSymbol]) {
+        options.contextClassInstance[this.localInstaceObjSymbol] = {};
+      }
+      const instanceKey = className + (entityName ? `.${entityName}` : '');
       const existed =
-        contextClassInstance[this.localInstaceObjSymbol][className];
+        options.contextClassInstance[this.localInstaceObjSymbol][instanceKey];
       if (existed) {
         return existed;
       }
@@ -819,13 +819,16 @@ export class EndpointContext {
 
         `);
       }
-      const locaInstanceConstructorArgs =
-        options.locaInstanceConstructorArgs || [];
-      const res = new (ctxClassFn as any)(...locaInstanceConstructorArgs);
-      contextClassInstance[this.localInstaceObjSymbol][className] = res;
-      // console.log(`[firedev] Creating local instance for ${className}  `+`on ${ClassHelpers.getFullInternalName(contextClassInstance)}`, res);
-      return res;
+
+      const injectedInstance = new (ctxClassFn as any)(
+        ...locaInstanceConstructorArgs,
+      );
+      options.contextClassInstance[this.localInstaceObjSymbol][instanceKey] =
+        injectedInstance;
+
+      return injectedInstance;
     }
+
     return this.allClassesInstances[className];
   }
 
@@ -852,7 +855,7 @@ export class EndpointContext {
   }
 
   isCLassType(classType: Models.ClassType, classFn: Function): boolean {
-    return this.getClassFunBy(classType)[ClassHelpers.getName(classFn)];
+    return !!this.getClassFunBy(classType)[ClassHelpers.getName(classFn)];
   }
 
   /**
@@ -1229,11 +1232,9 @@ export class EndpointContext {
         ? this.config.override.entities
         : this.getClassFunByArr(Models.ClassType.ENTITY)
     ).map(entityFn => {
-      //#region @websqlOnly
-      return entityFn[Symbols.orignalClass]; // TODO probably this OK also for backend nodejs
-      //#endregion
-      return entityFn;
+      return ClassHelpers.getOrginalClass(entityFn);
     });
+
     const dataSourceDbConfig = _.isObject(this.databaseConfig)
       ? ({
           type: this.databaseConfig.type,

@@ -5,9 +5,9 @@ import { Models } from '../models';
 import { FiredevControllerOptions } from '../decorators/classes/controller-decorator';
 import { FiredevHelpers } from './firedev-helpers';
 import { FiredevEntityOptions } from '../decorators/classes/entity-decorator';
+import { CLASS } from 'typescript-class-helpers/src';
 //#region @backend
 import * as FormData from 'form-data';
-
 //#endregion
 
 export namespace ClassHelpers {
@@ -43,10 +43,18 @@ export namespace ClassHelpers {
       (classFnOrObject[Symbols.classNameStaticProperty]
         ? classFnOrObject[Symbols.classNameStaticProperty]
         : classFnOrObject?.constructor[Symbols.classNameStaticProperty]) ||
-      void 0
+      CLASS.getName(classFnOrObject)
     );
   };
   //#endregion
+
+  export const getOrginalClass = (classFnOrObject: any): any => {
+    const org = classFnOrObject[Symbols.orignalClass];
+    if (!org) {
+      return classFnOrObject;
+    }
+    return getOrginalClass(org);
+  };
 
   //#region get full internal name
   export const getFullInternalName = (classFnOrObject: any): string => {

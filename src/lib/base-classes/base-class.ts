@@ -15,7 +15,12 @@ export class BaseClass<CloneT extends BaseClass = any> {
    * class initialization hook
    * firedev after class instace creation
    */
-  _() {}
+  async _() {
+    const reposToInit = this.__repositories_to_init__;
+    for (const repo of reposToInit) {
+      await repo.__init();
+    }
+  }
   //#endregion
 
   //#region context
@@ -33,13 +38,14 @@ export class BaseClass<CloneT extends BaseClass = any> {
   /**
    * inject crud repo for entity
    */
-  injectRepo<T>(entityForCrud: new () => T): BaseRepository<T> {
-    // return this.injectCustomRepository(BaseRepository as any, () => entity);
+  injectRepo<T>(entityForCrudFn: () => new (...args: any[]) => T): BaseRepository<T> {
     const baseRepoClass = require('./base-repository').BaseRepository;
-    return this.__inject(baseRepoClass as any, {
+    const repoProxy = this.__inject(baseRepoClass as any, {
       localInstance: true,
-      locaInstanceConstructorArgs: [() => entityForCrud],
+      locaInstanceConstructorArgs: [entityForCrudFn],
     });
+    this.__repositories_to_init__.push(repoProxy as any);
+    return repoProxy as any;
   }
   //#endregion
 
@@ -47,12 +53,14 @@ export class BaseClass<CloneT extends BaseClass = any> {
   injectCustomRepository<T>(
     cutomRepositoryClass: new (...args: any[]) => T,
   ): T {
-    return this.__inject<T>(cutomRepositoryClass, {
+    const repoProxy = this.__inject<T>(cutomRepositoryClass, {
       localInstance: true,
       locaInstanceConstructorArgs: [
-        () => cutomRepositoryClass.prototype.entityClassResolveFn,
+        () => cutomRepositoryClass.prototype.entityClassResolveFn(),
       ],
     });
+    this.__repositories_to_init__.push(repoProxy as any);
+    return repoProxy;
   }
   //#endregion
 
@@ -61,7 +69,9 @@ export class BaseClass<CloneT extends BaseClass = any> {
    * aliast to .injectRepository()
    */
   injectCustomRepo<T>(cutomRepositoryClass: new (...args: any[]) => T): T {
-    return this.injectCustomRepository<T>(cutomRepositoryClass);
+    const repoProxy =  this.injectCustomRepository<T>(cutomRepositoryClass)
+    this.__repositories_to_init__.push(repoProxy as any);
+    return repoProxy;
   }
   //#endregion
 
@@ -99,6 +109,11 @@ export class BaseClass<CloneT extends BaseClass = any> {
   }
   //#endregion
 
+  /**
+   * Repositories to init (by controller)
+   */
+  protected __repositories_to_init__ = [] as BaseRepository<any>[];
+
   //#region inject / __ inject
   /**
    * Inject: Controllers, Providers, Repositories, Services, etc.
@@ -124,7 +139,7 @@ export class BaseClass<CloneT extends BaseClass = any> {
     return new Proxy(
       {},
       {
-        get: (_, propName) => {
+        get: (__, propName) => {
           const contextFromClass: EndpointContext =
             ctor[Symbols.ctxInClassOrClassObj];
 
@@ -163,10 +178,10 @@ export class BaseClass<CloneT extends BaseClass = any> {
             return result;
           }
           //#region @browser
-          return inject(ctor)[propName];
+          // return inject(ctor)[propName];
           //#endregion
         },
-        set: (_, propName, value) => {
+        set: (__, propName, value) => {
           const contextFromClass = ctor[Symbols.ctxInClassOrClassObj];
           const resultContext: EndpointContext = contextFromClass
             ? contextFromClass
@@ -192,8 +207,8 @@ export class BaseClass<CloneT extends BaseClass = any> {
               `,
               );
             }
+            instance[propName] = value;
           }
-          instance[propName] = value;
           return true;
         },
       },

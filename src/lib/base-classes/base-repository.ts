@@ -100,6 +100,15 @@ export abstract class BaseRepository<
   }
 
   /**
+   * target for repository
+   */
+  public get target(): Function {
+    //#region @websqlFunc
+    return this?.repository?.target as any;
+    //#endregion
+  }
+
+  /**
    * alias to repository
    */
   protected get repo() {
@@ -120,6 +129,9 @@ export abstract class BaseRepository<
 
   async __init() {
     //#region @websql
+    if (this.__repository) {
+      return;
+    }
     let entityClassFn: any = this.entityClassResolveFn();
     if (!entityClassFn) {
       Helpers.warn(
@@ -131,10 +143,21 @@ export abstract class BaseRepository<
     const connection = ctx.connection;
 
     if (!connection) {
-      throw new Error(`Connection not found for context ${ctx.contextName}`);
-    }
+      throw new Error(`
 
-    entityClassFn = this.__endpoint_context__.getClassFunByClass(entityClassFn);
+        Connection not found for context ${ctx.contextName}
+
+
+        Maybe you forgot to init database ?
+
+        Firedev.createContext({
+        ...
+        database:true
+        ...
+        })
+
+        `);
+    }
 
     if (!entityClassFn) {
       Helpers.warn(
@@ -143,30 +166,12 @@ export abstract class BaseRepository<
       return;
     }
 
-    const entityObj = entityClassFn[Symbols.orignalClassClonesObj];
-    if (!entityObj) {
-      console.error(
-        `Cannot init base repository for ` +
-          ` ${ctx.contextName}/${ClassHelpers.getName(this)}/${
-            entityClassFn[Symbols.fullClassNameStaticProperty]
-          }`,
-      );
-      return;
-    }
-    entityClassFn = entityObj[ctx.contextName];
-
+    this.__repository = (await connection.getRepository(
+      ClassHelpers.getOrginalClass(entityClassFn),
+    )) as any;
     // console.log(
-    //   `Trying to init repo for ${ctx.contextName}/` +
-    //     `${ClassHelpers.getName(this)}/` +
-    //     `${entityClassFn[Symbols.fullClassNameStaticProperty]}`,
-    // );
-
-    this.__repository = (await connection.getRepository(entityClassFn)) as any;
-    // console.log(
-    //   `Inited repository for (${ClassHelpers.getFullInternalName(this)}) ` +
-    //     ` ${ctx.contextName}/${ClassHelpers.getName(this)}/${
-    //       entityClassFn[Symbols.fullClassNameStaticProperty]
-    //     }`,
+    //   `Inited repository for (${ClassHelpers.getName(this)}/` +
+    //     `${ClassHelpers.getName(entityClassFn)}/${ClassHelpers.getName(context)}`,
     //   this.repository,
     // );
     //#endregion
@@ -906,5 +911,4 @@ export abstract class BaseRepository<
     //#endregion
   }
   //#endregion
-
 }
