@@ -45,7 +45,7 @@
     "homepage": "https://github.com/darekf77/firedev#readme"
   },
   "name": "firedev",
-  "version": "16.444.6",
+  "version": "16.444.7",
   "description": "Isomorphic solution for backend and frontend",
   "scripts": {},
   "repository": {
@@ -69,7 +69,7 @@
   },
   "license": "MIT",
   "private": false,
-  "lastBuildTagHash": "76d818452daecdcca72af3eb3739ad26ceb754b1",
+  "lastBuildTagHash": "9c182724948264034304446928fa03a4c8576b49",
   "devDependencies": {
     "@angular-builders/custom-webpack": "~16.0.2-beta.2",
     "@angular-devkit/build-angular": "~16.0.5",
@@ -212,11 +212,11 @@
     "file-saver": "2.0.5",
     "file-type": "18.5.0",
     "firedev": "^16",
-    "firedev-crud": "16.444.4",
+    "firedev-crud": "16.444.5",
     "firedev-crud-deamon": "16.444.5",
-    "firedev-ports": "16.444.4",
-    "firedev-storage": "16.444.4",
-    "firedev-typeorm": "16.444.4",
+    "firedev-ports": "16.444.5",
+    "firedev-storage": "16.444.5",
+    "firedev-typeorm": "16.444.5",
     "firedev-ui": "16.444.1",
     "fkill": "6.1.0",
     "font-awesome": "4.7.0",
