@@ -1,50 +1,51 @@
 {
   "files.exclude": {
-    "**/*____ORIGINAL____.ts": true,
-    "_changelog": true,
-    "tsconfig.backend.dist.json": true,
-    "tsconfig.backend.bundle.json": true,
-    "tsconfig.backend.dist.json.filetemplate": true,
-    "tsconfig.backend.bundle.json.filetemplate": true,
-    "out": true,
-    "update-proj.js": true,
-    ".vscodeignore": true,
-    "*.vsix": true,
-    "node_modules": true,
-    "tmp*": true,
-    "dist*": true,
-    "bundle*": true,
-    "browser": true,
-    "browser*": true,
-    "websql": true,
-    "websql*": true,
-    "module*": true,
-    "backup": true,
-    "module": true,
-    "www": true,
-    "Thumbs.db": true,
-    ".DS_Store": true,
-    "**/.DS_Store": true,
-    "npm-debug.log*": true,
-    ".sass-cache": true,
-    ".sourcemaps": true,
-    ".npmrc": true,
-    "tslint.json": true,
-    ".editorconfig": true,
-    ".vscode/tasks.json": true,
-    "vsc-extension-quickstart.md": true,
-    "tsconfig.json": true,
-    "src/extension.ts": true,
-    "src/helpers.ts": true,
-    "src/models.ts": true,
-    "src/execute-command.ts": true,
-    "src/progress-output.ts": true,
-    ".gitignore": true,
-    ".npmignore": true,
-    ".babelrc": true,
-    "package.json_devDependencies.json": true,
-    "package.json": true,
-    "logo.svg": true
+    "**/*____ORIGINAL____.ts": false,
+    "_changelog": false,
+    "tsconfig.backend.dist.json": false,
+    "tsconfig.backend.dist.json.filetemplate": false,
+    "out": false,
+    "update-proj.js": false,
+    ".vscodeignore": false,
+    "*.vsix": false,
+    "node_modules": false,
+    "tmp*": false,
+    "dist*": false,
+    "bundle*": false,
+    "browser": false,
+    "browser*": false,
+    "websql": false,
+    "websql*": false,
+    "module*": false,
+    "backup": false,
+    "module": false,
+    "www": false,
+    "Thumbs.db": false,
+    ".DS_Store": false,
+    "**/.DS_Store": false,
+    "npm-debug.log*": false,
+    ".sass-cache": false,
+    ".sourcemaps": false,
+    ".vscode/tasks.json": false,
+    ".vscode/launch.json": false,
+    "vsc-extension-quickstart.md": false,
+    "tsconfig.json": false,
+    "src/extension.ts": false,
+    "src/helpers.ts": false,
+    "src/models.ts": false,
+    "src/execute-command.ts": false,
+    "src/progress-output.ts": false,
+    ".gitignore": false,
+    ".npmignore": false,
+    ".babelrc": false,
+    ".npmrc": false,
+    ".eslintrc.json": false,
+    ".prettierignore": false,
+    ".prettierrc": false,
+    ".editorconfig": false,
+    "devDependencies.json": false,
+    "package.json": false,
+    "logo.svg": false
   },
   "search.exclude": {
     "docs": true,
@@ -58,5 +59,48 @@
     "activityBar.background": "#2570b6",
     "statusBar.background": "#5c3735",
     "statusBar.debuggingBackground": "#5c3735"
-  }
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[json5]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "editor.rulers": [
+    80,
+    120
+  ],
+  "eslint.migration.2_x": "off",
+  "eslint.enable": true,
+  "prettier.enable": true,
+  "editor.suggest.snippetsPreventQuickSuggestions": false,
+  "editor.inlineSuggest.enabled": true,
+  "prettier.prettierPath": "./node_modules/prettier",
+  "prettier.endOfLine": "auto"
 }

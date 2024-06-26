@@ -15,6 +15,10 @@ app.hosts.ts
 /linked-repos
 
 /tests-environments
+/src/lib/lib-info.md
+/src/migrations/migrations-info.md
+/src/tests/mocha-tests-info.md
+/src/assets/shared/shared_folder_info.txt
 
 # System Files
 .DS_Store
@@ -39,10 +43,8 @@ Thumbs.db
 /npm-debug.log*
 /.sass-cache
 /.sourcemaps
-/.npmrc
-/tslint.json
-/.editorconfig
 /.vscode/tasks.json
+/.vscode/launch.json
 /.vscodeignore
 /vsc-extension-quickstart.md
 /tsconfig.json
@@ -53,10 +55,14 @@ Thumbs.db
 /src/execute-command.ts
 /src/progress-output.ts
 /tsconfig.backend.dist.json
-/tsconfig.backend.bundle.json
-
 !tsconfig*
 
 
 # =====================
+!firedev.json
+!firedev.jsonc
 *.filetemplate
+
+
+
+/.vscode/launch.json

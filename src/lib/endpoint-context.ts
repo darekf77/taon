@@ -494,8 +494,9 @@ export class EndpointContext {
         //#region resolve database config for mode backend-frontend(tcp+udp)
         case 'backend-frontend(tcp+udp)':
           databaseConfig = {
-            database: `tmp-db-${_.kebabCase(this.contextName)}.sqlite`,
-            type: 'better-sqlite3',
+            database: `context-db-${_.kebabCase(this.contextName)}`,
+            location: `tmp-db-${_.kebabCase(this.contextName)}.sqlite`,
+            type: 'sqljs',
             autoSave: true,
             synchronize: true,
             dropSchema: true,
@@ -1882,7 +1883,7 @@ export class EndpointContext {
     methodConfig: Models.Http.Rest.MethodConfig,
     expressPath: string,
     //#endregion
-  ) {
+  ): void {
     const ctx = this;
     // : { received: any; /* Rest<any, any>  */ }
     this.logServer && console.log(`${type?.toUpperCase()} ${expressPath} `);

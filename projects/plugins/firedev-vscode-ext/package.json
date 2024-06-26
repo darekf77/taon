@@ -67,147 +67,69 @@
   "contributes": {
     "commands": [
       {
-        "command": "extension.firedevtempfilesshow",
-        "title": "FIREDEV TEMP FILES => SHOW"
+        "command": "extension.tnpmagiccopyandrename",
+        "title": "TNP MAGIC COPY AND RENAME"
       },
       {
-        "command": "extension.firedevtempfileshide",
-        "title": "FIREDEV TEMP FILES => HIDE"
+        "command": "extension.tnpopenroutesfile",
+        "title": "TNP OPEN ROUTES FILE"
       },
       {
-        "command": "extension.firedevmagiccopyandrename",
-        "title": "FIREDEV MAGIC COPY AND RENAME"
+        "command": "extension.tnpopendatabasefile",
+        "title": "TNP OPEN DATABASE FILE"
       },
       {
-        "command": "extension.firedevopenroutesfile",
-        "title": "FIREDEV OPEN ROUTES FILE"
+        "command": "extension.tnpopencorecontainer",
+        "title": "TNP OPEN CORE CONTAINER"
       },
       {
-        "command": "extension.firedevopendatabasefile",
-        "title": "FIREDEV OPEN DATABASE FILE"
-      },
-      {
-        "command": "extension.firedevopencorecontainer",
-        "title": "FIREDEV OPEN CORE CONTAINER"
-      },
-      {
-        "command": "extension.firedevopencoreproject",
-        "title": "FIREDEV OPEN CORE PROJECT"
-      },
-      {
-        "command": "extension.firedevclearallandinit",
-        "title": "FIREDEV CLEAR ALL AND INIT"
-      },
-      {
-        "command": "extension.firedevgitcommitpushupdate",
-        "title": "FIREDEV GIT COMMIT/PUSH UPDATE"
-      },
-      {
-        "command": "extension.firedevcodegenerator",
-        "title": "FIREDEV CODE GENERATOR"
-      },
-      {
-        "command": "extension.firedevgenerateindexts",
-        "title": "FIREDEV GENERATE index.ts"
-      },
-      {
-        "command": "extension.firedevwrapfilewithbrowsertag",
-        "title": "FIREDEV WRAP FILE WITH @browser TAG"
+        "command": "extension.tnpcodegenerator",
+        "title": "TNP CODE GENERATOR"
       }
     ],
     "menus": {
       "explorer/context": [
         {
-          "command": "extension.firedevtempfilesshow"
+          "command": "extension.tnpmagiccopyandrename"
         },
         {
-          "command": "extension.firedevtempfileshide"
+          "command": "extension.tnpopenroutesfile"
         },
         {
-          "command": "extension.firedevmagiccopyandrename"
+          "command": "extension.tnpopendatabasefile"
         },
         {
-          "command": "extension.firedevopenroutesfile"
+          "command": "extension.tnpopencorecontainer"
         },
         {
-          "command": "extension.firedevopendatabasefile"
-        },
-        {
-          "command": "extension.firedevopencorecontainer"
-        },
-        {
-          "command": "extension.firedevopencoreproject"
-        },
-        {
-          "command": "extension.firedevclearallandinit"
-        },
-        {
-          "command": "extension.firedevgitcommitpushupdate"
-        },
-        {
-          "command": "extension.firedevcodegenerator"
-        },
-        {
-          "command": "extension.firedevgenerateindexts"
-        },
-        {
-          "command": "extension.firedevwrapfilewithbrowsertag"
+          "command": "extension.tnpcodegenerator"
         }
       ],
       "editor/title/context": [
         {
-          "command": "extension.firedevtempfilesshow",
+          "command": "extension.tnpmagiccopyandrename",
           "group": "FIREDEV CLI essentials"
         },
         {
-          "command": "extension.firedevtempfileshide",
+          "command": "extension.tnpopenroutesfile",
           "group": "FIREDEV CLI essentials"
         },
         {
-          "command": "extension.firedevmagiccopyandrename",
+          "command": "extension.tnpopendatabasefile",
           "group": "FIREDEV CLI essentials"
         },
         {
-          "command": "extension.firedevopenroutesfile",
+          "command": "extension.tnpopencorecontainer",
           "group": "FIREDEV CLI essentials"
         },
         {
-          "command": "extension.firedevopendatabasefile",
-          "group": "FIREDEV CLI essentials"
-        },
-        {
-          "command": "extension.firedevopencorecontainer",
-          "group": "FIREDEV CLI essentials"
-        },
-        {
-          "command": "extension.firedevopencoreproject",
-          "group": "FIREDEV CLI essentials"
-        },
-        {
-          "command": "extension.firedevclearallandinit",
-          "group": "FIREDEV CLI essentials"
-        },
-        {
-          "command": "extension.firedevgitcommitpushupdate",
-          "group": "FIREDEV CLI essentials"
-        },
-        {
-          "command": "extension.firedevcodegenerator",
-          "group": "FIREDEV CLI essentials"
-        },
-        {
-          "command": "extension.firedevgenerateindexts",
-          "group": "FIREDEV CLI essentials"
-        },
-        {
-          "command": "extension.firedevwrapfilewithbrowsertag",
+          "command": "extension.tnpcodegenerator",
           "group": "FIREDEV CLI essentials"
         }
       ]
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
     "build": "vsce package",
     "build:install": "ts-node update-proj.js && npm run build && code --install-extension tnp-vscode-ext-0.0.1.vsix",
     "compile": "npm-run tsc -p ./",

@@ -149,7 +149,7 @@
       // outstanding crossplatform orm
       // typeorm: "^0.3.10",
       // amazing sqlite drive without node-gyp
-      "better-sqlite3": "9.5.0",
+      // "better-sqlite3": "9.5.0",
       // awesome sql in browser
       // indexeddb just like localstorage
       "sql.js": "^1.8.0",

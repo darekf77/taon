@@ -19,7 +19,6 @@
       "includeNodeModules": false
     },
     "scripts": {
-      "vscode:prepublish": "npm run compile",
       "build": "vsce package",
       "build:install": "ts-node update-proj.js && npm run build && code --install-extension tnp-vscode-ext-0.0.1.vsix",
       "compile": "npm-run tsc -p ./",
