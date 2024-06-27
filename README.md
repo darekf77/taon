@@ -17,14 +17,15 @@
 [NodeJS](https://nodejs.org/en/)
 
 \+ [TypeORM](https://typeorm.io/)
-- [sqlite](https://github.com/WiseLibs/better-sqlite3) - SUPPORTED
-- [sql.js](https://sql.js.org) - SUPPORTED IN WEBSQL MODE
-- [mysql](https://www.mysql.com/) - support in progress
-- [postgress](https://www.postgresql.org) - support in progress
-- [mongo](https://www.postgresql.org) - support in progress
+- [sql.js](https://sql.js.org) - NODEJS SERVER MODE
+- [sql.js](https://sql.js.org) - *WEBSQL SERVER MODE
+- [mysql](https://www.mysql.com/) - SERVER IN DOCKER (work in progress)
 
 \+
-[Electron](https://www.electronjs.org/) desktop apps (support in progress)
+[Electron](https://www.electronjs.org/) desktop apps (work in progress)
+
+\+
+[Storybook](https://storybook.js.org/docs/get-started/angular) showcase (work in progress)
 
 <ins>backend/frontend [*isomorphic](https://en.wikipedia.org/wiki/Isomorphic_JavaScript)  apps/libs.</ins>
 

@@ -15,11 +15,12 @@ export const createContext = <
   ENTITY extends Record<string, new (...args: any[]) => any>,
   REPO extends Record<string, new (...args: any[]) => any>,
   PROVIDER extends Record<string, new (...args: any[]) => any>,
+  SUBSCRIBER extends Record<string, new (...args: any[]) => any>,
   //#endregion
 >(
   configFn: (
     env: any,
-  ) => Models.ContextOptions<CTX, CTRL, ENTITY, REPO, PROVIDER>,
+  ) => Models.ContextOptions<CTX, CTRL, ENTITY, REPO, PROVIDER, SUBSCRIBER>,
 ) => {
   let config = configFn(ENV);
   // if (config.logFramework) {
@@ -71,6 +72,9 @@ export const createContext = <
       },
       get providers() {
         return config.providers;
+      },
+      get subscribers() {
+        return config.subscribers;
       },
     },
     //#endregion

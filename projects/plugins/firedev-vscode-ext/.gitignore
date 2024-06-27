@@ -12,6 +12,7 @@ yarn-error.log
 testem.log
 /typings
 app.hosts.ts
+/**/*._auto-generated_.ts
 /linked-repos
 
 /tests-environments

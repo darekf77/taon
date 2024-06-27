@@ -53,26 +53,24 @@ export class MyEntityModule { }
 //#endregion
 //#endregion
 
+var MainContext = Firedev.createContext(()=>({
+  contextName: 'MainContext',
+  host,
+  controllers: {
+    // PUT FIREDEV CONTORLLERS HERE
+  },
+  entities: {
+    // PUT FIREDEV ENTITIES HERE
+  },
+  database: true,
+}));
+
 //#region firedev start function
 async function start() {
   // Firedev.enableProductionMode();
 
-  const context = await Firedev.init({
-    host,
-    controllers: [
-      // PUT FIREDEV CONTORLLERS HERE
-    ],
-    entities: [
-      // PUT FIREDEV ENTITIES HERE
-    ],
-    //#region @websql
-    config: {
-      type: 'better-sqlite3',
-      database: 'tmp-db.sqlite',
-      logging: false,
-    }
-    //#endregion
-  });
+  c
+  await MainContext.initialize();
   //#region @backend
   if (Firedev.isNode) {
     context.node.app.get('/hello', (req, res) => {

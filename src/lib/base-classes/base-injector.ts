@@ -88,6 +88,16 @@ export class BaseInjector<CloneT extends BaseClass = any> {
   }
   //#endregion
 
+
+  //#region inject / ctrl
+  /**
+   * aliast to .injectController()
+   */
+  injectSubscriber<T>(ctor: new (...args: any[]) => T): T {
+    return this.__inject<T>(ctor, { localInstance: false });
+  }
+  //#endregion
+
   //#region inject / ctrl
   /**
    * aliast to .injectController()

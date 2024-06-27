@@ -22,6 +22,7 @@ export namespace Models {
     CONTROLLER = 'CONTROLLER',
     REPOSITORY = 'REPOSITORY',
     PROVIDER = 'PROVIDER',
+    SUBSCRIBER = 'SUBSCRIBER',
   }
 
   export const ClassTypeKey = {
@@ -29,7 +30,8 @@ export namespace Models {
     [ClassType.CONTROLLER]: 'controllers',
     [ClassType.REPOSITORY]: 'repositories',
     [ClassType.PROVIDER]: 'providers',
-  } as { [key in ClassType]: keyof ContextOptions<any, any, any, any, any> };
+    [ClassType.SUBSCRIBER]: 'subscribers',
+  } as { [key in ClassType]: keyof ContextOptions<any, any, any, any, any, any> };
 
   //#endregion
 
@@ -93,6 +95,7 @@ export namespace Models {
     ENTITIES,
     REPOSITORIES,
     PROVIDERS,
+    SUBSCRIBERS,
   > {
     contextName: string;
     host?: string;
@@ -103,6 +106,7 @@ export namespace Models {
     entities?: ENTITIES;
     repositories?: REPOSITORIES;
     providers?: PROVIDERS;
+    subscribers?: SUBSCRIBERS;
     session?: ISession;
     productionMode?: boolean;
     abstract?: boolean;
@@ -124,6 +128,7 @@ export namespace Models {
       controllers?: Function[],
       repositories?: Function[],
       providers?: Function[],
+      subscribers?: Function[],
     }
   }
   //#endregion

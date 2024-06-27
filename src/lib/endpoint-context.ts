@@ -122,6 +122,7 @@ export class EndpointContext {
     Models.ClassType.CONTROLLER,
     Models.ClassType.PROVIDER,
     Models.ClassType.REPOSITORY,
+    Models.ClassType.SUBSCRIBER,
   ];
   //#endregion
 
@@ -170,7 +171,7 @@ export class EndpointContext {
   /**
    * available after init()
    */
-  public config: Models.ContextOptions<any, any, any, any, any>;
+  public config: Models.ContextOptions<any, any, any, any, any, any>;
   //#endregion
 
   //#region fields / logs
@@ -200,10 +201,10 @@ export class EndpointContext {
 
   //#region constructor
   constructor(
-    private originalConfig: Models.ContextOptions<any, any, any, any, any>,
+    private originalConfig: Models.ContextOptions<any, any, any, any, any, any>,
     private configFn: (
       env: any,
-    ) => Models.ContextOptions<any, any, any, any, any>,
+    ) => Models.ContextOptions<any, any, any, any, any, any>,
   ) {}
   //#endregion
 
@@ -304,6 +305,7 @@ export class EndpointContext {
     this.config.controllers = this.config.controllers || {};
     this.config.repositories = this.config.repositories || {};
     this.config.providers = this.config.providers || {};
+    this.config.subscribers = this.config.subscribers || {};
 
     this.config.entities = {
       ...(await this.getRecrusiveClassesfromContextsObj(
@@ -324,6 +326,13 @@ export class EndpointContext {
         Models.ClassType.PROVIDER,
       )),
       ...this.config.providers,
+    };
+
+    this.config.subscribers = {
+      ...(await this.getRecrusiveClassesfromContextsObj(
+        Models.ClassType.SUBSCRIBER,
+      )),
+      ...this.config.subscribers,
     };
 
     this.config.repositories = {
@@ -354,6 +363,12 @@ export class EndpointContext {
       config: this.config,
       ctx: this,
       classType: Models.ClassType.PROVIDER,
+    });
+    this.config.subscribers = this.cloneClassesObjWithNewMetadata({
+      classesInput: this.config.subscribers,
+      config: this.config,
+      ctx: this,
+      classType: Models.ClassType.SUBSCRIBER,
     });
     //#endregion
 
@@ -595,7 +610,7 @@ export class EndpointContext {
   }: {
     BaseClass: T;
     className: string;
-    config: Models.ContextOptions<any, any, any, any, any>;
+    config: Models.ContextOptions<any, any, any, any, any, any>;
     ctx: EndpointContext;
     classType: Models.ClassType;
   }): T => {
@@ -677,7 +692,7 @@ export class EndpointContext {
     classType,
   }: {
     classesInput: any;
-    config: Models.ContextOptions<any, any, any, any, any>;
+    config: Models.ContextOptions<any, any, any, any, any, any>;
     ctx: EndpointContext;
     classType: Models.ClassType;
   }) => {
@@ -1374,7 +1389,7 @@ export class EndpointContext {
       }
       //#endregion
 
-      console.log('methods', classConfig.methods);
+      // console.log('methods', classConfig.methods);
       Object.keys(classConfig.methods).forEach(methodName => {
         const methodConfig: Models.MethodConfig =
           classConfig.methods[methodName];
