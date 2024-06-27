@@ -63,7 +63,7 @@
     "lodash-walk-object": "16.444.4",
     "ng2-rest": "16.444.4",
     "ora": "3.4.0",
-    "socket.io": "2.4.1",
+    "socket.io": "4.7.5",
     "tslib": "~2.3.0",
     "tnp": "~16.444.5"
   },
@@ -322,6 +322,7 @@
     "simple-git": "1.96.0",
     "sinon": "15.2.0",
     "sloc": "0.2.0",
+    "socket.io-client": "4.7.5",
     "sort-package-json": "1.11.0",
     "sql.js": "1.8.0",
     "static-columns": "16.444.3",

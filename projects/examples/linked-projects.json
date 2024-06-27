@@ -11,5 +11,9 @@
     deafultBranch: "master",
     relativeClonePath: "inject-tests",
     repoUrl: "https://github.com/darekf77/inject-tests.git",
+  }, {
+    deafultBranch: "master",
+    relativeClonePath: "realtime-subscribers",
+    repoUrl: "https://github.com/darekf77/realtime-subscribers.git",
   }]
 }

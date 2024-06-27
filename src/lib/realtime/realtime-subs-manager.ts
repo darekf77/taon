@@ -1,46 +1,25 @@
-import * as _ from 'lodash';
-import { Level, Log } from 'ng2-logger/src';
-import { Subscriber } from 'rxjs';
-import { Helpers } from 'tnp-core/src';
-import { Symbols } from '../symbols';
-import type { BroadcastApiIoMockClient } from './broadcast-api-io-mock-client';
-import { EndpointContext } from '../endpoint-context';
-import { RealtimeBase } from './realtime';
+//#region imports
 //#region @backend
 import { URL } from 'url';
 //#endregion
+import { _ } from 'tnp-core/src';
+import { Subscriber } from 'rxjs';
+import { Symbols } from '../symbols';
+import { Socket as SocketClient } from 'socket.io-client';
+import { DefaultEventsMap } from 'socket.io/dist/typed-events';
+import { RealtimeModels } from './realtime.models';
+//#endregion
 
-const log = Log.create('REALTIME SUBS MANAGER', Level.__NOTHING);
-
-export type SubscribtionRealtime = {
-  context: EndpointContext;
-  customEvent: string;
-  roomName: string;
-  property: string;
-};
 export class RealtimeSubsManager {
-  private static idFrm(options: SubscribtionRealtime) {
-    const url = new URL(options.context.host);
-    return `${url.origin}|${options.roomName}|${options.property}|${options.customEvent}`;
-  }
-  private static roomSubs = {};
-  public static from(options: SubscribtionRealtime) {
-    const pathToInstance = RealtimeSubsManager.idFrm(options);
-    if (!RealtimeSubsManager.roomSubs[pathToInstance]) {
-      RealtimeSubsManager.roomSubs[pathToInstance] = new RealtimeSubsManager(
-        options,
-      );
-    }
-    return RealtimeSubsManager.roomSubs[pathToInstance] as RealtimeSubsManager;
-  }
-
   private isListening = false;
-  private constructor(private options: SubscribtionRealtime) {}
-
   private observers: Subscriber<any>[] = [];
+  constructor(private options: RealtimeModels.SubsManagerOpt) {}
 
-  startListenIfNotStarted(realtime: BroadcastApiIoMockClient) {
-    if (this.options.context.disabledRealtime) {
+  //#region methods & getters / start listen if not started
+  startListenIfNotStarted(
+    realtime: SocketClient<DefaultEventsMap, DefaultEventsMap>,
+  ) {
+    if (this.options.core.ctx.disabledRealtime) {
       console.warn(`[Firedev][startListenIfNotStarted] sockets are disabled`);
       return;
     }
@@ -53,27 +32,32 @@ export class RealtimeSubsManager {
     }
 
     if (!this.isListening) {
-      log.i(`subscribe to ${this.options?.roomName}`, this.options);
+      console.info(`subscribe to ${this.options?.roomName}`, this.options);
       this.isListening = true;
 
       if (this.options.customEvent) {
         // this means: send to current client custom event notification
         realtime.emit(
-          Symbols.old.REALTIME.ROOM_NAME.SUBSCRIBE.CUSTOM,
+          Symbols.REALTIME.ROOM_NAME.SUBSCRIBE.CUSTOM(
+            this.options.core.ctx.contextName,
+          ),
           this.options.roomName,
         );
       } else {
         if (_.isString(this.options.property)) {
           // this means: send to current client entity property events updates
           realtime.emit(
-            Symbols.old.REALTIME.ROOM_NAME.SUBSCRIBE
-              .ENTITY_PROPERTY_UPDATE_EVENTS,
+            Symbols.REALTIME.ROOM_NAME.SUBSCRIBE.ENTITY_PROPERTY_UPDATE_EVENTS(
+              this.options.core.ctx.contextName,
+            ),
             this.options.roomName,
           );
         } else {
           // this means: send to current client entity update events
           realtime.emit(
-            Symbols.old.REALTIME.ROOM_NAME.SUBSCRIBE.ENTITY_UPDATE_EVENTS,
+            Symbols.REALTIME.ROOM_NAME.SUBSCRIBE.ENTITY_UPDATE_EVENTS(
+              this.options.core.ctx.contextName,
+            ),
             this.options.roomName,
           );
         }
@@ -85,47 +69,58 @@ export class RealtimeSubsManager {
       });
     }
   }
+  //#endregion
 
+  //#region methods & getters / add observer
   add(observer: Subscriber<any>) {
     // log.info('Add observer')
     this.observers.push(observer);
   }
+  //#endregion
 
+  //#region methods & getters / remove observer
   remove(observer: Subscriber<any>) {
     // log.info('Remove observer')
     this.observers = this.observers.filter(obs => obs !== observer);
     if (this.observers.length === 0) {
       // log.info('Emit unsubscribe to server SERVER')
       this.isListening = false;
-      const { context, customEvent, roomName, property } = this.options;
-      const base = RealtimeBase.by(context);
-      const realtime = base.FE_REALTIME;
+      const { core, customEvent, roomName, property } = this.options;
+
+      const realtime = core.FE_REALTIME;
 
       if (customEvent) {
         realtime.emit(
-          Symbols.old.REALTIME.ROOM_NAME.UNSUBSCRIBE.CUSTOM,
+          Symbols.REALTIME.ROOM_NAME.UNSUBSCRIBE.CUSTOM(
+            this.options.core.ctx.contextName,
+          ),
           roomName,
         );
       } else {
         if (_.isString(property)) {
           realtime.emit(
-            Symbols.old.REALTIME.ROOM_NAME.UNSUBSCRIBE
-              .ENTITY_PROPERTY_UPDATE_EVENTS,
+            Symbols.REALTIME.ROOM_NAME.UNSUBSCRIBE.ENTITY_PROPERTY_UPDATE_EVENTS(
+              this.options.core.ctx.contextName,
+            ),
             roomName,
           );
         } else {
           realtime.emit(
-            Symbols.old.REALTIME.ROOM_NAME.UNSUBSCRIBE.ENTITY_UPDATE_EVENTS,
+            Symbols.REALTIME.ROOM_NAME.UNSUBSCRIBE.ENTITY_UPDATE_EVENTS(
+              this.options.core.ctx.contextName,
+            ),
             roomName,
           );
         }
       }
     }
   }
+  //#endregion
 
+  //#region methods & getters / update
   private update(data: any) {
     // log.data(`realtime update!!!!!  observers=${this.observers?.length} `)
-    const ngZone = this.options.context.ngZone;
+    const ngZone = this.options.core.ctx.ngZone;
     // console.log('updating', data);
     // console.log('ngzone', ngZone);
     this.observers.forEach(observer => {
@@ -141,4 +136,5 @@ export class RealtimeSubsManager {
       }
     });
   }
+  //#endregion
 }

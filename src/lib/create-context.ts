@@ -32,6 +32,8 @@ export const createContext = <
   // const entitiesCache = {};
   // const controllersCache = {};
 
+  // endpointContextRef.realtimeClient.listenChangesCustomEvent('') // @LAST
+
   const res = {
     //#region types
     types: {

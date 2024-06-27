@@ -31,7 +31,9 @@ export namespace Models {
     [ClassType.REPOSITORY]: 'repositories',
     [ClassType.PROVIDER]: 'providers',
     [ClassType.SUBSCRIBER]: 'subscribers',
-  } as { [key in ClassType]: keyof ContextOptions<any, any, any, any, any, any> };
+  } as {
+    [key in ClassType]: keyof ContextOptions<any, any, any, any, any, any>;
+  };
 
   //#endregion
 
@@ -70,12 +72,6 @@ export namespace Models {
   //#region models / session
 
   export type ISession = {
-    /**
-     * frontend host only needed when we are using
-     * withCredentials for axios
-     * and session cookie
-     */
-    frontendHost?: string;
     secret?: string;
     saveUninitialized?: boolean;
     /**
@@ -88,7 +84,12 @@ export namespace Models {
   //#endregion
 
   //#region models / context options
-  export type ContectionOptionsLogs = { server: boolean; framework: boolean; db: boolean };
+  export type ContectionOptionsLogs = {
+    http: boolean;
+    realtime: boolean;
+    framework: boolean;
+    db: boolean;
+  };
   export interface ContextOptions<
     CONTEXTS,
     CONTROLLERS,
@@ -99,6 +100,12 @@ export namespace Models {
   > {
     contextName: string;
     host?: string;
+    /**
+   * frontend host only needed when we are using
+   * withCredentials for axios
+   * and session cookie
+   */
+    frontendHost?: string;
     remoteHost?: string;
     useIpcWhenElectron?: boolean;
     contexts?: CONTEXTS;
@@ -124,12 +131,12 @@ export namespace Models {
      * only for debugging purpose
      */
     override?: {
-      entities?: Function[],
-      controllers?: Function[],
-      repositories?: Function[],
-      providers?: Function[],
-      subscribers?: Function[],
-    }
+      entities?: Function[];
+      controllers?: Function[];
+      repositories?: Function[];
+      providers?: Function[];
+      subscribers?: Function[];
+    };
   }
   //#endregion
 

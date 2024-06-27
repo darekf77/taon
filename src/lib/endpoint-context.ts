@@ -28,11 +28,11 @@ import {
   DataSourceOptions,
   getMetadataArgsStorage,
 } from 'firedev-typeorm/src';
-import { RealtimeBrowserRxjs } from './realtime';
 import { FiredevEntityOptions } from './decorators/classes/entity-decorator';
 import type { Server } from 'http';
 import { ENV } from './env';
 import type { BaseClass } from './base-classes/base-class';
+import { RealtimeCore } from './realtime/realtime-core';
 //#region @websql
 import type {
   TransactionRollbackEvent,
@@ -44,7 +44,6 @@ import type {
   UpdateEvent,
   InsertEvent,
 } from 'firedev-typeorm/src';
-import { RealtimeNodejs } from './realtime';
 import { Entity as TypeormEntity, Tree } from 'firedev-typeorm/src';
 //#endregion
 //#region @backend
@@ -161,10 +160,13 @@ export class EndpointContext {
   //#endregion
 
   //#region fields / realtime
-  realimteBrowser: RealtimeBrowserRxjs;
-  //#region @websql
-  realtimeNodeJs: RealtimeNodejs;
-  //#endregion
+  private realtime: RealtimeCore;
+  get realtimeClient() {
+    return this.realtime.client;
+  }
+  get realtimeServer() {
+    return this.realtime.server;
+  }
   //#endregion
 
   //#region fields / config
@@ -175,9 +177,16 @@ export class EndpointContext {
   //#endregion
 
   //#region fields / logs
-  get logServer(): boolean {
+  get logHttp(): boolean {
     if (_.isObject(this.config?.logs)) {
-      return !!(this.config.logs as Models.ContectionOptionsLogs).server;
+      return !!(this.config.logs as Models.ContectionOptionsLogs).http;
+    }
+    return this.config?.logs === true;
+  }
+
+  get logRealtime(): boolean {
+    if (_.isObject(this.config?.logs)) {
+      return !!(this.config.logs as Models.ContectionOptionsLogs).realtime;
     }
     return this.config?.logs === true;
   }
@@ -414,10 +423,7 @@ export class EndpointContext {
     //#region prepare relatime
     if (!this.config.abstract) {
       this.disabledRealtime = !!this.config.disabledRealtime;
-      //#region @websql
-      this.realtimeNodeJs = new RealtimeNodejs(this);
-      //#endregion
-      this.realimteBrowser = new RealtimeBrowserRxjs(this);
+      this.realtime = new RealtimeCore(this);
     }
     //#endregion
 
@@ -1067,6 +1073,12 @@ export class EndpointContext {
   }
   //#endregion
 
+  //#region methods & getters / host
+  get orgin() {
+    return this.uri?.origin;
+  }
+  //#endregion
+
   //#region methods & getters / init subscribers
   async initSubscribers() {
     if (!this.connection?.initialize) {
@@ -1075,148 +1087,128 @@ export class EndpointContext {
     //#region @websql
     const entities = this.getClassFunByArr(Models.ClassType.ENTITY);
     for (let index = 0; index < entities.length; index++) {
-      const Entity = entities[index];
-
-      const className = ClassHelpers.getName(Entity);
-      this.entitiesTriggers[className] = _.debounce(() => {
-        this.realtimeNodeJs.TrigggerEntityTableChanges(Entity);
-      }, 1000);
-
-      const notifyFn = (nameOfEvent, entityData) => {
-        // console.log('trigger table event: ',nameOfEvent)
-        this.entitiesTriggers[className]();
-      };
-
+      // const Entity = entities[index];
+      // const className = ClassHelpers.getName(Entity);
+      // this.entitiesTriggers[className] = _.debounce(() => {
+      //   this.realtimeNodeJs.TrigggerEntityTableChanges(Entity);
+      // }, 1000);
+      // const notifyFn = (nameOfEvent, entityData) => {
+      //   // console.log('trigger table event: ',nameOfEvent)
+      //   this.entitiesTriggers[className]();
+      // };
       //#region sub
-      const sub = {
-        listenTo() {
-          return Entity;
-        },
-        /**
-         * Called after entity is loaded.
-         */
-        afterLoad(entity: any) {
-          // TOOD this triggers too much
-          // notifyFn(`AFTER ENTITY LOADED: `, entity)
-        },
-
-        /**
-         * Called before post insertion.
-         */ beforeInsert(event: InsertEvent<any>) {
-          notifyFn(`BEFORE POST INSERTED: `, event.entity);
-        },
-
-        /**
-         * Called after entity insertion.
-         */ afterInsert(event: InsertEvent<any>) {
-          notifyFn(`AFTER ENTITY INSERTED: `, event.entity);
-        },
-
-        /**
-         * Called before entity update.
-         */ beforeUpdate(event: UpdateEvent<any>) {
-          notifyFn(`BEFORE ENTITY UPDATED: `, event.entity);
-        },
-
-        /**
-         * Called after entity update.
-         */ afterUpdate(event: UpdateEvent<any>) {
-          notifyFn(`AFTER ENTITY UPDATED: `, event.entity);
-        },
-
-        /**
-         * Called before entity removal.
-         */ beforeRemove(event: RemoveEvent<any>) {
-          notifyFn(
-            `BEFORE ENTITY WITH ID ${event.entityId} REMOVED: `,
-            event.entity,
-          );
-        },
-
-        /**
-         * Called after entity removal.
-         */ afterRemove(event: RemoveEvent<any>) {
-          notifyFn(
-            `AFTER ENTITY WITH ID ${event.entityId} REMOVED: `,
-            event.entity,
-          );
-        },
-
-        /**
-         * Called before entity removal.
-         */ beforeSoftRemove(event: SoftRemoveEvent<any>) {
-          notifyFn(
-            `BEFORE ENTITY WITH ID ${event.entityId} SOFT REMOVED: `,
-            event.entity,
-          );
-        },
-
-        /**
-         * Called after entity removal.
-         */ afterSoftRemove(event: SoftRemoveEvent<any>) {
-          notifyFn(
-            `AFTER ENTITY WITH ID ${event.entityId} SOFT REMOVED: `,
-            event.entity,
-          );
-        },
-
-        /**
-         * Called before entity recovery.
-         */ beforeRecover(event: RecoverEvent<any>) {
-          notifyFn(
-            `BEFORE ENTITY WITH ID ${event.entityId} RECOVERED: `,
-            event.entity,
-          );
-        },
-
-        /**
-         * Called after entity recovery.
-         */ afterRecover(event: RecoverEvent<any>) {
-          notifyFn(
-            `AFTER ENTITY WITH ID ${event.entityId} RECOVERED: `,
-            event.entity,
-          );
-        },
-
-        /**
-         * Called before transaction start.
-         */ beforeTransactionStart(event: TransactionStartEvent) {
-          notifyFn(`BEFORE TRANSACTION STARTED: `, event);
-        },
-
-        /**
-         * Called after transaction start.
-         */ afterTransactionStart(event: TransactionStartEvent) {
-          notifyFn(`AFTER TRANSACTION STARTED: `, event);
-        },
-
-        /**
-         * Called before transaction commit.
-         */ beforeTransactionCommit(event: TransactionCommitEvent) {
-          notifyFn(`BEFORE TRANSACTION COMMITTED: `, event);
-        },
-
-        /**
-         * Called after transaction commit.
-         */ afterTransactionCommit(event: TransactionCommitEvent) {
-          notifyFn(`AFTER TRANSACTION COMMITTED: `, event);
-        },
-
-        /**
-         * Called before transaction rollback.
-         */ beforeTransactionRollback(event: TransactionRollbackEvent) {
-          notifyFn(`BEFORE TRANSACTION ROLLBACK: `, event);
-        },
-
-        /**
-         * Called after transaction rollback.
-         */ afterTransactionRollback(event: TransactionRollbackEvent) {
-          notifyFn(`AFTER TRANSACTION ROLLBACK: `, event);
-        },
-      };
+      // const sub = {
+      //   listenTo() {
+      //     return Entity;
+      //   },
+      //   /**
+      //    * Called after entity is loaded.
+      //    */
+      //   afterLoad(entity: any) {
+      //     // TOOD this triggers too much
+      //     // notifyFn(`AFTER ENTITY LOADED: `, entity)
+      //   },
+      //   /**
+      //    * Called before post insertion.
+      //    */ beforeInsert(event: InsertEvent<any>) {
+      //     notifyFn(`BEFORE POST INSERTED: `, event.entity);
+      //   },
+      //   /**
+      //    * Called after entity insertion.
+      //    */ afterInsert(event: InsertEvent<any>) {
+      //     notifyFn(`AFTER ENTITY INSERTED: `, event.entity);
+      //   },
+      //   /**
+      //    * Called before entity update.
+      //    */ beforeUpdate(event: UpdateEvent<any>) {
+      //     notifyFn(`BEFORE ENTITY UPDATED: `, event.entity);
+      //   },
+      //   /**
+      //    * Called after entity update.
+      //    */ afterUpdate(event: UpdateEvent<any>) {
+      //     notifyFn(`AFTER ENTITY UPDATED: `, event.entity);
+      //   },
+      //   /**
+      //    * Called before entity removal.
+      //    */ beforeRemove(event: RemoveEvent<any>) {
+      //     notifyFn(
+      //       `BEFORE ENTITY WITH ID ${event.entityId} REMOVED: `,
+      //       event.entity,
+      //     );
+      //   },
+      //   /**
+      //    * Called after entity removal.
+      //    */ afterRemove(event: RemoveEvent<any>) {
+      //     notifyFn(
+      //       `AFTER ENTITY WITH ID ${event.entityId} REMOVED: `,
+      //       event.entity,
+      //     );
+      //   },
+      //   /**
+      //    * Called before entity removal.
+      //    */ beforeSoftRemove(event: SoftRemoveEvent<any>) {
+      //     notifyFn(
+      //       `BEFORE ENTITY WITH ID ${event.entityId} SOFT REMOVED: `,
+      //       event.entity,
+      //     );
+      //   },
+      //   /**
+      //    * Called after entity removal.
+      //    */ afterSoftRemove(event: SoftRemoveEvent<any>) {
+      //     notifyFn(
+      //       `AFTER ENTITY WITH ID ${event.entityId} SOFT REMOVED: `,
+      //       event.entity,
+      //     );
+      //   },
+      //   /**
+      //    * Called before entity recovery.
+      //    */ beforeRecover(event: RecoverEvent<any>) {
+      //     notifyFn(
+      //       `BEFORE ENTITY WITH ID ${event.entityId} RECOVERED: `,
+      //       event.entity,
+      //     );
+      //   },
+      //   /**
+      //    * Called after entity recovery.
+      //    */ afterRecover(event: RecoverEvent<any>) {
+      //     notifyFn(
+      //       `AFTER ENTITY WITH ID ${event.entityId} RECOVERED: `,
+      //       event.entity,
+      //     );
+      //   },
+      //   /**
+      //    * Called before transaction start.
+      //    */ beforeTransactionStart(event: TransactionStartEvent) {
+      //     notifyFn(`BEFORE TRANSACTION STARTED: `, event);
+      //   },
+      //   /**
+      //    * Called after transaction start.
+      //    */ afterTransactionStart(event: TransactionStartEvent) {
+      //     notifyFn(`AFTER TRANSACTION STARTED: `, event);
+      //   },
+      //   /**
+      //    * Called before transaction commit.
+      //    */ beforeTransactionCommit(event: TransactionCommitEvent) {
+      //     notifyFn(`BEFORE TRANSACTION COMMITTED: `, event);
+      //   },
+      //   /**
+      //    * Called after transaction commit.
+      //    */ afterTransactionCommit(event: TransactionCommitEvent) {
+      //     notifyFn(`AFTER TRANSACTION COMMITTED: `, event);
+      //   },
+      //   /**
+      //    * Called before transaction rollback.
+      //    */ beforeTransactionRollback(event: TransactionRollbackEvent) {
+      //     notifyFn(`BEFORE TRANSACTION ROLLBACK: `, event);
+      //   },
+      //   /**
+      //    * Called after transaction rollback.
+      //    */ afterTransactionRollback(event: TransactionRollbackEvent) {
+      //     notifyFn(`AFTER TRANSACTION ROLLBACK: `, event);
+      //   },
+      // };
       //#endregion
-
-      this.connection.subscribers.push(sub as any);
+      // this.connection.subscribers.push(sub as any);
     }
     //#endregion
   }
@@ -1381,7 +1373,7 @@ export class EndpointContext {
       //#region @backend
       if (!Helpers.isRunningIn.cliMode()) {
         //#endregion
-        this.logServer &&
+        this.logHttp &&
           console.groupCollapsed(
             `[firedev][express-server] routes [${classConfig.className}]`,
           );
@@ -1435,7 +1427,7 @@ export class EndpointContext {
       //#region @backend
       if (!Helpers.isRunningIn.cliMode()) {
         //#endregion
-        this.logServer && console.groupEnd();
+        this.logHttp && console.groupEnd();
         //#region @backend
       }
       //#endregion
@@ -1515,7 +1507,8 @@ export class EndpointContext {
         '[firedev][express-server] session enabled for this context ' +
           this.contextName,
       );
-      const { frontendHost, cookieMaxAge } = this.session;
+      const { cookieMaxAge } = this.session;
+      const frontendHost = this.config.frontendHost;
 
       const sessionObj = {
         frontendHost,
@@ -1529,18 +1522,35 @@ export class EndpointContext {
       app.use(
         cors({
           credentials: true,
-          origin: this.session.frontendHost,
+          origin: frontendHost,
         }),
       );
       app.use(expressSession(sessionObj));
+      console.log(`
+
+      CORS ENABLED FOR SESSION
+
+      `);
     } else {
       // if(this.config?.serverLogs) {
-      this.logServer &&
+      this.logHttp &&
         Helpers.info(
           `[firedev][express-server] session not enabled for this context '${this.contextName}'`,
         );
       // }
-      app.use(cors());
+      app.use(
+        cors({
+          // origin: "http://localhost:5555",
+          // methods: ["GET", "POST"],
+          // allowedHeaders: ["my-custom-header"],
+          // credentials: true
+        }),
+      );
+      console.log(`
+
+      CORS ENABLED WITHOUT SESSION
+
+      `);
     }
 
     (() => {
@@ -1664,7 +1674,7 @@ export class EndpointContext {
       //#endregion
 
       //#region @backend
-      this.logServer && console.log(`[${type.toUpperCase()}] ${expressPath} `);
+      this.logHttp && console.log(`[${type.toUpperCase()}] ${expressPath} `);
       this.expressApp[type.toLowerCase()](
         expressPath,
         requestHandler,
@@ -1901,7 +1911,7 @@ export class EndpointContext {
   ): void {
     const ctx = this;
     // : { received: any; /* Rest<any, any>  */ }
-    this.logServer && console.log(`${type?.toUpperCase()} ${expressPath} `);
+    this.logHttp && console.log(`${type?.toUpperCase()} ${expressPath} `);
     // console.log('INITING', methodConfig); // @LAST inject in static
     //#region resolve storage
     let storage: any;
