@@ -430,16 +430,21 @@ export class EndpointContext {
     //#region show context info
     // console.log({ ref })
     if (this.config.abstract) {
-      Helpers.info(
-        `[firedev] Create abstract context: ${this.config.contextName}`,
-      );
+      this.logFramework &&
+        Helpers.info(
+          `[firedev] Create abstract context: ${this.config.contextName}`,
+        );
     } else {
       if (this.config.remoteHost) {
-        Helpers.info(
-          `[firedev] Create context for remote host: ${this.config.remoteHost}`,
-        );
+        this.logFramework &&
+          Helpers.info(
+            `[firedev] Create context for remote host: ${this.config.remoteHost}`,
+          );
       } else {
-        Helpers.info(`[firedev] Create context for host: ${this.config.host}`);
+        this.logFramework &&
+          Helpers.info(
+            `[firedev] Create context for host: ${this.config.host}`,
+          );
       }
     }
     //#endregion
@@ -553,7 +558,8 @@ export class EndpointContext {
             `);
       });
     } else {
-      Helpers.info('Ipc communication enable instead tcp/upd');
+      this.logFramework &&
+        Helpers.info('Ipc communication enable instead tcp/upd');
     }
     //#endregion
   }
@@ -1279,7 +1285,9 @@ export class EndpointContext {
     // console.log(`[${this.contextName}]dataSourceDbConfig`, dataSourceDbConfig);
 
     if (this.modeAllowsDatabaseCreation && this.databaseConfig) {
-      Helpers.info('[firedev][database] prepare typeorm connection...');
+      this.logDb &&
+        this.logFramework &&
+        Helpers.info('[firedev][database] prepare typeorm connection...');
       try {
         const connection = new DataSource(dataSourceDbConfig);
         this.connection = connection;
@@ -1296,8 +1304,9 @@ export class EndpointContext {
         //#endregion
       }
       // console.clear();// TOOD @LAST @UNCOMMENT
-      console.info(
-        `
+      (this.logDb || this.logFramework) &&
+        console.info(
+          `
 
         CONTECTION OK for ${this.contextName} - ${this.mode}
 
@@ -1305,8 +1314,8 @@ export class EndpointContext {
 
 
         `,
-        dataSourceDbConfig,
-      );
+          dataSourceDbConfig,
+        );
       //     const entityMetadata = getMetadataArgsStorage();
       //     console.log(
       //       `
@@ -1461,7 +1470,7 @@ export class EndpointContext {
       `tmp-routes-${_.kebabCase(this.config.contextName)}.json`,
     );
 
-    Helpers.log(`[firedev] routes file: ${fileName} `);
+    this.logFramework && console.log(`[firedev] routes file: ${fileName} `);
     // Helpers.log(JSON.stringify(routes, null, 4))
     //#region @backend
     fse.writeJSONSync(fileName, routes, {

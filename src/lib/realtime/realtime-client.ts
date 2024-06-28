@@ -7,6 +7,7 @@ import { ClassHelpers } from '../helpers/class-helpers';
 import { RealtimeSubsManager } from './realtime-subs-manager';
 import { RealtimeModels } from './realtime.models';
 import type { BaseEntity } from '../base-classes/base-entity';
+import { Helpers } from 'tnp-core/src';
 //#endregion
 
 export class RealtimeClient {
@@ -14,12 +15,15 @@ export class RealtimeClient {
   constructor(private core: RealtimeCore) {
     this.core = core;
     if (!core.ctx.disabledRealtime) {
+      //#region @browser
       this.init();
+      //#endregion
     }
   }
 
   //#region methods & getters / init
   private init() {
+    //#region prepare naspaces pathes
     const nspPath = {
       global: this.core.pathFor(),
       realtime: this.core.pathFor(
@@ -27,15 +31,20 @@ export class RealtimeClient {
       ),
     };
 
-    console.info(
-      '[CLIENT] NAMESPACE GLOBAL ',
-      nspPath.global.href + ` host: ${this.core.ctx.host}`,
-    );
-    console.info(
-      '[CLIENT] NAMESPACE REALTIME',
-      nspPath.realtime.href + ` host: ${this.core.ctx.host}`,
-    );
+    this.core.ctx.logRealtime &&
+      console.info(
+        '[CLIENT] NAMESPACE GLOBAL ',
+        nspPath.global.href + ` host: ${this.core.ctx.host}`,
+      );
 
+    this.core.ctx.logRealtime &&
+      console.info(
+        '[CLIENT] NAMESPACE REALTIME',
+        nspPath.realtime.href + ` host: ${this.core.ctx.host}`,
+      );
+    //#endregion
+
+    //#region prepare globa FE socket
     this.core.FE = this.core.strategy.io(nspPath.global.origin, {
       path: nspPath.global.pathname,
     });
@@ -48,8 +57,9 @@ export class RealtimeClient {
         `[CLIENT] conented to GLOBAL namespace ${this.core.FE.id} of host: ${this.core.ctx.host}`,
       );
     });
-    // log.i('[CLIENT] IT SHOULD CONNECT TO GLOBAL')
+    //#endregion
 
+    //#region prepare realtime FE socket
     this.core.FE_REALTIME = this.core.strategy.io(nspPath.realtime.origin, {
       path: nspPath.realtime.pathname,
     });
@@ -62,10 +72,9 @@ export class RealtimeClient {
         `[CLIENT] conented to REALTIME namespace ${this.core.FE_REALTIME.id} host: ${this.core.ctx.host}`,
       );
     });
+    //#endregion
 
-    // log.i('IT SHOULD CONNECT TO REALTIME')
 
-    // Helpers.log('INITING SOCKETS DONE')
   }
   //#endregion
 

@@ -13,4 +13,5 @@ export abstract class RealtimeStrategy {
 
   abstract readonly io: typeof io;
   abstract readonly Server: typeof Server;
+  abstract toString(): string;
 }

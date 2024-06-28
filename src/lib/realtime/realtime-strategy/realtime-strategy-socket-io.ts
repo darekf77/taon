@@ -11,6 +11,9 @@ import { io } from 'socket.io-client';
  * - backend-backend communication
  */
 export class RealtimeStrategySocketIO extends RealtimeStrategy {
+  toString(): string {
+    return 'socket-io';
+  }
   constructor(protected ctx: EndpointContext) {
     super(ctx);
   }

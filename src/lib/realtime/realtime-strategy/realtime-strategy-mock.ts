@@ -8,6 +8,9 @@ import { MockServer, mockIo } from './realtime-strategy-mock-models'
  * - browser-browser communication mock (in websql mode)
  */
 export class RealtimeStrategyMock extends RealtimeStrategy {
+  toString(): string {
+    return 'mock';
+  }
 
 
   constructor(protected ctx: EndpointContext) {

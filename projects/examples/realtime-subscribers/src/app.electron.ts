@@ -1,10 +1,12 @@
-
-import { CLIENT_DEV_NORMAL_APP_PORT, CLIENT_DEV_WEBSQL_APP_PORT } from './app.hosts';
 import {
-path,
-//#region @backend
-fse
-//#endregion
+  CLIENT_DEV_NORMAL_APP_PORT,
+  CLIENT_DEV_WEBSQL_APP_PORT,
+} from './app.hosts';
+import {
+  path,
+  //#region @backend
+  fse,
+  //#endregion
 } from 'tnp-core';
 //#region @backend
 import { app, BrowserWindow, screen } from 'electron';
@@ -15,53 +17,57 @@ const args = process.argv.slice(1);
 const serve = args.some(val => val === '--serve');
 const websql = args.some(val => val === '--websql');
 
-function createWindow(): BrowserWindow {
+async function createWindow(): Promise<BrowserWindow> {
+  const size = screen.getPrimaryDisplay().workAreaSize;
 
-const size = screen.getPrimaryDisplay().workAreaSize;
+  // Create the browser window.
+  win = new BrowserWindow({
+    x: 0,
+    y: 0,
+    autoHideMenuBar: true,
+    width: size.width * (3 / 4),
+    height: size.height * (3 / 4),
+    webPreferences: {
+      nodeIntegration: true,
+      allowRunningInsecureContent: serve,
+      contextIsolation: false,
+    },
+  });
 
-// Create the browser window.
-win = new BrowserWindow({
-  x: 0,
-  y: 0,
-  autoHideMenuBar: true,
-  width: size.width * (3/4),
-  height: size.height * (3/4),
-  webPreferences: {
-    nodeIntegration: true,
-    allowRunningInsecureContent: (serve),
-    contextIsolation: false,
-  },
-});
+  if (serve) {
+    const debug = require('electron-debug');
+    debug();
+    win.webContents.openDevTools();
 
-if (serve) {
-  const debug = require('electron-debug');
-  debug();
-  win.webContents.openDevTools();
+    require('electron-reloader')(module);
+    win.loadURL(
+      'http://localhost:' +
+        (websql ? CLIENT_DEV_WEBSQL_APP_PORT : CLIENT_DEV_NORMAL_APP_PORT),
+    );
+  } else {
+    // Path when running electron executable
+    let pathIndex = './index.html';
 
-  require('electron-reloader')(module);
-  win.loadURL('http://localhost:' + (websql ? CLIENT_DEV_WEBSQL_APP_PORT : CLIENT_DEV_NORMAL_APP_PORT));
-} else {
-  // Path when running electron executable
-  let pathIndex = './index.html';
+    if (fse.existsSync(path.join(__dirname, '../dist/index.html'))) {
+      // Path when running electron in local folder
+      pathIndex = '../dist/index.html';
+    }
 
-  if (fse.existsSync(path.join(__dirname, '../dist/index.html'))) {
-    // Path when running electron in local folder
-    pathIndex = '../dist/index.html';
+    const url = new URL(path.join('file:', __dirname, pathIndex));
+    win.loadURL(url.href);
   }
 
-  const url = new URL(path.join('file:', __dirname, pathIndex));
-  win.loadURL(url.href);
-}
+  // Emitted when the window is closed.
+  win.on('closed', () => {
+    // Dereference the window object, usually you would store window
+    // in an array if your app supports multi windows, this is the time
+    // when you should delete the corresponding element.
+    win = null;
+  });
 
-// Emitted when the window is closed.
-win.on('closed', () => {
-  // Dereference the window object, usually you would store window
-  // in an array if your app supports multi windows, this is the time
-  // when you should delete the corresponding element.
-  win = null;
-});
 
-return win;
+
+  return win;
 }
 
 async function startElectron() {
@@ -72,7 +78,7 @@ async function startElectron() {
     // Some APIs can only be used after this event occurs.
     // Added 400 ms to fix the black background issue while using transparent window. More detais at https://github.com/electron/electron/issues/15947
     // app.on('ready', () => setTimeout(createWindow, 400));
-    setTimeout(createWindow, 400)
+    setTimeout(createWindow, 400);
 
     // Quit when all windows are closed.
     app.on('window-all-closed', () => {
@@ -90,7 +96,6 @@ async function startElectron() {
         createWindow();
       }
     });
-
   } catch (e) {
     // Catch Error
     throw e;
@@ -98,4 +103,4 @@ async function startElectron() {
 }
 
 startElectron();
-//#endregion  
+//#endregion

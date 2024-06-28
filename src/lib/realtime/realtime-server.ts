@@ -13,7 +13,9 @@ export class RealtimeServer {
   constructor(private core: RealtimeCore) {
     this.core = core;
     if (!core.ctx.disabledRealtime) {
+      //#region @websql
       this.init();
+      //#endregion
     }
   }
 
@@ -21,10 +23,7 @@ export class RealtimeServer {
   private init() {
     //#region @websql
 
-    // if (Helpers.isElectron) {
-    //   return;
-    // }
-
+    //#region prepare namespaces pathes
     const nspPath = {
       global: this.core.pathFor(),
       realtime: this.core.pathFor(
@@ -32,6 +31,22 @@ export class RealtimeServer {
       ),
     };
 
+    this.core.ctx.logRealtime &&
+      console.info(
+        `CREATE GLOBAL NAMESPACE: '${this.core.BE.path()}' , path: '${
+          nspPath.global.pathname
+        }'`,
+      );
+
+    this.core.ctx.logRealtime &&
+      console.info(
+        `CREATE REALTIME NAMESPACE: '${this.core.BE_REALTIME.path()}' , path: '${
+          nspPath.realtime.pathname
+        }' `,
+      );
+    //#endregion
+
+    //#region prepare global BE socket
     this.core.BE = new this.core.strategy.Server(this.core.ctx.serverTcpUdp, {
       path: nspPath.global.pathname,
 
@@ -39,23 +54,20 @@ export class RealtimeServer {
         origin: this.core.ctx.config.frontendHost,
         methods: this.core.allHttpMethods,
       },
-      // href: nspPath.global.href,
     });
-
-    // const ioGlobalNsp = base.BE;
-
     this.core.BE.on('connection', clientSocket => {
+      if (Helpers.isElectron) {
+        // @ts-ignore
+        this.core.BE.emit('connect');  // TODO QUICK_FIX
+      }
       console.info(
-        `client conected to namespace "${clientSocket.nsp.name}",  host: ${this.core.ctx.host}`,
+        `client conected to namespace "${clientSocket.nsp?.name}",  host: ${this.core.ctx.host}`,
       );
     });
 
-    console.info(
-      `CREATE GLOBAL NAMESPACE: '${this.core.BE.path()}' , path: '${
-        nspPath.global.pathname
-      }'`,
-    );
+    //#endregion
 
+    //#region prepare realtime BE socket
     this.core.BE_REALTIME = new this.core.strategy.Server(
       this.core.ctx.serverTcpUdp,
       {
@@ -64,24 +76,19 @@ export class RealtimeServer {
           origin: this.core.ctx.config.frontendHost,
           methods: this.core.allHttpMethods,
         },
-        //#region @browser
-        // href: nspPath.realtime.href,
-        //#endregion
       },
     );
 
-    console.info(
-      `CREATE REALTIME NAMESPACE: '${this.core.BE_REALTIME.path()}' , path: '${
-        nspPath.realtime.pathname
-      }' `,
-    );
-
-    // base.BE_REALTIME = ioRealtimeNsp as any;
-
     this.core.BE_REALTIME.on('connection', backendSocketForClient => {
       console.info(
-        `client conected to namespace "${backendSocketForClient.nsp.name}",  host: ${this.core.ctx.host}`,
+        `client conected to namespace "${backendSocketForClient.nsp?.name}",  host: ${this.core.ctx.host}`,
       );
+
+      if (Helpers.isElectron) {
+        // @ts-ignore
+        backendSocketForClient = this.core.BE_REALTIME; // TODO QUICK_FIX
+        this.core.BE_REALTIME.emit('connect');
+      }
 
       backendSocketForClient.on(
         Symbols.REALTIME.ROOM_NAME.SUBSCRIBE.CUSTOM(this.core.ctx.contextName),
@@ -161,10 +168,13 @@ export class RealtimeServer {
     });
 
     //#endregion
+
+    //#endregion
   }
   //#endregion
 
   //#region methods & getters / trigger changes
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private triggerChanges(
     entityObjOrClass: Function,
     property?: string,

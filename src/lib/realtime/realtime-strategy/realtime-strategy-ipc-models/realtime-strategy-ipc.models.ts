@@ -1,4 +1,4 @@
-import { IpcNamespace } from './realtime-strategy-ipc-namespace';
+import { IpcMainNamespace } from './realtime-strategy-ipc-main-namespace';
 
 export interface RendererEventListeners {
   [event: string]: Array<(event: any, ...args: any[]) => void>;
@@ -15,5 +15,5 @@ export interface Rooms {
 }
 
 export interface Namespaces {
-  [namespace: string]: IpcNamespace;
+  [namespace: string]: IpcMainNamespace;
 }

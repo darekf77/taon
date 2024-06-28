@@ -32,15 +32,16 @@ export class RealtimeSubsManager {
     }
 
     if (!this.isListening) {
-      console.info(`subscribe to ${this.options?.roomName}`, this.options);
+      const subscribeEvent = Symbols.REALTIME.ROOM_NAME.SUBSCRIBE.CUSTOM(
+        this.options.core.ctx.contextName,
+      );
+      // console.info(`[BROWSSER]][IPC] subscribe to "${this.options?.roomName}" by sending event: "${subscribeEvent}"`, this.options);
       this.isListening = true;
 
       if (this.options.customEvent) {
         // this means: send to current client custom event notification
         realtime.emit(
-          Symbols.REALTIME.ROOM_NAME.SUBSCRIBE.CUSTOM(
-            this.options.core.ctx.contextName,
-          ),
+          subscribeEvent,
           this.options.roomName,
         );
       } else {

@@ -11,6 +11,7 @@ import {
 } from './realtime-strategy';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 import { Server } from 'socket.io';
+import { Helpers } from 'tnp-core/src';
 //#endregion
 
 /**
@@ -60,6 +61,8 @@ export class RealtimeCore {
   //#region constructor
   constructor(public ctx: EndpointContext) {
     this.strategy = this.resolveStrategy();
+    ctx.logFramework &&
+      console.log(`[firedev] realtime strategy: ${this.strategy}`);
     this.client = new RealtimeClient(this);
     this.server = new RealtimeServer(this);
   }
@@ -89,7 +92,10 @@ export class RealtimeCore {
     let nsp = namespace ? namespace : '';
     nsp = nsp === '/' ? '' : nsp;
     const pathname = uri.pathname !== '/' ? uri.pathname : '';
-    const prefix = `socketNodeJs/-/`;
+    let prefix = `firedevContext-`;
+    if (Helpers.isElectron) {
+      prefix = ``;
+    }
     const href = `${uri.origin}${pathname}/${prefix}${nsp}`;
     // console.log(`HREF: ${href}, nsp: ${nsp}`)
     return new URL(href) as URL;

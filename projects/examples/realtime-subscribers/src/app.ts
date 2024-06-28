@@ -1,7 +1,12 @@
 //#region imports
 import { Firedev, BaseContext } from 'firedev/src';
 import { Observable, map } from 'rxjs';
-import { HOST_BACKEND_PORT } from './app.hosts';
+import {
+  CLIENT_DEV_NORMAL_APP_PORT,
+  CLIENT_DEV_WEBSQL_APP_PORT,
+  HOST_BACKEND_PORT,
+} from './app.hosts';
+import { Helpers } from 'tnp-core/src';
 //#region @browser
 import { NgModule, inject, Injectable } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
@@ -11,7 +16,19 @@ import { CommonModule } from '@angular/common';
 
 console.log('hello world');
 console.log('Your server will start on port ' + HOST_BACKEND_PORT);
-const host = 'http://localhost:' + HOST_BACKEND_PORT;
+const host1 = 'http://localhost:' + HOST_BACKEND_PORT;
+const host2 = 'http://localhost:' + (HOST_BACKEND_PORT + 1);
+const frontendHost1 =
+  'http://localhost:' +
+  (Helpers.isWebSQL ? CLIENT_DEV_WEBSQL_APP_PORT : CLIENT_DEV_NORMAL_APP_PORT);
+const frontendHost2 =
+  'http://localhost:' +
+  ((Helpers.isWebSQL
+    ? CLIENT_DEV_WEBSQL_APP_PORT
+    : CLIENT_DEV_NORMAL_APP_PORT) +
+    1);
+
+console.log({ host1, host2, frontendHost1, frontendHost2 });
 
 //#region realtime-subscribers component
 //#region @browser
@@ -92,8 +109,9 @@ class UserController extends Firedev.Base.CrudController<User> {
 
 //#region  realtime-subscribers context
 const MainContext = Firedev.createContext(() => ({
-  host,
-  frontendHost: 'http://localhost:5555',
+  host: host1,
+  useIpcWhenElectron: true,
+  frontendHost: frontendHost1,
   contextName: 'MainContext',
   contexts: { BaseContext },
   controllers: {
@@ -108,23 +126,57 @@ const MainContext = Firedev.createContext(() => ({
 }));
 //#endregion
 
+//#region  realtime-subscribers context
+// const MainContext2 = Firedev.createContext(() => ({
+//   host: host2,
+//   useIpcWhenElectron: true,
+//   frontendHost: frontendHost1,
+//   contextName: 'MainContext2',
+//   contexts: { BaseContext },
+//   controllers: {
+//     UserController,
+//     // PUT FIREDEV CONTORLLERS HERE
+//   },
+//   entities: {
+//     User,
+//     // PUT FIREDEV ENTITIES HERE
+//   },
+//   database: true,
+// }));
+//#endregion
+
 async function start() {
   await MainContext.initialize();
+  // await MainContext2.initialize();
 
   const eventsKey = 'eventsKey';
+  (() => {
+    //#region @browser
+    MainContext.refSync.realtimeClient
+      .listenChangesCustomEvent(eventsKey)
+      .subscribe(event => {
+        console.log('socket form backend111 ', event);
+      });
 
-  //#region @browser
-  MainContext.refSync.realtimeClient
-    .listenChangesCustomEvent(eventsKey)
-    .subscribe(event => {
-      console.log('socket form backend ', event);
-    });
-  //#endregion
+    // MainContext2.refSync.realtimeClient
+    //   .listenChangesCustomEvent(eventsKey)
+    //   .subscribe(event => {
+    //     console.log('socket form backen222 ', event);
+    //   });
+    //#endregion
+  })();
 
   //#region @websql
-  const notifyUser = ()=> {
-    MainContext.refSync.realtimeServer.triggerCustomEvent(eventsKey,'hello from backend');
-    setTimeout(notifyUser, 4000 );
+  const notifyUser = () => {
+    MainContext.refSync.realtimeServer.triggerCustomEvent(
+      eventsKey,
+      'hello from backend111',
+    );
+    // MainContext2.refSync.realtimeServer.triggerCustomEvent(
+    //   eventsKey,
+    //   'hello from backend222',
+    // );
+    setTimeout(notifyUser, 4000);
   };
   notifyUser();
   //#endregion

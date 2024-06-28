@@ -7,6 +7,7 @@
   "name": "realtime-subscribers",
   "version": "0.0.0",
   "private": true,
+  "main": "dist/app.electron.js",
   "devDependencies": {
     "@angular-builders/custom-webpack": "~16.0.2-beta.2",
     "@angular-devkit/build-angular": "~16.0.5",
