@@ -168,7 +168,7 @@ async function start() {
 
   //#region @websql
   const notifyUser = () => {
-    MainContext.refSync.realtimeServer.triggerCustomEvent(
+    MainContext.__refSync.realtimeServer.triggerCustomEvent(
       eventsKey,
       'hello from backend111',
     );
@@ -182,8 +182,8 @@ async function start() {
   //#endregion
 
   if (Firedev.isBrowser) {
-    const ref = await MainContext.ref();
-    const users = (await ref.getInstanceBy(UserController).getAll().received)
+
+    const users = (await MainContext.getClassInstance(UserController).getAll().received)
       .body?.json;
     console.log({
       'users from backend': users,

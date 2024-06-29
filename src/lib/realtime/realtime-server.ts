@@ -31,19 +31,6 @@ export class RealtimeServer {
       ),
     };
 
-    this.core.ctx.logRealtime &&
-      console.info(
-        `CREATE GLOBAL NAMESPACE: '${this.core.BE.path()}' , path: '${
-          nspPath.global.pathname
-        }'`,
-      );
-
-    this.core.ctx.logRealtime &&
-      console.info(
-        `CREATE REALTIME NAMESPACE: '${this.core.BE_REALTIME.path()}' , path: '${
-          nspPath.realtime.pathname
-        }' `,
-      );
     //#endregion
 
     //#region prepare global BE socket
@@ -55,10 +42,18 @@ export class RealtimeServer {
         methods: this.core.allHttpMethods,
       },
     });
+
+    this.core.ctx.logRealtime &&
+      console.info(
+        `CREATE GLOBAL NAMESPACE: '${this.core.BE.path()}' , path: '${
+          nspPath.global.pathname
+        }'`,
+      );
+
     this.core.BE.on('connection', clientSocket => {
       if (Helpers.isElectron) {
         // @ts-ignore
-        this.core.BE.emit('connect');  // TODO QUICK_FIX
+        this.core.BE.emit('connect'); // TODO QUICK_FIX
       }
       console.info(
         `client conected to namespace "${clientSocket.nsp?.name}",  host: ${this.core.ctx.host}`,
@@ -78,6 +73,13 @@ export class RealtimeServer {
         },
       },
     );
+
+    this.core.ctx.logRealtime &&
+      console.info(
+        `CREATE REALTIME NAMESPACE: '${this.core.BE_REALTIME.path()}' , path: '${
+          nspPath.realtime.pathname
+        }' `,
+      );
 
     this.core.BE_REALTIME.on('connection', backendSocketForClient => {
       console.info(

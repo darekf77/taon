@@ -423,6 +423,11 @@ export class EndpointContext {
     //#region prepare relatime
     if (!this.config.abstract) {
       this.disabledRealtime = !!this.config.disabledRealtime;
+      //#region @backend
+      if (Helpers.isRunningIn.cliMode()) { // TODO for now...
+        this.disabledRealtime = true;
+      }
+      //#endregion
       this.realtime = new RealtimeCore(this);
     }
     //#endregion
@@ -769,7 +774,7 @@ export class EndpointContext {
     // });
     for (const ctx of contexts) {
       // console.log(`STARTING ${ctx.contextName}`);
-      const ref = await ctx.ref();
+      const ref = await ctx.__ref();
       // console.log(`CTX FROM ${ctx.contextName}`, ref.contextName);
       const classesInput = ref.getClassFunBy(classType);
       // console.log(`${ref.contextName} - ${classType}`, { classesInput });
@@ -1394,6 +1399,7 @@ export class EndpointContext {
       Object.keys(classConfig.methods).forEach(methodName => {
         const methodConfig: Models.MethodConfig =
           classConfig.methods[methodName];
+        // debugger
         const type: Models.Http.Rest.HttpMethod = methodConfig.type;
         const expressPath = methodConfig.global
           ? `/${methodConfig.path?.replace(/\//, '')}`
@@ -1501,7 +1507,7 @@ export class EndpointContext {
       });
     }
 
-    this.expressApp.get('/', (req, res) => {
+    this.expressApp.get('/helloworld', (req, res) => {
       res.send(`Hello, world from context ${this.contextName}`);
     });
 
@@ -1555,7 +1561,8 @@ export class EndpointContext {
           // credentials: true
         }),
       );
-      console.log(`
+      this.logHttp &&
+        console.log(`
 
       CORS ENABLED WITHOUT SESSION
 

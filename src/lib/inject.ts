@@ -44,7 +44,7 @@ export const inject = <T>(entity: () => new (...args: any[]) => T): T => {
           return methodOrProperty;
         }
         //#region @browser
-        debugger
+        // debugger
         return angularInject(ctor)[propName];
         //#endregion
       },

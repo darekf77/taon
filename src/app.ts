@@ -1,30 +1,25 @@
-//#region @notForNpm
 //#region imports
-import { Firedev } from './lib/index';
-
-import { EMPTY, Observable, catchError, map, of, startWith } from 'rxjs';
-import { _ } from 'tnp-core/src';
-import { Helpers } from 'tnp-helpers/src';
+import { Firedev, BaseContext } from 'firedev/src';
+import { Observable, map } from 'rxjs';
 import { HOST_BACKEND_PORT } from './app.hosts';
 //#region @browser
-import { NgModule } from '@angular/core';
+import { NgModule, inject, Injectable } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { EntityOptions } from 'firedev-typeorm/src';
 //#endregion
 //#endregion
 
+console.log('hello world');
+console.log('Your server will start on port ' + HOST_BACKEND_PORT);
+const host = 'http://localhost:' + HOST_BACKEND_PORT;
+
+//#region firedev component
 //#region @browser
 @Component({
   selector: 'app-firedev',
   template: `hello from firedev<br />
     <br />
     users from backend
-    <button
-      (click)=""
-      test="asd">
-      refresh
-    </button>
     <ul>
       <li *ngFor="let user of users$ | async">{{ user | json }}</li>
     </ul> `,
@@ -36,138 +31,94 @@ import { EntityOptions } from 'firedev-typeorm/src';
     `,
   ],
 })
-export class FiredevComponent implements OnInit {
-  // @LAST fix base crud
-  users$: Observable<User[]>;
+export class FiredevComponent {
+  userApiService = inject(UserApiService);
+  readonly users$: Observable<User[]> = this.userApiService.getAll();
+}
+//#endregion
+//#endregion
 
-  constructor() {}
-  ngOnInit() {
-    console.log(
-      'UserContext.types.entities.User.ctrl.getAll',
-      UserContext.types.entities.User.ctrl.getAll(),
-    );
-    this.users$ = UserContext.types.entities.User.ctrl
+//#region  firedev api service
+//#region @browser
+@Injectable({
+  providedIn: 'root',
+})
+export class UserApiService {
+  userControlller = Firedev.inject(() => MainContext.get(UserController));
+  getAll() {
+    return this.userControlller
       .getAll()
-      .received.observable.pipe(map(data => data.body.json));
+      .received.observable.pipe(map(r => r.body.json));
   }
 }
+//#endregion
+//#endregion
 
+//#region  firedev module
+//#region @browser
 @NgModule({
-  imports: [CommonModule],
   exports: [FiredevComponent],
+  imports: [CommonModule],
   declarations: [FiredevComponent],
-  providers: [],
 })
 export class FiredevModule {}
 //#endregion
+//#endregion
 
-//#region user
-@Firedev.Entity({
-  className: 'User',
-})
+//#region  firedev entity
+@Firedev.Entity({ className: 'User' })
 class User extends Firedev.Base.AbstractEntity {
-  // public static ctrl = Firedev.inject(
-  //   () => UserContext.types.controllers.UserController,
-  // );
-  public static from(obj: Partial<User>) {
-    return _.merge(new User(), obj) as User;
-  }
-
+  public static ctrl?: UserController;
   //#region @websql
   @Firedev.Orm.Column.String()
   //#endregion
-  firstName: string;
+  name?: string;
 }
-
-@Firedev.Controller({
-  className: 'UserController',
-})
-class UserController extends Firedev.Base.CrudController<User> {
-  entityClassResolveFn = () => User;
-  userProviers = this.injectGlobalProvider(UserProvider);
-  async initExampleDbData(): Promise<void> {
-    //#region @websql
-    // Helpers.info(this.userProviers.helloFromUserProvier());
-    // await this.backend.create(
-    //   UserContext.types.entities.User.from({ firstName: 'pierwszy' }),
-    // );
-    // await this.backend.create(
-    //   UserContext.types.entities.User.from({ firstName: 'drugi' }),
-    // );
-    // console.log('all users', await this.backend.getAll());
-    //#endregion
-  }
-
-  @Firedev.Http.GET()
-  hello(
-    @Firedev.Http.Param.Query('user') user: string,
-  ): Firedev.Response<string> {
-    //#region @websqlFunc
-    return async (req, res) => {
-      return (
-        'hello from user controller my dear query params user "' +
-        user +
-        '" and ' +
-        this.userProviers.helloFromUserProvier()
-      );
-    };
-    //#endregion
-  }
-}
-
-@Firedev.Provider({
-  className: 'UserProvider',
-})
-class UserProvider extends Firedev.Base.Provider {
-  helloFromUserProvier() {
-    return 'hello from context ' + this.__endpoint_context__.contextName;
-  }
-}
-
-// const UserContext = Firedev.createContext(() => ({
-//   contextName: 'UserContext',
-//   host: `http://localhost:${HOST_BACKEND_PORT}`,
-//   contexts: { BaseContext },
-//   entities: {
-//     User,
-//   },
-//   controllers: {
-//     UserController,
-//   },
-//   providers: {
-//     UserProvider,
-//   },
-//   database: true,
-// }));
-
-// const AppContext = Firedev.createContext({
-//   contextName: 'AppContext',
-//   host: `http://localhost:${HOST_BACKEND_PORT + 1}`,
-//   contexts: { UserContext },
-// });
 //#endregion
 
-async function start(portForBackend?: string) {
-  //#region @backend
-  await Helpers.killProcessByPort(HOST_BACKEND_PORT);
-  // await Helpers.killProcessByPort(HOST_BACKEND_PORT + 1);
+//#region  firedev controller
+@Firedev.Controller({ className: 'UserController' })
+class UserController extends Firedev.Base.CrudController<User> {
+  entityClassResolveFn = () => User;
+  //#region @websql
+  async initExampleDbData(): Promise<void> {
+    const superAdmin = new User();
+    superAdmin.name = 'super-admin';
+    await this.db.save(superAdmin);
+  }
   //#endregion
+}
+//#endregion
 
-  // console.log({ portForBackend })
-  // console.log('Helpers.isElectron', Helpers.isElectron);
+//#region  firedev context
+const MainContext = Firedev.createContext(() => ({
+  host,
+  contextName: 'MainContext',
+  contexts: { BaseContext },
+  controllers: {
+    UserController,
+    // PUT FIREDEV CONTORLLERS HERE
+  },
+  entities: {
+    User,
+    // PUT FIREDEV ENTITIES HERE
+  },
+  database: true,
+  disabledRealtime: true,
+}));
+//#endregion
 
-  // await UserContext.initialize();
-  // await AppContext.initialize();
+async function start() {
+  await MainContext.initialize();
 
-  console.log('DONE');
-  // const s1 = Firedev.inject(SessionContext.controllers.SessionController);
-  // const s2 = Firedev.inject(UserContext.controllers.SessionController);
-  // console.log({ s1, s2 })
-  //#region @backend
-  process.stdin.resume();
-  //#endregion
+  if (Firedev.isBrowser) {
+    const users = (
+      await MainContext.getClassInstance(UserController).getAll().received
+    ).body?.json;
+    console.log({
+      'users from backend': users,
+    });
+  }
 }
 
 export default start;
-
-//#endregion

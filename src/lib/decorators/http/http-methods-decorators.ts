@@ -16,6 +16,7 @@ const metaReq = (
     options = pathOrOptions;
     pathOrOptions = options.path as any;
     pathIsGlobal = !!options.pathIsGlobal;
+    path = options.path;
   } else {
     options = { pathOrOptions, pathIsGlobal } as any;
   }

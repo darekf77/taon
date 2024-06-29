@@ -4,6 +4,7 @@ import { EndpointContext } from './endpoint-context';
 import { Models } from './models';
 import { FiredevAdmin } from './firedev-admin';
 import { ENV } from './env';
+
 // import { Symbols } from './symbols';
 // import { Firedev } from 'firedev/src';
 //#endregion
@@ -37,6 +38,7 @@ export const createContext = <
   const res = {
     //#region types
     types: {
+      //#region entites for
       // get entities() {
       //   return config.entities;
       // },
@@ -53,22 +55,10 @@ export const createContext = <
       //   }
       //   return entitiesCache[ctx.contextName] as typeof config.entities;
       // },
+      //#endregion
       get controllers() {
         return config.controllers;
       },
-      // controllesFor(classInstace?: BaseInjector) {
-      //   const ctx = classInstace.__endpoint_context__ || endpointContextRef;
-      //   if (!controllersCache[ctx.contextName]) {
-      //     controllersCache[ctx.contextName] = {};
-      //     for (const controllerName of Object.keys(config.controllers)) {
-      //       controllersCache[ctx.contextName][controllerName] =
-      //         config.controllers[controllerName][
-      //           Firedev.symbols.orignalClassClonesObj
-      //         ][ctx.contextName];
-      //     }
-      //   }
-      //   return controllersCache[ctx.contextName] as typeof config.controllers;
-      // },
       get repositories() {
         return config.repositories;
       },
@@ -92,7 +82,7 @@ export const createContext = <
     /**
      * - get reference to internal context
      */
-    async ref() {
+    async __ref() {
       if (!endpointContextRef.inited) {
         await endpointContextRef.init({
           initFromRecrusiveContextResovle: true,
@@ -100,15 +90,17 @@ export const createContext = <
       }
       return endpointContextRef;
     },
-    get refSync() {
+    get __refSync() {
       return endpointContextRef;
     },
-    get<T>(ctor:  new (...args: any[]) => T): new (...args: any[]) => T {
-      const classFun = endpointContextRef.getClassFunByClass(
-        ctor,
-      );
-      return classFun as any;
+    getClassInstance<T>(ctor: new (...args: any[]) => T): T {
+      return endpointContextRef.getInstanceBy(ctor);
+    },
 
+    getClass<T>(ctor: new (...args: any[]) => T): new (...args: any[]) => T {
+      const classFun = endpointContextRef.getClassFunByClass(ctor);
+      return classFun as any;
+      //#region old
       // TODO hmmmm for now context for controller inside api service
       // const allContexts = Object.values(classFun[Symbols.orignalClassClonesObj] || {}).map(classFn => {
       //   return {
@@ -120,6 +112,7 @@ export const createContext = <
       // debugger
       // console.log('activeContext', activeContext.ctx.contextName);
       // return activeContext.ctx.getClassFunByClass(ctor) as any;
+      //#endregion
     },
     //#endregion
     //#region initialize
