@@ -30,7 +30,7 @@ import { FiredevEntityOptions } from '../decorators/classes/entity-decorator';
 @FiredevController({ className: 'BaseCrudController' })
 export abstract class BaseCrudController<Entity> extends BaseController {
   //#region fields
-  public db?: BaseRepository<Entity>;
+  protected db?: BaseRepository<Entity>;
 
   /**
    * Please provide entity as class propery entityClassFn:

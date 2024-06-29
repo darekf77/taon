@@ -69,7 +69,6 @@ var MainContext = Firedev.createContext(()=>({
 async function start() {
   // Firedev.enableProductionMode();
 
-  c
   await MainContext.initialize();
   //#region @backend
   if (Firedev.isNode) {

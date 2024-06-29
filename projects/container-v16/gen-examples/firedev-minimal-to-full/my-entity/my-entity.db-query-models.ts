@@ -1,11 +1,21 @@
 //#region imports
 import type { MyEntity } from "./my-entity";
 import { _ } from 'tnp-core';
-import { MY_ENTITY_TABLE_NAME, DEF_MODEL_VALUE_MY_ENTITY } from "./my-entity.constants";
 //#region @websql
 import { NumberColumn, PropsEntitySQL, QueryTable, StringColumn } from "firedev-type-sql";
 //#endregion
 //#endregion
+
+export const MY_ENTITY_TABLE_NAME = _.snakeCase('myEntity').toUpperCase();
+
+export const MY_ENTITY_NON_COL_KEY_ARR = [
+  'ctrl',
+  'clone',
+] as MyEntityNonColumnsKeys[];
+
+export const DEF_MODEL_VALUE_MY_ENTITY: Omit<IMyEntity, MyEntityNonColumnsKeys> = {
+  description: 'MyEntity example description',
+}
 
 //#region my entity non columns key type
 export type MyEntityNonColumnsKeys =

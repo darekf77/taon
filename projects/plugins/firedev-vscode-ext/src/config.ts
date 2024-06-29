@@ -54,9 +54,60 @@ export const commands: CommandType[] = (
       },
     },
     //#endregion
-    //#region CODE GENERATOR
+    //#region GENERATE firedev minimal
     {
-      title: `${FRAMEWORK_NAME.toUpperCase()} CODE GENERATOR`,
+      title: `${FRAMEWORK_NAME.toUpperCase()} CODE GEN. firedev minimal`,
+      exec: `${FRAMEWORK_NAME} generate %absolutePath% firedev-minimal %entity%`,
+      options: {
+        title: 'generating firedev code',
+        showSuccessMessage: false,
+        resolveVariables: [
+          {
+            variable: 'entity',
+            placeholder: `my-entity`,
+            encode: true,
+          },
+        ],
+      },
+    },
+    //#endregion
+    //#region GENERATE firedev minimal
+    // {
+    //   title: `${FRAMEWORK_NAME.toUpperCase()} CODE GEN. firedev minimal=>full`,
+    //   exec: `${FRAMEWORK_NAME} generate %absolutePath% firedev-minimal-to-full %entity%`,
+    //   options: {
+    //     title: 'generating firedev code',
+    //     showSuccessMessage: false,
+    //     // resolveVariables: [
+    //     //   {
+    //     //     variable: 'entity',
+    //     //     placeholder: `my-entity`,
+    //     //     encode: true,
+    //     //   },
+    //     // ],
+    //   },
+    // },
+    //#endregion
+    //#region GENERATE firedev extended files
+    // {
+    //   title: `${FRAMEWORK_NAME.toUpperCase()} CODE GEN. firedev full`,
+    //   exec: `${FRAMEWORK_NAME} generate %absolutePath% firedev-full %entity%`,
+    //   options: {
+    //     title: 'generating firedev code',
+    //     showSuccessMessage: false,
+    //     resolveVariables: [
+    //       {
+    //         variable: 'entity',
+    //         placeholder: `my-entity`,
+    //         encode: true,
+    //       },
+    //     ],
+    //   },
+    // },
+    //#endregion
+    //#region CODE GEN.
+    {
+      title: `${FRAMEWORK_NAME.toUpperCase()} CODE GEN. - select -`,
       exec: `${FRAMEWORK_NAME} generate %absolutePath% %moduleName% %entity%`,
       //  exec: `tnp generate %absolutePath% %moduleName% %entity%`,
       options: {
@@ -65,10 +116,10 @@ export const commands: CommandType[] = (
           {
             variable: 'moduleName',
             options: [
-              {
-                option: 'app-extended_flat',
-                label: 'Generate extended app.* files for firedev app',
-              },
+              // {
+              //   option: 'app-extended_flat',
+              //   label: 'Generate extended app.* files for firedev app',
+              // },
               {
                 option: 'dummy-angular-standalone-component',
                 label: 'Generate dummy Angular component structure',
@@ -87,10 +138,10 @@ export const commands: CommandType[] = (
                 label:
                   'Generate dummy Angular lazy routing module/container structure',
               },
-              {
-                option: 'firedev-backend-frontend-module',
-                label: 'Generate Firedev backend/frontend module structure',
-              },
+              // {
+              //   option: 'firedev-backend-frontend-module',
+              //   label: 'Generate Firedev backend/frontend module structure',
+              // },
               {
                 option: 'ngrx-feature-container-module',
                 label: 'Generate NgRx container module structure',
@@ -105,11 +156,11 @@ export const commands: CommandType[] = (
               //   label: 'Generate in index.ts typescript exports from folders',
               //   skipNextVariableResolve: true
               // },
-              {
-                option: 'wrap-with-browser-regions_custom',
-                label: 'Wrap file with @browser regions',
-                skipNextVariableResolve: true,
-              },
+              // {
+              //   option: 'wrap-with-browser-regions_custom',
+              //   label: 'Wrap file with @browser regions',
+              //   skipNextVariableResolve: true,
+              // },
             ],
           },
           {

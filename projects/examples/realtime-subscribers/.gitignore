@@ -13,6 +13,7 @@ testem.log
 /typings
 app.hosts.ts
 /**/*._auto-generated_.ts
+/**/BUILD-INFO.md
 /linked-repos
 
 /tests-environments

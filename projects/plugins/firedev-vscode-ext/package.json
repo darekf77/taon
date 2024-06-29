@@ -83,8 +83,12 @@
         "title": "TNP OPEN CORE CONTAINER"
       },
       {
-        "command": "extension.tnpcodegenerator",
-        "title": "TNP CODE GENERATOR"
+        "command": "extension.tnpcodegenfiredevminimal",
+        "title": "TNP CODE GEN. firedev minimal"
+      },
+      {
+        "command": "extension.tnpcodegenselect",
+        "title": "TNP CODE GEN. - select -"
       }
     ],
     "menus": {
@@ -102,7 +106,10 @@
           "command": "extension.tnpopencorecontainer"
         },
         {
-          "command": "extension.tnpcodegenerator"
+          "command": "extension.tnpcodegenfiredevminimal"
+        },
+        {
+          "command": "extension.tnpcodegenselect"
         }
       ],
       "editor/title/context": [
@@ -123,7 +130,11 @@
           "group": "FIREDEV CLI essentials"
         },
         {
-          "command": "extension.tnpcodegenerator",
+          "command": "extension.tnpcodegenfiredevminimal",
+          "group": "FIREDEV CLI essentials"
+        },
+        {
+          "command": "extension.tnpcodegenselect",
           "group": "FIREDEV CLI essentials"
         }
       ]
