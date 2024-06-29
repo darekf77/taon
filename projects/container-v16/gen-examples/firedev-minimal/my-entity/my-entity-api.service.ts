@@ -11,7 +11,6 @@ export class MyEntityApiService {
   private myEntityController: MyEntityController = Firedev.inject(() => MyEntityContext.getClass(MyEntityController));
 
   get allMyEntity$(): Observable<MyEntity[]> {
-    // @ts-ignore
     return this.myEntityController.getAll().received.observable.pipe(
       map((res) => res.body?.json)
     )
