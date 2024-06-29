@@ -25,14 +25,14 @@ export class SessionController extends Firedev.Base.CrudController<Session> {
     console.log(this.adminController.helloWorldFromAdmin);
     console.log('userCustomRepo', this.userCustomRepo.amCustomRepository);
 
-    const session = new (SharedContext.types.entitiesFor(this).Session)();
+    const session = new (Session)();
     session.timeout = 3999;
-    await this.backend.create(session);
-    const session2 = new (SharedContext.types.entitiesFor(this).Session)();
+    await this.db.create(session);
+    const session2 = new (Session)();
     session2.timeout = 234;
     await this.sessionRepo.create(session2 as any);
 
-    const allSessions = await this.backend.getAll();
+    const allSessions = await this.db.getAll();
     console.log('All sessions', allSessions);
     //#endregion
   }

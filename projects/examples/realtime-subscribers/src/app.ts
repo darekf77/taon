@@ -61,7 +61,7 @@ export class RealtimeSubscribersComponent {
   providedIn: 'root',
 })
 export class UserApiService {
-  userControlller = Firedev.inject(() => MainContext.get(UserController));
+  userControlller = Firedev.inject(() => MainContext.getClass(UserController));
   getAll() {
     return this.userControlller
       .getAll()
@@ -152,7 +152,7 @@ async function start() {
   const eventsKey = 'eventsKey';
   (() => {
     //#region @browser
-    MainContext.refSync.realtimeClient
+    MainContext.__refSync.realtimeClient
       .listenChangesCustomEvent(eventsKey)
       .subscribe(event => {
         console.log('socket form backend111 ', event);
@@ -192,3 +192,4 @@ async function start() {
 }
 
 export default start;
+

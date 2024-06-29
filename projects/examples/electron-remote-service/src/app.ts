@@ -1,18 +1,20 @@
-//#region @notForNpm
 //#region imports
-import { Firedev } from 'firedev/src';
+import { Firedev, BaseContext } from 'firedev/src';
 import { Observable, map } from 'rxjs';
 import { HOST_BACKEND_PORT } from './app.hosts';
-import { Helpers } from 'tnp-helpers/src';
 //#region @browser
-import { NgModule } from '@angular/core';
+import { NgModule, inject, Injectable } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 //#endregion
 //#endregion
 
+console.log('hello world');
+console.log('Your server will start on port '+ HOST_BACKEND_PORT);
+const host = 'http://localhost:' + HOST_BACKEND_PORT;
+
+//#region electron-remote-service component
 //#region @browser
-//#region component
 @Component({
   selector: 'app-electron-remote-service',
   template: `hello from electron-remote-service<br>
@@ -24,83 +26,95 @@ import { CommonModule } from '@angular/common';
   `,
   styles: [` body { margin: 0px !important; } `],
 })
-export class ElectronRemoteServiceComponent implements OnInit {
-  users$: Observable<User[]> = User.ctrl.getAll().received.observable
-    .pipe(map(data => data.body.json));
-
-  constructor() { }
-  ngOnInit() { }
+export class ElectronRemoteServiceComponent {
+  userApiService = inject(UserApiService);
+  readonly users$: Observable<User[]> = this.userApiService.getAll();
 }
 //#endregion
+//#endregion
 
-//#region module
+//#region  electron-remote-service api service
+//#region @browser
+@Injectable({
+  providedIn:'root'
+})
+export class UserApiService {
+  userControlller = Firedev.inject(()=> MainContext.getClass(UserController))
+  getAll() {
+    return this.userControlller.getAll()
+      .received
+      .observable
+      .pipe(map(r => r.body.json));
+  }
+}
+//#endregion
+//#endregion
+
+//#region  electron-remote-service module
+//#region @browser
 @NgModule({
-  imports: [CommonModule],
   exports: [ElectronRemoteServiceComponent],
+  imports: [CommonModule],
   declarations: [ElectronRemoteServiceComponent],
-  providers: [],
 })
 export class ElectronRemoteServiceModule { }
 //#endregion
-
 //#endregion
 
-//#region user entity
+//#region  electron-remote-service entity
 @Firedev.Entity({ className: 'User' })
-class User extends Firedev.Base.Entity {
-  public static ctrl = Firedev.inject(() => UserContext.types.controllers.UserController);
+class User extends Firedev.Base.AbstractEntity {
+  public static ctrl?: UserController;
   //#region @websql
-  @Firedev.Orm.Column.Generated()
+  @Firedev.Orm.Column.String()
   //#endregion
-  id?: string | number;
+  name?: string;
 }
 //#endregion
 
-//#region user controller
+//#region  electron-remote-service controller
 @Firedev.Controller({ className: 'UserController' })
 class UserController extends Firedev.Base.CrudController<User> {
-  entity = () => UserContext.types.entities.User;
-
+  entityClassResolveFn = ()=> User;
   //#region @websql
   async initExampleDbData(): Promise<void> {
-    const userToSave = new UserContext.types.entities.User();
-    await this.repository.save(userToSave);
+    const superAdmin = new User();
+    superAdmin.name = 'super-admin';
+    await this.db.save(superAdmin);
   }
   //#endregion
 }
 //#endregion
 
-//#region user context
-const UserContext = Firedev.createContext({
-  contextName: 'UserContext',
-  host: 'http://localhost:' + HOST_BACKEND_PORT,
+//#region  electron-remote-service context
+const MainContext = Firedev.createContext(()=>({
+  host,
+  contextName: 'MainContext',
+  contexts:{ BaseContext },
   controllers: {
     UserController,
+    // PUT FIREDEV CONTORLLERS HERE
   },
   entities: {
     User,
-  },
-  repositories: {
-    [Firedev.Base.Repository.name]: Firedev.Base.Repository
+    // PUT FIREDEV ENTITIES HERE
   },
   database: true,
-});
+  disabledRealtime: true,
+}));
 //#endregion
 
 async function start() {
-  await Helpers.killProcessByPort(HOST_BACKEND_PORT);
-  await Helpers.killProcessByPort(HOST_BACKEND_PORT + 1);
 
-  await UserContext.initialize();
-  // if (Firedev.isBrowser) {
-  //   console.log('User.ctrl', User.ctrl);
-  //   const response = await User.ctrl.getAll().received;
-  //   const users = response?.body?.json;
-  //   console.log({
-  //     'users from backend': users
-  //   })
-  // }
+  await MainContext.initialize();
+
+  if (Firedev.isBrowser) {
+    const users = (await MainContext.getClassInstance(UserController).getAll().received)
+      .body?.json;
+    console.log({
+      'users from backend': users,
+    });
+  }
 }
 
 export default start;
-//#endregion

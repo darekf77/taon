@@ -5,7 +5,7 @@ import { User } from './user';
   className: 'UserRepository',
 })
 export class UserRepository extends Firedev.Base.Repository<User> {
-  entityClassResolveFn: () => User;
+  entityClassResolveFn = () => User;
   amCustomRepository = 'testingisnoin';
   async findByEmail(email: string) {
     //#region @websqlFunc

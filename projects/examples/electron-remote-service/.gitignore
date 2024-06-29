@@ -12,6 +12,8 @@ yarn-error.log
 testem.log
 /typings
 app.hosts.ts
+/**/*._auto-generated_.ts
+/**/BUILD-INFO.md
 /linked-repos
 
 /tests-environments
@@ -48,9 +50,6 @@ Thumbs.db
 /tsconfig.browser.json
 /tsconfig.json
 /tsconfig.backend.dist.json
-/.npmrc
-/tslint.json
-/.editorconfig
 /index.js
 /index.d.ts
 /index.js.map
@@ -64,11 +63,9 @@ Thumbs.db
 /tsconfig.json.filetemplate
 /tsconfig.backend.dist.json.filetemplate
 /tsconfig.backend.dist.json
-
-
-
-
 # =====================
+!firedev.json
+!firedev.jsonc
 *.filetemplate
 
 

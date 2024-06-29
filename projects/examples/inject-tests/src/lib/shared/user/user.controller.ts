@@ -15,13 +15,13 @@ export class UserController extends Firedev.Base.CrudController<User> {
   async initExampleDbData(): Promise<any> {
     //#region @websqlFunc
 
-    const admin = new (SharedContext.types.entitiesFor(this).User)();
+    const admin = new User();
     admin.name = 'admin';
     admin.email = 'admin@admin.pl';
     admin.password = 'admin';
     admin.theme = 'light';
 
-    const user = new (SharedContext.types.entitiesFor(this).User)();
+    const user = new User();
     user.name = 'test';
     user.email = 'test@test.pl';
     user.password = 'test';

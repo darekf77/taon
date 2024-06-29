@@ -117,8 +117,7 @@ async function start() {
   await Context.initialize();
 
   if (Firedev.isBrowser) {
-    const ref = await Context.ref();
-    const users = (await ref.getInstanceBy(UserController).getAll().received)
+    const users = (await Context.getClassInstance(UserController).getAll().received)
       .body?.json;
     console.log({
       'users from backend': users,
