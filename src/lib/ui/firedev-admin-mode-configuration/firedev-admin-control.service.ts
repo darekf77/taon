@@ -5,7 +5,7 @@ import {
   TemplateRef,
   inject,
 } from '@angular/core';
-import type { FiredevAdmin } from './firedev-admin';
+import type { FiredevAdmin } from './firedev-admin.service';
 import type { FiredevAdminModeConfigurationComponent } from './firedev-admin-mode-configuration.component';
 
 @Injectable({ providedIn: 'root' })

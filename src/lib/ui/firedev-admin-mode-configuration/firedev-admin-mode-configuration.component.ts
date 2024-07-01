@@ -13,7 +13,7 @@ import {
   inject,
 } from '@angular/core';
 import { Helpers, _ } from 'tnp-core/src';
-import { FiredevAdmin } from './firedev-admin';
+import { FiredevAdmin } from './firedev-admin.service';
 import { Stor } from 'firedev-storage/src';
 import {
   CdkDrag,
@@ -24,8 +24,6 @@ import {
 } from '@angular/cdk/drag-drop';
 import { BreakpointsService } from 'static-columns/src';
 import { Subject, takeUntil, tap } from 'rxjs';
-import { createCustomElement } from '@angular/elements';
-import { FiredevFileComponent } from '../firedev-file/firedev-file.component';
 import { FiredevAdminModeTab } from './models/firedev-admin-mode-tabs';
 import { FiredevAdminService } from './firedev-admin-control.service';
 
