@@ -1,14 +1,16 @@
 //#region import
 import { Stor } from 'firedev-storage/src';
-import { _ } from 'tnp-core/src';
+import { Helpers, _ } from 'tnp-core/src';
 import { Subject, take, takeUntil, tap } from 'rxjs';
-import { Helpers } from 'tnp-core/src';
+import type { FiredevAdminModeConfigurationComponent } from './firedev-admin-mode-configuration.component';
+import { globalPublicStorage } from '../../storage';
 import { config } from 'tnp-config/src';
-import { globalPublicStorage } from './storage';
+import { Injectable } from '@angular/core';
 //#endregion
 
 const ENV = Helpers.isBrowser ? window['ENV'] : global['ENV'];
 
+@Injectable({ providedIn: 'root' })
 export class FiredevAdmin {
   public scrollableEnabled = false; // TOOD @LAST false by default
 
@@ -17,7 +19,6 @@ export class FiredevAdmin {
     // Private constructor ensures the class cannot be instantiated from outside
     this.scrollableEnabled = !!ENV?.useGlobalNgxScrollbar;
   }
-
   public static get Instance(): FiredevAdmin {
     if (!globalPublicStorage[config.frameworkNames.firedev]) {
       globalPublicStorage[config.frameworkNames.firedev] = new FiredevAdmin();
@@ -26,21 +27,10 @@ export class FiredevAdmin {
   }
   //#endregion
 
-  //#region @browser
-  enabledTabs = [];
-
+  //#region fields & getters
+  public cmp: FiredevAdminModeConfigurationComponent;
   private onEditMode = new Subject();
   onEditMode$ = this.onEditMode.asObservable();
-
-  @Stor.property.in.localstorage.for(FiredevAdmin).withDefaultValue('')
-  selectedFileSrc: string;
-
-  //#region fields & getters / files edit mode
-  /**
-   * Enable edit mode for each element on page
-   */
-  @Stor.property.in.localstorage.for(FiredevAdmin).withDefaultValue(false)
-  public filesEditMode: boolean;
   //#endregion
 
   //#region fields & getters / popup is open
@@ -58,12 +48,27 @@ export class FiredevAdmin {
   public draggablePopupModeFullScreen: boolean;
   //#endregion
 
-  //#region methods / set edit mode
+  //#region fields & getters / kepp websql database data after reload
+  /**
+   * Property used in firedev
+   */
+  @Stor.property.in.localstorage.for(FiredevAdmin).withDefaultValue(false)
+  public keepWebsqlDbDataAfterReload: boolean;
+  //#endregion
+
+  //#region methods
   setEditMode(value: boolean) {
-    this.filesEditMode = value;
     this.onEditMode.next(value);
   }
-  //#endregion
+
+  setKeepWebsqlDbDataAfterReload(value: boolean) {
+    // if (value && !this.keepWebsqlDbDataAfterReload) {
+    //   this.firstTimeKeepWebsqlDbDataTrue = true;
+    // }
+    this.keepWebsqlDbDataAfterReload = value;
+  }
+
+  enabledTabs = [];
 
   hide() {
     this.draggablePopupMode = false;
@@ -74,24 +79,7 @@ export class FiredevAdmin {
     this.draggablePopupMode = false;
     this.adminPanelIsOpen = true;
   }
-  //#endregion
 
-  //#region  kepp websql database data after reload
-  /**
-   * Property used in firedev
-   */
-  //#region @browser
-  @Stor.property.in.localstorage.for(FiredevAdmin).withDefaultValue(false)
-  //#endregion
-  public keepWebsqlDbDataAfterReload: boolean;
-  //#endregion
-
-  //#region set keep websql db data after reload
-  setKeepWebsqlDbDataAfterReload(value: boolean) {
-    // if (value && !this.keepWebsqlDbDataAfterReload) {
-    //   this.firstTimeKeepWebsqlDbDataTrue = true;
-    // }
-    this.keepWebsqlDbDataAfterReload = value;
-  }
+  logout() {}
   //#endregion
 }

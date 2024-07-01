@@ -1,0 +1,15 @@
+@mixin section {
+  section {
+    display: block;
+    padding: 10px;
+
+    > * {
+      margin-top: 0px !important;
+      margin-bottom: 10px !important;
+
+      &:last-child {
+        margin-bottom: 0px !important;
+      }
+    }
+  }
+}

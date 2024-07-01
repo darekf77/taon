@@ -2,8 +2,11 @@
 import { Helpers } from 'tnp-core/src';
 import { EndpointContext } from './endpoint-context';
 import { Models } from './models';
-import { FiredevAdmin } from './firedev-admin';
+
 import { ENV } from './env';
+//#region @browser
+import { FiredevAdmin } from './ui/firedev-admin-mode-configuration/firedev-admin.service';
+//#endregion
 
 // import { Symbols } from './symbols';
 // import { Firedev } from 'firedev/src';
@@ -137,10 +140,12 @@ export const createContext = <
           //#endregion
 
           await endpointContextRef.initClasses();
-          if (
-            FiredevAdmin.Instance.keepWebsqlDbDataAfterReload &&
-            !Helpers.isNode
-          ) {
+          let keepWebsqlDbDataAfterReload = false;
+          //#region @browser
+          keepWebsqlDbDataAfterReload =
+            FiredevAdmin.Instance.keepWebsqlDbDataAfterReload;
+          //#endregion
+          if (!Helpers.isNode && keepWebsqlDbDataAfterReload) {
             Helpers.info(`[firedev] Keep websql data after reload`);
           } else {
             await endpointContextRef.reinitControllers();

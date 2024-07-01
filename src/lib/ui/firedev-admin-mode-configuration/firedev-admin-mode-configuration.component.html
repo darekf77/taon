@@ -1,0 +1,289 @@
+<!-- #region basic global components  -->
+<firedev-session-passcode
+  *ngIf="showPasscode"
+  [passcode]="passcode"
+  [message]="message" />
+<firedev-progress-bar [isDesktop]="isDesktop"></firedev-progress-bar>
+<firedev-notifications></firedev-notifications>
+<button
+  mat-fab
+  class="fab-button"
+  color="accent"
+  aria-label="Firedev Admin Mode"
+  *ngIf="
+    !admin.draggablePopupMode &&
+    isDesktop &&
+    !isIframe &&
+    !hideFiredevToolsInProduction
+  "
+  (click)="toogle()">
+  <mat-icon>build</mat-icon>
+</button>
+<!-- #endregion -->
+
+<!-- #region small hidden button -->
+<!-- <button class="admin-show-button"
+        *ngIf="!admin.draggablePopupMode && isDesktop"
+        (click)="toogle()"> Admin </button> -->
+<!-- #endregion -->
+
+<ng-template #contentNoScroll>
+  <ng-content> </ng-content>
+</ng-template>
+
+<ng-template #content>
+  <ng-scrollbar>
+    <ng-container [ngTemplateOutlet]="contentNoScroll"></ng-container>
+  </ng-scrollbar>
+</ng-template>
+
+<!-- #region admin tabs -->
+<ng-template #adminTabs>
+  <div class="firedev-header-admin-wrapper">
+    <columns-container
+      class="firedev-header-admin"
+      [ngClass]="{ 'draggable-column': admin.draggablePopupMode }">
+      <column width="200" class="logo-header">
+        <img
+          *ngIf="openedOnce"
+          src="/src/assets/shared/logo-header-admin-mode.png" />
+      </column>
+
+      <column grow>
+        <!-- <span>Super Admin Mode</span> -->
+      </column>
+
+      <column
+        width="40"
+        *ngIf="
+          !admin.draggablePopupModeFullScreen && !admin.draggablePopupMode
+        ">
+        <button
+          mat-icon-button
+          *ngIf="admin.draggablePopupMode"
+          (click)="
+            admin.draggablePopupMode = false;
+            opened = false;
+            wasOpenDraggablePopup = true
+          "
+          class="admin-close-button">
+          <mat-icon>close </mat-icon>
+        </button>
+
+        <button
+          mat-icon-button
+          *ngIf="!admin.draggablePopupMode"
+          (click)="toogle()"
+          class="admin-close-button">
+          <mat-icon>close</mat-icon>
+        </button>
+      </column>
+
+      <column width="40">
+        <button
+          mat-icon-button
+          *ngIf="!admin.draggablePopupModeFullScreen"
+          class="admin-close-button"
+          (click)="toogleFullScreen()">
+          <mat-icon>fullscreen</mat-icon>
+        </button>
+        <button
+          mat-icon-button
+          *ngIf="admin.draggablePopupModeFullScreen"
+          class="admin-close-button"
+          (click)="toogleFullScreen()">
+          <mat-icon>close_fullscreen</mat-icon>
+        </button>
+      </column>
+
+      <column width="40" *ngIf="!admin.draggablePopupModeFullScreen">
+        <button
+          mat-icon-button
+          *ngIf="!admin.draggablePopupMode"
+          (click)="admin.draggablePopupMode = true"
+          class="admin-close-button">
+          <mat-icon>launch</mat-icon>
+        </button>
+
+        <button
+          mat-icon-button
+          *ngIf="admin.draggablePopupMode"
+          (click)="admin.draggablePopupMode = false; resetDrag()"
+          class="admin-close-button">
+          <mat-icon style="transform: rotate(180deg)">login</mat-icon>
+        </button>
+      </column>
+    </columns-container>
+  </div>
+
+  <columns-container
+    [ngClass]="{ 'draggable-column': admin.draggablePopupMode }">
+    <column grow>
+      <mat-tab-group
+        dynamicHeight
+        (wheel)="scrollTabs($event)"
+        #tabGroup
+        [selectedIndex]="selectedIndex"
+        (selectedIndexChange)="selectedIndex = $event">
+        <mat-tab label="DB/Cache">
+          <section>
+            <mat-card>
+              <mat-card-header>
+                <mat-card-subtitle>WEBSQL MODE</mat-card-subtitle>
+              </mat-card-header>
+              <mat-card-content>
+                <mat-checkbox
+                  [disabled]="!isWebSQLMode"
+                  [ngModel]="admin.keepWebsqlDbDataAfterReload"
+                  (change)="
+                    admin.setKeepWebsqlDbDataAfterReload($event.checked)
+                  ">
+                  Don't remove data when reloading
+                </mat-checkbox>
+              </mat-card-content>
+            </mat-card>
+          </section>
+          <br />
+          <firedev-db-admin />
+        </mat-tab>
+
+        <mat-tab label="Files" *ngIf="admin.enabledTabs.includes('files')">
+          <section>
+            <mat-checkbox
+              [ngModel]="admin.filesEditMode"
+              (change)="admin.setEditMode($event.checked)"
+              >Edit mode</mat-checkbox
+            >
+          </section>
+          <!-- admin.filesEditMode: {{ admin.filesEditMode }} -->
+          <firedev-admin-edit-mode *ngIf="admin.filesEditMode">
+          </firedev-admin-edit-mode>
+          <br />
+          <hr *ngIf="admin.filesEditMode" />
+          <!-- <section>
+            <button mat-raised-button>[TODO] Clear Files from browser cache </button> <br>
+            <button mat-raised-button>[TODO] Start files export (as zip) </button> <br>
+            <button mat-raised-button>[TODO] Import whole database (from zip) </button><br>
+          </section> -->
+        </mat-tab>
+        <mat-tab *ngFor="let tab of tabs" label="{{ tab.name }}">
+          <div
+            class="full-tabs"
+            [style.height.px]="height - 150"
+            *ngIf="!isIframe">
+            <ng-container *ngTemplateOutlet="tab.template"></ng-container>
+          </div>
+          <ng-container *ngIf="isIframe">
+            <ng-container *ngTemplateOutlet="tab.template"></ng-container>
+          </ng-container>
+        </mat-tab>
+
+        <!-- <mat-tab label="Portal">
+          <section>
+            <mat-checkbox>[TODO] Maintenance Mode for whole portal</mat-checkbox>
+
+            <mat-expansion-panel>
+
+              <mat-expansion-panel-header>
+                [TODO] Active User: 80432
+              </mat-expansion-panel-header>
+              <section>
+                <button mat-raised-button>[TODO] Send notification to users </button><br>
+                <button mat-raised-button>[TODO] Send email to users </button><br>
+              </section>
+            </mat-expansion-panel>
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                [TODO] Enable features
+              </mat-expansion-panel-header>
+              <mat-checkbox>[TODO] AB testing</mat-checkbox> <br>
+              <mat-checkbox>
+                [TODO] Newsletter email question popup
+              </mat-checkbox> <br>
+              <mat-checkbox>
+                [TODO] Promotion popup
+              </mat-checkbox> <br>
+            </mat-expansion-panel>
+          </section>
+        </mat-tab>
+        <mat-tab label="User">
+          Welcome in user managements
+        </mat-tab>
+        <mat-tab label="Translations">
+          Welcome in user managements
+        </mat-tab> -->
+      </mat-tab-group>
+    </column>
+  </columns-container>
+</ng-template>
+<!-- #endregion -->
+
+<!-- #region small/mobile draggable popup windows -->
+<div
+  class="draggable-popup-mode-window"
+  *ngIf="
+    admin.draggablePopupMode && !admin.draggablePopupModeFullScreen && !isIframe
+  "
+  cdkDrag
+  [cdkDragFreeDragPosition]="dragPosition"
+  (cdkDragEnded)="moved($event)">
+  <ng-scrollbar>
+    <ng-container [ngTemplateOutlet]="adminTabs"></ng-container>
+  </ng-scrollbar>
+</div>
+<!-- #endregion -->
+
+<!-- #region fullscreen draggable popup window -->
+<div
+  class="draggable-popup-mode-window-full"
+  *ngIf="
+    admin.draggablePopupMode &&
+    admin.draggablePopupModeFullScreen &&
+    !isIframe &&
+    !reloading
+  "
+  cdkDrag
+  [cdkDragFreeDragPosition]="dragPositionZero">
+  <ng-container [ngTemplateOutlet]="adminTabs"></ng-container>
+</div>
+<!-- #endregion -->
+
+<!-- #region content when not in draggable (or fullscreen draggable) popup -->
+<div
+  [style.height.px]="height"
+  *ngIf="
+    (isIframe ||
+      !isDesktop ||
+      admin.draggablePopupMode ||
+      admin.draggablePopupModeFullScreen) &&
+    !reloading
+  "
+  style="width: 100%; display: block"
+  class="content">
+  <ng-container
+    [ngTemplateOutlet]="
+      admin.scrollableEnabled ? content : contentNoScroll
+    "></ng-container>
+</div>
+<!-- #endregion -->
+
+<!-- #region draggable popup window -->
+<mat-drawer-container
+  *ngIf="!admin.draggablePopupMode && isDesktop && !isIframe"
+  class="example-container"
+  [style.height.px]="height"
+  style="background-color: transparent"
+  (backdropClick)="opened = false"
+  [hasBackdrop]="false">
+  <mat-drawer #drawer style="width: 580px" [opened]="opened" [mode]="'side'">
+    <ng-container [ngTemplateOutlet]="adminTabs"></ng-container>
+  </mat-drawer>
+  <mat-drawer-content style="overflow: hidden">
+    <ng-container
+      *ngIf="!admin.draggablePopupMode && !reloading"
+      [ngTemplateOutlet]="
+        admin.scrollableEnabled ? content : contentNoScroll
+      "></ng-container>
+  </mat-drawer-content>
+</mat-drawer-container>
+<!-- #endregion -->

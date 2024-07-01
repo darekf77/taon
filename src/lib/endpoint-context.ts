@@ -22,7 +22,9 @@ import { getResponseValue } from './get-response-value';
 import type { Application } from 'express';
 import axios from 'axios';
 import type { NgZone } from '@angular/core';
-import { FiredevAdmin } from './firedev-admin';
+//#region @browser
+import { FiredevAdmin } from './ui/firedev-admin-mode-configuration/firedev-admin.service';
+//#endregion
 import {
   DataSource,
   DataSourceOptions,
@@ -424,7 +426,8 @@ export class EndpointContext {
     if (!this.config.abstract) {
       this.disabledRealtime = !!this.config.disabledRealtime;
       //#region @backend
-      if (Helpers.isRunningIn.cliMode()) { // TODO for now...
+      if (Helpers.isRunningIn.cliMode()) {
+        // TODO for now...
         this.disabledRealtime = true;
       }
       //#endregion
@@ -511,7 +514,13 @@ export class EndpointContext {
             logging: this.logDb,
           };
 
-          if (FiredevAdmin.Instance.keepWebsqlDbDataAfterReload) {
+          let keepWebsqlDbDataAfterReload = false;
+          //#region @browser
+          keepWebsqlDbDataAfterReload =
+            FiredevAdmin.Instance.keepWebsqlDbDataAfterReload;
+          //#endregion
+
+          if (keepWebsqlDbDataAfterReload) {
             databaseConfig.dropSchema = false;
             delete databaseConfig.synchronize; // false is not auto synchonize - from what I understand
           } else {

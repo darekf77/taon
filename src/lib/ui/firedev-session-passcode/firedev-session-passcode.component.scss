@@ -1,0 +1,50 @@
+:host {
+  position: fixed;
+  background-color: rgb(159 159 159 / 34%);
+  z-index: 99999;
+  backdrop-filter: blur(50px);
+  width: 100%;
+  height: 100%;
+  // box-sizing      : border-box;
+  display: none;
+}
+
+// @font-face {
+//   font-family: "Geist Mono";
+//   src        : url("https://assets.codepen.io/605876/GeistMonoVariableVF.ttf") format("truetype");
+// }
+
+input {
+  // font-family      : "Geist Mono", monospace;
+  // font-size: 1.75rem;
+  // letter-spacing: 0.2ch;
+  // border-radius: 6px;
+  // color: var(--color-alpha);
+  // border-color: var(--color-alpha);
+  // border-style: solid;
+  // background: var(--input-bg);
+  // outline: none;
+  // transition: border-color 0.2s, color 0.2s
+
+  background: rgb(255, 255, 255);
+  border-radius: 6px;
+  outline: 0px;
+  border: 0px;
+  color: gray;
+  text-align: center;
+  width: 500px;
+
+  // &::placeholder {
+  //   font-style: italic;
+  //   color     : gray;
+  //   opacity   : 0.7;
+  // }
+}
+
+// div {
+//   p {
+//     background-color: rgba(247, 247, 247, 0.34);
+//     backdrop-filter : blur(10px);
+//   }
+
+// }
