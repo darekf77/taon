@@ -41,11 +41,7 @@
 (for windows only git bash supported https://gitforwindows.org)
 
 
-2. Increased memory limit:
-```
-export NODE_OPTIONS=--max_old_space_size=4096
-```
-3. (linux only) Increased watchers limit:
+2. (linux only) Increased watchers limit:
 ```
 echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 ```
