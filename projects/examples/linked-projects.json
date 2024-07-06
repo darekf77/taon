@@ -15,5 +15,9 @@
     deafultBranch: "master",
     relativeClonePath: "realtime-subscribers",
     repoUrl: "https://github.com/darekf77/realtime-subscribers.git",
+  }, {
+    deafultBranch: "master",
+    relativeClonePath: "subscriber-inject",
+    repoUrl: "https://github.com/darekf77/subscriber-inject.git",
   }]
 }
