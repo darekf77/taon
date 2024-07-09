@@ -35,7 +35,9 @@ import type { Server } from 'http';
 import { ENV } from './env';
 import type { BaseClass } from './base-classes/base-class';
 import { RealtimeCore } from './realtime/realtime-core';
+import { FiredevSubscriberOptions } from './decorators/classes/subscriber-decorator';
 //#region @websql
+import { EventSubscriber } from 'firedev-typeorm/src';
 import type {
   TransactionRollbackEvent,
   TransactionCommitEvent,
@@ -891,8 +893,22 @@ export class EndpointContext {
   }
   //#endregion
 
+  checkIfContextInitialized() {
+    if (_.isUndefined(this.config)) {
+      throw new Error(`Please check if your context has been initilized.
+
+      // ...
+      await Context.initialize();
+      // ...
+
+
+      `);
+    }
+  }
+
   //#region methods & getters / get class function by class type name
   getClassFunBy(classType: Models.ClassType) {
+    this.checkIfContextInitialized();
     switch (classType) {
       case Models.ClassType.CONTROLLER:
         return this.config.controllers;
@@ -902,6 +918,8 @@ export class EndpointContext {
         return this.config.providers;
       case Models.ClassType.REPOSITORY:
         return this.config.repositories;
+      case Models.ClassType.SUBSCRIBER:
+        return this.config.subscribers;
     }
   }
 
@@ -1101,9 +1119,27 @@ export class EndpointContext {
 
   //#region methods & getters / init subscribers
   async initSubscribers() {
+    //#region @websqlFunc
     if (!this.connection?.initialize) {
       return;
     }
+    const subscribers = this.getClassFunByArr(Models.ClassType.SUBSCRIBER);
+    for (const subscriber of subscribers) {
+      const options = Reflect.getMetadata(
+        Symbols.metadata.options.subscriber,
+        subscriber,
+      ) as FiredevSubscriberOptions;
+
+      // const nameForSubscriber = ClassHelpers.getName(subscriber);
+      EventSubscriber()(subscriber);
+    }
+
+    console.log(this.config.subscribers);
+
+    // this.connection.subscribers.push(sub as any);
+
+    return;
+    //#endregion
     //#region @websql
     const entities = this.getClassFunByArr(Models.ClassType.ENTITY);
     for (let index = 0; index < entities.length; index++) {
@@ -1278,6 +1314,10 @@ export class EndpointContext {
       return ClassHelpers.getOrginalClass(entityFn);
     });
 
+    const subscribers = this.config.override?.subscribers
+      ? this.config.override.subscribers
+      : this.getClassFunByArr(Models.ClassType.SUBSCRIBER);
+
     const dataSourceDbConfig = _.isObject(this.databaseConfig)
       ? ({
           type: this.databaseConfig.type,
@@ -1288,6 +1328,7 @@ export class EndpointContext {
           password: this.databaseConfig.databasePassword,
           useLocalForage: this.databaseConfig.useLocalForage,
           entities,
+          subscribers,
           synchronize: this.databaseConfig.synchronize,
           autoSave: this.databaseConfig.autoSave,
           dropSchema: this.databaseConfig.dropSchema,
@@ -1296,7 +1337,8 @@ export class EndpointContext {
         } as DataSourceOptions)
       : ({} as DataSourceOptions);
 
-    // console.log(`[${this.contextName}]dataSourceDbConfig`, dataSourceDbConfig);
+    debugger;
+    console.log(`[${this.contextName}]dataSourceDbConfig`, dataSourceDbConfig);
 
     if (this.modeAllowsDatabaseCreation && this.databaseConfig) {
       this.logDb &&

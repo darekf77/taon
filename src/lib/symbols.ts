@@ -64,6 +64,7 @@ export namespace Symbols {
       entity: `entity:options`,
       repository: `repository:options`,
       provider: `provider:options`,
+      subscriber: `subscriber:options`,
     },
   };
 

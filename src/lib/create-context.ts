@@ -131,8 +131,13 @@ export const createContext = <
             throw new Error(`Abstract context can not be initialized`);
           }
           await endpointContextRef.initEntities();
-          await endpointContextRef.initDatabaseConnection();
           await endpointContextRef.initSubscribers();
+          await endpointContextRef.initDatabaseConnection();
+          // console.log(
+          //   'connection subscribers',
+          //   endpointContextRef?.connection?.subscribers,
+          // );
+          // debugger;
           endpointContextRef.initMetadata();
           endpointContextRef.startServer();
           //#region @websql

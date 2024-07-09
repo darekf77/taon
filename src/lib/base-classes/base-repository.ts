@@ -126,7 +126,7 @@ export abstract class BaseRepository<
 
   //#region init
 
-  async __init(context?:any) {
+  async __init(context?: any) {
     //#region @websql
     if (this.__repository) {
       return;
@@ -141,6 +141,9 @@ export abstract class BaseRepository<
       return;
     }
     const ctx: EndpointContext = this.__endpoint_context__;
+    if (ctx.remoteHost) {
+      return;
+    }
     const connection = ctx.connection;
 
     if (!connection) {

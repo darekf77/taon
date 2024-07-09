@@ -5,6 +5,7 @@ import * as controllerDecorator from './decorators/classes/controller-decorator'
 import * as entityDecorator from './decorators/classes/entity-decorator';
 import * as providerDecorator from './decorators/classes/provider-decorator';
 import * as repositoryDecorator from './decorators/classes/repository-decorator';
+import * as subscriberDecorator from './decorators/classes/subscriber-decorator';
 import * as createContextFn from './create-context';
 import * as orm from './orm';
 import * as models from './models';
@@ -21,6 +22,7 @@ import { NgZone } from '@angular/core';
 export { BaseRepository } from './base-classes/base-repository';
 export { BaseController } from './base-classes/base-controller';
 export { BaseProvider } from './base-classes/base-provider';
+export { BaseSubscriber } from './base-classes/base-subscriber';
 export { BaseEntity } from './base-classes/base-entity';
 export { BaseContext } from './base-classes/base-context';
 export { createContext } from './create-context';
@@ -43,6 +45,7 @@ export namespace Firedev {
   export import Entity = entityDecorator.FiredevEntity;
   export import Provider = providerDecorator.FiredevProvider;
   export import Repository = repositoryDecorator.FiredevRepository;
+  export import Subscriber = subscriberDecorator.FiredevSubscriber;
   //#endregion
   //#region aliases to helpers
   /**

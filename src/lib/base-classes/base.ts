@@ -6,7 +6,7 @@ import * as repository from './base-repository';
 import * as provider from './base-provider';
 import * as baseclass from './base-class';
 import * as baseContext from './base-context';
-
+import * as baseSubscriber from './base-subscriber';
 export namespace Base {
   export import Controller = controller.BaseController;
   export import CrudController = crudController.BaseCrudController;
@@ -15,5 +15,6 @@ export namespace Base {
   export import Provider = provider.BaseProvider;
   export import Class = baseclass.BaseClass;
   export import Repository = repository.BaseRepository;
+  export import Subscriber = baseSubscriber.BaseSubscriber;
   export const Context = baseContext.BaseContext;
 }
