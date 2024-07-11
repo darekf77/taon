@@ -12,7 +12,7 @@ const ENV = Helpers.isBrowser ? window['ENV'] : global['ENV'];
 
 @Injectable({ providedIn: 'root' })
 export class FiredevAdmin {
-  public scrollableEnabled = false; // TOOD @LAST false by default
+  public scrollableEnabled = false; // TOOD false by default
 
   //#region singleton
   private constructor() {

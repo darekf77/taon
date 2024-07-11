@@ -49,14 +49,17 @@ export class RealtimeClient {
       path: nspPath.global.pathname,
     });
 
-    this.core.FE.on('connect', () => {
-      // console.info(
-      //   `[CLIENT] conented to GLOBAL namespace ${global.nsp} of host: ${context.host}`,
-      // );
-      console.info(
-        `[CLIENT] conented to GLOBAL namespace ${this.core.FE.id} of host: ${this.core.ctx.host}`,
-      );
-    });
+    if (this.core.FE.on) {
+      this.core.FE.on('connect', () => {
+        // console.info(
+        //   `[CLIENT] conented to GLOBAL namespace ${global.nsp} of host: ${context.host}`,
+        // );
+        console.info(
+          `[CLIENT] conented to GLOBAL namespace ${this.core.FE.id} of host: ${this.core.ctx.host}`,
+        );
+      });
+    }
+
     //#endregion
 
     //#region prepare realtime FE socket
@@ -64,17 +67,18 @@ export class RealtimeClient {
       path: nspPath.realtime.pathname,
     });
 
-    this.core.FE_REALTIME.on('connect', () => {
-      // console.info(
-      //   `[CLIENT] conented to REALTIME namespace ${realtime.nsp} host: ${context.host}`,
-      // );
-      console.info(
-        `[CLIENT] conented to REALTIME namespace ${this.core.FE_REALTIME.id} host: ${this.core.ctx.host}`,
-      );
-    });
+    if (this.core.FE_REALTIME.on) {
+      this.core.FE_REALTIME.on('connect', () => {
+        // console.info(
+        //   `[CLIENT] conented to REALTIME namespace ${realtime.nsp} host: ${context.host}`,
+        // );
+        console.info(
+          `[CLIENT] conented to REALTIME namespace ${this.core.FE_REALTIME.id} host: ${this.core.ctx.host}`,
+        );
+      });
+    }
+
     //#endregion
-
-
   }
   //#endregion
 

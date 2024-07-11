@@ -1337,8 +1337,8 @@ export class EndpointContext {
         } as DataSourceOptions)
       : ({} as DataSourceOptions);
 
-    debugger;
-    console.log(`[${this.contextName}]dataSourceDbConfig`, dataSourceDbConfig);
+    // debugger;
+    // console.log(`[${this.contextName}]dataSourceDbConfig`, dataSourceDbConfig);
 
     if (this.modeAllowsDatabaseCreation && this.databaseConfig) {
       this.logDb &&
@@ -1359,7 +1359,7 @@ export class EndpointContext {
         process.exit(1);
         //#endregion
       }
-      // console.clear();// TOOD @LAST @UNCOMMENT
+
       (this.logDb || this.logFramework) &&
         console.info(
           `

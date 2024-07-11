@@ -65,7 +65,7 @@
     "ora": "3.4.0",
     "socket.io": "4.7.5",
     "tslib": "~2.3.0",
-    "tnp": "~16.444.11"
+    "tnp": "~16.444.12"
   },
   "license": "MIT",
   "private": false,
@@ -335,9 +335,9 @@
     "threads": "1.7.0",
     "tnp-cli": "~16.444.1",
     "tnp-config": "~16.444.8",
-    "tnp-core": "~16.444.9",
+    "tnp-core": "~16.444.11",
     "tnp-db": "~16.444.7",
-    "tnp-helpers": "~16.444.15",
+    "tnp-helpers": "~16.444.16",
     "tnp-models": "~16.444.8",
     "ts-debug": "1.3.0",
     "ts-json-schema-generator": "2.1.1",
