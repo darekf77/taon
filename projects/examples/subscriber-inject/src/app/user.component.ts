@@ -22,4 +22,11 @@ import { User } from './user';
 export class SubscriberInjectComponent {
   userApiService = inject(UserApiService);
   readonly users$: Observable<User[]> = this.userApiService.getAll();
+  ngOnInit(): void {
+    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
+    //Add 'implements OnInit' to the class.
+    this.userApiService.userCustomevent.subscribe((event) => {
+      console.log('event !!!', event);
+    });
+  }
 }

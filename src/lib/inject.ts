@@ -5,11 +5,8 @@ import { Symbols } from './symbols';
 import type { EndpointContext } from './endpoint-context';
 import type { BaseInjector } from './base-classes/base-injector';
 import { Observable, Subject } from 'rxjs';
+import type { BaseClass } from './base-classes/base-class';
 
-/**
- * @deprecated
- * use Firedev.injectController(..) instead
- */
 export const inject = <T>(entity: () => new (...args: any[]) => T): T => {
   return new Proxy(
     {},
@@ -57,14 +54,16 @@ export const inject = <T>(entity: () => new (...args: any[]) => T): T => {
   ) as T;
 };
 
+export const injectController = inject;
+
 export type SubscbtionEvent<T> = {
   name: keyof T;
   data: any;
 };
 
-export const injectSubscriber = <T>(
+export const injectSubscriberEvents = <T>(
   subscriberClassResolveFn: () => new (...args: any[]) => T,
-  eventName: Omit<keyof T, 'clone'>,
+  eventName: keyof T,
 ): Observable<SubscbtionEvent<T>> => {
   const eventsSrc = new Subject<SubscbtionEvent<T>>();
   const obs = eventsSrc.asObservable();
@@ -77,14 +76,19 @@ export const injectSubscriber = <T>(
         return (...args: any[]) => {
           if (isFirstSubscription) {
             isFirstSubscription = false;
-            // console.log('First subscription, you can access arguments here:', {
-            //   subscriberClassResolveFn,
-            //   eventName,
-            // });
+            const subscriberClassFN: typeof BaseClass =
+              subscriberClassResolveFn() as any;
+            const ctx = subscriberClassFN[
+              Symbols.ctxInClassOrClassObj
+            ] as EndpointContext;
+            const subscriberInstance = ctx.getInstanceBy(subscriberClassFN);
+            // subscriberInstance TODO @LAST subscriber event from instance
+            // const entity = subscriberClassFN.prototype.listenTo();
+            console.log('First subscription, you can access arguments here:', {
+              subscriberClassFN,
+              eventName,
+            });
             // @LAST
-            const subscriberClassFN = subscriberClassResolveFn();
-            const entity = subscriberClassFN.prototype.listenTo();
-
           }
           return target.subscribe(...args);
         };

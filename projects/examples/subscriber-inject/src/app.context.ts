@@ -19,6 +19,12 @@ export const AppContext = Firedev.createContext(() => ({
     // PUT FIREDEV ENTITIES HERE
   },
   subscribers: { UserSubscriber },
+  disabledRealtime: true,
   database: true,
-  logs: true,
+  logs: {
+    db: false,
+    framework: true,
+    http: true,
+    realtime: true,
+  },
 }));

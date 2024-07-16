@@ -5,8 +5,12 @@ import { User } from "./user";
   className: 'UserSubscriber',
 })
 export class UserSubscriber extends Firedev.Base.Subscriber {
-  listenTo() {
-    return User;
+  // listenTo() {
+  //   return User;
+  // }
+
+  customEvent() {
+    console.log('CUSTOM EVENT');
   }
 }
 

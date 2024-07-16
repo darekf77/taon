@@ -38,7 +38,7 @@ export namespace Firedev {
   export import Base = base.Base;
   export import Orm = orm.Orm;
 
-  export const getResponseValue  = getResponse.getResponseValue;
+  export const getResponseValue = getResponse.getResponseValue;
 
   //#region class decorators
   export import Controller = controllerDecorator.FiredevController;
@@ -68,6 +68,8 @@ export namespace Firedev {
   export const createContext = createContextFn.createContext;
 
   export const inject = injectFn.inject;
+  export const injectSubscriberEvents = injectFn.injectSubscriberEvents;
+  // export const injectController = injectFn.injectController;
 
   //#region @browser
   export const initNgZone = (ngZone: NgZone) => {

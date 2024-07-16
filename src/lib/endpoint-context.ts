@@ -1,41 +1,5 @@
 /* eslint-disable @typescript-eslint/typedef */
 //#region imports
-import { Models } from './models';
-import { ClassHelpers } from './helpers/class-helpers';
-import { Symbols } from './symbols';
-import { _, Helpers } from 'tnp-core/src';
-import type { createContext } from './create-context';
-import { DIFiredevContainer } from './dependency-injection/di-container';
-import { FiredevControllerOptions } from './decorators/classes/controller-decorator';
-import { FiredevHelpers } from './helpers/firedev-helpers';
-import {
-  Mapping,
-  Models as ModelsNg2Rest,
-  Resource,
-  RestHeaders,
-} from 'ng2-rest/src';
-import { JSON10 } from 'json10/src';
-import { path } from 'tnp-core/src';
-import { from, Subject } from 'rxjs';
-import { EntityProcess } from './entity-process';
-import { getResponseValue } from './get-response-value';
-import type { Application } from 'express';
-import axios from 'axios';
-import type { NgZone } from '@angular/core';
-//#region @browser
-import { FiredevAdmin } from './ui/firedev-admin-mode-configuration/firedev-admin.service';
-//#endregion
-import {
-  DataSource,
-  DataSourceOptions,
-  getMetadataArgsStorage,
-} from 'firedev-typeorm/src';
-import { FiredevEntityOptions } from './decorators/classes/entity-decorator';
-import type { Server } from 'http';
-import { ENV } from './env';
-import type { BaseClass } from './base-classes/base-class';
-import { RealtimeCore } from './realtime/realtime-core';
-import { FiredevSubscriberOptions } from './decorators/classes/subscriber-decorator';
 //#region @websql
 import { EventSubscriber } from 'firedev-typeorm/src';
 import type {
@@ -62,6 +26,44 @@ import { Http2Server } from 'http2';
 import { URL } from 'url';
 import { fse, http, https } from 'tnp-core/src';
 //#endregion
+//#region @browser
+import { FiredevAdmin } from './ui/firedev-admin-mode-configuration/firedev-admin.service';
+//#endregion
+import { Models } from './models';
+import { ClassHelpers } from './helpers/class-helpers';
+import { Symbols } from './symbols';
+import { _, Helpers } from 'tnp-core/src';
+import type { createContext } from './create-context';
+import { DIFiredevContainer } from './dependency-injection/di-container';
+import { FiredevControllerOptions } from './decorators/classes/controller-decorator';
+import { FiredevHelpers } from './helpers/firedev-helpers';
+import {
+  Mapping,
+  Models as ModelsNg2Rest,
+  Resource,
+  RestHeaders,
+} from 'ng2-rest/src';
+import { JSON10 } from 'json10/src';
+import { path } from 'tnp-core/src';
+import { from, Subject } from 'rxjs';
+import { EntityProcess } from './entity-process';
+import { getResponseValue } from './get-response-value';
+import type { Application } from 'express';
+import axios from 'axios';
+import type { NgZone } from '@angular/core';
+
+import {
+  DataSource,
+  DataSourceOptions,
+  getMetadataArgsStorage,
+} from 'firedev-typeorm/src';
+import { FiredevEntityOptions } from './decorators/classes/entity-decorator';
+import type { Server } from 'http';
+import { ENV } from './env';
+import type { BaseClass } from './base-classes/base-class';
+import { RealtimeCore } from './realtime/realtime-core';
+import { FiredevSubscriberOptions } from './decorators/classes/subscriber-decorator';
+import { BaseSubscriberForEntity } from './base-classes/base-subscriber-for-entity';
 //#endregion
 
 export class EndpointContext {
@@ -1119,6 +1121,7 @@ export class EndpointContext {
 
   //#region methods & getters / init subscribers
   async initSubscribers() {
+    return; // TODO
     //#region @websqlFunc
     if (!this.connection?.initialize) {
       return;
@@ -1314,9 +1317,11 @@ export class EndpointContext {
       return ClassHelpers.getOrginalClass(entityFn);
     });
 
-    const subscribers = this.config.override?.subscribers
-      ? this.config.override.subscribers
-      : this.getClassFunByArr(Models.ClassType.SUBSCRIBER);
+    const subscribers = (
+      this.config.override?.subscribers
+        ? this.config.override.subscribers
+        : this.getClassFunByArr(Models.ClassType.SUBSCRIBER)
+    ).filter(f => f instanceof BaseSubscriberForEntity);
 
     const dataSourceDbConfig = _.isObject(this.databaseConfig)
       ? ({
