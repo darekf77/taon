@@ -26,6 +26,16 @@ export namespace Symbols {
       CUSTOM(contextName: string, customEvent: string) {
         return `${contextName}:roomcustomevnet${customEvent}`;
       },
+      /**
+       * @LAST TODO
+       */
+      SUBSCRIBER_EVENT(
+        contextName: string,
+        className: string,
+        propertyName: string,
+      ) {
+        return `${contextName}:room${_.camelCase(className)}${propertyName}`.toLowerCase();
+      },
       UPDATE_ENTITY(
         contextName: string,
         className: string,

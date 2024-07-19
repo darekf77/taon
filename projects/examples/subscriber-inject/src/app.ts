@@ -3,22 +3,12 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SubscriberInjectComponent } from './app/user.component';
+export { SubscriberInjectModule } from './app/user.module';
 //#endregion
 import { Firedev } from 'firedev/src';
 import { AppContext } from './app.context';
 import { UserController } from './app/user.controller';
 import { UserSubscriber } from './app/user.subscriber';
-//#endregion
-
-//#region  subscriber-inject module
-//#region @browser
-@NgModule({
-  exports: [SubscriberInjectComponent],
-  imports: [CommonModule],
-  declarations: [SubscriberInjectComponent],
-})
-export class SubscriberInjectModule {}
-//#endregion
 //#endregion
 
 async function start() {

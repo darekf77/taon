@@ -11,7 +11,7 @@ import { UserSubscriber } from './user.subscriber';
 export class UserApiService {
   userControlller = Firedev.inject(() => AppContext.getClass(UserController));
   userCustomevent = Firedev.injectSubscriberEvents(
-    () => UserSubscriber,
+    () => AppContext.getClass(UserSubscriber),
     'customEvent',
   );
 

@@ -81,6 +81,17 @@ export const injectSubscriberEvents = <T>(
             const ctx = subscriberClassFN[
               Symbols.ctxInClassOrClassObj
             ] as EndpointContext;
+            if (!ctx) {
+              throw new Error(
+                `You are trying to inject class without context. Use context like this;
+
+              Firedev.injectSubscriberEvents( ()=> ` +
+                  `MyContext.getInstance(${subscriberClassFN?.name}), '${eventName as any}' )
+
+
+              `,
+              );
+            }
             const subscriberInstance = ctx.getInstanceBy(subscriberClassFN);
             // subscriberInstance TODO @LAST subscriber event from instance
             // const entity = subscriberClassFN.prototype.listenTo();
