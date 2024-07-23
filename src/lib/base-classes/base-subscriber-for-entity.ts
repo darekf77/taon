@@ -13,7 +13,7 @@ import { BaseInjector } from './base-injector';
 import { FiredevSubscriber } from '../decorators/classes/subscriber-decorator';
 
 @FiredevSubscriber({
-  className: 'm',
+  className: 'BaseSubscriberForEntity',
 })
 export abstract class BaseSubscriberForEntity<Entity = any>
   extends BaseInjector
