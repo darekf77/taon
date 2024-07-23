@@ -68,7 +68,7 @@ export namespace Firedev {
   export const createContext = createContextFn.createContext;
 
   export const inject = injectFn.inject;
-  export const injectSubscriberEvents = injectFn.injectSubscriberEvents;
+  // export const injectSubscriberEvents = injectFn.injectSubscriberEvents;
   // export const injectController = injectFn.injectController;
 
   //#region @browser
