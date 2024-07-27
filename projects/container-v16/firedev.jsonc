@@ -63,6 +63,9 @@
       "babel-preset-env": null,
       "babel-preset-es2015": null,
       "node-sass": null,
+      // TODO remove firedev ui
+      // "firedev-ui": null,
+
       //#endregion
       //#region FIND ALTERNATIVE
       "svg-png-converter": null,
@@ -131,7 +134,7 @@
       "zone.js": "~0.13.0",
       "ng-packagr": "^16.0.1",
       "ts-node": "~10.9.1",
-      "bun":"^1.1.17",
+      "bun": "^1.1.17",
       "typescript": "~5.0.2",
       "ts-loader": "^2.3.1",
       "ts-debug": "^1.3.0",
@@ -513,18 +516,10 @@
       "karma-cli": "~1.0.1",
       "callsite-record": "4.1.3",
       "@types/vinyl": "^2.0.2",
-      "progress": "^2.0.3",
-      "@types/progress": "^2.0.3",
-      "ora": "3.4.0",
-      "enquirer": "^2.3.0",
-      "prompts": "^0.1.8",
+      // @removeThis @notNeeded
       "omelette": "^0.4.5",
-      "inquirer": "~7.3.3",
-      "@inquirer/prompts": "^5.3.2",
       "minimist": "^1.2.0",
-      "chalk": "^2.3.2",
       "fuzzy": "^0.1.3",
-      "inquirer-autocomplete-prompt": "~1.3.0",
       "@types/watch": "^1.0.0",
       "watch": "~1.0.2",
       "portfinder": "1.0.21",
@@ -549,6 +544,26 @@
       "lockfile": "^1.0.4",
       "@types/lockfile": "^1.0.0",
       "hostile": "~1.3.3",
+      //#endregion
+
+      //#region BACKEND CONSOLE/TERMINAL GUI
+      "progress": "^2.0.3",
+      "@types/progress": "^2.0.3",
+      "ora": "3.4.0",
+      "enquirer": "^2.4.1",
+      "prompts": "^2.4.2",
+      // @deprecated
+      "inquirer": "~7.3.3",
+      // @deprecated
+      "inquirer-autocomplete-prompt": "~1.3.0",
+      "@inquirer/prompts": "^5.3.2",
+      // "inquirer-select-pro": "^1.0.0-alpha.6",
+      // "inquirer-sortable-checkbox": "^1.0.1",
+      // "inquirer-toggle": "^1.0.1",
+      // "@bartheleway/inquirer-table-multiple": "^0.0.3",
+      // "inquirer-action-select": "^0.0.3",
+      // "inquirer-interactive-list-prompt": "^1.0.4",
+      "chalk": "^2.3.2",
       //#endregion
 
       //#region BACKEND HTTP SERVER
