@@ -5,7 +5,7 @@ import * as child from 'child_process';
 import { window, ProgressLocation } from 'vscode';
 import { ProcesOptions, ProgressData, ResolveVariable } from './models';
 import {
-  capitalizeFirstLetter, optionsFix, Log, getModuleName,
+  capitalizeFirstLetter, optionsFix, Log, getModuleName, shell,
   escapeStringForRegEx, deepClone, valueFromCommand, crossPlatformPath
 } from './helpers';
 
@@ -229,8 +229,9 @@ export function executeCommand(registerName: string, commandToExecute: string | 
               //#region handle result as link
               if (item.useResultAsLinkAndExit) {
                 try {
+                  // TODO @LAST refactor this
                   // @ts-ignore
-                  child.execSync(`navi goto ${item.variableValue}`);
+                  child.execSync(`navi goto ${item.variableValue}`, { shell });
                 } catch (error) { }
                 resolve(void 0);
                 return;
@@ -424,7 +425,7 @@ export function executeCommand(registerName: string, commandToExecute: string | 
 
             if (syncProcess) {
               //#region handle sync process
-              let childResult = child.execSync(cmd);
+              let childResult = child.execSync(cmd, { shell });
               progress.report({ increment: 50 });
               if (typeof childResult !== 'object') {
                 throw `Child result is not a object`
@@ -439,7 +440,7 @@ export function executeCommand(registerName: string, commandToExecute: string | 
                 outputChannel.show();
               }
 
-              var proc = child.exec(cmd, { cwd });
+              var proc = child.exec(cmd, { cwd, shell });
               if (!proc) {
                 await window.showErrorMessage(`Incorrect execution of: ${cmd}`);
                 return;
