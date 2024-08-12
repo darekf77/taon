@@ -1,3 +1,4 @@
+// @ts-nocheck
 //#region @browser
 //#region imports
 import {
@@ -63,11 +64,13 @@ export class FiredevAdminModeConfigurationComponent implements OnInit {
     ? ENV.passcode.message
     : void 0;
 
+  // @ts-ignore
   @Stor.property.in.localstorage
     .for(FiredevAdminModeConfigurationComponent)
     .withDefaultValue(0)
   dragPositionX: number;
 
+  // @ts-ignore
   @Stor.property.in.localstorage
     .for(FiredevAdminModeConfigurationComponent)
     .withDefaultValue(0)
@@ -76,6 +79,7 @@ export class FiredevAdminModeConfigurationComponent implements OnInit {
   dragPositionZero = { x: 0, y: 0 } as Point;
   dragPosition: Point;
 
+  // @ts-ignore
   @Stor.property.in.localstorage
     .for(FiredevAdminModeConfigurationComponent)
     .withDefaultValue(0)
@@ -83,6 +87,7 @@ export class FiredevAdminModeConfigurationComponent implements OnInit {
 
   @ViewChild('tabGroup') tabGroup;
 
+  // @ts-ignore
   @Stor.property.in.localstorage
     .for(FiredevAdminModeConfigurationComponent)
     .withDefaultValue(false)

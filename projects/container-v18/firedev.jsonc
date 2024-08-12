@@ -9,6 +9,7 @@
     "dependencies": {
       //#region not needed anymore @deprecated
       "@angular/http": null,
+
       "hammerjs": null,
       "rxjs-compat": null,
       "@angular-devkit/build-optimizer": null,
@@ -63,12 +64,14 @@
       "babel-preset-env": null,
       "babel-preset-es2015": null,
       "node-sass": null,
+
       // TODO remove firedev ui
       // "firedev-ui": null,
 
       //#endregion
       //#region FIND ALTERNATIVE
       "svg-png-converter": null,
+
       "sharp": null,
       "@types/sharp": null,
       "@iconify/react": null,
@@ -509,11 +512,12 @@
       // @trusted=major
       "ngx-pipes": "3.2.2",
 
-      // @trusted=minor
-      "dateformat": "~4.6.3",
+      "dateformat": "^3.0.3",
+      "@types/dateformat": "^1.0.1",
 
-      // @trusted=minor
-      "@types/dateformat": "~5.0.2",
+      // api change in new version
+      // "dateformat": "~4.6.3",
+      // "@types/dateformat": "~5.0.2",
 
       //#endregion
 
@@ -942,7 +946,7 @@
       "node-notifier": "~10.0.1",
       "@types/glob": "^5.0.35",
 
-      //pizda  @useBy=tnp-core
+      //@useBy=tnp-core
       "glob": "^7.1.2",
 
       // @useBy=tnp-helpers      @useBy=tnp-core
@@ -1081,6 +1085,9 @@
       // @trusted=minor
       //#endregion
       "password-hash": "1.2.2",
+
+      "tnp-core": "18.0.3",
+      "tnp-models": "18.0.1"
     },
     "linkedFolders": [],
     "npmFixes": [],

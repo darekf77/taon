@@ -1,3 +1,4 @@
+// @ts-nocheck
 //#region import
 import { Stor } from 'firedev-storage/src';
 import { Helpers, _ } from 'tnp-core/src';
@@ -34,16 +35,19 @@ export class FiredevAdmin {
   //#endregion
 
   //#region fields & getters / popup is open
+  // @ts-ignore
   @Stor.property.in.localstorage.for(FiredevAdmin).withDefaultValue(false)
   public adminPanelIsOpen: boolean;
   //#endregion
 
   //#region fields & getters / draggable popup instead side view for admin
+  // @ts-ignore
   @Stor.property.in.localstorage.for(FiredevAdmin).withDefaultValue(false)
   public draggablePopupMode: boolean;
   //#endregion
 
   //#region fields & getters / draggable popup instead side view for admin
+  // @ts-ignore
   @Stor.property.in.localstorage.for(FiredevAdmin).withDefaultValue(false)
   public draggablePopupModeFullScreen: boolean;
   //#endregion
@@ -51,7 +55,7 @@ export class FiredevAdmin {
   //#region fields & getters / kepp websql database data after reload
   /**
    * Property used in firedev
-   */
+   */ // @ts-ignore
   @Stor.property.in.localstorage.for(FiredevAdmin).withDefaultValue(false)
   public keepWebsqlDbDataAfterReload: boolean;
   //#endregion

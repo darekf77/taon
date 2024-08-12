@@ -41,7 +41,7 @@
 
   "smartContainerTarget": "",
   "type": "isomorphic-lib",
-  "version": "v16",
+  "version": "v18",
   "additionalNpmNames": [],
   "scripts": {},
   "description": "Isomorphic solution for backend and frontend",
