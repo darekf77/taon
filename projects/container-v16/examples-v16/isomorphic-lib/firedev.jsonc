@@ -3,7 +3,7 @@
     "README.md"
   ],
   "type": "isomorphic-lib",
-  "version": "v4",
+  "version": "v16",
   "overrided": {
     "ignoreDepsPattern": [],
     "includeAsDev": [],

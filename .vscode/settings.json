@@ -67,7 +67,8 @@
   "search.exclude": {
     "docs": true,
     "projects": true,
-    "bin": true
+    "bin": true,
+    "local_release": true
   },
   "[typescriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",

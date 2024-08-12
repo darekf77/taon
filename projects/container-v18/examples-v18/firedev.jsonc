@@ -2,7 +2,7 @@
   "resources": ["README.md"],
   "type": "container",
   "monorepo": true,
-  "version": "v4",
+  "version": "v18",
 
   "overrided": {
     "dependencies": {},

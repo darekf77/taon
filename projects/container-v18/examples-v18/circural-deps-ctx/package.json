@@ -1,7 +1,7 @@
 {
   "tnp": {
     "resources": [],
-    "version": "v16",
+    "version": "v18",
     "type": "isomorphic-lib"
   },
   "name": "circural-deps-ctx",
