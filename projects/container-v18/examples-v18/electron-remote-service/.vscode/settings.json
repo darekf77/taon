@@ -1,0 +1,109 @@
+{
+  "files.exclude": {
+    "**/*____ORIGINAL____.ts": true,
+    "_changelog": true,
+    "tsconfig.backend.dist.json": true,
+    "tsconfig.backend.dist.json.filetemplate": true,
+    "webpack.backend-dist-build.js": true,
+    "node_modules": true,
+    "tmp*": true,
+    "dist*": true,
+    "bundle*": true,
+    "browser": true,
+    "browser*": true,
+    "websql": true,
+    "websql*": true,
+    "module*": true,
+    "backup": true,
+    "module": true,
+    "www": true,
+    "Thumbs.db": true,
+    ".DS_Store": true,
+    "**/.DS_Store": true,
+    "npm-debug.log*": true,
+    ".sass-cache": true,
+    ".sourcemaps": true,
+    "tsconfig.isomorphic.json": true,
+    "tsconfig.isomorphic-flat-dist.json": true,
+    "tsconfig.browser.json": true,
+    "tsconfig.json": true,
+    "index.js": true,
+    "index.d.ts": true,
+    "index.js.map": true,
+    "webpack.config.js": true,
+    "run.js": true,
+    "run-org.js": true,
+    "tsconfig.isomorphic.json.filetemplate": true,
+    "tsconfig.isomorphic-flat-dist.json.filetemplate": true,
+    "tsconfig.browser.json.filetemplate": true,
+    "tsconfig.json.filetemplate": true,
+    ".gitignore": true,
+    ".npmignore": true,
+    ".babelrc": true,
+    ".npmrc": true,
+    ".eslintrc.json": true,
+    ".prettierignore": true,
+    ".prettierrc": true,
+    ".editorconfig": true,
+    "devDependencies.json": true,
+    "package.json": true,
+    "logo.svg": true
+  },
+  "workbench.colorCustomizations": {
+    "activityBar.background": "#0084ff",
+    "activityBar.foreground": "#000000"
+  },
+  "editor.rulers": [
+    80,
+    120
+  ],
+  "html.format.wrapAttributes": "force-aligned",
+  "workbench.colorTheme": "Default Light+",
+  "tslint.autoFixOnSave": true,
+  "eslint.enable": true,
+  "tslint.enable": false,
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "search.exclude": {
+    "docs": true,
+    "projects": true,
+    "bin": true
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[json5]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "eslint.migration.2_x": "off",
+  "prettier.enable": true,
+  "editor.suggest.snippetsPreventQuickSuggestions": false,
+  "editor.inlineSuggest.enabled": true,
+  "prettier.prettierPath": "./node_modules/prettier",
+  "prettier.endOfLine": "auto"
+}

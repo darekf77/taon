@@ -520,7 +520,6 @@
     "file-loader": "~1.1.11",
     "file-saver": "2.0.5",
     "file-type": "~19.1.1",
-    "firedev": "^16",
     "firedev-crud": "16.444.15",
     "firedev-crud-deamon": "16.444.15",
     "firedev-ports": "16.444.15",

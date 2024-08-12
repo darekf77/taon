@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "eg2.tslint",
+    "johnpapa.angular2",
+    "Angular.ng-template",
+    "thekalinga.bootstrap4-vscode",
+    "robinbentley.sass-indented",
+    "wcwhitehead.bootstrap-3-snippets",
+    "thekalinga.bootstrap4-vscode",
+    "chrisdias.vscode-opennewinstance"
+  ]
+}
