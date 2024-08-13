@@ -23,7 +23,7 @@
       "cliBuildIncludeNodeModules": false
     }
   },
-  "name": "isomorphic-lib",
+  "name": "single-file",
   "version": "0.0.0",
   "main": "dist/app.electron.js",
   "dependencies": {

@@ -980,8 +980,7 @@
       // @trusted=patch
       "@types/progress": "~2.0.7",
 
-      // @trusted=patch
-      "ora": "~8.0.1",
+      "ora": "3.4.0",
 
       // @trusted=patch
       "enquirer": "2.4.1",
@@ -1088,18 +1087,18 @@
       "password-hash": "1.2.2",
 
       //#region my packages
-      "firedev-typeorm": "16.444.11",
-      "firedev-crud": "16.444.15",
-      "firedev-ports": "16.444.15",
+      "firedev-typeorm": "18.0.1",
+      "firedev-crud": "18.0.1",
+      "firedev-ports": "18.0.1",
       "firedev-ui": "16.444.1",
-      "tnp-cli": "16.444.7",
-      "record-replay-req-res-scenario": "16.444.7",
-      "ng-talkback": "16.444.7",
-      "vpn-split": "16.444.7",
-      "node-cli-tester": "16.444.7",
-      "static-columns": "16.444.10",
+      "tnp-cli": "18.0.1",
+      "record-replay-req-res-scenario": "18.0.1",
+      "ng-talkback": "18.0.1",
+      "vpn-split": "18.0.1",
+      "node-cli-tester": "18.0.1",
+      "static-columns": "18.0.3",
       "background-worker-process": "16.100.10",
-      "firedev-storage": "16.444.11",
+      "firedev-storage": "18.0.1",
       "tnp-core": "18.0.26",
       "tnp-config": "18.0.4",
       "ng2-logger": "18.0.4",
