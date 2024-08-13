@@ -1005,7 +1005,7 @@
       // "inquirer-action-select": "^0.0.3",
       // "inquirer-interactive-list-prompt": "^1.0.4",
       // @trusted=patch
-      "chalk": "~1.1.3",
+      "chalk": "^2.3.2",
 
       //#endregion
 
