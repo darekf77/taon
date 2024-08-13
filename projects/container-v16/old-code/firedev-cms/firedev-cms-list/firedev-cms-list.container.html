@@ -1,0 +1,17 @@
+<!-- <firedev-table [entity]="FiredevFile"
+               [allowedColumns]="['src','contentType']"
+               [columns]="columns"
+               [expansionTemplate]="expansionTpl"
+               (expansionChange)="expansionRow($event)">
+</firedev-table> -->
+
+<ng-template #expansionTpl let-row>
+  hello from expansion {{row.src}}
+</ng-template>
+
+<firedev-table
+  [entity]="FiredevBinaryFile"
+  [allowedColumns]="['src']"
+  [columns]="columns"
+  (addingItem)="add()">
+</firedev-table>

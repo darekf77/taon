@@ -1,0 +1,70 @@
+<button mat-icon-button class="close-button" (click)="close()">
+  <mat-icon>close</mat-icon>
+</button>
+<h1>
+  File Editor
+  <mat-slide-toggle (change)="toogleMode()">Preview mode</mat-slide-toggle>
+</h1>
+<div class="split-demo" [style.height.px]="height">
+  <mtx-split
+    direction="horizontal"
+    [restrictMove]="true"
+    [useTransition]="true">
+    <mtx-split-pane [size]="100">
+      <mtx-split direction="vertical" [restrictMove]="true">
+        <mtx-split-pane [size]="30" #panel style="overflow: hidden">
+          <table width="100%" height="100%" align="center" valign="center">
+            <tr>
+              <td style="text-align: center" *ngIf="mode === ViewMode.Preview">
+                <img
+                  [src]="url | safe: 'url'"
+                  #imagePreview
+                  [style.height.px]="panel.offsetHeight"
+                  *ngIf="mediaType === 'image'" />
+                <div
+                  *ngIf="mediaType === 'text'"
+                  [innerHtml]="text | safe: 'html'"></div>
+                <audio
+                  *ngIf="mediaType === 'audio'"
+                  [src]="url | safe: 'url'"
+                  id="audio"
+                  controls></audio>
+              </td>
+              <td *ngIf="mode !== ViewMode.Preview">
+                <ace
+                  *ngIf="mediaType === 'text'"
+                  [mode]="'typescript'"
+                  [(value)]="text"
+                  [theme]="'twilight'"
+                  style="width: 100%; height: 100%"></ace>
+              </td>
+            </tr>
+          </table>
+        </mtx-split-pane>
+        <mtx-split-pane [size]="70">
+          <p>
+            Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+            accusantium doloremque laudantium, totam rem aperiam, eaque ipsa
+            quae ab illo inventore veritatis et quasi architecto beatae vitae
+            dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit
+            aspernatur aut odit aut fugit, sed quia consequuntur magni dolores
+            eodolor sit amet, consectetur, adipisci velit, sed quia non numquam
+            eius modi tempora incidunt ut labore et dolore magnam aliquam
+            quaerat voluptatem. Ut enim ad minima veniam, quis nostrum
+            exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid
+            ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui
+            in ea voluptate velit esse quam nihil molestiae consequatur, vel
+            illum qui dolorem eum fugiat quo voluptas nulla pariatur?
+          </p>
+        </mtx-split-pane>
+      </mtx-split>
+    </mtx-split-pane>
+  </mtx-split>
+</div>
+<br />
+<columns-container>
+  <column grow> </column>
+  <column [width]="200">
+    <button mat-raised-button (click)="save()">save</button>
+  </column>
+</columns-container>

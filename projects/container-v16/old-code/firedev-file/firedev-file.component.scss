@@ -1,0 +1,54 @@
+:host {
+  position: relative;
+  display: none;
+}
+
+.wrapper {
+  position: relative;
+  text-align: center;
+
+  audio {
+    display: inline-block;
+  }
+
+  article {
+    text-align: initial;
+  }
+}
+
+article {
+  overflow: scroll;
+}
+
+@mixin edit-hover {
+  background-color: rgba(38, 129, 220, 0.285) !important;
+  cursor: pointer !important;
+}
+
+.class-selected-edit {
+  @include edit-hover;
+}
+
+.firedev-file-edit-mode {
+  > div {
+    background-color: transparent;
+
+    &:hover {
+      @include edit-hover;
+    }
+
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2147483647;
+    margin: 0px;
+    padding: 0px;
+    outline: 0px;
+  }
+}
+
+.dotted {
+  outline: dodgerblue dotted 2px;
+}

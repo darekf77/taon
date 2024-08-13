@@ -1,0 +1,97 @@
+<ng-template #mask>
+  <div
+    *ngIf="!insideAdmin"
+    (click)="selectForEdit()"
+    [ngClass]="{ 'class-selected-edit': isSelectedInAdmin }"></div>
+</ng-template>
+<!-- viewas: {{ viewAs }} -->
+
+<div
+  *ngIf="viewAs === 'img-tag'"
+  class="wrapper"
+  [ngClass]="{ 'firedev-file-edit-mode': admin.filesEditMode }">
+  <ng-container *ngTemplateOutlet="mask"></ng-container>
+
+  <img
+    [src]="tempLink"
+    #image
+    *ngIf="file"
+    [ngClass]="{ dotted: admin.filesEditMode }"
+    [style.height.px]="height" />
+</div>
+
+<div
+  *ngIf="viewAs === 'html-rendered'"
+  class="wrapper"
+  [ngClass]="{ 'firedev-file-edit-mode': admin.filesEditMode }">
+  <ng-container *ngTemplateOutlet="mask"></ng-container>
+  <article
+    #html
+    *ngIf="file && tempText"
+    [firedevInjectHTML]="tempText"
+    [style.height.px]="height"
+    [style.width.px]="width"></article>
+</div>
+
+<div
+  *ngIf="viewAs === 'video-tag'"
+  class="wrapper"
+  [ngClass]="{ 'firedev-file-edit-mode': admin.filesEditMode }">
+  <ng-container *ngTemplateOutlet="mask"></ng-container>
+
+  <video
+    controls
+    *ngIf="file && tempLink"
+    #video
+    [style.height.px]="height"
+    [style.width.px]="width">
+    <source [src]="tempLink" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+</div>
+
+<div
+  *ngIf="viewAs === 'json-editor'"
+  class="wrapper"
+  [ngClass]="{ 'firedev-file-edit-mode': admin.filesEditMode }">
+  <ng-container *ngTemplateOutlet="mask"></ng-container>
+  {{ tempText }}
+  <!-- <ace [mode]="'json'"
+       *ngIf="file && tempText"
+       #json
+       [(value)]="tempText"
+       [theme]="'twilight'"
+       [style.height.px]="height"
+       [style.width.px]="width"></ace> -->
+</div>
+
+<div
+  *ngIf="viewAs === 'audio-tag'"
+  class="wrapper"
+  [ngClass]="{ 'firedev-file-edit-mode': admin.filesEditMode }">
+  <ng-container *ngTemplateOutlet="mask"></ng-container>
+  <!-- <div class="audio-wrapper"> -->
+  <audio
+    controls
+    *ngIf="file && tempLink"
+    style="position: relative"
+    #audio
+    [style.height.px]="height"
+    [style.width.px]="width"
+    [style.top.px]="-(height / 2 - 27)">
+    <source [src]="tempLink" [type]="file.contentType" />
+    Your browser does not support the audio element.
+  </audio>
+  <!-- </div> -->
+</div>
+
+<!-- {{ file.text }} -->
+<!-- editmode: {{ (editMode$ | async) }} -->
+<!-- <script [src]="file.src"
+        *ngIf="as === 'script-tag'"></script>
+
+<link rel="stylesheet"
+      href="{{file.src}}"
+      *ngIf="as === 'css-tag'"> -->
+
+<ng-content></ng-content>
