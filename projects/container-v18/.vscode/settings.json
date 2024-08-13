@@ -51,5 +51,6 @@
   "editor.inlineSuggest.enabled": true,
   "tslint.autoFixOnSave": false,
   "tslint.enable": false,
-  "tslint.alwaysShowRuleFailuresAsWarnings": false
+  "tslint.alwaysShowRuleFailuresAsWarnings": false,
+  "git.ignoreLimitWarning": true
 }
