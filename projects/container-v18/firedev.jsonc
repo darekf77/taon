@@ -1100,7 +1100,7 @@
       "static-columns": "16.444.10",
       "background-worker-process": "16.100.10",
       "firedev-storage": "16.444.11",
-      "tnp-core": "18.0.9",
+      "tnp-core": "18.0.15",
       "tnp-config": "18.0.2",
       "ng2-logger": "18.0.2",
       "typescript-class-helpers": "18.0.2",
