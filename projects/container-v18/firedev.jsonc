@@ -405,10 +405,10 @@
       "electron-reloader": "1.2.3",
 
       //  @trusted=patch
-      "node-polyfill-webpack-plugin": "~1.1.4",
+      "node-polyfill-webpack-plugin": "2.0.1",
 
       //  @trusted=patch
-      "wait-on": "~5.2.2",
+      "wait-on": "7.0.1",
 
       // electron needs webpack for ng build
       //  @trusted=patch
@@ -860,7 +860,7 @@
       "cross-spawn": "7.0.3",
 
       // @trusted=patch
-      "chokidar": "~2.1.8",
+      "chokidar": "3.5.3",
 
       "@types/chokidar": "~2.1.3",
       "cpr": "^3.0.1",
@@ -915,7 +915,7 @@
       "istanbul-instrumenter-loader": "~3.0.1",
 
       // @trusted=patch
-      "karma-cli": "~0.1.2",
+      "karma-cli": "~1.0.1",
 
       // @trusted=patch
       "callsite-record": "~4.1.5",
