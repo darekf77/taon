@@ -368,7 +368,7 @@
         "firedev-ports": "16.444.15",
         "firedev-crud-deamon": "16.444.15",
         "firedev-ui": "16.444.1",
-        "tnp-core": "18.0.20",
+        "tnp-core": "18.0.24",
         "tnp-cli": "16.444.7",
         "any-project-cli": "16.444.12",
         "ng2-logger": "18.0.3",
@@ -679,7 +679,7 @@
     "threads": "1.7.0",
     "tnp-cli": "16.444.7",
     "tnp-config": "18.0.3",
-    "tnp-core": "18.0.20",
+    "tnp-core": "18.0.24",
     "tnp-db": "16.444.14",
     "tnp-helpers": "16.444.25",
     "tnp-models": "16.444.15",
@@ -710,7 +710,7 @@
     "zone.js": "~0.13.0"
   },
   "devDependencies": {
-    "tnp-core": "18.0.20",
+    "tnp-core": "18.0.24",
     "tnp-config": "18.0.3",
     "ng2-logger": "18.0.3"
   },

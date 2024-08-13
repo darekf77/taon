@@ -781,7 +781,7 @@
       "firedev-ports": "16.444.15",
       "firedev-crud-deamon": "16.444.15",
       "firedev-ui": "16.444.1",
-      "tnp-core": "18.0.20",
+      "tnp-core": "18.0.24",
       "tnp-cli": "16.444.7",
       "any-project-cli": "16.444.12",
       "ng2-logger": "18.0.3",
