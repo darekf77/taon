@@ -865,15 +865,15 @@
       "rimraf": "^2.6.2",
 
       // @trusted=patch
-      "fs-extra": "~11.1.1",
+      "fs-extra": "8.1.0",
 
       "jscodeshift": "^0.6.3",
 
       // @trusted=patch
-      "@types/fs-extra": "~11.0.4",
+      "@types/fs-extra": "^7.0.0",
 
       // @trusted=patch
-      "@types/rimraf": "~4.0.5",
+      "@types/rimraf": "^2.0.2",
 
       // @trusted=patch
       "open": "~10.0.4",
@@ -1094,27 +1094,27 @@
       "static-columns": "18.0.4",
       "background-worker-process": "16.100.10",
       "firedev-storage": "18.0.2",
-      "tnp-core": "18.0.27",
-      "tnp-config": "18.0.5",
-      "ng2-logger": "18.0.5",
-      "typescript-class-helpers": "18.0.4",
-      "tnp-models": "18.0.4",
-      "json10-writer": "18.0.3",
-      "tnp-helpers": "18.0.3",
-      "incremental-compiler": "18.0.3",
-      "any-project-cli": "18.0.3",
-      "firedev-crud-deamon": "18.0.3",
-      "tnp-db": "18.0.3",
-      "magic-renamer": "18.0.3",
-      "isomorphic-region-loader": "18.0.3",
-      "tnp": "18.0.3",
-      "lodash-walk-object": "18.0.3",
-      "json10": "18.0.3",
-      "ng2-rest": "18.0.3",
-      "firedev-type-sql": "18.0.3",
+      "tnp-core": "18.0.28",
+      "tnp-config": "18.0.6",
+      "ng2-logger": "18.0.6",
+      "typescript-class-helpers": "18.0.5",
+      "tnp-models": "18.0.5",
+      "json10-writer": "18.0.4",
+      "tnp-helpers": "18.0.4",
+      "incremental-compiler": "18.0.4",
+      "any-project-cli": "18.0.4",
+      "firedev-crud-deamon": "18.0.4",
+      "tnp-db": "18.0.4",
+      "magic-renamer": "18.0.4",
+      "isomorphic-region-loader": "18.0.4",
+      "tnp": "18.0.4",
+      "lodash-walk-object": "18.0.4",
+      "json10": "18.0.4",
+      "ng2-rest": "18.0.4",
+      "firedev-type-sql": "18.0.4",
 
       //#endregion
-      "firedev": "18.0.6"
+      "firedev": "18.0.7"
     },
     "linkedFolders": [],
     "npmFixes": [],
