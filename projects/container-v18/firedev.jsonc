@@ -875,8 +875,7 @@
       // @trusted=patch
       "@types/rimraf": "^2.0.2",
 
-      // @trusted=patch
-      "open": "~10.0.4",
+      "open": "7.2.1",
 
       // @trusted=patch
       "@types/chai": "~4.3.17",
