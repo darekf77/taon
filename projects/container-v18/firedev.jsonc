@@ -199,7 +199,7 @@
 
       // typescript types for fs, net etc. (build in from node)
       //  @trusted=patch
-      "@types/node": "^16.18.21",
+      "@types/node": "^18.19.45",
 
       //  @trusted=patch
       "@babel/cli": "~7.24.8",
