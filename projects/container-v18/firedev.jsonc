@@ -192,6 +192,9 @@
       "typescript": "~5.5.4",
 
       //  @trusted=patch
+      "type-fest": "4.25.0",
+
+      //  @trusted=patch
       "ts-loader": "^2.3.1",
 
       //  @trusted=patch
