@@ -13,16 +13,16 @@ TAON  **T**ypescript **A**ngular **O**rm **N**ode )
 \+
 [Angular](https://angular.io/) (PWA)
 
-\+
-[RxJs](https://rxjs.dev/)  / [NgRx](https://ngrx.io/) (optional) 
+\+ Orm with [TypeORM](https://typeorm.io/)
+- [sql.js](https://sql.js.org) - NODEJS SERVER MODE
+- [sql.js](https://sql.js.org) - *WEBSQL SERVER MODE
+- [mysql](https://www.mysql.com/) - SERVER IN DOCKER (work in progress)
 
 \+
 [NodeJS](https://nodejs.org/en/)
 
-\+ [TypeORM](https://typeorm.io/)
-- [sql.js](https://sql.js.org) - NODEJS SERVER MODE
-- [sql.js](https://sql.js.org) - *WEBSQL SERVER MODE
-- [mysql](https://www.mysql.com/) - SERVER IN DOCKER (work in progress)
+\+
+[RxJs](https://rxjs.dev/)  / [NgRx](https://ngrx.io/) (optional) 
 
 \+
 [Electron](https://www.electronjs.org/) desktop apps (work in progress)
