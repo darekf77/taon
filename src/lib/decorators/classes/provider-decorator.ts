@@ -2,7 +2,7 @@ import { ClassHelpers } from '../../helpers/class-helpers';
 import { Symbols } from '../../symbols';
 import { Models } from '../../models';
 
-export function FiredevProvider<T = any>(options?: FiredevProviderOptions<T>) {
+export function TaonProvider<T = any>(options?: FiredevProviderOptions<T>) {
   return function (constructor: Function) {
     Reflect.defineMetadata(
       Symbols.metadata.options.provider,

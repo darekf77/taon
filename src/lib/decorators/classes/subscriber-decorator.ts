@@ -10,7 +10,7 @@ export class FiredevSubscriberOptions<
   allowedEvents?: (keyof T)[];
 }
 
-export function FiredevSubscriber(options: FiredevSubscriberOptions) {
+export function TaonSubscriber(options: FiredevSubscriberOptions) {
   return function <T extends { new (...args: any[]): {} }>(constructor: T) {
     Reflect.defineMetadata(
       Symbols.metadata.options.repository,

@@ -1,7 +1,7 @@
-import { FiredevController } from '../decorators/classes/controller-decorator';
+import { TaonController } from '../decorators/classes/controller-decorator';
 import { BaseInjector } from './base-injector';
 
-@FiredevController({ className: 'BaseController' })
+@TaonController({ className: 'BaseController' })
 export class BaseController extends BaseInjector {
   /**
    * init example data for db

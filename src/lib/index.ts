@@ -32,7 +32,7 @@ export * from './constants';
 export { ClassHelpers } from './helpers/class-helpers';
 // TODO export all things
 
-export namespace Firedev {
+export namespace Taon {
   export import Response = models.Models.Http.Response;
   export import Http = http.Http;
   export import Base = base.Base;
@@ -41,11 +41,11 @@ export namespace Firedev {
   export const getResponseValue = getResponse.getResponseValue;
 
   //#region class decorators
-  export import Controller = controllerDecorator.FiredevController;
-  export import Entity = entityDecorator.FiredevEntity;
-  export import Provider = providerDecorator.FiredevProvider;
-  export import Repository = repositoryDecorator.FiredevRepository;
-  export import Subscriber = subscriberDecorator.FiredevSubscriber;
+  export import Controller = controllerDecorator.TaonController;
+  export import Entity = entityDecorator.TaonEntity;
+  export import Provider = providerDecorator.TaonProvider;
+  export import Repository = repositoryDecorator.TaonRepository;
+  export import Subscriber = subscriberDecorator.TaonSubscriber;
   //#endregion
   //#region aliases to helpers
   /**

@@ -7,7 +7,7 @@ import {
 } from 'firedev-typeorm/src';
 import { _ } from 'tnp-core/src';
 
-export function FiredevRepository(options: FiredevRepositoryOptions) {
+export function TaonRepository(options: FiredevRepositoryOptions) {
   return function (constructor: Function) {
     Reflect.defineMetadata(
       Symbols.metadata.options.repository,

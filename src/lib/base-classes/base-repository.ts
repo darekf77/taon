@@ -26,13 +26,13 @@ import { Helpers } from 'tnp-core/src';
 import { _ } from 'tnp-core/src';
 import { ClassHelpers } from '../helpers/class-helpers';
 import { MySqlQuerySource } from 'firedev-type-sql/src';
-import { FiredevRepository } from '../decorators/classes/repository-decorator';
+import { TaonRepository } from '../decorators/classes/repository-decorator';
 import { BaseInjector } from './base-injector';
 //#endregion
 
 const INDEX_KEYS_NO_FOR_UPDATE = ['id'];
 
-@FiredevRepository({ className: 'BaseRepository' })
+@TaonRepository({ className: 'BaseRepository' })
 export abstract class BaseRepository<
   Entity extends { id?: any },
 > extends BaseInjector {

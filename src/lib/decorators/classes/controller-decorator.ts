@@ -2,7 +2,7 @@ import { ClassHelpers } from '../../helpers/class-helpers';
 import { Symbols } from '../../symbols';
 import { Models } from '../../models';
 
-export function FiredevController(options?: FiredevControllerOptions) {
+export function TaonController(options?: FiredevControllerOptions) {
   return function (constructor: Function) {
     ClassHelpers.setName(constructor, options?.className);
     Reflect.defineMetadata(

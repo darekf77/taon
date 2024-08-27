@@ -8,7 +8,7 @@ import { Models } from '../../models';
 import { Entity as TypeormEntity, Tree } from 'firedev-typeorm/src';
 //#endregion
 
-export function FiredevEntity<T = any>(options?: FiredevEntityOptions<T>) {
+export function TaonEntity<T = any>(options?: FiredevEntityOptions<T>) {
   return function (constructor: Function) {
     options = options || ({} as any);
     options.uniqueKeyProp = options.uniqueKeyProp || ('id' as any);

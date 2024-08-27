@@ -15,7 +15,7 @@ import { MySqlQuerySource } from 'firedev-type-sql/src';
 import { Models } from '../models';
 import { Helpers, _ } from 'tnp-core/src';
 import {
-  FiredevController,
+  TaonController,
   FiredevControllerOptions,
 } from '../decorators/classes/controller-decorator';
 import { ClassHelpers } from '../helpers/class-helpers';
@@ -27,7 +27,7 @@ import { FiredevEntityOptions } from '../decorators/classes/entity-decorator';
 /**
  * Please override property entityClassFn with entity class.
  */
-@FiredevController({ className: 'BaseCrudController' })
+@TaonController({ className: 'BaseCrudController' })
 export abstract class BaseCrudController<Entity> extends BaseController {
   //#region fields
   protected db?: BaseRepository<Entity>;

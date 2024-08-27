@@ -1,8 +1,11 @@
-<p style="text-align: center;"><img src="./__images/logo-header-bold.png" ></p>
+<p style="text-align: center;"><img src="./__images/logo-header-bold-taon5.png" ></p>
+
+TAON  **T**ypescript **A**ngular **O**rm **N**ode )
+
 
 ( BETA VERSION - MAJOR REFACTOR IN PROGRESS )
 
-**Firedev** 🔥🔥🔥 is a solution (**global cli tool** & **framework**) for
+**Taon** 🔥🔥🔥 is a solution (**global cli tool** & **framework**) for
 
 \+
 [TypesSript](https://www.typescriptlang.org/)  
@@ -34,7 +37,7 @@
 <br>
 <br>
 
-### Initial requirements of firedev
+### Initial requirements of taon
 1. Installed git
 
 
@@ -49,8 +52,8 @@ echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo s
 <br>
 <br>
 
-### Projects that are part of firedev:
-- firedev https://github.com/darekf77/firedev
+### Projects that are part of taon.dev:
+- taon https://github.com/darekf77/taon
     + framework library
 - tnp https://github.com/darekf77/tnp
     + main cli / code structuring tool

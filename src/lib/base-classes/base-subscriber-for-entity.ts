@@ -10,9 +10,9 @@ import {
   UpdateEvent,
 } from 'firedev-typeorm/src';
 import { BaseInjector } from './base-injector';
-import { FiredevSubscriber } from '../decorators/classes/subscriber-decorator';
+import { TaonSubscriber } from '../decorators/classes/subscriber-decorator';
 
-@FiredevSubscriber({
+@TaonSubscriber({
   className: 'BaseSubscriberForEntity',
 })
 export abstract class BaseSubscriberForEntity<Entity = any>
