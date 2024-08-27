@@ -201,8 +201,9 @@
       "ts-debug": "1.3.0",
 
       // typescript types for fs, net etc. (build in from node)
-      //  @trusted=patch
-      "@types/node": "^18.19.45",
+      "@types/node": "^16.18.21",
+      // problem with types
+      // "@types/node": "^18.19.45",
 
       //  @trusted=patch
       "@babel/cli": "~7.24.8",
