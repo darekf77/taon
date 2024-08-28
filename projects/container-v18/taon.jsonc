@@ -1089,7 +1089,7 @@
       "password-hash": "1.2.2",
 
       //#region my packages
-      "taon-typeorm": "18.0.5",
+      "taon-typeorm": "18.0.8",
 
       // "firedev-crud": "18.0.5",
       // "firedev-ports": "18.0.5",
@@ -1097,11 +1097,11 @@
       // "tnp-cli": "18.0.5",
       "record-replay-req-res-scenario": "18.0.8",
       "ng-talkback": "18.0.8",
-      "vpn-split": "18.0.5",
+      "vpn-split": "18.0.8",
       "node-cli-tester": "18.0.8",
       "static-columns": "18.0.10",
       "background-worker-process": "16.100.10",
-      "taon-storage": "18.0.5",
+      "taon-storage": "18.0.8",
       "tnp-core": "18.0.33",
       "tnp-config": "18.0.11",
       "ng2-logger": "18.0.11",
