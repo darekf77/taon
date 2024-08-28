@@ -1,5 +1,5 @@
 //#region @websql
-import { Entity } from 'firedev-typeorm/src';
+import { Entity } from 'taon-typeorm/src';
 //#endregion
 import { EndpointContext } from '../endpoint-context';
 import { Symbols } from '../symbols';

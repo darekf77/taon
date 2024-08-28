@@ -41,7 +41,7 @@ export function getFromlyConfigFor(
     _.isArray(keysPathesToInclude) && keysPathesToInclude.length > 0;
   if (checkExclude && checkInclude) {
     throw new Error(
-      `In Firedev function getFromlyConfigFor(...) please use keysPathesToInclude or keysPathesToExclude, `,
+      `In Taon function getFromlyConfigFor(...) please use keysPathesToInclude or keysPathesToExclude, `,
     );
   }
   // if (checkInclude) {

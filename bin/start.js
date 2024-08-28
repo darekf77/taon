@@ -19,7 +19,7 @@ process.removeAllListeners('warning');
 //#region resolve constants
 const childprocsecretarg = '-childproc';
 const isWinGitBash = (process.platform === 'win32');
-const procType = (process.argv[1].endsWith('tnp') || process.argv[1].endsWith('firedev')) ? 'root'
+const procType = (process.argv[1].endsWith('tnp') || process.argv[1].endsWith('taon')) ? 'root'
   : ((process.argv.find(a => a.startsWith(childprocsecretarg)))
     ? 'child-of-root'
     : 'child-of-child'
@@ -30,7 +30,7 @@ const orgArgv = JSON.parse(JSON.stringify(process.argv));
 global.tnpNonInteractive = (typeof process.argv.find(a => a.startsWith('--tnpNonInteractive')) !== 'undefined');
 const spinnerIsDefault = !tnpNonInteractive;
 const splited = crossPlatofrmPath(process.argv[1]).split('/');
-global.frameworkName = 'firedev';
+global.frameworkName = 'taon';
 
 global.restartWorker = (typeof (process.argv.find(a => a.startsWith('-restartWorker'))) !== 'undefined');
 global.reinitDb = (typeof (process.argv.find(a => a.startsWith('-reinitDb'))) !== 'undefined');
@@ -226,7 +226,7 @@ if (startSpinner) {
     if (distExist) {
       // console.log('USE /dist/cli.js')
       mode = 'dist';
-      !global.hideLog && setText('- firedev dist -', true);
+      !global.hideLog && setText('- taon dist -', true);
       // TODO TOOOO MUCH TIME !!!!!!
       start = require(pathToDistRun.replace(/\.js$/g, '')).start;
     } else {

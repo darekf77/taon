@@ -11,17 +11,17 @@ import {
   PATCH,
 } from '../decorators/http/http-methods-decorators';
 import { Query, Path, Body } from '../decorators/http/http-params-decorators';
-import { MySqlQuerySource } from 'firedev-type-sql/src';
+import { MySqlQuerySource } from 'taon-type-sql/src';
 import { Models } from '../models';
 import { Helpers, _ } from 'tnp-core/src';
 import {
   TaonController,
-  FiredevControllerOptions,
+  TaonControllerOptions,
 } from '../decorators/classes/controller-decorator';
 import { ClassHelpers } from '../helpers/class-helpers';
 
 import { Validators } from '../validators';
-import { FiredevEntityOptions } from '../decorators/classes/entity-decorator';
+import { TaonEntityOptions } from '../decorators/classes/entity-decorator';
 //#endregion
 
 /**
@@ -58,7 +58,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
       const configEntity = Reflect.getMetadata(
         Symbols.metadata.options.entity,
         ClassHelpers.getClassFnFromObject(this),
-      ) as FiredevEntityOptions;
+      ) as TaonEntityOptions;
       if (configEntity?.createTable === false) {
         Helpers.warn(
           `Table for entity ${ClassHelpers.getName(

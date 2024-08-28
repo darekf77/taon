@@ -2,7 +2,7 @@ import { ClassHelpers } from '../../helpers/class-helpers';
 import { Symbols } from '../../symbols';
 import { Models } from '../../models';
 
-export function TaonController(options?: FiredevControllerOptions) {
+export function TaonController(options?: TaonControllerOptions) {
   return function (constructor: Function) {
     ClassHelpers.setName(constructor, options?.className);
     Reflect.defineMetadata(
@@ -18,7 +18,7 @@ export function TaonController(options?: FiredevControllerOptions) {
   };
 }
 
-export class FiredevControllerOptions extends Models.DecoratorAbstractOpt {
+export class TaonControllerOptions extends Models.DecoratorAbstractOpt {
   /**
    * typeorm realtime subscribtion // TODO disabled for now, does not make sense ?s
    */

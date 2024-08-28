@@ -11,12 +11,12 @@
 //   http, https,
 // } from 'tnp-core';
 
-// import { Firedev } from '../index';
+// import { Taon } from '../index';
 // import { Log } from 'ng2-logger';
 
 // const log = Log.create('formly')
 
-// @Firedev.Entity<Article>({
+// @Taon.Entity<Article>({
 //   className: 'Article',
 //   defaultModelValues: {
 //     title: '- no book title -'
@@ -27,7 +27,7 @@
 //   }
 // })
 // class Article {
-//   @Firedev.Orm.Column.Generated()
+//   @Taon.Orm.Column.Generated()
 //   id: number;
 //   title: string;
 //   owner: Person;
@@ -35,7 +35,7 @@
 
 // }
 
-// @Firedev.Entity<Person>({
+// @Taon.Entity<Person>({
 //   className: 'Person',
 //   defaultModelValues: {
 //     id: 1
@@ -53,7 +53,7 @@
 
 // }
 
-// @Firedev.Controller({
+// @Taon.Controller({
 //   className: 'ArticlesController',
 //   entity: Article
 // })
@@ -67,7 +67,7 @@
 
 //     // let i = new ArticlesController()
 //     let p = new Article()
-//     await Firedev.init({
+//     await Taon.init({
 //       host: 'http://localhost:8888',
 //       controllers: [ArticlesController],
 //       entities: [Article],

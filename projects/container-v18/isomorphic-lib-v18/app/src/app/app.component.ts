@@ -1,5 +1,5 @@
 import { Component, NgZone } from '@angular/core';
-import { Firedev } from 'firedev';  // <- this is to replace by firedev
+import { Taon } from 'taon';  // <- this is to replace by taon
 // @ts-ignore
 import start from './---projectname---/app';
 
@@ -15,11 +15,11 @@ export class AppComponent {
   constructor(
     ngzone: NgZone
   ) {
-    Firedev.initNgZone(ngzone);
+    Taon.initNgZone(ngzone);
   }
 
   async ngOnInit() {
-    removeElement('firedevpreloadertoremove');
+    removeElement('taonpreloadertoremove');
     document.body.style.backgroundColor = "FIREDEV_TO_REPLACE_COLOR";
     this.removedPreloader = true;
     // @ts-ignore

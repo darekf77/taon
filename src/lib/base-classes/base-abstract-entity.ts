@@ -1,5 +1,5 @@
 //#region @websql
-import { Entity } from 'firedev-typeorm/src';
+import { Entity } from 'taon-typeorm/src';
 //#endregion
 import { Orm } from '../orm';
 import { BaseEntity } from './base-entity';

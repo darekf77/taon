@@ -15,12 +15,12 @@
 // // if you used the '@types/mocha' method to install mocha type definitions, uncomment the following line
 // // import 'mocha';
 
-// import { Firedev } from '../index';
+// import { Taon } from '../index';
 // import { Log } from 'ng2-logger';
 // import { walk } from 'lodash-walk-object';
 // const log = Log.create('formly')
 
-// @Firedev.Entity<Book>({
+// @Taon.Entity<Book>({
 //   className: 'Book',
 //   defaultModelValues: {
 //     title: '- no book title -'
@@ -36,7 +36,7 @@
 
 // }
 
-// @Firedev.Entity<User>({
+// @Taon.Entity<User>({
 //   className: 'User',
 //   // formly: {
 //   //   transformFn: (f) => f
@@ -66,7 +66,7 @@
 
 //   it('Should return nice full formly form config', () => {
 
-//     let config = Firedev.Formly.getFrom(User);
+//     let config = Taon.Formly.getFrom(User);
 //     // console.log('')
 //     // log.i('config', config)
 //     fse.writeJSONSync(path.join(crossPlatformPath(__dirname), '..', '..', 'tmp-test-json1.json'), config, {
@@ -78,7 +78,7 @@
 
 //   it('Should exclude fields', () => {
 
-//     let config = Firedev.Formly.getFrom(User, {
+//     let config = Taon.Formly.getFrom(User, {
 //       keysPathesToExclude: ['name']
 //     });
 //     // console.log('config', config)
@@ -89,7 +89,7 @@
 
 //   it('Should inlcude only fields', () => {
 
-//     let config = Firedev.Formly.getFrom(User, {
+//     let config = Taon.Formly.getFrom(User, {
 //       keysPathesToInclude: ['name']
 //     });
 //     // console.log('config', config)

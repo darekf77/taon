@@ -1,5 +1,5 @@
 //#region @websql
-import * as tsorm from 'firedev-typeorm/src';
+import * as tsorm from 'taon-typeorm/src';
 //#endregion
 
 //#region orm

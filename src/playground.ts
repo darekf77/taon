@@ -17,7 +17,7 @@
 //   .secondPilot
 //   .name
 
-// import { QueryBuilder, SelectQueryBuilder } from 'firedev-typeorm'
+// import { QueryBuilder, SelectQueryBuilder } from 'taon-typeorm'
 
 // type BaseQueryBuilder<T> = Pick<QueryBuilder<T>, 'select'>
 // type BaseSelectQueryBuilder<T> = Pick<SelectQueryBuilder<T>, 'getMany' | 'delete' | 'getManyAndCount'>

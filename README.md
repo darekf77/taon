@@ -32,7 +32,7 @@ TAON  **T**ypescript **A**ngular **O**rm **N**ode )
 
 <ins>backend/frontend [*isomorphic](https://en.wikipedia.org/wiki/Isomorphic_JavaScript)  apps/libs.</ins>
 
-**[READ DOCUMENTATION](https://firedev.io/#/docs)**
+**[READ DOCUMENTATION](https://taon.io/#/docs)**
 
 <br>
 <br>
@@ -57,39 +57,37 @@ echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo s
     + framework library
 - tnp https://github.com/darekf77/tnp
     + main cli / code structuring tool
-- firedev-core https://github.com/darekf77/tnp-core
+- taon-core https://github.com/darekf77/tnp-core
     + essential/core helpers for all projects
-- firedev-class-helpers https://github.com/darekf77/typescript-class-helpers
+- taon-class-helpers https://github.com/darekf77/typescript-class-helpers
     + helpers for OOP class names based
-- firedev-config https://github.com/darekf77/tnp-config
+- taon-config https://github.com/darekf77/tnp-config
     + config/models for general purpose
-- firedev-cli https://github.com/darekf77/tnp-cli
+- taon-cli https://github.com/darekf77/tnp-cli
     + helpers/abstraction for global cli tools NodeJS based
-- firedev-helpers https://github.com/darekf77/tnp-helpers
+- taon-helpers https://github.com/darekf77/tnp-helpers
     + extended core helpers
-- firedev-json https://github.com/darekf77/json10
+- taon-json https://github.com/darekf77/json10
     + handle JSON in better way
-- firedev-logger https://github.com/darekf77/ng2-logger
+- taon-logger https://github.com/darekf77/ng2-logger
     + logging in isomorphic apps
-- firedev-typeorm https://github.com/darekf77/firedev-typeorm
+- taon-typeorm https://github.com/darekf77/taon-typeorm
     + TypeOrm fork 
-- firedev-type-sql https://github.com/darekf77/firedev-type-sql
+- taon-type-sql https://github.com/darekf77/taon-type-sql
     + strongly type sql
-- firedev-rest https://github.com/darekf77/ng2-rest
+- taon-rest https://github.com/darekf77/ng2-rest
     + easy rest api
-- firedev-incremental-watcher https://github.com/darekf77/incremental-compiler
+- taon-incremental-watcher https://github.com/darekf77/incremental-compiler
     + abstraction for incremental builders NodeJS based 
-- firedev-storage https://github.com/darekf77/firedev-storage
+- taon-storage https://github.com/darekf77/taon-storage
     + ts decorators based storage solution
-- firedev-walk-object https://github.com/darekf77/lodash-walk-object
+- taon-walk-object https://github.com/darekf77/lodash-walk-object
     + iterate over deep properties in object
-- firedev-ui https://github.com/darekf77/firedev-ui
-    + open source UI for firedev based projects
 
 
 
-### Global npm dependencies installed with firedev 
-Installation happens when you first time use firedev
+### Global npm dependencies installed with taon 
+Installation happens when you first time use taon
 
 <pre>
 { name: 'ncc', version: '0.36.0', installName: '@vercel/ncc' },
@@ -103,13 +101,13 @@ Installation happens when you first time use firedev
 { name: 'nodemon' },
 { name: 'madge' },
 { name: 'yarn' },
-{ name: 'firedev-http-server' },
+{ name: 'taon-http-server' },
 { name: 'prettier' },
 { name: 'fkill', installName: 'fkill-cli' },
 { name: 'mocha' },
 { name: 'jest' },
 { name: 'ts-node' },
-{ name: 'firedev-vsce' },
+{ name: 'taon-vsce' },
 { name: 'webpack-bundle-analyzer' },
 { name: 'babel', installName: 'babel-cli' },
 { name: 'javascript-obfuscator', version: '4' },

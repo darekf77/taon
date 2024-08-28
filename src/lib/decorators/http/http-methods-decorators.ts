@@ -8,10 +8,10 @@ const metaReq = (
   target: Function,
   propertyKey: string,
   descriptor: PropertyDescriptor,
-  pathOrOptions: string | FiredevHttpDecoratorOptions,
+  pathOrOptions: string | TaonHttpDecoratorOptions,
   pathIsGlobal: boolean,
 ) => {
-  let options: FiredevHttpDecoratorOptions;
+  let options: TaonHttpDecoratorOptions;
   if (typeof pathOrOptions === 'object') {
     options = pathOrOptions;
     pathOrOptions = options.path as any;
@@ -72,7 +72,7 @@ const metaReq = (
   // console.log('methods updated', methodConfig);
 };
 
-export interface FiredevHttpDecoratorOptions {
+export interface TaonHttpDecoratorOptions {
   path?: string;
   pathIsGlobal?: boolean;
   overrideContentType?: CoreModels.ContentType;
@@ -80,7 +80,7 @@ export interface FiredevHttpDecoratorOptions {
 }
 
 export function GET(
-  pathOrOptions?: string | FiredevHttpDecoratorOptions,
+  pathOrOptions?: string | TaonHttpDecoratorOptions,
   pathIsGlobal = false,
 ) {
   return function (
@@ -101,7 +101,7 @@ export function GET(
 }
 
 export function HEAD(
-  pathOrOptions?: string | FiredevHttpDecoratorOptions,
+  pathOrOptions?: string | TaonHttpDecoratorOptions,
   pathIsGlobal = false,
 ) {
   return function (
@@ -122,7 +122,7 @@ export function HEAD(
 }
 
 export function POST(
-  pathOrOptions?: string | FiredevHttpDecoratorOptions,
+  pathOrOptions?: string | TaonHttpDecoratorOptions,
   pathIsGlobal = false,
 ) {
   return function (
@@ -143,7 +143,7 @@ export function POST(
 }
 
 export function PUT(
-  pathOrOptions?: string | FiredevHttpDecoratorOptions,
+  pathOrOptions?: string | TaonHttpDecoratorOptions,
   pathIsGlobal = false,
 ) {
   return function (
@@ -164,7 +164,7 @@ export function PUT(
 }
 
 export function PATCH(
-  pathOrOptions?: string | FiredevHttpDecoratorOptions,
+  pathOrOptions?: string | TaonHttpDecoratorOptions,
   pathIsGlobal = false,
 ) {
   return function (
@@ -185,7 +185,7 @@ export function PATCH(
 }
 
 export function DELETE(
-  pathOrOptions?: string | FiredevHttpDecoratorOptions,
+  pathOrOptions?: string | TaonHttpDecoratorOptions,
   pathIsGlobal = false,
 ) {
   return function (

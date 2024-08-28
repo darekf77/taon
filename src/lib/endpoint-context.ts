@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/typedef */
 //#region imports
 //#region @websql
-import { EventSubscriber } from 'firedev-typeorm/src';
+import { EventSubscriber } from 'taon-typeorm/src';
 import type {
   TransactionRollbackEvent,
   TransactionCommitEvent,
@@ -11,8 +11,8 @@ import type {
   RemoveEvent,
   UpdateEvent,
   InsertEvent,
-} from 'firedev-typeorm/src';
-import { Entity as TypeormEntity, Tree } from 'firedev-typeorm/src';
+} from 'taon-typeorm/src';
+import { Entity as TypeormEntity, Tree } from 'taon-typeorm/src';
 //#endregion
 //#region @backend
 import * as express from 'express';
@@ -27,16 +27,16 @@ import { URL } from 'url';
 import { fse, http, https } from 'tnp-core/src';
 //#endregion
 //#region @browser
-import { FiredevAdmin } from './ui/firedev-admin-mode-configuration/firedev-admin.service';
+import { TaonAdmin } from './ui/taon-admin-mode-configuration/taon-admin.service';
 //#endregion
 import { Models } from './models';
 import { ClassHelpers } from './helpers/class-helpers';
 import { Symbols } from './symbols';
 import { _, Helpers } from 'tnp-core/src';
 import type { createContext } from './create-context';
-import { DIFiredevContainer } from './dependency-injection/di-container';
-import { FiredevControllerOptions } from './decorators/classes/controller-decorator';
-import { FiredevHelpers } from './helpers/firedev-helpers';
+import { DITaonContainer } from './dependency-injection/di-container';
+import { TaonControllerOptions } from './decorators/classes/controller-decorator';
+import { TaonHelpers } from './helpers/taon-helpers';
 import {
   Mapping,
   Models as ModelsNg2Rest,
@@ -56,13 +56,13 @@ import {
   DataSource,
   DataSourceOptions,
   getMetadataArgsStorage,
-} from 'firedev-typeorm/src';
-import { FiredevEntityOptions } from './decorators/classes/entity-decorator';
+} from 'taon-typeorm/src';
+import { TaonEntityOptions } from './decorators/classes/entity-decorator';
 import type { Server } from 'http';
 import { ENV } from './env';
 import type { BaseClass } from './base-classes/base-class';
 import { RealtimeCore } from './realtime/realtime-core';
-import { FiredevSubscriberOptions } from './decorators/classes/subscriber-decorator';
+import { TaonSubscriberOptions } from './decorators/classes/subscriber-decorator';
 import { BaseSubscriberForEntity } from './base-classes/base-subscriber-for-entity';
 //#endregion
 
@@ -237,7 +237,7 @@ export class EndpointContext {
 
     //#region debug config
     // console.log(
-    //   `[firedev][${this.config.contextName}] - resolve config from fn`,
+    //   `[taon][${this.config.contextName}] - resolve config from fn`,
     //   {
     //     config: this.config,
     //   },
@@ -268,7 +268,7 @@ export class EndpointContext {
     if (this.config.remoteHost) {
       if (this.config.host) {
         Helpers.error(
-          `[firedev] You can't have remoteHost and host at the same time`,
+          `[taon] You can't have remoteHost and host at the same time`,
           false,
           true,
         );
@@ -282,7 +282,7 @@ export class EndpointContext {
 
     if (!this.mode && !this.config.abstract) {
       Helpers.error(
-        `[firedev] Context "${this.contextName}": You need to provide host or remoteHost or useIpcWhenElectron`,
+        `[taon] Context "${this.contextName}": You need to provide host or remoteHost or useIpcWhenElectron`,
         false,
         true,
       );
@@ -444,18 +444,18 @@ export class EndpointContext {
     if (this.config.abstract) {
       this.logFramework &&
         Helpers.info(
-          `[firedev] Create abstract context: ${this.config.contextName}`,
+          `[taon] Create abstract context: ${this.config.contextName}`,
         );
     } else {
       if (this.config.remoteHost) {
         this.logFramework &&
           Helpers.info(
-            `[firedev] Create context for remote host: ${this.config.remoteHost}`,
+            `[taon] Create context for remote host: ${this.config.remoteHost}`,
           );
       } else {
         this.logFramework &&
           Helpers.info(
-            `[firedev] Create context for host: ${this.config.host}`,
+            `[taon] Create context for host: ${this.config.host}`,
           );
       }
     }
@@ -490,7 +490,7 @@ export class EndpointContext {
     } else {
       this.logFramework &&
         Helpers.info(
-          `[firedev][database] Automatically resolving database config for mode ${this.mode}`,
+          `[taon][database] Automatically resolving database config for mode ${this.mode}`,
         );
       switch (this.mode) {
         //#region resolve database config for mode backend-frontend(tcp+udp)
@@ -521,7 +521,7 @@ export class EndpointContext {
           let keepWebsqlDbDataAfterReload = false;
           //#region @browser
           keepWebsqlDbDataAfterReload =
-            FiredevAdmin.Instance.keepWebsqlDbDataAfterReload;
+            TaonAdmin.Instance.keepWebsqlDbDataAfterReload;
           //#endregion
 
           if (keepWebsqlDbDataAfterReload) {
@@ -570,7 +570,7 @@ export class EndpointContext {
     if (this.mode === 'backend-frontend(tcp+udp)') {
       // this.displayRoutes(this.expressApp);
       this.serverTcpUdp.listen(Number(this.uri.port), () => {
-        Helpers.log(`[firedev][express-server]listening on port: ${this.uri.port}, hostname: ${this.uri.pathname},
+        Helpers.log(`[taon][express-server]listening on port: ${this.uri.port}, hostname: ${this.uri.pathname},
             address: ${this.uri.protocol}//localhost:${this.uri.port}${this.uri.pathname}
             env: ${this.expressApp.settings.env}
             `);
@@ -965,7 +965,7 @@ export class EndpointContext {
       // ...recrusiveValuesFromContext,
       ...Object.values(classes),
     ]) {
-      const instance = DIFiredevContainer.resolve(classFn as any) as any;
+      const instance = DITaonContainer.resolve(classFn as any) as any;
       const classInstancesByNameObj = this.classInstancesByNameObj[classType];
       const className = ClassHelpers.getName(classFn);
       // console.log({ classFn, classType, instance, place, className, 'classInstancesByNameObj': this.classInstancesByNameObj });
@@ -981,7 +981,7 @@ export class EndpointContext {
   //#region methods & getters / reinit controllers db example data
   async reinitControllers() {
     // Helpers.taskStarted(
-    //   `[firedev] REINITING CONTROLLERS ${this.contextName} STARTED`,
+    //   `[taon] REINITING CONTROLLERS ${this.contextName} STARTED`,
     // );
     const controllers = this.getClassesInstancesArrBy(
       Models.ClassType.CONTROLLER,
@@ -996,7 +996,7 @@ export class EndpointContext {
       }
     }
     // Helpers.taskDone(
-    //   `[firedev] REINITING CONTROLLERS ${this.contextName} DONE`,
+    //   `[taon] REINITING CONTROLLERS ${this.contextName} DONE`,
     // );
   }
   async initClasses() {
@@ -1008,7 +1008,7 @@ export class EndpointContext {
     ]) {
       //#region init class staict _ property
       // Helpers.taskStarted(
-      //   `[firedev] REINITING _ CLASS FN ${classTypeName} ${this.contextName} STARTED`,
+      //   `[taon] REINITING _ CLASS FN ${classTypeName} ${this.contextName} STARTED`,
       // );
       for (const classFun of this.getClassFunByArr(classTypeName) as any[]) {
         if (_.isFunction(classFun._)) {
@@ -1025,7 +1025,7 @@ export class EndpointContext {
         }
       }
       // Helpers.taskStarted(
-      //   `[firedev] REINITING _ CLASS FN ${classTypeName} ${this.contextName} DONE`,
+      //   `[taon] REINITING _ CLASS FN ${classTypeName} ${this.contextName} DONE`,
       // );
       //#endregion
     }
@@ -1037,7 +1037,7 @@ export class EndpointContext {
     ]) {
       //#region init providers, repositories  _ property
       // Helpers.taskStarted(
-      //   `[firedev] REINITING _ INS FN ${classTypeName} ${this.contextName} STARTED`,
+      //   `[taon] REINITING _ INS FN ${classTypeName} ${this.contextName} STARTED`,
       // );
       for (const ctrl of this.getClassesInstancesArrBy(classTypeName)) {
         if (_.isFunction(ctrl._)) {
@@ -1048,7 +1048,7 @@ export class EndpointContext {
         }
       }
       // Helpers.taskStarted(
-      //   `[firedev] REINITING _ INS FN ${classTypeName} ${this.contextName} DONE`,
+      //   `[taon] REINITING _ INS FN ${classTypeName} ${this.contextName} DONE`,
       // );
       //#endregion
     }
@@ -1131,7 +1131,7 @@ export class EndpointContext {
       const options = Reflect.getMetadata(
         Symbols.metadata.options.subscriber,
         subscriber,
-      ) as FiredevSubscriberOptions;
+      ) as TaonSubscriberOptions;
 
       // const nameForSubscriber = ClassHelpers.getName(subscriber);
       EventSubscriber()(subscriber);
@@ -1281,7 +1281,7 @@ export class EndpointContext {
       const options = Reflect.getMetadata(
         Symbols.metadata.options.entity,
         entity,
-      ) as FiredevEntityOptions;
+      ) as TaonEntityOptions;
       const createTable = _.isUndefined(options.createTable)
         ? true
         : options.createTable;
@@ -1290,14 +1290,14 @@ export class EndpointContext {
       if (_.isUndefined(options.createTable) ? true : options.createTable) {
         this.logDb &&
           console.info(
-            `[firedev][typeorm] create table for entity "${nameForEntity}" ? '${createTable}'`,
+            `[taon][typeorm] create table for entity "${nameForEntity}" ? '${createTable}'`,
           );
         // console.log('TypeormEntity', { TypeormEntity });
         TypeormEntity(nameForEntity)(entity);
       } else {
         this.logDb &&
           console.info(
-            `[firedev][typeorm] create table for entity "${nameForEntity}" ? '${createTable}'`,
+            `[taon][typeorm] create table for entity "${nameForEntity}" ? '${createTable}'`,
           );
       }
     }
@@ -1348,7 +1348,7 @@ export class EndpointContext {
     if (this.modeAllowsDatabaseCreation && this.databaseConfig) {
       this.logDb &&
         this.logFramework &&
-        Helpers.info('[firedev][database] prepare typeorm connection...');
+        Helpers.info('[taon][database] prepare typeorm connection...');
       try {
         const connection = new DataSource(dataSourceDbConfig);
         this.connection = connection;
@@ -1371,7 +1371,7 @@ export class EndpointContext {
 
         CONTECTION OK for ${this.contextName} - ${this.mode}
 
-        [firedev][typeorm] db prepration done.. db initialize=${this.connection?.isInitialized}
+        [taon][typeorm] db prepration done.. db initialize=${this.connection?.isInitialized}
 
 
         `,
@@ -1388,7 +1388,7 @@ export class EndpointContext {
       //     );
       //     debugger;
     } else {
-      Helpers.info(`[firedev][typeorm] Not initing db for mode ${this.mode}`);
+      Helpers.info(`[taon][typeorm] Not initing db for mode ${this.mode}`);
     }
     //#endregion
   }
@@ -1409,14 +1409,14 @@ export class EndpointContext {
       const parentscalculatedPath = _.slice(configs, 1)
         .reverse()
         .map(bc => {
-          if (FiredevHelpers.isGoodPath(bc.path)) {
+          if (TaonHelpers.isGoodPath(bc.path)) {
             return bc.path;
           }
           return bc.className;
         })
         .join('/');
 
-      if (FiredevHelpers.isGoodPath(classConfig.path)) {
+      if (TaonHelpers.isGoodPath(classConfig.path)) {
         classConfig.calculatedPath = classConfig.path;
       } else {
         classConfig.calculatedPath =
@@ -1445,7 +1445,7 @@ export class EndpointContext {
         //#endregion
         this.logHttp &&
           console.groupCollapsed(
-            `[firedev][express-server] routes [${classConfig.className}]`,
+            `[taon][express-server] routes [${classConfig.className}]`,
           );
         //#region @backend
       }
@@ -1459,7 +1459,7 @@ export class EndpointContext {
         const type: Models.Http.Rest.HttpMethod = methodConfig.type;
         const expressPath = methodConfig.global
           ? `/${methodConfig.path?.replace(/\//, '')}`
-          : FiredevHelpers.getExpressPath(classConfig, methodConfig);
+          : TaonHelpers.getExpressPath(classConfig, methodConfig);
 
         // console.log({ expressPath })
         if (Helpers.isNode || Helpers.isWebSQL) {
@@ -1513,12 +1513,12 @@ export class EndpointContext {
 
     const troutes = this.activeRoutes.map(({ method, routePath }) => {
       return (
-        FiredevHelpers.fillUpTo(method.toUpperCase() + ':', 10) +
+        TaonHelpers.fillUpTo(method.toUpperCase() + ':', 10) +
         this.uri.href.replace(/\/$/, '') +
         routePath
       );
 
-      // return `${FiredevHelpers.string(method.toUpperCase() + ':')
+      // return `${TaonHelpers.string(method.toUpperCase() + ':')
       // .fillUpTo(10)}${context.uri.href.replace(/\/$/, '')}${routePath}`
     });
     const routes = [
@@ -1532,7 +1532,7 @@ export class EndpointContext {
       `tmp-routes-${_.kebabCase(this.config.contextName)}.json`,
     );
 
-    this.logFramework && console.log(`[firedev] routes file: ${fileName} `);
+    this.logFramework && console.log(`[taon] routes file: ${fileName} `);
     // Helpers.log(JSON.stringify(routes, null, 4))
     //#region @backend
     fse.writeJSONSync(fileName, routes, {
@@ -1575,7 +1575,7 @@ export class EndpointContext {
 
     if (this.session) {
       Helpers.info(
-        '[firedev][express-server] session enabled for this context ' +
+        '[taon][express-server] session enabled for this context ' +
           this.contextName,
       );
       const { cookieMaxAge } = this.session;
@@ -1606,7 +1606,7 @@ export class EndpointContext {
       // if(this.config?.serverLogs) {
       this.logHttp &&
         Helpers.info(
-          `[firedev][express-server] session not enabled for this context '${this.contextName}'`,
+          `[taon][express-server] session not enabled for this context '${this.contextName}'`,
         );
       // }
       app.use(
@@ -1711,7 +1711,7 @@ export class EndpointContext {
 
     if (Helpers.isElectron) {
       //#region @backend
-      const ipcKeyName = FiredevHelpers.ipcKeyNameRequest(
+      const ipcKeyName = TaonHelpers.ipcKeyNameRequest(
         target,
         methodConfig,
         expressPath,
@@ -1723,7 +1723,7 @@ export class EndpointContext {
           void 0,
         );
         event.sender.send(
-          FiredevHelpers.ipcKeyNameResponse(target, methodConfig, expressPath),
+          TaonHelpers.ipcKeyNameResponse(target, methodConfig, expressPath),
           responseJsonData,
         );
       });
@@ -1811,7 +1811,7 @@ export class EndpointContext {
               const entity = JSON.parse(
                 req.headers[Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS],
               );
-              tQuery = FiredevHelpers.parseJSONwithStringJSONs(
+              tQuery = TaonHelpers.parseJSONwithStringJSONs(
                 Mapping.encode(tQuery, entity),
               );
             } catch (e) {}
@@ -1827,7 +1827,7 @@ export class EndpointContext {
                 if (_.isString(beforeTransofrm)) {
                   try {
                     const paresed =
-                      FiredevHelpers.tryTransformParam(beforeTransofrm);
+                      TaonHelpers.tryTransformParam(beforeTransofrm);
                     beforeTransofrm = paresed;
                   } catch (e) {}
                 }
@@ -1836,7 +1836,7 @@ export class EndpointContext {
                   entityForParam,
                 );
                 tQuery[queryParamName] =
-                  FiredevHelpers.parseJSONwithStringJSONs(afterEncoding);
+                  TaonHelpers.parseJSONwithStringJSONs(afterEncoding);
               } catch (e) {}
             });
           }
@@ -1873,7 +1873,7 @@ export class EndpointContext {
 
           const resolvedParams = args
             .reverse()
-            .map(v => FiredevHelpers.tryTransformParam(v));
+            .map(v => TaonHelpers.tryTransformParam(v));
 
           try {
             let result = await getResult(resolvedParams, req, res);
@@ -1903,7 +1903,7 @@ export class EndpointContext {
               const m = /^data:(.+?);base64,(.+)$/.exec(img_base64);
               if (!m) {
                 throw new Error(
-                  `[firedev - framework] Not a base64 image[${img_base64}]`,
+                  `[taon - framework] Not a base64 image[${img_base64}]`,
                 );
               }
               const [_, content_type, file_base64] = m;
@@ -1949,7 +1949,7 @@ export class EndpointContext {
             } else {
               Helpers.log(error);
               Helpers.error(
-                `[Firedev] Bad result isomorphic method: ${error} `,
+                `[Taon] Bad result isomorphic method: ${error} `,
                 true,
                 false,
               );
@@ -2005,10 +2005,10 @@ export class EndpointContext {
       target.prototype[methodConfig.methodName] = function (...args) {
         const received = new Promise(async (resolve, reject) => {
           const headers = {};
-          const { request, response } = FiredevHelpers.websqlMocks(headers);
+          const { request, response } = TaonHelpers.websqlMocks(headers);
 
           Helpers.ipcRenderer.once(
-            FiredevHelpers.ipcKeyNameResponse(
+            TaonHelpers.ipcKeyNameResponse(
               target,
               methodConfig,
               expressPath,
@@ -2043,7 +2043,7 @@ export class EndpointContext {
             },
           );
           Helpers.ipcRenderer.send(
-            FiredevHelpers.ipcKeyNameRequest(target, methodConfig, expressPath),
+            TaonHelpers.ipcKeyNameRequest(target, methodConfig, expressPath),
             args,
           );
         });
@@ -2123,7 +2123,7 @@ export class EndpointContext {
       // }
       const received = new Promise(async (resolve, reject) => {
         const headers = {};
-        const { request, response } = FiredevHelpers.websqlMocks(headers);
+        const { request, response } = TaonHelpers.websqlMocks(headers);
 
         let res: any;
         try {
@@ -2332,15 +2332,15 @@ export class EndpointContext {
         if (currentParam.paramType === 'Body') {
           if (currentParam.paramName) {
             if (ClassHelpers.getName(bodyObject) === 'FormData') {
-              throw new Error(`[firedev - framework] Don use param names when posting / putting FormData.
+              throw new Error(`[taon - framework] Don use param names when posting / putting FormData.
               Use this:
 // ...
-(@Firedev.Http.Param.Body() formData: FormData) ...
+(@Taon.Http.Param.Body() formData: FormData) ...
 // ...
 
 instead
   // ...
-  (@Firedev.Http.Param.Body('${currentParam.paramName}') formData: FormData) ...
+  (@Taon.Http.Param.Body('${currentParam.paramName}') formData: FormData) ...
 // ...
 `);
             }

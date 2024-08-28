@@ -1,4 +1,4 @@
-// import { Firedev } from 'firedev/src';
+// import { Taon } from 'taon/src';
 // import { EMPTY, Observable, catchError, map, of, startWith } from 'rxjs';
 // import { Helpers, _ } from 'tnp-core/src';
 // //#region @notForNpm
@@ -9,8 +9,8 @@
 // import { CommonModule } from '@angular/common';
 
 // @Component({
-//   selector: 'app-firedev',
-//   template: `hello from firedev<br>
+//   selector: 'app-taon',
+//   template: `hello from taon<br>
 //     <br>
 //     users from backend
 //     <ul>
@@ -19,7 +19,7 @@
 //   `,
 //   styles: [` body { margin: 0px !important; } `],
 // })
-// export class FiredevComponent implements OnInit {
+// export class TaonComponent implements OnInit {
 //   users$: Observable<User[]> = User.ctrl.getAll().received.observable
 //     .pipe(
 //       map(data => data.body.json),
@@ -31,35 +31,35 @@
 
 // @NgModule({
 //   imports: [CommonModule],
-//   exports: [FiredevComponent],
-//   declarations: [FiredevComponent],
+//   exports: [TaonComponent],
+//   declarations: [TaonComponent],
 //   providers: [],
 // })
-// export class FiredevModule { }
+// export class TaonModule { }
 // //#endregion
 
-// @Firedev.Entity({ className: 'User' })
-// class User extends Firedev.Base.Entity {
+// @Taon.Entity({ className: 'User' })
+// class User extends Taon.Base.Entity {
 //   static from(user: Partial<User>) {
 //     return _.merge(new User(), user);
 //   }
 //   public static ctrl?: UserController;
 //   //#region @websql
-//   @Firedev.Orm.Column.Generated()
+//   @Taon.Orm.Column.Generated()
 //   //#endregion
 //   id?: string | number;
 
 //   //#region @websql
-//   @Firedev.Orm.Column.Custom({ type: 'varchar', length: 100 })
+//   @Taon.Orm.Column.Custom({ type: 'varchar', length: 100 })
 //   //#endregion
 //   name?: string;
 // }
 
-// @Firedev.Controller({ className: 'UserController', entity: User })
-// class UserController extends Firedev.Base.Controller<User> {
+// @Taon.Controller({ className: 'UserController', entity: User })
+// class UserController extends Taon.Base.Controller<User> {
 
-//   @Firedev.Http.PUT()
-//   helloWorld(@Firedev.Http.Param.Query('id') id: string, @Firedev.Http.Param.Query('test') test: number): Firedev.Response<string> {
+//   @Taon.Http.PUT()
+//   helloWorld(@Taon.Http.Param.Query('id') id: string, @Taon.Http.Param.Query('test') test: number): Taon.Response<string> {
 //     //#region @websqlFunc
 //     return async () => {
 //       console.log({ id, test })
@@ -83,15 +83,15 @@
 //   console.log('Your server will start on port ' + HOST_BACKEND_PORT);
 //   const host = 'http://localhost:' + HOST_BACKEND_PORT;
 
-//   const context = await Firedev.init({
+//   const context = await Taon.init({
 //     host,
 //     controllers: [
 //       UserController,
-//       // PUT FIREDEV CONTORLLERS HERE
+//       // PUT TAON CONTORLLERS HERE
 //     ],
 //     entities: [
 //       User,
-//       // PUT FIREDEV ENTITIES HERE
+//       // PUT TAON ENTITIES HERE
 //     ],
 //     //#region @websql
 //     config: {
@@ -102,7 +102,7 @@
 //     //#endregion
 //   });
 
-//   if (Firedev.isBrowser) {
+//   if (Taon.isBrowser) {
 //     const helloWorld = (await User.ctrl!.helloWorld('secrethashid', 444).received)!.body?.rawJson;
 //     console.log({
 //       'helloWorld from backend': helloWorld

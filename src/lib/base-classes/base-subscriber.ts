@@ -8,7 +8,7 @@ import {
   TransactionRollbackEvent,
   RemoveEvent,
   UpdateEvent,
-} from 'firedev-typeorm/src';
+} from 'taon-typeorm/src';
 import { BaseInjector } from './base-injector';
 import { TaonSubscriber } from '../decorators/classes/subscriber-decorator';
 

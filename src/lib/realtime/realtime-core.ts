@@ -62,7 +62,7 @@ export class RealtimeCore {
   constructor(public ctx: EndpointContext) {
     this.strategy = this.resolveStrategy();
     ctx.logFramework &&
-      console.log(`[firedev] realtime strategy: ${this.strategy}`);
+      console.log(`[taon] realtime strategy: ${this.strategy}`);
     this.client = new RealtimeClient(this);
     this.server = new RealtimeServer(this);
   }
@@ -92,7 +92,7 @@ export class RealtimeCore {
     let nsp = namespace ? namespace : '';
     nsp = nsp === '/' ? '' : nsp;
     const pathname = uri.pathname !== '/' ? uri.pathname : '';
-    let prefix = `firedevContext-`;
+    let prefix = `taonContext-`;
     if (Helpers.isElectron) {
       prefix = ``;
     }

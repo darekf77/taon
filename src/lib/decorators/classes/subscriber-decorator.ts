@@ -4,13 +4,13 @@ import { Models } from '../../models';
 import { _ } from 'tnp-core/src';
 import type { BaseSubscriber } from '../../base-classes/base-subscriber';
 
-export class FiredevSubscriberOptions<
+export class TaonSubscriberOptions<
   T = any,
 > extends Models.DecoratorAbstractOpt {
   allowedEvents?: (keyof T)[];
 }
 
-export function TaonSubscriber(options: FiredevSubscriberOptions) {
+export function TaonSubscriber(options: TaonSubscriberOptions) {
   return function <T extends { new (...args: any[]): {} }>(constructor: T) {
     Reflect.defineMetadata(
       Symbols.metadata.options.repository,

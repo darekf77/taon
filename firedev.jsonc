@@ -1,12 +1,10 @@
 {
-  "resources": [
-    "README.md", // readme for humans
-    "bin",
-  ],
+  "resources": ["README.md", "bin"],
 
   "overrided": {
     "linkedFolders": [],
     "includeAsDev": [],
+
     "includeOnly": [
       "tnp",
       "tslib",
@@ -14,15 +12,13 @@
       "ng2-rest",
       "json10",
       "lodash-walk-object",
-      "firedev-type-sql",
-      // TOOD better than chokidar, but doesn"t work when globally installed npm package
-      // "@parcel/watcher",
-      // TOOD QUICK_FIX bundle socket io client has weird dependency resolver
-      "socket.io",
+      "taon-type-sql",
+      "socket.io"
     ],
+
     "ignoreDepsPattern": [],
     "dependencies": {},
-    "npmFixes": [],
+    "npmFixes": []
   },
 
   "smartContainerBuildTarget": "",
@@ -36,7 +32,7 @@
     "cliBuildNoDts": false,
     "cliBuildObscure": false,
     "cliBuildIncludeNodeModules": false,
-    "cliBuildUglify": false,
+    "cliBuildUglify": false
   },
 
   "smartContainerTarget": "",
@@ -48,5 +44,5 @@
   "license": "MIT",
   "private": false,
   "author": "Dariusz Filipiak",
-  "homepage": "https://github.com/darekf77/firedev#readme",
+  "homepage": "https://github.com/darekf77/taon#readme"
 }

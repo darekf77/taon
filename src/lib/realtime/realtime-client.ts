@@ -104,7 +104,7 @@ export class RealtimeClient {
     if (_.isString(property)) {
       if (property.trim() === '') {
         throw new Error(
-          `[Firedev][listenChangesEntity.. incorect property '' for ${className}`,
+          `[Taon][listenChangesEntity.. incorect property '' for ${className}`,
         );
       }
     }
@@ -114,7 +114,7 @@ export class RealtimeClient {
       //#region prepare parameters for manager
 
       if (this.core.ctx.disabledRealtime) {
-        console.error(`[Firedev][realtime rxjs] remove firedev config flag:
+        console.error(`[Taon][realtime rxjs] remove taon config flag:
 
         ...
         disabledRealtime: true

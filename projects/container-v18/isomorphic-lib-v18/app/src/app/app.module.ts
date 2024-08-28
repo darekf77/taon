@@ -4,7 +4,7 @@ import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-// import { FiredevAdminModeConfigurationModule } from 'firedev-ui'; // <- this is to replace by firedev
+// import { TaonAdminModeConfigurationModule } from 'taon-ui'; // <- this is to replace by taon
 
 @NgModule({
   declarations: [
@@ -19,7 +19,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
       //distReleaseOnlyregistrationStrategy: 'registerWhenStable:30000'
     //distReleaseOnly}),
     BrowserAnimationsModule,
-    // FiredevAdminModeConfigurationModule,
+    // TaonAdminModeConfigurationModule,
     //<<<TO_REPLACE_MODULE>>>
   ],
   providers: [],

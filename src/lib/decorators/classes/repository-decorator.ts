@@ -4,10 +4,10 @@ import { Models } from '../../models';
 import {
   Repository as TypeormRepository,
   EntityRepository,
-} from 'firedev-typeorm/src';
+} from 'taon-typeorm/src';
 import { _ } from 'tnp-core/src';
 
-export function TaonRepository(options: FiredevRepositoryOptions) {
+export function TaonRepository(options: TaonRepositoryOptions) {
   return function (constructor: Function) {
     Reflect.defineMetadata(
       Symbols.metadata.options.repository,
@@ -23,6 +23,6 @@ export function TaonRepository(options: FiredevRepositoryOptions) {
   };
 }
 
-export class FiredevRepositoryOptions<
+export class TaonRepositoryOptions<
   T = any,
 > extends Models.DecoratorAbstractOpt {}

@@ -5,10 +5,10 @@ import { Symbols } from '../../symbols';
 import { _ } from 'tnp-core/src';
 import { Models } from '../../models';
 //#region @websql
-import { Entity as TypeormEntity, Tree } from 'firedev-typeorm/src';
+import { Entity as TypeormEntity, Tree } from 'taon-typeorm/src';
 //#endregion
 
-export function TaonEntity<T = any>(options?: FiredevEntityOptions<T>) {
+export function TaonEntity<T = any>(options?: TaonEntityOptions<T>) {
   return function (constructor: Function) {
     options = options || ({} as any);
     options.uniqueKeyProp = options.uniqueKeyProp || ('id' as any);
@@ -42,7 +42,7 @@ export function TaonEntity<T = any>(options?: FiredevEntityOptions<T>) {
   };
 }
 
-export class FiredevEntityOptions<T = any> extends Models.DecoratorAbstractOpt {
+export class TaonEntityOptions<T = any> extends Models.DecoratorAbstractOpt {
   /**
    * default unique property is "id"
    * for your entity it may be something else

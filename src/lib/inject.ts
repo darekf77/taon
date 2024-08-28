@@ -85,7 +85,7 @@ export const injectSubscriberEvents = <T>(
               throw new Error(
                 `You are trying to inject class without context. Use context like this;
 
-              Firedev.injectSubscriberEvents( ()=> ` +
+              Taon.injectSubscriberEvents( ()=> ` +
                   `MyContext.getInstance(${subscriberClassFN?.name}), '${eventName as any}' )
 
 

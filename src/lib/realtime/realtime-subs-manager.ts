@@ -20,13 +20,13 @@ export class RealtimeSubsManager {
     realtime: SocketClient<DefaultEventsMap, DefaultEventsMap>,
   ) {
     if (this.options.core.ctx.disabledRealtime) {
-      console.warn(`[Firedev][startListenIfNotStarted] sockets are disabled`);
+      console.warn(`[Taon][startListenIfNotStarted] sockets are disabled`);
       return;
     }
 
     if (!realtime) {
       console.warn(
-        `[Firedev][startListenIfNotStarted] invalid socket connection`,
+        `[Taon][startListenIfNotStarted] invalid socket connection`,
       );
       return;
     }

@@ -7,15 +7,15 @@ export namespace Validators {
     setTimeout(() => {
       // console.log(`check after timeout ${className} , production mode: ${FrameworkContext.isProductionMode}`)
       if (_.isUndefined(className)) {
-        throw `[Firedev]
+        throw `[Taon]
       Please provide "className" property for each Controller and Entity:
 
-          @Firedev.Controller({ className: 'MyExampleCtrl'  })
+          @Taon.Controller({ className: 'MyExampleCtrl'  })
           class MyExampleCtrl {
             ...
           }
 
-          @Firedev.Entity({ className: 'MyExampleEntity'  })
+          @Taon.Entity({ className: 'MyExampleEntity'  })
           class MyExampleEntity {
             ...
           }
@@ -44,7 +44,7 @@ export namespace Validators {
       const m = methods[index];
       if (m.path === current.path && m.responseType !== current.responseType) {
         throw new Error(`
-  [firedev] you can have 2 methods with same path but differetn reponseType-s
+  [taon] you can have 2 methods with same path but differetn reponseType-s
 
           ${m.methodName}( ... path: ${m.path} )  -> responseType: ${m.responseType || defaultResponseType}
           ${current.methodName}( ... path: ${current.path} ) -> responseType: ${current.responseType}
@@ -72,7 +72,7 @@ export namespace Validators {
       console.error('controllers', controllers);
       throw `
 
-  Incorect value for property "controllers" inside Firedev.Init(...)
+  Incorect value for property "controllers" inside Taon.Init(...)
 
   `;
     }
@@ -84,7 +84,7 @@ export namespace Validators {
       console.error('entites', entities);
       throw `
 
-  Incorect value for property "entities" inside Firedev.Init(...)
+  Incorect value for property "entities" inside Taon.Init(...)
 
   `;
     }

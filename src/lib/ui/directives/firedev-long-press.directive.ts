@@ -9,13 +9,13 @@ import {
 
 import { _ } from 'tnp-core/src';
 import { Log, Level } from 'ng2-logger/src';
-const log = Log.create(`[firedev-helpers] long-press`, Level.__NOTHING);
+const log = Log.create(`[taon-helpers] long-press`, Level.__NOTHING);
 
 @Directive({
-  selector: '[firedevLongPress]',
+  selector: '[taonLongPress]',
   standalone: true,
 })
-export class FiredevLongPress {
+export class TaonLongPress {
   @Input() pressDuration: number = 1000;
 
   @Output() onLongPress: EventEmitter<any> = new EventEmitter();

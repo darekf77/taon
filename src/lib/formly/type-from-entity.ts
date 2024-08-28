@@ -1,4 +1,4 @@
-import { ClassHelpers } from 'firedev/src';
+import { ClassHelpers } from 'taon/src';
 import { _ } from 'tnp-core/src';
 
 export function findTypeForEntity(entity: Function, isArray: boolean = false) {

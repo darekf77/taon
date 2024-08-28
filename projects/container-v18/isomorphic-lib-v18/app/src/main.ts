@@ -7,9 +7,9 @@ import * as localForge from 'localforage';
 window['localforage'] = localForge;
 import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import { Helpers } from 'tnp-core';  // <- this is to replace by firedev
-import { FiredevAdmin } from 'firedev-ui';  // <- this is to replace by firedev
-import { Stor } from 'firedev-storage';  // <- this is to replace by firedev
+import { Helpers } from 'tnp-core';  // <- this is to replace by taon
+import { TaonAdmin } from 'taon-ui';  // <- this is to replace by taon
+import { Stor } from 'taon-storage';  // <- this is to replace by taon
 import { AppModule } from './app/app.module';
 
 if (environment.production) {

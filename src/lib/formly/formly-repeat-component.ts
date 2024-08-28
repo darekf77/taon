@@ -22,7 +22,7 @@ DON'T FORGET
     </div>
     <div
       *ngFor="let field of field.fieldGroup; let i = index"
-      class="firedev-formly-array">
+      class="taon-formly-array">
       <formly-group
         [model]="model[i]"
         [field]="field"
@@ -63,7 +63,7 @@ DON'T FORGET
         padding: 5px;
       }
 
-      .firedev-formly-array {
+      .taon-formly-array {
         padding: 5px;
         background: white;
       }

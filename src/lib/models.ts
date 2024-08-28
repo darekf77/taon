@@ -6,8 +6,8 @@ import {
 } from 'express';
 import { Models as ModelsNg2Rest } from 'ng2-rest/src';
 import { ClassHelpers } from './helpers/class-helpers';
-import type { FiredevControllerOptions } from './decorators/classes/controller-decorator';
-import type { FiredevEntityOptions } from './decorators/classes/entity-decorator';
+import type { TaonControllerOptions } from './decorators/classes/controller-decorator';
+import type { TaonEntityOptions } from './decorators/classes/entity-decorator';
 
 export namespace Models {
   export type FrameworkMode =

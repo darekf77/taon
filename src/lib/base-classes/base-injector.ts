@@ -20,7 +20,7 @@ export class BaseInjector<CloneT extends BaseClass = any> {
   //#region class initialization hook
   /**
    * class initialization hook
-   * firedev after class instace creation
+   * taon after class instace creation
    */
   async _() {
     const reposToInit = this.__repositories_to_init__;

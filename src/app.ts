@@ -1,5 +1,5 @@
 //#region imports
-import { Firedev, BaseContext } from 'firedev/src';
+import { Taon, BaseContext } from 'taon/src';
 import { Observable, map } from 'rxjs';
 import { HOST_BACKEND_PORT } from './app.hosts';
 //#region @browser
@@ -13,11 +13,11 @@ console.log('hello world');
 console.log('Your server will start on port ' + HOST_BACKEND_PORT);
 const host = 'http://localhost:' + HOST_BACKEND_PORT;
 
-//#region firedev component
+//#region taon component
 //#region @browser
 @Component({
-  selector: 'app-firedev',
-  template: `hello from firedev<br />
+  selector: 'app-taon',
+  template: `hello from taon<br />
     <br />
     users from backend
     <ul>
@@ -31,20 +31,20 @@ const host = 'http://localhost:' + HOST_BACKEND_PORT;
     `,
   ],
 })
-export class FiredevComponent {
+export class TaonComponent {
   userApiService = inject(UserApiService);
   readonly users$: Observable<User[]> = this.userApiService.getAll();
 }
 //#endregion
 //#endregion
 
-//#region  firedev api service
+//#region  taon api service
 //#region @browser
 @Injectable({
   providedIn: 'root',
 })
 export class UserApiService {
-  userControlller = Firedev.inject(() => MainContext.get(UserController));
+  userControlller = Taon.inject(() => MainContext.get(UserController));
   getAll() {
     return this.userControlller
       .getAll()
@@ -54,31 +54,31 @@ export class UserApiService {
 //#endregion
 //#endregion
 
-//#region  firedev module
+//#region  taon module
 //#region @browser
 @NgModule({
-  exports: [FiredevComponent],
+  exports: [TaonComponent],
   imports: [CommonModule],
-  declarations: [FiredevComponent],
+  declarations: [TaonComponent],
 })
-export class FiredevModule {}
+export class TaonModule {}
 //#endregion
 //#endregion
 
-//#region  firedev entity
-@Firedev.Entity({ className: 'User' })
-class User extends Firedev.Base.AbstractEntity {
+//#region  taon entity
+@Taon.Entity({ className: 'User' })
+class User extends Taon.Base.AbstractEntity {
   public static ctrl?: UserController;
   //#region @websql
-  @Firedev.Orm.Column.String()
+  @Taon.Orm.Column.String()
   //#endregion
   name?: string;
 }
 //#endregion
 
-//#region  firedev controller
-@Firedev.Controller({ className: 'UserController' })
-class UserController extends Firedev.Base.CrudController<User> {
+//#region  taon controller
+@Taon.Controller({ className: 'UserController' })
+class UserController extends Taon.Base.CrudController<User> {
   entityClassResolveFn = () => User;
   //#region @websql
   async initExampleDbData(): Promise<void> {
@@ -90,18 +90,18 @@ class UserController extends Firedev.Base.CrudController<User> {
 }
 //#endregion
 
-//#region  firedev context
-const MainContext = Firedev.createContext(() => ({
+//#region  taon context
+const MainContext = Taon.createContext(() => ({
   host,
   contextName: 'MainContext',
   contexts: { BaseContext },
   controllers: {
     UserController,
-    // PUT FIREDEV CONTORLLERS HERE
+    // PUT TAON CONTORLLERS HERE
   },
   entities: {
     User,
-    // PUT FIREDEV ENTITIES HERE
+    // PUT TAON ENTITIES HERE
   },
   database: true,
   disabledRealtime: true,
@@ -111,7 +111,7 @@ const MainContext = Firedev.createContext(() => ({
 async function start() {
   await MainContext.initialize();
 
-  if (Firedev.isBrowser) {
+  if (Taon.isBrowser) {
     const users = (
       await MainContext.getClassInstance(UserController).getAll().received
     ).body?.json;

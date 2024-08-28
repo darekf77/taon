@@ -215,7 +215,7 @@ export class RealtimeServer {
 
       if (!valueOfUniquPropery) {
         Helpers.error(
-          `[Firedev][Realtime] Entity without iD ! ${ClassHelpers.getName(
+          `[Taon][Realtime] Entity without iD ! ${ClassHelpers.getName(
             entityFn,
           )} `,
           true,
@@ -266,7 +266,7 @@ export class RealtimeServer {
       const className = ClassHelpers.getName(entityObjOrClass);
 
       console.warn(
-        `[Firedev][TrigggerEntityChanges] Entity "${className}' is not realtime`,
+        `[Taon][TrigggerEntityChanges] Entity "${className}' is not realtime`,
       );
       return;
     }
@@ -284,7 +284,7 @@ export class RealtimeServer {
       const className = ClassHelpers.getName(entityObjOrClass);
 
       console.warn(
-        `[Firedev][TrigggerEntityPropertyChanges][property=${
+        `[Taon][TrigggerEntityPropertyChanges][property=${
           property as string
         }] Entity "${className}' is not realtime`,
       );
@@ -316,7 +316,7 @@ export class RealtimeServer {
     const className = ClassHelpers.getName(entityClass);
     if (this.core.ctx.disabledRealtime) {
       console.warn(
-        `[Firedev][TrigggerEntityTableChanges] Entity "${className}' is not realtime`,
+        `[Taon][TrigggerEntityTableChanges] Entity "${className}' is not realtime`,
       );
       return;
     }

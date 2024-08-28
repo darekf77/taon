@@ -5,11 +5,11 @@ import { Models } from './models';
 
 import { ENV } from './env';
 //#region @browser
-import { FiredevAdmin } from './ui/firedev-admin-mode-configuration/firedev-admin.service';
+import { TaonAdmin } from './ui/taon-admin-mode-configuration/taon-admin.service';
 //#endregion
 
 // import { Symbols } from './symbols';
-// import { Firedev } from 'firedev/src';
+// import { Taon } from 'taon/src';
 //#endregion
 
 export const createContext = <
@@ -28,7 +28,7 @@ export const createContext = <
 ) => {
   let config = configFn(ENV);
   // if (config.logFramework) {
-  //   console.log(`[firedev][${config.contextName}] framework config`, {
+  //   console.log(`[taon][${config.contextName}] framework config`, {
   //     config,
   //   });
   // }
@@ -52,7 +52,7 @@ export const createContext = <
       //     for (const entityClassName of Object.keys(config.entities)) {
       //       entitiesCache[ctx.contextName][entityClassName] =
       //         config.entities[entityClassName][
-      //           Firedev.symbols.orignalClassClonesObj
+      //           Taon.symbols.orignalClassClonesObj
       //         ][ctx.contextName];
       //     }
       //   }
@@ -148,10 +148,10 @@ export const createContext = <
           let keepWebsqlDbDataAfterReload = false;
           //#region @browser
           keepWebsqlDbDataAfterReload =
-            FiredevAdmin.Instance.keepWebsqlDbDataAfterReload;
+            TaonAdmin.Instance.keepWebsqlDbDataAfterReload;
           //#endregion
           if (!Helpers.isNode && keepWebsqlDbDataAfterReload) {
-            Helpers.info(`[firedev] Keep websql data after reload`);
+            Helpers.info(`[taon] Keep websql data after reload`);
           } else {
             await endpointContextRef.reinitControllers();
           }

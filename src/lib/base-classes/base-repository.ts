@@ -7,25 +7,25 @@ import type {
   FindOneOptions,
   FindOptionsWhere,
   InsertResult,
-  // ObjectID // TODO why is this not in firedev-typeorm,
+  // ObjectID // TODO why is this not in taon-typeorm,
   RemoveOptions,
   Repository,
   SaveOptions,
   UpdateResult,
-} from 'firedev-typeorm/src';
-// @firedev-ignore
-import type { QueryDeepPartialEntity } from 'firedev-typeorm/lib/typeorm/query-builder/QueryPartialEntity';
-// @firedev-ignore
-import type { UpsertOptions } from 'firedev-typeorm/lib/typeorm/repository/UpsertOptions';
-// import { QueryDeepPartialEntity } from 'firedev-typeorm/src';
-// import { UpsertOptions } from 'firedev-typeorm/src';
+} from 'taon-typeorm/src';
+// @taon-ignore
+import type { QueryDeepPartialEntity } from 'taon-typeorm/lib/typeorm/query-builder/QueryPartialEntity';
+// @taon-ignore
+import type { UpsertOptions } from 'taon-typeorm/lib/typeorm/repository/UpsertOptions';
+// import { QueryDeepPartialEntity } from 'taon-typeorm/src';
+// import { UpsertOptions } from 'taon-typeorm/src';
 
-import type { DataSource as DataSourceType } from 'firedev-typeorm/src';
+import type { DataSource as DataSourceType } from 'taon-typeorm/src';
 import { EndpointContext } from '../endpoint-context';
 import { Helpers } from 'tnp-core/src';
 import { _ } from 'tnp-core/src';
 import { ClassHelpers } from '../helpers/class-helpers';
-import { MySqlQuerySource } from 'firedev-type-sql/src';
+import { MySqlQuerySource } from 'taon-type-sql/src';
 import { TaonRepository } from '../decorators/classes/repository-decorator';
 import { BaseInjector } from './base-injector';
 //#endregion
@@ -154,7 +154,7 @@ export abstract class BaseRepository<
 
         Maybe you forgot to init database ?
 
-        Firedev.createContext({
+        Taon.createContext({
         ...
         database:true
         ...

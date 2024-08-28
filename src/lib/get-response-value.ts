@@ -3,7 +3,7 @@ import {
   Response as ExpressResponse,
   Request as ExpressRequest,
 } from 'express';
-import { FiredevHelpers } from './helpers/firedev-helpers';
+import { TaonHelpers } from './helpers/taon-helpers';
 import { Helpers } from 'tnp-core/src';
 
 export const getResponseValue = <T>(
@@ -16,7 +16,7 @@ export const getResponseValue = <T>(
     //#region @websql
     const resp: Models.Http.__Response<T> = response;
     if (!response && response.send === undefined) {
-      console.error('[firedev] Bad response value for function');
+      console.error('[taon] Bad response value for function');
       resolve(undefined);
     } else if (typeof response === 'function') {
       const asyncResponse: Models.Http.AsyncResponse<T> = response as any;
@@ -25,7 +25,7 @@ export const getResponseValue = <T>(
         resolve(result as any);
       } catch (e) {
         console.error(e);
-        console.error('[firedev] Error during function call inside controller');
+        console.error('[taon] Error during function call inside controller');
         Helpers.renderError(e);
         reject(e);
       }
@@ -38,11 +38,11 @@ export const getResponseValue = <T>(
           resolve(response.send as any);
         }
       } catch (error) {
-        console.error('[firedev] Bad synchonus function call ');
+        console.error('[taon] Bad synchonus function call ');
         Helpers.renderError(error);
         reject(error);
       }
-    } else reject(`[firedev] Not recognized type of reposne ${response}`);
+    } else reject(`[taon] Not recognized type of reposne ${response}`);
     //#endregion
   });
   //#endregion

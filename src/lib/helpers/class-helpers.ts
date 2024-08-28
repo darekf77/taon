@@ -2,9 +2,9 @@ import { Symbols } from '../symbols';
 import { Validators } from '../validators';
 import { _ } from 'tnp-core/src';
 import { Models } from '../models';
-import { FiredevControllerOptions } from '../decorators/classes/controller-decorator';
-import { FiredevHelpers } from './firedev-helpers';
-import { FiredevEntityOptions } from '../decorators/classes/entity-decorator';
+import { TaonControllerOptions } from '../decorators/classes/controller-decorator';
+import { TaonHelpers } from './taon-helpers';
+import { TaonEntityOptions } from '../decorators/classes/entity-decorator';
 import { CLASS } from 'typescript-class-helpers/src';
 //#region @backend
 import * as FormData from 'form-data';
@@ -80,7 +80,7 @@ export namespace ClassHelpers {
     const config = Reflect.getMetadata(
       Symbols.metadata.options.controller,
       classFn,
-    ) as FiredevEntityOptions;
+    ) as TaonEntityOptions;
     return config.uniqueKeyProp;
   };
   //#endregion
@@ -140,7 +140,7 @@ export namespace ClassHelpers {
   export const getControllerConfig = (
     target: Function,
   ): Models.ControllerConfig | undefined => {
-    const classMetadataOptions: FiredevControllerOptions = Reflect.getMetadata(
+    const classMetadataOptions: TaonControllerOptions = Reflect.getMetadata(
       Symbols.metadata.options.controller,
       target,
     );
@@ -264,7 +264,7 @@ export namespace ClassHelpers {
     const parentscalculatedPath = _.slice(configs, 1)
       .reverse()
       .map(bc => {
-        if (FiredevHelpers.isGoodPath(bc.path)) {
+        if (TaonHelpers.isGoodPath(bc.path)) {
           return bc.path;
         }
         return bc.className;

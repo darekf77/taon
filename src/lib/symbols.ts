@@ -1,5 +1,5 @@
 import { _ } from 'tnp-core/src';
-import { OrignalClassKey } from 'firedev-typeorm/src';
+import { OrignalClassKey } from 'taon-typeorm/src';
 import { SYMBOL } from 'typescript-class-helpers/src';
 
 export namespace Symbols {
@@ -11,7 +11,7 @@ export namespace Symbols {
   export const classMethodsNames: string = `$$classMethodsNames$$`;
 
   export const REALTIME = {
-    NAMESPACE: (contextName: string) => `${contextName}:firedevRealtimeNsp`,
+    NAMESPACE: (contextName: string) => `${contextName}:taonRealtimeNsp`,
     TABLE_CHANGE(contextName: string, tableName: string) {
       return `${contextName}:listentablename${tableName}`;
     },

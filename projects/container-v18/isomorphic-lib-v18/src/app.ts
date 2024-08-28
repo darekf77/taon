@@ -1,4 +1,4 @@
-import { Firedev } from 'firedev';
+import { Taon } from 'taon';
 import { Observable, map } from 'rxjs';
 //#region @notForNpm
 import { HOST_BACKEND_PORT } from './app.hosts';
@@ -35,18 +35,18 @@ export class IsomorphicLibV18Component implements OnInit {
 export class IsomorphicLibV18Module { }
 //#endregion
 
-@Firedev.Entity({ className: 'User' })
-class User extends Firedev.Base.Entity {
+@Taon.Entity({ className: 'User' })
+class User extends Taon.Base.Entity {
   public static ctrl?: UserController;
   //#region @websql
-  @Firedev.Orm.Column.Generated()
+  @Taon.Orm.Column.Generated()
   //#endregion
   id?: string | number;
 
 }
 
-@Firedev.Controller({ className: 'UserController' })
-class UserController extends Firedev.Base.CrudController<User> {
+@Taon.Controller({ className: 'UserController' })
+class UserController extends Taon.Base.CrudController<User> {
   entity = ()=> User;
   //#region @websql
   async initExampleDbData(): Promise<void> {
@@ -60,7 +60,7 @@ async function start() {
   console.log('Your server will start on port '+ HOST_BACKEND_PORT);
   const host = 'http://localhost:' + HOST_BACKEND_PORT;
 
-  const context = await Firedev.createContext({
+  const context = await Taon.createContext({
     host,
     contextName: 'context',
     controllers: {
@@ -77,7 +77,7 @@ async function start() {
   });
   await context.initialize();
 
-  if (Firedev.isBrowser) {
+  if (Taon.isBrowser) {
     const users = (await User.ctrl.getAll().received).body.json;
     console.log({
       'users from backend': users

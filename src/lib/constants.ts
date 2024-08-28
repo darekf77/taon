@@ -1,4 +1,4 @@
-export type FiredevEntityKeysToOmit =
+export type TaonEntityKeysToOmit =
   | 'ctrl'
   | 'clone'
   | '__endpoint_context__'

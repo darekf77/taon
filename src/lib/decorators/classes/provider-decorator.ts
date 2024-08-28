@@ -2,7 +2,7 @@ import { ClassHelpers } from '../../helpers/class-helpers';
 import { Symbols } from '../../symbols';
 import { Models } from '../../models';
 
-export function TaonProvider<T = any>(options?: FiredevProviderOptions<T>) {
+export function TaonProvider<T = any>(options?: TaonProviderOptions<T>) {
   return function (constructor: Function) {
     Reflect.defineMetadata(
       Symbols.metadata.options.provider,
@@ -18,7 +18,7 @@ export function TaonProvider<T = any>(options?: FiredevProviderOptions<T>) {
   };
 }
 
-export class FiredevProviderOptions<
+export class TaonProviderOptions<
   T = any,
 > extends Models.DecoratorAbstractOpt {
   // global?: boolean;
