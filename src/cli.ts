@@ -1,5 +1,5 @@
 // @taon-ignore
-let tnpStart = require('tnp/src').start;
+let tnpStart = require('tnp/cli').start;
 //#region @notForNpm
 let tnpStartLocal = require('tnp/src').start;
 //#endregion

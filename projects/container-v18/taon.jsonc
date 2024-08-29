@@ -1100,7 +1100,6 @@
       "vpn-split": "18.0.8",
       "node-cli-tester": "18.0.8",
       "static-columns": "18.0.10",
-      "background-worker-process": "16.100.10",
       "taon-storage": "18.0.8",
       "tnp-core": "18.0.33",
       "tnp-config": "18.0.11",
