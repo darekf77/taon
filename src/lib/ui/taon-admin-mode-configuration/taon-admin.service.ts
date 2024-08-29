@@ -21,10 +21,10 @@ export class TaonAdmin {
     this.scrollableEnabled = !!ENV?.useGlobalNgxScrollbar;
   }
   public static get Instance(): TaonAdmin {
-    if (!globalPublicStorage[config.frameworkNames.taon]) {
-      globalPublicStorage[config.frameworkNames.taon] = new TaonAdmin();
+    if (!globalPublicStorage[config.frameworkNames.productionFrameworkName]) {
+      globalPublicStorage[config.frameworkNames.productionFrameworkName] = new TaonAdmin();
     }
-    return globalPublicStorage[config.frameworkNames.taon];
+    return globalPublicStorage[config.frameworkNames.productionFrameworkName];
   }
   //#endregion
 
