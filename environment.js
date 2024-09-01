@@ -5,6 +5,6 @@ var { config } = { config: {} };
 config = {
   domain: 'firedev.io',
   useDomain: true,
-  title: 'Firedev'
+  title: 'Taon'
 }
 module.exports = exports = { config };
