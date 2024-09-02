@@ -45,7 +45,7 @@
     "homepage": "https://github.com/darekf77/taon#readme"
   },
   "name": "taon",
-  "version": "18.0.15",
+  "version": "18.0.16",
   "description": "Isomorphic solution for backend and frontend",
   "scripts": {},
   "repository": {
