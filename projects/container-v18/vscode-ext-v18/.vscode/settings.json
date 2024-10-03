@@ -1,56 +1,65 @@
 {
   "files.exclude": {
-    "**/*____ORIGINAL____.ts": true,
-    "_changelog": true,
-    "tsconfig.backend.dist.json": true,
-    "tsconfig.backend.bundle.json": true,
-    "tsconfig.backend.dist.json.filetemplate": true,
-    "tsconfig.backend.bundle.json.filetemplate": true,
-    "out": true,
-    "update-proj.js": true,
-    ".vscodeignore": true,
-    "*.vsix": true,
-    "node_modules": true,
-    "tmp*": true,
-    "dist*": true,
-    "bundle*": true,
-    "browser": true,
-    "browser*": true,
-    "websql": true,
-    "websql*": true,
-    "module*": true,
-    "backup": true,
-    "module": true,
-    "www": true,
-    "Thumbs.db": true,
-    ".DS_Store": true,
-    "**/.DS_Store": true,
-    "npm-debug.log*": true,
-    ".sass-cache": true,
-    ".sourcemaps": true,
-    "src-for-stanalone": true,
-    "components-for-stanalone": true,
-    ".gitignore": true,
-    ".npmignore": true,
-    ".npmrc": true,
-    ".babelrc": true,
-    "package.json_devDependencies.json": true,
-    "package.json": true,
-    "docs": true,
-    "logo.svg": true,
-    "**/*.filetemplate": true,
-    "**/tsconfig.*": true,
-    "tslint.*": true,
-    "index.*": true,
-    "package-lock.json": true,
-    "protractor.conf.js": true,
-    "karma.conf.js": true,
-    ".editorconfig": true,
-    ".vscode/launch.json": false,
-    ".vscode/tasks.json": false
+    "**/*____ORIGINAL____.ts": false,
+    "_changelog": false,
+    "out": false,
+    "update-proj.js": false,
+    ".vscodeignore": false,
+    "*.vsix": false,
+    "**/node_modules": false,
+    "**/tmp*": false,
+    "**/dist*": false,
+    "**/bundle*": false,
+    "**/browser": false,
+    "**/browser*": false,
+    "**/websql": false,
+    "**/websql*": false,
+    "**/module*": false,
+    "**/backup": false,
+    "**/module": false,
+    "**/www": false,
+    "**/Thumbs.db": false,
+    "**/.DS_Store": false,
+    "**/**/.DS_Store": false,
+    "**/npm-debug.log*": false,
+    "**/.sass-cache": false,
+    "**/.sourcemaps": false,
+    "**/src-for-stanalone": false,
+    "**/components-for-stanalone": false,
+    "**/tsconfig.backend.dist.json": false,
+    "**/.gitignore": false,
+    "**/.npmignore": false,
+    "**/.babelrc": false,
+    "**/.npmrc": false,
+    "**/.eslintrc.json": false,
+    "**/.prettierignore": false,
+    "**/.prettierrc": false,
+    "**/.editorconfig": false,
+    "**/devDependencies.json": false,
+    "**/package.json": false,
+    "**/logo.svg": false
   },
   "search.exclude": {
-    "out": true
+    "docs": true,
+    "projects": true,
+    "bin": true,
+    "local_release": true,
+    "node_modules": true,
+    ".build": true,
+    ".vscode": true,
+    "browser": true,
+    "dist": true,
+    "package-lock.json": true,
+    "**/docs": true,
+    "**/projects": true,
+    "**/bin": true,
+    "**/local_release": true,
+    "**/node_modules": true,
+    "**/.build": true,
+    "**/.vscode": true,
+    "**/browser": true,
+    "**/dist": true,
+    "**/package-lock.json": true
   },
   "typescript.tsc.autoDetect": "off",
   "html.format.wrapAttributes": "force-aligned",
@@ -59,5 +68,52 @@
     "activityBar.background": "#25b6a3",
     "statusBar.background": "#25b6a3",
     "statusBar.debuggingBackground": "#25b6a3"
-  }
+  },
+  "search.useIgnoreFiles": false,
+  "search.include": [
+    "**/src/**"
+  ],
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[json5]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "editor.rulers": [
+    80,
+    120
+  ],
+  "eslint.migration.2_x": "off",
+  "eslint.enable": true,
+  "prettier.enable": true,
+  "editor.suggest.snippetsPreventQuickSuggestions": false,
+  "editor.inlineSuggest.enabled": true,
+  "prettier.prettierPath": "./node_modules/prettier",
+  "prettier.endOfLine": "auto"
 }

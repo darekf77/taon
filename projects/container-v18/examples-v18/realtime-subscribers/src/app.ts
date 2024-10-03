@@ -1,5 +1,5 @@
 //#region imports
-import { Firedev, BaseContext } from 'firedev/src';
+import { Taon, BaseContext } from 'taon/src';
 import { Observable, map } from 'rxjs';
 import {
   CLIENT_DEV_NORMAL_APP_PORT,
@@ -61,7 +61,7 @@ export class RealtimeSubscribersComponent {
   providedIn: 'root',
 })
 export class UserApiService {
-  userControlller = Firedev.inject(() => MainContext.getClass(UserController));
+  userControlller = Taon.inject(() => MainContext.getClass(UserController));
   getAll() {
     return this.userControlller
       .getAll()
@@ -83,19 +83,19 @@ export class RealtimeSubscribersModule {}
 //#endregion
 
 //#region  realtime-subscribers entity
-@Firedev.Entity({ className: 'User' })
-class User extends Firedev.Base.AbstractEntity {
+@Taon.Entity({ className: 'User' })
+class User extends Taon.Base.AbstractEntity {
   public static ctrl?: UserController;
   //#region @websql
-  @Firedev.Orm.Column.String()
+  @Taon.Orm.Column.String()
   //#endregion
   name?: string;
 }
 //#endregion
 
 //#region  realtime-subscribers controller
-@Firedev.Controller({ className: 'UserController' })
-class UserController extends Firedev.Base.CrudController<User> {
+@Taon.Controller({ className: 'UserController' })
+class UserController extends Taon.Base.CrudController<User> {
   entityClassResolveFn = () => User;
   //#region @websql
   async initExampleDbData(): Promise<void> {
@@ -108,7 +108,7 @@ class UserController extends Firedev.Base.CrudController<User> {
 //#endregion
 
 //#region  realtime-subscribers context
-const MainContext = Firedev.createContext(() => ({
+const MainContext = Taon.createContext(() => ({
   host: host1,
   useIpcWhenElectron: true,
   frontendHost: frontendHost1,
@@ -127,7 +127,7 @@ const MainContext = Firedev.createContext(() => ({
 //#endregion
 
 //#region  realtime-subscribers context
-// const MainContext2 = Firedev.createContext(() => ({
+// const MainContext2 = Taon.createContext(() => ({
 //   host: host2,
 //   useIpcWhenElectron: true,
 //   frontendHost: frontendHost1,
@@ -181,7 +181,7 @@ async function start() {
   notifyUser();
   //#endregion
 
-  if (Firedev.isBrowser) {
+  if (Taon.isBrowser) {
 
     const users = (await MainContext.getClassInstance(UserController).getAll().received)
       .body?.json;

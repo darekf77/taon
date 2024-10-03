@@ -1,9 +1,9 @@
 //#region imports
-import { BaseContext, Firedev } from 'firedev/src';
+import { BaseContext, Taon } from 'taon/src';
 import { Observable, map } from 'rxjs';
 import { HOST_BACKEND_PORT } from './app.hosts';
 //#region @websql
-import { getMetadataArgsStorage } from 'firedev-typeorm/src';
+import { getMetadataArgsStorage } from 'taon-typeorm/src';
 //#endregion
 //#region @browser
 import { Injectable, NgModule, inject } from '@angular/core';
@@ -43,7 +43,7 @@ export class CrudComponent {
   providedIn: 'root',
 })
 export class UserApiService {
-  userController = Firedev.inject(
+  userController = Taon.inject(
     () => Context.types.controllers.UserController,
   );
 
@@ -67,19 +67,19 @@ export class CrudModule {}
 //#endregion
 
 //#region entity
-@Firedev.Entity({ className: 'User' })
-class User extends Firedev.Base.AbstractEntity {
+@Taon.Entity({ className: 'User' })
+class User extends Taon.Base.AbstractEntity {
 
   //#region @websql
-  @Firedev.Orm.Column.String()
+  @Taon.Orm.Column.String()
   //#endregion
   name: string;
 }
 //#endregion
 
 //#region controller
-@Firedev.Controller({ className: 'UserController', realtime: false })
-class UserController extends Firedev.Base.CrudController<User> {
+@Taon.Controller({ className: 'UserController', realtime: false })
+class UserController extends Taon.Base.CrudController<User> {
   entityClassResolveFn = () => User;
 
   async initExampleDbData(): Promise<void> {
@@ -94,7 +94,7 @@ console.log('hello world');
 console.log('Your server will start on port ' + HOST_BACKEND_PORT);
 const host = 'http://localhost:' + HOST_BACKEND_PORT;
 
-var Context = Firedev.createContext(() => ({
+var Context = Taon.createContext(() => ({
   host,
   contextName: 'Context',
   contexts: { BaseContext },
@@ -116,7 +116,7 @@ var Context = Firedev.createContext(() => ({
 async function start() {
   await Context.initialize();
 
-  if (Firedev.isBrowser) {
+  if (Taon.isBrowser) {
     const users = (await Context.getClassInstance(UserController).getAll().received)
       .body?.json;
     console.log({

@@ -1,9 +1,9 @@
-import { Firedev } from 'firedev/src';
+import { Taon } from 'taon/src';
 import { User } from './user';
 import { UserSubscriber } from './user.subscriber';
 
-@Firedev.Controller({ className: 'UserController' })
-export class UserController extends Firedev.Base.CrudController<User> {
+@Taon.Controller({ className: 'UserController' })
+export class UserController extends Taon.Base.CrudController<User> {
 
   entityClassResolveFn = () => User;
   //#region @websql

@@ -1,31 +1,31 @@
-import { Firedev } from 'firedev/src';
+import { Taon } from 'taon/src';
 
-@Firedev.Entity({
+@Taon.Entity({
   className: 'User',
   createTable: true,
 })
-export class User extends Firedev.Base.Entity {
+export class User extends Taon.Base.Entity {
   //#region @websql
-  @Firedev.Orm.Column.Generated()
+  @Taon.Orm.Column.Generated()
   //#endregion
   id: string;
 
   //#region @websql
-  @Firedev.Orm.Column.String()
+  @Taon.Orm.Column.String()
   //#endregion
   name: string;
 
   //#region @websql
-  @Firedev.Orm.Column.String()
+  @Taon.Orm.Column.String()
   //#endregion
   email: string;
 
   //#region @websql
-  @Firedev.Orm.Column.String()
+  @Taon.Orm.Column.String()
   //#endregion
   password: string;
    //#region @websql
-   @Firedev.Orm.Column.String()
+   @Taon.Orm.Column.String()
    //#endregion
    theme: string;
 }

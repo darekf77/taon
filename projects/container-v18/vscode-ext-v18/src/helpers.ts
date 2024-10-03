@@ -9,7 +9,7 @@ function findGitBash() {
     'C:\\Program Files (x86)\\Git\\bin\\bash.exe',
     `${process.env.ProgramW6432}\\Git\\bin\\bash.exe`,
     `${process.env.ProgramFiles}\\Git\\bin\\bash.exe`,
-    `${process.env['ProgramFiles(x86)']}\\Git\\bin\\bash.exe`
+    `${process.env['ProgramFiles(x86)']}\\Git\\bin\\bash.exe`,
   ];
 
   for (const gitBashPath of possiblePaths) {
@@ -21,7 +21,6 @@ function findGitBash() {
   console.error('Git Bash not found. Please install Git Bash.');
   process.exit(1);
 }
-
 
 function getShell() {
   if (process.platform === 'win32') {
@@ -41,7 +40,6 @@ function getShell() {
 
 export const shell = getShell();
 
-
 export function valueFromCommand({
   command,
   cwd,
@@ -49,10 +47,18 @@ export function valueFromCommand({
 }: {
   command: string;
   cwd?: string;
-  bigBuffer?: boolean,
+  bigBuffer?: boolean;
 }) {
-  const decode = true
-  let res = child.execSync(command, { cwd, shell, encoding: 'utf8', maxBuffer: bigBuffer ? (50 * 1024 * 1024) : void 0 }).toString().trim();
+  const decode = true;
+  let res = child
+    .execSync(command, {
+      cwd,
+      shell,
+      encoding: 'utf8',
+      maxBuffer: bigBuffer ? 50 * 1024 * 1024 : void 0,
+    })
+    .toString()
+    .trim();
   const splited = (res || '').split('\n');
   res = splited.pop() || '';
   if (decode) {
@@ -62,20 +68,31 @@ export function valueFromCommand({
 }
 
 export function deepClone(obj: any, hash = new WeakMap()): any {
-  if (Object(obj) !== obj) { return obj; } // primitives
-  if (hash.has(obj)) { return hash.get(obj); } // cyclic reference
-  const result = obj instanceof Set ? new Set(obj) // See note about this!
-    : obj instanceof Map ? new Map(Array.from(obj, ([key, val]) =>
-      [key, deepClone(val, hash)]))
-      : obj instanceof Date ? new Date(obj)
-        : obj instanceof RegExp ? new RegExp(obj.source, obj.flags)
-          // ... add here any specific treatment for other classes ...
-          // and finally a catch-all:
-          : obj.constructor ? new obj.constructor()
-            : Object.create(null);
+  if (Object(obj) !== obj) {
+    return obj;
+  } // primitives
+  if (hash.has(obj)) {
+    return hash.get(obj);
+  } // cyclic reference
+  const result =
+    obj instanceof Set
+      ? new Set(obj) // See note about this!
+      : obj instanceof Map
+        ? new Map(Array.from(obj, ([key, val]) => [key, deepClone(val, hash)]))
+        : obj instanceof Date
+          ? new Date(obj)
+          : obj instanceof RegExp
+            ? new RegExp(obj.source, obj.flags)
+            : // ... add here any specific treatment for other classes ...
+              // and finally a catch-all:
+              obj.constructor
+              ? new obj.constructor()
+              : Object.create(null);
   hash.set(obj, result);
-  return Object.assign(result, ...Object.keys(obj).map(
-    key => ({ [key]: deepClone(obj[key], hash) })));
+  return Object.assign(
+    result,
+    ...Object.keys(obj).map(key => ({ [key]: deepClone(obj[key], hash) })),
+  );
 }
 
 export function capitalizeFirstLetter(str: string) {
@@ -146,7 +163,7 @@ export function optionsFix(options?: ProcesOptions) {
 
 export function crossPlatformPath(pathStringOrPathParts: string | string[]) {
   if (Array.isArray(pathStringOrPathParts)) {
-    pathStringOrPathParts = pathStringOrPathParts.join('/')
+    pathStringOrPathParts = pathStringOrPathParts.join('/');
   }
   //#region @backend
   if (process.platform !== 'win32') {
@@ -167,30 +184,27 @@ export function crossPlatformPath(pathStringOrPathParts: string | string[]) {
   return pathStringOrPathParts.replace(/\\/g, '/');
 }
 
-
 export async function getModuleName(value: string = 'Filename') {
   const result = await vscode.window.showInputBox({
     value,
-    placeHolder: value
+    placeHolder: value,
   });
   return !result ? '' : result;
 }
 
 export type LogMode = 'dialog' | 'logmsg';
 export class Log {
-
   outputChannel: vscode.OutputChannel;
   constructor(
     private name: string,
     private mode: LogMode = 'dialog',
-    private debugMode = false
+    private debugMode = false,
   ) {
     this.outputChannel = vscode.window.createOutputChannel(name);
     if (debugMode) {
       this.outputChannel.show();
     }
   }
-
 
   public static instance(name: string, mode: LogMode, debugMode = false) {
     return new Log(name, mode, debugMode);
@@ -225,5 +239,4 @@ export class Log {
       this.outputChannel.appendLine(`[error] ${message}`);
     }
   }
-
 }

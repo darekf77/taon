@@ -1,15 +1,15 @@
-import { Firedev } from 'firedev/src';
+import { Taon } from 'taon/src';
 import { SharedContext } from '../shared.context';
 import { Session } from './sesison';
-import { EntityOptions } from 'firedev-typeorm/src';
+import { EntityOptions } from 'taon-typeorm/src';
 import { Admin } from '../admin/admin';
 import { AdminController } from '../admin/admin.controller';
 import { UserRepository } from '../user/user.repository';
 
-@Firedev.Controller({
+@Taon.Controller({
   className: 'SessionController',
 })
-export class SessionController extends Firedev.Base.CrudController<Session> {
+export class SessionController extends Taon.Base.CrudController<Session> {
   entityClassResolveFn = () => Session;
 
   userCustomRepo = this.injectCustomRepo(UserRepository);

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Firedev } from 'firedev/src';
+import { Taon } from 'taon/src';
 import { AppContext } from '../app.context';
 import { UserController } from './user.controller';
 import { map } from 'rxjs';
@@ -9,8 +9,8 @@ import { UserSubscriber } from './user.subscriber';
   providedIn: 'root',
 })
 export class UserApiService {
-  userControlller = Firedev.inject(() => AppContext.getClass(UserController));
-  userCustomevent = Firedev.injectSubscriberEvents(
+  userControlller = Taon.inject(() => AppContext.getClass(UserController));
+  userCustomevent = Taon.injectSubscriberEvents(
     () => AppContext.getClass(UserSubscriber),
     'customEvent',
   );

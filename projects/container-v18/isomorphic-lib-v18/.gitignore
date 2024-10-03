@@ -52,8 +52,8 @@ Thumbs.db
 /components-for-stanalone
 /tsconfig.backend.dist.json
 # =====================
-!firedev.json
-!firedev.jsonc
+!taon.json
+!taon.jsonc
 !*.filetemplate
 
 

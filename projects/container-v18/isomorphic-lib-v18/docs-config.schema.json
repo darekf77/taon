@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/DocsConfig",
+  "definitions": {
+    "DocsConfig": {
+      "type": "object",
+      "properties": {
+        "site_name": {
+          "type": "string",
+          "description": "override site name"
+        },
+        "priorityOrder": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "relative pathes to md files for proper order"
+        },
+        "omitFilesPatters": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "glob pattern to omit files"
+        },
+        "additionalAssets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "relative path to the assets folders in project [external assets not allowed... use externalDocs for that]"
+        },
+        "externalDocs": {
+          "type": "object",
+          "properties": {
+            "mdfiles": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    ],
+                    "description": "path to *.md file or array of paths (fallbacks pathes for the same file) [in case of multiple files -> you will be ask to choose one]"
+                  },
+                  "magicRenameRules": {
+                    "type": "string",
+                    "description": "if you want to rename something inside file you can use this magic rename rules example:\n\nframework-name => new-framework-name\n\nexample with array:\n\nframework-name => new-framework-name, framework-name2 => new-framework-name2"
+                  }
+                },
+                "required": ["path", "magicRenameRules"],
+                "additionalProperties": false
+              }
+            },
+            "projects": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "description": "path to project or array of paths (fallbacks pathes for the same projec) [in case of multiple projects -> you will be ask to choose one]"
+                  }
+                },
+                "required": ["path"],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": ["mdfiles", "projects"],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "site_name",
+        "omitFilesPatters",
+        "additionalAssets",
+        "externalDocs"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

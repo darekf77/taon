@@ -1,8 +1,8 @@
-import { Firedev, createContext } from "firedev/src";
+import { Taon, createContext } from "taon/src";
 import { GroupController } from "./group.controller";
 import { Group } from "./group";
 
-export const GroupContext = Firedev.createContext(() => ({
+export const GroupContext = Taon.createContext(() => ({
   contextName: 'GroupContext',
   host: 'http://abstract.host.com',
   abstract: true,

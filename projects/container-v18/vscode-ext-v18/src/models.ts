@@ -1,16 +1,17 @@
-export type NaviGenCommand = 'example' |
-  'module' |
-  'api:module' |
-  'routing:module' |
-  'component' |
-  'api:service' |
-  'service' |
-  'pipe' |
-  'directive';
+export type NaviGenCommand =
+  | 'example'
+  | 'module'
+  | 'api:module'
+  | 'routing:module'
+  | 'component'
+  | 'api:service'
+  | 'service'
+  | 'pipe'
+  | 'directive';
 
 export type CommandType = {
   command?: string;
-  exec?: string[] | string;
+  exec?: string[] | string; // | { (context: any): any };
   title?: string;
   group?: string;
   hideContextMenu?: boolean;
@@ -18,10 +19,11 @@ export type CommandType = {
   isDefaultBuildCommand?: boolean;
 };
 
-export type LibType = 'angular-lib'
-  | "isomorphic-lib"
+export type LibType =
+  | 'angular-lib'
+  | 'isomorphic-lib'
   | 'angular-client'
-  | "ionic-client"
+  | 'ionic-client'
   | 'workspace'
   | 'container'
   | 'docker'
@@ -34,8 +36,12 @@ export type ResolveVariable = {
   placeholder?: string | Function;
   variableValue?: any;
   encode?: boolean;
-  options: { option: any, label: string }[] | string;
-  optionsResolved: { option: any, label: string, skipNextVariableResolve?: boolean; }[];
+  options: { option: any; label: string }[] | string;
+  optionsResolved: {
+    option: any;
+    label: string;
+    skipNextVariableResolve?: boolean;
+  }[];
   useResultAsLinkAndExit?: boolean;
   exitWithMessgeWhenNoOptions?: string;
   /**
@@ -61,7 +67,7 @@ export type ProcesOptions = {
   showOutputDataOnSuccess?: boolean;
   showSuccessMessage?: boolean;
   askBeforeExecute?: boolean;
-  resolveVariables?: ResolveVariable[]
+  resolveVariables?: ResolveVariable[];
 };
 
 export type PROGRESS_DATA_TYPE = 'info' | 'error' | 'warning' | 'event';
@@ -77,10 +83,11 @@ export interface IProgressData {
 }
 
 export class ProgressData implements IProgressData {
-
-  public static resolveFrom(chunk: string,
-    callbackOnFounded?: (json: ProgressData) => any, checkSplit = true): ProgressData[] {
-
+  public static resolveFrom(
+    chunk: string,
+    callbackOnFounded?: (json: ProgressData) => any,
+    checkSplit = true,
+  ): ProgressData[] {
     let progress;
     let res: ProgressData[] = [];
     if (typeof chunk !== 'string') {
@@ -113,7 +120,7 @@ export class ProgressData implements IProgressData {
         }
       } catch (err) {
         console.log(err);
-        console.error(`ProgresssBarData: fail to parse "${progress}"`)
+        console.error(`ProgresssBarData: fail to parse "${progress}"`);
       }
     }
     return res;
@@ -124,6 +131,6 @@ export class ProgressData implements IProgressData {
     public msg: string = '',
 
     public type: PROGRESS_DATA_TYPE = 'event',
-    public date: Date = new Date()
-  ) { }
+    public date: Date = new Date(),
+  ) {}
 }

@@ -65,8 +65,8 @@
       "babel-preset-es2015": null,
       "node-sass": null,
 
-      // TODO remove firedev ui
-      // "firedev-ui": null,
+      // TODO remove taon ui
+      // "taon-ui": null,
 
       //#endregion
       //#region FIND ALTERNATIVE
@@ -541,6 +541,9 @@
       // @trusted=major
       "ngx-photo-editor": "0.4.4",
 
+      // @trusted=major
+      "ngx-infinite-scroll": "18.0.0",
+
       //#endregion
       //#region STRING MANIPULATIONS
       // compare advanced strings
@@ -894,8 +897,10 @@
       // @trusted=patch
       "nodemon": "~2.0.22",
 
-      // @trusted=patch
+      // @deprecated
       "enum-values": "1.2.1",
+
+      "typescript-string-enums": "^1.0.0",
 
       //#endregion
 
@@ -1091,9 +1096,9 @@
       //#region my packages
       "taon-typeorm": "18.0.9",
 
-      // "firedev-crud": "18.0.5",
-      // "firedev-ports": "18.0.5",
-      // "firedev-ui": "18.0.6",
+      // "taon-crud": "18.0.5",
+      // "taon-ports": "18.0.5",
+      // "taon-ui": "18.0.6",
       // "tnp-cli": "18.0.5",
       "record-replay-req-res-scenario": "18.0.9",
       "ng-talkback": "18.0.9",
@@ -1110,7 +1115,7 @@
       "tnp-helpers": "18.0.10",
       "incremental-compiler": "18.0.10",
       // "any-project-cli": "18.0.6",
-      // "firedev-crud-deamon": "18.0.6",
+      // "taon-crud-deamon": "18.0.6",
       // "tnp-db": "18.0.6",
       "magic-renamer": "18.0.10",
       "isomorphic-region-loader": "18.0.10",

@@ -1,12 +1,12 @@
-import { Firedev } from 'firedev/src';
+import { Taon } from 'taon/src';
 import { SharedContext } from '../shared.context';
 import { Session } from './sesison';
-import { EntityOptions } from 'firedev-typeorm/src';
+import { EntityOptions } from 'taon-typeorm/src';
 
-@Firedev.Controller({
+@Taon.Controller({
   className: 'SessionController',
 })
-export class SessionController extends Firedev.Base.CrudController<Session> {
+export class SessionController extends Taon.Base.CrudController<Session> {
   entityClassResolveFn = () => Session;
 
   async initExampleDbData(): Promise<any> {}

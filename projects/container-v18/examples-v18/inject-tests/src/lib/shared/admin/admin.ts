@@ -1,13 +1,13 @@
-import { Firedev } from 'firedev/src';
+import { Taon } from 'taon/src';
 import { User } from '../user/user';
 
-@Firedev.Entity({
+@Taon.Entity({
   className: 'Admin',
   createTable: true,
 })
 export class Admin extends User {
   //#region @websql
-  @Firedev.Orm.Column.String()
+  @Taon.Orm.Column.String()
   //#endregion
   permissions: string;
 }

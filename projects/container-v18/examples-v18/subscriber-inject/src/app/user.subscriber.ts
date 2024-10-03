@@ -1,10 +1,10 @@
-import { Firedev } from "firedev/src";
+import { Taon } from "taon/src";
 import { User } from "./user";
 
-@Firedev.Subscriber({
+@Taon.Subscriber({
   className: 'UserSubscriber',
 })
-export class UserSubscriber extends Firedev.Base.Subscriber {
+export class UserSubscriber extends Taon.Base.Subscriber {
   // listenTo() {
   //   return User;
   // }

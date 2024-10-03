@@ -1,6 +1,6 @@
-import { Firedev } from 'firedev/src';
+import { Taon } from 'taon/src';
 import { Observable, map } from 'rxjs';
-import { getMetadataArgsStorage } from 'firedev-typeorm/src';
+import { getMetadataArgsStorage } from 'taon-typeorm/src';
 
 import { HOST_BACKEND_PORT } from './app.hosts';
 import { AppContext } from './app.context';

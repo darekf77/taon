@@ -49,6 +49,6 @@ Thumbs.db
 /src-for-stanalone
 /components-for-stanalone
 # =====================
-!firedev.json
-!firedev.jsonc
+!taon.json
+!taon.jsonc
 !*.filetemplate

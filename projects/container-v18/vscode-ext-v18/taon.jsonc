@@ -1,0 +1,41 @@
+{
+  "resources": [],
+  "version": "v18",
+  "type": "vscode-ext",
+  "overrided": {
+    "ignoreDepsPattern": [],
+    "includeAsDev": [],
+    "includeOnly": [],
+    "dependencies": {},
+    "linkedFolders": []
+  },
+  "linkedProjects": [],
+  "libReleaseOptions": {
+    "nodts": false,
+    "obscure": false,
+    "ugly": false
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "build": "vsce package",
+    "build:install": "ts-node update-proj.js && npm run build && code --install-extension tnp-vscode-ext-0.0.1.vsix",
+    "compile": "npm-run tsc -p ./",
+    "watch": "npm-run tsc -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "test": "npm run compile && node ./node_modules/vscode/bin/test"
+  },
+  "description": "",
+  "main": "./out/extension.js",
+  "engines": {
+    "vscode": "^1.30.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "license": "MIT",
+  "private": false,
+  "isCoreProject": true
+}

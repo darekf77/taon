@@ -53,8 +53,8 @@ Thumbs.db
 /run.js
 /run-org.js
 # =====================
-!firedev.json
-!firedev.jsonc
+!taon.json
+!taon.jsonc
 *.filetemplate
 
 

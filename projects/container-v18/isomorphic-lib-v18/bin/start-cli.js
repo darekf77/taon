@@ -8,7 +8,7 @@
 // //#region resolve args
 // const childprocsecretarg = '-childproc';
 // const isWinGitBash = (process.platform === 'win32');
-// const procType = (process.argv[1].endsWith('tnp') || process.argv[1].endsWith('firedev')) ? 'root'
+// const procType = (process.argv[1].endsWith('tnp') || process.argv[1].endsWith('taon')) ? 'root'
 //   : ((process.argv.find(a => a.startsWith(childprocsecretarg)))
 //     ? 'child-of-root'
 //     : 'child-of-child'
@@ -153,7 +153,7 @@
 
 //   if (distExist) {
 //     mode = 'dist';
-//     !global.hideLog && setText('- firedev dist -', true);
+//     !global.hideLog && setText('- taon dist -', true);
 //     // TODO TOOOO MUCH TIME !!!!!!
 //     start = require(pathToDistRun.replace(/\.js$/g, '')).default;
 //   } else {

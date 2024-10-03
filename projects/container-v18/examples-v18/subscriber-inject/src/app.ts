@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { SubscriberInjectComponent } from './app/user.component';
 export { SubscriberInjectModule } from './app/user.module';
 //#endregion
-import { Firedev } from 'firedev/src';
+import { Taon } from 'taon/src';
 import { AppContext } from './app.context';
 import { UserController } from './app/user.controller';
 import { UserSubscriber } from './app/user.subscriber';
@@ -14,7 +14,7 @@ import { UserSubscriber } from './app/user.subscriber';
 async function start() {
   await AppContext.initialize();
 
-  if (Firedev.isBrowser) {
+  if (Taon.isBrowser) {
     const userController = AppContext.getClassInstance(UserController);
     const users = (await userController.getAll().received).body?.json;
     console.log({

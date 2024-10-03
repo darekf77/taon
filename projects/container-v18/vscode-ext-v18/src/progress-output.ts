@@ -1,4 +1,3 @@
-
 export type PROGRESS_DATA_TYPE = 'info' | 'error' | 'warning' | 'event';
 
 export interface IProgressData {
@@ -11,12 +10,12 @@ export interface IProgressData {
   date?: Date;
 }
 
-
 export class ProgressData implements IProgressData {
-
-  public static resolveFrom(chunk: string,
-    callbackOnFounded?: (json: ProgressData) => any, checkSplit = true): ProgressData[] {
-
+  public static resolveFrom(
+    chunk: string,
+    callbackOnFounded?: (json: ProgressData) => any,
+    checkSplit = true,
+  ): ProgressData[] {
     let progress;
     let res: ProgressData[] = [];
     if (typeof chunk !== 'string') {
@@ -49,13 +48,11 @@ export class ProgressData implements IProgressData {
         }
       } catch (err) {
         console.log(err);
-        console.error(`ProgresssBarData: fail to parse "${progress}"`)
+        console.error(`ProgresssBarData: fail to parse "${progress}"`);
       }
     }
     return res;
   }
-
-
 
   constructor(
     public value: number = 0,
@@ -63,10 +60,6 @@ export class ProgressData implements IProgressData {
 
     public type: PROGRESS_DATA_TYPE = 'event',
 
-    public date: Date = new Date()
-  ) {
-
-  }
-
-
+    public date: Date = new Date(),
+  ) {}
 }

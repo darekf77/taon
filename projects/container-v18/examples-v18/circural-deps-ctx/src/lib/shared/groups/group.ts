@@ -1,16 +1,16 @@
-import { Firedev } from 'firedev/src';
+import { Taon } from 'taon/src';
 
-@Firedev.Entity({
+@Taon.Entity({
   className: 'Group',
 })
-export class Group extends Firedev.Base.Entity {
+export class Group extends Taon.Base.Entity {
   //#region @websql
-  @Firedev.Orm.Column.Generated()
+  @Taon.Orm.Column.Generated()
   //#endregion
   id: string;
 
   //#region @websql
-  @Firedev.Orm.Column.String()
+  @Taon.Orm.Column.String()
   //#endregion
   name: string;
 }

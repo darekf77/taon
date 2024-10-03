@@ -1,9 +1,9 @@
-import { Firedev } from "firedev/src";
+import { Taon } from "taon/src";
 
-@Firedev.Entity({ className: 'User' })
-export class User extends Firedev.Base.AbstractEntity {
+@Taon.Entity({ className: 'User' })
+export class User extends Taon.Base.AbstractEntity {
   //#region @websql
-  @Firedev.Orm.Column.String()
+  @Taon.Orm.Column.String()
   //#endregion
   name?: string;
 }

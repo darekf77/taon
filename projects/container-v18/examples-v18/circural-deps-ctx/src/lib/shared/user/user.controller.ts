@@ -1,11 +1,11 @@
-import { ClassHelpers, Firedev } from 'firedev/src';
+import { ClassHelpers, Taon } from 'taon/src';
 import { SharedContext } from '../shared.context';
 import { User } from './user';
 
-@Firedev.Controller({
+@Taon.Controller({
   className: 'UserController',
 })
-export class UserController extends Firedev.Base.CrudController<User> {
+export class UserController extends Taon.Base.CrudController<User> {
   entityClassResolveFn = () => User;
 
   currentRepo: any;
