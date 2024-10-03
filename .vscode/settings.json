@@ -49,6 +49,10 @@
     "**/devDependencies.json": true,
     "**/package.json": true,
     "**/logo.svg": true,
+    ".firedev": true,
+    ".taon": true,
+    ".tnp": true,
+    ".": true,
     "**/*.filetemplate": true,
     "**/tsconfig.*": true,
     "**/tslint.*": true,
@@ -60,7 +64,8 @@
     "**/run.*": true,
     "**/package-lock.json": true,
     "**/protractor.conf.js": true,
-    "**/karma.conf.js": true
+    "**/karma.conf.js": true,
+    "**/docs-config.schema.json": true
   },
   "workbench.colorCustomizations": {
     "activityBar.background": "#e66a54",
@@ -88,6 +93,10 @@
     "browser": true,
     "dist": true,
     "package-lock.json": true,
+    ".firedev": true,
+    ".taon": true,
+    ".tnp": true,
+    ".": true,
     "**/docs": true,
     "**/projects": true,
     "**/bin": true,
@@ -97,7 +106,11 @@
     "**/.vscode": true,
     "**/browser": true,
     "**/dist": true,
-    "**/package-lock.json": true
+    "**/package-lock.json": true,
+    "**/.firedev": true,
+    "**/.taon": true,
+    "**/.tnp": true,
+    "**/.": true
   },
   "[typescriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -141,5 +154,6 @@
   "search.useIgnoreFiles": false,
   "search.include": [
     "**/src/**"
-  ]
+  ],
+  "window.title": "npm/taon-dev/taon  [ ${activeEditorShort} ]"
 }
