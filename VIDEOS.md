@@ -1,5 +1,5 @@
 # Official videos:
-1. Why firedev ?
+1. Why taon ?
 2. Standalone npm/github pages libs/apps
 3. Organization npm/github pages libs/apps
 3. Handling git repos like a boss

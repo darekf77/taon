@@ -47,7 +47,9 @@
   "name": "taon",
   "version": "18.0.17",
   "description": "Isomorphic solution for backend and frontend",
-  "scripts": {},
+  "scripts": {
+    "mkdocs": "python3 -m mkdocs"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/darekf77/taon.git"
