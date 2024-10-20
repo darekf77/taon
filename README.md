@@ -1,7 +1,3 @@
----
-title: README
----
-
 <p style="text-align: center;"><img src="./__images/logo-header-bold-taon.png" ></p>
 
 TAON  **T**ypescript **A**ngular **O**rm **N**ode )
