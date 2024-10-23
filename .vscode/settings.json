@@ -59,7 +59,7 @@
     "**/recent.json": true,
     "**/angular.json": true,
     "**/webpack*": true,
-    "**/docs/**/*.*": true,
+    "**/docs/**/*": true,
     "**/run-*": true,
     "**/run.*": true,
     "**/package-lock.json": true,
@@ -155,5 +155,13 @@
   "search.include": [
     "**/src/**"
   ],
-  "window.title": "npm/taon-dev/taon  [ ${activeEditorShort} ]"
+  "window.title": "npm/taon-dev/taon  [ ${activeEditorShort} ]",
+  "json.schemas": [
+    {
+      "fileMatch": [
+        "/docs-config.jsonc"
+      ],
+      "url": "./docs-config.schema.json"
+    }
+  ]
 }

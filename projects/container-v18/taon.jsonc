@@ -187,6 +187,8 @@
 
       //  @trusted=major
       "bun": "~1.1.22",
+      // NOTE: I cant use bun inside ts code if I am not executing code through bun run
+      // "@types/bun": "^1.1.5",
 
       // @trusted=major
       "typescript": "~5.5.4",
@@ -1094,7 +1096,7 @@
       "password-hash": "1.2.2",
 
       //#region my packages
-      "taon-typeorm": "18.0.9",
+      "taon-typeorm": "18.0.11",
 
       // "taon-crud": "18.0.5",
       // "taon-ports": "18.0.5",
@@ -1102,10 +1104,10 @@
       // "tnp-cli": "18.0.5",
       "record-replay-req-res-scenario": "18.0.11",
       "ng-talkback": "18.0.11",
-      "vpn-split": "18.0.9",
+      "vpn-split": "18.0.11",
       "node-cli-tester": "18.0.11",
       "static-columns": "18.0.13",
-      "taon-storage": "18.0.9",
+      "taon-storage": "18.0.11",
       "tnp-core": "18.0.36",
       "tnp-config": "18.0.14",
       "ng2-logger": "18.0.14",

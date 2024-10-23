@@ -47,7 +47,9 @@
   "name": "taon",
   "version": "18.0.17",
   "description": "Isomorphic solution for backend and frontend",
-  "scripts": {},
+  "scripts": {
+    "mkdocs": "python3 -m mkdocs"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/darekf77/taon.git"
@@ -329,8 +331,8 @@
     "sweetalert2": "11.7.32",
     "systeminformation": "3.45.7",
     "taon": "^18",
-    "taon-storage": "18.0.9",
-    "taon-typeorm": "18.0.9",
+    "taon-storage": "18.0.11",
+    "taon-typeorm": "18.0.11",
     "task.js": "0.1.5",
     "threads": "1.7.0",
     "tnp-config": "~18.0.14",
@@ -354,7 +356,7 @@
     "uuid": "10.0.0",
     "validator": "13.5.2",
     "video.js": "8.3.0",
-    "vpn-split": "~18.0.9",
+    "vpn-split": "~18.0.11",
     "vscode": "1.1.37",
     "wait-on": "7.0.1",
     "watch": "1.0.2",

@@ -1,34 +1,27 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$ref": "#/definitions/DocsConfig",
+  "$ref": "#/definitions/Models.DocsConfig",
   "definitions": {
-    "DocsConfig": {
+    "Models.DocsConfig": {
       "type": "object",
       "properties": {
         "site_name": {
           "type": "string",
-          "description": "override site name"
+          "description": "override site name (default is project name)"
         },
         "priorityOrder": {
           "type": "array",
           "items": {
             "type": "string"
           },
-          "description": "relative pathes to md files for proper order"
+          "description": "relative pathes (or titles) of md files for proper order"
         },
         "omitFilesPatters": {
           "type": "array",
           "items": {
             "type": "string"
           },
-          "description": "glob pattern to omit files"
-        },
-        "additionalAssets": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "relative path to the assets folders in project [external assets not allowed... use externalDocs for that]"
+          "description": "glob pattern to omit files by title"
         },
         "externalDocs": {
           "type": "object",
@@ -38,7 +31,31 @@
               "items": {
                 "type": "object",
                 "properties": {
-                  "path": {
+                  "packageNameWithPath": {
+                    "type": "string",
+                    "description": "path to *.md file Examples: taon-core/README.md taon-core/docs/README.md # deep pathes allowed"
+                  },
+                  "magicRenameRules": {
+                    "type": "string",
+                    "description": "if you want to rename something inside file you can use this magic rename rules example:\n\nframework-name => new-framework-name\n\nexample with array:\n\nframework-name => new-framework-name, framework-name2 => new-framework-name2"
+                  },
+                  "overrideTitle": {
+                    "type": "string",
+                    "description": "override menu item name (by default titile is relative path)         *"
+                  }
+                },
+                "required": [
+                  "packageNameWithPath"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "projects": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "packageNameWithPath": {
                     "anyOf": [
                       {
                         "type": "string"
@@ -50,41 +67,43 @@
                         }
                       }
                     ],
-                    "description": "path to *.md file or array of paths (fallbacks pathes for the same file) [in case of multiple files -> you will be ask to choose one]"
+                    "description": "default README.md file If array -> file will be join and first file will be used as title"
                   },
-                  "magicRenameRules": {
+                  "overrideTitle": {
                     "type": "string",
-                    "description": "if you want to rename something inside file you can use this magic rename rules example:\n\nframework-name => new-framework-name\n\nexample with array:\n\nframework-name => new-framework-name, framework-name2 => new-framework-name2"
+                    "description": "override menu item name"
                   }
                 },
-                "required": ["path", "magicRenameRules"],
-                "additionalProperties": false
-              }
-            },
-            "projects": {
-              "type": "array",
-              "items": {
-                "type": "object",
-                "properties": {
-                  "path": {
-                    "type": "string",
-                    "description": "path to project or array of paths (fallbacks pathes for the same projec) [in case of multiple projects -> you will be ask to choose one]"
-                  }
-                },
-                "required": ["path"],
                 "additionalProperties": false
               }
             }
           },
-          "required": ["mdfiles", "projects"],
-          "additionalProperties": false
+          "required": [
+            "mdfiles",
+            "projects"
+          ],
+          "additionalProperties": false,
+          "description": "include external docs inside this docs"
+        },
+        "mapTitlesNames": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "rename/override titles in menu, exmaple: README.md => Home"
+        },
+        "customJsPath": {
+          "type": "string"
+        },
+        "customCssPath": {
+          "type": "string"
         }
       },
       "required": [
         "site_name",
         "omitFilesPatters",
-        "additionalAssets",
-        "externalDocs"
+        "externalDocs",
+        "mapTitlesNames"
       ],
       "additionalProperties": false
     }
