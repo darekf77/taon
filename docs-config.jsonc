@@ -11,6 +11,7 @@
         "packageNameWithPath": "tnp/ALL_COMMANDS.md",
       },
     ],
+    "projects": []
   },
   "omitFilesPatters": ["BUILD-INFO"],
   "priorityOrder": ["README"]
