@@ -11,22 +11,27 @@ import { VERSION } from '@angular/core';
 //#endregion
 
 console.log('hello world');
-console.log('Your server will start on port '+ HOST_BACKEND_PORT);
+console.log('Your server will start on port ' + HOST_BACKEND_PORT);
 const host = 'http://localhost:' + HOST_BACKEND_PORT;
 
-//#region isomorphic-lib component
+//#region single file example component
 //#region @browser
 @Component({
-  selector: 'app-isomorphic-lib',
-  template: `hello from isomorphic-lib<br>
-    Angular version: {{ angularVersion }}<br>
-    <br>
+  selector: 'app-single-file',
+  template: `hello from single file example<br />
+    Angular version: {{ angularVersion }}<br />
+    <br />
     users from backend
     <ul>
-      <li *ngFor="let user of (users$ | async)"> {{ user | json }} </li>
-    </ul>
-  `,
-  styles: [` body { margin: 0px !important; } `],
+      <li *ngFor="let user of users$ | async">{{ user | json }}</li>
+    </ul> `,
+  styles: [
+    `
+      body {
+        margin: 0px !important;
+      }
+    `,
+  ],
 })
 export class IsomorphicLibComponent {
   angularVersion = VERSION.full;
@@ -36,35 +41,34 @@ export class IsomorphicLibComponent {
 //#endregion
 //#endregion
 
-//#region  isomorphic-lib api service
+//#region  single file example api service
 //#region @browser
 @Injectable({
-  providedIn:'root'
+  providedIn: 'root',
 })
 export class UserApiService {
-  userControlller = Taon.inject(()=> MainContext.getClass(UserController))
+  userControlller = Taon.inject(() => MainContext.getClass(UserController));
   getAll() {
-    return this.userControlller.getAll()
-      .received
-      .observable
-      .pipe(map(r => r.body.json));
+    return this.userControlller
+      .getAll()
+      .received.observable.pipe(map(r => r.body.json));
   }
 }
 //#endregion
 //#endregion
 
-//#region  isomorphic-lib module
+//#region  single file example module
 //#region @browser
 @NgModule({
   exports: [IsomorphicLibComponent],
   imports: [CommonModule],
   declarations: [IsomorphicLibComponent],
 })
-export class IsomorphicLibModule { }
+export class SingleFileModule {}
 //#endregion
 //#endregion
 
-//#region  isomorphic-lib entity
+//#region  single file example entity
 @Taon.Entity({ className: 'User' })
 class User extends Taon.Base.AbstractEntity {
   //#region @websql
@@ -74,10 +78,10 @@ class User extends Taon.Base.AbstractEntity {
 }
 //#endregion
 
-//#region  isomorphic-lib controller
+//#region  single file example controller
 @Taon.Controller({ className: 'UserController' })
 class UserController extends Taon.Base.CrudController<User> {
-  entityClassResolveFn = ()=> User;
+  entityClassResolveFn = () => User;
   //#region @websql
   async initExampleDbData(): Promise<void> {
     const superAdmin = new User();
@@ -88,11 +92,12 @@ class UserController extends Taon.Base.CrudController<User> {
 }
 //#endregion
 
-//#region  isomorphic-lib context
-const MainContext = Taon.createContext(()=>({
+//#region  single file example context
+const MainContext = Taon.createContext(() => ({
   host,
+  disabledRealtime: true,
   contextName: 'MainContext',
-  contexts:{ BaseContext },
+  contexts: { BaseContext },
   controllers: {
     UserController,
     // PUT FIREDEV CONTORLLERS HERE
@@ -102,17 +107,17 @@ const MainContext = Taon.createContext(()=>({
     // PUT FIREDEV ENTITIES HERE
   },
   database: true,
-  // disabledRealtime: true,
+  // logs: true,
 }));
 //#endregion
 
 async function start() {
-
   await MainContext.initialize();
 
   if (Taon.isBrowser) {
-    const users = (await MainContext.getClassInstance(UserController).getAll().received)
-      .body?.json;
+    const users = (
+      await MainContext.getClassInstance(UserController).getAll().received
+    ).body?.json;
     console.log({
       'users from backend': users,
     });

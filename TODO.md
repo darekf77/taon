@@ -7,7 +7,7 @@
 ## Taon v19.X.X
 
 - 🔲 angular v19 support
-- 🔲 2FA authentication
+- 🔲 2FA authentication keycloak
 - 🔲 simple online payments
 - 🔲 fast/stable packeges installer solution
 - 🔲 organization build based on standalone (single process with multiple entrypoints build)
@@ -19,7 +19,7 @@
 - ✅ angular v18 support
 - ✅ firedev -> taon (rebranding)
 - 🔲 docs for new framework api
-- 🔲 docs update for new cli
+- ✅ docs update for new cli
 - 🔲 docs examples for better understranding
 - 🔲 relaltime development FE/BE and BE/BE
 - 🔲 basic authentication

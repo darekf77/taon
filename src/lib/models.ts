@@ -99,13 +99,21 @@ export namespace Models {
     SUBSCRIBERS,
   > {
     contextName: string;
+    /**
+     * host/port for initing backend server
+     */
     host?: string;
     /**
-   * frontend host only needed when we are using
-   * withCredentials for axios
-   * and session cookie
-   */
+     * frontend host only needed when we are
+     * using withCredentials for axios
+     * and session cookie
+     * or realtime communication
+     */
     frontendHost?: string;
+    /**
+     * backend way of communication
+     * between taon backends/processes
+     */
     remoteHost?: string;
     useIpcWhenElectron?: boolean;
     contexts?: CONTEXTS;

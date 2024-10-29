@@ -23,6 +23,17 @@ export class RealtimeServer {
   private init() {
     //#region @websql
 
+    if(!this.core.ctx.config.frontendHost) {
+      console.warn(`[Taon][Realtime]
+
+      Frontend host is not defined
+      REALTIME COUMMUNICATION WILL NOT WORK
+
+      provide "frontendHost" property in your taon config
+
+      `);
+    }
+
     //#region prepare namespaces pathes
     const nspPath = {
       global: this.core.pathFor(),

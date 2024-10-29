@@ -4,10 +4,10 @@
     "strictNullChecks": false,
     "rootDir": "./src",
     "paths": {
-      "isomorphic-lib": [
+      "single-file": [
         "./src/lib"
       ],
-      "isomorphic-lib/*": [
+      "single-file/*": [
         "./src/lib/*"
       ]
     }
