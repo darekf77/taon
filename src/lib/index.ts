@@ -48,21 +48,9 @@ export namespace Taon {
   export import Subscriber = subscriberDecorator.TaonSubscriber;
   //#endregion
   //#region aliases to helpers
-  /**
-   * @deprecated
-   */
   export const isBrowser = coreHelpers.Helpers.isBrowser;
-  /**
-   * @deprecated
-   */
   export const isNode = coreHelpers.Helpers.isNode;
-  /**
-   * @deprecated
-   */
   export const isWebSQL = coreHelpers.Helpers.isWebSQL;
-  /**
-   * @deprecated
-   */
   export const isElectron = coreHelpers.Helpers.isElectron;
   //#endregion
   export const createContext = createContextFn.createContext;

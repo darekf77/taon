@@ -1,19 +1,32 @@
-import { MockNamespace } from "./realtime-strategy-mock-namespaces";
-import { MockSocket } from "./realtime-strategy-mock-socket";
-import { Namespaces } from "./realtime-strategy-mock.models";
+import { MockNamespace } from './realtime-strategy-mock-namespaces';
+import { MockSocket } from './realtime-strategy-mock-socket';
+import { Namespaces } from './realtime-strategy-mock.models';
 
 export class MockServer {
   private namespaces: Namespaces = {
-    '/': new MockNamespace('/', this.contextName)
+    '/': new MockNamespace('/', this.contextName),
   };
 
   constructor(public contextName: string) {}
 
   of(namespace: string): MockNamespace {
     if (!this.namespaces[namespace]) {
-      this.namespaces[namespace] = new MockNamespace(namespace, this.contextName);
+      this.namespaces[namespace] = new MockNamespace(
+        namespace,
+        this.contextName,
+      );
     }
     return this.namespaces[namespace];
+  }
+
+  in(roomName: string) {
+    return {
+      emit: (event: string, data?: any) => {
+        console.log('emit', { event, data, roomName });
+        // TODO @LAST
+        // (this.namespaces['/'] as MockNamespace).in(roomName).emit(event, data);
+      },
+    };
   }
 
   on(event: string, callback: (socket: MockSocket) => void) {

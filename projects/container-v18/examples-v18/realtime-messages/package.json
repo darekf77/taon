@@ -4,9 +4,10 @@
     "version": "v18",
     "type": "isomorphic-lib"
   },
-  "name": "inject-tests",
+  "name": "realtime-messages",
   "version": "0.0.0",
   "private": true,
+  "main": "dist/app.electron.js",
   "devDependencies": {
     "@angular-builders/custom-webpack": "~18.0.0",
     "@angular-devkit/build-angular": "~18.1.4",

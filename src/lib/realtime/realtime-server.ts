@@ -9,7 +9,7 @@ import type { BaseEntity } from '../base-classes/base-entity';
 const SOCKET_EVENT_DEBOUNCE = 500;
 
 export class RealtimeServer {
-  private jobs = {};
+  // private jobs = {};
   constructor(private core: RealtimeCore) {
     this.core = core;
     if (!core.ctx.disabledRealtime) {
@@ -195,6 +195,7 @@ export class RealtimeServer {
     customEvent?: string,
     customEventData?: any,
   ) {
+    // console.log('customEventData', customEventData);
     // console.info('__triger entity changes');
     //#region @websql
 
@@ -249,21 +250,11 @@ export class RealtimeServer {
           );
     }
 
-    const job = () => {
-      console.log(`Trigger realtime: ${this.core.ctx.contextName}/${roomName}`);
-      this.core.BE_REALTIME.in(roomName).emit(
-        roomName, // roomName == eventName in room na
-        customEventData ? customEventData : '',
-      );
-    };
-
-    if (!_.isFunction(this.jobs[roomName])) {
-      this.jobs[roomName] = _.debounce(() => {
-        job();
-      }, SOCKET_EVENT_DEBOUNCE);
-    }
-
-    this.jobs[roomName]();
+    // console.log(`Trigger realtime: ${this.core.ctx.contextName}/${roomName}`,eventData);
+    this.core.BE_REALTIME.in(roomName).emit(
+      roomName, // roomName == eventName in room na
+      customEvent ? customEventData : '',
+    );
     //#endregion
   }
   //#endregion

@@ -4,6 +4,7 @@ speed-measure-plugin*.json
 
 # misc
 /.sass-cache
+/**/tmp-*
 /connect.lock
 /coverage
 /libpeerconnection.log
@@ -12,6 +13,14 @@ yarn-error.log
 testem.log
 /typings
 app.hosts.ts
+/.firedev
+/.taon
+/.tnp
+/.
+  .map(c => '/' + c)
+  .join('
+')}
+/docs-config.schema.json
 /**/*._auto-generated_.ts
 /**/BUILD-INFO.md
 /linked-repos
@@ -45,11 +54,6 @@ Thumbs.db
 /npm-debug.log*
 /.sass-cache
 /.sourcemaps
-/tsconfig.isomorphic.json
-/tsconfig.isomorphic-flat-dist.json
-/tsconfig.browser.json
-/tsconfig.json
-/tsconfig.backend.dist.json
 /index.js
 /index.d.ts
 /index.js.map
@@ -57,14 +61,7 @@ Thumbs.db
 /webpack.backend-dist-build.js
 /run.js
 /run-org.js
-/tsconfig.isomorphic.json.filetemplate
-/tsconfig.isomorphic-flat-dist.json.filetemplate
-/tsconfig.browser.json.filetemplate
-/tsconfig.json.filetemplate
-/tsconfig.backend.dist.json.filetemplate
-/tsconfig.backend.dist.json
 # =====================
-!taon.json
 !taon.jsonc
 *.filetemplate
 
