@@ -4,7 +4,7 @@
     "version": "v18",
     "type": "isomorphic-lib"
   },
-  "name": "realtime-messages",
+  "name": "realtime-messages-from-be-to-fe",
   "version": "0.0.0",
   "private": true,
   "main": "dist/app.electron.js",

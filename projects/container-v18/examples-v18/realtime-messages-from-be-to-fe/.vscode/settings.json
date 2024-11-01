@@ -145,7 +145,7 @@
   "editor.inlineSuggest.enabled": true,
   "prettier.endOfLine": "auto",
   "prettier.prettierPath": "./node_modules/prettier",
-  "window.title": "container-v18/examples-v18/realtime-messages  [ ${activeEditorShort} ]",
+  "window.title": "container-v18/examples-v18/realtime-messages-from-be-to-fe  [ ${activeEditorShort} ]",
   "search.useIgnoreFiles": false,
   "search.include": [
     "**/src/**"

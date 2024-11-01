@@ -25,31 +25,21 @@ const eventsKey = 'eventsKey';
 //#region realtime-subscribers component
 //#region @browser
 @Component({
-  selector: 'app-realtime-messages',
   template: `hello from realtime messages<br />
     <br />
     messages from backend
     <ul>
       <li *ngFor="let message of messages$ | async">{{ message }}</li>
     </ul> `,
-})
-export class RealtimeSubscribersComponent {
-  readonly messages$: Observable<string[]> = MainContext.__refSync.realtimeClient
-  .listenChangesCustomEvent(eventsKey).pipe(
-    scan((acc, e) => [...acc, e], [])
-  ) as any as Observable<string[]>
-}
-//#endregion
-//#endregion
-
-//#region  realtime-subscribers module
-//#region @browser
-@NgModule({
-  exports: [RealtimeSubscribersComponent],
   imports: [CommonModule],
-  declarations: [RealtimeSubscribersComponent],
+  standalone: true,
 })
-export class RealtimeMessagesModule {}
+export class RealtimeMessagesFromBeToFeComponent {
+  readonly messages$: Observable<string[]> =
+    MainContext.__refSync.realtimeClient
+      .listenChangesCustomEvent(eventsKey)
+      .pipe(scan((acc, e) => [...acc, e], [])) as any as Observable<string[]>;
+}
 //#endregion
 //#endregion
 
