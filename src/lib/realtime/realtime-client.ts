@@ -55,10 +55,11 @@ export class RealtimeClient {
         // console.info(
         //   `[CLIENT] conented to GLOBAL namespace ${global.nsp} of host: ${context.host}`,
         // );
-        console.info(
-          `[CLIENT] conented to GLOBAL namespace ${this.core.conectSocketFE.id}` +
-            ` of host: ${this.core.ctx.host}`,
-        );
+        this.core.ctx.logRealtime &&
+          console.info(
+            `[CLIENT] conented to GLOBAL namespace ${this.core.conectSocketFE.id}` +
+              ` of host: ${this.core.ctx.host}`,
+          );
       });
     }
 
@@ -74,10 +75,11 @@ export class RealtimeClient {
         // console.info(
         //   `[CLIENT] conented to REALTIME namespace ${realtime.nsp} host: ${context.host}`,
         // );
-        console.info(
-          `[CLIENT] conented to REALTIME namespace ${this.core.socketFE.id}` +
-            ` host: ${this.core.ctx.host}`,
-        );
+        this.core.ctx.logRealtime &&
+          console.info(
+            `[CLIENT] conented to REALTIME namespace ${this.core.socketFE.id}` +
+              ` host: ${this.core.ctx.host}`,
+          );
       });
     }
 

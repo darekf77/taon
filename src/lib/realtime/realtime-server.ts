@@ -111,10 +111,11 @@ export class RealtimeServer {
       backendSocketForClient.on(
         Symbols.REALTIME.ROOM_NAME.SUBSCRIBE.CUSTOM(this.core.ctx.contextName),
         roomName => {
-          console.info(
-            `Joining room ${roomName} in namespace  REALTIME` +
-              ` host: ${this.core.ctx.contextName}/${this.core.ctx.host}`,
-          );
+          this.core.ctx.logRealtime &&
+            console.info(
+              `Joining room ${roomName} in namespace  REALTIME` +
+                ` host: ${this.core.ctx.contextName}/${this.core.ctx.host}`,
+            );
           backendSocketForClient.join(roomName);
         },
       );
@@ -124,10 +125,11 @@ export class RealtimeServer {
           this.core.ctx.contextName,
         ),
         roomName => {
-          console.info(
-            `[backend] Joining room ${roomName} in namespace  REALTIME` +
-              ` host: ${this.core.ctx.contextName}/${this.core.ctx.host}`,
-          );
+          this.core.ctx.logRealtime &&
+            console.info(
+              `[backend] Joining room ${roomName} in namespace  REALTIME` +
+                ` host: ${this.core.ctx.contextName}/${this.core.ctx.host}`,
+            );
           backendSocketForClient.join(roomName);
         },
       );
@@ -137,10 +139,11 @@ export class RealtimeServer {
           this.core.ctx.contextName,
         ),
         roomName => {
-          console.info(
-            `[backend] Joining room ${roomName} in namespace REALTIME ` +
-              ` host: ${this.core.ctx.contextName}/${this.core.ctx.host}`,
-          );
+          this.core.ctx.logRealtime &&
+            console.info(
+              `[backend] Joining room ${roomName} in namespace REALTIME ` +
+                ` host: ${this.core.ctx.contextName}/${this.core.ctx.host}`,
+            );
           backendSocketForClient.join(roomName);
         },
       );
@@ -150,10 +153,11 @@ export class RealtimeServer {
           this.core.ctx.contextName,
         ),
         roomName => {
-          console.info(
-            `[backend] Leaving room ${roomName} in namespace  REALTIME` +
-              ` host: ${this.core.ctx.contextName}/${this.core.ctx.host}`,
-          );
+          this.core.ctx.logRealtime &&
+            console.info(
+              `[backend] Leaving room ${roomName} in namespace  REALTIME` +
+                ` host: ${this.core.ctx.contextName}/${this.core.ctx.host}`,
+            );
           backendSocketForClient.leave(roomName);
         },
       );
@@ -163,10 +167,11 @@ export class RealtimeServer {
           this.core.ctx.contextName,
         ),
         roomName => {
-          console.info(
-            `[backend] Leaving room ${roomName} in namespace REALTIME ` +
-              ` host: ${this.core.ctx.contextName}/${this.core.ctx.host}`,
-          );
+          this.core.ctx.logRealtime &&
+            console.info(
+              `[backend] Leaving room ${roomName} in namespace REALTIME ` +
+                ` host: ${this.core.ctx.contextName}/${this.core.ctx.host}`,
+            );
           backendSocketForClient.leave(roomName);
         },
       );
@@ -176,10 +181,11 @@ export class RealtimeServer {
           this.core.ctx.contextName,
         ),
         roomName => {
-          console.info(
-            `[backend] Leaving room ${roomName} in namespace REALTIME ` +
-              ` host: ${this.core.ctx.contextName}/${this.core.ctx.host}`,
-          );
+          this.core.ctx.logRealtime &&
+            console.info(
+              `[backend] Leaving room ${roomName} in namespace REALTIME ` +
+                ` host: ${this.core.ctx.contextName}/${this.core.ctx.host}`,
+            );
           backendSocketForClient.leave(roomName);
         },
       );

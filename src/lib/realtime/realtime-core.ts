@@ -47,7 +47,12 @@ export class RealtimeCore {
   /**
    * global BE socket - only for established connection
    */
-  public connectSocketBE: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
+  public connectSocketBE: Server<
+    DefaultEventsMap,
+    DefaultEventsMap,
+    DefaultEventsMap,
+    any
+  >;
   /**
    * socket for namespaces and rooms
    */
@@ -64,7 +69,8 @@ export class RealtimeCore {
     this.ctx = ctx;
     this.strategy = this.resolveStrategy();
 
-    console.log(`[taon] realtime strategy: ${this.strategy}`);
+    this.ctx.logRealtime &&
+      console.log(`[taon] realtime strategy: ${this.strategy}`);
     if (Helpers.isWebSQL) {
       this.server = new RealtimeServer(this);
       // console.log('DONE INITING SERVER');

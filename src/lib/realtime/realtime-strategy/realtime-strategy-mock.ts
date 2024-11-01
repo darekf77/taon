@@ -235,7 +235,6 @@ class MockSocket {
 
   //#region join room
   join(room: string): void {
-    console.log(`join room ${room}`);
     this.rooms.add(room);
     this.namespaceInstance.joinRoom(room, this);
   }
