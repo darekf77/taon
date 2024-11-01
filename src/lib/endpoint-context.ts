@@ -1984,7 +1984,7 @@ export class EndpointContext {
     const ctx = this;
     // : { received: any; /* Rest<any, any>  */ }
     this.logHttp && console.log(`${type?.toUpperCase()} ${expressPath} `);
-    // console.log('INITING', methodConfig); // @LAST inject in static
+    // console.log('INITING', methodConfig); // TODO inject in static
     //#region resolve storage
     let storage: any;
     if (Helpers.isBrowser) {

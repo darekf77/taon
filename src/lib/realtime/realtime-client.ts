@@ -30,6 +30,7 @@ export class RealtimeClient {
         Symbols.REALTIME.NAMESPACE(this.core.ctx.contextName),
       ),
     };
+    // console.log('[browser] nspPath', nspPath);
 
     this.core.ctx.logRealtime &&
       console.info(
@@ -45,17 +46,18 @@ export class RealtimeClient {
     //#endregion
 
     //#region prepare globa FE socket
-    this.core.FE = this.core.strategy.io(nspPath.global.origin, {
+    this.core.conectSocketFE = this.core.strategy.io(nspPath.global.origin, {
       path: nspPath.global.pathname,
     });
 
-    if (this.core.FE.on) {
-      this.core.FE.on('connect', () => {
+    if (this.core.conectSocketFE.on) {
+      this.core.conectSocketFE.on('connect', () => {
         // console.info(
         //   `[CLIENT] conented to GLOBAL namespace ${global.nsp} of host: ${context.host}`,
         // );
         console.info(
-          `[CLIENT] conented to GLOBAL namespace ${this.core.FE.id} of host: ${this.core.ctx.host}`,
+          `[CLIENT] conented to GLOBAL namespace ${this.core.conectSocketFE.id}` +
+            ` of host: ${this.core.ctx.host}`,
         );
       });
     }
@@ -63,17 +65,18 @@ export class RealtimeClient {
     //#endregion
 
     //#region prepare realtime FE socket
-    this.core.FE_REALTIME = this.core.strategy.io(nspPath.realtime.origin, {
+    this.core.socketFE = this.core.strategy.io(nspPath.realtime.origin, {
       path: nspPath.realtime.pathname,
     });
 
-    if (this.core.FE_REALTIME.on) {
-      this.core.FE_REALTIME.on('connect', () => {
+    if (this.core.socketFE.on) {
+      this.core.socketFE.on('connect', () => {
         // console.info(
         //   `[CLIENT] conented to REALTIME namespace ${realtime.nsp} host: ${context.host}`,
         // );
         console.info(
-          `[CLIENT] conented to REALTIME namespace ${this.core.FE_REALTIME.id} host: ${this.core.ctx.host}`,
+          `[CLIENT] conented to REALTIME namespace ${this.core.socketFE.id}` +
+            ` host: ${this.core.ctx.host}`,
         );
       });
     }
@@ -166,7 +169,7 @@ to use socket realtime connection;
       const inst = this.subsmanagers[subManagerId];
       inst.add(observer);
 
-      inst.startListenIfNotStarted(this.core.FE_REALTIME);
+      inst.startListenIfNotStarted(this.core.socketFE);
 
       return () => {
         inst.remove(observer);

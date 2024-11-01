@@ -13,9 +13,8 @@ export class RealtimeStrategyIpc extends RealtimeStrategy {
   toString(): string {
     return 'ipc';
   }
-  establishConnection(): void {
-    throw new Error('Method not implemented.');
-  }
+
+
   constructor(protected ctx: EndpointContext) {
     super(ctx);
   }

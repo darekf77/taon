@@ -15,6 +15,10 @@ export namespace Symbols {
     TABLE_CHANGE(contextName: string, tableName: string) {
       return `${contextName}:listentablename${tableName}`;
     },
+    KEY: {
+      roomSubscribe: `roomSubscribe`,
+      roomUnsubscribe: `roomUnsubscribe`,
+    },
     /**
      * for backendSocket.in(ROOM_NAME).emit(EVENT)
      *
@@ -53,14 +57,20 @@ export namespace Symbols {
       },
 
       SUBSCRIBE: {
-        CUSTOM: (contextName:string) => `${contextName}:roomSubscribeCustomRoomEvent`,
-        ENTITY_UPDATE_EVENTS:(contextName:string) => `${contextName}:roomSubscribeEntityEvents`,
-        ENTITY_PROPERTY_UPDATE_EVENTS:(contextName:string) => `${contextName}:roomSubscribeEntityPropertyEvents`,
+        CUSTOM: (contextName: string) =>
+          `${contextName}:${REALTIME.KEY.roomSubscribe}CustomRoomEvent`,
+        ENTITY_UPDATE_EVENTS: (contextName: string) =>
+          `${contextName}:${REALTIME.KEY.roomSubscribe}EntityEvents`,
+        ENTITY_PROPERTY_UPDATE_EVENTS: (contextName: string) =>
+          `${contextName}:${REALTIME.KEY.roomSubscribe}EntityPropertyEvents`,
       },
       UNSUBSCRIBE: {
-        CUSTOM:(contextName:string) => `${contextName}:roomUnsubscribeCustomRoomEvent`,
-        ENTITY_UPDATE_EVENTS:(contextName:string) => `${contextName}:roomUnsubscribeEntityEvents`,
-        ENTITY_PROPERTY_UPDATE_EVENTS:(contextName:string) => `${contextName}:roomUnsubscribeEntityPropertyEvents`,
+        CUSTOM: (contextName: string) =>
+          `${contextName}:${REALTIME.KEY.roomUnsubscribe}CustomRoomEvent`,
+        ENTITY_UPDATE_EVENTS: (contextName: string) =>
+          `${contextName}:${REALTIME.KEY.roomUnsubscribe}EntityEvents`,
+        ENTITY_PROPERTY_UPDATE_EVENTS: (contextName: string) =>
+          `${contextName}:${REALTIME.KEY.roomUnsubscribe}EntityPropertyEvents`,
       },
     },
   };

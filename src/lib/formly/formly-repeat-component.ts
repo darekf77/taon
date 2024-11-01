@@ -73,7 +73,7 @@ DON'T FORGET
 export class RepeatTypeComponent extends FieldArrayType {
   get labelTemplate() {
     // @ts-ignore
-    return this.field.fieldArray.templateOptions.label; // TODO QUICK_FIX @LAST
+    return this.field.fieldArray.templateOptions.label; // TODO QUICK_FIX
   }
   constructor(builder: FormlyFormBuilder) {
     // TODO QUICK_FIX

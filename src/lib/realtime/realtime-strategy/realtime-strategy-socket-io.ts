@@ -22,15 +22,9 @@ export class RealtimeStrategySocketIO extends RealtimeStrategy {
     //#region @backendFunc
     return Server;
     //#endregion
-  };
+  }
 
   get io() {
     return io;
   }
-
-  establishConnection(): void {
-    throw new Error('Method not implemented.');
-  }
 }
-
-

@@ -88,7 +88,7 @@ export class RealtimeSubsManager {
       this.isListening = false;
       const { core, customEvent, roomName, property } = this.options;
 
-      const realtime = core.FE_REALTIME;
+      const realtime = core.socketFE;
 
       if (customEvent) {
         realtime.emit(

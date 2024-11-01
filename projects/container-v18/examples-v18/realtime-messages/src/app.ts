@@ -25,7 +25,7 @@ const eventsKey = 'eventsKey';
 //#region realtime-subscribers component
 //#region @browser
 @Component({
-  selector: 'app-realtime-subscribers',
+  selector: 'app-realtime-messages',
   template: `hello from realtime messages<br />
     <br />
     messages from backend
@@ -77,7 +77,8 @@ async function start() {
       eventsKey,
       'hello message from backend no: ' + counter++,
     );
-    setTimeout(notifyBrowser, 4000);
+    // console.log('notified browser');
+    setTimeout(notifyBrowser, 1000);
   };
   notifyBrowser();
   //#endregion

@@ -35,22 +35,23 @@ export class RealtimeCore {
   public readonly client: RealtimeClient;
   public readonly server: RealtimeServer;
   public readonly strategy: RealtimeStrategy;
+
   /**
-   * global FE socket
+   * global FE socket - only for established connection
    */
-  public FE: SocketClient<DefaultEventsMap, DefaultEventsMap>;
-  /**
-   * socket for namespaces and rooms
-   */
-  public FE_REALTIME: SocketClient<DefaultEventsMap, DefaultEventsMap>;
-  /**
-   * global BE socket
-   */
-  public BE: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
+  public conectSocketFE: SocketClient<DefaultEventsMap, DefaultEventsMap>;
   /**
    * socket for namespaces and rooms
    */
-  public BE_REALTIME: Server<
+  public socketFE: SocketClient<DefaultEventsMap, DefaultEventsMap>;
+  /**
+   * global BE socket - only for established connection
+   */
+  public connectSocketBE: Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>;
+  /**
+   * socket for namespaces and rooms
+   */
+  public socketBE: Server<
     DefaultEventsMap,
     DefaultEventsMap,
     DefaultEventsMap,
@@ -60,11 +61,19 @@ export class RealtimeCore {
 
   //#region constructor
   constructor(public ctx: EndpointContext) {
+    this.ctx = ctx;
     this.strategy = this.resolveStrategy();
-    ctx.logFramework &&
-      console.log(`[taon] realtime strategy: ${this.strategy}`);
-    this.client = new RealtimeClient(this);
-    this.server = new RealtimeServer(this);
+
+    console.log(`[taon] realtime strategy: ${this.strategy}`);
+    if (Helpers.isWebSQL) {
+      this.server = new RealtimeServer(this);
+      // console.log('DONE INITING SERVER');
+      this.client = new RealtimeClient(this);
+      // console.log('DONE INITING CLIENT');
+    } else {
+      this.client = new RealtimeClient(this);
+      this.server = new RealtimeServer(this);
+    }
   }
   //#endregion
 
@@ -90,6 +99,7 @@ export class RealtimeCore {
   //#region path for
   public pathFor(namespace?: string) {
     const uri = this.ctx.uri;
+
     let nsp = namespace ? namespace : '';
     nsp = nsp === '/' ? '' : nsp;
     const pathname = uri.pathname !== '/' ? uri.pathname : '';

@@ -23,7 +23,7 @@ export class RealtimeServer {
   private init() {
     //#region @websql
 
-    if(!this.core.ctx.config.frontendHost) {
+    if (!this.core.ctx.config.frontendHost) {
       console.warn(`[Taon][Realtime]
 
       Frontend host is not defined
@@ -44,63 +44,68 @@ export class RealtimeServer {
 
     //#endregion
 
-    //#region prepare global BE socket
-    this.core.BE = new this.core.strategy.Server(this.core.ctx.serverTcpUdp, {
-      path: nspPath.global.pathname,
+    // console.log('[backend] nspPath', nspPath);
 
-      cors: {
-        origin: this.core.ctx.config.frontendHost,
-        methods: this.core.allHttpMethods,
-      },
-    });
+    //#region prepare global BE socket
+    this.core.connectSocketBE = new this.core.strategy.Server(
+      Helpers.isWebSQL ? this.core.ctx.uri.origin : this.core.ctx.serverTcpUdp,
+      {
+        path: nspPath.global.pathname,
+
+        cors: {
+          origin: this.core.ctx.config.frontendHost,
+          methods: this.core.allHttpMethods,
+        },
+      }, // @ts-ignore
+      this.core.ctx,
+    );
 
     this.core.ctx.logRealtime &&
       console.info(
-        `CREATE GLOBAL NAMESPACE: '${this.core.BE.path()}' , path: '${
-          nspPath.global.pathname
-        }'`,
+        `[backend] CREATE GLOBAL NAMESPACE: '${this.core.connectSocketBE.path()}'` +
+          ` , path: '${nspPath.global.pathname}'`,
       );
 
-    this.core.BE.on('connection', clientSocket => {
+    this.core.connectSocketBE.on('connection', clientSocket => {
       if (Helpers.isElectron) {
         // @ts-ignore
-        this.core.BE.emit('connect'); // TODO QUICK_FIX
+        this.core.connectSocketBE.emit('connect'); // TODO QUICK_FIX
       }
-      console.info(
-        `client conected to namespace "${clientSocket.nsp?.name}",  host: ${this.core.ctx.host}`,
-      );
+      // console.info(
+      //   `[backend] client conected to namespace "${clientSocket.nsp?.name}",  host: ${this.core.ctx.host}`,
+      // );
     });
 
     //#endregion
 
     //#region prepare realtime BE socket
-    this.core.BE_REALTIME = new this.core.strategy.Server(
-      this.core.ctx.serverTcpUdp,
+    this.core.socketBE = new this.core.strategy.Server(
+      Helpers.isWebSQL ? this.core.ctx.uri.origin : this.core.ctx.serverTcpUdp,
       {
         path: nspPath.realtime.pathname,
         cors: {
           origin: this.core.ctx.config.frontendHost,
           methods: this.core.allHttpMethods,
         },
-      },
+      }, // @ts-ignore
+      this.core.ctx,
     );
 
     this.core.ctx.logRealtime &&
       console.info(
-        `CREATE REALTIME NAMESPACE: '${this.core.BE_REALTIME.path()}' , path: '${
-          nspPath.realtime.pathname
-        }' `,
+        `[backend] CREATE REALTIME NAMESPACE: '${this.core.socketBE.path()}'` +
+          ` , path: '${nspPath.realtime.pathname}' `,
       );
 
-    this.core.BE_REALTIME.on('connection', backendSocketForClient => {
-      console.info(
-        `client conected to namespace "${backendSocketForClient.nsp?.name}",  host: ${this.core.ctx.host}`,
-      );
+    this.core.socketBE.on('connection', backendSocketForClient => {
+      // console.info(
+      //   `[backend] client conected to namespace "${backendSocketForClient.nsp?.name}",  host: ${this.core.ctx.host}`,
+      // );
 
       if (Helpers.isElectron) {
         // @ts-ignore
-        backendSocketForClient = this.core.BE_REALTIME; // TODO QUICK_FIX
-        this.core.BE_REALTIME.emit('connect');
+        backendSocketForClient = this.core.socketBE; // TODO QUICK_FIX
+        this.core.socketBE.emit('connect');
       }
 
       backendSocketForClient.on(
@@ -120,7 +125,7 @@ export class RealtimeServer {
         ),
         roomName => {
           console.info(
-            `Joining room ${roomName} in namespace  REALTIME` +
+            `[backend] Joining room ${roomName} in namespace  REALTIME` +
               ` host: ${this.core.ctx.contextName}/${this.core.ctx.host}`,
           );
           backendSocketForClient.join(roomName);
@@ -133,7 +138,7 @@ export class RealtimeServer {
         ),
         roomName => {
           console.info(
-            `Joining room ${roomName} in namespace REALTIME ` +
+            `[backend] Joining room ${roomName} in namespace REALTIME ` +
               ` host: ${this.core.ctx.contextName}/${this.core.ctx.host}`,
           );
           backendSocketForClient.join(roomName);
@@ -146,7 +151,7 @@ export class RealtimeServer {
         ),
         roomName => {
           console.info(
-            `Leaving room ${roomName} in namespace  REALTIME` +
+            `[backend] Leaving room ${roomName} in namespace  REALTIME` +
               ` host: ${this.core.ctx.contextName}/${this.core.ctx.host}`,
           );
           backendSocketForClient.leave(roomName);
@@ -159,7 +164,7 @@ export class RealtimeServer {
         ),
         roomName => {
           console.info(
-            `Leaving room ${roomName} in namespace REALTIME ` +
+            `[backend] Leaving room ${roomName} in namespace REALTIME ` +
               ` host: ${this.core.ctx.contextName}/${this.core.ctx.host}`,
           );
           backendSocketForClient.leave(roomName);
@@ -172,7 +177,7 @@ export class RealtimeServer {
         ),
         roomName => {
           console.info(
-            `Leaving room ${roomName} in namespace REALTIME ` +
+            `[backend] Leaving room ${roomName} in namespace REALTIME ` +
               ` host: ${this.core.ctx.contextName}/${this.core.ctx.host}`,
           );
           backendSocketForClient.leave(roomName);
@@ -251,7 +256,7 @@ export class RealtimeServer {
     }
 
     // console.log(`Trigger realtime: ${this.core.ctx.contextName}/${roomName}`,eventData);
-    this.core.BE_REALTIME.in(roomName).emit(
+    this.core.socketBE.in(roomName).emit(
       roomName, // roomName == eventName in room na
       customEvent ? customEventData : '',
     );
