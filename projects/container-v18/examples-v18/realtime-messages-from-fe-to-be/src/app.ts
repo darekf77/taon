@@ -24,20 +24,22 @@ const eventsKey = 'eventsKey';
 //#region realtime-subscribers component
 //#region @browser
 @Component({
-  template: `hello from realtime messages<br />
+  template: `push global event to backend with click of a button<br />
     <br />
-    messages from backend
-    <ul>
-      <li *ngFor="let message of messages$ | async">{{ message }}</li>
-    </ul> `,
+    <button (click)="notifyBackend()">notify backend</button>
+    `,
   imports: [CommonModule],
   standalone: true,
 })
-export class RealtimeMessagesFromBeToFeComponent {
-  readonly messages$: Observable<string[]> =
-    MainContext.__refSync.realtimeClient
-      .listenChangesCustomEvent(eventsKey)
-      .pipe(scan((acc, e) => [...acc, e], [])) as any as Observable<string[]>;
+export class RealtimeMessagesFromFeToBeComponent {
+  counter = 0;
+  notifyBackend() {
+    console.log('notifyBackend');
+    MainContext.__refSync.realtimeClient.triggerCustomEvent(
+      eventsKey,
+      `hello ${++this.counter} message from frontend`,
+    );
+  }
 }
 //#endregion
 //#endregion
@@ -63,16 +65,10 @@ async function start() {
   await MainContext.initialize();
 
   //#region @websql
-  let counter = 0;
-  const notifyBrowser = () => {
-    MainContext.__refSync.realtimeServer.triggerCustomEvent(
-      eventsKey,
-      'hello message from backend no: ' + counter++,
-    );
-    // console.log('notified browser');
-    setTimeout(notifyBrowser, 1000);
-  };
-  notifyBrowser();
+  console.log(`Server subscribed to events ${eventsKey}`);
+  MainContext.__refSync.realtimeServer.listenChangesCustomEvent(eventsKey).subscribe((data)=> {
+    console.log('data from frontend:', data);
+  });
   //#endregion
 }
 

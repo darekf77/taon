@@ -2,6 +2,7 @@
   "files.exclude": {
     "**/*____ORIGINAL____.ts": true,
     "_changelog": true,
+    "webpack.backend-dist-build.js": true,
     "**/node_modules": true,
     "**/tmp*": true,
     "**/dist*": true,
@@ -20,7 +21,23 @@
     "**/npm-debug.log*": true,
     "**/.sass-cache": true,
     "**/.sourcemaps": true,
+    "**/tsconfig.isomorphic.json": true,
+    "**/tsconfig.isomorphic-flat-dist.json": true,
+    "**/tsconfig.browser.json": true,
+    "**/tsconfig.json": true,
     "**/tsconfig.backend.dist.json": true,
+    "**/index.js": true,
+    "**/index.d.ts": true,
+    "**/index.js.map": true,
+    "**/webpack.config.js": true,
+    "**/webpack.backend-dist-build.js": true,
+    "**/run.js": true,
+    "**/run-org.js": true,
+    "**/tsconfig.isomorphic.json.filetemplate": true,
+    "**/tsconfig.isomorphic-flat-dist.json.filetemplate": true,
+    "**/tsconfig.browser.json.filetemplate": true,
+    "**/tsconfig.json.filetemplate": true,
+    "**/tsconfig.backend.dist.json.filetemplate": true,
     "**/.gitignore": true,
     "**/.npmignore": true,
     "**/.babelrc": true,
@@ -44,22 +61,22 @@
     "**/package-lock.json": true,
     "**/protractor.conf.js": true,
     "**/karma.conf.js": true,
-    "**/docs-config.schema.json": true,
-    "recent.json": true,
-    "angular.json": true
+    "**/docs-config.schema.json": true
   },
   "workbench.colorCustomizations": {
-    "activityBar.background": "#ce9243",
-    "activityBar.foreground": "#313129"
+    "activityBar.background": "#0084ff",
+    "activityBar.foreground": "#000000"
   },
   "editor.rulers": [
-    100,
+    80,
     120
   ],
   "html.format.wrapAttributes": "force-aligned",
   "workbench.colorTheme": "Default Light+",
   "tslint.autoFixOnSave": true,
-  "tslint.enable": true,
+  "eslint.enable": true,
+  "tslint.enable": false,
+  "typescript.tsdk": "node_modules/typescript/lib",
   "search.exclude": {
     "docs": true,
     "projects": true,
@@ -90,7 +107,45 @@
     "**/.tnp": true,
     "**/.": true
   },
-  "window.title": "projects/container-v18/examples-v18  [ ${activeEditorShort} ]",
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[json5]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "eslint.migration.2_x": "off",
+  "prettier.enable": true,
+  "editor.suggest.snippetsPreventQuickSuggestions": false,
+  "editor.inlineSuggest.enabled": true,
+  "prettier.endOfLine": "auto",
+  "prettier.prettierPath": "./node_modules/prettier",
+  "window.title": "container-v18/examples-v18/realtime-messages-from-fe-to-be  [ ${activeEditorShort} ]",
   "search.useIgnoreFiles": false,
   "search.include": [
     "**/src/**"

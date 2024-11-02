@@ -85,7 +85,10 @@ export class RealtimeCore {
 
   //#region methods & getters / resovle staraegy
   private resolveStrategy(): RealtimeStrategy {
-    if (this.ctx.mode === 'backend-frontend(websql)') {
+    if (
+      this.ctx.mode === 'backend-frontend(websql)' ||
+      this.ctx.mode === 'backend-frontend(websql-electron)'
+    ) {
       // debugger
       return new RealtimeStrategyMock(this.ctx);
     }

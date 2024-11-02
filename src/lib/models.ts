@@ -14,6 +14,7 @@ export namespace Models {
     | 'backend-frontend(tcp+udp)'
     | 'remote-backend(tcp+udp)'
     | 'backend-frontend(ipc-electron)'
+    | 'backend-frontend(websql-electron)'
     | 'backend-frontend(websql)';
 
   //#region models / class types
@@ -85,10 +86,10 @@ export namespace Models {
 
   //#region models / context options
   export type ContectionOptionsLogs = {
-    http: boolean;
-    realtime: boolean;
-    framework: boolean;
-    db: boolean;
+    http?: boolean;
+    realtime?: boolean;
+    framework?: boolean;
+    db?: boolean;
   };
   export interface ContextOptions<
     CONTEXTS,

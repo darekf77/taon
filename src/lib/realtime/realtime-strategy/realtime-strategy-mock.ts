@@ -37,9 +37,9 @@ class MockServer {
 //#region mock namespace
 class MockNamespace {
   public name: string;
-  private sockets: MockSocket[] = [];
+  public readonly sockets: MockSocket[] = [];
   private rooms: { [key: string]: MockSocket[] } = {};
-  public eventHandlers: { [event: string]: EventHandler } = {};
+  public namespaceEventHandlers: { [event: string]: EventHandler } = {};
 
   //#region constructor
   constructor(name: string) {
@@ -49,7 +49,7 @@ class MockNamespace {
 
   //#region on
   on(event: string, handler: EventHandler): void {
-    this.eventHandlers[event] = handler;
+    this.namespaceEventHandlers[event] = handler;
   }
   //#endregion
 
@@ -145,6 +145,7 @@ class MockSocket {
   private eventHandlers: { [event: string]: EventHandler } = {};
   private rooms: Set<string> = new Set();
   private ctx: EndpointContext;
+  private server: MockServer;
 
   get id() {
     return this.nsp.name;
@@ -172,6 +173,7 @@ class MockSocket {
       serverRegistry[url] = new MockServer(url);
       server = serverRegistry[url];
     }
+    this.server = server;
 
     const ns = server.of(this.namespaceName);
     ns.connect(this);
@@ -188,6 +190,10 @@ class MockSocket {
     };
   }
   //#endregion
+
+  path() {
+    return this.namespaceInstance?.name;
+  }
 
   //#region on
   on(event: string, handler: EventHandler): void {
@@ -208,19 +214,25 @@ class MockSocket {
 
     const [contextName, eventName] = event.split(':');
 
-    if (eventName.startsWith(Symbols.REALTIME.KEY.roomSubscribe)) {
+    if (eventName?.startsWith(Symbols.REALTIME.KEY.roomSubscribe)) {
       const room = args[0];
       this.join(room);
-    } else if (eventName.startsWith(Symbols.REALTIME.KEY.roomUnsubscribe)) {
+    } else if (eventName?.startsWith(Symbols.REALTIME.KEY.roomUnsubscribe)) {
       const room = args[0];
       this.leave(room);
     } else {
       // console.log('try to emit event (to server)', event);
       if (this.namespaceInstance) {
-        const serverHandler = this.namespaceInstance.eventHandlers[event];
+        const serverHandler = this.namespaceInstance.namespaceEventHandlers[event];
         if (serverHandler) {
           serverHandler(this, ...args);
           return;
+        } else {
+          // console.log(`no server handler for event ${event}`);
+          // TODO QUICK FIX
+          for (const socket of this.namespaceInstance.sockets) {
+            socket.eventHandlers[event]?.(...args);
+          }
         }
       }
 

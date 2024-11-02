@@ -277,7 +277,11 @@ export class EndpointContext {
     }
 
     if (this.config.useIpcWhenElectron && Helpers.isElectron) {
-      this.mode = 'backend-frontend(ipc-electron)';
+      if (Helpers.isWebSQL) {
+        this.mode = 'backend-frontend(websql-electron)';
+      } else {
+        this.mode = 'backend-frontend(ipc-electron)';
+      }
     }
 
     if (!this.mode && !this.config.abstract) {
@@ -454,9 +458,7 @@ export class EndpointContext {
           );
       } else {
         this.logFramework &&
-          Helpers.info(
-            `[taon] Create context for host: ${this.config.host}`,
-          );
+          Helpers.info(`[taon] Create context for host: ${this.config.host}`);
       }
     }
     //#endregion
@@ -507,6 +509,7 @@ export class EndpointContext {
         //#endregion
 
         //#region  resolve database config for mode backend-frontend(websql)
+        case 'backend-frontend(websql-electron)':
         case 'backend-frontend(websql)':
           databaseConfig = {
             location: `tmp-db-${_.kebabCase(this.contextName)}.sqljs`,
@@ -2008,11 +2011,7 @@ export class EndpointContext {
           const { request, response } = TaonHelpers.websqlMocks(headers);
 
           Helpers.ipcRenderer.once(
-            TaonHelpers.ipcKeyNameResponse(
-              target,
-              methodConfig,
-              expressPath,
-            ),
+            TaonHelpers.ipcKeyNameResponse(target, methodConfig, expressPath),
             (event, responseData) => {
               let res: any = responseData;
               console.log({ responseData });

@@ -222,6 +222,17 @@ to use socket realtime connection;
   }
   //#endregion
 
+  //#region methods & getters / trigger custom event\
+  /**
+   * Trigger custom event on backend
+   * @param customEvent global event name
+   * @param dataToPush
+   */
+  public triggerCustomEvent(customEvent: string, dataToPush: any) {
+    this.core.socketFE.emit(customEvent, dataToPush);
+  }
+  //#endregion
+
   //#region methods & getters / get room id from
   private getRoomIdFrom(options: RealtimeModels.SubsManagerOpt) {
     const url = new URL(options.core.ctx.host);

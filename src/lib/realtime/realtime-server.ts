@@ -4,6 +4,7 @@ import { Helpers, _ } from 'tnp-core/src';
 import { RealtimeCore } from './realtime-core';
 import { ClassHelpers } from '../helpers/class-helpers';
 import type { BaseEntity } from '../base-classes/base-entity';
+import { Observable, Subject } from 'rxjs';
 //#endregion
 
 const SOCKET_EVENT_DEBOUNCE = 500;
@@ -19,7 +20,7 @@ export class RealtimeServer {
     }
   }
 
-  //#region methods & getters /  init
+  //#region methods & getters / init
   private init() {
     //#region @websql
 
@@ -71,9 +72,9 @@ export class RealtimeServer {
         // @ts-ignore
         this.core.connectSocketBE.emit('connect'); // TODO QUICK_FIX
       }
-      // console.info(
-      //   `[backend] client conected to namespace "${clientSocket.nsp?.name}",  host: ${this.core.ctx.host}`,
-      // );
+      console.info(
+        `[backend] client conected to namespace "${clientSocket.nsp?.name}",  host: ${this.core.ctx.host}`,
+      );
     });
 
     //#endregion
@@ -340,6 +341,29 @@ export class RealtimeServer {
       void 0,
       Symbols.REALTIME.TABLE_CHANGE(this.core.ctx.contextName, className),
     );
+  }
+  //#endregion
+
+  //#region methods & getters / listen custom events from users
+  /**
+   * Listen to custom events from users
+   * @param customEvent  global event name
+   */
+  listenChangesCustomEvent(customEvent: string): Observable<any> {
+    //#region @websqlFunc
+    const sub = new Subject<any>();
+    this.core.socketBE.on('connection', backendSocketForClient => {
+      console.info(
+        `[backend][listenChangesCustomEvent] client conected to namespace "${backendSocketForClient.nsp?.name}"`,
+      );
+      console.log(`[backend][listenChangesCustomEvent] ${customEvent}`);
+      backendSocketForClient.on(customEvent, data => {
+        sub.next(data);
+      });
+    });
+
+    return sub.asObservable();
+    //#endregion
   }
   //#endregion
 }
