@@ -1,61 +1,116 @@
-import { Server } from 'socket.io';
+//#region imports
 import type { EndpointContext } from '../../endpoint-context';
 import { RealtimeStrategy } from './realtime-strategy';
 import { Symbols } from '../../symbols';
 import { ManagerOptions, SocketOptions } from 'socket.io-client';
-
-//#region models
-type EventHandler = (...args: any[]) => void;
+import { RealtimeModels } from '../realtime.models';
+import { ServerOptions } from 'socket.io';
 //#endregion
-
-// Global registry to map URLs to MockServer instances
-const serverRegistry: { [url: string]: MockServer } = {};
 
 //#region mock server
 class MockServer {
-  private namespaces: { [key: string]: MockNamespace } = {};
+  static serverByUrl = new Map<string, MockServer>();
+  static from(url: string): MockServer {
+    if (!MockServer.serverByUrl.has(url)) {
+      MockServer.serverByUrl.set(url, new MockServer(url));
+    }
+    return MockServer.serverByUrl.get(url);
+  }
+
+  get allServers() {
+    return Array.from(MockServer.serverByUrl.values());
+  }
+
+  namespacesByName = new Map<string, MockNamespace>();
 
   //#region constructor
   constructor(public url: string) {
-    serverRegistry[url] = this;
+    MockServer.serverByUrl.set(url, this);
   }
   //#endregion
 
   //#region of
   of(namespace: string): MockNamespace {
-    if (!this.namespaces[namespace]) {
-      this.namespaces[namespace] = new MockNamespace(namespace);
+    if (!this.namespacesByName.has(namespace)) {
+      this.namespacesByName.set(namespace, new MockNamespace(namespace, this));
     }
-    return this.namespaces[namespace];
+    return this.namespacesByName.get(namespace);
   }
   //#endregion
 
-  // emit not implemented - not needed for this mock
+  //#region path
+  path() {
+    return this.url;
+  }
+  //#endregion
 }
 //#endregion
 
 //#region mock namespace
 class MockNamespace {
-  public name: string;
-  public readonly sockets: MockSocket[] = [];
-  private rooms: { [key: string]: MockSocket[] } = {};
-  public namespaceEventHandlers: { [event: string]: EventHandler } = {};
+  /**
+   * All sockets connected to this namespace
+   */
+  public readonly allSocketsForNamespace = new Set<MockSocket>();
+  /**
+   * Rooms and their sockets
+   */
+  private socketByRoomName: {
+    [roomName: string]: Set<MockSocket>;
+  } = {};
+  /**
+   * Event handlers for this namespace
+   */
+  public namespaceEventHandlers: {
+    [eventName: string]: Set<RealtimeModels.EventHandler>;
+  } = {};
 
   //#region constructor
-  constructor(name: string) {
-    this.name = name;
-  }
+  constructor(
+    /**
+     * unique namespace name
+     */
+    public name: string,
+    public server: MockServer,
+  ) {}
   //#endregion
 
   //#region on
-  on(event: string, handler: EventHandler): void {
-    this.namespaceEventHandlers[event] = handler;
+  on(eventName: string, handler: RealtimeModels.EventHandler): void {
+    // console.log(`ON EVNET event "${eventName}"`);
+    if (!this.namespaceEventHandlers[eventName]) {
+      this.namespaceEventHandlers[eventName] =
+        new Set<RealtimeModels.EventHandler>();
+    }
+
+    if (!this.namespaceEventHandlers[eventName].has(handler)) {
+      this.namespaceEventHandlers[eventName].add(handler);
+    }
+
+    // QUICK_FIX Emit connection event for backend
+    // TODO make it in emit
+    if (eventName === 'connection') {
+      setTimeout(() => {
+        this.emit('connection', this);
+      });
+    }
   }
   //#endregion
 
   //#region emit
   emit(event: string, ...args: any[]): void {
-    this.sockets.forEach(socket => {
+    // TODO @LAST trigger connection event less hacky
+    // const firstArg = _.first(args);
+    // // QUICK_FIX emit 'connection' event
+    // if (firstArg instanceof MockSocket) {
+    //   this.emit(eventName, ...[this, ...args.slice(1)]);
+    //   return;
+    // }
+
+    (this.namespaceEventHandlers[event] || []).forEach(handler => {
+      handler(...args);
+    });
+    this.allSocketsForNamespace?.forEach(socket => {
       socket.emit(event, ...args);
     });
   }
@@ -63,60 +118,68 @@ class MockNamespace {
 
   //#region connect
   connect(socket: MockSocket): void {
-    this.sockets.push(socket);
+    this.allSocketsForNamespace.add(socket);
     socket.namespaceInstance = this;
   }
   //#endregion
 
   //#region to
-  to(roomName: string, includeSender: boolean = false): RoomEmitter {
-    const socketsInRoom = this.rooms[roomName] || [];
-    // console.log(
-    //   `to room "${roomName}" in namespace "${this.name}" , socketsInRoom: ${socketsInRoom.join(',')}`,
-    // );
-    return new RoomEmitter(socketsInRoom, includeSender);
+  to(roomName: string): RoomEmitter {
+    const socketsInRoom = this.socketByRoomName[roomName];
+    return new RoomEmitter(socketsInRoom, true);
+  }
+  //#endregion
+
+  //#region to room
+  in(roomName: string): RoomEmitter {
+    const socketsInRoom = this.socketByRoomName[roomName];
+    return new RoomEmitter(socketsInRoom, false);
   }
   //#endregion
 
   //#region join room
   joinRoom(roomName: string, socket: MockSocket): void {
-    if (!this.rooms[roomName]) {
-      this.rooms[roomName] = [];
+    if (!this.socketByRoomName[roomName]) {
+      this.socketByRoomName[roomName] = new Set<MockSocket>();
     }
-    if (!this.rooms[roomName].includes(socket)) {
-      this.rooms[roomName].push(socket);
-    }
+    this.socketByRoomName[roomName].add(socket);
   }
   //#endregion
 
   //#region leave room
   leaveRoom(roomName: string, socket: MockSocket): void {
-    const roomSockets = this.rooms[roomName];
+    const roomSockets = this.socketByRoomName[roomName];
     if (roomSockets) {
-      this.rooms[roomName] = roomSockets.filter(s => s !== socket);
+      this.socketByRoomName[roomName].delete(socket);
     }
   }
   //#endregion
+
+  //#region nsp + name
+  get nsp() {
+    const self = this;
+    return {
+      get name() {
+        return self.name;
+      },
+    };
+  }
+  //#endregion
+
+  path() {
+    return this.name;
+  }
 }
 //#endregion
 
 //#region room emitter
 class RoomEmitter {
-  private sockets: MockSocket[];
-  private includeSender: boolean;
-  private sender: MockSocket | null;
-
   //#region constructor
   constructor(
-    sockets: MockSocket[],
-    includeSender: boolean = false,
-    sender: MockSocket | null = null,
-  ) {
-    this.sockets = sockets;
-    this.includeSender = includeSender;
-    this.sender = sender;
-    // console.log(`RoomEmitter created, sockets: ${this.sockets.length}`);
-  }
+    private sockets: Set<MockSocket>,
+    private includeSender: boolean = false,
+    private sender: MockSocket = null, // TODO QUICK FIX how to include sender
+  ) {}
   //#endregion
 
   //#region emit in room
@@ -124,7 +187,7 @@ class RoomEmitter {
     // console.log(
     //   `emit room emiter ${event} ,  this.sockets ${this.sockets.length}`,
     // );
-    this.sockets.forEach(socket => {
+    this.sockets?.forEach(socket => {
       // console.log(`emit event ${event} to socket ${socket.id}`);
       if (this.includeSender || socket !== this.sender) {
         socket.emit(event, ...args);
@@ -137,45 +200,28 @@ class RoomEmitter {
 
 //#region mock socket
 class MockSocket {
-  private static connectionCounter = 0;
-  private static sockets = new Map<string, MockSocket>();
-
-  public namespaceName: string;
-  public namespaceInstance: MockNamespace | null = null;
-  private eventHandlers: { [event: string]: EventHandler } = {};
-  private rooms: Set<string> = new Set();
-  private ctx: EndpointContext;
-  private server: MockServer;
-
+  public namespaceInstance: MockNamespace;
+  private socketEventHandlers = {} as {
+    [eventName: string]: Set<RealtimeModels.EventHandler>;
+  };
   get id() {
     return this.nsp.name;
   }
 
   //#region constructor
   constructor(
-    url: string,
+    public url: string,
     opts?: Partial<ManagerOptions & SocketOptions>,
-    ctx?: EndpointContext,
   ) {
-    MockSocket.connectionCounter++;
-
-    this.ctx = ctx as EndpointContext;
-    url = url || this.ctx.uri.origin;
-
     // @ts-ignore
     const [baseUrl, namespace] = [url, opts.path || '/'];
     // console.log({ url, baseUrl, namespace });
-    this.namespaceName = namespace || '/';
+    const namespaceName = namespace || '/';
 
     // Look up the server instance from the registry
-    let server = serverRegistry[url];
-    if (!server) {
-      serverRegistry[url] = new MockServer(url);
-      server = serverRegistry[url];
-    }
-    this.server = server;
+    const server = MockServer.from(url);
 
-    const ns = server.of(this.namespaceName);
+    const ns = server.of(namespaceName);
     ns.connect(this);
   }
   //#endregion
@@ -191,89 +237,88 @@ class MockSocket {
   }
   //#endregion
 
+  //#region path
   path() {
     return this.namespaceInstance?.name;
   }
+  //#endregion
 
   //#region on
-  on(event: string, handler: EventHandler): void {
-    if (event === 'connect' || event === 'connection') {
+  on(eventName: string, handler: RealtimeModels.EventHandler): void {
+    if (!this.socketEventHandlers[eventName]) {
+      this.socketEventHandlers[eventName] =
+        new Set<RealtimeModels.EventHandler>();
+    }
+    this.socketEventHandlers[eventName].add(handler);
+
+    // QUICK_FIX client initing itself
+    if (eventName === 'connect') {
       setTimeout(() => {
-        handler(this);
+        this.emit('connect');
+        // this.namespaceInstance.emit('connection', this); @UNCOMMNENT
       });
-    } else {
-      this.eventHandlers[event] = handler;
     }
   }
   //#endregion
 
   //#region emit
-  emit(event: string, ...args: any[]): void {
-    // console.log(`emit event ${event} to socket ${this.id}`);
-    // Emit to server-side handlers
+  emit(eventName: string, ...args: any[]): void {
+    eventName = eventName || '';
 
-    const [contextName, eventName] = event.split(':');
-
-    if (eventName?.startsWith(Symbols.REALTIME.KEY.roomSubscribe)) {
+    if (eventName.includes(`:${Symbols.REALTIME.KEYroomSubscribe}`)) {
       const room = args[0];
       this.join(room);
-    } else if (eventName?.startsWith(Symbols.REALTIME.KEY.roomUnsubscribe)) {
+    } else if (eventName.includes(`:${Symbols.REALTIME.KEYroomUnsubscribe}`)) {
       const room = args[0];
       this.leave(room);
     } else {
       // console.log('try to emit event (to server)', event);
       if (this.namespaceInstance) {
-        const serverHandler = this.namespaceInstance.namespaceEventHandlers[event];
-        if (serverHandler) {
-          serverHandler(this, ...args);
-          return;
-        } else {
-          // console.log(`no server handler for event ${event}`);
-          // TODO QUICK FIX
-          for (const socket of this.namespaceInstance.sockets) {
-            socket.eventHandlers[event]?.(...args);
+        const namespaceEventHandlers =
+          this.namespaceInstance.namespaceEventHandlers[eventName] || [];
+
+        // emit to namespace events
+        for (const namespaceEventHandler of namespaceEventHandlers) {
+          if (namespaceEventHandler) {
+            namespaceEventHandler(...args);
           }
         }
-      }
 
-      // Emit to client-side handlers
-      const clientHandler = this.eventHandlers[event];
-      if (clientHandler) {
-        clientHandler(...args);
+        const allSocketsForNamespaceExceptCurrent = Array.from(
+          this.namespaceInstance.allSocketsForNamespace.values(),
+        ).filter(socket => socket !== this);
+
+        // emit to all sockets in namespace
+        for (const socket of allSocketsForNamespaceExceptCurrent) {
+          const socketEventHandlers = socket.socketEventHandlers[eventName];
+          for (const socketEventHandler of socketEventHandlers) {
+            if (socketEventHandler) {
+              socketEventHandler(...args);
+            }
+          }
+        }
+
+        // Emit to current socket
+        const socketEventHandlers = this.socketEventHandlers[eventName] || [];
+        for (const clientHandler of socketEventHandlers) {
+          if (clientHandler) {
+            clientHandler(...args);
+          }
+        }
       }
     }
   }
   //#endregion
 
   //#region join room
-  join(room: string): void {
-    this.rooms.add(room);
-    this.namespaceInstance.joinRoom(room, this);
+  join(roomName: string): void {
+    this.namespaceInstance.joinRoom(roomName, this);
   }
   //#endregion
 
   //#region leave room
-  leave(room: string): void {
-    this.rooms.delete(room);
-    this.namespaceInstance.leaveRoom(room, this);
-  }
-  //#endregion
-
-  //#region to room
-  to(room: string): RoomEmitter {
-    if (this.namespaceInstance) {
-      return this.namespaceInstance.to(room, false)['excludeSender'](this);
-    }
-    return new RoomEmitter([], false);
-  }
-  //#endregion
-
-  //#region in room
-  in(room: string): RoomEmitter {
-    if (this.namespaceInstance) {
-      return this.namespaceInstance.to(room, true);
-    }
-    return new RoomEmitter([], true);
+  leave(roomName: string): void {
+    this.namespaceInstance.leaveRoom(roomName, this);
   }
   //#endregion
 }
@@ -297,16 +342,17 @@ export class RealtimeStrategyMock extends RealtimeStrategy {
   //#endregion
 
   //#region server & io
-  get Server() {
-    return MockSocket as any;
+  ioServer(url: string, opt: ServerOptions) {
+    const server = MockServer.from(url || this.ctx.uri.origin);
+    return server.of(opt?.path || '/') as any;
   }
 
-  get io() {
+  get ioClient() {
     const clientIo = (
       uri: string,
       opts?: Partial<ManagerOptions & SocketOptions>,
     ): MockSocket => {
-      return new MockSocket(uri, opts as any, this.ctx);
+      return new MockSocket(uri || this.ctx.uri.origin, opts as any);
     };
     return clientIo as any;
   }

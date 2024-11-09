@@ -46,18 +46,21 @@ export class RealtimeClient {
     //#endregion
 
     //#region prepare globa FE socket
-    this.core.conectSocketFE = this.core.strategy.io(nspPath.global.origin, {
-      path: nspPath.global.pathname,
-    });
+    this.core.conectSocketFE = this.core.strategy.ioClient(
+      nspPath.global.origin,
+      {
+        path: nspPath.global.pathname,
+      },
+    );
 
     if (this.core.conectSocketFE.on) {
       this.core.conectSocketFE.on('connect', () => {
         // console.info(
-        //   `[CLIENT] conented to GLOBAL namespace ${global.nsp} of host: ${context.host}`,
+        //   `[CLIENT] connected to GLOBAL namespace ${global.nsp} of host: ${context.host}`,
         // );
         this.core.ctx.logRealtime &&
           console.info(
-            `[CLIENT] conented to GLOBAL namespace ${this.core.conectSocketFE.id}` +
+            `[CLIENT] connected to GLOBAL namespace ${this.core.conectSocketFE.id}` +
               ` of host: ${this.core.ctx.host}`,
           );
       });
@@ -66,18 +69,18 @@ export class RealtimeClient {
     //#endregion
 
     //#region prepare realtime FE socket
-    this.core.socketFE = this.core.strategy.io(nspPath.realtime.origin, {
+    this.core.socketFE = this.core.strategy.ioClient(nspPath.realtime.origin, {
       path: nspPath.realtime.pathname,
     });
 
     if (this.core.socketFE.on) {
       this.core.socketFE.on('connect', () => {
         // console.info(
-        //   `[CLIENT] conented to REALTIME namespace ${realtime.nsp} host: ${context.host}`,
+        //   `[CLIENT] connected to REALTIME namespace ${realtime.nsp} host: ${context.host}`,
         // );
         this.core.ctx.logRealtime &&
           console.info(
-            `[CLIENT] conented to REALTIME namespace ${this.core.socketFE.id}` +
+            `[CLIENT] connected to REALTIME namespace ${this.core.socketFE.id}` +
               ` host: ${this.core.ctx.host}`,
           );
       });
@@ -135,19 +138,19 @@ to use socket realtime connection;
       let roomName: string;
 
       if (customEvent) {
-        roomName = Symbols.REALTIME.ROOM_NAME.CUSTOM(
+        roomName = Symbols.REALTIME.ROOM_NAME_CUSTOM(
           this.core.ctx.contextName,
           customEvent,
         );
       } else {
         roomName = _.isString(property)
-          ? Symbols.REALTIME.ROOM_NAME.UPDATE_ENTITY_PROPERTY(
+          ? Symbols.REALTIME.ROOM_NAME_UPDATE_ENTITY_PROPERTY(
               this.core.ctx.contextName,
               className,
               property,
               idOrUniqValue,
             )
-          : Symbols.REALTIME.ROOM_NAME.UPDATE_ENTITY(
+          : Symbols.REALTIME.ROOM_NAME_UPDATE_ENTITY(
               this.core.ctx.contextName,
               className,
               idOrUniqValue,

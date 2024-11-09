@@ -69,7 +69,7 @@ async function start() {
       eventsKey,
       'hello message from backend no: ' + counter++,
     );
-    // console.log('notified browser');
+    console.log('notified browser');
     setTimeout(notifyBrowser, 1000);
   };
   notifyBrowser();

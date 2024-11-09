@@ -13,4 +13,6 @@ export namespace RealtimeModels {
     property?: string;
     customEvent?: string;
   };
+
+  export type EventHandler = (...args: any[]) => void;
 }

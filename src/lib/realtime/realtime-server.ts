@@ -48,7 +48,7 @@ export class RealtimeServer {
     // console.log('[backend] nspPath', nspPath);
 
     //#region prepare global BE socket
-    this.core.connectSocketBE = new this.core.strategy.Server(
+    this.core.connectSocketBE = this.core.strategy.ioServer(
       Helpers.isWebSQL ? this.core.ctx.uri.origin : this.core.ctx.serverTcpUdp,
       {
         path: nspPath.global.pathname,
@@ -68,10 +68,6 @@ export class RealtimeServer {
       );
 
     this.core.connectSocketBE.on('connection', clientSocket => {
-      if (Helpers.isElectron) {
-        // @ts-ignore
-        this.core.connectSocketBE.emit('connect'); // TODO QUICK_FIX
-      }
       console.info(
         `[backend] client conected to namespace "${clientSocket.nsp?.name}",  host: ${this.core.ctx.host}`,
       );
@@ -80,8 +76,10 @@ export class RealtimeServer {
     //#endregion
 
     //#region prepare realtime BE socket
-    this.core.socketBE = new this.core.strategy.Server(
-      Helpers.isWebSQL ? this.core.ctx.uri.origin : this.core.ctx.serverTcpUdp,
+    this.core.socketBE = this.core.strategy.ioServer(
+      Helpers.isWebSQL || Helpers.isElectron
+        ? this.core.ctx.uri.origin
+        : this.core.ctx.serverTcpUdp,
       {
         path: nspPath.realtime.pathname,
         cors: {
@@ -99,18 +97,12 @@ export class RealtimeServer {
       );
 
     this.core.socketBE.on('connection', backendSocketForClient => {
-      // console.info(
-      //   `[backend] client conected to namespace "${backendSocketForClient.nsp?.name}",  host: ${this.core.ctx.host}`,
-      // );
-
-      if (Helpers.isElectron) {
-        // @ts-ignore
-        backendSocketForClient = this.core.socketBE; // TODO QUICK_FIX
-        this.core.socketBE.emit('connect');
-      }
+      console.info(
+        `[backend] client conected to namespace "${backendSocketForClient.nsp?.name}",  host: ${this.core.ctx.host}`,
+      );
 
       backendSocketForClient.on(
-        Symbols.REALTIME.ROOM_NAME.SUBSCRIBE.CUSTOM(this.core.ctx.contextName),
+        Symbols.REALTIME.ROOM_SUBSCRIBE_CUSTOM(this.core.ctx.contextName),
         roomName => {
           this.core.ctx.logRealtime &&
             console.info(
@@ -122,7 +114,7 @@ export class RealtimeServer {
       );
 
       backendSocketForClient.on(
-        Symbols.REALTIME.ROOM_NAME.SUBSCRIBE.ENTITY_UPDATE_EVENTS(
+        Symbols.REALTIME.ROOM_SUBSCRIBE_ENTITY_UPDATE_EVENTS(
           this.core.ctx.contextName,
         ),
         roomName => {
@@ -136,7 +128,7 @@ export class RealtimeServer {
       );
 
       backendSocketForClient.on(
-        Symbols.REALTIME.ROOM_NAME.SUBSCRIBE.ENTITY_PROPERTY_UPDATE_EVENTS(
+        Symbols.REALTIME.ROOM_SUBSCRIBE_ENTITY_PROPERTY_UPDATE_EVENTS(
           this.core.ctx.contextName,
         ),
         roomName => {
@@ -150,9 +142,7 @@ export class RealtimeServer {
       );
 
       backendSocketForClient.on(
-        Symbols.REALTIME.ROOM_NAME.UNSUBSCRIBE.CUSTOM(
-          this.core.ctx.contextName,
-        ),
+        Symbols.REALTIME.ROOM_UNSUBSCRIBE_CUSTOM(this.core.ctx.contextName),
         roomName => {
           this.core.ctx.logRealtime &&
             console.info(
@@ -164,7 +154,7 @@ export class RealtimeServer {
       );
 
       backendSocketForClient.on(
-        Symbols.REALTIME.ROOM_NAME.UNSUBSCRIBE.ENTITY_UPDATE_EVENTS(
+        Symbols.REALTIME.ROOM_UNSUBSCRIBE_ENTITY_UPDATE_EVENTS(
           this.core.ctx.contextName,
         ),
         roomName => {
@@ -178,7 +168,7 @@ export class RealtimeServer {
       );
 
       backendSocketForClient.on(
-        Symbols.REALTIME.ROOM_NAME.UNSUBSCRIBE.ENTITY_PROPERTY_UPDATE_EVENTS(
+        Symbols.REALTIME.ROOM_UNSUBSCRIBE_ENTITY_PROPERTY_UPDATE_EVENTS(
           this.core.ctx.contextName,
         ),
         roomName => {
@@ -218,7 +208,7 @@ export class RealtimeServer {
     }
 
     if (customEvent) {
-      roomName = Symbols.REALTIME.ROOM_NAME.CUSTOM(
+      roomName = Symbols.REALTIME.ROOM_NAME_CUSTOM(
         this.core.ctx.contextName,
         customEvent,
       );
@@ -249,20 +239,19 @@ export class RealtimeServer {
       }
 
       roomName = _.isString(property)
-        ? Symbols.REALTIME.ROOM_NAME.UPDATE_ENTITY_PROPERTY(
+        ? Symbols.REALTIME.ROOM_NAME_UPDATE_ENTITY_PROPERTY(
             this.core.ctx.contextName,
             ClassHelpers.getName(entityFn),
             property,
             valueOfUniquPropery,
           )
-        : Symbols.REALTIME.ROOM_NAME.UPDATE_ENTITY(
+        : Symbols.REALTIME.ROOM_NAME_UPDATE_ENTITY(
             this.core.ctx.contextName,
             ClassHelpers.getName(entityFn),
             valueOfUniquPropery,
           );
     }
 
-    // console.log(`Trigger realtime: ${this.core.ctx.contextName}/${roomName}`,eventData);
     this.core.socketBE.in(roomName).emit(
       roomName, // roomName == eventName in room na
       customEvent ? customEventData : '',
@@ -352,12 +341,9 @@ export class RealtimeServer {
   listenChangesCustomEvent(customEvent: string): Observable<any> {
     //#region @websqlFunc
     const sub = new Subject<any>();
+
     this.core.socketBE.on('connection', backendSocketForClient => {
-      console.info(
-        `[backend][listenChangesCustomEvent] client conected to namespace "${backendSocketForClient.nsp?.name}"`,
-      );
-      console.log(`[backend][listenChangesCustomEvent] ${customEvent}`);
-      backendSocketForClient.on(customEvent, data => {
+      backendSocketForClient.on(customEvent, (data, ...args) => {
         sub.next(data);
       });
     });

@@ -1,9 +1,10 @@
+import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 import { EndpointContext } from '../../endpoint-context';
 import { RealtimeStrategy } from './realtime-strategy';
 //#region @backend
-import { Server } from 'socket.io';
+import { Server, ServerOptions } from 'socket.io';
 //#endregion
-import { io } from 'socket.io-client';
+import { io, ManagerOptions, Socket, SocketOptions } from 'socket.io-client';
 
 /**
  * Purpose:
@@ -18,13 +19,13 @@ export class RealtimeStrategySocketIO extends RealtimeStrategy {
     super(ctx);
   }
 
-  get Server() {
+  ioServer(...args) {
     //#region @backendFunc
-    return Server;
+    return new Server(...args);
     //#endregion
   }
 
-  get io() {
+  get ioClient() {
     return io;
   }
 }

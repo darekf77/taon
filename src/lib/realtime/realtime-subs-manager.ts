@@ -25,14 +25,12 @@ export class RealtimeSubsManager {
     }
 
     if (!realtime) {
-      console.warn(
-        `[Taon][startListenIfNotStarted] invalid socket connection`,
-      );
+      console.warn(`[Taon][startListenIfNotStarted] invalid socket connection`);
       return;
     }
 
     if (!this.isListening) {
-      const subscribeEvent = Symbols.REALTIME.ROOM_NAME.SUBSCRIBE.CUSTOM(
+      const subscribeEvent = Symbols.REALTIME.ROOM_SUBSCRIBE_CUSTOM(
         this.options.core.ctx.contextName,
       );
       // console.info(`[BROWSSER]][IPC] subscribe to "${this.options?.roomName}" by sending event: "${subscribeEvent}"`, this.options);
@@ -40,15 +38,12 @@ export class RealtimeSubsManager {
 
       if (this.options.customEvent) {
         // this means: send to current client custom event notification
-        realtime.emit(
-          subscribeEvent,
-          this.options.roomName,
-        );
+        realtime.emit(subscribeEvent, this.options.roomName);
       } else {
         if (_.isString(this.options.property)) {
           // this means: send to current client entity property events updates
           realtime.emit(
-            Symbols.REALTIME.ROOM_NAME.SUBSCRIBE.ENTITY_PROPERTY_UPDATE_EVENTS(
+            Symbols.REALTIME.ROOM_SUBSCRIBE_ENTITY_PROPERTY_UPDATE_EVENTS(
               this.options.core.ctx.contextName,
             ),
             this.options.roomName,
@@ -56,7 +51,7 @@ export class RealtimeSubsManager {
         } else {
           // this means: send to current client entity update events
           realtime.emit(
-            Symbols.REALTIME.ROOM_NAME.SUBSCRIBE.ENTITY_UPDATE_EVENTS(
+            Symbols.REALTIME.ROOM_SUBSCRIBE_ENTITY_UPDATE_EVENTS(
               this.options.core.ctx.contextName,
             ),
             this.options.roomName,
@@ -92,7 +87,7 @@ export class RealtimeSubsManager {
 
       if (customEvent) {
         realtime.emit(
-          Symbols.REALTIME.ROOM_NAME.UNSUBSCRIBE.CUSTOM(
+          Symbols.REALTIME.ROOM_UNSUBSCRIBE_CUSTOM(
             this.options.core.ctx.contextName,
           ),
           roomName,
@@ -100,14 +95,14 @@ export class RealtimeSubsManager {
       } else {
         if (_.isString(property)) {
           realtime.emit(
-            Symbols.REALTIME.ROOM_NAME.UNSUBSCRIBE.ENTITY_PROPERTY_UPDATE_EVENTS(
+            Symbols.REALTIME.ROOM_UNSUBSCRIBE_ENTITY_PROPERTY_UPDATE_EVENTS(
               this.options.core.ctx.contextName,
             ),
             roomName,
           );
         } else {
           realtime.emit(
-            Symbols.REALTIME.ROOM_NAME.UNSUBSCRIBE.ENTITY_UPDATE_EVENTS(
+            Symbols.REALTIME.ROOM_UNSUBSCRIBE_ENTITY_UPDATE_EVENTS(
               this.options.core.ctx.contextName,
             ),
             roomName,

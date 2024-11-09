@@ -10,70 +10,85 @@ export namespace Symbols {
   export const orignalClassClonesObj: string = `$$originalClassClonesObj$$`;
   export const classMethodsNames: string = `$$classMethodsNames$$`;
 
-  export const REALTIME = {
-    NAMESPACE: (contextName: string) => `${contextName}:taonRealtimeNsp`,
+  /**
+   * for backendSocket.in(ROOM_NAME).emit(EVENT)
+   *
+   * Room names are uniqe..
+   * here I am limiting number of event for clients.
+   */
+  class Realtime {
+    NAMESPACE(contextName: string) {
+      return `${contextName}:taonRealtimeNsp`;
+    }
     TABLE_CHANGE(contextName: string, tableName: string) {
       return `${contextName}:listentablename${tableName}`;
-    },
-    KEY: {
-      roomSubscribe: `roomSubscribe`,
-      roomUnsubscribe: `roomUnsubscribe`,
-    },
-    /**
-     * for backendSocket.in(ROOM_NAME).emit(EVENT)
-     *
-     * Room names are uniqe..
-     * here I am limiting number of event for clients.
-     */
-    ROOM_NAME: {
-      // it identifys group of client to notify
-      CUSTOM(contextName: string, customEvent: string) {
-        return `${contextName}:roomcustomevnet${customEvent}`;
-      },
-      /**
-       * @LAST TODO
-       */
-      SUBSCRIBER_EVENT(
-        contextName: string,
-        className: string,
-        propertyName: string,
-      ) {
-        return `${contextName}:room${_.camelCase(className)}${propertyName}`.toLowerCase();
-      },
-      UPDATE_ENTITY(
-        contextName: string,
-        className: string,
-        entityId: number | string,
-      ) {
-        return `${contextName}:room${_.camelCase(className)}${entityId}`.toLowerCase();
-      },
-      UPDATE_ENTITY_PROPERTY(
-        contextName: string,
-        className: string,
-        property: string,
-        entityId: number | string,
-      ) {
-        return `${contextName}:room${_.camelCase(className)}${_.camelCase(property)}${entityId}`.toLowerCase();
-      },
+    }
+    readonly KEYroomSubscribe = `roomSubscribe`;
+    readonly KEYroomUnsubscribe = `roomUnsubscribe`;
 
-      SUBSCRIBE: {
-        CUSTOM: (contextName: string) =>
-          `${contextName}:${REALTIME.KEY.roomSubscribe}CustomRoomEvent`,
-        ENTITY_UPDATE_EVENTS: (contextName: string) =>
-          `${contextName}:${REALTIME.KEY.roomSubscribe}EntityEvents`,
-        ENTITY_PROPERTY_UPDATE_EVENTS: (contextName: string) =>
-          `${contextName}:${REALTIME.KEY.roomSubscribe}EntityPropertyEvents`,
-      },
-      UNSUBSCRIBE: {
-        CUSTOM: (contextName: string) =>
-          `${contextName}:${REALTIME.KEY.roomUnsubscribe}CustomRoomEvent`,
-        ENTITY_UPDATE_EVENTS: (contextName: string) =>
-          `${contextName}:${REALTIME.KEY.roomUnsubscribe}EntityEvents`,
-        ENTITY_PROPERTY_UPDATE_EVENTS: (contextName: string) =>
-          `${contextName}:${REALTIME.KEY.roomUnsubscribe}EntityPropertyEvents`,
-      },
-    },
-  };
+    // /**
+    //  * TODO use it or not?
+    //  * @deprecated
+    //  */
+    // ROOM_NAME_SUBSCRIBER_EVENT(
+    //   contextName: string,
+    //   className: string,
+    //   propertyName: string,
+    // ) {
+    //   return `${contextName}:room${_.camelCase(className)}${propertyName}`.toLowerCase();
+    // }
+
+    //#region custom events in rooms
+    ROOM_NAME_CUSTOM(contextName: string, customEvent: string) {
+      return `${contextName}:CustomRoomEvent${customEvent}`;
+    }
+
+    ROOM_SUBSCRIBE_CUSTOM(contextName: string) {
+      return `${contextName}:${this.KEYroomSubscribe}CustomRoomEvent`;
+    }
+    ROOM_UNSUBSCRIBE_CUSTOM(contextName: string) {
+      return `${contextName}:${this.KEYroomUnsubscribe}CustomRoomEvent`;
+    }
+    //#endregion
+
+    //#region entity events
+    ROOM_NAME_UPDATE_ENTITY(
+      contextName: string,
+      className: string,
+      entityId: number | string,
+    ) {
+      return `${contextName}:room${_.camelCase(className)}${entityId}`.toLowerCase();
+    }
+    ROOM_SUBSCRIBE_ENTITY_UPDATE_EVENTS(contextName: string) {
+      return `${contextName}:${this.KEYroomSubscribe}EntityEvents`;
+    }
+
+    ROOM_UNSUBSCRIBE_ENTITY_UPDATE_EVENTS(contextName: string) {
+      return `${contextName}:${this.KEYroomUnsubscribe}EntityEvents`;
+    }
+    //#endregion
+
+    //#region entity property events
+    ROOM_NAME_UPDATE_ENTITY_PROPERTY(
+      contextName: string,
+      className: string,
+      property: string,
+      entityId: number | string,
+    ) {
+      return `${contextName}:room${_.camelCase(className)}${_.camelCase(property)}${entityId}`.toLowerCase();
+    }
+
+    ROOM_SUBSCRIBE_ENTITY_PROPERTY_UPDATE_EVENTS(contextName: string) {
+      return `${contextName}:${this.KEYroomSubscribe}EntityPropertyEvents`;
+    }
+
+    ROOM_UNSUBSCRIBE_ENTITY_PROPERTY_UPDATE_EVENTS(contextName: string) {
+      return `${contextName}:${this.KEYroomUnsubscribe}EntityPropertyEvents`;
+    }
+    //#endregion
+  }
+
+  export const REALTIME = new Realtime();
 
   export const metadata = {
     className: `class:realname`,

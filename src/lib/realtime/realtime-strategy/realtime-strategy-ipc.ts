@@ -1,150 +1,185 @@
 //#region imports
-import { Server } from 'socket.io';
+import { Server, ServerOptions } from 'socket.io';
 import { EndpointContext } from '../../endpoint-context';
 import { RealtimeStrategy } from './realtime-strategy';
-import type { io } from 'socket.io-client';
+import type { io, ManagerOptions, SocketOptions } from 'socket.io-client';
 import type { ipcRenderer } from 'electron';
+import { Symbols } from '../../symbols';
 //#region @backend
 import * as Electron from 'electron';
 import { ipcMain } from 'electron';
 //#endregion
+import { RealtimeModels } from '../realtime.models';
 //#endregion
 
-//#region models
-export interface RendererEventListeners {
-  [event: string]: Array<(event: any, ...args: any[]) => void>;
-}
+//#region mock server ipc
+export class MockServerIpc {
+  static serverByContextName = new Map<string, MockServerIpc>();
 
-export interface EventListeners {
-  [event: string]: Array<
-    (event: Electron.IpcMainEvent, ...args: any[]) => void
-  >;
-}
-
-export interface Rooms {
-  [room: string]: Set<Electron.WebContents>;
-}
-
-export interface Namespaces {
-  [namespace: string]: IpcMainNamespace;
-}
-
-//#endregion
-
-//#region ipc main namespace
-export class IpcMainNamespace {
-  private rooms: Rooms = {};
-  private listeners: EventListeners = {};
-
-  constructor(public name: string) {}
-
-  on(
-    event: string,
-    callback: (event: Electron.IpcMainEvent, ...args: any[]) => void,
-  ) {
-    //#region @backendFunc
-    const listenKey = `(${this.name}) "${event}"`;
-    // console.log(`[BACKEND]][IPC][MAIN NAMSEPACE] listenToEvent "${listenKey}"`);
-    if (!this.listeners[event]) {
-      this.listeners[event] = [];
+  static from(contextName: string): MockServerIpc {
+    if (!MockServerIpc.serverByContextName.has(contextName)) {
+      MockServerIpc.serverByContextName.set(
+        contextName,
+        new MockServerIpc(contextName),
+      );
     }
-    this.listeners[event].push(callback);
-    ipcMain.on(listenKey, callback);
-    this.emit(listenKey); // QUICK_FIX
-    //#endregion
+    return MockServerIpc.serverByContextName.get(contextName);
   }
 
-  off(
-    event: string,
-    callback?: (event: Electron.IpcMainEvent, ...args: any[]) => void,
-  ) {
+  namespacesByName = new Map<string, MockNamespaceIpc>();
+
+  //#region constructor
+  constructor(public contextName: string) {
+    MockServerIpc.serverByContextName.set(contextName, this);
+  }
+  //#endregion
+
+  //#region of
+  of(namespace: string): MockNamespaceIpc {
+    if (!this.namespacesByName.has(namespace)) {
+      this.namespacesByName.set(
+        namespace,
+        new MockNamespaceIpc(namespace, this),
+      );
+    }
+    return this.namespacesByName.get(namespace);
+  }
+  //#endregion
+}
+//#endregion
+
+//#region mock namespace ipc
+export class MockNamespaceIpc {
+  //#region fields & getters
+  electronClients = new Set<Electron.WebContents>();
+  roomsByRoomName: {
+    [roomName: string]: Set<Electron.WebContents>;
+  } = {};
+
+  private namespaceEventHandlers: {
+    [eventName: string]: Set<RealtimeModels.EventHandler>;
+  } = {};
+  //#endregion
+
+  //#region constructor
+  constructor(
+    /**
+     * Namespace name
+     */
+    public name: string,
+    public server: MockServerIpc,
+  ) {}
+  //#endregion
+
+  //#region on
+  on(eventName: string, callback: RealtimeModels.EventHandler) {
     //#region @backendFunc
-    if (!this.listeners[event]) return;
+    const listenKey = `(${this.name}) "${eventName}"`;
+
+    if (!this.namespaceEventHandlers[eventName]) {
+      this.namespaceEventHandlers[eventName] = new Set();
+    }
+    this.namespaceEventHandlers[eventName].add(callback);
+
+    ipcMain.on(listenKey, (eventElectron, ...args) => {
+      this.electronClients.add(eventElectron.sender);
+
+      const connectionListener = `(${this.name}) "connection"`;
+      if (connectionListener === listenKey) {
+        callback(this, ...args);
+      } else {
+        if (eventName.includes(`:${Symbols.REALTIME.KEYroomSubscribe}`)) {
+          const roomName = args[0];
+          this.join(eventElectron.sender, roomName);
+        } else if (
+          eventName.includes(`:${Symbols.REALTIME.KEYroomUnsubscribe}`)
+        ) {
+          const roomName = args[0];
+          this.leave(eventElectron.sender, roomName);
+        } else {
+          callback(...args);
+        }
+      }
+    });
+    // this.emit(listenKey); // QUICK_FIX
+    //#endregion
+  }
+  //#endregion
+
+  //#region off
+  off(event: string, callback?: RealtimeModels.EventHandler) {
+    //#region @backendFunc
+    if (!this.namespaceEventHandlers[event]) {
+      return;
+    }
 
     if (callback) {
-      this.listeners[event] = this.listeners[event].filter(
-        listener => listener !== callback,
-      );
+      this.namespaceEventHandlers[event].delete(callback);
     } else {
-      delete this.listeners[event];
+      delete this.namespaceEventHandlers[event];
     }
     const removeKey = `(${this.name}) "${event}"`;
-    // console.log(`[BACKEND]][IPC][MAIN NAMSEPACE]  removeKey ${removeKey}`);
     ipcMain.removeListener(removeKey, callback);
     //#endregion
   }
+  //#endregion
 
-  emit(event: string, ...args: any[]) {
+  //#region emit
+  emit(eventName: string, ...args: any[]) {
     //#region @backendFunc
-    const sendEventKey = `(${this.name}) "${event}"`;
-    // console.log(`[BACKEND]][IPC][MAIN NAMSEPACE] emitEvent "${sendEventKey}"`);
-    const allWindows = Electron.BrowserWindow.getAllWindows();
-    allWindows.forEach((win, index) => {
-      win.webContents.send(sendEventKey, ...args);
-    });
+    const sendEventKey = `(${this.name}) "${eventName}"`;
+    for (const webContents of this.electronClients) {
+      webContents.send(sendEventKey, ...args);
+    }
+    // const allWindows = Electron.BrowserWindow.getAllWindows();
+    // allWindows.forEach((win, index) => {
+    //   win.webContents.send(sendEventKey, ...args);
+    // });
     //#endregion
   }
+  //#endregion
 
-  to(room: string) {
-    return {
-      emit: (event: string, ...args: any[]) => {
-        const emitEvent = `(${this.name}) "${event}"`;
-        // console.log(
-        //   `[BACKEND]][IPC][MAIN NAMSEPACE] emitEvent in room "${room}"` +
-        //     ` (exited=${!!this.rooms[room]}) "${emitEvent}"`,
-        // );
-        const allWindows = Electron.BrowserWindow.getAllWindows();
-        allWindows.forEach((win, index) => {
-          win.webContents.send(emitEvent, ...args);
-        });
-      },
-    };
+  //#region to
+  to(roomName: string) {
+    const electronClientsInroom = this.roomsByRoomName[roomName];
+    return new RoomEmitterIpc(electronClientsInroom, this.name, true);
   }
+  //#endregion
 
-  in(room: string) {
-    return {
-      emit: (event: string, ...args: any[]) => {
-        // console.log(
-        //   `[BACKEND]][IPC][MAIN NAMSEPACE] ` +
-        //     ` emit in room "${room}" "${event}"`,
-        // );
-        const sendEventKey = `(${this.name}) "${event}"`;
-        const allWindows = Electron.BrowserWindow.getAllWindows();
-        allWindows.forEach((win, index) => {
-          win.webContents.send(sendEventKey, ...args);
-        });
-      },
-    };
+  //#region in
+  in(roomName: string) {
+    const electronClientsInroom = this.roomsByRoomName[roomName];
+    return new RoomEmitterIpc(electronClientsInroom, this.name, false);
   }
+  //#endregion
 
-  join(webContents: Electron.WebContents, room: string) {
-    if (!this.rooms[room]) {
-      this.rooms[room] = new Set();
+  //#region join
+  join(webContents: Electron.WebContents, roomName: string) {
+    if (!this.roomsByRoomName[roomName]) {
+      this.roomsByRoomName[roomName] = new Set();
     }
-    this.rooms[room].add(webContents);
-    // console.log(
-    //   `[BACKEND]][IPC][MAIN NAMSEPACE] joinRoom "${room}"`,
-    //   this.rooms[room].size,
-    // );
+    this.roomsByRoomName[roomName].add(webContents);
   }
+  //#endregion
 
-  leave(webContents: Electron.WebContents, room: string) {
-    if (this.rooms[room]) {
-      this.rooms[room].delete(webContents);
-      if (this.rooms[room].size === 0) {
-        delete this.rooms[room];
+  //#region leave
+  leave(webContents: Electron.WebContents, roomName: string) {
+    if (this.roomsByRoomName[roomName]) {
+      this.roomsByRoomName[roomName].delete(webContents);
+      if (this.roomsByRoomName[roomName].size === 0) {
+        delete this.roomsByRoomName[roomName];
       }
     }
-    // console.log(
-    //   `[BACKEND]][IPC][MAIN NAMSEPACE] leaveRoom "${room}"`,
-    //   this.rooms[room] ? this.rooms[room].size : 'no room',
-    // );
   }
+  //#endregion
 
+  //#region path
   path() {
     return this.name;
   }
+  //#endregion
 
+  //#region get nsp
   get nsp() {
     const self = this;
     return {
@@ -153,159 +188,111 @@ export class IpcMainNamespace {
       },
     };
   }
+  //#endregion
+}
+
+//#endregion
+
+//#region room emitter ipc
+class RoomEmitterIpc {
+  //#region constructor
+  constructor(
+    private electronClients: Set<Electron.WebContents>,
+    /**
+     * namespace name
+     */
+    private name: string,
+    private includeSender: boolean = false,
+    private sender: MockSocketIpc = null, // TODO QUICK FIX how to include sender
+  ) {}
+  //#endregion
+
+  //#region emit in room
+  emit(eventName: string, ...args: any[]): void {
+    const emitEvent = `(${this.name}) "${eventName}"`;
+    this.electronClients?.forEach(webContents => {
+      webContents.send(emitEvent, ...args);
+    });
+  }
+  //#endregion
 }
 //#endregion
 
-//#region ipc renderer wrapper
-export class IpcRendererWrapper {
-  private namespaces: { [namespace: string]: IpcRendererNamespace } = {
-    '/': new IpcRendererNamespace('/'),
-  };
-  private connected = false;
+//#region mock socket ipc
+export class MockSocketIpc {
+  //#region fields & getters
 
-  constructor(public contextName: string) {
-    // console.log(`IpcRendererWrapper created for context: "${contextName}"`);
-  }
-
-  of(namespace: string): IpcRendererNamespace {
-    // console.log(
-    //   `[BROWSSER]][IPC] of namespace"${namespace}"`,
-    // );
-    if (!this.namespaces[namespace]) {
-      this.namespaces[namespace] = new IpcRendererNamespace(namespace);
-    }
-    return this.namespaces[namespace];
-  }
-
-  on(event: string, callback: (event: any, ...args: any[]) => void) {
-    // if (event === 'connection' || event === 'connect') {
-    //   setTimeout(() => {
-    //     callback(null, null);
-    //   });
-    //   return;
-    // }
-    // console.log(
-    //   `[BROWSSER]][IPC] on "${event}"`,
-    // );
-    this.namespaces['/'].on(event, callback);
-  }
-
-  emit(event: string, ...args: any[]) {
-    // console.log(
-    //   `[BROWSSER]][IPC] emit "${event}"`,
-    // );
-    this.namespaces['/'].emit(event, ...args);
-  }
-}
-//#endregion
-
-//#region io ipc strategy
-export class IoIpcStrategy {
-  private namespaces: Namespaces = {
-    ' /': new IpcMainNamespace('/'),
-  };
-
-  constructor(public contextName: string) {
-    // console.log(`IpcMainWrapper created for context: "${contextName}"`);
-  }
-
-  of(namespace: string): IpcMainNamespace {
-    if (!this.namespaces[namespace]) {
-      this.namespaces[namespace] = new IpcMainNamespace(namespace);
-    }
-    return this.namespaces[namespace];
-  }
-
-  on(
-    event: string,
-    callback: (event: Electron.IpcMainEvent, ...args: any[]) => void,
-  ) {
-    const eventKey = `(${this.contextName}) "${event}"`;
-    // console.log(`[BACKEND]][IPC][MAIN] listenToEvent "${eventKey}"`);
-    this.namespaces['/'].on(eventKey, callback);
-  }
-
-  emit(event: string, ...args: any[]) {
-    const eventKey = `(${this.contextName}) "${event}"`;
-    // console.log(`[BACKEND]][IPC][MAIN] emitEven "${eventKey}"`);
-    this.namespaces['/'].emit(eventKey, ...args);
-  }
-
-  path() {
-    return '/';
-  }
-
-  get nsp() {
-    return {
-      get name() {
-        return '/';
-      },
-    };
-  }
-
-  in(room: string) {
-    return {
-      emit: (event: string, ...args: any[]) => {
-        // console.log(`[BACKEND]][IPC][MAIN] emit in room "${room}" "${event}"`);
-        Object.values(this.namespaces).forEach(namespace => {
-          namespace.to(room).emit(event, ...args);
-        });
-      },
-    };
-  }
-}
-//#endregion
-
-//#region ipc renderer namespace
-export class IpcRendererNamespace {
+  //#region fields & getters / ipc renderer
   ipcRenderer!: typeof ipcRenderer;
-  private listeners: RendererEventListeners = {};
+  //#endregion
 
-  constructor(public name: string) {
+  //#region fields & getters / event handlers by name
+  private socketEventHandlers = {} as {
+    [eventName: string]: Set<RealtimeModels.EventHandler>;
+  };
+  //#endregion
+
+  //#region fields & getters / name
+  get name() {
+    return this.namespaceName;
+  }
+  //#endregion
+
+  //#endregion
+
+  //#region constructor
+  /**
+   * @param namespaceName instead url for ipc
+   */
+  constructor(public namespaceName: string) {
     this.ipcRenderer = (window as any).require('electron').ipcRenderer;
   }
+  //#endregion
 
+  //#region on
   on(eventName: string, callback: (event: any, ...args: any[]) => void) {
-    if (!this.listeners[eventName]) {
-      this.listeners[eventName] = [];
+    if (!this.socketEventHandlers[eventName]) {
+      this.socketEventHandlers[eventName] = new Set();
     }
-    this.listeners[eventName].push(callback);
+    this.socketEventHandlers[eventName].add(callback);
+
     const listenToEvent = `(${this.name}) "${eventName}"`;
-    // console.log(`[BROWSSER]][IPC][NAMESPACE] listenToEvent "${listenToEvent}"`);
-    this.ipcRenderer.on(listenToEvent, (e, data) => {
+    this.ipcRenderer.on(listenToEvent, (rendereEvent, data) => {
       callback(data);
     });
+
     if (eventName === 'connect') {
-      this.emit('connection');
-    } else {
-      this.emit(eventName);
+      const connectionEventKey = `(${this.name}) "connection"`;
+      this.ipcRenderer.send(connectionEventKey, this.name);
     }
   }
+  //#endregion
 
+  //#region off
   off(event: string, callback?: (event: any, ...args: any[]) => void) {
-    if (!this.listeners[event]) return;
+    if (!this.socketEventHandlers[event]) {
+      return;
+    }
 
     if (callback) {
-      this.listeners[event] = this.listeners[event].filter(
-        listener => listener !== callback,
-      );
+      this.socketEventHandlers[event].delete(callback);
     } else {
-      delete this.listeners[event];
+      delete this.socketEventHandlers[event];
     }
     const removeListener = `(${this.name}) "${event}"`;
-    // console.log({ 'this.contextName': this.contextName });
-    // console.log(
-    //   `[BROWSSER]][IPC][NAMESPACE] removeListener "${removeListener}"`,
-    // );
-    this.ipcRenderer.removeListener(removeListener, callback);
-  }
 
+    this.ipcRenderer.removeListener(removeListener, data => {
+      callback(data);
+    });
+  }
+  //#endregion
+
+  //#region emit
   emit(event: string, ...args: any[]) {
     const emitEvent = `(${this.name}) "${event}"`;
-    // console.log({ 'this.contextName': this.contextName });
-    // console.log(`[BROWSSER]][IPC][NAMESPACE] emitEvent: "${emitEvent}"`);
     this.ipcRenderer.send(emitEvent, ...args);
   }
+  //#endregion
 }
 //#endregion
 
@@ -327,38 +314,21 @@ export class RealtimeStrategyIpc extends RealtimeStrategy {
   //#endregion
 
   //#region server & io
-  contextsServers: { [contextName: string]: Server } = {};
-  contextsIO: { [contextName: string]: typeof io } = {};
-
-  get io() {
-    //#region @browser
-    return ((__, { path: namespacePath }) => {
-      if (this.contextsIO[namespacePath]) {
-        return this.contextsIO[namespacePath];
-      }
-      const wrap = new IpcRendererWrapper(this.ctx.contextName);
-      // console.log(`[FRONTEND][IPC] namespace("${namespacePath}")`);
-      const nsp = wrap.of(namespacePath);
-      this.contextsIO[namespacePath] = nsp as any;
-      return nsp;
-    }) as any;
-    //#endregion
-    return void 0;
+  ioServer(__: string, opt: ServerOptions) {
+    const namespace = opt?.path || '/';
+    const server = MockServerIpc.from(this.ctx.contextName);
+    return server.of(namespace) as any;
   }
-  get Server() {
-    //#region @websql
-    return ((___, { path: namespacePath }) => {
-      if (this.contextsServers[namespacePath]) {
-        return this.contextsServers[namespacePath];
-      }
-      const wrap = new IoIpcStrategy(this.ctx.contextName);
-      // console.log(`[SERVER][IPC] namespace("${namespacePath}")`);
-      const nsp = wrap.of(namespacePath);
-      this.contextsServers[namespacePath] = nsp as any;
-      return nsp;
-    }) as any;
-    //#endregion
-    return void 0;
+
+  get ioClient() {
+    const clientIo = (
+      __: string,
+      opt?: Partial<ManagerOptions & SocketOptions>,
+    ): MockSocketIpc => {
+      const namespace = opt?.path || '/';
+      return new MockSocketIpc(namespace);
+    };
+    return clientIo as any;
   }
   //#endregion
 }

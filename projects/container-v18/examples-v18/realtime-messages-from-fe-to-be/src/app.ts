@@ -67,6 +67,7 @@ async function start() {
   //#region @websql
   console.log(`Server subscribed to events ${eventsKey}`);
   MainContext.__refSync.realtimeServer.listenChangesCustomEvent(eventsKey).subscribe((data)=> {
+    // TODO @LAST fix this for electron
     console.log('data from frontend:', data);
   });
   //#endregion
