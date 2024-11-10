@@ -99,17 +99,6 @@ class MockNamespace {
 
   //#region emit
   emit(event: string, ...args: any[]): void {
-    // TODO @LAST trigger connection event less hacky
-    // const firstArg = _.first(args);
-    // // QUICK_FIX emit 'connection' event
-    // if (firstArg instanceof MockSocket) {
-    //   this.emit(eventName, ...[this, ...args.slice(1)]);
-    //   return;
-    // }
-
-    (this.namespaceEventHandlers[event] || []).forEach(handler => {
-      handler(...args);
-    });
     this.allSocketsForNamespace?.forEach(socket => {
       socket.emit(event, ...args);
     });
