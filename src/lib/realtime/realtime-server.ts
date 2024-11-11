@@ -7,8 +7,6 @@ import type { BaseEntity } from '../base-classes/base-entity';
 import { Observable, Subject } from 'rxjs';
 //#endregion
 
-const SOCKET_EVENT_DEBOUNCE = 500;
-
 export class RealtimeServer {
   // private jobs = {};
   constructor(private core: RealtimeCore) {
@@ -28,7 +26,7 @@ export class RealtimeServer {
       console.warn(`[Taon][Realtime]
 
       Frontend host is not defined
-      REALTIME COUMMUNICATION WILL NOT WORK
+      REALTIME COMMUNICATION WILL NOT WORK
 
       provide "frontendHost" property in your taon config
 
@@ -69,7 +67,8 @@ export class RealtimeServer {
 
     this.core.connectSocketBE.on('connection', clientSocket => {
       console.info(
-        `[backend] client conected to namespace "${clientSocket.nsp?.name}",  host: ${this.core.ctx.host}`,
+        `[backend] client connected to namespace "${nspPath.global.pathname}", ` +
+          ` host: ${this.core.ctx.host}`,
       );
     });
 
@@ -98,7 +97,8 @@ export class RealtimeServer {
 
     this.core.socketBE.on('connection', backendSocketForClient => {
       console.info(
-        `[backend] client conected to namespace "${backendSocketForClient.nsp?.name}",  host: ${this.core.ctx.host}`,
+        `[backend] client connected to namespace "${nspPath.realtime.pathname}", ` +
+          ` host: ${this.core.ctx.host}`,
       );
 
       backendSocketForClient.on(
@@ -193,7 +193,7 @@ export class RealtimeServer {
   private triggerChanges(
     entityObjOrClass: Function,
     property?: string,
-    valueOfUniquPropery?: number | string,
+    valueOfUniqueProperty?: number | string,
     customEvent?: string,
     customEventData?: any,
   ) {
@@ -214,20 +214,20 @@ export class RealtimeServer {
       );
     } else {
       let entityFn = entityObjOrClass as Function;
-      const enittyIsObject =
+      const entityIsObject =
         !_.isFunction(entityObjOrClass) && _.isObject(entityObjOrClass);
 
-      if (enittyIsObject) {
+      if (entityIsObject) {
         entityFn = ClassHelpers.getClassFnFromObject(entityObjOrClass);
       }
 
-      const uniqueKey = ClassHelpers.getUniquKey(entityFn);
+      const uniqueKey = ClassHelpers.getUniqueKey(entityFn);
 
-      if (enittyIsObject) {
-        valueOfUniquPropery = entityObjOrClass[uniqueKey];
+      if (entityIsObject) {
+        valueOfUniqueProperty = entityObjOrClass[uniqueKey];
       }
 
-      if (!valueOfUniquPropery) {
+      if (!valueOfUniqueProperty) {
         Helpers.error(
           `[Taon][Realtime] Entity without iD ! ${ClassHelpers.getName(
             entityFn,
@@ -243,12 +243,12 @@ export class RealtimeServer {
             this.core.ctx.contextName,
             ClassHelpers.getName(entityFn),
             property,
-            valueOfUniquPropery,
+            valueOfUniqueProperty,
           )
         : Symbols.REALTIME.ROOM_NAME_UPDATE_ENTITY(
             this.core.ctx.contextName,
             ClassHelpers.getName(entityFn),
-            valueOfUniquPropery,
+            valueOfUniqueProperty,
           );
     }
 
@@ -260,8 +260,10 @@ export class RealtimeServer {
   }
   //#endregion
 
+  //#region entity changes
+
   //#region methods & getters / trigger entity changes
-  public trigggerEntityChanges(
+  public triggerEntityChanges(
     entityObjOrClass: Function,
     idToTrigger?: number | string,
   ) {
@@ -269,7 +271,7 @@ export class RealtimeServer {
       const className = ClassHelpers.getName(entityObjOrClass);
 
       console.warn(
-        `[Taon][TrigggerEntityChanges] Entity "${className}' is not realtime`,
+        `[Taon][TriggerEntityChanges] Entity "${className}' is not realtime`,
       );
       return;
     }
@@ -278,7 +280,7 @@ export class RealtimeServer {
   //#endregion
 
   //#region methods & getters / trigger entity property changes
-  public trigggerEntityPropertyChanges<ENTITY extends BaseEntity>(
+  public triggerEntityPropertyChanges<ENTITY extends BaseEntity>(
     entityObjOrClass: new (...args) => ENTITY,
     property: keyof ENTITY | (keyof ENTITY)[],
     idToTrigger?: number | string,
@@ -287,7 +289,7 @@ export class RealtimeServer {
       const className = ClassHelpers.getName(entityObjOrClass);
 
       console.warn(
-        `[Taon][TrigggerEntityPropertyChanges][property=${
+        `[Taon][TriggerEntityPropertyChanges][property=${
           property as string
         }] Entity "${className}' is not realtime`,
       );
@@ -308,28 +310,33 @@ export class RealtimeServer {
   }
   //#endregion
 
-  //#region methods & getters / trigger custom event
-  public triggerCustomEvent(customEvent: string, dataToPush: any) {
-    this.triggerChanges(void 0, void 0, void 0, customEvent, dataToPush);
-  }
-  //#endregion
-
   //#region methods & getters / trigger entity table changes
-  public trigggerEntityTableChanges(entityClass: Function) {
-    const className = ClassHelpers.getName(entityClass);
+  public triggerEntityTableChanges(entityClassOrInstance: Function | object) {
+    const className = ClassHelpers.getName(entityClassOrInstance);
+
     if (this.core.ctx.disabledRealtime) {
       console.warn(
-        `[Taon][TrigggerEntityTableChanges] Entity "${className}' is not realtime`,
+        `[Taon][TriggerEntityTableChanges] Entity "${className}' is not realtime`,
       );
       return;
     }
 
     this.triggerChanges(
-      entityClass as any,
+      entityClassOrInstance as any,
       void 0,
       void 0,
       Symbols.REALTIME.TABLE_CHANGE(this.core.ctx.contextName, className),
     );
+  }
+  //#endregion
+
+  //#endregion
+
+  //#region custom changes
+
+  //#region methods & getters / trigger custom event
+  public triggerCustomEvent(customEvent: string, dataToPush: any) {
+    this.triggerChanges(void 0, void 0, void 0, customEvent, dataToPush);
   }
   //#endregion
 
@@ -351,5 +358,7 @@ export class RealtimeServer {
     return sub.asObservable();
     //#endregion
   }
+  //#endregion
+
   //#endregion
 }

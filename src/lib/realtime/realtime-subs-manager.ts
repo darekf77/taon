@@ -30,32 +30,30 @@ export class RealtimeSubsManager {
     }
 
     if (!this.isListening) {
-      const subscribeEvent = Symbols.REALTIME.ROOM_SUBSCRIBE_CUSTOM(
-        this.options.core.ctx.contextName,
-      );
-      // console.info(`[BROWSSER]][IPC] subscribe to "${this.options?.roomName}" by sending event: "${subscribeEvent}"`, this.options);
+      // console.info(`[BROWSER]][IPC] subscribe to "${this.options?.roomName}" by sending event: "${subscribeEvent}"`, this.options);
       this.isListening = true;
 
       if (this.options.customEvent) {
+        const subscribeEvent = Symbols.REALTIME.ROOM_SUBSCRIBE_CUSTOM(
+          this.options.core.ctx.contextName,
+        );
         // this means: send to current client custom event notification
         realtime.emit(subscribeEvent, this.options.roomName);
       } else {
         if (_.isString(this.options.property)) {
-          // this means: send to current client entity property events updates
-          realtime.emit(
+          const subscribeEvent =
             Symbols.REALTIME.ROOM_SUBSCRIBE_ENTITY_PROPERTY_UPDATE_EVENTS(
               this.options.core.ctx.contextName,
-            ),
-            this.options.roomName,
-          );
+            );
+          // this means: send to current client entity property events updates
+          realtime.emit(subscribeEvent, this.options.roomName);
         } else {
-          // this means: send to current client entity update events
-          realtime.emit(
+          const subscribeEvent =
             Symbols.REALTIME.ROOM_SUBSCRIBE_ENTITY_UPDATE_EVENTS(
               this.options.core.ctx.contextName,
-            ),
-            this.options.roomName,
-          );
+            );
+          // this means: send to current client entity update events
+          realtime.emit(subscribeEvent, this.options.roomName);
         }
       }
 

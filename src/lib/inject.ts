@@ -4,8 +4,6 @@ import { inject as angularInject } from '@angular/core';
 import { Symbols } from './symbols';
 import type { EndpointContext } from './endpoint-context';
 import type { BaseInjector } from './base-classes/base-injector';
-import { Observable, Subject } from 'rxjs';
-import type { BaseClass } from './base-classes/base-class';
 
 export const inject = <T>(entity: () => new (...args: any[]) => T): T => {
   return new Proxy(
@@ -54,59 +52,68 @@ export const inject = <T>(entity: () => new (...args: any[]) => T): T => {
   ) as T;
 };
 
-export const injectController = inject;
+// export const injectController = inject;
 
-export type SubscbtionEvent<T> = {
-  name: keyof T;
-  data: any;
-};
+// export type SubscriptionEvent<T> = {
+//   name: keyof T;
+//   data: any;
+// };
 
-export const injectSubscriberEvents = <T>(
-  subscriberClassResolveFn: () => new (...args: any[]) => T,
-  eventName: keyof T,
-): Observable<SubscbtionEvent<T>> => {
-  const eventsSrc = new Subject<SubscbtionEvent<T>>();
-  const obs = eventsSrc.asObservable();
+/**
+ * TODO
+ */
+// export const injectEntityEvents = <T>(
+//   subscriberClassResolveFn: () => new (...args: any[]) => T,
+//   eventName?: keyof Omit<EntitySubscriberInterface,'listenTo'> ,
+// ): Observable<SubscriptionEvent<T>> => {
+//   const eventsSrc = new Subject<SubscriptionEvent<T>>();
+//   const obs = eventsSrc.asObservable();
 
-  let isFirstSubscription = true;
+//   let isFirstSubscription = true;
 
-  const proxiedObservable = new Proxy(obs, {
-    get(target, prop, receiver) {
-      if (prop === 'subscribe') {
-        return (...args: any[]) => {
-          if (isFirstSubscription) {
-            isFirstSubscription = false;
-            const subscriberClassFN: typeof BaseClass =
-              subscriberClassResolveFn() as any;
-            const ctx = subscriberClassFN[
-              Symbols.ctxInClassOrClassObj
-            ] as EndpointContext;
-            if (!ctx) {
-              throw new Error(
-                `You are trying to inject class without context. Use context like this;
+//   const proxyObservable = new Proxy(obs, {
+//     get(target, prop, receiver) {
+//       if (prop === 'subscribe') {
+//         return (...args: any[]) => {
+//           // @LAST
+//           if (isFirstSubscription) {
+//             isFirstSubscription = false;
+//             const subscriberClassFN: typeof BaseClass =
+//               subscriberClassResolveFn() as any;
+//             const ctx = subscriberClassFN[
+//               Symbols.ctxInClassOrClassObj
+//             ] as EndpointContext;
+//             if (!ctx) {
+//               throw new Error(
+//                 `You are trying to inject class without context. Use context like this:
 
-              Taon.injectSubscriberEvents( ()=> ` +
-                  `MyContext.getInstance(${subscriberClassFN?.name}), '${eventName as any}' )
+//               class MyClassSubscriber extends BaseSubscriber {
+//                   ${eventName as any}() {
+//                     \/\/ your code here
+//                   }
+//               }
+
+//               Taon.injectSubscriberEvents( MyContext.getInstance(()=> MyClassSubscriber), '${eventName as any}' )
 
 
-              `,
-              );
-            }
-            const subscriberInstance = ctx.getInstanceBy(subscriberClassFN);
-            // subscriberInstance TODO @LAST subscriber event from instance
-            // const entity = subscriberClassFN.prototype.listenTo();
-            console.log('First subscription, you can access arguments here:', {
-              subscriberClassFN,
-              eventName,
-            });
-            // @LAST
-          }
-          return target.subscribe(...args);
-        };
-      }
-      return Reflect.get(target, prop, receiver);
-    },
-  });
+//               `,
+//               );
+//             }
+//             const subscriberInstance = ctx.getInstanceBy(subscriberClassFN);
+//             // subscriberInstance TODO @LAST subscriber event from instance
+//             // const entity = subscriberClassFN.prototype.listenTo();
+//             console.log('First subscription, you can access arguments here:', {
+//               subscriberClassFN,
+//               eventName,
+//             });
+//             // @LAST
+//           }
+//           return target.subscribe(...args);
+//         };
+//       }
+//       return Reflect.get(target, prop, receiver);
+//     },
+//   });
 
-  return proxiedObservable as Observable<SubscbtionEvent<T>>;
-};
+//   return proxyObservable as Observable<SubscriptionEvent<T>>;
+// };

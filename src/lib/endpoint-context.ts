@@ -1124,153 +1124,18 @@ export class EndpointContext {
 
   //#region methods & getters / init subscribers
   async initSubscribers() {
-    return; // TODO
     //#region @websqlFunc
-    if (!this.connection?.initialize) {
-      return;
-    }
-    const subscribers = this.getClassFunByArr(Models.ClassType.SUBSCRIBER);
-    for (const subscriber of subscribers) {
+    const subscriberClasses = this.getClassFunByArr(
+      Models.ClassType.SUBSCRIBER,
+    );
+    for (const subscriberClassFn of subscriberClasses) {
       const options = Reflect.getMetadata(
         Symbols.metadata.options.subscriber,
-        subscriber,
+        subscriberClassFn,
       ) as TaonSubscriberOptions;
-
+      // console.log('subscriber options', options);
       // const nameForSubscriber = ClassHelpers.getName(subscriber);
-      EventSubscriber()(subscriber);
-    }
-
-    console.log(this.config.subscribers);
-
-    // this.connection.subscribers.push(sub as any);
-
-    return;
-    //#endregion
-    //#region @websql
-    const entities = this.getClassFunByArr(Models.ClassType.ENTITY);
-    for (let index = 0; index < entities.length; index++) {
-      // const Entity = entities[index];
-      // const className = ClassHelpers.getName(Entity);
-      // this.entitiesTriggers[className] = _.debounce(() => {
-      //   this.realtimeNodeJs.TrigggerEntityTableChanges(Entity);
-      // }, 1000);
-      // const notifyFn = (nameOfEvent, entityData) => {
-      //   // console.log('trigger table event: ',nameOfEvent)
-      //   this.entitiesTriggers[className]();
-      // };
-      //#region sub
-      // const sub = {
-      //   listenTo() {
-      //     return Entity;
-      //   },
-      //   /**
-      //    * Called after entity is loaded.
-      //    */
-      //   afterLoad(entity: any) {
-      //     // TOOD this triggers too much
-      //     // notifyFn(`AFTER ENTITY LOADED: `, entity)
-      //   },
-      //   /**
-      //    * Called before post insertion.
-      //    */ beforeInsert(event: InsertEvent<any>) {
-      //     notifyFn(`BEFORE POST INSERTED: `, event.entity);
-      //   },
-      //   /**
-      //    * Called after entity insertion.
-      //    */ afterInsert(event: InsertEvent<any>) {
-      //     notifyFn(`AFTER ENTITY INSERTED: `, event.entity);
-      //   },
-      //   /**
-      //    * Called before entity update.
-      //    */ beforeUpdate(event: UpdateEvent<any>) {
-      //     notifyFn(`BEFORE ENTITY UPDATED: `, event.entity);
-      //   },
-      //   /**
-      //    * Called after entity update.
-      //    */ afterUpdate(event: UpdateEvent<any>) {
-      //     notifyFn(`AFTER ENTITY UPDATED: `, event.entity);
-      //   },
-      //   /**
-      //    * Called before entity removal.
-      //    */ beforeRemove(event: RemoveEvent<any>) {
-      //     notifyFn(
-      //       `BEFORE ENTITY WITH ID ${event.entityId} REMOVED: `,
-      //       event.entity,
-      //     );
-      //   },
-      //   /**
-      //    * Called after entity removal.
-      //    */ afterRemove(event: RemoveEvent<any>) {
-      //     notifyFn(
-      //       `AFTER ENTITY WITH ID ${event.entityId} REMOVED: `,
-      //       event.entity,
-      //     );
-      //   },
-      //   /**
-      //    * Called before entity removal.
-      //    */ beforeSoftRemove(event: SoftRemoveEvent<any>) {
-      //     notifyFn(
-      //       `BEFORE ENTITY WITH ID ${event.entityId} SOFT REMOVED: `,
-      //       event.entity,
-      //     );
-      //   },
-      //   /**
-      //    * Called after entity removal.
-      //    */ afterSoftRemove(event: SoftRemoveEvent<any>) {
-      //     notifyFn(
-      //       `AFTER ENTITY WITH ID ${event.entityId} SOFT REMOVED: `,
-      //       event.entity,
-      //     );
-      //   },
-      //   /**
-      //    * Called before entity recovery.
-      //    */ beforeRecover(event: RecoverEvent<any>) {
-      //     notifyFn(
-      //       `BEFORE ENTITY WITH ID ${event.entityId} RECOVERED: `,
-      //       event.entity,
-      //     );
-      //   },
-      //   /**
-      //    * Called after entity recovery.
-      //    */ afterRecover(event: RecoverEvent<any>) {
-      //     notifyFn(
-      //       `AFTER ENTITY WITH ID ${event.entityId} RECOVERED: `,
-      //       event.entity,
-      //     );
-      //   },
-      //   /**
-      //    * Called before transaction start.
-      //    */ beforeTransactionStart(event: TransactionStartEvent) {
-      //     notifyFn(`BEFORE TRANSACTION STARTED: `, event);
-      //   },
-      //   /**
-      //    * Called after transaction start.
-      //    */ afterTransactionStart(event: TransactionStartEvent) {
-      //     notifyFn(`AFTER TRANSACTION STARTED: `, event);
-      //   },
-      //   /**
-      //    * Called before transaction commit.
-      //    */ beforeTransactionCommit(event: TransactionCommitEvent) {
-      //     notifyFn(`BEFORE TRANSACTION COMMITTED: `, event);
-      //   },
-      //   /**
-      //    * Called after transaction commit.
-      //    */ afterTransactionCommit(event: TransactionCommitEvent) {
-      //     notifyFn(`AFTER TRANSACTION COMMITTED: `, event);
-      //   },
-      //   /**
-      //    * Called before transaction rollback.
-      //    */ beforeTransactionRollback(event: TransactionRollbackEvent) {
-      //     notifyFn(`BEFORE TRANSACTION ROLLBACK: `, event);
-      //   },
-      //   /**
-      //    * Called after transaction rollback.
-      //    */ afterTransactionRollback(event: TransactionRollbackEvent) {
-      //     notifyFn(`AFTER TRANSACTION ROLLBACK: `, event);
-      //   },
-      // };
-      //#endregion
-      // this.connection.subscribers.push(sub as any);
+      EventSubscriber()(subscriberClassFn);
     }
     //#endregion
   }
@@ -1320,11 +1185,9 @@ export class EndpointContext {
       return ClassHelpers.getOrginalClass(entityFn);
     });
 
-    const subscribers = (
-      this.config.override?.subscribers
-        ? this.config.override.subscribers
-        : this.getClassFunByArr(Models.ClassType.SUBSCRIBER)
-    ).filter(f => f instanceof BaseSubscriberForEntity);
+    const subscribers = this.config.override?.subscribers
+      ? this.config.override.subscribers
+      : this.getClassFunByArr(Models.ClassType.SUBSCRIBER);
 
     const dataSourceDbConfig = _.isObject(this.databaseConfig)
       ? ({
@@ -1346,7 +1209,11 @@ export class EndpointContext {
       : ({} as DataSourceOptions);
 
     // debugger;
-    // console.log(`[${this.contextName}]dataSourceDbConfig`, dataSourceDbConfig);
+    this.logFramework &&
+      console.log(
+        `[Context: "${this.contextName}"] dataSourceDbConfig`,
+        dataSourceDbConfig,
+      );
 
     if (this.modeAllowsDatabaseCreation && this.databaseConfig) {
       this.logDb &&

@@ -112,11 +112,11 @@ export class RealtimeCore {
     let nsp = namespace ? namespace : '';
     nsp = nsp === '/' ? '' : nsp;
     const pathname = uri.pathname !== '/' ? uri.pathname : '';
-    let prefix = `taonContext-`;
+    let prefix = `taonContext`;
     if (Helpers.isElectron) {
       prefix = ``;
     }
-    const href = `${uri.origin}${pathname}/${prefix}${nsp}`;
+    const href = `${uri.origin}${pathname}/${prefix}${prefix && nsp ? '-' + nsp : nsp}`;
     // console.log(`HREF: ${href}, nsp: ${nsp}`)
     return new URL(href) as URL;
   }

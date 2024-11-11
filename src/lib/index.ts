@@ -22,7 +22,6 @@ import { NgZone } from '@angular/core';
 export { BaseRepository } from './base-classes/base-repository';
 export { BaseController } from './base-classes/base-controller';
 export { BaseProvider } from './base-classes/base-provider';
-export { BaseSubscriber } from './base-classes/base-subscriber';
 export { BaseEntity } from './base-classes/base-entity';
 export { BaseContext } from './base-classes/base-context';
 export { createContext } from './create-context';
@@ -56,8 +55,6 @@ export namespace Taon {
   export const createContext = createContextFn.createContext;
 
   export const inject = injectFn.inject;
-  // export const injectSubscriberEvents = injectFn.injectSubscriberEvents;
-  // export const injectController = injectFn.injectController;
 
   //#region @browser
   export const initNgZone = (ngZone: NgZone) => {

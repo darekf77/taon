@@ -64,10 +64,8 @@
     "**/docs-config.schema.json": true
   },
   "workbench.colorCustomizations": {
-    "activityBar.background": "#e66a54",
-    "activityBar.foreground": "#000000",
-    "statusBar.debuggingBackground": "#e66a54",
-    "statusBar.background": "#e66a54"
+    "activityBar.background": "#0084ff",
+    "activityBar.foreground": "#000000"
   },
   "editor.rulers": [
     80,
@@ -75,9 +73,10 @@
   ],
   "html.format.wrapAttributes": "force-aligned",
   "workbench.colorTheme": "Default Light+",
-  "tslint.autoFixOnSave": false,
+  "tslint.autoFixOnSave": true,
   "eslint.enable": true,
   "tslint.enable": false,
+  "typescript.tsdk": "node_modules/typescript/lib",
   "search.exclude": {
     "docs": true,
     "bin": true,
@@ -129,6 +128,10 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": false
   },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": false
@@ -137,18 +140,13 @@
   "prettier.enable": true,
   "editor.suggest.snippetsPreventQuickSuggestions": false,
   "editor.inlineSuggest.enabled": true,
-  "tslint.alwaysShowRuleFailuresAsWarnings": false,
-  "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.formatOnSave": false
-  },
   "prettier.endOfLine": "auto",
   "prettier.prettierPath": "./node_modules/prettier",
+  "window.title": "container-v18/examples-v18/realtime-class-subscriber  [ ${activeEditorShort} ]",
   "search.useIgnoreFiles": false,
   "search.include": [
     "**/src/**"
   ],
-  "window.title": "npm/taon-dev/taon  [ ${activeEditorShort} ]",
   "json.schemas": [
     {
       "fileMatch": [
@@ -156,5 +154,5 @@
       ],
       "url": "./docs-config.schema.json"
     }
-  ],
+  ]
 }

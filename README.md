@@ -1,5 +1,6 @@
 <p style="text-align: center;"><img src="./__images/logo-header-bold-taon.png" ></p>
 
+/* cspell: disable-next-line */
 TAON  **T**ypescript **A**ngular **O**rm **N**ode )
 
 
@@ -8,7 +9,7 @@ TAON  **T**ypescript **A**ngular **O**rm **N**ode )
 **Taon** 🔥🔥🔥 is a solution (**global cli tool** & **framework**) for
 
 \+
-[TypesSript](https://www.typescriptlang.org/)  
+[TypesScript](https://www.typescriptlang.org/)  
 
 \+
 [Angular](https://angular.io/) (PWA)
@@ -45,7 +46,7 @@ TAON  **T**ypescript **A**ngular **O**rm **N**ode )
 
 
 2. (linux only) Increased watchers limit:
-```
+```/* cspell: disable-next-line */
 echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 ```
 
@@ -88,7 +89,7 @@ echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo s
 
 ### Global npm dependencies installed with taon 
 Installation happens when you first time use taon
-
+<!-- /* cSpell:disable */ -->
 <pre>
 { name: 'ncc', version: '0.36.0', installName: '@vercel/ncc' },
 { name: 'extract-zip', version: '1.6.7' },
@@ -113,3 +114,5 @@ Installation happens when you first time use taon
 { name: 'javascript-obfuscator', version: '4' },
 { name: 'uglifyjs', installName: 'uglify-js' },
 </pre>
+
+<!-- /* cSpell:enable */ -->

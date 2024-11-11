@@ -11,7 +11,7 @@ import { Helpers } from 'tnp-core/src';
 //#endregion
 
 export class RealtimeClient {
-  private subsmanagers: { [path: string]: RealtimeSubsManager } = {};
+  private subsManagers: { [path: string]: RealtimeSubsManager } = {};
   constructor(private core: RealtimeCore) {
     this.core = core;
     if (!core.ctx.disabledRealtime) {
@@ -60,7 +60,7 @@ export class RealtimeClient {
         // );
         this.core.ctx.logRealtime &&
           console.info(
-            `[CLIENT] connected to GLOBAL namespace ${this.core.conectSocketFE.id}` +
+            `[CLIENT] connected to GLOBAL namespace ${nspPath.global.pathname}` +
               ` of host: ${this.core.ctx.host}`,
           );
       });
@@ -80,7 +80,7 @@ export class RealtimeClient {
         // );
         this.core.ctx.logRealtime &&
           console.info(
-            `[CLIENT] connected to REALTIME namespace ${this.core.socketFE.id}` +
+            `[CLIENT] connected to REALTIME namespace ${nspPath.realtime.pathname}` +
               ` host: ${this.core.ctx.host}`,
           );
       });
@@ -165,13 +165,13 @@ to use socket realtime connection;
       };
       //#endregion
 
-      const subManagerId = this.getRoomIdFrom(roomSubOptions);
-      if (!this.subsmanagers[subManagerId]) {
-        this.subsmanagers[subManagerId] = new RealtimeSubsManager(
+      const subManagerId = this.getUniqueIdentifierForConnection(roomSubOptions);
+      if (!this.subsManagers[subManagerId]) {
+        this.subsManagers[subManagerId] = new RealtimeSubsManager(
           roomSubOptions,
         );
       }
-      const inst = this.subsmanagers[subManagerId];
+      const inst = this.subsManagers[subManagerId];
       inst.add(observer);
 
       inst.startListenIfNotStarted(this.core.socketFE);
@@ -212,7 +212,7 @@ to use socket realtime connection;
     options?: RealtimeModels.ChangeOption,
   ) {
     const classFn = ClassHelpers.getClassFnFromObject(entity);
-    const uniqueKey = ClassHelpers.getUniquKey(classFn);
+    const uniqueKey = ClassHelpers.getUniqueKey(classFn);
     return this.listenChangesEntity(classFn, entity[uniqueKey], options);
   }
   //#endregion
@@ -231,13 +231,13 @@ to use socket realtime connection;
    * @param customEvent global event name
    * @param dataToPush
    */
-  public triggerCustomEvent(customEvent: string, dataToPush: any) {
+  public triggerCustomEvent(customEvent: string, dataToPush?: any) {
     this.core.socketFE.emit(customEvent, dataToPush);
   }
   //#endregion
 
   //#region methods & getters / get room id from
-  private getRoomIdFrom(options: RealtimeModels.SubsManagerOpt) {
+  private getUniqueIdentifierForConnection(options: RealtimeModels.SubsManagerOpt) {
     const url = new URL(options.core.ctx.host);
     return `${this.core.ctx.contextName}:${url.origin}|${options.roomName}|${options.property}|${options.customEvent}`;
   }

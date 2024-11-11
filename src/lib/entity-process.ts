@@ -216,7 +216,7 @@ export class EntityProcess {
 
             if (_.isFunction(fun)) {
               _.set(toSend, `${lodashPath}.${browserKey}`, value[browserKey]);
-              const indexProp = ClassHelpers.getUniquKey(value);
+              const indexProp = ClassHelpers.getUniqueKey(value);
               _.set(toSend, `${lodashPath}.${indexProp}`, value[indexProp]);
               // skipObject()
             } else {
@@ -257,7 +257,7 @@ export class EntityProcess {
                 toSend[prop] = {
                   [browserKey]: v[browserKey],
                 };
-                const indexProp = ClassHelpers.getUniquKey(v);
+                const indexProp = ClassHelpers.getUniqueKey(v);
                 toSend[prop][indexProp] = this.data[prop][indexProp];
                 for (const key in v) {
                   if (

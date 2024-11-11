@@ -18,7 +18,7 @@ export namespace Symbols {
    */
   class Realtime {
     NAMESPACE(contextName: string) {
-      return `${contextName}:taonRealtimeNsp`;
+      return `${contextName}-taonRealtimeNsp`;
     }
     TABLE_CHANGE(contextName: string, tableName: string) {
       return `${contextName}:listentablename${tableName}`;

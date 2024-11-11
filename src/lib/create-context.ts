@@ -27,16 +27,8 @@ export const createContext = <
   ) => Models.ContextOptions<CTX, CTRL, ENTITY, REPO, PROVIDER, SUBSCRIBER>,
 ) => {
   let config = configFn(ENV);
-  // if (config.logFramework) {
-  //   console.log(`[taon][${config.contextName}] framework config`, {
-  //     config,
-  //   });
-  // }
-  const endpointContextRef = new EndpointContext(config, configFn);
-  // const entitiesCache = {};
-  // const controllersCache = {};
 
-  // endpointContextRef.realtimeClient.listenChangesCustomEvent('') // @LAST
+  const endpointContextRef = new EndpointContext(config, configFn);
 
   const res = {
     //#region types
@@ -83,6 +75,7 @@ export const createContext = <
     //#endregion
     //#region context
     /**
+     * @deprecated
      * - get reference to internal context
      */
     async __ref() {
@@ -93,6 +86,10 @@ export const createContext = <
       }
       return endpointContextRef;
     },
+    /**
+    * only for internal use
+    * @deprecated
+    */
     get __refSync() {
       return endpointContextRef;
     },
@@ -160,6 +157,20 @@ export const createContext = <
       });
     },
     //#endregion
+    /**
+     * realtime communication with server
+     * Udp socket.io (or ipc) based.
+     */
+    get realtime() {
+      return {
+        get client() {
+          return endpointContextRef.realtimeClient;
+        },
+        get server() {
+          return endpointContextRef.realtimeServer;
+        }
+      }
+    },
   };
   return res;
 };

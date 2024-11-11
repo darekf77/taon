@@ -1,5 +1,5 @@
 ## Intro to CD/CI of isomorphic app and libs
-Continouse delivery and continouse integration are crucial part of
+Continuous delivery and continuous integration are crucial part of
 modern software development.
 
 
