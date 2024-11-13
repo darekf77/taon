@@ -16,7 +16,7 @@ import * as allSymbols from './symbols';
 import * as getResponse from './get-response-value';
 //#region @browser
 import { NgZone } from '@angular/core';
-
+export * from './ui';
 //#endregion
 
 export { BaseRepository } from './base-classes/base-repository';

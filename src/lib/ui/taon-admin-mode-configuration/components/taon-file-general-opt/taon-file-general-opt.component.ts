@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import { Subscription } from 'rxjs';
-import type { TaonFile } from '../../../taon-file';
+// import type { TaonFile } from '../../../taon-file';
 import { _ } from 'tnp-core/src';
 
 @Component({
@@ -65,7 +65,7 @@ export class TaonFileGeneralOptComponent implements OnInit {
     f.className = 'formly-field-half-size';
     return f;
   });
-  @Input() file: TaonFile;
+  @Input() file: any;
 
   constructor() {}
 

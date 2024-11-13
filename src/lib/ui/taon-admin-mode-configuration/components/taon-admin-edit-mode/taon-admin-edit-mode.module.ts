@@ -2,7 +2,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TaonAdminEditModeComponent } from './taon-admin-edit-mode.component';
-import { TaonFileComponent } from '../../../taon-file';
+// import { TaonFileComponent } from '../../../taon-file';
 import { TaonFullMaterialModule } from '../../../taon-full-material.module';
 import { StaticColumnsModule } from 'static-columns/src';
 import { FormsModule } from '@angular/forms';
@@ -18,7 +18,7 @@ import { TaonTableModule } from '../../../taon-table';
     NgScrollbarModule,
     TaonFileGeneralOptModule,
     FormsModule,
-    TaonFileComponent,
+    // TaonFileComponent,
     NgArrayPipesModule,
     TaonTableModule,
     TaonFullMaterialModule, // TODO import only partial things

@@ -47,9 +47,9 @@ export class TaonSessionPasscodeComponent implements OnInit {
   @Input() public message: string;
   public safeMessage: SafeHtml;
 
-  @Stor.property.in.localstorage
+  @(Stor.property.in.localstorage
     .for(TaonSessionPasscodeComponent)
-    .withDefaultValue('')
+    .withDefaultValue(''))
   private lastPasscode: string;
   @HostBinding('style.display') public display = 'none';
   public form: FormGroup<TaonSessionPasscodeForm> =
@@ -59,7 +59,7 @@ export class TaonSessionPasscodeComponent implements OnInit {
   constructor(
     @Self() private element: ElementRef<HTMLElement>,
     private domSanitizer: DomSanitizer,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
@@ -93,7 +93,7 @@ export class TaonSessionPasscodeComponent implements OnInit {
         takeUntilDestroyed(this.destroyRef),
         tap(() => {
           this.focus();
-        })
+        }),
       )
       .subscribe();
   }

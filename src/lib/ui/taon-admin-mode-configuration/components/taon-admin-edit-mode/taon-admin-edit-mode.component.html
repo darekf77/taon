@@ -17,8 +17,8 @@
     [selectedIndex]="selectedTabIndex"
     (selectedIndexChange)="selectedTabIndex = $event; refresFilesList()">
     <mat-tab label="General">
-      <taon-file-general-opt
-        [file]="admin.selectedFile"></taon-file-general-opt>
+      <!-- <taon-file-general-opt
+        [file]="admin.selectedFile"></taon-file-general-opt> -->
     </mat-tab>
     <!-- <mat-tab label="CSS Editing">
       <ace [mode]="'css'"
@@ -29,22 +29,22 @@
     </mat-tab> -->
 
     <mat-tab label="Files Picker">
-      <taon-table
+      <!-- <taon-table
         [entity]="entity"
         [allowedColumns]="['src', 'contentType']"
         [columns]="columns"
         [expansionTemplate]="expansionTpl"
         (expansionChange)="expansionRow($event)">
-      </taon-table>
+      </taon-table> -->
     </mat-tab>
     <mat-tab label="File Version History">
-      <taon-table
+      <!-- <taon-table
         [entity]="entity"
         [allowedColumns]="['src', 'contentType']"
         [columns]="columns"
         [expansionTemplate]="expansionTpl"
         (expansionChange)="expansionRow($event)">
-      </taon-table>
+      </taon-table> -->
     </mat-tab>
     <mat-tab label="Current File">
       <columns-container *ngIf="files.length > 0">

@@ -10,7 +10,7 @@ import { NgScrollbarModule } from 'ngx-scrollbar';
 import { TaonProgressBarModule } from '../taon-progress-bar';
 import { TaonNotificationsModule } from '../taon-notifications';
 import { createCustomElement } from '@angular/elements';
-import { TaonDbAdminComponent } from './components/taon-db-admin/taon-db-admin.component';
+// import { TaonDbAdminComponent } from './components/taon-db-admin/taon-db-admin.component';
 import { TaonSessionPasscodeComponent } from '../taon-session-passcode';
 
 @NgModule({
@@ -23,7 +23,7 @@ import { TaonSessionPasscodeComponent } from '../taon-session-passcode';
     TaonProgressBarModule,
     TaonNotificationsModule,
     TaonFullMaterialModule, // TODO import only partial things
-    TaonDbAdminComponent,
+    // TaonDbAdminComponent,
     TaonSessionPasscodeComponent,
   ],
   declarations: [TaonAdminModeConfigurationComponent],

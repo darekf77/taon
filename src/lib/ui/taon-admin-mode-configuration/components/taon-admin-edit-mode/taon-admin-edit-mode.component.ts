@@ -9,8 +9,8 @@ import {
   Output,
 } from '@angular/core';
 import { delay, of, Subject, Subscription, takeUntil, tap } from 'rxjs';
-import { TaonFile } from '../../../taon-file';
-import { TaonAdmin } from '../../taon-admin';
+// import { TaonFile } from '../../../taon-file';
+// import { TaonAdmin } from '../../taon-admin';
 import { Router } from '@angular/router';
 import { Stor } from 'taon-storage/src';
 import 'brace';
@@ -35,19 +35,19 @@ export class TaonAdminEditModeComponent implements OnInit {
   // inited$ = Taon.anyContextLoaded();
   inited$ = of(true);
   private destroyed$ = new Subject();
-  admin = window['taon'] as TaonAdmin;
+  admin: any; // = window['taon'] as TaonAdmin;
   handlers: Subscription[] = [];
-  entity = TaonFile;
-  files: TaonFile[] = [];
+  entity: any; //= TaonFile;
+  files: any; // TaonFile[] = [];
 
-  @Stor.property.in.localstorage
+  @(Stor.property.in.localstorage
     .for(TaonAdminEditModeComponent)
-    .withDefaultValue(0)
+    .withDefaultValue(0))
   selectedTabIndex: number;
 
-  @Stor.property.in.localstorage
+  @(Stor.property.in.localstorage
     .for(TaonAdminEditModeComponent)
-    .withDefaultValue('')
+    .withDefaultValue(''))
   fileToSearch: string;
   columns = [
     {
@@ -81,7 +81,7 @@ export class TaonAdminEditModeComponent implements OnInit {
     this.handlers.push(
       this.admin.onEditMode$.subscribe(() => {
         this.refresFilesList();
-      })
+      }),
     );
     // this.handlers.push(this.router.events.subscribe(() => {
     //   this.files = this.admin.currentFiles;
@@ -91,7 +91,7 @@ export class TaonAdminEditModeComponent implements OnInit {
       takeUntil(this.destroyed$),
       tap(() => {
         this.refresFilesList();
-      })
+      }),
     );
   }
   ngOnDestroy(): void {
@@ -120,7 +120,7 @@ export class TaonAdminEditModeComponent implements OnInit {
     this.files = this.admin.currentFiles;
   }
 
-  searchFind(file: TaonFile): any {
+  searchFind(file: any): any {
     if (!!this?.fileToSearch) {
       return file?.src?.search(this?.fileToSearch) !== -1;
     }
