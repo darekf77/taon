@@ -16,18 +16,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  standalone: true,
-  imports: [
-    CommonModule,
-    // BrowserModule,
-    //distReleaseOnly ServiceWorkerModule.register('ngsw-worker.js', {
-    //distReleaseOnlyenabled: true,
-    //distReleaseOnly// Register the ServiceWorker as soon as the app is stable
-    //distReleaseOnly// or after 30 seconds (whichever comes first).
-    //distReleaseOnlyregistrationStrategy: 'registerWhenStable:30000'
-    //distReleaseOnly}),
-    // BrowserAnimationsModule,
-  ],
 })
 export class AppComponent {
   @ViewChild('container', { read: ViewContainerRef, static: true })

@@ -47,18 +47,25 @@ Config of application
 
 ## Taon controller
 
-Injectable to angular's api service.
-Glue between backend and frontend.
+Injectable to angular's api service -
+glue between backend and frontend.
 
 ## Taon entities
 
-Entity class that can be use as Dto 
+Entity class that can be use as Dto.
 
 ## Taon providers
 
-Injectable (service like) classes
-
+Injectable (service like) classes singleton classes.
+ 
 ## Taon repositories
 
-Injectable (service like) classes
+Injectable (service like) classes for backend db communication
+(similar to https://typeorm.io/custom-repository).
+
+
+## Taon subscribers
+
+Injectable (service like) classes for subscribing to 
+entity events (just like in subscribers in https://typeorm.io/listeners-and-subscribers)
 

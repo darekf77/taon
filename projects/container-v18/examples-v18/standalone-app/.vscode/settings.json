@@ -75,7 +75,6 @@
   "tslint.enable": false,
   "search.exclude": {
     "docs": true,
-    "projects": true,
     "bin": true,
     "local_release": true,
     "node_modules": true,
@@ -87,9 +86,7 @@
     ".firedev": true,
     ".taon": true,
     ".tnp": true,
-    ".": true,
     "**/docs": true,
-    "**/projects": true,
     "**/bin": true,
     "**/local_release": true,
     "**/node_modules": true,
@@ -101,7 +98,7 @@
     "**/.firedev": true,
     "**/.taon": true,
     "**/.tnp": true,
-    "**/.": true
+    "projects": true
   },
   "[typescriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -150,7 +147,7 @@
       "url": "./docs-config.schema.json"
     }
   ],
-  "window.title": "container-v18/examples/single-file  [ ${activeEditorShort} ]",
+  "window.title": "container-v18/examples-v18/standalone-app  [ ${activeEditorShort} ]",
   "search.useIgnoreFiles": false,
   "search.include": [
     "**/src/**"

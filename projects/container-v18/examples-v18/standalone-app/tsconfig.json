@@ -4,10 +4,10 @@
     "strictNullChecks": false,
     "rootDir": "./src",
     "paths": {
-      "single-file": [
+      "standalone-app": [
         "./src/lib"
       ],
-      "single-file/*": [
+      "standalone-app/*": [
         "./src/lib/*"
       ]
     }

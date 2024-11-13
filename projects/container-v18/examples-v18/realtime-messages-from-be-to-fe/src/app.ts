@@ -8,7 +8,7 @@ import {
 } from './app.hosts';
 import { Helpers } from 'tnp-core/src';
 //#region @browser
-import { Component } from '@angular/core';
+import { Component, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 //#endregion
 //#endregion
@@ -30,8 +30,6 @@ const eventsKey = 'eventsKey';
     <ul>
       <li *ngFor="let message of messages$ | async">{{ message }}</li>
     </ul> `,
-  imports: [CommonModule],
-  standalone: true,
 })
 export class RealtimeMessagesFromBeToFeComponent {
   readonly messages$: Observable<string[]> =
@@ -77,4 +75,15 @@ async function start() {
 }
 
 export default start;
+//#endregion
+
+//#region  realtime-messages-from-be-to-fe module
+//#region @browser
+@NgModule({
+  declarations: [RealtimeMessagesFromBeToFeComponent],
+  imports: [CommonModule],
+  exports: [RealtimeMessagesFromBeToFeComponent],
+})
+export class RealtimeMessagesFromBeToFeModule {}
+//#endregion
 //#endregion

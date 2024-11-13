@@ -8,7 +8,7 @@ import {
 } from './app.hosts';
 import { Helpers } from 'tnp-core/src';
 //#region @browser
-import { Component } from '@angular/core';
+import { Component, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 //#endregion
 //#endregion
@@ -26,10 +26,7 @@ const eventsKey = 'eventsKey';
 @Component({
   template: `push global event to backend with click of a button<br />
     <br />
-    <button (click)="notifyBackend()">notify backend</button>
-    `,
-  imports: [CommonModule],
-  standalone: true,
+    <button (click)="notifyBackend()">notify backend</button> `,
 })
 export class RealtimeMessagesFromFeToBeComponent {
   counter = 0;
@@ -66,12 +63,25 @@ async function start() {
 
   //#region @websql
   console.log(`Server subscribed to events ${eventsKey}`);
-  MainContext.__refSync.realtimeServer.listenChangesCustomEvent(eventsKey).subscribe((data)=> {
-    // TODO @LAST fix this for electron
-    console.log('data from frontend:', data);
-  });
+  MainContext.__refSync.realtimeServer
+    .listenChangesCustomEvent(eventsKey)
+    .subscribe(data => {
+      // TODO @LAST fix this for electron
+      console.log('data from frontend:', data);
+    });
   //#endregion
 }
 
 export default start;
+//#endregion
+
+//#region  realtime-messages-from-fe-to-be module
+//#region @browser
+@NgModule({
+  declarations: [RealtimeMessagesFromFeToBeComponent],
+  imports: [CommonModule],
+  exports: [RealtimeMessagesFromFeToBeComponent],
+})
+export class RealtimeMessagesFromFeToBeModule {}
+//#endregion
 //#endregion
