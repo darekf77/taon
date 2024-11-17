@@ -1,5 +1,6 @@
 import * as methods from './http-methods-decorators';
 import * as params from './http-params-decorators';
+import { Models } from 'ng2-rest/src';
 
 export namespace Http {
   export import GET = methods.GET;
@@ -8,6 +9,7 @@ export namespace Http {
   export import DELETE = methods.DELETE;
   export import PATCH = methods.PATCH;
   export import HEAD = methods.HEAD;
+  export import Response = Models.HttpResponse;
   export namespace Param {
     export import Query = params.Query;
     export import Path = params.Path;

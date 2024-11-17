@@ -120,16 +120,25 @@ export const createContext = <
      * - create controller instances for context
      * - init database (if enable) + migation scripts
      */
-    initialize: async (): Promise<EndpointContext> => {
+    initialize: async (overrideOptions?:{
+      overrideHost?: string;
+      overrideRemoteHost?: string;
+    }): Promise<EndpointContext> => {
       return await new Promise(async (resolve, reject) => {
         setTimeout(async () => {
-          await endpointContextRef.init();
+          await endpointContextRef.init({
+            ...overrideOptions,
+          });
           if (config.abstract) {
             throw new Error(`Abstract context can not be initialized`);
           }
+
           await endpointContextRef.initEntities();
           await endpointContextRef.initSubscribers();
+
+
           await endpointContextRef.initDatabaseConnection();
+
           // console.log(
           //   'connection subscribers',
           //   endpointContextRef?.connection?.subscribers,

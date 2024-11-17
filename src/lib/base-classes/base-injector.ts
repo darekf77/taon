@@ -32,10 +32,18 @@ export class BaseInjector<CloneT extends BaseClass = any> {
 
   //#region context
   /**
+   * @deprecated use ctx instead
    * Current endpoint context
    */
   get __endpoint_context__() {
     return this[Symbols.ctxInClassOrClassObj] as EndpointContext;
+  }
+
+  /**
+   * get  current endpoint context
+   */
+  get ctx() {
+    return this.__endpoint_context__;
   }
   //#endregion
 
@@ -87,7 +95,6 @@ export class BaseInjector<CloneT extends BaseClass = any> {
     return this.__inject<T>(ctor, { localInstance: false });
   }
   //#endregion
-
 
   //#region inject / ctrl
   /**

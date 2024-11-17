@@ -62,7 +62,6 @@
   "tslint.enable": true,
   "search.exclude": {
     "docs": true,
-    "projects": true,
     "bin": true,
     "local_release": true,
     "node_modules": true,
@@ -74,9 +73,7 @@
     ".firedev": true,
     ".taon": true,
     ".tnp": true,
-    ".": true,
     "**/docs": true,
-    "**/projects": true,
     "**/bin": true,
     "**/local_release": true,
     "**/node_modules": true,
@@ -88,7 +85,7 @@
     "**/.firedev": true,
     "**/.taon": true,
     "**/.tnp": true,
-    "**/.": true
+    "projects": true
   },
   "window.title": "projects/container-v18/examples-v18  [ ${activeEditorShort} ]",
   "search.useIgnoreFiles": false,

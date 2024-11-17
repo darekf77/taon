@@ -77,13 +77,13 @@ export class EndpointContext {
     this.ngZone = ngZone;
     //#endregion
   }
-  public static findForTraget(classFnOrObject: any): EndpointContext {
-    const obj = ClassHelpers.getClassFnFromObject(classFnOrObject) || {};
-    return (
-      classFnOrObject[Symbols.ctxInClassOrClassObj] ||
-      obj[Symbols.ctxInClassOrClassObj]
-    );
-  }
+  // public static findForTraget(classFnOrObject: any): EndpointContext {
+  //   const obj = ClassHelpers.getClassFnFromObject(classFnOrObject) || {};
+  //   return (
+  //     classFnOrObject[Symbols.ctxInClassOrClassObj] ||
+  //     obj[Symbols.ctxInClassOrClassObj]
+  //   );
+  // }
   //#endregion
 
   //#region fields
@@ -224,11 +224,23 @@ export class EndpointContext {
   //#endregion
 
   //#region methods & getters / init
-  public async init(options?: { initFromRecrusiveContextResovle?: boolean }) {
-    const { initFromRecrusiveContextResovle } = options || {}; // TODO use it ?
+  public async init(options?: { initFromRecrusiveContextResovle?: boolean; overrideHost?: string;overrideRemoteHost?: string }) {
+    const { initFromRecrusiveContextResovle, overrideHost, overrideRemoteHost } = options || {}; // TODO use it ?
 
     this.inited = true;
     this.config = this.configFn(ENV);
+    if(overrideHost && overrideRemoteHost) {
+      if(Helpers.isWebSQL) {
+        throw new Error(`You can't have overrideHost and overrideRemoteHost at the same time`)
+      }
+      Helpers.error(`You can't have overrideHost and overrideRemoteHost at the same time`, false, true);
+      //#region @backend
+      process.exit(0)
+      //#endregion
+    }
+    this.config.host =   overrideHost ? overrideHost : this.config.host;
+    this.config.remoteHost = overrideRemoteHost ? overrideRemoteHost : this.config.remoteHost;
+
     // console.log(
     //   `[${
     //     this.contextName
@@ -410,7 +422,7 @@ export class EndpointContext {
       //#region @backend
       this.expressApp = express();
 
-      this.initMidleware();
+      this.initMiddlewares();
       this.serverTcpUdp = this.isHttpServer
         ? new https.Server(
             {
@@ -570,6 +582,9 @@ export class EndpointContext {
   //#region methods & getters / start server
   startServer() {
     //#region @backendFunc
+    if(this.remoteHost) {
+      return;
+    }
     if (this.mode === 'backend-frontend(tcp+udp)') {
       // this.displayRoutes(this.expressApp);
       this.serverTcpUdp.listen(Number(this.uri.port), () => {
@@ -767,7 +782,7 @@ export class EndpointContext {
   };
   //#endregion
 
-  //#region methods & getters / get recrusive classes from contexts
+  //#region methods & getters / get recursive classes from contexts
   private async getRecrusiveClassesfromContextsObj(
     classType: Models.ClassType,
   ) {
@@ -818,7 +833,7 @@ export class EndpointContext {
   }
   //#endregion
 
-  //#region methods & getters / get class instaces arr
+  //#region methods & getters / get class instances arr
   private getClassesInstancesArrBy(classType: Models.ClassType): any[] {
     return this.objWithClassesInstancesArr[classType];
   }
@@ -900,7 +915,7 @@ export class EndpointContext {
 
   checkIfContextInitialized() {
     if (_.isUndefined(this.config)) {
-      throw new Error(`Please check if your context has been initilized.
+      throw new Error(`Please check if your context has been initialized.
 
       // ...
       await Context.initialize();
@@ -983,6 +998,9 @@ export class EndpointContext {
 
   //#region methods & getters / reinit controllers db example data
   async reinitControllers() {
+    if(this.remoteHost) {
+      return;
+    }
     // Helpers.taskStarted(
     //   `[taon] REINITING CONTROLLERS ${this.contextName} STARTED`,
     // );
@@ -1003,6 +1021,9 @@ export class EndpointContext {
     // );
   }
   async initClasses() {
+    if(this.remoteHost) {
+      return;
+    }
     for (const classTypeName of [
       Models.ClassType.PROVIDER,
       Models.ClassType.REPOSITORY,
@@ -1125,6 +1146,9 @@ export class EndpointContext {
   //#region methods & getters / init subscribers
   async initSubscribers() {
     //#region @websqlFunc
+    if(this.remoteHost) {
+      return;
+    }
     const subscriberClasses = this.getClassFunByArr(
       Models.ClassType.SUBSCRIBER,
     );
@@ -1144,6 +1168,9 @@ export class EndpointContext {
   //#region methods & getters / init entities
   async initEntities() {
     //#region @websql
+    if(this.remoteHost) {
+      return;
+    }
     const entities = this.getClassFunByArr(Models.ClassType.ENTITY);
     for (const entity of entities) {
       const options = Reflect.getMetadata(
@@ -1177,6 +1204,9 @@ export class EndpointContext {
   //#region methods & getters / init connection
   async initDatabaseConnection() {
     //#region @websqlFunc
+    if(this.remoteHost) {
+      return;
+    }
     const entities = (
       this.config.override?.entities
         ? this.config.override.entities
@@ -1378,6 +1408,9 @@ export class EndpointContext {
 
   //#region methods & getters / write active routes
   public writeActiveRoutes() {
+    if(this.remoteHost) {
+      return;
+    }
     const contexts: EndpointContext[] = [this];
     //#region @websql
 
@@ -1422,8 +1455,8 @@ export class EndpointContext {
   }
   //#endregion
 
-  //#region methods & getters / init midleware
-  private initMidleware() {
+  //#region methods & getters / init middlewares
+  private initMiddlewares() {
     //#region @backend
     const app = this.expressApp;
     if (this.middlewares) {
@@ -2068,7 +2101,7 @@ export class EndpointContext {
     //#endregion
     //#endregion
 
-    //#region handl normal request
+    //#region handle normal request
 
     target.prototype[methodConfig.methodName] = function (this: {}, ...args) {
       // console.log('[init method browser] FRONTEND expressPath', expressPath)
