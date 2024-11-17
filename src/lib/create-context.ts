@@ -129,6 +129,7 @@ export const createContext = <
           await endpointContextRef.init({
             ...overrideOptions,
           });
+
           if (config.abstract) {
             throw new Error(`Abstract context can not be initialized`);
           }
@@ -161,6 +162,17 @@ export const createContext = <
           } else {
             await endpointContextRef.reinitControllers();
           }
+          const shouldStartRemoteHost = endpointContextRef.mode !== 'remote-backend(tcp+udp)';
+          if(shouldStartRemoteHost) {
+            const endpointContextRemoteHostRef = new EndpointContext(config, configFn);
+            await endpointContextRemoteHostRef.init({
+              overrideRemoteHost: endpointContextRef.host,
+            });
+            endpointContextRemoteHostRef.initMetadata();
+
+            endpointContextRef.__contextForControllerInstanceAccess = endpointContextRemoteHostRef;
+          }
+
           resolve(endpointContextRef);
         });
       });

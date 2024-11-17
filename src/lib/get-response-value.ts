@@ -14,11 +14,8 @@ export const getResponseValue = <T>(
   const { req, res } = options || {};
   return new Promise<T>(async (resolve, reject) => {
     //#region @websql
-    const resp: Models.Http.__Response<T> = response;
-    if (!response && response.send === undefined) {
-      console.error('[taon] Bad response value for function');
-      resolve(undefined);
-    } else if (typeof response === 'function') {
+
+    if (typeof response === 'function') {
       const asyncResponse: Models.Http.AsyncResponse<T> = response as any;
       try {
         const result = await asyncResponse(req, res);
@@ -29,20 +26,9 @@ export const getResponseValue = <T>(
         Helpers.renderError(e);
         reject(e);
       }
-    } else if (typeof response === 'object') {
-      try {
-        if (typeof response.send === 'function') {
-          const result = (response as any).send(req, res) as any;
-          resolve(result);
-        } else {
-          resolve(response.send as any);
-        }
-      } catch (error) {
-        console.error('[taon] Bad synchonus function call ');
-        Helpers.renderError(error);
-        reject(error);
-      }
-    } else reject(`[taon] Not recognized type of reposne ${response}`);
+    } else {
+      reject(`[taon] Not recognized type of response ${response}`);
+    }
     //#endregion
   });
   //#endregion

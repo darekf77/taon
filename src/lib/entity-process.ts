@@ -189,14 +189,6 @@ export class EntityProcess {
 
   //#region send
   send() {
-    if (!_.isObject(this.data)) {
-      if (_.isNumber(this.data)) {
-        this.response.send(this.data.toString());
-      } else {
-        this.response.send(this.data);
-      }
-      return;
-    }
     if (this.advancedManipulation) {
       const browserKey = config.folder.browser;
       let toSend = _.isArray(this.data) ? [] : {};

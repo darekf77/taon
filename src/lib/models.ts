@@ -238,12 +238,6 @@ export namespace Models {
       received?: Rest.PromiseObservableMix<Rest.HttpResponse<T>>;
     }
 
-    export interface __Response<T> {
-      //#region @websql
-      send?: MixResponse<T>;
-      //#endregion
-    }
-
     export interface AsyncResponse<T> {
       (
         req?: ExpressRequest,
@@ -251,9 +245,8 @@ export namespace Models {
       ): Promise<SyncResponse<T> | SyncResponseFunc<T>>;
     }
 
-    export type Response<T = string> = (__Response<T> | AsyncResponse<T>) &
-      ClientAction<T> &
-      __Response<T>;
+    export type Response<T = string> = ( AsyncResponse<T>) &
+      ClientAction<T> ;
 
     export class Errors {
       public toString = (): string => {

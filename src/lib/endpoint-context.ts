@@ -136,6 +136,8 @@ export class EndpointContext {
     Models.ClassType.ENTITY,
   ];
 
+  public __contextForControllerInstanceAccess?: EndpointContext;
+
   //#region fields / express app
   public expressApp: Application = {} as any;
   //#endregion
@@ -909,10 +911,24 @@ export class EndpointContext {
    * alias for inject
    */
   getInstanceBy<T>(ctor: new (...args: any[]) => T): T {
+    if(!!this.__contextForControllerInstanceAccess) {
+      const className = ClassHelpers.getName(ctor);
+      const allControllers = this.getClassFunByArr(Models.ClassType.CONTROLLER);
+
+      // TODO QUICK_FIX cache controllers
+      for (const ctrl of allControllers) {
+        if(ClassHelpers.getName(ctrl) === className) {
+          // console.log('injecting from contextForControllerInstanceAcesss', className);
+          return this.__contextForControllerInstanceAccess.inject(ctor, { localInstance: false });
+        }
+      }
+    }
+
     return this.inject(ctor, { localInstance: false });
   }
   //#endregion
 
+  //#region methods & getters / check if context initialized
   checkIfContextInitialized() {
     if (_.isUndefined(this.config)) {
       throw new Error(`Please check if your context has been initialized.
@@ -925,6 +941,7 @@ export class EndpointContext {
       `);
     }
   }
+  //#endregion
 
   //#region methods & getters / get class function by class type name
   getClassFunBy(classType: Models.ClassType) {
