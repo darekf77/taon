@@ -73,7 +73,16 @@ const metaReq = (
 };
 
 export interface TaonHttpDecoratorOptions {
+  /**
+   * ! BE CAREFULL
+   * This method is only for very special cases
+   * Path for the method is automatically generated
+   */
   path?: string;
+  /**
+   * ! BE CAREFULL
+   * If true, the path will be global
+   */
   pathIsGlobal?: boolean;
   overrideContentType?: CoreModels.ContentType;
   overridResponseType?: ModelsNg2Rest.ResponseTypeAxios;

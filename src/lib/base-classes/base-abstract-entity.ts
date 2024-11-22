@@ -28,3 +28,5 @@ export abstract class BaseAbstractEntity<
   //#endregion
   version: number;
 }
+
+export type AbstractEntityOmitKeys<ENTITY> = Omit<ENTITY, 'id' | 'version'|  '_' | 'clone'>;

@@ -30,7 +30,7 @@ import { TaonEntityOptions } from '../decorators/classes/entity-decorator';
 @TaonController({ className: 'BaseCrudController' })
 export abstract class BaseCrudController<Entity> extends BaseController {
   //#region fields
-  protected db?: BaseRepository<Entity>;
+  protected db: BaseRepository<Entity>;
 
   /**
    * Please provide entity as class propery entityClassFn:

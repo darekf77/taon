@@ -87,9 +87,9 @@ export const createContext = <
       return endpointContextRef;
     },
     /**
-    * only for internal use
-    * @deprecated
-    */
+     * only for internal use
+     * @deprecated
+     */
     get __refSync() {
       return endpointContextRef;
     },
@@ -120,7 +120,7 @@ export const createContext = <
      * - create controller instances for context
      * - init database (if enable) + migation scripts
      */
-    initialize: async (overrideOptions?:{
+    initialize: async (overrideOptions?: {
       overrideHost?: string;
       overrideRemoteHost?: string;
     }): Promise<EndpointContext> => {
@@ -136,7 +136,6 @@ export const createContext = <
 
           await endpointContextRef.initEntities();
           await endpointContextRef.initSubscribers();
-
 
           await endpointContextRef.initDatabaseConnection();
 
@@ -162,16 +161,20 @@ export const createContext = <
           } else {
             await endpointContextRef.reinitControllers();
           }
-          const shouldStartRemoteHost = endpointContextRef.mode !== 'remote-backend(tcp+udp)';
-          if(shouldStartRemoteHost) {
-            const endpointContextRemoteHostRef = new EndpointContext(config, configFn);
-            await endpointContextRemoteHostRef.init({
-              overrideRemoteHost: endpointContextRef.host,
-            });
-            endpointContextRemoteHostRef.initMetadata();
+          ///#region TODO this may be usefull but for now
+          // 2 separate contexts are fine
+          // const shouldStartRemoteHost = endpointContextRef.mode !== 'remote-backend(tcp+udp)';
+          // if(shouldStartRemoteHost) {
+          //   const endpointContextRemoteHostRef = new EndpointContext(config, configFn);
+          //   await endpointContextRemoteHostRef.init({
+          //     overrideRemoteHost: endpointContextRef.host,
+          //     overrideHost: null,
+          //   });
+          //   endpointContextRemoteHostRef.initMetadata();
 
-            endpointContextRef.__contextForControllerInstanceAccess = endpointContextRemoteHostRef;
-          }
+          //   endpointContextRef.__contextForControllerInstanceAccess = endpointContextRemoteHostRef;
+          // }
+          //#endregion
 
           resolve(endpointContextRef);
         });
@@ -189,8 +192,8 @@ export const createContext = <
         },
         get server() {
           return endpointContextRef.realtimeServer;
-        }
-      }
+        },
+      };
     },
   };
   return res;

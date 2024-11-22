@@ -411,7 +411,8 @@
       "node-polyfill-webpack-plugin": "2.0.1",
 
       //  @trusted=patch
-      "wait-on": "7.0.1",
+      "wait-on": "7.2.0",
+      "@types/wait-on": "5.3.4",
 
       // electron needs webpack for ng build
       //  @trusted=patch
@@ -883,7 +884,7 @@
       "@types/fs-extra": "^7.0.0",
 
       // @trusted=patch
-      "@types/rimraf": "^2.0.2",
+      // "@types/rimraf": "^2.0.2",
 
       "open": "7.2.1",
 
@@ -952,7 +953,8 @@
       "@types/node-notifier": "~8.0.5",
 
       "node-notifier": "~10.0.1",
-      "@types/glob": "^5.0.35",
+      // TODO provide types in tnp-core
+      // "@types/glob": "^5.0.35",
 
       //@useBy=tnp-core
       "glob": "^7.1.2",

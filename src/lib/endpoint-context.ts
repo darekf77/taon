@@ -136,7 +136,7 @@ export class EndpointContext {
     Models.ClassType.ENTITY,
   ];
 
-  public __contextForControllerInstanceAccess?: EndpointContext;
+  // public __contextForControllerInstanceAccess?: EndpointContext;
 
   //#region fields / express app
   public expressApp: Application = {} as any;
@@ -226,51 +226,55 @@ export class EndpointContext {
   //#endregion
 
   //#region methods & getters / init
-  public async init(options?: { initFromRecrusiveContextResovle?: boolean; overrideHost?: string;overrideRemoteHost?: string }) {
-    const { initFromRecrusiveContextResovle, overrideHost, overrideRemoteHost } = options || {}; // TODO use it ?
+  public async init(options?: {
+    initFromRecrusiveContextResovle?: boolean;
+    overrideHost?: string | null;
+    overrideRemoteHost?: string | null;
+  }) {
+    const {
+      initFromRecrusiveContextResovle,
+      overrideHost,
+      overrideRemoteHost,
+    } = options || {}; // TODO use it ?
 
     this.inited = true;
     this.config = this.configFn(ENV);
-    if(overrideHost && overrideRemoteHost) {
-      if(Helpers.isWebSQL) {
-        throw new Error(`You can't have overrideHost and overrideRemoteHost at the same time`)
-      }
-      Helpers.error(`You can't have overrideHost and overrideRemoteHost at the same time`, false, true);
-      //#region @backend
-      process.exit(0)
-      //#endregion
+    if (overrideHost && overrideRemoteHost) {
+      Helpers.throw(
+        `[taon-config] You can't have overrideHost and overrideRemoteHost at the same time`,
+      );
     }
-    this.config.host =   overrideHost ? overrideHost : this.config.host;
-    this.config.remoteHost = overrideRemoteHost ? overrideRemoteHost : this.config.remoteHost;
 
-    // console.log(
-    //   `[${
-    //     this.contextName
-    //   }] init context... from resolve: ${!!initFromRecrusiveContextResovle}`,
-    // );
+    this.config.host = !_.isUndefined(overrideHost)
+      ? overrideHost
+      : this.config.host;
+    this.config.remoteHost = !_.isUndefined(overrideRemoteHost)
+      ? overrideRemoteHost
+      : this.config.remoteHost;
 
-    //#region debug config
-    // console.log(
-    //   `[taon][${this.config.contextName}] - resolve config from fn`,
-    //   {
-    //     config: this.config,
-    //   },
-    // );
-    // for (const ctrlName of Object.keys(config.controllers || {})) {
-    //   console.log(`${ctrlName} = ${!!config.controllers[ctrlName]}`);
-    // }
-    // for (const entityName of Object.keys(config.entities || {})) {
-    //   console.log(`${entityName} = ${!!config.entities[entityName]}`);
-    // }
-    // for (const providersName of Object.keys(config.providers || {})) {
-    //   console.log(`${providersName} = ${!!config.providers[providersName]}`);
-    // }
-    // for (const repositoryName of Object.keys(config.repositories || {})) {
-    //   console.log(
-    //     `${repositoryName} = ${!!config.repositories[repositoryName]}`,
-    //   );
-    // }
-    //#endregion
+    this.config.host = this.host === null ? void 0 : this.host;
+    this.config.remoteHost =
+      this.remoteHost === null ? void 0 : this.remoteHost;
+
+    if (
+      this.config.host &&
+      !this.config.host.startsWith('http://') &&
+      !this.config.host.startsWith('https://')
+    ) {
+      Helpers.throw(
+        `[taon-config] Your 'host' must start with http:// or https://`,
+      );
+    }
+
+    if (
+      this.config.remoteHost &&
+      !this.config.remoteHost.startsWith('http://') &&
+      !this.config.remoteHost.startsWith('https://')
+    ) {
+      Helpers.throw(
+        `[taon-config] Your 'remoteHost' must start with http:// or https://`,
+      );
+    }
 
     //#region resolve mode
     if (this.config.host) {
@@ -279,12 +283,11 @@ export class EndpointContext {
       this.mode = 'backend-frontend(websql)';
       //#endregion
     }
+
     if (this.config.remoteHost) {
       if (this.config.host) {
-        Helpers.error(
+        Helpers.throw(
           `[taon] You can't have remoteHost and host at the same time`,
-          false,
-          true,
         );
       }
       this.mode = 'remote-backend(tcp+udp)';
@@ -584,7 +587,7 @@ export class EndpointContext {
   //#region methods & getters / start server
   startServer() {
     //#region @backendFunc
-    if(this.remoteHost) {
+    if (this.remoteHost) {
       return;
     }
     if (this.mode === 'backend-frontend(tcp+udp)') {
@@ -911,18 +914,20 @@ export class EndpointContext {
    * alias for inject
    */
   getInstanceBy<T>(ctor: new (...args: any[]) => T): T {
-    if(!!this.__contextForControllerInstanceAccess) {
-      const className = ClassHelpers.getName(ctor);
-      const allControllers = this.getClassFunByArr(Models.ClassType.CONTROLLER);
+    // if (!!this.__contextForControllerInstanceAccess) {
+    //   const className = ClassHelpers.getName(ctor);
+    //   const allControllers = this.getClassFunByArr(Models.ClassType.CONTROLLER);
 
-      // TODO QUICK_FIX cache controllers
-      for (const ctrl of allControllers) {
-        if(ClassHelpers.getName(ctrl) === className) {
-          // console.log('injecting from contextForControllerInstanceAcesss', className);
-          return this.__contextForControllerInstanceAccess.inject(ctor, { localInstance: false });
-        }
-      }
-    }
+    //   // TODO QUICK_FIX cache controllers
+    //   for (const ctrl of allControllers) {
+    //     if (ClassHelpers.getName(ctrl) === className) {
+    //       // console.log('injecting from contextForControllerInstanceAcesss', className);
+    //       return this.__contextForControllerInstanceAccess.inject(ctor, {
+    //         localInstance: false,
+    //       });
+    //     }
+    //   }
+    // }
 
     return this.inject(ctor, { localInstance: false });
   }
@@ -1015,7 +1020,7 @@ export class EndpointContext {
 
   //#region methods & getters / reinit controllers db example data
   async reinitControllers() {
-    if(this.remoteHost) {
+    if (this.remoteHost) {
       return;
     }
     // Helpers.taskStarted(
@@ -1038,7 +1043,7 @@ export class EndpointContext {
     // );
   }
   async initClasses() {
-    if(this.remoteHost) {
+    if (this.remoteHost) {
       return;
     }
     for (const classTypeName of [
@@ -1163,7 +1168,7 @@ export class EndpointContext {
   //#region methods & getters / init subscribers
   async initSubscribers() {
     //#region @websqlFunc
-    if(this.remoteHost) {
+    if (this.remoteHost) {
       return;
     }
     const subscriberClasses = this.getClassFunByArr(
@@ -1185,7 +1190,7 @@ export class EndpointContext {
   //#region methods & getters / init entities
   async initEntities() {
     //#region @websql
-    if(this.remoteHost) {
+    if (this.remoteHost) {
       return;
     }
     const entities = this.getClassFunByArr(Models.ClassType.ENTITY);
@@ -1221,7 +1226,7 @@ export class EndpointContext {
   //#region methods & getters / init connection
   async initDatabaseConnection() {
     //#region @websqlFunc
-    if(this.remoteHost) {
+    if (this.remoteHost) {
       return;
     }
     const entities = (
@@ -1425,7 +1430,7 @@ export class EndpointContext {
 
   //#region methods & getters / write active routes
   public writeActiveRoutes() {
-    if(this.remoteHost) {
+    if (this.remoteHost) {
       return;
     }
     const contexts: EndpointContext[] = [this];
