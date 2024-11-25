@@ -127,7 +127,7 @@ export namespace Models {
     productionMode?: boolean;
     abstract?: boolean;
     logs?: boolean | ContectionOptionsLogs;
-    database?: boolean | DatabaseConfig;
+    database?: boolean | Partial<DatabaseConfig>;
     disabledRealtime?: boolean;
     https?: {
       key: string;
