@@ -224,7 +224,7 @@
 
       // http request
       //  @trusted=major
-      "axios": "~1.7.3",
+      "axios": "~1.7.7",
 
       //#endregion
       //#region DATABASES
@@ -309,7 +309,7 @@
       //  @trusted=minor
       "supertest": "~7.0.0",
 
-       // @trusted=minor
+      // @trusted=minor
       "playwright": "1.43.1",
 
       // jest test framework / runner
@@ -411,7 +411,7 @@
       "node-polyfill-webpack-plugin": "2.0.1",
 
       //  @trusted=patch
-      "wait-on": "7.2.0",
+      "wait-on": "8.0.1",
       "@types/wait-on": "5.3.4",
 
       // electron needs webpack for ng build
@@ -884,7 +884,7 @@
       "@types/fs-extra": "^7.0.0",
 
       // @trusted=patch
-      // "@types/rimraf": "^2.0.2",
+      "@types/rimraf": "^2.0.2",
 
       "open": "7.2.1",
 
@@ -954,7 +954,7 @@
 
       "node-notifier": "~10.0.1",
       // TODO provide types in tnp-core
-      // "@types/glob": "^5.0.35",
+      "@types/glob": "^5.0.35",
 
       //@useBy=tnp-core
       "glob": "^7.1.2",
@@ -980,7 +980,10 @@
       "lockfile": "^1.0.4",
       "@types/lockfile": "~1.0.4",
       "hostile": "~1.3.3",
-      "cfonts":"3.3.0",
+      "cfonts": "3.3.0",
+      "columnify":"1.6.0",
+      // not maintained but so nice
+      // "multispinner":"0.2.1",
 
       // @trusted=patch
       "progress": "2.0.3",
@@ -1098,6 +1101,15 @@
 
       "password-hash": "1.2.2",
 
+      //#region DOCKER
+      // @trusted=patch
+      "@types/dockerode": "3.3.32",
+      // @trusted=patch
+      "dockerode": "4.0.2",
+      // @trusted=patch
+      "pm2":"5.4.3",
+      //#endregion
+
       //#region my packages
       "taon-typeorm": "18.0.13",
 
@@ -1132,7 +1144,7 @@
       "taon-type-sql": "18.0.14",
 
       //#endregion
-      "taon": "18.0.19"
+      "taon": "18.0.19",
     },
     "linkedFolders": [],
     "npmFixes": [],
