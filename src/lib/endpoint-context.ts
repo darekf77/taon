@@ -496,7 +496,7 @@ export class EndpointContext {
       Helpers.info('Running in docker, using in mysql database');
       // TODO auto resolve database config in docker
       databaseConfig = {
-        database: `tmp-db-${_.kebabCase(this.contextName)}.sqljs.db`,
+        database: `tmp-db-${_.kebabCase(this.contextName)}.sqlite`,
         type: 'mysql',
         autoSave: true,
         synchronize: true,
@@ -516,7 +516,7 @@ export class EndpointContext {
         //#region resolve database config for mode backend-frontend(tcp+udp)
         case 'backend-frontend(ipc-electron)':
           return {
-            location: `tmp-db-${_.kebabCase(this.contextName)}.sqljs`,
+            location: `tmp-db-${_.kebabCase(this.contextName)}.sqlite`,
             type: 'sqljs',
             autoSave: true,
             synchronize: true,
@@ -530,7 +530,7 @@ export class EndpointContext {
         case 'backend-frontend(websql-electron)':
         case 'backend-frontend(websql)':
           databaseConfig = {
-            location: `tmp-db-${_.kebabCase(this.contextName)}.sqljs`,
+            location: `tmp-db-${_.kebabCase(this.contextName)}.sqlite`,
             type: 'sqljs',
             useLocalForage: true, // !!window['localforage'], // TODO this need to be checked in runtime
             autoSave: true,

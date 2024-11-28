@@ -1,6 +1,6 @@
 <p style="text-align: center;"><img src="./__images/logo-header-bold-taon.png" ></p>
 
-/* cspell: disable-next-line */
+<!-- cspell: disable-next-line  -->
 TAON  **T**ypescript **A**ngular **O**rm **N**ode )
 
 
@@ -39,13 +39,9 @@ TAON  **T**ypescript **A**ngular **O**rm **N**ode )
 <br>
 
 ### Initial requirements of taon
-1. Installed git
+1. (windows) Installed gitbash https://gitforwindows.org
 
-
-(for windows only git bash supported https://gitforwindows.org)
-
-
-2. (linux only) Increased watchers limit:
+2. (linux with GUI) Increased watchers limit:
 ```/* cspell: disable-next-line */
 echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 ```

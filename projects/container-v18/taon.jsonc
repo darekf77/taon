@@ -982,6 +982,7 @@
       "hostile": "~1.3.3",
       "cfonts": "3.3.0",
       "columnify":"1.6.0",
+      "console-png": "^1.2.1",
       // not maintained but so nice
       // "multispinner":"0.2.1",
 
@@ -1111,7 +1112,7 @@
       //#endregion
 
       //#region my packages
-      "taon-typeorm": "18.0.13",
+      "taon-typeorm": "18.0.14",
 
       // "taon-crud": "18.0.5",
       // "taon-ports": "18.0.5",
@@ -1119,10 +1120,10 @@
       // "tnp-cli": "18.0.5",
       "record-replay-req-res-scenario": "18.0.14",
       "ng-talkback": "18.0.14",
-      "vpn-split": "18.0.13",
+      "vpn-split": "18.0.14",
       "node-cli-tester": "18.0.14",
       "static-columns": "18.0.16",
-      "taon-storage": "18.0.23",
+      "taon-storage": "18.0.24",
       "tnp-core": "18.0.40",
       "tnp-config": "18.0.17",
       "ng2-logger": "18.0.17",
