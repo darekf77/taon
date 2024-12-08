@@ -464,7 +464,7 @@
       //  @trusted=patch
       "threads": "1.7.0",
 
-      //  @trusted=patch
+      // TODO old to remove @deprecated
       "task.js": "^0.1.5",
 
       //  @trusted=patch
