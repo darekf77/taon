@@ -501,6 +501,10 @@ export class EndpointContext {
         autoSave: true,
         synchronize: true,
         dropSchema: true,
+        dbRecreateMode: {
+          dev:'DEV_DROP_ALL',
+          prod: 'PROD_MIGRATIONS',
+        },
         logging: this.logDb,
         databasePort: 3306,
         databaseHost: 'localhost',

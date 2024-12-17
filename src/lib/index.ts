@@ -24,6 +24,7 @@ export { BaseController } from './base-classes/base-controller';
 export { BaseProvider } from './base-classes/base-provider';
 export { BaseEntity } from './base-classes/base-entity';
 export { BaseContext } from './base-classes/base-context';
+export { PersistenceBuilder } from './base-classes/persistance-builder';
 export { createContext } from './create-context';
 export { inject } from './inject';
 export { Models } from './models';

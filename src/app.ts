@@ -1,11 +1,13 @@
 //#region imports
 import { Taon, BaseContext } from 'taon/src';
+import { _ } from 'tnp-core/src';
 import { Observable, map } from 'rxjs';
 import { HOST_BACKEND_PORT } from './app.hosts';
 //#region @browser
 import { NgModule, inject, Injectable } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { PersistenceBuilder } from 'taon/src';
 //#endregion
 //#endregion
 
@@ -68,7 +70,9 @@ export class TaonModule {}
 //#region  taon entity
 @Taon.Entity({ className: 'User' })
 class User extends Taon.Base.AbstractEntity {
-  public static ctrl?: UserController;
+  public static from(obj: Pick<User, 'name'>): User {
+    return _.merge(new User(), obj);
+  }
   //#region @websql
   @Taon.Orm.Column.String()
   //#endregion
@@ -85,6 +89,14 @@ class UserController extends Taon.Base.CrudController<User> {
     const superAdmin = new User();
     superAdmin.name = 'super-admin';
     await this.db.save(superAdmin);
+  }
+  public makeSureEntitiesExistsInDB(): PersistenceBuilder<any> {
+    // this.initExampleDbData();
+    return this.persist.entity(
+      User.from({
+        name: 'super-admin',
+      }),
+    );
   }
   //#endregion
 }

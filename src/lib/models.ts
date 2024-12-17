@@ -42,6 +42,49 @@ export namespace Models {
   export type MiddlewareType = [Function, any[]];
   //#endregion
 
+  export type DBRecreateModel = 'DROP_ALL' | 'MIGRATIONS';
+
+  /**
+   * Default mode is DEV_DROP_ALL
+   */
+  export type DBDevRecreateMode =
+    /**
+     * Purpose: TESTING / DEVELOPMENT without using migrations
+     * Drops schema/data and recreates everything from scratch.
+     * synchronize: true , dropSchema: true
+     * use migrations: false
+     */
+    | 'DEV_DROP_ALL'
+    /**
+     * Purpose: DEVELOPMENT with using migrations
+     * synchronize: false, dropSchema: false
+     * use migrations: true
+     */
+    | 'DEV_TRY_SYNC'
+    /**
+     * Purpose: DEVELOPMENT with using migrations
+     * synchronize: false, dropSchema: false
+     * use migrations: true
+     */
+    | 'DEV_MIGRATIONS';
+
+  /**
+   * Default mode is PROD_DROP_ALL
+   */
+  export type DBProdRecreateMode =
+    /**
+     * Purpose: PRODUCTION SERVER that uses example data instead migrations
+     * synchronize: false, dropSchema: true
+     * use migrations: false
+     */
+    | 'PROD_DROP_ALL'
+    /**
+     * Purpose: PRODUCTION SERVER that uses migrations - proper CI/CD solution
+     * synchronize: false, dropSchema: false
+     * use migrations: true
+     */
+    | 'PROD_MIGRATIONS';
+
   //#region models / database connection options
   export interface DatabaseConfig {
     /**
@@ -62,7 +105,19 @@ export namespace Models {
      */
     useLocalForage?: boolean;
     logging: boolean;
-
+    /**
+     * Default value 'DROP_ALL'.
+     *
+     * Tell framework what is happening with db
+     * when context is starting.
+     */
+    dbRecreateMode?:
+      | {
+          dev?: DBDevRecreateMode;
+          prod?: DBProdRecreateMode;
+        }
+      | 'DROP_ALL'
+      | 'MIGRATIONS';
     databasePort?: number;
     databaseHost?: string;
     databaseUsername?: string;
@@ -245,8 +300,7 @@ export namespace Models {
       ): Promise<SyncResponse<T> | SyncResponseFunc<T>>;
     }
 
-    export type Response<T = string> = ( AsyncResponse<T>) &
-      ClientAction<T> ;
+    export type Response<T = string> = AsyncResponse<T> & ClientAction<T>;
 
     export class Errors {
       public toString = (): string => {
