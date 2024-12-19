@@ -1,1 +1,0 @@
-# isomorphic-lib v2
