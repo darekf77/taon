@@ -41,7 +41,7 @@ export class AppComponent {
         '<<<TO_REPLACE_COMPONENT>>>',
       );
 
-    document.body.style.backgroundColor = 'FIREDEV_TO_REPLACE_COLOR';
+    document.body.style.backgroundColor = 'TAON_TO_REPLACE_COLOR';
     this.removedPreloader = true;
     // @ts-ignore
     await start();
