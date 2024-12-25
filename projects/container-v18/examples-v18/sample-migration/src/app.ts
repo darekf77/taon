@@ -1,24 +1,34 @@
 //#region imports
 import { Taon, BaseContext } from 'taon/src';
-import { _ } from 'tnp-core/src';
+import { Helpers } from 'tnp-core/src';
 import { Observable, map } from 'rxjs';
-import { HOST_BACKEND_PORT } from './app.hosts';
+import {
+  HOST_BACKEND_PORT,
+  CLIENT_DEV_WEBSQL_APP_PORT,
+  CLIENT_DEV_NORMAL_APP_PORT,
+} from './app.hosts';
+import { MigrationInterface, QueryRunner } from 'taon-typeorm/src';
 //#region @browser
 import { NgModule, inject, Injectable } from '@angular/core';
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { VERSION } from '@angular/core';
 //#endregion
 //#endregion
 
 console.log('hello world');
 console.log('Your server will start on port ' + HOST_BACKEND_PORT);
 const host = 'http://localhost:' + HOST_BACKEND_PORT;
+const frontendHost =
+  'http://localhost:' +
+  (Helpers.isWebSQL ? CLIENT_DEV_WEBSQL_APP_PORT : CLIENT_DEV_NORMAL_APP_PORT);
 
-//#region taon component
+//#region sample-migration component
 //#region @browser
 @Component({
-  selector: 'app-taon',
-  template: `hello from taon<br />
+  selector: 'app-sample-migration',
+  template: `hello from sample-migration<br />
+    Angular version: {{ angularVersion }}<br />
     <br />
     users from backend
     <ul>
@@ -32,14 +42,15 @@ const host = 'http://localhost:' + HOST_BACKEND_PORT;
     `,
   ],
 })
-export class TaonComponent {
+export class SampleMigrationComponent {
+  angularVersion = VERSION.full;
   userApiService = inject(UserApiService);
   readonly users$: Observable<User[]> = this.userApiService.getAll();
 }
 //#endregion
 //#endregion
 
-//#region  taon api service
+//#region  sample-migration api service
 //#region @browser
 @Injectable({
   providedIn: 'root',
@@ -55,59 +66,92 @@ export class UserApiService {
 //#endregion
 //#endregion
 
-//#region  taon module
+//#region  sample-migration module
 //#region @browser
 @NgModule({
-  exports: [TaonComponent],
+  exports: [SampleMigrationComponent],
   imports: [CommonModule],
-  declarations: [TaonComponent],
+  declarations: [SampleMigrationComponent],
 })
-export class TaonModule {}
+export class SampleMigrationModule {}
 //#endregion
 //#endregion
 
-//#region  taon entity
+//#region  sample-migration migration
+
+export class PostRefactoringTIMESTAMP implements MigrationInterface {
+  async up(queryRunner: QueryRunner): Promise<void> {
+    //#region @websqlFunc
+    await queryRunner.query(
+      // add a new random record to USER table
+      `INSERT INTO "User" ("name", "age") VALUES ('John Doe', 30)`,
+    );
+    //#endregion
+  }
+
+  async down(queryRunner: QueryRunner): Promise<void> {
+    //#region @websqlFunc
+    await queryRunner.query(
+      // remove the record added in "up" method
+      `DELETE FROM "User" WHERE "name" = 'John Doe' AND "age" = 30`,
+    ); // reverts things made in "up" method
+    //#endregion
+  }
+}
+//#endregion
+
+//#region  sample-migration entity
 @Taon.Entity({ className: 'User' })
 class User extends Taon.Base.AbstractEntity {
-  public static from(obj: Pick<User, 'name'>): User {
-    return new User().clone(obj);
-  }
   //#region @websql
   @Taon.Orm.Column.String()
   //#endregion
   name?: string;
+
+  //#region @websql
+  @Taon.Orm.Column.Number()
+  //#endregion
+  age?: number;
 }
 //#endregion
 
-//#region  taon controller
+//#region  sample-migration controller
 @Taon.Controller({ className: 'UserController' })
 class UserController extends Taon.Base.CrudController<User> {
   entityClassResolveFn = () => User;
   //#region @websql
   async initExampleDbData(): Promise<void> {
-    const superAdmin = new User();
-    superAdmin.name = 'super-admin';
-    await this.db.save(superAdmin);
+    // const superAdmin = new User();
+    // superAdmin.name = 'super-admin';
+    // await this.db.save(superAdmin);
   }
   //#endregion
 }
 //#endregion
 
-//#region  taon context
-const MainContext = Taon.createContext(() => ({
+//#region  sample-migration context
+var MainContext = Taon.createContext(() => ({
   host,
+  frontendHost,
   contextName: 'MainContext',
   contexts: { BaseContext },
+  migrations: { PostRefactoringTIMESTAMP },
   controllers: {
     UserController,
-    // PUT TAON CONTORLLERS HERE
+    // PUT TAON CONTROLLERS HERE
   },
   entities: {
     User,
     // PUT TAON ENTITIES HERE
   },
-  database: true,
-  disabledRealtime: true,
+  database: {
+    recreateMode: 'PRESERVE_DATA+MIGRATIONS',
+  },
+  logs: {
+    db: true,
+    framework: true,
+  },
+  // disabledRealtime: true,
 }));
 //#endregion
 

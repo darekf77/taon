@@ -20,11 +20,20 @@ export const createContext = <
   REPO extends Record<string, new (...args: any[]) => any>,
   PROVIDER extends Record<string, new (...args: any[]) => any>,
   SUBSCRIBER extends Record<string, new (...args: any[]) => any>,
+  MIGRATION extends Record<string, new (...args: any[]) => any>,
   //#endregion
 >(
   configFn: (
     env: any,
-  ) => Models.ContextOptions<CTX, CTRL, ENTITY, REPO, PROVIDER, SUBSCRIBER>,
+  ) => Models.ContextOptions<
+    CTX,
+    CTRL,
+    ENTITY,
+    REPO,
+    PROVIDER,
+    SUBSCRIBER,
+    MIGRATION
+  >,
 ) => {
   let config = configFn(ENV);
 
@@ -62,6 +71,9 @@ export const createContext = <
       },
       get subscribers() {
         return config.subscribers;
+      },
+      get migrations() {
+        return config.migrations;
       },
     },
     //#endregion
