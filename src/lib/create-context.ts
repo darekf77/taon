@@ -20,11 +20,20 @@ export const createContext = <
   REPO extends Record<string, new (...args: any[]) => any>,
   PROVIDER extends Record<string, new (...args: any[]) => any>,
   SUBSCRIBER extends Record<string, new (...args: any[]) => any>,
+  MIGRATION extends Record<string, new (...args: any[]) => any>,
   //#endregion
 >(
   configFn: (
     env: any,
-  ) => Models.ContextOptions<CTX, CTRL, ENTITY, REPO, PROVIDER, SUBSCRIBER>,
+  ) => Models.ContextOptions<
+    CTX,
+    CTRL,
+    ENTITY,
+    REPO,
+    PROVIDER,
+    SUBSCRIBER,
+    MIGRATION
+  >,
 ) => {
   let config = configFn(ENV);
 
@@ -62,6 +71,9 @@ export const createContext = <
       },
       get subscribers() {
         return config.subscribers;
+      },
+      get migrations() {
+        return config.migrations;
       },
     },
     //#endregion
@@ -123,6 +135,8 @@ export const createContext = <
     initialize: async (overrideOptions?: {
       overrideHost?: string;
       overrideRemoteHost?: string;
+      onlyMigrationRun?: boolean;
+      onlyMigrationRevertToTimestamp?: number;
     }): Promise<EndpointContext> => {
       return await new Promise(async (resolve, reject) => {
         setTimeout(async () => {
@@ -139,12 +153,14 @@ export const createContext = <
 
           await endpointContextRef.initDatabaseConnection();
 
+          await endpointContextRef.dbMigrations.ensureMigrationTableExists();
+
           // console.log(
           //   'connection subscribers',
           //   endpointContextRef?.connection?.subscribers,
           // );
           // debugger;
-          endpointContextRef.initMetadata();
+          endpointContextRef.initControllers();
           endpointContextRef.startServer();
           //#region @websql
           endpointContextRef.writeActiveRoutes();
@@ -175,6 +191,16 @@ export const createContext = <
           //   endpointContextRef.__contextForControllerInstanceAccess = endpointContextRemoteHostRef;
           // }
           //#endregion
+
+          if (endpointContextRef.onlyMigrationRun) {
+            await endpointContextRef.dbMigrations.runAllNotCompletedMigrations();
+          } else if (endpointContextRef.onlyMigrationRevertToTimestamp) {
+            await endpointContextRef.dbMigrations.revertMigrationToTimestamp(
+              endpointContextRef.onlyMigrationRevertToTimestamp,
+            );
+          } else {
+            await endpointContextRef.dbMigrations.runAllNotCompletedMigrations();
+          }
 
           resolve(endpointContextRef);
         });

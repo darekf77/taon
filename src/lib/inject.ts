@@ -75,7 +75,6 @@ export const inject = <T>(entity: () => new (...args: any[]) => T): T => {
 //     get(target, prop, receiver) {
 //       if (prop === 'subscribe') {
 //         return (...args: any[]) => {
-//           // @LAST
 //           if (isFirstSubscription) {
 //             isFirstSubscription = false;
 //             const subscriberClassFN: typeof BaseClass =
@@ -106,7 +105,6 @@ export const inject = <T>(entity: () => new (...args: any[]) => T): T => {
 //               subscriberClassFN,
 //               eventName,
 //             });
-//             // @LAST
 //           }
 //           return target.subscribe(...args);
 //         };

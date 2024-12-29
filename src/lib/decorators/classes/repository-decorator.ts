@@ -7,6 +7,9 @@ import {
 } from 'taon-typeorm/src';
 import { _ } from 'tnp-core/src';
 
+/**
+ * Repository decorator
+ */
 export function TaonRepository(options: TaonRepositoryOptions) {
   return function (constructor: Function) {
     Reflect.defineMetadata(

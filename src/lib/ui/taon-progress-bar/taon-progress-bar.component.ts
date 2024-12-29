@@ -32,7 +32,7 @@ declare const ENV: any;
 export class TaonProgressBarComponent implements OnInit {
   @ViewChild('labProgress') labProgress: NgProgressRef;
   @Input() isDesktop: boolean;
-  admin: any; //TODO @LAST
+  admin: any;
   handlers: Subscription[] = [];
   options: NgProgressConfig = _.merge(
     {
@@ -159,7 +159,7 @@ export class TaonProgressBarComponent implements OnInit {
     //     // }
     //   }),
     // );
-    // @LAST @UNCOMMENT
+
 
     //#endregion
   }

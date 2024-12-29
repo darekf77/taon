@@ -19,5 +19,13 @@
     deafultBranch: "master",
     relativeClonePath: "subscriber-inject",
     repoUrl: "https://github.com/darekf77/subscriber-inject.git",
+  }, {
+    deafultBranch: "master",
+    relativeClonePath: "migration",
+    repoUrl: "git@github.com:darekf77/migration.git",
+  }, {
+    deafultBranch: "master",
+    relativeClonePath: "sample-migration",
+    repoUrl: "git@github.com:darekf77/sample-migration.git",
   }]
 }

@@ -1,5 +1,6 @@
 //#region imports
 import { Taon, BaseContext } from 'taon/src';
+import { _ } from 'tnp-core/src';
 import { Observable, map } from 'rxjs';
 import { HOST_BACKEND_PORT } from './app.hosts';
 //#region @browser
@@ -44,9 +45,9 @@ export class TaonComponent {
   providedIn: 'root',
 })
 export class UserApiService {
-  userControlller = Taon.inject(() => MainContext.get(UserController));
+  userController = Taon.inject(() => MainContext.getClass(UserController));
   getAll() {
-    return this.userControlller
+    return this.userController
       .getAll()
       .received.observable.pipe(map(r => r.body.json));
   }
@@ -68,7 +69,9 @@ export class TaonModule {}
 //#region  taon entity
 @Taon.Entity({ className: 'User' })
 class User extends Taon.Base.AbstractEntity {
-  public static ctrl?: UserController;
+  public static from(obj: Pick<User, 'name'>): User {
+    return new User().clone(obj);
+  }
   //#region @websql
   @Taon.Orm.Column.String()
   //#endregion

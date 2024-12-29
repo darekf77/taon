@@ -123,7 +123,12 @@ if (isNaN(Number(port))) {
 const script = new vm.Script(`
 global["ENV"] = JSON.parse(ENV);
 var app = require("${relativePath}").default;
-app(${port},[${process.argv.slice(2).map(c => `"${c}"`).join(',')}]);
+app({
+   port:${port},
+   onlyMigrationRun: ${argsMinimist.onlyMigrationRun},
+   onlyMigrationRevertToTimestamp: ${argsMinimist.onlyMigrationRevertToTimestamp},
+   args: [${process.argv.slice(2).map(c => `"${c}"`).join(',')}]
+});
 `);
 
 const context = vm.createContext(sandbox);

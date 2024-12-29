@@ -6,6 +6,7 @@ import * as entityDecorator from './decorators/classes/entity-decorator';
 import * as providerDecorator from './decorators/classes/provider-decorator';
 import * as repositoryDecorator from './decorators/classes/repository-decorator';
 import * as subscriberDecorator from './decorators/classes/subscriber-decorator';
+import * as migrationDecorator from './decorators/classes/migration-decorator';
 import * as createContextFn from './create-context';
 import * as orm from './orm';
 import * as models from './models';
@@ -24,6 +25,7 @@ export { BaseController } from './base-classes/base-controller';
 export { BaseProvider } from './base-classes/base-provider';
 export { BaseEntity } from './base-classes/base-entity';
 export { BaseContext } from './base-classes/base-context';
+export { BaseMigration } from './base-classes/base-migration';
 export { createContext } from './create-context';
 export { inject } from './inject';
 export { Models } from './models';
@@ -36,7 +38,7 @@ export namespace Taon {
   export import Http = http.Http;
   export import Base = base.Base;
   export import Orm = orm.Orm;
-
+  export import StartParams = models.Models.StartParams;
   export const getResponseValue = getResponse.getResponseValue;
 
   //#region class decorators
@@ -45,6 +47,7 @@ export namespace Taon {
   export import Provider = providerDecorator.TaonProvider;
   export import Repository = repositoryDecorator.TaonRepository;
   export import Subscriber = subscriberDecorator.TaonSubscriber;
+  export import Migration = migrationDecorator.TaonMigration;
   //#endregion
   //#region aliases to helpers
   export const isBrowser = coreHelpers.Helpers.isBrowser;

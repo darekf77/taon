@@ -8,6 +8,9 @@ import { Models } from '../../models';
 import { Entity as TypeormEntity, Tree } from 'taon-typeorm/src';
 //#endregion
 
+/**
+ * Entity decorator
+ */
 export function TaonEntity<T = any>(options?: TaonEntityOptions<T>) {
   return function (constructor: Function) {
     options = options || ({} as any);

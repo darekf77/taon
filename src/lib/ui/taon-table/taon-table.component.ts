@@ -68,7 +68,7 @@ export class TaonTableComponent {
   @Output() public addingItem = new EventEmitter<void>();
   @ViewChild('search', { static: true }) search?: ElementRef<HTMLElement>;
   private searchInputChange$ = defer(() =>
-    fromEvent<KeyboardEvent>(this.search?.nativeElement as any, 'keyup')
+    fromEvent<KeyboardEvent>(this.search?.nativeElement as any, 'keyup'),
   ).pipe(
     map(c => c.target['value']),
     debounceTime(500),
@@ -76,7 +76,7 @@ export class TaonTableComponent {
     share(),
     tap(data => {
       console.log({ data });
-    })
+    }),
   );
 
   public expandable: boolean = false;
@@ -112,7 +112,7 @@ export class TaonTableComponent {
     if (entityClass && columnsConfigSameAsDefault) {
       log.i(
         'this.crud.entity',
-        CLASS.describeProperites(entityClass as Function)
+        CLASS.describeProperites(entityClass as Function),
       );
 
       try {
@@ -121,7 +121,7 @@ export class TaonTableComponent {
           .filter(prop =>
             this.allowedColumns.length > 0
               ? this.allowedColumns.includes(prop)
-              : true
+              : true,
           )
           .map(prop => {
             return {
@@ -189,8 +189,6 @@ export class TaonTableComponent {
 
   //#region methods / retrive data
   async retriveData() {
-    // @ts-ignore
-    // TODO @LAST
     // if (!this.entity) {
     //   return;
     // }

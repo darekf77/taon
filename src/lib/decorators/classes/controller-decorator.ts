@@ -2,6 +2,9 @@ import { ClassHelpers } from '../../helpers/class-helpers';
 import { Symbols } from '../../symbols';
 import { Models } from '../../models';
 
+/**
+ * Controller decorator
+ */
 export function TaonController(options?: TaonControllerOptions) {
   return function (constructor: Function) {
     ClassHelpers.setName(constructor, options?.className);

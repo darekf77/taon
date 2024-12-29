@@ -33,7 +33,7 @@ const host = 'http://localhost:' + HOST_BACKEND_PORT;
     `,
   ],
 })
-export class IsomorphicLibComponent {
+export class SingleFileComponent {
   angularVersion = VERSION.full;
   userApiService = inject(UserApiService);
   readonly users$: Observable<User[]> = this.userApiService.getAll();
@@ -60,9 +60,9 @@ export class UserApiService {
 //#region  single file example module
 //#region @browser
 @NgModule({
-  exports: [IsomorphicLibComponent],
+  exports: [SingleFileComponent],
   imports: [CommonModule],
-  declarations: [IsomorphicLibComponent],
+  declarations: [SingleFileComponent],
 })
 export class SingleFileModule {}
 //#endregion
@@ -107,7 +107,7 @@ const MainContext = Taon.createContext(() => ({
     // PUT FIREDEV ENTITIES HERE
   },
   database: true,
-  // logs: true,
+  logs: true,
 }));
 //#endregion
 

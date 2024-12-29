@@ -2,10 +2,14 @@ import { ClassHelpers } from '../../helpers/class-helpers';
 import { Symbols } from '../../symbols';
 import { Models } from '../../models';
 import { _ } from 'tnp-core/src';
+
+/**
+ * Subscriber decorator
+ */
 export function TaonSubscriber(options: TaonSubscriberOptions) {
   return function (constructor: Function) {
     Reflect.defineMetadata(
-      Symbols.metadata.options.repository,
+      Symbols.metadata.options.subscriber,
       options,
       constructor,
     );

@@ -100,6 +100,7 @@ export namespace Symbols {
       repository: `repository:options`,
       provider: `provider:options`,
       subscriber: `subscriber:options`,
+      migration: `migration:options`,
     },
   };
 

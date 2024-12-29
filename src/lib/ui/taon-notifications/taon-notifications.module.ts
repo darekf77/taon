@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TaonNotificationsComponent } from './taon-notifications.component';
 
-// @LAST
 // import { HotToastModule } from '@ngneat/hot-toast';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TaonNotificationsService } from './taon-notifications.service';

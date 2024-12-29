@@ -4,6 +4,7 @@ import {
   Response as ExpressResponse,
   Request as ExpressRequest,
 } from 'express';
+import { _ } from 'tnp-core/src';
 import { Models as ModelsNg2Rest } from 'ng2-rest/src';
 import { ClassHelpers } from './helpers/class-helpers';
 import type { TaonControllerOptions } from './decorators/classes/controller-decorator';
@@ -24,6 +25,7 @@ export namespace Models {
     REPOSITORY = 'REPOSITORY',
     PROVIDER = 'PROVIDER',
     SUBSCRIBER = 'SUBSCRIBER',
+    MIGRATION = 'MIGRATION',
   }
 
   export const ClassTypeKey = {
@@ -32,8 +34,9 @@ export namespace Models {
     [ClassType.REPOSITORY]: 'repositories',
     [ClassType.PROVIDER]: 'providers',
     [ClassType.SUBSCRIBER]: 'subscribers',
+    [ClassType.MIGRATION]: 'migrations',
   } as {
-    [key in ClassType]: keyof ContextOptions<any, any, any, any, any, any>;
+    [key in ClassType]: keyof ContextOptions<any, any, any, any, any, any, any>;
   };
 
   //#endregion
@@ -42,8 +45,25 @@ export namespace Models {
   export type MiddlewareType = [Function, any[]];
   //#endregion
 
+  //#region models / db recreate mode
+  /**
+   * DROP_DB+MIGRATIONS (default for development)
+   * Drop all tables + recreate them + run migrations
+   * synchronize: true , dropSchema: true
+   * use migrations: true
+   *
+   * MIGRATIONS (default for production)
+   * Do not drop tables, only run migrations
+   * synchronize: false, dropSchema: false
+   * use migrations: true
+   */
+  export type DBRecreateMode =
+    | 'DROP_DB+MIGRATIONS'
+    | 'PRESERVE_DATA+MIGRATIONS';
+  //#endregion
+
   //#region models / database connection options
-  export interface DatabaseConfig {
+  export class DatabaseConfigTypeOrm {
     /**
      * database name
      */
@@ -55,18 +75,61 @@ export namespace Models {
     synchronize: boolean;
     dropSchema: boolean;
     type?: CoreModels.DatabaseType;
-
-    autoSave: boolean; // TODO what is this ?
+    /**
+     * Persists db on disk/local-storage if serverless db
+     */
+    autoSave?: boolean;
     /**
      * for websql db mode
+     * true by default
      */
     useLocalForage?: boolean;
     logging: boolean;
-
     databasePort?: number;
     databaseHost?: string;
     databaseUsername?: string;
     databasePassword?: string;
+  }
+  //#endregion
+
+  //#region models / database config
+  export class DatabaseConfig extends DatabaseConfigTypeOrm {
+    /**
+     * Default value 'DROP_ALL'.
+     *
+     * Tell framework what is happening with db
+     * when context is starting.
+     */
+    public recreateMode?: DBRecreateMode;
+
+    static from(
+      databasePartialConfig: Partial<
+        Omit<
+          DatabaseConfig,
+          'synchronize' | 'dropSchema' | 'databaseConfigTypeORM'
+        >
+      >,
+    ): DatabaseConfig {
+      return _.merge(new DatabaseConfig(), databasePartialConfig);
+    }
+
+    get databaseConfigTypeORM(): DatabaseConfigTypeOrm {
+      //#region @websqlFunc
+      const result = _.cloneDeep(this) as DatabaseConfig;
+      if (result.recreateMode) {
+        if (result.recreateMode === 'DROP_DB+MIGRATIONS') {
+          result.synchronize = true;
+          result.dropSchema = true;
+        } else if (result.recreateMode === 'PRESERVE_DATA+MIGRATIONS') {
+          result.synchronize = false;
+          result.dropSchema = false;
+        }
+      }
+      delete result.recreateMode;
+
+      return result as any;
+      //#endregion
+    }
   }
   //#endregion
 
@@ -85,11 +148,12 @@ export namespace Models {
   //#endregion
 
   //#region models / context options
-  export type ContectionOptionsLogs = {
+  export type ConnectionOptionsLogs = {
     http?: boolean;
     realtime?: boolean;
     framework?: boolean;
     db?: boolean;
+    migrations?: boolean;
   };
   export interface ContextOptions<
     CONTEXTS,
@@ -98,6 +162,7 @@ export namespace Models {
     REPOSITORIES,
     PROVIDERS,
     SUBSCRIBERS,
+    MIGRATIONS,
   > {
     contextName: string;
     /**
@@ -123,10 +188,11 @@ export namespace Models {
     repositories?: REPOSITORIES;
     providers?: PROVIDERS;
     subscribers?: SUBSCRIBERS;
+    migrations?: MIGRATIONS;
     session?: ISession;
     productionMode?: boolean;
     abstract?: boolean;
-    logs?: boolean | ContectionOptionsLogs;
+    logs?: boolean | ConnectionOptionsLogs;
     database?: boolean | Partial<DatabaseConfig>;
     disabledRealtime?: boolean;
     https?: {
@@ -135,17 +201,6 @@ export namespace Models {
     };
     publicAssets?: { serverPath: string; locationOnDisk: string }[];
     middlewares?: MiddlewareType[];
-    /**
-     * @deprecated
-     * only for debugging purpose
-     */
-    override?: {
-      entities?: Function[];
-      controllers?: Function[];
-      repositories?: Function[];
-      providers?: Function[];
-      subscribers?: Function[];
-    };
   }
   //#endregion
 
@@ -245,8 +300,7 @@ export namespace Models {
       ): Promise<SyncResponse<T> | SyncResponseFunc<T>>;
     }
 
-    export type Response<T = string> = ( AsyncResponse<T>) &
-      ClientAction<T> ;
+    export type Response<T = string> = AsyncResponse<T> & ClientAction<T>;
 
     export class Errors {
       public toString = (): string => {
@@ -286,5 +340,15 @@ export namespace Models {
 
     //#endregion
   }
+  //#endregion
+
+  //#region models / start params
+  export interface StartParams {
+    port: number;
+    args: string[];
+    onlyMigrationRun?: boolean;
+    onlyMigrationRevertToTimestamp?: number;
+  }
+
   //#endregion
 }

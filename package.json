@@ -331,6 +331,8 @@
     "sloc": "0.2.0",
     "socket.io-client": "4.7.5",
     "sort-package-json": "1.11.0",
+    "sql-template-strings": "2.2.2",
+    "sql-template-tag": "5.2.1",
     "sql.js": "1.8.0",
     "static-columns": "~18.0.16",
     "string-similarity": "4.0.4",

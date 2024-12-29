@@ -7,6 +7,7 @@ import * as provider from './base-provider';
 import * as baseClass from './base-class';
 import * as baseContext from './base-context';
 import * as baseSubscriberEntity from './base-subscriber-for-entity';
+import * as baseMigration from './base-migration';
 export namespace Base {
   export import Controller = controller.BaseController;
   export import CrudController = crudController.BaseCrudController;
@@ -17,5 +18,6 @@ export namespace Base {
   export import Class = baseClass.BaseClass;
   export import Repository = repository.BaseRepository;
   export import SubscriberForEntity = baseSubscriberEntity.BaseSubscriberForEntity;
+  export import Migration = baseMigration.BaseMigration;
   export const Context = baseContext.BaseContext;
 }

@@ -2,6 +2,9 @@ import { ClassHelpers } from '../../helpers/class-helpers';
 import { Symbols } from '../../symbols';
 import { Models } from '../../models';
 
+/**
+ * Provider decorator
+ */
 export function TaonProvider<T = any>(options?: TaonProviderOptions<T>) {
   return function (constructor: Function) {
     Reflect.defineMetadata(

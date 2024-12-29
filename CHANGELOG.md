@@ -11,6 +11,6 @@
 - ✅ standalone projects support (app + lib)
 - ✅ organization projects support
 - ✅ stable isomorphic library build
-- ✅ realese app to github /docs
+- ✅ release app to github /docs
 - ✅ websql mode for mocked backend in github /docs
 
