@@ -24,11 +24,12 @@ import * as methodOverride from 'method-override';
 import * as fileUpload from 'express-fileupload';
 import { Http2Server } from 'http2';
 import { URL } from 'url';
-import { fse, http, https, UtilsOs } from 'tnp-core/src';
+import { fse, http, https } from 'tnp-core/src';
 //#endregion
 //#region @browser
 import { TaonAdmin } from './ui/taon-admin-mode-configuration/taon-admin.service';
 //#endregion
+import { UtilsOs } from 'tnp-core/src';
 import { Models } from './models';
 import { ClassHelpers } from './helpers/class-helpers';
 import { Symbols } from './symbols';
