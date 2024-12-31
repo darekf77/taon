@@ -44,15 +44,16 @@ const frontendHost2 =
 @Component({
   selector: 'app-sample-migration',
   template: `
-  <taon-admin-mode-configuration>
-    hello from sample-migration<br />
-    Angular version: {{ angularVersion }}<br />
-    <br />
-    users from backend
-    <ul>
-      <li *ngFor="let user of users$ | async">{{ user | json }}</li>
-    </ul>
-  </taon-admin-mode-configuration> `,
+    <taon-admin-mode-configuration>
+      hello from sample-migration<br />
+      Angular version: {{ angularVersion }}<br />
+      <br />
+      users from backend
+      <ul>
+        <li *ngFor="let user of users$ | async">{{ user | json }}</li>
+      </ul>
+    </taon-admin-mode-configuration>
+  `,
   styles: [
     `
       body {
@@ -98,7 +99,7 @@ export class SampleMigrationModule {}
 
 //#region  sample-migration entity
 @Taon.Entity({ className: 'User' })
-class User extends Taon.Base.AbstractEntity {
+export class User extends Taon.Base.AbstractEntity<User> {
   //#region @websql
   @Taon.Orm.Column.String()
   //#endregion
@@ -141,11 +142,11 @@ var MainContext = Taon.createContext(() => ({
     // PUT TAON ENTITIES HERE
   },
   database: true,
-  logs: {
-    // db: true,
-    framework: true,
-    migrations: true,
-  },
+  // logs: {
+  //   // db: true,
+  //   framework: true,
+  //   migrations: true,
+  // },
   // disabledRealtime: true,
 }));
 //#endregion
@@ -166,11 +167,11 @@ var SecondContext = Taon.createContext(() => ({
     // PUT TAON ENTITIES HERE
   },
   database: true,
-  logs: {
-    // db: true,
-    framework: true,
-    migrations: true,
-  },
+  // logs: {
+  //   // db: true,
+  //   framework: true,
+  //   migrations: true,
+  // },
   // disabledRealtime: true,
 }));
 //#endregion
