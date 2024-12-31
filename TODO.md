@@ -27,6 +27,7 @@
 - 🔲 simple CD/CI develop/build/deploy process
 - 🔲 local release electron, cli, vscode ext.
 - 🔲 script installation for server (curl -o- https://taon.dev/install-on-server-script.sh | bash)
+- 🔲 release standalone package as @organization/package
 
 ## Taon (Firedev) v17.X.X
 

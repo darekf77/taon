@@ -176,7 +176,7 @@ export class ContextDbMigrations {
         })
         .filter(f => !!f)
         .map(f => f as BaseMigration)
-        .filter(migrationInstance => migrationInstance.isReadToRun());
+        .filter(migrationInstance => migrationInstance.isReadyToRun());
 
     const queryRunner = this.ctx.connection.createQueryRunner();
     await queryRunner.connect();
@@ -273,7 +273,7 @@ export class ContextDbMigrations {
     const migrationClassesInstances: BaseMigration[] = migrationsClassFns
       .map(classFn => this.ctx.getInstanceBy(classFn as any))
       .map(f => f as BaseMigration)
-      .filter(migrationInstance => migrationInstance.isReadToRun());
+      .filter(migrationInstance => migrationInstance.isReadyToRun());
 
     const queryRunner = this.ctx.connection.createQueryRunner();
     await queryRunner.connect();
@@ -350,7 +350,7 @@ export class ContextDbMigrations {
     const migrationClassesInstances: BaseMigration[] = migrationsClassFns
       .map(classFn => this.ctx.getInstanceBy(classFn as any))
       .map(f => f as BaseMigration)
-      .filter(migrationInstance => migrationInstance.isReadToRun());
+      .filter(migrationInstance => migrationInstance.isReadyToRun());
 
     const queryRunner = this.ctx.connection.createQueryRunner();
     await queryRunner.connect();

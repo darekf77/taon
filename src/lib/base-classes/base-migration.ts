@@ -7,7 +7,7 @@ export class BaseMigration extends BaseInjector implements MigrationInterface {
   /**
    * by default is READY to run
    */
-  public isReadToRun(): boolean {
+  public isReadyToRun(): boolean {
     return true;
   }
 
