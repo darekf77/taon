@@ -94,6 +94,7 @@ export class ContextDbMigrations {
       return;
     }
     const queryRunner = this.ctx.connection.createQueryRunner();
+    await queryRunner.connect();
     await queryRunner.startTransaction();
 
     // Check if the table already exists
@@ -173,7 +174,9 @@ export class ContextDbMigrations {
 
           return this.ctx.getInstanceBy(classFn as any) as any;
         })
-        .filter(f => !!f);
+        .filter(f => !!f)
+        .map(f => f as BaseMigration)
+        .filter(migrationInstance => migrationInstance.isReadToRun());
 
     const queryRunner = this.ctx.connection.createQueryRunner();
     await queryRunner.connect();
@@ -240,6 +243,7 @@ export class ContextDbMigrations {
       return;
     }
     const queryRunner = this.ctx.connection.createQueryRunner();
+    await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
@@ -266,11 +270,13 @@ export class ContextDbMigrations {
       Models.ClassType.MIGRATION,
     );
 
-    const migrationClassesInstances: BaseMigration[] = migrationsClassFns.map(
-      classFn => this.ctx.getInstanceBy(classFn as any),
-    );
+    const migrationClassesInstances: BaseMigration[] = migrationsClassFns
+      .map(classFn => this.ctx.getInstanceBy(classFn as any))
+      .map(f => f as BaseMigration)
+      .filter(migrationInstance => migrationInstance.isReadToRun());
 
     const queryRunner = this.ctx.connection.createQueryRunner();
+    await queryRunner.connect();
 
     try {
       await queryRunner.startTransaction();
@@ -341,11 +347,13 @@ export class ContextDbMigrations {
       Models.ClassType.MIGRATION,
     );
 
-    const migrationClassesInstances: BaseMigration[] = migrationsClassFns.map(
-      classFn => this.ctx.getInstanceBy(classFn as any),
-    );
+    const migrationClassesInstances: BaseMigration[] = migrationsClassFns
+      .map(classFn => this.ctx.getInstanceBy(classFn as any))
+      .map(f => f as BaseMigration)
+      .filter(migrationInstance => migrationInstance.isReadToRun());
 
     const queryRunner = this.ctx.connection.createQueryRunner();
+    await queryRunner.connect();
 
     try {
       await queryRunner.startTransaction();

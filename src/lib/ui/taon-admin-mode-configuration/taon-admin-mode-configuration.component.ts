@@ -1,5 +1,3 @@
-// @ts-nocheck
-//#region @browser
 //#region imports
 import {
   ChangeDetectorRef,
@@ -14,7 +12,7 @@ import {
   inject,
 } from '@angular/core';
 import { Helpers, _ } from 'tnp-core/src';
-import { TaonAdmin } from './taon-admin.service';
+import { TaonAdminService } from './taon-admin.service';
 import { Stor } from 'taon-storage/src';
 import {
   CdkDrag,
@@ -25,17 +23,36 @@ import {
 } from '@angular/cdk/drag-drop';
 import { BreakpointsService } from 'static-columns/src';
 import { Subject, takeUntil, tap } from 'rxjs';
-import { TaonAdminModeTab } from './models/taon-admin-mode-tabs';
-import { TaonAdminService } from './taon-admin-control.service';
 
-declare const ENV: any;
+import { CommonModule } from '@angular/common';
+import { TaonFullMaterialModule } from '../taon-full-material.module';
+import { StaticColumnsModule } from 'static-columns/src';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgScrollbarModule } from 'ngx-scrollbar';
+import { TaonProgressBarModule } from '../taon-progress-bar';
+import { TaonNotificationsModule } from '../taon-notifications';
+import { TaonSessionPasscodeComponent } from '../taon-session-passcode';
+
 //#endregion
 
+declare const ENV: any;
 @Component({
   //#region component options
-  selector: 'app-taon-admin-mode-configuration',
+  selector: 'taon-admin-mode-configuration',
   templateUrl: './taon-admin-mode-configuration.component.html',
   styleUrls: ['./taon-admin-mode-configuration.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    StaticColumnsModule,
+    FormsModule,
+    NgScrollbarModule,
+    TaonProgressBarModule,
+    TaonNotificationsModule,
+    TaonFullMaterialModule, // TODO import only partial things
+    // TaonDbAdminComponent,
+    TaonSessionPasscodeComponent,
+  ],
   //#endregion
 })
 export class TaonAdminModeConfigurationComponent implements OnInit {
@@ -44,8 +61,6 @@ export class TaonAdminModeConfigurationComponent implements OnInit {
   public readonly cdr = inject(ChangeDetectorRef);
   public readonly taonAdminService = inject(TaonAdminService);
   public readonly isDesktop: boolean;
-  public tabs: TaonAdminModeTab[] = [];
-  public admin: TaonAdmin = window['taon'] as TaonAdmin;
   public isWebSQLMode: boolean = Helpers.isWebSQL;
   public hideTaonToolsInProduction: boolean =
     ENV.hideTaonToolsInProduction && ENV.angularProd;
@@ -65,32 +80,32 @@ export class TaonAdminModeConfigurationComponent implements OnInit {
     : void 0;
 
   // @ts-ignore
-  @Stor.property.in.localstorage
+  @(Stor.property.in.localstorage
     .for(TaonAdminModeConfigurationComponent)
-    .withDefaultValue(0)
+    .withDefaultValue(0))
   dragPositionX: number;
 
   // @ts-ignore
-  @Stor.property.in.localstorage
+  @(Stor.property.in.localstorage
     .for(TaonAdminModeConfigurationComponent)
-    .withDefaultValue(0)
+    .withDefaultValue(0))
   dragPositionY: number;
 
   dragPositionZero = { x: 0, y: 0 } as Point;
   dragPosition: Point;
 
   // @ts-ignore
-  @Stor.property.in.localstorage
+  @(Stor.property.in.localstorage
     .for(TaonAdminModeConfigurationComponent)
-    .withDefaultValue(0)
+    .withDefaultValue(0))
   selectedIndex: number;
 
   @ViewChild('tabGroup') tabGroup;
 
   // @ts-ignore
-  @Stor.property.in.localstorage
+  @(Stor.property.in.localstorage
     .for(TaonAdminModeConfigurationComponent)
-    .withDefaultValue(false)
+    .withDefaultValue(false))
   wasOpenDraggablePopup: boolean;
 
   @Output() taonAdminModeConfigurationDataChanged = new EventEmitter();
@@ -111,8 +126,10 @@ export class TaonAdminModeConfigurationComponent implements OnInit {
   //#endregion
 
   //#region constructor
-  constructor(private breakpointsService: BreakpointsService) {
-    this.admin.cmp = this;
+  constructor(
+    private breakpointsService: BreakpointsService,
+    public admin: TaonAdminService,
+  ) {
     this.breakpointsService
       .listenTo()
       .pipe(takeUntil(this.$destroy))
@@ -120,17 +137,8 @@ export class TaonAdminModeConfigurationComponent implements OnInit {
         // @ts-ignore
         this.isDesktop = breakpoint === 'desktop';
       });
-    this.taonAdminService.init(this);
   }
   //#endregion
-
-  reloadTabs() {
-    this.reloading = true;
-    setTimeout(() => {
-      this.reloading = false;
-      console.log('reloading done');
-    });
-  }
 
   //#region hooks
   async ngOnInit() {
@@ -178,6 +186,17 @@ export class TaonAdminModeConfigurationComponent implements OnInit {
   //#endregion
 
   //#region methods
+  async reloadTabs(): Promise<void> {
+    return new Promise<void>(resolve => {
+      this.reloading = true;
+      setTimeout(() => {
+        this.reloading = false;
+        console.log('reloading done');
+        resolve();
+      });
+    });
+  }
+
   async toogle() {
     // await stor.setItem(IS_OPEN_ADMIN, !this.opened);
     this.opened = !this.opened;
@@ -217,5 +236,3 @@ export class TaonAdminModeConfigurationComponent implements OnInit {
 
   //#endregion
 }
-
-//#endregion

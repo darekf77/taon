@@ -27,7 +27,7 @@ import { URL } from 'url';
 import { fse, http, https } from 'tnp-core/src';
 //#endregion
 //#region @browser
-import { TaonAdmin } from './ui/taon-admin-mode-configuration/taon-admin.service';
+import { TaonAdminService } from './ui/taon-admin-mode-configuration/taon-admin.service';
 //#endregion
 import { UtilsOs } from 'tnp-core/src';
 import { Models } from './models';
@@ -588,7 +588,7 @@ export class EndpointContext {
           let keepWebsqlDbDataAfterReload = false;
           //#region @browser
           keepWebsqlDbDataAfterReload =
-            TaonAdmin.Instance.keepWebsqlDbDataAfterReload; // TODO @LAST
+            TaonAdminService.Instance?.keepWebsqlDbDataAfterReload; // TODO @LAST
           //#endregion
 
           databaseConfig = databaseConfig = Models.DatabaseConfig.from({

@@ -4,3 +4,4 @@ export interface TaonAdminModeTab {
   name: string;
   template: TemplateRef<any>;
 }
+

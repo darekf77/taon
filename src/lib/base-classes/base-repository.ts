@@ -59,7 +59,7 @@ export abstract class BaseRepository<
   public get dbQuery(): MySqlQuerySource {
     //#region @websqlFunc
     if (!this.__dbQuery) {
-      if (!this.__endpoint_context__) {
+      if (!this.ctx) {
         return; // TODO
         throw new Error(
           `[BaseRepository] Context not inited for class ${ClassHelpers.getName(
@@ -67,10 +67,10 @@ export abstract class BaseRepository<
           )}`,
         );
       }
-      const connection = this.__endpoint_context__?.connection;
+      const connection = this.ctx?.connection;
       if (!connection) {
         throw new Error(
-          `[BaseRepository] Database not inited for context ${this.__endpoint_context__?.contextName}`,
+          `[BaseRepository] Database not inited for context ${this.ctx?.contextName}`,
         );
       }
       this.__dbQuery = new MySqlQuerySource(connection);
@@ -83,7 +83,7 @@ export abstract class BaseRepository<
   //#region connection
   public get connection(): DataSourceType {
     //#region @websqlFunc
-    return this.__endpoint_context__?.connection;
+    return this.ctx?.connection;
     //#endregion
   }
   //#endregion

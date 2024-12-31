@@ -13,7 +13,7 @@ export class BaseClass<CloneT extends BaseClass = any> {
   //#region class initialization hook
   /**
    * class initialization hook
-   * taon after class instace creation
+   * taon after class instance creation
    */
   async _() {}
   //#endregion

@@ -5,7 +5,7 @@ import { Models } from './models';
 
 import { ENV } from './env';
 //#region @browser
-import { TaonAdmin } from './ui/taon-admin-mode-configuration/taon-admin.service';
+import { TaonAdminService } from './ui/taon-admin-mode-configuration/taon-admin.service';
 //#endregion
 
 // import { Symbols } from './symbols';
@@ -170,7 +170,7 @@ export const createContext = <
           let keepWebsqlDbDataAfterReload = false;
           //#region @browser
           keepWebsqlDbDataAfterReload =
-            TaonAdmin.Instance.keepWebsqlDbDataAfterReload;
+            TaonAdminService.Instance?.keepWebsqlDbDataAfterReload;
           //#endregion
           if (!Helpers.isNode && keepWebsqlDbDataAfterReload) {
             Helpers.info(`[taon] Keep websql data after reload`);

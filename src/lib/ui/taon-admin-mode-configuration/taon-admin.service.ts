@@ -1,4 +1,3 @@
-// @ts-nocheck
 //#region import
 import { Stor } from 'taon-storage/src';
 import { Helpers, _ } from 'tnp-core/src';
@@ -12,52 +11,52 @@ import { Injectable } from '@angular/core';
 const ENV = Helpers.isBrowser ? window['ENV'] : global['ENV'];
 
 @Injectable({ providedIn: 'root' })
-export class TaonAdmin {
-  public scrollableEnabled = false; // TOOD false by default
-
+export class TaonAdminService {
   //#region singleton
-  private constructor() {
-    // Private constructor ensures the class cannot be instantiated from outside
-    this.scrollableEnabled = !!ENV?.useGlobalNgxScrollbar;
-  }
-  public static get Instance(): TaonAdmin {
-    if (!globalPublicStorage[config.frameworkNames.productionFrameworkName]) {
-      globalPublicStorage[config.frameworkNames.productionFrameworkName] = new TaonAdmin();
-    }
-    return globalPublicStorage[config.frameworkNames.productionFrameworkName];
+  private static _instance: TaonAdminService;
+  public static get Instance() {
+    return this._instance;
   }
   //#endregion
 
   //#region fields & getters
-  public cmp: TaonAdminModeConfigurationComponent;
+  public scrollableEnabled = false; // TOOD false by default
   private onEditMode = new Subject();
   onEditMode$ = this.onEditMode.asObservable();
-  //#endregion
 
   //#region fields & getters / popup is open
-  // @ts-ignore
-  @Stor.property.in.localstorage.for(TaonAdmin).withDefaultValue(false)
+
+  @(Stor.property.in.localstorage.for(TaonAdminService).withDefaultValue(false))
   public adminPanelIsOpen: boolean;
   //#endregion
 
   //#region fields & getters / draggable popup instead side view for admin
-  // @ts-ignore
-  @Stor.property.in.localstorage.for(TaonAdmin).withDefaultValue(false)
+
+  @(Stor.property.in.localstorage.for(TaonAdminService).withDefaultValue(false))
   public draggablePopupMode: boolean;
   //#endregion
 
   //#region fields & getters / draggable popup instead side view for admin
-  // @ts-ignore
-  @Stor.property.in.localstorage.for(TaonAdmin).withDefaultValue(false)
+
+  @(Stor.property.in.localstorage.for(TaonAdminService).withDefaultValue(false))
   public draggablePopupModeFullScreen: boolean;
   //#endregion
 
-  //#region fields & getters / kepp websql database data after reload
+  //#region fields & getters / keep websql database data after reload
   /**
    * Property used in taon
-   */ // @ts-ignore
-  @Stor.property.in.localstorage.for(TaonAdmin).withDefaultValue(false)
+   */
+  @(Stor.property.in.localstorage.for(TaonAdminService).withDefaultValue(false))
   public keepWebsqlDbDataAfterReload: boolean;
+  //#endregion
+
+  //#endregion
+
+  //#region constructor
+  constructor() {
+    TaonAdminService._instance = this;
+    this.scrollableEnabled = !!ENV?.useGlobalNgxScrollbar;
+  }
   //#endregion
 
   //#region methods

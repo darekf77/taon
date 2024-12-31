@@ -1,5 +1,9 @@
 //#region imports
-import { Taon, BaseContext } from 'taon/src';
+import {
+  Taon,
+  BaseContext,
+  TaonAdminModeConfigurationComponent,
+} from 'taon/src';
 import { Helpers } from 'tnp-core/src';
 import { Observable, map } from 'rxjs';
 import {
@@ -39,13 +43,16 @@ const frontendHost2 =
 //#region @browser
 @Component({
   selector: 'app-sample-migration',
-  template: `hello from sample-migration<br />
+  template: `
+  <taon-admin-mode-configuration>
+    hello from sample-migration<br />
     Angular version: {{ angularVersion }}<br />
     <br />
     users from backend
     <ul>
       <li *ngFor="let user of users$ | async">{{ user | json }}</li>
-    </ul> `,
+    </ul>
+  </taon-admin-mode-configuration> `,
   styles: [
     `
       body {
@@ -82,7 +89,7 @@ export class UserApiService {
 //#region @browser
 @NgModule({
   exports: [SampleMigrationComponent],
-  imports: [CommonModule],
+  imports: [CommonModule, TaonAdminModeConfigurationComponent],
   declarations: [SampleMigrationComponent],
 })
 export class SampleMigrationModule {}
@@ -171,10 +178,13 @@ var SecondContext = Taon.createContext(() => ({
 async function start(params?: Taon.StartParams) {
   await MainContext.initialize(params);
   await SecondContext.initialize(params);
+
+  //#region @backend
   if (params.onlyMigrationRun || params.onlyMigrationRevertToTimestamp) {
     console.log('only migration run/revert');
     process.exit(0);
   }
+  //#endregion
 
   if (Taon.isBrowser) {
     const users = (

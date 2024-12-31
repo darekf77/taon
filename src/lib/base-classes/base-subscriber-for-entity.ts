@@ -26,7 +26,7 @@ export abstract class BaseSubscriberForEntity<Entity = any>
    * Called after entity is loaded.
    */
   afterLoad(entity: any) {
-    this.__endpoint_context__.logDb &&
+    this.ctx.logDb &&
       console.log(`AFTER ENTITY LOADED: `, entity);
   }
 
@@ -35,7 +35,7 @@ export abstract class BaseSubscriberForEntity<Entity = any>
    */
   beforeQuery(event: any) {
     // BeforeQueryEvent<any>
-    this.__endpoint_context__.logDb &&
+    this.ctx.logDb &&
       console.log(`BEFORE QUERY: `, event.query);
   }
 
@@ -44,7 +44,7 @@ export abstract class BaseSubscriberForEntity<Entity = any>
    */
   afterQuery(event: any) {
     // AfterQueryEvent<any>
-    this.__endpoint_context__.logDb &&
+    this.ctx.logDb &&
       console.log(`AFTER QUERY: `, event.query);
   }
 
@@ -52,7 +52,7 @@ export abstract class BaseSubscriberForEntity<Entity = any>
    * Called before entity insertion.
    */
   beforeInsert(event: InsertEvent<any>) {
-    this.__endpoint_context__.logDb &&
+    this.ctx.logDb &&
       console.log(`BEFORE ENTITY INSERTED: `, event.entity);
   }
 
@@ -60,7 +60,7 @@ export abstract class BaseSubscriberForEntity<Entity = any>
    * Called after entity insertion.
    */
   afterInsert(event: InsertEvent<any>) {
-    this.__endpoint_context__.logDb &&
+    this.ctx.logDb &&
       console.log(`AFTER ENTITY INSERTED: `, event.entity);
   }
 
@@ -68,7 +68,7 @@ export abstract class BaseSubscriberForEntity<Entity = any>
    * Called before entity update.
    */
   beforeUpdate(event: UpdateEvent<any>) {
-    this.__endpoint_context__.logDb &&
+    this.ctx.logDb &&
       console.log(`BEFORE ENTITY UPDATED: `, event.entity);
   }
 
@@ -76,7 +76,7 @@ export abstract class BaseSubscriberForEntity<Entity = any>
    * Called after entity update.
    */
   afterUpdate(event: UpdateEvent<any>) {
-    this.__endpoint_context__.logDb &&
+    this.ctx.logDb &&
       console.log(`AFTER ENTITY UPDATED: `, event.entity);
   }
 
@@ -84,7 +84,7 @@ export abstract class BaseSubscriberForEntity<Entity = any>
    * Called before entity removal.
    */
   beforeRemove(event: RemoveEvent<any>) {
-    this.__endpoint_context__.logDb &&
+    this.ctx.logDb &&
       console.log(
         `BEFORE ENTITY WITH ID ${event.entityId} REMOVED: `,
         event.entity,
@@ -95,7 +95,7 @@ export abstract class BaseSubscriberForEntity<Entity = any>
    * Called after entity removal.
    */
   afterRemove(event: RemoveEvent<any>) {
-    this.__endpoint_context__.logDb &&
+    this.ctx.logDb &&
       console.log(
         `AFTER ENTITY WITH ID ${event.entityId} REMOVED: `,
         event.entity,
@@ -106,7 +106,7 @@ export abstract class BaseSubscriberForEntity<Entity = any>
    * Called before entity removal.
    */
   beforeSoftRemove(event: SoftRemoveEvent<any>) {
-    this.__endpoint_context__.logDb &&
+    this.ctx.logDb &&
       console.log(
         `BEFORE ENTITY WITH ID ${event.entityId} SOFT REMOVED: `,
         event.entity,
@@ -117,7 +117,7 @@ export abstract class BaseSubscriberForEntity<Entity = any>
    * Called after entity removal.
    */
   afterSoftRemove(event: SoftRemoveEvent<any>) {
-    this.__endpoint_context__.logDb &&
+    this.ctx.logDb &&
       console.log(
         `AFTER ENTITY WITH ID ${event.entityId} SOFT REMOVED: `,
         event.entity,
@@ -128,7 +128,7 @@ export abstract class BaseSubscriberForEntity<Entity = any>
    * Called before entity recovery.
    */
   beforeRecover(event: RecoverEvent<any>) {
-    this.__endpoint_context__.logDb &&
+    this.ctx.logDb &&
       console.log(
         `BEFORE ENTITY WITH ID ${event.entityId} RECOVERED: `,
         event.entity,
@@ -139,7 +139,7 @@ export abstract class BaseSubscriberForEntity<Entity = any>
    * Called after entity recovery.
    */
   afterRecover(event: RecoverEvent<any>) {
-    this.__endpoint_context__.logDb &&
+    this.ctx.logDb &&
       console.log(
         `AFTER ENTITY WITH ID ${event.entityId} RECOVERED: `,
         event.entity,
@@ -150,7 +150,7 @@ export abstract class BaseSubscriberForEntity<Entity = any>
    * Called before transaction start.
    */
   beforeTransactionStart(event: TransactionStartEvent) {
-    this.__endpoint_context__.logDb &&
+    this.ctx.logDb &&
       console.log(`BEFORE TRANSACTION STARTED: `, event);
   }
 
@@ -158,7 +158,7 @@ export abstract class BaseSubscriberForEntity<Entity = any>
    * Called after transaction start.
    */
   afterTransactionStart(event: TransactionStartEvent) {
-    this.__endpoint_context__.logDb &&
+    this.ctx.logDb &&
       console.log(`AFTER TRANSACTION STARTED: `, event);
   }
 
@@ -166,7 +166,7 @@ export abstract class BaseSubscriberForEntity<Entity = any>
    * Called before transaction commit.
    */
   beforeTransactionCommit(event: TransactionCommitEvent) {
-    this.__endpoint_context__.logDb &&
+    this.ctx.logDb &&
       console.log(`BEFORE TRANSACTION COMMITTED: `, event);
   }
 
@@ -174,7 +174,7 @@ export abstract class BaseSubscriberForEntity<Entity = any>
    * Called after transaction commit.
    */
   afterTransactionCommit(event: TransactionCommitEvent) {
-    this.__endpoint_context__.logDb &&
+    this.ctx.logDb &&
       console.log(`AFTER TRANSACTION COMMITTED: `, event);
   }
 
@@ -182,7 +182,7 @@ export abstract class BaseSubscriberForEntity<Entity = any>
    * Called before transaction rollback.
    */
   beforeTransactionRollback(event: TransactionRollbackEvent) {
-    this.__endpoint_context__.logDb &&
+    this.ctx.logDb &&
       console.log(`BEFORE TRANSACTION ROLLBACK: `, event);
   }
 
@@ -190,7 +190,7 @@ export abstract class BaseSubscriberForEntity<Entity = any>
    * Called after transaction rollback.
    */
   afterTransactionRollback(event: TransactionRollbackEvent) {
-    this.__endpoint_context__.logDb &&
+    this.ctx.logDb &&
       console.log(`AFTER TRANSACTION ROLLBACK: `, event);
   }
 }
