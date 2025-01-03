@@ -1118,7 +1118,7 @@
       //#endregion
 
       //#region my packages
-      "taon-typeorm": "18.0.15",
+      "taon-typeorm": "18.0.16",
 
       // "taon-crud": "18.0.5",
       // "taon-ports": "18.0.5",
@@ -1126,10 +1126,10 @@
       // "tnp-cli": "18.0.5",
       "record-replay-req-res-scenario": "18.0.16",
       "ng-talkback": "18.0.16",
-      "vpn-split": "18.0.15",
+      "vpn-split": "18.0.16",
       "node-cli-tester": "18.0.16",
       "static-columns": "18.0.18",
-      "taon-storage": "18.0.25",
+      "taon-storage": "18.0.26",
       "tnp-core": "18.0.43",
       "tnp-config": "18.0.19",
       "ng2-logger": "18.0.19",
