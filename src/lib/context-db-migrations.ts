@@ -106,6 +106,7 @@ export class ContextDbMigrations {
         console.log(
           `Table ${this.DEFAULT_MIGRATION_TABLE_NAME} already exists.`,
         );
+      await queryRunner.commitTransaction();
       await queryRunner.release();
       return; // Exit early if the table exists
     }
@@ -137,6 +138,18 @@ export class ContextDbMigrations {
   //#endregion
 
   //#region methods & getters / revert migration to timestamp
+  private async logSelectALl(name: string, queryRunner: QueryRunner) {
+    console.log(
+      name,
+      (
+        await queryRunner.query(
+          `SELECT * FROM ${this.DEFAULT_MIGRATION_TABLE_NAME} WHERE context = $1`,
+          [this.ctx.contextName],
+        )
+      ).map(m => m.name),
+    );
+  }
+
   async revertMigrationToTimestamp(timestamp: number) {
     //#region @websqlFunc
     if (this.ctx.remoteHost) {
@@ -223,7 +236,8 @@ export class ContextDbMigrations {
       await queryRunner.commitTransaction();
       this.ctx.logMigrations &&
         console.log(
-          'Migrations successfully reverted to the specified timestamp.',
+          `Migrations successfully reverted ` +
+            `to the specified timestamp ${timestamp} .`,
         );
     } catch (error) {
       this.ctx.logMigrations &&
@@ -347,10 +361,20 @@ export class ContextDbMigrations {
       Models.ClassType.MIGRATION,
     );
 
+    // console.log({
+    //   migrationClassesALl: migrationsClassFns.map(f => ClassHelpers.getName(f)),
+    // });
+
     const migrationClassesInstances: BaseMigration[] = migrationsClassFns
       .map(classFn => this.ctx.getInstanceBy(classFn as any))
       .map(f => f as BaseMigration)
       .filter(migrationInstance => migrationInstance.isReadyToRun());
+
+    // console.log({
+    //   migrationClassesInstances: migrationsClassFns.map(f =>
+    //     ClassHelpers.getName(f),
+    //   ),
+    // });
 
     const queryRunner = this.ctx.connection.createQueryRunner();
     await queryRunner.connect();

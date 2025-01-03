@@ -24,8 +24,8 @@ import { VERSION } from '@angular/core';
 //#endregion
 //#endregion
 
-console.log('hello world');
-console.log('Your server will start on port ' + HOST_BACKEND_PORT);
+console.log('[app.ts] hello world');
+console.log('[app.ts] Your server will start on port ' + HOST_BACKEND_PORT);
 const host = 'http://localhost:' + HOST_BACKEND_PORT;
 const host2 = 'http://localhost:' + (HOST_BACKEND_PORT + 1);
 const frontendHost =
@@ -44,15 +44,16 @@ const frontendHost2 =
 @Component({
   selector: 'app-sample-migration',
   template: `
-  <taon-admin-mode-configuration>
-    hello from sample-migration<br />
-    Angular version: {{ angularVersion }}<br />
-    <br />
-    users from backend
-    <ul>
-      <li *ngFor="let user of users$ | async">{{ user | json }}</li>
-    </ul>
-  </taon-admin-mode-configuration> `,
+    <taon-admin-mode-configuration>
+      hello from sample-migration<br />
+      Angular version: {{ angularVersion }}<br />
+      <br />
+      users from backend
+      <ul>
+        <li *ngFor="let user of users$ | async">{{ user | json }}</li>
+      </ul>
+    </taon-admin-mode-configuration>
+  `,
   styles: [
     `
       body {
@@ -98,7 +99,7 @@ export class SampleMigrationModule {}
 
 //#region  sample-migration entity
 @Taon.Entity({ className: 'User' })
-class User extends Taon.Base.AbstractEntity {
+export class User extends Taon.Base.AbstractEntity<User> {
   //#region @websql
   @Taon.Orm.Column.String()
   //#endregion
@@ -143,8 +144,8 @@ var MainContext = Taon.createContext(() => ({
   database: true,
   logs: {
     // db: true,
-    framework: true,
-    migrations: true,
+    // framework: true,
+    // migrations: true,
   },
   // disabledRealtime: true,
 }));
@@ -168,8 +169,8 @@ var SecondContext = Taon.createContext(() => ({
   database: true,
   logs: {
     // db: true,
-    framework: true,
-    migrations: true,
+    // framework: true,
+    // migrations: true,
   },
   // disabledRealtime: true,
 }));
@@ -181,7 +182,6 @@ async function start(params?: Taon.StartParams) {
 
   //#region @backend
   if (params.onlyMigrationRun || params.onlyMigrationRevertToTimestamp) {
-    console.log('only migration run/revert');
     process.exit(0);
   }
   //#endregion
