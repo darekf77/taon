@@ -1,5 +1,5 @@
 //#region imports
-import { Helpers } from 'tnp-core/src';
+import { Helpers, UtilsOs } from 'tnp-core/src';
 import { EndpointContext } from './endpoint-context';
 import { Models } from './models';
 
@@ -173,8 +173,17 @@ export const createContext = <
             TaonAdminService.Instance?.keepWebsqlDbDataAfterReload;
           //#endregion
           if (!Helpers.isNode && keepWebsqlDbDataAfterReload) {
-            Helpers.info(`[taon] Keep websql data after reload`);
+            !UtilsOs.isRunningInCliMode() &&
+              Helpers.info(
+                `[taon] Keeping websql data after reload ` +
+                  `(context=${endpointContextRef.contextName}).`,
+              );
           } else {
+            !UtilsOs.isRunningInCliMode() &&
+              Helpers.info(
+                `[taon] Dropping all tables and data ` +
+                  `(context=${endpointContextRef.contextName}).`,
+              );
             await endpointContextRef.reinitControllers();
           }
           ///#region TODO this may be usefull but for now

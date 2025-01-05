@@ -10,11 +10,15 @@ import { Injectable } from '@angular/core';
 
 const ENV = Helpers.isBrowser ? window['ENV'] : global['ENV'];
 
-@Injectable({ providedIn: 'root' })
+// @Injectable({ providedIn: 'root' }) TODO make it angular service
 export class TaonAdminService {
   //#region singleton
   private static _instance: TaonAdminService;
   public static get Instance() {
+    if (!this._instance) {
+
+      this._instance = new TaonAdminService();
+    }
     return this._instance;
   }
   //#endregion

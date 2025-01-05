@@ -11,7 +11,7 @@
   color="accent"
   aria-label="Taon Admin Mode"
   *ngIf="
-    !admin.draggablePopupMode &&
+    !taonAdminService.draggablePopupMode &&
     isDesktop &&
     !isIframe &&
     !hideTaonToolsInProduction
@@ -23,7 +23,7 @@
 
 <!-- #region small hidden button -->
 <!-- <button class="admin-show-button"
-        *ngIf="!admin.draggablePopupMode && isDesktop"
+        *ngIf="!taonAdminService.draggablePopupMode && isDesktop"
         (click)="toogle()"> Admin </button> -->
 <!-- #endregion -->
 
@@ -43,7 +43,7 @@
   <div class="taon-header-admin-wrapper">
     <columns-container
       class="taon-header-admin"
-      [ngClass]="{ 'draggable-column': admin.draggablePopupMode }">
+      [ngClass]="{ 'draggable-column': taonAdminService.draggablePopupMode }">
       <column
         width="200"
         class="logo-header">
@@ -59,13 +59,14 @@
       <column
         width="40"
         *ngIf="
-          !admin.draggablePopupModeFullScreen && !admin.draggablePopupMode
+          !taonAdminService.draggablePopupModeFullScreen &&
+          !taonAdminService.draggablePopupMode
         ">
         <button
           mat-icon-button
-          *ngIf="admin.draggablePopupMode"
+          *ngIf="taonAdminService.draggablePopupMode"
           (click)="
-            admin.draggablePopupMode = false;
+            taonAdminService.draggablePopupMode = false;
             opened = false;
             wasOpenDraggablePopup = true
           "
@@ -75,7 +76,7 @@
 
         <button
           mat-icon-button
-          *ngIf="!admin.draggablePopupMode"
+          *ngIf="!taonAdminService.draggablePopupMode"
           (click)="toogle()"
           class="admin-close-button">
           <mat-icon>close</mat-icon>
@@ -85,14 +86,14 @@
       <column width="40">
         <button
           mat-icon-button
-          *ngIf="!admin.draggablePopupModeFullScreen"
+          *ngIf="!taonAdminService.draggablePopupModeFullScreen"
           class="admin-close-button"
           (click)="toogleFullScreen()">
           <mat-icon>fullscreen</mat-icon>
         </button>
         <button
           mat-icon-button
-          *ngIf="admin.draggablePopupModeFullScreen"
+          *ngIf="taonAdminService.draggablePopupModeFullScreen"
           class="admin-close-button"
           (click)="toogleFullScreen()">
           <mat-icon>close_fullscreen</mat-icon>
@@ -101,19 +102,19 @@
 
       <column
         width="40"
-        *ngIf="!admin.draggablePopupModeFullScreen">
+        *ngIf="!taonAdminService.draggablePopupModeFullScreen">
         <button
           mat-icon-button
-          *ngIf="!admin.draggablePopupMode"
-          (click)="admin.draggablePopupMode = true"
+          *ngIf="!taonAdminService.draggablePopupMode"
+          (click)="taonAdminService.draggablePopupMode = true"
           class="admin-close-button">
           <mat-icon>launch</mat-icon>
         </button>
 
         <button
           mat-icon-button
-          *ngIf="admin.draggablePopupMode"
-          (click)="admin.draggablePopupMode = false; resetDrag()"
+          *ngIf="taonAdminService.draggablePopupMode"
+          (click)="taonAdminService.draggablePopupMode = false; resetDrag()"
           class="admin-close-button">
           <mat-icon style="transform: rotate(180deg)">login</mat-icon>
         </button>
@@ -123,7 +124,7 @@
   <!-- #endregion -->
 
   <columns-container
-    [ngClass]="{ 'draggable-column': admin.draggablePopupMode }">
+    [ngClass]="{ 'draggable-column': taonAdminService.draggablePopupMode }">
     <column grow>
       <mat-tab-group
         dynamicHeight
@@ -140,9 +141,11 @@
               <mat-card-content>
                 <mat-checkbox
                   [disabled]="!isWebSQLMode"
-                  [ngModel]="admin.keepWebsqlDbDataAfterReload"
+                  [ngModel]="taonAdminService.keepWebsqlDbDataAfterReload"
                   (change)="
-                    admin.setKeepWebsqlDbDataAfterReload($event.checked)
+                    taonAdminService.setKeepWebsqlDbDataAfterReload(
+                      $event.checked
+                    )
                   ">
                   Don't remove data when reloading
                 </mat-checkbox>
@@ -162,7 +165,9 @@
 <div
   class="draggable-popup-mode-window"
   *ngIf="
-    admin.draggablePopupMode && !admin.draggablePopupModeFullScreen && !isIframe
+    taonAdminService.draggablePopupMode &&
+    !taonAdminService.draggablePopupModeFullScreen &&
+    !isIframe
   "
   cdkDrag
   [cdkDragFreeDragPosition]="dragPosition"
@@ -177,8 +182,8 @@
 <div
   class="draggable-popup-mode-window-full"
   *ngIf="
-    admin.draggablePopupMode &&
-    admin.draggablePopupModeFullScreen &&
+    taonAdminService.draggablePopupMode &&
+    taonAdminService.draggablePopupModeFullScreen &&
     !isIframe &&
     !reloading
   "
@@ -194,22 +199,22 @@
   *ngIf="
     (isIframe ||
       !isDesktop ||
-      admin.draggablePopupMode ||
-      admin.draggablePopupModeFullScreen) &&
+      taonAdminService.draggablePopupMode ||
+      taonAdminService.draggablePopupModeFullScreen) &&
     !reloading
   "
   style="width: 100%; display: block"
   class="content">
   <ng-container
     [ngTemplateOutlet]="
-      admin.scrollableEnabled ? content : contentNoScroll
+      taonAdminService.scrollableEnabled ? content : contentNoScroll
     "></ng-container>
 </div>
 <!-- #endregion -->
 
 <!-- #region draggable popup window -->
 <mat-drawer-container
-  *ngIf="!admin.draggablePopupMode && isDesktop && !isIframe"
+  *ngIf="!taonAdminService.draggablePopupMode && isDesktop && !isIframe"
   class="example-container"
   [style.height.px]="height"
   style="background-color: transparent"
@@ -224,9 +229,9 @@
   </mat-drawer>
   <mat-drawer-content style="overflow: hidden">
     <ng-container
-      *ngIf="!admin.draggablePopupMode && !reloading"
+      *ngIf="!taonAdminService.draggablePopupMode && !reloading"
       [ngTemplateOutlet]="
-        admin.scrollableEnabled ? content : contentNoScroll
+        taonAdminService.scrollableEnabled ? content : contentNoScroll
       "></ng-container>
   </mat-drawer-content>
 </mat-drawer-container>

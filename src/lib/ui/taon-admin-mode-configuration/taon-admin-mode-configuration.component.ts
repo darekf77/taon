@@ -59,7 +59,8 @@ export class TaonAdminModeConfigurationComponent implements OnInit {
   //#region fields & getters
   $destroy = new Subject();
   public readonly cdr = inject(ChangeDetectorRef);
-  public readonly taonAdminService = inject(TaonAdminService);
+  public readonly taonAdminService: TaonAdminService =
+    TaonAdminService.Instance;
   public readonly isDesktop: boolean;
   public isWebSQLMode: boolean = Helpers.isWebSQL;
   public hideTaonToolsInProduction: boolean =
@@ -111,7 +112,7 @@ export class TaonAdminModeConfigurationComponent implements OnInit {
   @Output() taonAdminModeConfigurationDataChanged = new EventEmitter();
   @Input() taonAdminModeConfigurationData: any = {};
   public get opened() {
-    return !this.isIframe && this.admin.adminPanelIsOpen;
+    return !this.isIframe && this.taonAdminService.adminPanelIsOpen;
   }
   public set opened(v) {
     if (v && !this.openedOnce) {
@@ -119,17 +120,14 @@ export class TaonAdminModeConfigurationComponent implements OnInit {
     }
     if (this.wasOpenDraggablePopup) {
       this.wasOpenDraggablePopup = false;
-      this.admin.draggablePopupMode = true;
+      this.taonAdminService.draggablePopupMode = true;
     }
-    this.admin.adminPanelIsOpen = v;
+    this.taonAdminService.adminPanelIsOpen = v;
   }
   //#endregion
 
   //#region constructor
-  constructor(
-    private breakpointsService: BreakpointsService,
-    public admin: TaonAdminService,
-  ) {
+  constructor(private breakpointsService: BreakpointsService) {
     this.breakpointsService
       .listenTo()
       .pipe(takeUntil(this.$destroy))
@@ -144,7 +142,7 @@ export class TaonAdminModeConfigurationComponent implements OnInit {
   async ngOnInit() {
     await Stor.awaitPendingOperatios();
     // console.log('PENDING OPERATION AWAITED ', this.selectedIndex)
-    // console.log('draggablePopupModeFullScreen ', this.admin.draggablePopupModeFullScreen)
+    // console.log('draggablePopupModeFullScreen ', this.taonAdminService.draggablePopupModeFullScreen)
 
     this.dragPosition = { x: this.dragPositionX, y: this.dragPositionY };
     this.openedOnce = this.opened;
@@ -162,7 +160,7 @@ export class TaonAdminModeConfigurationComponent implements OnInit {
       this.height = window.innerHeight;
 
       // TODO QUICK_FIX for draggble popup proper first index load on tabs
-      if (this.admin.draggablePopupMode) {
+      if (this.taonAdminService.draggablePopupMode) {
         this.reloadTabs();
       }
 
@@ -203,9 +201,9 @@ export class TaonAdminModeConfigurationComponent implements OnInit {
   }
 
   async toogleFullScreen() {
-    this.admin.draggablePopupMode = true;
-    this.admin.draggablePopupModeFullScreen =
-      !this.admin.draggablePopupModeFullScreen;
+    this.taonAdminService.draggablePopupMode = true;
+    this.taonAdminService.draggablePopupModeFullScreen =
+      !this.taonAdminService.draggablePopupModeFullScreen;
     this.resetDrag();
   }
 

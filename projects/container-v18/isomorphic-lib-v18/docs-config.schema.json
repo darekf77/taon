@@ -14,7 +14,7 @@
           "items": {
             "type": "string"
           },
-          "description": "relative pathes (or titles) of md files for proper order"
+          "description": "relative paths (or titles) of md files for proper order"
         },
         "omitFilesPatters": {
           "type": "array",
@@ -33,7 +33,7 @@
                 "properties": {
                   "packageNameWithPath": {
                     "type": "string",
-                    "description": "path to *.md file Examples: taon-core/README.md taon-core/docs/README.md # deep pathes allowed"
+                    "description": "path to *.md file Examples: taon-core/README.md taon-core/docs/README.md # deep paths allowed"
                   },
                   "magicRenameRules": {
                     "type": "string",
@@ -41,7 +41,7 @@
                   },
                   "overrideTitle": {
                     "type": "string",
-                    "description": "override menu item name (by default titile is relative path)         *"
+                    "description": "override menu item name (by default title is relative path)         *"
                   }
                 },
                 "required": [
@@ -90,7 +90,7 @@
           "additionalProperties": {
             "type": "string"
           },
-          "description": "rename/override titles in menu, exmaple: README.md => Home"
+          "description": "rename/override titles in menu, example: README.md => Home"
         },
         "customJsPath": {
           "type": "string"
