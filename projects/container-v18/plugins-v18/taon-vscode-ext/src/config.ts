@@ -6,6 +6,24 @@ const group = `TAON CLI essentials`;
 
 export const commands: CommandType[] = (
   [
+    //#region CREATE MIGRATION
+    {
+      title: `${FRAMEWORK_NAME.toUpperCase()} CREATE MIGRATION`,
+      exec: `${FRAMEWORK_NAME} migration:create %migrationname%`,
+      options: {
+        title: `taon is adding new migration..`,
+        cancellable: false,
+        findNearestProject: true,
+        findNearestProjectType:'isomorphic-lib',
+        resolveVariables: [
+          {
+            variable: 'migrationname',
+            placeholder: `my new db change`,
+          },
+        ],
+      },
+    },
+    //#endregion
     //#region MAGIC COPY AND RENAME
     {
       title: `${FRAMEWORK_NAME.toUpperCase()} MAGIC COPY AND RENAME`,

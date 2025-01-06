@@ -10,7 +10,6 @@
     "aeschli.vscode-css-formatter",
     "alefragnani.Bookmarks",
     "alexdima.copy-relative-path",
-    "alexiv.vscode-angular2-files",
     "amodio.toggle-excluded-files",
     "cg-cnu.vscode-path-tools",
     "chrisdias.vscode-opennewinstance",
@@ -70,6 +69,7 @@
     "ms-vscode-remote.remote-ssh",
     "tomoki1207.pdf",
     "hediet.vscode-drawio",
-    "antfu.file-nesting"
+    "christian-kohler.path-intellisense",
+    "thebearingedge.vscode-sql-lit"
   ]
 }
