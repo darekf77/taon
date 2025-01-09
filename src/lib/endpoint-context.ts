@@ -29,7 +29,8 @@ import { fse, http, https } from 'tnp-core/src';
 //#region @browser
 import { TaonAdminService } from './ui/taon-admin-mode-configuration/taon-admin.service';
 //#endregion
-import { UtilsOs } from 'tnp-core/src';
+import { UtilsOs, Utils } from 'tnp-core/src';
+import { crossPlatformPath } from 'tnp-core/src';
 import { Models } from './models';
 import { ClassHelpers } from './helpers/class-helpers';
 import { Symbols } from './symbols';
@@ -52,7 +53,6 @@ import { getResponseValue } from './get-response-value';
 import type { Application } from 'express';
 import axios from 'axios';
 import type { NgZone } from '@angular/core';
-
 import {
   DataSource,
   DataSourceOptions,
@@ -1497,9 +1497,15 @@ export class EndpointContext {
     const contexts: EndpointContext[] = [this];
     //#region @websql
 
-    const troutes = this.activeRoutes.map(({ method, routePath }) => {
+    const troutes = Utils.uniqArray(
+      this.activeRoutes.map(f => {
+        return `${f.method} ${f.routePath}`;
+      }),
+    ).map(f => {
+      const [method, routePath] = f.split(' ');
       return (
-        TaonHelpers.fillUpTo(method.toUpperCase() + ':', 10) +
+        `\n### ${_.startCase(_.last(routePath.split('/')))}\n` +
+        TaonHelpers.fillUpTo(method.toUpperCase() + ' ', 10) +
         this.uri.href.replace(/\/$/, '') +
         routePath
       );
@@ -1508,23 +1514,20 @@ export class EndpointContext {
       // .fillUpTo(10)}${context.uri.href.replace(/\/$/, '')}${routePath}`
     });
     const routes = [
-      ...['', `---------- FOR HOST ${this.uri.href} ----------`],
+      ...['', `#  ROUTES FOR HOST ${this.uri.href} `],
       ...troutes,
-    ];
-    const fileName = path.join(
+    ].join('\n');
+    const fileName = crossPlatformPath([
       //#region @backend
       process.cwd(),
       //#endregion
-      `tmp-routes-${_.kebabCase(this.config.contextName)}.json`,
-    );
+      `routes-${this.config.contextName}.rest`,
+    ]);
 
     this.logFramework && console.log(`[taon] routes file: ${fileName} `);
     // Helpers.log(JSON.stringify(routes, null, 4))
     //#region @backend
-    fse.writeJSONSync(fileName, routes, {
-      spaces: 2,
-      encoding: 'utf8',
-    });
+    Helpers.writeFile(fileName, routes);
     //#endregion
     //#endregion
   }
