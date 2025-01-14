@@ -190,6 +190,7 @@ export namespace Models {
     subscribers?: SUBSCRIBERS;
     migrations?: MIGRATIONS;
     session?: ISession;
+    skipWritingServerRoutes?: boolean;
     productionMode?: boolean;
     abstract?: boolean;
     logs?: boolean | ConnectionOptionsLogs;

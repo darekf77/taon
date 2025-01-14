@@ -1,6 +1,7 @@
 //#region @websql
 import * as tsorm from 'taon-typeorm/src';
 //#endregion
+import { _ } from 'tnp-core/src';
 
 //#region orm
 export namespace Orm {
@@ -37,8 +38,14 @@ export namespace Orm {
     /**
      * 100 characters varchar
      */
-    export const String = () =>
-      tsorm.Column({ type: 'varchar', length: 100, nullable: true });
+    export const String = <T = string>(defaultValue:T = null) =>
+      tsorm.Column({ type: 'varchar', length: 100, nullable: _.isNil(defaultValue)   , default: defaultValue });
+
+    /**
+     * 500 characters varchar
+     */
+    export const String500 = <T = string>(defaultValue:T = null) =>
+      tsorm.Column({ type: 'varchar', length: 500, nullable: _.isNil(defaultValue)   , default: defaultValue });
 
     export const Number = () =>
       tsorm.Column({ type: 'int',  nullable: true });

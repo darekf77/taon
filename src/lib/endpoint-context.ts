@@ -127,6 +127,8 @@ export class EndpointContext {
   }[] = [];
   //#endregion
 
+  public readonly skipWritingServerRoutes: boolean = false;
+
   //#region fields / types from contexts
   private injectableTypesfromContexts = [
     Models.ClassType.CONTROLLER,
@@ -317,6 +319,15 @@ export class EndpointContext {
         `[taon-config] Your 'remoteHost' must start with http:// or https://`,
       );
     }
+
+    //#region resolve if skipping writing server routes
+    //@ts-expect-error overriding readonly
+    this.skipWritingServerRoutes = _.isBoolean(
+      this.config.skipWritingServerRoutes,
+    )
+      ? this.config.skipWritingServerRoutes
+      : false;
+    //#endregion
 
     //#region resolve mode
     if (this.config.host) {
@@ -1491,7 +1502,11 @@ export class EndpointContext {
 
   //#region methods & getters / write active routes
   public writeActiveRoutes() {
-    if (this.remoteHost || this.isRunOrRevertOnlyMigrationAppStart) {
+    if (
+      this.remoteHost ||
+      this.isRunOrRevertOnlyMigrationAppStart ||
+      this.skipWritingServerRoutes
+    ) {
       return;
     }
     const contexts: EndpointContext[] = [this];
