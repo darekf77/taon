@@ -35,6 +35,7 @@
     "**/webpack.backend-dist-build.js": true,
     "**/run.js": true,
     "**/run-org.js": true,
+    "**/update-vscode-package-json.js": true,
     "**/tsconfig.isomorphic.json.filetemplate": true,
     "**/tsconfig.isomorphic-flat-dist.json.filetemplate": true,
     "**/tsconfig.browser.json.filetemplate": true,
