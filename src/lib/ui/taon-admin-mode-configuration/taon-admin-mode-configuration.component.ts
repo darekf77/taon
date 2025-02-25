@@ -1,5 +1,13 @@
 //#region imports
 import {
+  CdkDrag,
+  CdkDragEnd,
+  CdkDragMove,
+  CdkDragRelease,
+  Point,
+} from '@angular/cdk/drag-drop';
+import { CommonModule } from '@angular/common';
+import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
@@ -9,29 +17,22 @@ import {
   OnInit,
   Output,
   ViewChild,
-  inject,
+  inject, AfterViewInit, OnDestroy,
 } from '@angular/core';
-import { Helpers, _ } from 'tnp-core/src';
-import { TaonAdminService } from './taon-admin.service';
-import { Stor } from 'taon-storage/src';
-import {
-  CdkDrag,
-  CdkDragEnd,
-  CdkDragMove,
-  CdkDragRelease,
-  Point,
-} from '@angular/cdk/drag-drop';
-import { BreakpointsService } from 'static-columns/src';
-import { Subject, takeUntil, tap } from 'rxjs';
-
-import { CommonModule } from '@angular/common';
-import { TaonFullMaterialModule } from '../taon-full-material.module';
-import { StaticColumnsModule } from 'static-columns/src';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgScrollbarModule } from 'ngx-scrollbar';
-import { TaonProgressBarModule } from '../taon-progress-bar';
+import { Subject, takeUntil, tap } from 'rxjs';
+import { StaticColumnsModule } from 'static-columns/src';
+import { BreakpointsService } from 'static-columns/src';
+import { Stor } from 'taon-storage/src';
+import { Helpers, _ } from 'tnp-core/src';
+
+import { TaonFullMaterialModule } from '../taon-full-material.module';
 import { TaonNotificationsModule } from '../taon-notifications';
+import { TaonProgressBarModule } from '../taon-progress-bar';
 import { TaonSessionPasscodeComponent } from '../taon-session-passcode';
+
+import { TaonAdminService } from './taon-admin.service';
 
 //#endregion
 
@@ -55,7 +56,7 @@ declare const ENV: any;
   ],
   //#endregion
 })
-export class TaonAdminModeConfigurationComponent implements OnInit {
+export class TaonAdminModeConfigurationComponent implements OnInit, AfterViewInit, OnDestroy {
   //#region fields & getters
   $destroy = new Subject();
   public readonly cdr = inject(ChangeDetectorRef);
