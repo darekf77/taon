@@ -5308,29 +5308,6 @@
           "type": "object",
           "additionalProperties": false,
           "properties": {
-            "type": {
-              "type": "string",
-              "const": "container"
-            },
-            "resources": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              },
-              "description": "Static resurces for site project, that are going to be included in release dist"
-            },
-            "smart": {
-              "type": "boolean",
-              "description": "Project is smart container for organization npm project"
-            },
-            "monorepo": {
-              "type": "boolean",
-              "description": "Project is monorepo"
-            },
-            "smartContainerBuildTarget": {
-              "type": "string",
-              "description": "Main project for smart container command \"taon start\" will start this project"
-            },
             "version": {
               "$ref": "#/definitions/CoreModels.FrameworkVersion",
               "description": "version of taon framework for project"
@@ -10621,6 +10598,29 @@
               },
               "additionalProperties": false,
               "deprecated": true
+            },
+            "type": {
+              "type": "string",
+              "const": "container"
+            },
+            "resources": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Static resurces for site project, that are going to be included in release dist"
+            },
+            "smart": {
+              "type": "boolean",
+              "description": "Project is smart container for organization npm project"
+            },
+            "monorepo": {
+              "type": "boolean",
+              "description": "Project is monorepo"
+            },
+            "smartContainerBuildTarget": {
+              "type": "string",
+              "description": "Main project for smart container command \"taon start\" will start this project"
             }
           },
           "required": [

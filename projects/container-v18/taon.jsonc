@@ -2,11 +2,13 @@
   "resources": [
     "README.md", // hello
   ],
-
-  "overrided": {
-    "ignoreDepsPattern": [],
-    "includeAsDev": [],
-    "includeOnly": [],
+  "smartContainerBuildTarget": "",
+  "type": "container",
+  "isCoreProject": true,
+  "version": "v18",
+  "packageJsonOverride": {
+    "license": "UNLICENSED",
+    "private": true,
     "dependencies": {
       //#region not needed anymore @deprecated
       "@angular/http": null,
@@ -1156,26 +1158,5 @@
       //#endregion
       "taon": "18.0.25",
     },
-    "linkedFolders": [],
-    "npmFixes": [],
   },
-
-  "smartContainerBuildTarget": "",
-  "linkedRepos": [],
-
-  "libReleaseOptions": {
-    "cliBuildNoDts": false,
-    "cliBuildObscure": false,
-    "cliBuildIncludeNodeModules": false,
-    "cliBuildUglify": false,
-  },
-
-  "smartContainerTarget": "",
-  "type": "container",
-  "isCoreProject": true,
-  "version": "v18",
-  "license": "UNLICENSED",
-  "private": true,
-  "workerPlugins": {},
-  "packageJsonOverride": {}
 }

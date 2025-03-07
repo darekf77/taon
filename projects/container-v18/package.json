@@ -416,7 +416,8 @@
     "version": "v18",
     "license": "UNLICENSED",
     "private": true,
-    "workerPlugins": {}
+    "workerPlugins": {},
+    "packageJsonOverride": {}
   },
   "dependencies": {
     "@angular-builders/custom-webpack": "~18.0.0",
