@@ -2,6 +2,7 @@
   "resources": [
     "README.md", // hello
   ],
+
   "overrided": {
     "ignoreDepsPattern": [],
     "includeAsDev": [],
@@ -1121,7 +1122,7 @@
       //#endregion
 
       //#region my packages
-      "taon-typeorm": "18.0.18",
+      "taon-typeorm": "18.0.19",
 
       // "taon-crud": "18.0.5",
       // "taon-ports": "18.0.5",
@@ -1129,10 +1130,10 @@
       // "tnp-cli": "18.0.5",
       "record-replay-req-res-scenario": "18.0.19",
       "ng-talkback": "18.0.19",
-      "vpn-split": "18.0.18",
+      "vpn-split": "18.0.19",
       "node-cli-tester": "18.0.19",
       "static-columns": "18.0.21",
-      "taon-storage": "18.0.28",
+      "taon-storage": "18.0.29",
       "tnp-core": "18.0.47",
       "tnp-config": "18.0.22",
       "ng2-logger": "18.0.22",
@@ -1158,14 +1159,17 @@
     "linkedFolders": [],
     "npmFixes": [],
   },
+
   "smartContainerBuildTarget": "",
   "linkedRepos": [],
+
   "libReleaseOptions": {
     "cliBuildNoDts": false,
     "cliBuildObscure": false,
     "cliBuildIncludeNodeModules": false,
     "cliBuildUglify": false,
   },
+
   "smartContainerTarget": "",
   "type": "container",
   "isCoreProject": true,
@@ -1173,4 +1177,5 @@
   "license": "UNLICENSED",
   "private": true,
   "workerPlugins": {},
+  "packageJsonOverride": {}
 }

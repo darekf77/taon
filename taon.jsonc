@@ -44,5 +44,6 @@
   "license": "MIT",
   "private": false,
   "author": "Dariusz Filipiak",
-  "homepage": "https://github.com/darekf77/taon#readme"
+  "homepage": "https://github.com/darekf77/taon#readme",
+  "packageJsonOverride": {}
 }
