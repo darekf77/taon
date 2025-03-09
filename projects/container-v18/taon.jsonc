@@ -7,8 +7,7 @@
   "isCoreProject": true,
   "version": "v18",
   "packageJsonOverride": {
-    "license": "UNLICENSED",
-    "private": true,
+    "author":"Dariusz Filipiak",
     "dependencies": {
       //#region not needed anymore @deprecated
       "@angular/http": null,

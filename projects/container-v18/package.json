@@ -1,4 +1,8 @@
 {
+  "name": "container-v18",
+  "version": "0.0.0",
+  "license": "UNLICENSED",
+  "author": "Dariusz Filipiak",
   "dependencies": {
     "@angular-builders/custom-webpack": "~18.0.0",
     "@angular-devkit/build-angular": "~18.1.4",
@@ -313,9 +317,5 @@
     "zone.js": "~0.13.0"
   },
   "devDependencies": {},
-  "license": "UNLICENSED",
-  "main": "dist/app.electron.js",
-  "name": "container-v18",
-  "private": true,
-  "version": "0.0.0"
+  "main": "dist/app.electron.js"
 }
