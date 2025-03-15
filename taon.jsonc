@@ -1,5 +1,7 @@
 {
+  "resources": ["README.md", "bin"],
   "type": "isomorphic-lib",
+
   "version": "v18",
 
   "dependenciesNamesForNpmLib": [
@@ -12,9 +14,7 @@
     "taon-type-sql",
     "socket.io"
   ],
-
   "additionalNpmNames": [],
-  "resources": ["README.md", "bin"],
 
   "packageJsonOverride": {
     "author": "Dariusz Filipiak",
