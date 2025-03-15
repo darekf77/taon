@@ -13,6 +13,11 @@ yarn-error.log
 testem.log
 /typings
 app.hosts.ts
+/.firedev
+/.taon
+/.tnp
+/docs-config.schema.json
+/taon-config.schema.json
 /**/*._auto-generated_.ts
 /**/BUILD-INFO.md
 /linked-repos
@@ -48,9 +53,16 @@ Thumbs.db
 /.sourcemaps
 /src-for-stanalone
 /components-for-stanalone
+/projects/tmp*
 !tsconfig*
-
+!webpack.*
 
 # =====================
 !taon.jsonc
 !*.filetemplate
+
+
+
+
+/*.sqlite
+/*.rest

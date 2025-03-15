@@ -6,12 +6,13 @@
     "update-proj.js": false,
     ".vscodeignore": false,
     "*.vsix": false,
+    "*.sh": false,
+    "*.xlsx": false,
+    "scripts": false,
     "**/node_modules": false,
     "**/tmp*": false,
     "**/dist*": false,
-    "**/bundle*": false,
     "**/browser": false,
-    "**/browser*": false,
     "**/websql": false,
     "**/websql*": false,
     "**/module*": false,
@@ -26,6 +27,7 @@
     "**/.sourcemaps": false,
     "**/src-for-stanalone": false,
     "**/components-for-stanalone": false,
+    "**/projects/tmp*": false,
     "**/tsconfig.backend.dist.json": false,
     "**/.gitignore": false,
     "**/.npmignore": false,
@@ -40,8 +42,6 @@
     "**/logo.svg": false
   },
   "search.exclude": {
-    "docs": true,
-    "projects": true,
     "bin": true,
     "local_release": true,
     "node_modules": true,
@@ -50,8 +50,9 @@
     "browser": true,
     "dist": true,
     "package-lock.json": true,
-    "**/docs": true,
-    "**/projects": true,
+    ".firedev": true,
+    ".taon": true,
+    ".tnp": true,
     "**/bin": true,
     "**/local_release": true,
     "**/node_modules": true,
@@ -59,7 +60,11 @@
     "**/.vscode": true,
     "**/browser": true,
     "**/dist": true,
-    "**/package-lock.json": true
+    "**/package-lock.json": true,
+    "**/.firedev": true,
+    "**/.taon": true,
+    "**/.tnp": true,
+    "projects": true
   },
   "typescript.tsc.autoDetect": "off",
   "html.format.wrapAttributes": "force-aligned",
@@ -115,5 +120,20 @@
   "editor.suggest.snippetsPreventQuickSuggestions": false,
   "editor.inlineSuggest.enabled": true,
   "prettier.prettierPath": "./node_modules/prettier",
-  "prettier.endOfLine": "auto"
+  "prettier.endOfLine": "auto",
+  "window.title": "projects/container-v18/vscode-ext-v18  [ ${activeEditorShort} ]",
+  "json.schemas": [
+    {
+      "fileMatch": [
+        "/docs-config.jsonc"
+      ],
+      "url": "./docs-config.schema.json"
+    },
+    {
+      "fileMatch": [
+        "/taon.jsonc"
+      ],
+      "url": "./taon-config.schema.json"
+    }
+  ]
 }

@@ -32,7 +32,8 @@
     "workerPlugins": {},
     "license": "UNLICENSED",
     "private": true,
-    "main": "index.js"
+    "main": "index.js",
+    "packageJsonOverride": {}
   },
   "name": "isomorphic-lib-v18",
   "version": "16.0.0",

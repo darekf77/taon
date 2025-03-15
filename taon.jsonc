@@ -1,48 +1,40 @@
 {
-  "resources": ["README.md", "bin"],
-
-  "overrided": {
-    "linkedFolders": [],
-    "includeAsDev": [],
-
-    "includeOnly": [
-      "tnp",
-      "tslib",
-      "ora",
-      "ng2-rest",
-      "json10",
-      "lodash-walk-object",
-      "taon-type-sql",
-      "socket.io"
-    ],
-
-    "ignoreDepsPattern": [],
-    "dependencies": {},
-    "npmFixes": []
-  },
-
-  "smartContainerBuildTarget": "",
-  "linkedRepos": [],
-
-  "libReleaseOptions": {
-    "nodts": false,
-    "obscure": false,
-    "ugly": false,
-    "includeNodeModules": false,
-    "cliBuildNoDts": false,
-    "cliBuildObscure": false,
-    "cliBuildIncludeNodeModules": false,
-    "cliBuildUglify": false
-  },
-
-  "smartContainerTarget": "",
   "type": "isomorphic-lib",
   "version": "v18",
+
+  "dependenciesNamesForNpmLib": [
+    "tnp",
+    "tslib",
+    "ora",
+    "ng2-rest",
+    "json10",
+    "lodash-walk-object",
+    "taon-type-sql",
+    "socket.io"
+  ],
+
   "additionalNpmNames": [],
-  "scripts": {},
-  "description": "Isomorphic solution for backend and frontend",
-  "license": "MIT",
-  "private": false,
-  "author": "Dariusz Filipiak",
-  "homepage": "https://github.com/darekf77/taon#readme"
+  "resources": ["README.md", "bin"],
+
+  "packageJsonOverride": {
+    "author": "Dariusz Filipiak",
+
+    "bugs": {
+      "url": "https://github.com/darekf77/taon/issues"
+    },
+
+    "description": "Isomorphic solution for backend and frontend",
+    "homepage": "https://github.com/darekf77/taon#readme",
+    "license": "MIT",
+    "private": false,
+
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/darekf77/taon.git"
+    },
+
+    "scripts": {
+      "mkdocs": "python3 -m mkdocs"
+    }
+  }
 }

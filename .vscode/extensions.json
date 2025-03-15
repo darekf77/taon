@@ -61,13 +61,14 @@
     "davidanson.vscode-markdownlint",
     "bibhasdn.unique-lines",
     "streetsidesoftware.code-spell-checker",
-    "pranaygp.vscode-css-peek",
     "gruntfuggly.todo-tree",
     "ms-vscode-remote.remote-ssh",
     "tomoki1207.pdf",
     "hediet.vscode-drawio",
     "humao.rest-client",
     "christian-kohler.path-intellisense",
-    "thebearingedge.vscode-sql-lit"
+    "thebearingedge.vscode-sql-lit",
+    "ms-vscode-remote.remote-wsl",
+    "kgrzywocz.wsl-path"
   ]
 }
