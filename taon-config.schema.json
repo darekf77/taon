@@ -1,0 +1,610 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/Models.TaonConfig",
+  "definitions": {
+    "Models.TaonConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/CoreModels.LibType"
+        },
+        "version": {
+          "$ref": "#/definitions/CoreModels.FrameworkVersion"
+        },
+        "smartContainerBuildTarget": {
+          "type": "string"
+        },
+        "smart": {
+          "type": "boolean"
+        },
+        "monorepo": {
+          "type": "boolean"
+        },
+        "libReleaseOptions": {
+          "type": "object",
+          "properties": {
+            "cliBuildObscure": {
+              "type": "boolean"
+            },
+            "cliBuildUglify": {
+              "type": "boolean"
+            },
+            "cliBuildNoDts": {
+              "type": "boolean"
+            },
+            "cliBuildIncludeNodeModules": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        },
+        "isCoreProject": {
+          "type": "boolean",
+          "description": "project is template for other project"
+        },
+        "scripts": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "license": {
+          "type": "string"
+        },
+        "private": {
+          "type": "boolean",
+          "description": "if true => package is private"
+        },
+        "author": {
+          "type": "string"
+        },
+        "homepage": {
+          "type": "string"
+        },
+        "overrided": {
+          "type": "object",
+          "properties": {
+            "tsconfig": {
+              "type": "object",
+              "properties": {
+                "constructor": {
+                  "type": "object",
+                  "properties": {
+                    "prototype": {},
+                    "length": {
+                      "type": "number"
+                    },
+                    "arguments": {},
+                    "caller": {
+                      "$ref": "#/definitions/interface-731470504-9888-11315-731470504-0-215038"
+                    }
+                  },
+                  "required": [
+                    "prototype",
+                    "length",
+                    "arguments",
+                    "caller"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "constructor"
+              ],
+              "additionalProperties": false
+            },
+            "dedupe": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "ignoreDepsPattern": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "includeOnly": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "includeAsDev": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "string",
+                  "const": "*"
+                }
+              ]
+            },
+            "linkedFolders": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "type": "string"
+                  },
+                  "to": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "from",
+                  "to"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "dependencies": {
+              "$ref": "#/definitions/Models.DependenciesFromPackageJsonStyle"
+            }
+          },
+          "additionalProperties": false,
+          "description": "Override automation generation"
+        },
+        "main": {
+          "type": "string"
+        },
+        "module": {
+          "type": "string"
+        },
+        "exports": {
+          "type": "object"
+        },
+        "name": {
+          "type": "string"
+        },
+        "linkedRepos": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Models.LinkedRepo"
+          },
+          "description": "for type-orm fork"
+        },
+        "workerPlugins": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "deprecated": "worker plugins for cli\r\n\r\nworkerPlugin: {\r\n 'tnp-db': '',\r\n 'tnp-db-autoupdate': '/up'\r\n}"
+        },
+        "usesItsOwnNodeModules": {
+          "type": "boolean",
+          "description": "let project use it own node_modules instead linking them from core container"
+        },
+        "targetProjects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Models.TargetProject"
+          }
+        },
+        "frameworks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CoreModels.UIFramework"
+          },
+          "deprecated": "framework available inside project/app"
+        },
+        "additionalNpmNames": {
+          "type": "boolean",
+          "deprecated": true
+        },
+        "overrideCoreDeps": {
+          "type": "boolean",
+          "description": "only for container"
+        },
+        "isCommandLineToolOnly": {
+          "type": "boolean",
+          "description": "Easy way to skip browser compilation",
+          "deprecated": true
+        },
+        "isGlobalSystemTool": {
+          "type": "boolean",
+          "deprecated": true
+        },
+        "useFramework": {
+          "type": "boolean",
+          "description": "Only for isomorphic lib",
+          "deprecated": "- if true => generate controllers.ts, entities.ts"
+        },
+        "core": {
+          "type": "object",
+          "properties": {
+            "dependencies": {
+              "type": "object",
+              "properties": {
+                "always": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "this dependenices are always included in some way"
+                },
+                "asDevDependencies": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "this dependencies are only included as devDependencies"
+                },
+                "trusted": {
+                  "$ref": "#/definitions/Models.TrustedType"
+                },
+                "dedupe": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "list of package to dedupe"
+                },
+                "stubForBackend": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "common": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/definitions/Models.DependenciesFromPackageJsonStyle"
+                    },
+                    {
+                      "type": "object",
+                      "additionalProperties": {
+                        "$ref": "#/definitions/Models.DependenciesFromPackageJsonStyle"
+                      }
+                    }
+                  ],
+                  "description": "Comon dependencies for all kinds of project types"
+                },
+                "onlyFor": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "anyOf": [
+                      {
+                        "$ref": "#/definitions/Models.DependenciesFromPackageJsonStyle"
+                      },
+                      {
+                        "type": "object",
+                        "additionalProperties": {
+                          "$ref": "#/definitions/Models.DependenciesFromPackageJsonStyle"
+                        }
+                      }
+                    ]
+                  },
+                  "description": "Dependencies only for specyfic project type"
+                }
+              },
+              "required": [
+                "trusted",
+                "dedupe",
+                "stubForBackend",
+                "common",
+                "onlyFor"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "dependencies"
+          ],
+          "additionalProperties": false,
+          "description": "Core and contant dependecies for all projects"
+        },
+        "dependsOn": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "dependency site baselines"
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Static resurces for standalone project, that are going to be included in release dist"
+        },
+        "allowedEnv": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CoreModels.EnvironmentName"
+          },
+          "description": "Allowed environment for poroject"
+        }
+      },
+      "required": [
+        "additionalNpmNames",
+        "core",
+        "dependsOn",
+        "isCoreProject",
+        "libReleaseOptions",
+        "overrided",
+        "targetProjects",
+        "type",
+        "useFramework"
+      ]
+    },
+    "CoreModels.LibType": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/CoreModels.BaseProjectType"
+        },
+        {
+          "type": "string",
+          "const": "isomorphic-lib"
+        },
+        {
+          "type": "string",
+          "const": "container"
+        },
+        {
+          "type": "string",
+          "const": "docker"
+        },
+        {
+          "type": "string",
+          "const": "vscode-ext"
+        },
+        {
+          "type": "string",
+          "const": "chrome-ext"
+        },
+        {
+          "type": "string",
+          "const": "unknow-npm-project"
+        }
+      ],
+      "deprecated": "there will be only one lib type \"isomorphic-lib\""
+    },
+    "CoreModels.BaseProjectType": {
+      "type": "string",
+      "enum": [
+        "typescript",
+        "angular",
+        "angular-lib",
+        "unknow",
+        "unknow-npm-project"
+      ]
+    },
+    "CoreModels.FrameworkVersion": {
+      "type": "string",
+      "enum": [
+        "v1",
+        "v2",
+        "v3",
+        "v4",
+        "v16",
+        "v18",
+        "v20"
+      ]
+    },
+    "interface-731470504-9888-11315-731470504-0-215038": {
+      "type": "object",
+      "properties": {
+        "prototype": {},
+        "length": {
+          "type": "number"
+        },
+        "arguments": {},
+        "caller": {
+          "$ref": "#/definitions/interface-731470504-9888-11315-731470504-0-215038"
+        }
+      },
+      "required": [
+        "prototype",
+        "length",
+        "arguments",
+        "caller"
+      ],
+      "additionalProperties": false
+    },
+    "Models.DependenciesFromPackageJsonStyle": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "deprecated": true
+    },
+    "Models.LinkedRepo": {
+      "type": "object",
+      "properties": {
+        "origin": {
+          "type": "string"
+        },
+        "relativeFoldersLinks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "from": {
+                "type": "string"
+              },
+              "to": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "from",
+              "to"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "origin"
+      ],
+      "additionalProperties": false
+    },
+    "Models.TargetProject": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "origin": {
+          "type": "string"
+        },
+        "branch": {
+          "type": "string"
+        },
+        "links": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "origin",
+        "branch",
+        "links"
+      ],
+      "additionalProperties": false,
+      "deprecated": true
+    },
+    "CoreModels.UIFramework": {
+      "type": "string",
+      "enum": [
+        "bootstrap",
+        "material",
+        "ionic"
+      ],
+      "deprecated": true
+    },
+    "Models.TrustedType": {
+      "type": "object",
+      "properties": {
+        "v1": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        },
+        "v2": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        },
+        "v3": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        },
+        "v4": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        },
+        "v16": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        },
+        "v18": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        },
+        "v20": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      },
+      "required": [
+        "v1",
+        "v2",
+        "v3",
+        "v4",
+        "v16",
+        "v18",
+        "v20"
+      ],
+      "additionalProperties": false
+    },
+    "CoreModels.EnvironmentName": {
+      "type": "string",
+      "enum": [
+        "local",
+        "static",
+        "dev",
+        "stage",
+        "prod",
+        "online",
+        "test",
+        "qa",
+        "custom"
+      ]
+    }
+  }
+}
