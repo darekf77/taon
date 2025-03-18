@@ -1,4 +1,4 @@
-<p style="text-align: center;"><img src="./__images/logo-header-bold-taon.png" ></p>
+<p style="text-align: center;"><img src="./images/logo-header-bold-taon.png" ></p>
 
 <!-- cspell: disable-next-line  -->
 TAON  **T**ypescript **A**ngular **O**rm **N**ode )
@@ -6,48 +6,60 @@ TAON  **T**ypescript **A**ngular **O**rm **N**ode )
 
 ( BETA VERSION - MAJOR REFACTOR IN PROGRESS )
 
-**Taon** 🔥🔥🔥 is a solution (**global cli tool** & **framework**) for
+**Taon** 🔥🔥🔥 is a solution (**global cli tool** & **framework** & **cloud**) for
 
 \+
-[TypesScript](https://www.typescriptlang.org/)  
+[TypesScript](https://www.typescriptlang.org/) isomorphic libraries/backends/frontends
 
 \+
-[Angular](https://angular.io/) (PWA)
+[Angular](https://angular.io/) libraries and PWA-s
 
-\+ Orm with [TypeORM](https://typeorm.io/)
-- [sql.js](https://sql.js.org) - NODEJS SERVER MODE
-- [sql.js](https://sql.js.org) - *WEBSQL SERVER MODE
-- [mysql](https://www.mysql.com/) - SERVER IN DOCKER (work in progress)
-
-\+
-[NodeJS](https://nodejs.org/en/)
+\+ Databases with Orm ([TypeORM](https://typeorm.io/))
+- [sql.js](https://sql.js.org) - NodeJs Server Mode
+- [sql.js](https://sql.js.org) - WEBSQL Server Mode (backend in browser)
+- [mysql](https://www.mysql.com/) - Mysql Server Mode (for dockerized version)
 
 \+
-[RxJs](https://rxjs.dev/)  / [NgRx](https://ngrx.io/) (optional) 
+[NodeJS](https://nodejs.org/en/) backends
 
 \+
-[Electron](https://www.electronjs.org/) desktop apps (work in progress)
+[Electron](https://www.electronjs.org/) desktop apps
 
 \+
-[Storybook](https://storybook.js.org/docs/get-started/angular) showcase (work in progress)
+[Ionic](https://www.electronjs.org/) mobile apps
+
+\+
+[Visual Studio Code](https://www.electronjs.org/) plugins
+
+\+Documentation:<br>
++ [MkDocs](https://www.mkdocs.org/) beautifull material wrapper for .md files docs <br>
++ [Storybook](https://storybook.js.org/docs/get-started/angular) ui elements documentation <br>
++ [Compodoc](https://compodoc.app/) docs from comments <br>
+ 
 
 <ins>backend/frontend [*isomorphic](https://en.wikipedia.org/wiki/Isomorphic_JavaScript)  apps/libs.</ins>
 
-**[READ DOCUMENTATION](https://taon.io/#/docs)**
-
-<br>
-<br>
+**[READ DOCUMENTATION](https://taon.dev/#/docs)**
 
 ### Initial requirements of taon
-1. (windows) Installed gitbash https://gitforwindows.org
+1. Git (gitbash https://gitforwindows.org on windows) 
 
-2. (linux with GUI) Increased watchers limit:
-```/* cspell: disable-next-line */
+2. Increased watchers limit (only on linux):
+```bash
 echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 ```
+3. Installed python3 and mkdocs:<br>
 
-<br>
-<br>
++ Windwos/Linux
+```bash
+pip3 install mkdocs
+pip3 install mkdocs-material --user
+```
++ MacOs
+```bash
+brew install mkdocs
+brew install mkdocs-material
+```
 
 ### Projects that are part of taon.dev:
 - taon https://github.com/darekf77/taon

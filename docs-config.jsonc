@@ -2,10 +2,10 @@
   "site_name": "taon",
   "externalDocs": {
     "mdfiles": [
-      {
-        "overrideTitle": "Examples",
-        "packageNameWithPath": "taon/projects/container-v18/examples-v18/README.md",
-      },
+      // {
+      //   "overrideTitle": "Examples",
+      //   "packageNameWithPath": "taon/projects/container-v18/examples-v18/README.md",
+      // },
       {
         "magicRenameRules": "tnp -> taon",
         "packageNameWithPath": "tnp/ALL_COMMANDS.md",

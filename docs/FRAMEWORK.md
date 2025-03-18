@@ -36,10 +36,7 @@ for backend and frontend. Usual structure:
 /assets/shared # shared assets from project
 ```
 
-
-### Organization project
-
-
+<!-- 
 
 ## Taon config
 
@@ -68,4 +65,4 @@ Injectable (service like) classes for backend db communication
 
 Injectable (service like) classes for subscribing to 
 entity events (just like in subscribers in https://typeorm.io/listeners-and-subscribers)
-
+ -->
