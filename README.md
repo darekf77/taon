@@ -14,10 +14,10 @@ TAON  **T**ypescript **A**ngular **O**rm **N**ode )
 \+
 [Angular](https://angular.io/) libraries and PWA-s
 
-\+ Databases with Orm ([TypeORM](https://typeorm.io/))
-- [sql.js](https://sql.js.org) - NodeJs Server Mode
-- [sql.js](https://sql.js.org) - WEBSQL Server Mode (backend in browser)
-- [mysql](https://www.mysql.com/) - Mysql Server Mode (for dockerized version)
+\+ Databases with Orm ([TypeORM](https://typeorm.io/)) <br>
+- [sql.js](https://sql.js.org) - NodeJs Server Mode <br>
+- [sql.js](https://sql.js.org) - WEBSQL Server Mode (backend in browser) <br>
+- [mysql](https://www.mysql.com/) - Mysql Server Mode (inside docker) <br>
 
 \+
 [NodeJS](https://nodejs.org/en/) backends
@@ -32,17 +32,16 @@ TAON  **T**ypescript **A**ngular **O**rm **N**ode )
 [Visual Studio Code](https://www.electronjs.org/) plugins
 
 \+Documentation:<br>
-+ [MkDocs](https://www.mkdocs.org/) beautifull material wrapper for .md files docs <br>
++ [MkDocs](https://www.mkdocs.org/) beautifull material wrapper for *.md docs files <br>
 + [Storybook](https://storybook.js.org/docs/get-started/angular) ui elements documentation <br>
 + [Compodoc](https://compodoc.app/) docs from comments <br>
  
-
-<ins>backend/frontend [*isomorphic](https://en.wikipedia.org/wiki/Isomorphic_JavaScript)  apps/libs.</ins>
+backend/frontend **[*isomorphic](https://en.wikipedia.org/wiki/Isomorphic_JavaScript)**  apps/libs.
 
 **[READ DOCUMENTATION](https://taon.dev/#/docs)**
 
 ### Initial requirements of taon
-1. Git (gitbash https://gitforwindows.org on windows) 
+1. Git (gitbash [https://gitforwindows.org](https://gitforwindows.org) on windows) 
 
 2. Increased watchers limit (only on linux):
 ```bash
@@ -50,12 +49,12 @@ echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo s
 ```
 3. Installed python3 and mkdocs:<br>
 
-+ Windwos/Linux
+Windwos/Linux
 ```bash
 pip3 install mkdocs
 pip3 install mkdocs-material --user
 ```
-+ MacOs
+MacOs
 ```bash
 brew install mkdocs
 brew install mkdocs-material
@@ -68,9 +67,9 @@ brew install mkdocs-material
 
 
 ## Required version of NodeJS** 
-- Windows 10/11 (gitbash): >= v16 
-- MacOS: >= v16
-- Linux: >= v16
+- Windows 10/11 (gitbash): >= v18
+- MacOS: >= v18
+- Linux: >= v18
 
 
 ## How to install taon
@@ -80,9 +79,10 @@ npm i -g taon
 
 
 ##  How to uninstall taon from local machine
-Taon stores a big global container (in ~/.taon) for npm packages that are being shared 
-accros all taon apps
-```
+Taon stores a big global container (in ~/.taon) for npm packages <br>
+that are being shared across all taon projects.
+
+```bash
 npm uninstall -g taon
 rm -rf ~/.taon  # taon local packages repository
 ```

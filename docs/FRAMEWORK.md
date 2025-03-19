@@ -4,33 +4,37 @@ Taon has very flexible structure for build apps and libraries. Each project
 can be at the same time library and app.
 
 ### Types of projects
-There 2 types of project app and libraries: 
+Taon has 2 types of projects: 
 
-- **standalone** (simple project with that has /src for for all source code)
-- **organization** (contains multiple standalone projects that can be build together)
+- **standalone** (simple project with source code inside /src folder)
+- **container** (contains multiple standalone projects that can be build/release together)
 
-### Projects name <=> folder name  <=> package.json(name property)
+#### Standalone
 
-Each taon project should have distincy name that follow
+Each taon project should have distinct name that follows
 npm package naming convention (without @,.,_).
-To simplyfiy development process all these tree things:
-project name, folder name, package.json(name property) should 
-have the same name to avoid confusion.
-Command `taon init` will alwayus update `package.json(name property)`
-to project folder name.
 
-Your pacakge name,folder is at the same time you published
-to npm package name.
+To simplify development process (in standalone project):
+npm name, folder name and package.json(name property) are equal by default (you can override it with property "overrideNpmName" inside taon.jsonc).
+
+Command `taon init` will make sure that `package.json(name property)` is the same as basename of project folder.
+
+#### Container
+
+Scoped/organization projects are simply standalone projects inside container (with proper "isOrganization" in taon.jsonc).
+
+Name of publish package is taken from container name:
+
+`@parent-container/my-package-name`
 
 
 ### Isomorphic compiled npm package
-Isomorphic package contains all neccessary js (or mjs) files
+Isomorphic npm package contains all necessary js (or mjs) files
 for backend and frontend. Usual structure:
 
 ```bash
 /lib # all backend es5 javascript code
 /browser # browser code for normal nodejs/angular development
-/client # same thing as /browser @deprecaed now
 /websql # special version of browser code from WEBSQL MODE
 /bin # cli related files
 /assets/shared # shared assets from project
@@ -38,7 +42,17 @@ for backend and frontend. Usual structure:
 
 
 ## Rules of writing taon code
-### Files with special extension and purpose:
+
+During development of taon apps/libs we must know 
+that some files are by default only for 
+browser frontend purpose or just for NodeJs backend 
+purpose. 
+
+Good practice here is to write each isomorphic 
+files in the way that we can use it in backend
+and frontend without any additional work.
+
+### Files with special extensions:
 
 \+ Frontend only files (available also in websql backend mode)
  
@@ -55,25 +69,29 @@ for backend and frontend. Usual structure:
 - ***.reducers.ts** *(ngrx directives)*
 - ***.selectors.ts** *(ngrx selectors)*
 - ***.routes.ts** *(angular router files)*
+
+additionally **all .css, sass, .html** are not available for NodeJS backend code
+
+\+ Backend only files (available also in WEBSQL mode)
+ 
+- ***.test.ts** *(mocha/sinon backend tests)*
 - ***.spec.ts** *(jest tests files)*
 - ***.cy.ts** *(cypress tests files)*
 
-additionaly **all .css, sass, .html** are not available for nodej backend code
-
-\+ Backend only files (available also in websql mode)
- 
-- ***.test.ts** *(mocha/sinon backend tests)*
-
-\+ Backend only files (not available in websql mode => only nodejs)
+\+ Backend only files (not available in WEBSQL)
  
 - ***.backend.ts** *(nodejs backend code)*
 
-PLEASE REMEMBER THAT **example-file-name-backend.ts** is NOT a nodejs-backend only code
+PLEASE REMEMBER THAT **example-file-name-backend.ts** is NOT a NodeJS backend only code.
 
 
 ### Code regions 
 
-\+ **Code for nodejs/websql backend:** 
+Taon framework splits each *.ts to different 
+temporary source folder that serve different purposes. From original *.ts files code regions/lines
+are removed based on region tag. 
+
+\+ **Code for NodeJs/Websql backend:** 
 
 `//#region @websql`
 
@@ -87,15 +105,28 @@ PLEASE REMEMBER THAT **example-file-name-backend.ts** is NOT a nodejs-backend on
 
   /* code */
   
-   `//#endregion`
+  `//#endregion`
 
 *When you should use @websql, @websqlFunc:*
+\-> generally this should be most often used
+tool for striping backend code (you never know if
+some of your backend files are going to be
+needed on frontend for some reason)
 
-\-> have in mind that this code can be mocked in browser in websql mode
+```ts
+function myFunc():string {
+  //@websqlFunc
+  return 'hello in backend'l
+  //#endregion
+}
 
-\-> you should use it more often that @backend, @backendFunc
-
-\-> ..why? => websql mode is super confortable for development
+// in browser (not WEBSQL mode) there will be
+function myFunc():string {
+  /**/
+  /**/
+  return void 0;
+}
+```
 
 \+ **Code only for nodejs backend:**
 
@@ -117,6 +148,23 @@ PLEASE REMEMBER THAT **example-file-name-backend.ts** is NOT a nodejs-backend on
 
 \-> for deleting code that can't be mocked in websql mode
 
+*When you should use @websql, @websqlFunc:*
+
+```ts
+function whatIsMyOs():string {
+  //@backendFunc
+  return os.getName();
+  //#endregion
+}
+
+// in browser there will be
+function myFunc():string {
+  /**/
+  /**/
+  return void 0;
+}
+```
+
 \+ **Code only for browser:** 
 
 `//#region @browser` 
@@ -129,7 +177,7 @@ PLEASE REMEMBER THAT **example-file-name-backend.ts** is NOT a nodejs-backend on
 
 \-> for frontend code that for some reason can't be executed/imported in NodeJS backend
 
-\+ **Code only for websql mode (not available for nodejs backend):** 
+\+ **Code only for websql mode (not available for NodeJs backend):** 
 
 `//#region @websqlOnly`  
 
@@ -143,13 +191,17 @@ PLEASE REMEMBER THAT **example-file-name-backend.ts** is NOT a nodejs-backend on
 
 ## Taon TypeScript building blocks
 
+Taon powerful class based api let you build
+app with robust approach (never seen before).
+
+Each building block: Context, Entity, Controller, Migration, Repository, Provider - works with inheritance and allows you to achieve the highest possible level of abstraction.
+
 ### Taon context
-Purpose of taon context is to:
- - agregate all backend building block of application
- - start UDP/TCP serve
-     
-  + (with multiple contexts can have multiple servers in 1 nodejs app)
- - initialize databas (only 1 db per context allowed)
+Purpose of taon context:
+ - aggregate all backend building block of application
+ - start UDP/TCP server<br>
+   (multiple contexts === multiple servers in 1 NodeJs app)
+ - initialization of database (only 1 db per context allowed)
 ```ts
 import { Taon, BaseContext } from 'taon/src';
 
@@ -188,7 +240,7 @@ const BiggerBackendContext = Taon.createContext(() => ({
 
 ```
 
-## Taon entities
+### Taon entities
 
 Entity class that can be use as Dto.
 ```ts
@@ -220,7 +272,7 @@ class UserController extends Taon.Base.CrudController<User> {
 ```
 
  
-## Taon repositories
+### Taon repositories
 
 Injectable (service like) classes for backend db communication
 (similar to https://typeorm.io/custom-repository).
@@ -239,9 +291,9 @@ export class UserRepository extends Taon.Base.Repository<User> {
 }
 ```
 
-## Taon subscribers
+### Taon subscribers
 
-Injectable (service like) classes for subscribing to 
+Injectable classes for subscribing to 
 entity events (just like in subscribers in https://typeorm.io/listeners-and-subscribers)
 
 ```ts
@@ -261,7 +313,7 @@ export class RealtimeClassSubscriber extends Taon.Base.SubscriberForEntity {
 
 ```
 
-## Taon providers
+### Taon providers
 
 Injectable (service like) classes singleton classes.
 ```ts
@@ -277,7 +329,9 @@ export class TaonConfigProvier extends Taon.Base.Provider {
 ```
 
 
-### Migrations 
+### Taon migrations 
+Auto generated migration class files for
+convenient CI/CD.
 
 ```ts
 @Taon.Migration({

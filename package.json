@@ -38,7 +38,7 @@
   "name": "taon",
   "version": "18.0.25",
   "scripts": {
-    "mkdocs": "python3 -m mkdocs"
+    "mkdocs": "mkdocs"
   },
   "license": "MIT",
   "author": "Dariusz Filipiak",
