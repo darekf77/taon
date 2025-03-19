@@ -61,7 +61,34 @@ brew install mkdocs
 brew install mkdocs-material
 ```
 
-### Projects that are part of taon.dev:
+## Supported OS-es:
+- Win10, Win11 (gitbash)
+- MacOS
+- Linux
+
+
+## Required version of NodeJS** 
+- Windows 10/11 (gitbash): >= v16 
+- MacOS: >= v16
+- Linux: >= v16
+
+
+## How to install taon
+```
+npm i -g taon
+```
+
+
+##  How to uninstall taon from local machine
+Taon stores a big global container (in ~/.taon) for npm packages that are being shared 
+accros all taon apps
+```
+npm uninstall -g taon
+rm -rf ~/.taon  # taon local packages repository
+```
+
+
+## Projects that are part of taon.dev:
 - taon https://github.com/darekf77/taon
     + framework library
 - tnp https://github.com/darekf77/tnp
@@ -95,32 +122,53 @@ brew install mkdocs-material
 
 
 
-### Global npm dependencies installed with taon 
+## Global npm dependencies installed with taon 
 Installation happens when you first time use taon
-<!-- /* cSpell:disable */ -->
-<pre>
-{ name: 'ncc', version: '0.36.0', installName: '@vercel/ncc' },
-{ name: 'extract-zip', version: '1.6.7' },
-{ name: 'cpr' },
-{ name: 'check-node-version' },
-{ name: 'npm-run', version: '4.1.2' },
-{ name: 'rimraf', version: '3.0.2' },
-{ name: 'mkdirp' },
-{ name: 'renamer', version: '2.0.1' },
-{ name: 'nodemon' },
-{ name: 'madge' },
-{ name: 'yarn' },
-{ name: 'taon-http-server' },
-{ name: 'prettier' },
-{ name: 'fkill', installName: 'fkill-cli' },
-{ name: 'mocha' },
-{ name: 'jest' },
-{ name: 'ts-node' },
-{ name: 'taon-vsce' },
-{ name: 'webpack-bundle-analyzer' },
-{ name: 'babel', installName: 'babel-cli' },
-{ name: 'javascript-obfuscator', version: '4' },
-{ name: 'uglifyjs', installName: 'uglify-js' },
-</pre>
-
-<!-- /* cSpell:enable */ -->
+```jsonc
+[
+  // tool for minifying js (WILL EB REMOVED SOON FROM GLOBAL DEPS)
+  { name: 'ncc', version: '0.36.0', installName: '@vercel/ncc' },
+  // zip extractor.. no needed anymore (WILL EB REMOVED SOON FROM GLOBAL DEPS)
+  { name: 'extract-zip', version: '1.6.7' },
+  // copy catalogs (WILL EB REMOVED SOON FROM GLOBAL DEPS)
+  { name: 'cpr' },
+  // check version of your nodejs
+  { name: 'check-node-version' },
+  // alternative not npx ( it wil not download package from npm if is not installed )
+  { name: 'npm-run', version: '4.1.2' },
+  //handy for removing files
+  { name: 'rimraf', version: '3.0.2' },
+  //handy for recreating catalogs
+  { name: 'mkdirp' },
+  // rename files in build  (WILL EB REMOVED SOON FROM GLOBAL DEPS)
+  { name: 'renamer', version: '2.0.1' },
+  // run/watch node server (WILL EB REMOVED SOON FROM GLOBAL DEPS)
+  { name: 'nodemon' },
+  // check circural deps (WILL EB REMOVED SOON FROM GLOBAL DEPS)
+  { name: 'madge' },
+  // package manager
+  { name: 'yarn' },
+  // https server with --base-href
+  { name: 'taon-http-server' },
+  // code formatter
+  { name: 'prettier' },
+  // process killer
+  { name: 'fkill', installName: 'fkill-cli' },
+  // for unit tests runner (WILL EB REMOVED SOON FROM GLOBAL DEPS)
+  { name: 'mocha' },
+  // for unit tests runner
+  { name: 'jest' },
+  // run ts code directly
+  { name: 'ts-node' },
+  // oficial vsce package striped out from some restrictions
+  { name: 'taon-vsce' },
+  // analyze you final bundle (WILL EB REMOVED SOON FROM GLOBAL DEPS)
+  { name: 'webpack-bundle-analyzer' },
+  // strip types from TypeScript
+  { name: 'babel', installName: 'babel-cli' },
+  // create js bundle that are not human readable (WILL EB REMOVED SOON FROM GLOBAL DEPS)
+  { name: 'javascript-obfuscator', version: '4' },
+  // minify js (WILL EB REMOVED SOON FROM GLOBAL DEPS)
+  { name: 'uglifyjs', installName: 'uglify-js' },
+]
+```
