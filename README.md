@@ -47,7 +47,8 @@ backend/frontend **[*isomorphic](https://en.wikipedia.org/wiki/Isomorphic_JavaSc
 ```bash
 echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 ```
-3. Installed python3 and mkdocs:<br>
+3. Installed [python3](https://www.python.org/downloads/release/python-3123/) 
+and [mkdocs](https://www.mkdocs.org/user-guide/installation/):<br>
 
 Windwos/Linux
 ```bash
@@ -66,7 +67,7 @@ brew install mkdocs-material
 - Linux
 
 
-## Required version of NodeJS** 
+## Required version of NodeJS
 - Windows 10/11 (gitbash): >= v18
 - MacOS: >= v18
 - Linux: >= v18
