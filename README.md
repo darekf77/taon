@@ -31,10 +31,10 @@ TAON  **T**ypescript **A**ngular **O**rm **N**ode )
 \+
 [Visual Studio Code](https://www.electronjs.org/) plugins
 
-\+Documentation:<br>
-+ [MkDocs](https://www.mkdocs.org/) beautifull material wrapper for *.md docs files <br>
-+ [Storybook](https://storybook.js.org/docs/get-started/angular) ui elements documentation <br>
-+ [Compodoc](https://compodoc.app/) docs from comments <br>
+\+ Documentation:<br>
+- [MkDocs](https://www.mkdocs.org/) beautifull material wrapper for *.md docs files <br>
+- [Storybook](https://storybook.js.org/docs/get-started/angular) ui elements documentation <br>
+- [Compodoc](https://compodoc.app/) docs from comments <br>
  
 backend/frontend **[*isomorphic](https://en.wikipedia.org/wiki/Isomorphic_JavaScript)**  apps/libs.
 
