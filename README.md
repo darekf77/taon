@@ -1,4 +1,4 @@
-<p style="text-align: center;"><img src="./__images/logo-header-bold-taon.png" ></p>
+<p style="text-align: center;"><img src="./images/logo-header-bold-taon.png" ></p>
 
 <!-- cspell: disable-next-line  -->
 TAON  **T**ypescript **A**ngular **O**rm **N**ode )
@@ -6,50 +6,90 @@ TAON  **T**ypescript **A**ngular **O**rm **N**ode )
 
 ( BETA VERSION - MAJOR REFACTOR IN PROGRESS )
 
-**Taon** 🔥🔥🔥 is a solution (**global cli tool** & **framework**) for
+**Taon** 🔥🔥🔥 is a solution (**global cli tool** & **framework** & **cloud**) for
 
 \+
-[TypesScript](https://www.typescriptlang.org/)  
+[TypesScript](https://www.typescriptlang.org/) isomorphic libraries/backends/frontends
 
 \+
-[Angular](https://angular.io/) (PWA)
+[Angular](https://angular.io/) libraries and PWA-s
 
-\+ Orm with [TypeORM](https://typeorm.io/)
-- [sql.js](https://sql.js.org) - NODEJS SERVER MODE
-- [sql.js](https://sql.js.org) - *WEBSQL SERVER MODE
-- [mysql](https://www.mysql.com/) - SERVER IN DOCKER (work in progress)
-
-\+
-[NodeJS](https://nodejs.org/en/)
+\+ Databases with Orm ([TypeORM](https://typeorm.io/)) <br>
+- [sql.js](https://sql.js.org) - NodeJs Server Mode <br>
+- [sql.js](https://sql.js.org) - WEBSQL Server Mode (backend in browser) <br>
+- [mysql](https://www.mysql.com/) - Mysql Server Mode (inside docker) <br>
 
 \+
-[RxJs](https://rxjs.dev/)  / [NgRx](https://ngrx.io/) (optional) 
+[NodeJS](https://nodejs.org/en/) backends
 
 \+
-[Electron](https://www.electronjs.org/) desktop apps (work in progress)
+[Electron](https://www.electronjs.org/) desktop apps
 
 \+
-[Storybook](https://storybook.js.org/docs/get-started/angular) showcase (work in progress)
+[Ionic](https://www.electronjs.org/) mobile apps
 
-<ins>backend/frontend [*isomorphic](https://en.wikipedia.org/wiki/Isomorphic_JavaScript)  apps/libs.</ins>
+\+
+[Visual Studio Code](https://www.electronjs.org/) plugins
 
-**[READ DOCUMENTATION](https://taon.io/#/docs)**
+\+ Documentation:<br>
+- [MkDocs](https://www.mkdocs.org/) beautifull material wrapper for *.md docs files <br>
+- [Storybook](https://storybook.js.org/docs/get-started/angular) ui elements documentation <br>
+- [Compodoc](https://compodoc.app/) docs from comments <br>
+ 
+backend/frontend **[*isomorphic](https://en.wikipedia.org/wiki/Isomorphic_JavaScript)**  apps/libs.
 
-<br>
-<br>
+**[READ DOCUMENTATION](https://taon.dev/#/docs)**
 
 ### Initial requirements of taon
-1. (windows) Installed gitbash https://gitforwindows.org
+1. Git (gitbash [https://gitforwindows.org](https://gitforwindows.org) on windows) 
 
-2. (linux with GUI) Increased watchers limit:
-```/* cspell: disable-next-line */
+2. Increased watchers limit (only on linux):
+```bash
 echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
 ```
+3. Installed [python3](https://www.python.org/downloads/release/python-3123/) 
+and [mkdocs](https://www.mkdocs.org/user-guide/installation/):<br>
 
-<br>
-<br>
+Windwos/Linux
+```bash
+pip3 install mkdocs
+pip3 install mkdocs-material --user
+```
+MacOs
+```bash
+brew install mkdocs
+brew install mkdocs-material
+```
 
-### Projects that are part of taon.dev:
+## Supported OS-es:
+- Win10, Win11 (gitbash)
+- MacOS
+- Linux
+
+
+## Required version of NodeJS
+- Windows 10/11 (gitbash): >= v18
+- MacOS: >= v18
+- Linux: >= v18
+
+
+## How to install taon
+```
+npm i -g taon
+```
+
+
+##  How to uninstall taon from local machine
+Taon stores a big global container (in ~/.taon) for npm packages <br>
+that are being shared across all taon projects.
+
+```bash
+npm uninstall -g taon
+rm -rf ~/.taon  # taon local packages repository
+```
+
+
+## Projects that are part of taon.dev:
 - taon https://github.com/darekf77/taon
     + framework library
 - tnp https://github.com/darekf77/tnp
@@ -83,32 +123,53 @@ echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo s
 
 
 
-### Global npm dependencies installed with taon 
+## Global npm dependencies installed with taon 
 Installation happens when you first time use taon
-<!-- /* cSpell:disable */ -->
-<pre>
-{ name: 'ncc', version: '0.36.0', installName: '@vercel/ncc' },
-{ name: 'extract-zip', version: '1.6.7' },
-{ name: 'cpr' },
-{ name: 'check-node-version' },
-{ name: 'npm-run', version: '4.1.2' },
-{ name: 'rimraf', version: '3.0.2' },
-{ name: 'mkdirp' },
-{ name: 'renamer', version: '2.0.1' },
-{ name: 'nodemon' },
-{ name: 'madge' },
-{ name: 'yarn' },
-{ name: 'taon-http-server' },
-{ name: 'prettier' },
-{ name: 'fkill', installName: 'fkill-cli' },
-{ name: 'mocha' },
-{ name: 'jest' },
-{ name: 'ts-node' },
-{ name: 'taon-vsce' },
-{ name: 'webpack-bundle-analyzer' },
-{ name: 'babel', installName: 'babel-cli' },
-{ name: 'javascript-obfuscator', version: '4' },
-{ name: 'uglifyjs', installName: 'uglify-js' },
-</pre>
-
-<!-- /* cSpell:enable */ -->
+```jsonc
+[
+  // tool for minifying js (WILL EB REMOVED SOON FROM GLOBAL DEPS)
+  { name: 'ncc', version: '0.36.0', installName: '@vercel/ncc' },
+  // zip extractor.. no needed anymore (WILL EB REMOVED SOON FROM GLOBAL DEPS)
+  { name: 'extract-zip', version: '1.6.7' },
+  // copy catalogs (WILL EB REMOVED SOON FROM GLOBAL DEPS)
+  { name: 'cpr' },
+  // check version of your nodejs
+  { name: 'check-node-version' },
+  // alternative not npx ( it wil not download package from npm if is not installed )
+  { name: 'npm-run', version: '4.1.2' },
+  //handy for removing files
+  { name: 'rimraf', version: '3.0.2' },
+  //handy for recreating catalogs
+  { name: 'mkdirp' },
+  // rename files in build  (WILL EB REMOVED SOON FROM GLOBAL DEPS)
+  { name: 'renamer', version: '2.0.1' },
+  // run/watch node server (WILL EB REMOVED SOON FROM GLOBAL DEPS)
+  { name: 'nodemon' },
+  // check circural deps (WILL EB REMOVED SOON FROM GLOBAL DEPS)
+  { name: 'madge' },
+  // package manager
+  { name: 'yarn' },
+  // https server with --base-href
+  { name: 'taon-http-server' },
+  // code formatter
+  { name: 'prettier' },
+  // process killer
+  { name: 'fkill', installName: 'fkill-cli' },
+  // for unit tests runner (WILL EB REMOVED SOON FROM GLOBAL DEPS)
+  { name: 'mocha' },
+  // for unit tests runner
+  { name: 'jest' },
+  // run ts code directly
+  { name: 'ts-node' },
+  // oficial vsce package striped out from some restrictions
+  { name: 'taon-vsce' },
+  // analyze you final bundle (WILL EB REMOVED SOON FROM GLOBAL DEPS)
+  { name: 'webpack-bundle-analyzer' },
+  // strip types from TypeScript
+  { name: 'babel', installName: 'babel-cli' },
+  // create js bundle that are not human readable (WILL EB REMOVED SOON FROM GLOBAL DEPS)
+  { name: 'javascript-obfuscator', version: '4' },
+  // minify js (WILL EB REMOVED SOON FROM GLOBAL DEPS)
+  { name: 'uglifyjs', installName: 'uglify-js' },
+]
+```
