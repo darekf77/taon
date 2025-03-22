@@ -1,30 +1,30 @@
 {
   "projects": [{
-    deafultBranch: "master",
+    defaultBranch: "master",
     relativeClonePath: "circural-deps-ctx",
     repoUrl: "https://github.com/darekf77/circural-deps-ctx.git",
   }, {
     repoUrl: "https://github.com/darekf77/inject-tests.git",
-    deafultBranch: "master",
+    defaultBranch: "master",
     relativeClonePath: "crud",
   }, {
-    deafultBranch: "master",
+    defaultBranch: "master",
     relativeClonePath: "inject-tests",
     repoUrl: "https://github.com/darekf77/inject-tests.git",
   }, {
-    deafultBranch: "master",
+    defaultBranch: "master",
     relativeClonePath: "realtime-subscribers",
     repoUrl: "https://github.com/darekf77/realtime-subscribers.git",
   }, {
-    deafultBranch: "master",
+    defaultBranch: "master",
     relativeClonePath: "subscriber-inject",
     repoUrl: "https://github.com/darekf77/subscriber-inject.git",
   }, {
-    deafultBranch: "master",
+    defaultBranch: "master",
     relativeClonePath: "migration",
     repoUrl: "git@github.com:darekf77/migration.git",
   }, {
-    deafultBranch: "master",
+    defaultBranch: "master",
     relativeClonePath: "sample-migration",
     repoUrl: "git@github.com:darekf77/sample-migration.git",
   }]
