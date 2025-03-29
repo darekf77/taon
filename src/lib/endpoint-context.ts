@@ -310,6 +310,10 @@ export class EndpointContext {
       );
     }
 
+    if (_.isUndefined(this.config.useIpcWhenElectron)) {
+      this.config.useIpcWhenElectron = true;
+    }
+
     if (
       this.config.remoteHost &&
       !this.config.remoteHost.startsWith('http://') &&

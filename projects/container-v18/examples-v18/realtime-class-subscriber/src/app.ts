@@ -47,7 +47,7 @@ export class RealtimeClassSubscriberComponent {
   readonly messages$: Observable<string[]> = of([]);
 
   saveNewUser() {
-    MainContext.__refSync.realtimeClient.triggerCustomEvent(
+    MainContext.realtime.client.triggerCustomEvent(
       saveNewUserEventKey,
     );
   }
@@ -103,13 +103,10 @@ export class RealtimeClassSubscriber extends Taon.Base.SubscriberForEntity {
 export class RealtimeUserController extends Taon.Base
   .CrudController<UserEntity> {
   entityClassResolveFn = () => UserEntity;
-  sub = this.injectSubscriber(RealtimeClassSubscriber);
+  realtimeClassSubscriber = this.injectSubscriber(RealtimeClassSubscriber);
   async initExampleDbData() {
     //#region @websql
     await this.saveNewUser();
-
-    console.log('subscribers', this.sub);
-
     //#endregion
   }
 
@@ -120,7 +117,6 @@ export class RealtimeUserController extends Taon.Base
       _.merge(new UserEntity(), { name: 'user' + (counterUser + 1) }),
     );
     Helpers.info(`new user${counterUser + 1} saved.`);
-
     //#endregion
   }
 }
@@ -128,7 +124,6 @@ export class RealtimeUserController extends Taon.Base
 //#region  realtime-subscribers context
 var MainContext = Taon.createContext(() => ({
   host: host1,
-  useIpcWhenElectron: true,
   frontendHost: frontendHost1,
   contextName: 'MainContext',
   contexts: { BaseContext },
@@ -147,7 +142,6 @@ var MainContext = Taon.createContext(() => ({
 //#region start
 async function start() {
   const ref = await MainContext.initialize();
-  const realtimeClassSubscriber = ref.getInstanceBy(RealtimeClassSubscriber);
   const realtimeUserController = ref.getInstanceBy(RealtimeUserController);
 
   //#region @websql
@@ -157,12 +151,6 @@ async function start() {
       console.log('save new user event');
       await realtimeUserController.saveNewUser();
     });
-  //#endregion
-
-  // sub.helloFirstNotifyEvent('FIRST MESSAGE');
-  // sub.helloSecondNotifyEvent('SECOND MESSAGE');
-  //#region @websql
-  // MainContext.__refSync
   //#endregion
 }
 

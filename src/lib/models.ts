@@ -181,6 +181,11 @@ export namespace Models {
      * between taon backends/processes
      */
     remoteHost?: string;
+    /**
+     * User ipc for communication between BE/FE
+     * when electron is used as a platform
+     * Default: true
+     */
     useIpcWhenElectron?: boolean;
     contexts?: CONTEXTS;
     controllers?: CONTROLLERS;
