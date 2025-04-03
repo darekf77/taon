@@ -31,6 +31,6 @@ import { FieldWrapper } from '@ngx-formly/core';
   ],
 })
 export class FormlyHorizontalWrapper extends FieldWrapper {
-  @ViewChild('fieldComponent', { read: ViewContainerRef })
+  @ViewChild('fieldComponent', { read: ViewContainerRef }) // @ts-ignore
   fieldComponent: ViewContainerRef;
 }

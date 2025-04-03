@@ -16,7 +16,6 @@
     "ctcuff.font-preview",
     "dbaeumer.vscode-eslint",
     "dnicolson.binary-plist",
-    "eamodio.gitlens",
     "eg2.tslint",
     "esbenp.prettier-vscode",
     "henry-li.vscode-import-formatter",
@@ -67,8 +66,6 @@
     "hediet.vscode-drawio",
     "humao.rest-client",
     "christian-kohler.path-intellisense",
-    "thebearingedge.vscode-sql-lit",
-    "ms-vscode-remote.remote-wsl",
-    "kgrzywocz.wsl-path"
+    "thebearingedge.vscode-sql-lit"
   ]
 }
