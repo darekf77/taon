@@ -1,4 +1,4 @@
-import 'reflect-metadata';
+import 'reflect-metadata'; // TODO this is needed for my decorators to work
 import * as http from './decorators/http/http-decorators';
 import * as base from './base-classes/base';
 import * as controllerDecorator from './decorators/classes/controller-decorator';

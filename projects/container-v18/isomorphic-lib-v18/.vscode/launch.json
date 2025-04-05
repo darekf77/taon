@@ -7,7 +7,7 @@
       "name": "Debug/Start Server",
       "program": "${workspaceFolder}/run.js",
       "args": [
-        "port=4404",
+        "port=4504",
         "--ENVoverride=%7B%0A%20%20%20%20%22clientProjectName%22%3A%20%22isomorphic-lib-v18%22%0A%7D "
       ],
       "outFiles": [
@@ -18,6 +18,7 @@
         "--nolazy",
         "-r",
         "ts-node/register",
+        "--preserve-symlinks",
         "--experimental-worker"
       ]
     },
@@ -46,6 +47,24 @@
       "skipFiles": [
         "<node_internals>/**"
       ]
+    },
+    {
+      "name": "Debug/Start Vscode Plugin",
+      "type": "extensionHost",
+      "request": "launch",
+      "runtimeExecutable": "${execPath}",
+      "sourceMaps": true,
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/**",
+        "!**/node_modules/**"
+      ],
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/tmp-vscode-proj/development/isomorphic-lib-v18"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/tmp-vscode-proj/development/isomorphic-lib-v18/out/**/*.js"
+      ],
+      "preLaunchTask": "Update package.json vscode metadata"
     }
   ],
   "compounds": [
