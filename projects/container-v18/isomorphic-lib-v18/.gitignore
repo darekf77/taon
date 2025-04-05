@@ -4,6 +4,7 @@ speed-measure-plugin*.json
 
 # misc
 /.sass-cache
+/**/tmp-*
 /connect.lock
 /coverage
 /libpeerconnection.log
@@ -12,8 +13,12 @@ yarn-error.log
 testem.log
 /typings
 app.hosts.ts
-/linked-repos
-
+/.firedev
+/.taon
+/.tnp
+/docs-config.schema.json
+/**/*._auto-generated_.ts
+/**/BUILD-INFO.md
 /tests-environments
 /src/lib/lib-info.md
 /src/migrations/migrations-info.md
@@ -23,8 +28,6 @@ app.hosts.ts
 # System Files
 .DS_Store
 Thumbs.db
-
-
 /node_modules
 /tmp*
 /dist*
@@ -43,18 +46,14 @@ Thumbs.db
 /npm-debug.log*
 /.sass-cache
 /.sourcemaps
-/tsconfig.isomorphic.json
-/tsconfig.isomorphic-flat-dist.json
-/tsconfig.browser.json
-/tsconfig.json
-/tsconfig.backend.dist.json
 /src-for-stanalone
 /components-for-stanalone
-/tsconfig.backend.dist.json
+/projects/tmp*
+!tsconfig*
+!webpack.*
+
 # =====================
-!taon.json
 !taon.jsonc
 !*.filetemplate
-
-
-/webpack.backend-dist-build.js
+/*.sqlite
+/*.rest
