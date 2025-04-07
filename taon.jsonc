@@ -14,6 +14,11 @@
   ],
 
   "additionalNpmNames": [],
+
+  "autoReleaseConfigAllowedItems": [{
+    "artifactName": "npm-lib-and-cli-tool"
+  }],
+
   "resources": ["README.md", "bin"],
 
   "packageJsonOverride": {

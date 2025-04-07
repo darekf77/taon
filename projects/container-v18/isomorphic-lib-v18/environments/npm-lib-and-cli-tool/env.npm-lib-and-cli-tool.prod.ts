@@ -3,7 +3,7 @@ import baseEnv from './env.npm-lib-and-cli-tool.__';
 
 const env: Partial<EnvOptions> = {
   ...baseEnv,
-  build: {
+  release: {
     cli: {
       includeNodeModules: true,
     },

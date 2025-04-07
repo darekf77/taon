@@ -5307,17 +5307,17 @@
           },
           "description": "Static resurces for site project, that are going to be included in release dist"
         },
-        "smart": {
-          "type": "boolean",
-          "description": "Project is smart container for organization npm project"
-        },
         "monorepo": {
           "type": "boolean",
           "description": "Project is monorepo"
         },
-        "smartContainerBuildTarget": {
+        "organization": {
+          "type": "boolean",
+          "description": "Project is organization/scope (like"
+        },
+        "microFrontendMainProjectName": {
           "type": "string",
-          "description": "Main project for smart container command \"taon start\" will start this project"
+          "description": "Container projects can be used as micro frontends with router:  <site-path>/  (microFrontendMainProjectName)  <site-path>/_/other-project-name"
         }
       },
       "required": [

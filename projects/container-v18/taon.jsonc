@@ -966,6 +966,7 @@
 
       //@useBy=tnp-core
       "glob": "^7.1.2",
+      "fast-glob": "~3.3.2",
 
       // @useBy=tnp-helpers      @useBy=tnp-core
       "sloc": "^0.2.0",

@@ -5296,6 +5296,18 @@
           "additionalProperties": false,
           "deprecated": true
         },
+        "overrideNpmName": {
+          "type": "string",
+          "description": "override npm name for build/relese"
+        },
+        "overrideNameWhenInsideOrganization": {
+          "type": "string",
+          "description": "it override name of project when is inside container that is organization.\n\nProperty \"overrideNpmName\" can override this name."
+        },
+        "overrideNameForCli": {
+          "type": "string",
+          "description": "override name of cli tool created from project"
+        },
         "type": {
           "type": "string",
           "const": "isomorphic-lib"
@@ -5314,12 +5326,20 @@
           },
           "description": "At beginning after node_modules installation taon is checking is packages are installed - if not it will throw error. Also.. this dependencies are going to be included in released npm lib as dependencies."
         },
+        "peerDependenciesNamesForNpmLib": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "At beginning after node_modules installation taon is checking is packages are installed - if not it will throw error. Also.. this peerDependencies are going to be included in released npm lib as peerDependencies."
+        },
         "additionalNpmNames": {
           "type": "array",
           "items": {
             "type": "string"
           },
-          "description": "so I can release same npm lib with different name"
+          "description": "so I can release same npm lib with different name",
+          "deprecated": "does not make sense"
         },
         "isUsingOwnNodeModulesInsteadCoreContainer": {
           "type": "boolean",
@@ -5329,16 +5349,24 @@
           "type": "boolean",
           "deprecated": "use isUsingOwnNodeModulesInsteadCoreContainer"
         },
-        "cliLibReleaseOptions": {
-          "$ref": "#/definitions/Models.CliLibReleaseOptions",
-          "description": "options what to do with cli tool"
+        "shouldGenerateAutogenIndexFile": {
+          "type": "boolean",
+          "description": "generate src/lib/index._auto-generated_.ts with all exports from lib ts files"
+        },
+        "autoReleaseConfigAllowedItems": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Models.TaonAutoReleaseItem"
+          },
+          "description": "Auto release helps with releasing multiple projects from a local machine. This is useful when we don't have Taon Cloud set up and want to release all projects with a single command."
         }
       },
       "required": [
-        "cliLibReleaseOptions",
         "dependenciesNamesForNpmLib",
         "isCoreProject",
         "packageJsonOverride",
+        "peerDependenciesNamesForNpmLib",
+        "shouldGenerateAutogenIndexFile",
         "type"
       ],
       "additionalProperties": false
@@ -6220,28 +6248,50 @@
       "additionalProperties": false,
       "description": "An alternative configuration for workspaces."
     },
-    "Models.CliLibReleaseOptions": {
+    "Models.TaonAutoReleaseItem": {
       "type": "object",
       "properties": {
-        "cliBuildObscure": {
-          "type": "boolean"
+        "artifactName": {
+          "type": "string",
+          "enum": [
+            "npm-lib-and-cli-tool",
+            "angular-node-app",
+            "electron-app",
+            "mobile-app",
+            "vscode-plugin",
+            "docs-webapp"
+          ]
         },
-        "cliBuildUglify": {
-          "type": "boolean"
+        "envName": {
+          "type": "string",
+          "enum": [
+            "localhost",
+            "dev",
+            "stage",
+            "prod",
+            "test",
+            "qa",
+            "sandbox",
+            "uat",
+            "preprod",
+            "demo",
+            "ci",
+            "training"
+          ],
+          "description": "if not proviede default  env.<artifact-name>.__.ts will be in use"
         },
-        "cliBuildNoDts": {
-          "type": "boolean"
+        "envNumber": {
+          "type": "number",
+          "description": "example for dev environtment > undefined - env.<artifact-name>.dev.ts > 1 - env.<artifact-name>.dev1.ts > 2 - env.<artifact-name>.dev2.ts ..."
         },
-        "cliBuildIncludeNodeModules": {
-          "type": "boolean"
-        },
-        "libBuildUglify": {
-          "type": "boolean"
-        },
-        "libBuildObscure": {
-          "type": "boolean"
+        "skip": {
+          "type": "boolean",
+          "description": "skip release of this artifact"
         }
       },
+      "required": [
+        "artifactName"
+      ],
       "additionalProperties": false
     }
   }
