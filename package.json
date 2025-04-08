@@ -1,6 +1,6 @@
 {
   "name": "taon",
-  "version": "18.0.25",
+  "version": "18.0.26",
   "scripts": {
     "mkdocs": "python3 -m mkdocs"
   },
@@ -155,6 +155,7 @@
     "express": "~4.19.2",
     "express-fileupload": "~1.4.0",
     "express-session": "~1.18.0",
+    "fast-glob": "~3.3.2",
     "file-loader": "~1.1.11",
     "file-saver": "2.0.5",
     "file-type": "~19.1.1",
@@ -328,5 +329,10 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/darekf77/taon.git"
+  },
+  "bin": {
+    "taon": "bin/taon",
+    "taon-debug": "bin/taon-debug",
+    "taon-debug-brk": "bin/taon-debug-brk"
   }
 }
