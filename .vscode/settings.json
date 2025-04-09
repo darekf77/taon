@@ -30,14 +30,11 @@
     "**/index.js": true,
     "**/index.d.ts": true,
     "**/index.js.map": true,
-    "**/taon-config-standalone.schema.json": true,
-    "**/taon-config-container.schema.json": true,
+    "**/taon-config.schema.json": true,
     "**/webpack.config.js": true,
     "**/webpack.backend-dist-build.js": true,
     "**/run.js": true,
     "**/run-org.js": true,
-    "**/update-vscode-package-json.js": true,
-    "**/eslint.config.js": true,
     "**/tsconfig.isomorphic.json.filetemplate": true,
     "**/tsconfig.isomorphic-flat-dist.json.filetemplate": true,
     "**/tsconfig.browser.json.filetemplate": true,
@@ -48,12 +45,16 @@
     "**/.npmignore": true,
     "**/.babelrc": true,
     "**/.npmrc": true,
+    "**/.eslintrc.json": true,
     "**/.prettierignore": true,
     "**/.prettierrc": true,
     "**/.editorconfig": true,
     "**/devDependencies.json": true,
     "**/package.json": true,
     "**/logo.svg": true,
+    ".firedev": true,
+    ".taon": true,
+    ".tnp": true,
     "**/*.filetemplate": true,
     "**/tsconfig.*": true,
     "**/tslint.*": true,
@@ -151,18 +152,18 @@
     "**/src/**"
   ],
   "window.title": "npm/taon-dev/taon  [ ${activeEditorShort} ]",
-  "json.schemas": [
-    {
-      "fileMatch": [
-        "/taon.jsonc"
-      ],
-      "url": "./taon-config-standalone.schema.json"
-    },
-    {
-      "fileMatch": [
-        "/taon.jsonc"
-      ],
-      "url": "./taon-config-standalone.schema.json"
-    }
-  ]
+  "json.schemas": [{
+    "fileMatch": [
+      "/docs-config.jsonc"
+    ],
+    "url": "./docs-config.schema.json"
+  }, {
+    "fileMatch": [
+      "/taon.jsonc"
+    ],
+    "url": "./taon-config-standalone.schema.json"
+  }, {
+    "fileMatch": ["/taon.jsonc"],
+    "url": "./taon-config.schema.json"
+  }]
 }
