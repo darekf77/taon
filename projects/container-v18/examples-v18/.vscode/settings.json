@@ -2,6 +2,9 @@
   "files.exclude": {
     "**/*____ORIGINAL____.ts": true,
     "_changelog": true,
+    "*.sh": true,
+    "*.xlsx": true,
+    "scripts": true,
     "**/node_modules": true,
     "**/tmp*": true,
     "**/dist*": true,
@@ -18,12 +21,12 @@
     "**/npm-debug.log*": true,
     "**/.sass-cache": true,
     "**/.sourcemaps": true,
+    "**/projects/tmp*": true,
     "**/tsconfig.backend.dist.json": true,
     "**/.gitignore": true,
     "**/.npmignore": true,
     "**/.babelrc": true,
     "**/.npmrc": true,
-    "**/.eslintrc.json": true,
     "**/.prettierignore": true,
     "**/.prettierrc": true,
     "**/.editorconfig": true,
@@ -42,6 +45,8 @@
     "**/protractor.conf.js": true,
     "**/karma.conf.js": true,
     "**/docs-config.schema.json": true,
+    "**/taon-config-standalone.schema.json": true,
+    "**/taon-config-container.schema.json": true,
     "**/index.js": true,
     "**/index.d.ts": true,
     "**/index.js.map": true,
@@ -93,9 +98,9 @@
   "json.schemas": [
     {
       "fileMatch": [
-        "/docs-config.jsonc"
+        "/taon.jsonc"
       ],
-      "url": "./docs-config.schema.json"
+      "url": "./taon-config-container.schema.json"
     }
   ]
 }

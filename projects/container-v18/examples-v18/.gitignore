@@ -19,8 +19,6 @@ app.hosts.ts
 /docs-config.schema.json
 /**/*._auto-generated_.ts
 /**/BUILD-INFO.md
-/linked-repos
-
 
 /src/lib/lib-info.md
 /src/migrations/migrations-info.md
@@ -30,8 +28,6 @@ app.hosts.ts
 # System Files
 .DS_Store
 Thumbs.db
-
-
 /node_modules
 /tmp*
 /dist*
@@ -50,6 +46,10 @@ Thumbs.db
 /npm-debug.log*
 /.sass-cache
 /.sourcemaps
+/projects/tmp*
+!tsconfig*
+!webpack.*
+
 # container/workspace git projects
 # PREFIX
 
@@ -59,7 +59,5 @@ Thumbs.db
 # =====================
 !taon.jsonc
 *.filetemplate
-
-
-
-/.vscode/launch.json
+/*.sqlite
+/*.rest

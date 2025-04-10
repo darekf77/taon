@@ -1,26 +1,10 @@
 {
-  "resources": ["README.md"],
   "type": "container",
-  "monorepo": true,
   "version": "v18",
-
-  "overrided": {
-    "dependencies": {},
-    "ignoreDepsPattern": [],
-    "includeAsDev": [],
-    "includeOnly": [],
-    "linkedFolders": [],
-    "npmFixes": []
-  },
-
+  "dependenciesNamesForNpmLib": [],
   "linkedProjects": ["electron-remote-service"],
+  "monorepo": true,
+  "resources": ["README.md"],
   "smartContainerBuildTarget": "",
-  "linkedRepos": [],
-
-  "libReleaseOptions": {
-    "cliBuildNoDts": false,
-    "cliBuildObscure": false,
-    "cliBuildUglify": false,
-    "cliBuildIncludeNodeModules": false
-  }
+  "packageJsonOverride": {}
 }

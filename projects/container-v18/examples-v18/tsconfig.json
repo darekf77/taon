@@ -2,10 +2,8 @@
   "compilerOptions": {
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "strictNullChecks": false,
-    "rootDir": "./",
-    "paths": {},
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "rootDir": "./"
   },
   "include": [
     "environments/**/*.ts",
