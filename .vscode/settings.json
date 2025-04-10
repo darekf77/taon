@@ -163,12 +163,6 @@
         "/taon.jsonc"
       ],
       "url": "./taon-config-standalone.schema.json"
-    },
-    {
-      "fileMatch": [
-        "/taon.jsonc"
-      ],
-      "url": "./taon-config.schema.json"
     }
   ]
 }

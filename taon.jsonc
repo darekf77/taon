@@ -1,7 +1,5 @@
 {
-  "resources": ["README.md", "bin"],
   "type": "isomorphic-lib",
-
   "version": "v18",
 
   "dependenciesNamesForNpmLib": [
@@ -20,6 +18,8 @@
   "autoReleaseConfigAllowedItems": [{
     "artifactName": "npm-lib-and-cli-tool"
   }],
+
+  "resources": ["README.md", "bin"],
 
   "packageJsonOverride": {
     "author": "Dariusz Filipiak",

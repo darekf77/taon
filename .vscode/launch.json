@@ -15,11 +15,7 @@
         "!**/node_modules/**"
       ],
       "runtimeArgs": [
-        "--nolazy",
-        "-r",
-        "ts-node/register",
-        "--preserve-symlinks",
-        "--experimental-worker"
+        "--preserve-symlinks"
       ]
     },
     {
@@ -43,10 +39,29 @@
       "type": "node",
       "request": "attach",
       "name": "Attach to global cli tool",
+      "autoAttachChildProcesses": false,
       "port": 9229,
       "skipFiles": [
         "<node_internals>/**"
       ]
+    },
+    {
+      "name": "Debug/Start Vscode Plugin",
+      "type": "extensionHost",
+      "request": "launch",
+      "runtimeExecutable": "${execPath}",
+      "sourceMaps": true,
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/**",
+        "!**/node_modules/**"
+      ],
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/tmp-vscode-proj/development/taon"
+      ],
+      "outFiles": [
+        "${workspaceFolder}/tmp-vscode-proj/development/taon/out/**/*.js"
+      ],
+      "preLaunchTask": "Update package.json vscode metadata"
     }
   ],
   "compounds": [
