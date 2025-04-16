@@ -1,6 +1,6 @@
 import { Symbols } from '../symbols';
 import { Validators } from '../validators';
-import { _ } from 'tnp-core/src';
+import { _, Utils } from 'tnp-core/src';
 import { Models } from '../models';
 import { TaonControllerOptions } from '../decorators/classes/controller-decorator';
 import { TaonHelpers } from './taon-helpers';
@@ -198,7 +198,7 @@ export namespace ClassHelpers {
     allMethodsNames = [],
   ): string[] => {
     if (!classOrClassInstance) {
-      return allMethodsNames;
+      return Utils.uniqArray(allMethodsNames);
     }
 
     const isClassFunction = _.isFunction(classOrClassInstance);
@@ -226,7 +226,7 @@ export namespace ClassHelpers {
       !classFun.constructor ||
       classFun?.constructor?.name === 'Object'
     ) {
-      return allMethodsNames;
+      return Utils.uniqArray(allMethodsNames);
     }
     return getMethodsNames(Object.getPrototypeOf(classFun), allMethodsNames);
   };
