@@ -10,6 +10,7 @@
 
 // @Component({
 //   selector: 'app-taon',
+// standalone: false,
 //   template: `hello from taon<br>
 //     <br>
 //     users from backend

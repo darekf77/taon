@@ -3,6 +3,7 @@ import { FieldWrapper } from '@ngx-formly/core';
 
 @Component({
   selector: 'formly-horizontal-wrapper',
+  standalone: false,
   template: `
     <div class="form-group row">
       <label

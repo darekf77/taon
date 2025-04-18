@@ -12,11 +12,11 @@ import { Observable, Subject, Subscription } from 'rxjs';
 import { _ } from 'tnp-core/src';
 
 import axios from 'axios';
-import {
-  NgProgressConfig,
-  NgProgressModule,
-  NgProgressRef,
-} from 'ngx-progressbar';
+// import {
+//   NgProgressConfig,
+//   NgProgressModule,
+//   NgProgressRef,
+// } from 'ngx-progressbar';
 import { Taon } from 'taon/src';
 // import { Models } from 'tnp-models';
 // import type { TaonAdmin } from '../taon-admin-mode-configuration';
@@ -28,30 +28,31 @@ declare const ENV: any;
   selector: 'taon-progress-bar',
   templateUrl: './taon-progress-bar.component.html',
   styleUrls: ['./taon-progress-bar.component.scss'],
+  standalone: false,
 })
 export class TaonProgressBarComponent implements OnInit {
-  @ViewChild('labProgress') labProgress: NgProgressRef;
+  @ViewChild('labProgress') labProgress: any; // NgProgressRef;
   @Input() isDesktop: boolean;
   admin: any;
   handlers: Subscription[] = [];
-  options: NgProgressConfig = _.merge(
-    {
-      min: 8,
-      max: 100,
-      speed: 200,
-      trickleSpeed: 300,
-      debounceTime: 0,
-      ease: 'linear',
-      spinnerPosition: 'right',
-      direction: 'ltr+',
-      color: 'gray',
-      fixed: true,
-      meteor: true,
-      spinner: true,
-      thick: false,
-    },
-    _.get(ENV, `plugins['ngx-progressbar']`),
-  );
+  // options: NgProgressConfig = _.merge(
+  //   {
+  //     min: 8,
+  //     max: 100,
+  //     speed: 200,
+  //     trickleSpeed: 300,
+  //     debounceTime: 0,
+  //     ease: 'linear',
+  //     spinnerPosition: 'right',
+  //     direction: 'ltr+',
+  //     color: 'gray',
+  //     fixed: true,
+  //     meteor: true,
+  //     spinner: true,
+  //     thick: false,
+  //   },
+  //   _.get(ENV, `plugins['ngx-progressbar']`),
+  // );
 
   constructor() {}
 

@@ -16,6 +16,7 @@ DON'T FORGET
 
 @Component({
   selector: 'formly-repeat-section',
+  standalone: false,
   template: `
     <div *ngIf="field.fieldGroup && field.fieldGroup.length === 0">
       Press button to add new element...

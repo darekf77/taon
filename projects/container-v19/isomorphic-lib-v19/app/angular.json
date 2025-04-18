@@ -33,9 +33,7 @@
               "src/assets",
               "src/manifest.webmanifest"
             ],
-            "styles": [
-              "src/styles.scss"
-            ],
+            "styles": ["src/styles.scss"],
             "scripts": [],
             "serviceWorker": true,
             "ngswConfigPath": "ngsw-config.json"
@@ -66,10 +64,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "app:build:production"
+              "buildTarget": "app:build:production"
             },
             "development": {
-              "browserTarget": "app:build:development"
+              "buildTarget": "app:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -93,9 +91,7 @@
               "src/assets",
               "src/manifest.webmanifest"
             ],
-            "styles": [
-              "src/styles.scss"
-            ],
+            "styles": ["src/styles.scss"],
             "scripts": []
           }
         },
@@ -170,13 +166,8 @@
             "tsConfig": "tsconfig.app.json",
             "polyfills": "src/polyfills.ts",
             "inlineStyleLanguage": "scss",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
-            "styles": [
-              "src/styles.scss"
-            ],
+            "assets": ["src/favicon.ico", "src/assets"],
+            "styles": ["src/styles.scss"],
             "scripts": [],
             "customWebpackConfig": {
               "path": "./angular.webpack.js",
@@ -285,13 +276,8 @@
             "karmaConfig": "src/karma.conf.js",
             "inlineStyleLanguage": "scss",
             "scripts": [],
-            "styles": [
-              "src/styles.scss"
-            ],
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
+            "styles": ["src/styles.scss"],
+            "assets": ["src/favicon.ico", "src/assets"],
             "customWebpackConfig": {
               "path": "./angular.webpack.js",
               "replaceDuplicatePlugins": true
@@ -301,10 +287,7 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html"
-            ]
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
           }
         }
       }
@@ -312,9 +295,6 @@
   },
   "cli": {
     "analytics": false,
-    "schematicCollections": [
-      "@cypress/schematic",
-      "@schematics/angular"
-    ]
+    "schematicCollections": ["@cypress/schematic", "@schematics/angular"]
   }
 }

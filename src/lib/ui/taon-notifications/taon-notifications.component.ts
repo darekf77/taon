@@ -8,6 +8,7 @@ import { TaonNotificationsService } from './taon-notifications.service';
   selector: 'taon-notifications',
   templateUrl: './taon-notifications.component.html',
   styleUrls: ['./taon-notifications.component.scss'],
+  standalone: false,
 })
 export class TaonNotificationsComponent implements OnInit {
   constructor(private notification: TaonNotificationsService) {}

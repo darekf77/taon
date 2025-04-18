@@ -48,7 +48,6 @@
       "stylus-loader": null,
       "uglifyjs-webpack-plugin": null,
       "url-loader": null,
-      "@ngtools/webpack": null,
       "sass-variable-loader": null,
       "@ionic-native/core": null,
       "@ionic-native/splash-screen": null,
@@ -115,6 +114,9 @@
       // "lodash.set": ">= 4",
       //#endregion
       //#region CORE PACKAGES
+      //  @trusted=major
+      "@ngtools/webpack": "19.2.8",
+
       //  @trusted=major
       "@angular/animations": "~19.2.7",
 
@@ -248,8 +250,8 @@
       // "better-sqlite3": "9.5.0",
       // awesome sql in browser
       // indexeddb just like localstorage
-      //  @trusted=minor @githublink=https://github.com/sql-js/sql.js
-      "sql.js": "^1.8.0",
+      // @githublink=https://github.com/sql-js/sql.js
+      "sql.js": "1.8.0",
 
       //  @trusted=minor
       "localforage": "1.10.0",
@@ -532,6 +534,7 @@
 
       "dateformat": "^3.0.3",
       "@types/dateformat": "^1.0.1",
+      "date-fns": "^4.1.0",
 
       // api change in new version
       // "dateformat": "~4.6.3",

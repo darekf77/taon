@@ -18,6 +18,7 @@ const host = 'http://localhost:' + HOST_BACKEND_PORT;
 //#region @browser
 @Component({
   selector: 'app-taon',
+  standalone: false,
   template: `hello from taon<br />
     <br />
     users from backend

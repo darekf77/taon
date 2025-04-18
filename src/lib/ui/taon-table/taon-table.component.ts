@@ -47,6 +47,7 @@ const defaultColumns = [
   selector: 'taon-table',
   templateUrl: './taon-table.component.html',
   styleUrls: ['./taon-table.component.scss'],
+  standalone: false,
 })
 export class TaonTableComponent {
   //#region fields
