@@ -33,6 +33,9 @@
     "**/devDependencies.json": true,
     "**/package.json": true,
     "**/logo.svg": true,
+    ".firedev": true,
+    ".taon": true,
+    ".tnp": true,
     "**/*.filetemplate": true,
     "**/tsconfig.*": true,
     "**/tslint.*": true,
@@ -90,7 +93,7 @@
     "**/.tnp": true,
     "projects": true
   },
-  "window.title": "projects/container-v18/examples-v18  [ ${activeEditorShort} ]",
+  "window.title": "projects/container-v19/examples-v19  [ ${activeEditorShort} ]",
   "search.useIgnoreFiles": false,
   "search.include": [
     "**/src/**"

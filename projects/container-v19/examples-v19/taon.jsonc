@@ -6,5 +6,7 @@
   "monorepo": true,
   "resources": ["README.md"],
   "smartContainerBuildTarget": "",
-  "packageJsonOverride": {}
+  "packageJsonOverride": {
+    "author": "Dariusz Filipiak"
+  }
 }

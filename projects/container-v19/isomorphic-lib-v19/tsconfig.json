@@ -2,7 +2,15 @@
   "extends": "./tsconfig.isomorphic.json",
   "compilerOptions": {
     "strictNullChecks": false,
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "paths": {
+      "isomorphic-lib-v19": [
+        "./src/lib"
+      ],
+      "isomorphic-lib-v19/*": [
+        "./src/lib/*"
+      ]
+    }
   },
   "include": [
     "src/**/*"

@@ -7,7 +7,7 @@
   "isCoreProject": true,
   "version": "v19",
   "packageJsonOverride": {
-    "author":"Dariusz Filipiak",
+    "author": "Dariusz Filipiak",
     "dependencies": {
       //#region not needed anymore @deprecated
       "@angular/http": null,
@@ -116,87 +116,93 @@
       //#endregion
       //#region CORE PACKAGES
       //  @trusted=major
-      "@angular/animations": "~18.1.4",
+      "@angular/animations": "~19.2.7",
 
       //  @trusted=major
-      "@angular/cdk": "~18.1.4",
+      "@angular/cdk": "~19.2.10",
 
       //  @trusted=major
-      "@angular/common": "~18.1.4",
+      "@angular/common": "~19.2.7",
 
       //  @trusted=major
-      "@angular/compiler": "~18.1.4",
+      "@angular/compiler": "~19.2.7",
 
       //  @trusted=major
-      "@angular/core": "~18.1.4",
+      "@angular/core": "~19.2.7",
 
       //  @trusted=major
-      "@angular/forms": "~18.1.4",
+      "@angular/forms": "~19.2.7",
 
       //  @trusted=major
-      "@angular/elements": "~18.1.4",
+      "@angular/elements": "~19.2.7",
 
       //  @trusted=major
-      "@angular/material": "~18.1.4",
+      "@angular/material": "~19.2.10",
 
       //  @trusted=major
-      "@angular/platform-browser": "~18.1.4",
+      "@angular/platform-browser": "~19.2.7",
 
       //  @trusted=major
-      "@angular/platform-browser-dynamic": "~18.1.4",
+      "@angular/platform-browser-dynamic": "~19.2.7",
 
       //  @trusted=major
-      "@angular/pwa": "~18.1.4",
+      "@angular/platform-server": "^19.2.0",
 
       //  @trusted=major
-      "@angular/router": "~18.1.4",
+      "@angular/ssr": "^19.2.8",
 
       //  @trusted=major
-      "@angular/service-worker": "~18.1.4",
+      "@angular/pwa": "~19.2.8",
 
       //  @trusted=major
-      "@angular-devkit/build-angular": "~18.1.4",
+      "@angular/router": "~19.2.7",
 
       //  @trusted=major
-      "@angular-builders/custom-webpack": "~18.0.0",
+      "@angular/service-worker": "~19.2.7",
 
       //  @trusted=major
-      "@angular-devkit/core": "~18.1.4",
+      "@angular-devkit/build-angular": "~19.2.8",
 
       //  @trusted=major
-      "@angular/cli": "~18.1.4",
+      "@angular-builders/custom-webpack": "~19.0.1",
 
       //  @trusted=major
-      "@angular/compiler-cli": "~18.1.4",
+      "@angular-devkit/core": "~19.2.8",
+
+      //  @trusted=major
+      "@angular/cli": "~19.2.8",
+
+      //  @trusted=major
+      "@angular/compiler-cli": "~19.2.7",
 
       //  @deprecated
       "@angular/flex-layout": null,
 
       //  @trusted=major
-      "rxjs": "~7.8.1",
+      "rxjs": "~7.8.2",
 
       // "rxjs-watcher": "^1.1.3",
       //  @trusted=major
-      "tslib": "~2.6.3",
+      "tslib": "~2.8.1",
 
       //  @trusted=major
       "zone.js": "~0.13.0",
 
       //  @trusted=major
-      "ng-packagr": "~18.1.0",
+      "ng-packagr": "~19.2.2",
 
       "ts-node": "~10.9.1",
 
       //  @trusted=major
-      "bun": "~1.1.22",
+      "bun": "~1.2.10",
       // NOTE: I cant use bun inside ts code if I am not executing code through bun run
       // "@types/bun": "^1.1.5",
 
       // @trusted=major
-      "typescript": "~5.5.4",
+      "typescript": "~5.7.2",
 
       //  @trusted=patch
-      "type-fest": "4.25.0",
+      "type-fest": "~4.39.1",
 
       //  @trusted=patch
       "ts-loader": "^2.3.1",
@@ -210,7 +216,7 @@
       // "@types/node": "^18.19.45",
 
       //  @trusted=patch
-      "@babel/cli": "~7.24.8",
+      "@babel/cli": "~7.25.9",
 
       //  @trusted=patch
       "@types/q": "~1.5.8",
@@ -219,14 +225,14 @@
       //#region CORE COMMUNICATION PACKAGES
       // socket communication
       //  @trusted=minor
-      "socket.io": "4.7.5",
+      "socket.io": "~4.8.1",
 
       //  @trusted=minor
       "socket.io-client": "~4.7.5",
 
       // http request
       //  @trusted=major
-      "axios": "~1.7.7",
+      "axios": "~1.8.4",
 
       //#endregion
       //#region DATABASES
@@ -268,57 +274,57 @@
       //#endregion
       //#region NGRX  / immutable @ngrx
       // @trusted=major
-      "@ngrx/effects": "~18.0.2",
+      "@ngrx/effects": "~19.1.0",
 
       // @trusted=major
-      "@ngrx/entity": "~18.0.2",
+      "@ngrx/entity": "~19.1.0",
 
       // @trusted=major
-      "@ngrx/router-store": "~18.0.2",
+      "@ngrx/router-store": "~19.1.0",
 
       // @trusted=major
-      "@ngrx/schematics": "~18.0.2",
+      "@ngrx/schematics": "~19.1.0",
 
       // @trusted=major
-      "@ngrx/store": "~18.0.2",
+      "@ngrx/store": "~19.1.0",
 
       // @trusted=major
-      "@ngrx/store-devtools": "~18.0.2",
+      "@ngrx/store-devtools": "~19.1.0",
 
       // @trusted=major
-      "@ngrx/component-store": "~18.0.2",
+      "@ngrx/component-store": "~19.1.0",
 
       // fantastic immutable arrays
       // @trusted=major
-      "@ngrx/data": "~18.0.2",
+      "@ngrx/data": "~19.1.0",
 
       // @trusted=major
-      "immutable": "~4.3.7",
+      "immutable": "~5.1.1",
 
       "immer": "~10.0.2",
 
       //#endregion
       //#region TESTING / MOCKING
       //  @trusted=minor
-      "mocha": "~10.7.3",
+      "mocha": "~10.8.2",
 
       //  @trusted=minor
       "@testdeck/mocha": "~0.3.3",
 
       //  @trusted=minor
-      "chai": "~4.5.0",
+      "chai": "~5.2.0",
 
       //  @trusted=minor
-      "sinon": "~18.0.0",
+      "sinon": "~16.1.3",
 
       // "sinon-chai": "3.7.0",
       "ts-sinon": null,
 
       //  @trusted=minor
-      "supertest": "~7.0.0",
+      "supertest": "~7.1.0",
 
       // @trusted=minor
-      "playwright": "1.43.1",
+      "playwright": "~1.52.0",
 
       // jest test framework / runner
       // @trusted=major
@@ -328,13 +334,13 @@
       "jest-marbles": "latest",
 
       // @trusted=major
-      "@types/jest": "~29.5.12",
+      "@types/jest": "~29.5.14",
 
       // @trusted=major
       "@testdeck/jest": "~0.3.3",
 
       // @trusted=major
-      "jest-preset-angular": "~14.2.2",
+      "jest-preset-angular": "~14.5.5",
 
       // @trusted=major
       "jest-date-mock": "~1.0.10",
@@ -350,7 +356,7 @@
 
       // better angula  tests
       // @trusted=major
-      "@ngneat/spectator": "~19.0.0",
+      "@ngneat/spectator": "~19.4.1",
 
       // for e2e not tested yet but prepared
       // awesome e2e (https://docs.cypress.io/guides/getting-started/installing-cypress)
@@ -360,7 +366,7 @@
       // "cypress": "^13.5.1",
       // faking data (https://github.com/ngneat/falso)
       //  @trusted=minor
-      "@ngneat/falso": "~7.2.0",
+      "@ngneat/falso": "~7.3.0",
 
       // jest is instead karma test runner
       // "~6.4.0",
@@ -381,13 +387,13 @@
       //#endregion
       //#region DOCS
       // @trusted=major
-      "@compodoc/compodoc": "~1.1.25",
+      "@compodoc/compodoc": "~1.1.26",
 
       // @trusted=major
-      "typedoc": "~0.26.5",
+      "typedoc": "~0.28.2",
 
       // @trusted=major
-      "typedoc-plugin-markdown": "~4.2.3",
+      "typedoc-plugin-markdown": "~4.6.2",
 
       // generate changelog based on commits metadata
       // @trusted=major
@@ -419,7 +425,7 @@
       "node-polyfill-webpack-plugin": "2.0.1",
 
       //  @trusted=patch
-      "wait-on": "8.0.1",
+      "wait-on": "~8.0.3",
       "@types/wait-on": "5.3.4",
 
       // electron needs webpack for ng build
@@ -436,11 +442,11 @@
       //#region FORMLY
       // "@ngx-formly/bootstrap": "6.0.0-next.8",
       // @trusted=major
-      "@ngx-formly/core": "~6.3.6",
+      "@ngx-formly/core": "~6.3.12",
 
       // "@ngx-formly/ionic": "6.0.0-next.8", disabled for now
       // @trusted=major
-      "@ngx-formly/material": "~6.3.6",
+      "@ngx-formly/material": "~6.3.12",
 
       //#endregion
       //#region VALIDATION
@@ -453,14 +459,14 @@
 
       // amazing schema validation (decide betwwen yup vs joi)
       //  @trusted=patch
-      "yup": "~1.3.3",
+      "yup": "~1.0.0-beta.8",
 
       //  @trusted=patch
       "joi": "~17.13.3",
 
       // validation function based
       //  @trusted=patch
-      "validator": "~13.5.2",
+      "validator": "~13.1.17",
 
       // fast json schema vlaidation
       //  @trusted=patch
@@ -476,7 +482,7 @@
       "task.js": "^0.1.5",
 
       //  @trusted=patch
-      "file-type": "~19.1.1",
+      "file-type": "~17.1.6",
 
       //#endregion
       //#region MEDIA (IMAGE/VIDEO/AUDIO) MANIPULATION
@@ -536,7 +542,7 @@
       //#region WYSIG
       // good for higlighting in read only mode
       // @trusted=major
-      "ngx-highlightjs": "~12.0.0",
+      "ngx-highlightjs": "~14.0.0",
 
       // highlighting and editing at the same time!
       // @trusted=major
@@ -544,7 +550,7 @@
 
       // wysig editor with copy / paste images
       // @trusted=major
-      "ngx-editor": "~17.5.4",
+      "ngx-editor": "~18.0.0",
 
       // @trusted=major
       "ngx-monaco-editor": "12.0.0",
@@ -553,7 +559,7 @@
       "ngx-photo-editor": "0.4.4",
 
       // @trusted=major
-      "ngx-infinite-scroll": "18.0.0",
+      "ngx-infinite-scroll": "~19.0.0",
 
       //#endregion
       //#region STRING MANIPULATIONS
@@ -570,10 +576,10 @@
 
       // compare npm pacakages  versions
       // @trusted=patch
-      "@types/semver": "~7.5.8",
+      "@types/semver": "~7.3.13",
 
       // @trusted=patch
-      "semver": "~7.6.3",
+      "semver": "~7.5.4",
 
       // @trusted=patch,
       "turndown": "~7.2.0",
@@ -588,10 +594,10 @@
       // ----- TRANSLATIONS
       // angular apps translation
       // @trusted=major
-      "@ngx-translate/core": "~15.0.0",
+      "@ngx-translate/core": "~16.0.4",
 
       // @trusted=major
-      "@ngx-translate/http-loader": "~8.0.0",
+      "@ngx-translate/http-loader": "~16.0.1",
 
       //#endregion
       //#region FLASHY UI EXTENSIONS
@@ -604,28 +610,28 @@
       // top right corner notifications
       // "ngx-toastr": "14.2.2",
       // @trusted=major
-      "@ngneat/overview": "~6.1.1",
+      "@ngneat/overview": "~6.1.2",
 
       // @trusted=major
       "@ngneat/hot-toast": "~7.0.0",
 
       // beautifull modal / notifications
       // @trusted=patch
-      "sweetalert2": "~11.7.32",
+      "sweetalert2": "~11.4.38",
 
       // @trusted=patch
-      "@sweetalert2/ngx-sweetalert2": "~12.4.0",
+      "@sweetalert2/ngx-sweetalert2": "~12.0.2",
 
       // top horizontal request progress bard, v9 dla angular 15 (inuse)
       // @trusted=major
-      "ngx-progressbar": "~11.1.0",
+      "ngx-progressbar": "~14.0.0",
 
       // "@ngx-loading-bar/core":"6.0.2" ,
       // "@ngx-loading-bar/http-client": "6.0.2",
       // "@ngx-loading-bar/router": "6.0.2",
       // slim scroll, v10 for angular 15
       // @trusted=major
-      "ngx-scrollbar": "~15.1.2",
+      "ngx-scrollbar": "~18.0.0",
 
       // easy rxjs destroy
       "@ngneat/until-destroy": "~10.0.0",
@@ -634,7 +640,7 @@
       // "ngx-bootstrap": "8.0.0",
       // "ng-bootstrap": "11.0.1", // bootstrap feels old
       // @trusted=patch
-      "bootstrap": "~5.3.3",
+      "bootstrap": "~5.3.5",
 
       // creating zips in browser/node!
       // @trusted=patch
@@ -651,19 +657,19 @@
 
       // use csss variable from js inside scss
       // @trusted=major
-      "angular-material-css-vars": "~7.0.0",
+      "angular-material-css-vars": "~8.0.1",
 
       // perfect lock for buttons when loading
       // @trusted=major
-      "ng-lock": "~18.0.1",
+      "ng-lock": "~19.0.1",
 
       // faster track by
       // @trusted=major
-      "ng-for-track-by-property": "~18.0.1",
+      "ng-for-track-by-property": "~19.0.1",
 
       // scroll to the top button for angular
       // @trusted=major
-      "ngx-scrolltop": "~18.0.0",
+      "ngx-scrolltop": "~19.0.2",
 
       // @trusted=major
       "@angular-material-extensions/password-strength": "~16.0.0",
@@ -702,54 +708,54 @@
       //  + tooltips
       //  + color picker
       // @trusted=major
-      "@ng-matero/extensions": "~18.1.2",
+      "@ng-matero/extensions": "~19.3.2",
 
       // @trusted=major
-      "primeflex": "3.3.1",
+      "primeflex": "~4.0.0",
 
       // @trusted=major
       "primeicons": "~7.0.0",
 
       // @trusted=major @angular
-      "primeng": "~17.18.8",
+      "primeng": "~19.1.0",
 
       //#endregion
       //#region LINT
       // @trusted=major
-      "@angular-eslint/builder": "~18.2.0",
+      "@angular-eslint/builder": "~19.3.0",
 
       // @trusted=major
-      "@angular-eslint/eslint-plugin": "~18.2.0",
+      "@angular-eslint/eslint-plugin": "~19.3.0",
 
       // @trusted=major
-      "@angular-eslint/eslint-plugin-template": "~18.2.0",
+      "@angular-eslint/eslint-plugin-template": "~19.3.0",
 
       // @trusted=major
-      "@angular-eslint/schematics": "~18.2.0",
+      "@angular-eslint/schematics": "~19.3.0",
 
       // @trusted=major
-      "@angular-eslint/template-parser": "~18.2.0",
+      "@angular-eslint/template-parser": "~19.3.0",
 
       // @trusted=major
-      "@typescript-eslint/eslint-plugin": "~8.0.1",
+      "@typescript-eslint/eslint-plugin": "~8.30.1",
 
       // @trusted=major
-      "@typescript-eslint/parser": "~8.0.1",
+      "@typescript-eslint/parser": "~8.30.1",
 
       // @trusted=major
-      "eslint": "~9.9.0",
+      "eslint": "~9.24.0",
 
       // @trusted=major
-      "eslint-config-prettier": "9.1.0",
+      "eslint-config-prettier": "~10.1.2",
 
       // @trusted=major
-      "eslint-plugin-prettier": "~5.2.1",
+      "eslint-plugin-prettier": "~5.2.6",
 
       // @trusted=major
-      "prettier": "~3.3.3",
+      "prettier": "~3.5.3",
 
       // @trusted=major
-      "prettier-eslint": "16.3.0",
+      "prettier-eslint": "~16.4.1",
 
       // @trusted=major
       "eslint-plugin-import": "latest",
@@ -776,7 +782,7 @@
       //#endregion
       //#region USE IT
       // @trusted=patch
-      "ts-json-schema-generator": "~2.3.0-next.5",
+      "ts-json-schema-generator": "~2.4.0-next.7",
 
       // can be installed with visual stdio as dependency on windows
       // "@parcel/watcher": "2.3.0",
@@ -815,10 +821,10 @@
       // cheerio: "1.0.0-rc.12",
       // "impress.js":"1.1.0",
       // @trusted=major
-      "ng2-pdfjs-viewer": "~18.0.0",
+      "ng2-pdfjs-viewer": "~19.0.0",
 
       // @trusted=major
-      "google-libphonenumber": "~3.2.38",
+      "google-libphonenumber": "~3.2.40",
 
       // "print-js": "^1.6.0",
       // "@ngx-formly/primeng":"~6.1.8",
@@ -827,7 +833,7 @@
       "copy-paste": "1.5.3",
 
       // @trusted=major
-      "@vercel/ncc": "~0.38.1",
+      "@vercel/ncc": "~0.38.3",
 
       //#endregion
 
@@ -844,7 +850,7 @@
       "randomcolor": "^0.5.3",
 
       // @trusted=major
-      "uuid": "~10.0.0",
+      "uuid": "~11.1.0",
 
       // @trusted=patch
       "buffer-shims": "1.0.0",
@@ -873,7 +879,7 @@
       "lnk": "~1.0.1",
 
       // @trusted=patch
-      "cross-spawn": "7.0.3",
+      "cross-spawn": "~7.0.6",
 
       // @trusted=patch
       "chokidar": "3.5.3",
@@ -883,24 +889,21 @@
       "mkdirp": "^0.5.1",
       "rimraf": "^2.6.2",
 
-      // @trusted=patch
       "fs-extra": "8.1.0",
 
       "jscodeshift": "^0.6.3",
 
-      // @trusted=patch
       "@types/fs-extra": "^7.0.0",
 
-      // @trusted=patch
       "@types/rimraf": "^2.0.2",
 
       "open": "7.2.1",
 
       // @trusted=patch
-      "@types/chai": "~4.3.17",
+      "@types/chai": "~4.3.20",
 
       // @trusted=patch
-      "@types/mocha": "~10.0.7",
+      "@types/mocha": "~10.0.10",
 
       // @trusted=patch
       "detect-mocha": "0.1.0",
@@ -923,7 +926,7 @@
       "node-localstorage": "2.1.6",
 
       // @trusted=patch
-      "concurrently": "~8.2.2",
+      "concurrently": "~9.1.2",
 
       // @trusted=patch
       "file-loader": "~1.1.11",
@@ -972,7 +975,7 @@
       "sloc": "^0.2.0",
 
       // @trusted=major
-      "simple-git": "3.25.0",
+      "simple-git": "~3.27.0",
 
       "fkill": "6.1.0",
       "ps-list": "6.1.0",
@@ -1038,7 +1041,7 @@
 
       //#region BACKEND HTTP SERVER
       // @trusted=minor
-      "@types/http-proxy": "~1.17.15",
+      "@types/http-proxy": "~1.17.16",
 
       // @trusted=minor
       "http-server": "~0.13.0",
@@ -1078,21 +1081,21 @@
 
       // handle user session auth
       // @trusted=minor
-      "express-session": "~1.18.0",
+      "express-session": "~1.18.1",
 
       // smooth file uplload
       "@types/express-fileupload": "~1.5.0",
 
       // @trusted=minor
-      "express-fileupload": "~1.4.0",
+      "express-fileupload": "~1.5.1",
 
       // for data for nodejs (browser has it build it)
       // @trusted=minor
-      "form-data": "4.0.0",
+      "form-data": "~4.0.2",
 
       // secure express app
       // @trusted=minor
-      "helmet": "~7.1.0",
+      "helmet": "~7.2.0",
 
       // @trusted=minor
       "@types/oauth2orize": "~1.11.5",
@@ -1116,11 +1119,11 @@
 
       //#region DOCKER
       // @trusted=patch
-      "@types/dockerode": "3.3.32",
+      "@types/dockerode": "~3.3.38",
       // @trusted=patch
-      "dockerode": "4.0.2",
+      "dockerode": "~4.0.5",
       // @trusted=patch
-      "pm2": "5.4.3",
+      "pm2": "~6.0.5",
       //#endregion
 
       //#region my packages

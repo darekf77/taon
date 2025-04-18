@@ -84,7 +84,7 @@
       "url": "./taon-config-standalone.schema.json"
     }
   ],
-  "window.title": "projects/container-v18/isomorphic-lib-v18  [ ${activeEditorShort} ]",
+  "window.title": "projects/container-v19/isomorphic-lib-v19  [ ${activeEditorShort} ]",
   "prettier.prettierPath": "./node_modules/prettier",
   "search.useIgnoreFiles": false,
   "search.include": [

@@ -4,7 +4,7 @@
     {
       "label": "Update package.json vscode metadata",
       "type": "shell",
-      "command": "cd tmp-vscode-proj/development/container-v18 && node --no-deprecation update-vscode-package-json.js app.vscode",
+      "command": "cd tmp-vscode-proj/development/container-v19 && node --no-deprecation update-vscode-package-json.js app.vscode",
       "presentation": {
         "reveal": "always",
         "panel": "shared"

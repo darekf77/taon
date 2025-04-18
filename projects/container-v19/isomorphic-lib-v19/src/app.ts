@@ -9,30 +9,36 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-isomorphic-lib-v19',
-  template: `hello from isomorphic-lib-v19<br>
-    <br>
+  template: `hello from isomorphic-lib-v19<br />
+    <br />
     users from backend
     <ul>
-      <li *ngFor="let user of (users$ | async)"> {{ user | json }} </li>
-    </ul>
-  `,
-  styles: [` body { margin: 0px !important; } `],
+      <li *ngFor="let user of users$ | async">{{ user | json }}</li>
+    </ul> `,
+  styles: [
+    `
+      body {
+        margin: 0px !important;
+      }
+    `,
+  ],
 })
-export class IsomorphicLibv19Component implements OnInit {
-  users$: Observable<User[]> = User.ctrl.getAll().received.observable
-    .pipe(map(data => data.body.json));
+export class IsomorphicLibV19Component implements OnInit {
+  users$: Observable<User[]> = User.ctrl
+    .getAll()
+    .received.observable.pipe(map(data => data.body.json));
 
-  constructor() { }
-  ngOnInit() { }
+  constructor() {}
+  ngOnInit() {}
 }
 
 @NgModule({
   imports: [CommonModule],
-  exports: [IsomorphicLibv19Component],
-  declarations: [IsomorphicLibv19Component],
+  exports: [IsomorphicLibV19Component],
+  declarations: [IsomorphicLibV19Component],
   providers: [],
 })
-export class IsomorphicLibv19Module { }
+export class IsomorphicLibV19Module {}
 //#endregion
 
 @Taon.Entity({ className: 'User' })
@@ -42,22 +48,21 @@ class User extends Taon.Base.Entity {
   @Taon.Orm.Column.Generated()
   //#endregion
   id?: string | number;
-
 }
 
 @Taon.Controller({ className: 'UserController' })
 class UserController extends Taon.Base.CrudController<User> {
-  entity = ()=> User;
+  entity = () => User;
   //#region @websql
   async initExampleDbData(): Promise<void> {
-    await this.repository.save(new User())
+    await this.repository.save(new User());
   }
   //#endregion
 }
 
 async function start() {
   console.log('hello world');
-  console.log('Your server will start on port '+ HOST_BACKEND_PORT);
+  console.log('Your server will start on port ' + HOST_BACKEND_PORT);
   const host = 'http://localhost:' + HOST_BACKEND_PORT;
 
   const context = await Taon.createContext({
@@ -72,7 +77,7 @@ async function start() {
       // PUT FIREDEV ENTITIES HERE
     },
     //#region @websql
-    database:true,
+    database: true,
     //#endregion
   });
   await context.initialize();
@@ -80,13 +85,11 @@ async function start() {
   if (Taon.isBrowser) {
     const users = (await User.ctrl.getAll().received).body.json;
     console.log({
-      'users from backend': users
-    })
+      'users from backend': users,
+    });
   }
 }
 
 export default start;
-
-
 
 //#endregion
