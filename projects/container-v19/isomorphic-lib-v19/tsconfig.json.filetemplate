@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.isomorphic.json",
+  "compilerOptions": {
+    "strictNullChecks": false,
+     "rootDir": "./src",
+     {{{ (ENV && ENV.pathsTsconfig) || '' }}}
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "src/assets"
+  ]
+}

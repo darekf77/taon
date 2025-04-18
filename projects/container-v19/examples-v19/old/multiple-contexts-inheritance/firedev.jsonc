@@ -1,0 +1,22 @@
+{
+  "resources": [],
+  "version": "v19",
+  "type": "isomorphic-lib",
+  "overrided": {
+    "linkedFolders": [],
+    "ignoreDepsPattern": [],
+    "npmFixes": [],
+    "includeAsDev": [],
+    "includeOnly": [],
+    "dependencies": {}
+  },
+  "linkedProjects": [],
+  "smartContainerBuildTarget": "",
+  "linkedRepos": [],
+  "libReleaseOptions": {
+    "cliBuildNoDts": false,
+    "cliBuildObscure": false,
+    "cliBuildUglify": false,
+    "cliBuildIncludeNodeModules": false
+  }
+}

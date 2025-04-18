@@ -1,0 +1,1162 @@
+{
+  "resources": [
+    "README.md", // hello
+  ],
+  "smartContainerBuildTarget": "",
+  "type": "container",
+  "isCoreProject": true,
+  "version": "v19",
+  "packageJsonOverride": {
+    "author":"Dariusz Filipiak",
+    "dependencies": {
+      //#region not needed anymore @deprecated
+      "@angular/http": null,
+
+      "hammerjs": null,
+      "rxjs-compat": null,
+      "@angular-devkit/build-optimizer": null,
+      "@angular-devkit/schematics": null,
+      "@angular/language-service": null,
+      "@types/jasminewd2": null,
+      "codelyzer": null,
+      "jasmine-spec-reporter": null,
+      "karma-coverage-istanbul-reporter": null,
+      "protractor": null,
+      "core-js": null,
+      "core-js-compat": null,
+      "webpack-cli": null,
+      "html-webpack-plugin": null,
+      "sw-toolbox": null,
+      "gulp-inline-ng2-template": null,
+      "gulp": "^3.9.1",
+      "autoprefixer": null,
+      "circular-dependency-plugin": null,
+      "copy-webpack-plugin": null,
+      "css-loader": null,
+      "cssnano": null,
+      "exports-loader": null,
+      "friendly-errors-webpack-plugin": null,
+      "less-loader": null,
+      "ngc-webpack": null,
+      "postcss-custom-properties": null,
+      "postcss-loader": null,
+      "postcss-url": null,
+      "raw-loader": null,
+      "sass-loader": null,
+      "source-map-loader": null,
+      "style-loader": null,
+      "stylus-loader": null,
+      "uglifyjs-webpack-plugin": null,
+      "url-loader": null,
+      "@ngtools/webpack": null,
+      "sass-variable-loader": null,
+      "@ionic-native/core": null,
+      "@ionic-native/splash-screen": null,
+      "@ionic-native/status-bar": null,
+      "@ionic/storage": null,
+      "@ionic/app-scripts": null,
+      "ionic": null,
+      "ionic-angular": null,
+      "ionicons": null,
+      "@ngx-loading-bar/http": null,
+      "babel-cli": null,
+      "babel-loader": null,
+      "babel-core": null,
+      "babel-plugin-syntax-dynamic-import": null,
+      "babel-preset-env": null,
+      "babel-preset-es2015": null,
+      "node-sass": null,
+
+      // TODO remove taon ui
+      // "taon-ui": null,
+
+      //#endregion
+      //#region FIND ALTERNATIVE
+      "svg-png-converter": null,
+
+      "sharp": null,
+      "@types/sharp": null,
+      "@iconify/react": null,
+      "@types/socket.io": null,
+      "@types/socket.io-client": null,
+      "sqlite3": null,
+      "@ngneat/transloco": null,
+      "angular-tree-component": null,
+      "ngx-breadcrumbs": null,
+      "ng-modal-lib": null,
+      "tsickle": null,
+      "node-cli-test": null,
+      "button-dropdown": null,
+      "tnp-tools": null,
+
+      //#endregion
+      //#region maybe usefull
+      // "@types/lodash.get": "^4.4.4",
+      // "@types/lodash.isequal": "^4.5.3",
+      // "@types/lodash.merge": "^4.6.4",
+      // "@types/lodash.set": "^4.3.4",
+      // "on-build-webpack": "0.1.0",
+      // "path-browserify": "~1.0.1",
+      // "timers-browserify": "~2.0.12",
+      // "stream-browserify": "~3.0.0",
+      // "os-browserify": "~0.3.0",
+      // "browserify-fs": "~1.0.0",
+      // "stream-http": "~3.2.0",
+      // "crypto-browserify": "~3.12.0",
+      // "browserify": "~17.0.0",
+      // "ng2-file-upload": "~4.0.0",
+      // multer: "1.4.5-lts.1", // for file upload => file-upload is ok for now
+      // explore file system in browser => not needed for now
+      // "filer.js": "0.4.5",
+      // "ngx-wig": "13.0.3", // wysig editor
+      // "lodash.get": ">= 4",
+      // "lodash.isequal": ">= 4",
+      // "lodash.merge": ">= 4",
+      // "lodash.set": ">= 4",
+      //#endregion
+      //#region CORE PACKAGES
+      //  @trusted=major
+      "@angular/animations": "~18.1.4",
+
+      //  @trusted=major
+      "@angular/cdk": "~18.1.4",
+
+      //  @trusted=major
+      "@angular/common": "~18.1.4",
+
+      //  @trusted=major
+      "@angular/compiler": "~18.1.4",
+
+      //  @trusted=major
+      "@angular/core": "~18.1.4",
+
+      //  @trusted=major
+      "@angular/forms": "~18.1.4",
+
+      //  @trusted=major
+      "@angular/elements": "~18.1.4",
+
+      //  @trusted=major
+      "@angular/material": "~18.1.4",
+
+      //  @trusted=major
+      "@angular/platform-browser": "~18.1.4",
+
+      //  @trusted=major
+      "@angular/platform-browser-dynamic": "~18.1.4",
+
+      //  @trusted=major
+      "@angular/pwa": "~18.1.4",
+
+      //  @trusted=major
+      "@angular/router": "~18.1.4",
+
+      //  @trusted=major
+      "@angular/service-worker": "~18.1.4",
+
+      //  @trusted=major
+      "@angular-devkit/build-angular": "~18.1.4",
+
+      //  @trusted=major
+      "@angular-builders/custom-webpack": "~18.0.0",
+
+      //  @trusted=major
+      "@angular-devkit/core": "~18.1.4",
+
+      //  @trusted=major
+      "@angular/cli": "~18.1.4",
+
+      //  @trusted=major
+      "@angular/compiler-cli": "~18.1.4",
+
+      //  @deprecated
+      "@angular/flex-layout": null,
+
+      //  @trusted=major
+      "rxjs": "~7.8.1",
+
+      // "rxjs-watcher": "^1.1.3",
+      //  @trusted=major
+      "tslib": "~2.6.3",
+
+      //  @trusted=major
+      "zone.js": "~0.13.0",
+
+      //  @trusted=major
+      "ng-packagr": "~18.1.0",
+
+      "ts-node": "~10.9.1",
+
+      //  @trusted=major
+      "bun": "~1.1.22",
+      // NOTE: I cant use bun inside ts code if I am not executing code through bun run
+      // "@types/bun": "^1.1.5",
+
+      // @trusted=major
+      "typescript": "~5.5.4",
+
+      //  @trusted=patch
+      "type-fest": "4.25.0",
+
+      //  @trusted=patch
+      "ts-loader": "^2.3.1",
+
+      //  @trusted=patch
+      "ts-debug": "1.3.0",
+
+      // typescript types for fs, net etc. (build in from node)
+      "@types/node": "^16.18.21",
+      // problem with types
+      // "@types/node": "^18.19.45",
+
+      //  @trusted=patch
+      "@babel/cli": "~7.24.8",
+
+      //  @trusted=patch
+      "@types/q": "~1.5.8",
+
+      //#endregion
+      //#region CORE COMMUNICATION PACKAGES
+      // socket communication
+      //  @trusted=minor
+      "socket.io": "4.7.5",
+
+      //  @trusted=minor
+      "socket.io-client": "~4.7.5",
+
+      // http request
+      //  @trusted=major
+      "axios": "~1.7.7",
+
+      //#endregion
+      //#region DATABASES
+
+      // typed sql
+      "taon-type-sql": "~18.0.22",
+      "sql-template-strings": "~2.2.2",
+      "sql-template-tag": "~5.2.1",
+
+      // outstanding crossplatform orm
+      // typeorm: "^0.3.10",
+      // amazing sqlite drive without node-gyp
+      // "better-sqlite3": "9.5.0",
+      // awesome sql in browser
+      // indexeddb just like localstorage
+      //  @trusted=minor @githublink=https://github.com/sql-js/sql.js
+      "sql.js": "^1.8.0",
+
+      //  @trusted=minor
+      "localforage": "1.10.0",
+
+      //  @trusted=minor
+      "lowdb": "7.0.1",
+
+      // dependencies of typeorm
+      //  @trusted=patch
+      "cli-highlight": "2.1.11",
+
+      //  @trusted=patch
+      "@sqltools/formatter": "~1.2.5",
+
+      //  @trusted=patch
+      "app-root-path": "~3.1.0",
+
+      //#endregion
+      //#region TODO create awesome routers
+      "path-to-regexp": "~6.2.2",
+
+      //#endregion
+      //#region NGRX  / immutable @ngrx
+      // @trusted=major
+      "@ngrx/effects": "~18.0.2",
+
+      // @trusted=major
+      "@ngrx/entity": "~18.0.2",
+
+      // @trusted=major
+      "@ngrx/router-store": "~18.0.2",
+
+      // @trusted=major
+      "@ngrx/schematics": "~18.0.2",
+
+      // @trusted=major
+      "@ngrx/store": "~18.0.2",
+
+      // @trusted=major
+      "@ngrx/store-devtools": "~18.0.2",
+
+      // @trusted=major
+      "@ngrx/component-store": "~18.0.2",
+
+      // fantastic immutable arrays
+      // @trusted=major
+      "@ngrx/data": "~18.0.2",
+
+      // @trusted=major
+      "immutable": "~4.3.7",
+
+      "immer": "~10.0.2",
+
+      //#endregion
+      //#region TESTING / MOCKING
+      //  @trusted=minor
+      "mocha": "~10.7.3",
+
+      //  @trusted=minor
+      "@testdeck/mocha": "~0.3.3",
+
+      //  @trusted=minor
+      "chai": "~4.5.0",
+
+      //  @trusted=minor
+      "sinon": "~18.0.0",
+
+      // "sinon-chai": "3.7.0",
+      "ts-sinon": null,
+
+      //  @trusted=minor
+      "supertest": "~7.0.0",
+
+      // @trusted=minor
+      "playwright": "1.43.1",
+
+      // jest test framework / runner
+      // @trusted=major
+      "jest": "~29.7.0",
+
+      // @trusted=major
+      "jest-marbles": "latest",
+
+      // @trusted=major
+      "@types/jest": "~29.5.12",
+
+      // @trusted=major
+      "@testdeck/jest": "~0.3.3",
+
+      // @trusted=major
+      "jest-preset-angular": "~14.2.2",
+
+      // @trusted=major
+      "jest-date-mock": "~1.0.10",
+
+      // @trusted=major
+      "jest-junit": "16.0.0",
+
+      // jasmine bdd test framework
+      "jasmine-core": null,
+
+      "@types/jasmine": null,
+      "@testdeck/jasmine": null,
+
+      // better angula  tests
+      // @trusted=major
+      "@ngneat/spectator": "~19.0.0",
+
+      // for e2e not tested yet but prepared
+      // awesome e2e (https://docs.cypress.io/guides/getting-started/installing-cypress)
+      // "@cypress/schematic": "^2.5.0",
+      // TODO issue on windows "The Cypress App could not be downloaded."
+      // ] Does your workplace require a proxy to be used to access the Internet?
+      // "cypress": "^13.5.1",
+      // faking data (https://github.com/ngneat/falso)
+      //  @trusted=minor
+      "@ngneat/falso": "~7.2.0",
+
+      // jest is instead karma test runner
+      // "~6.4.0",
+      "karma": null,
+
+      // "~3.2.0",
+      "karma-chrome-launcher": null,
+
+      // "~5.1.0",
+      "karma-jasmine": null,
+
+      // "~2.0.0",
+      "karma-jasmine-html-reporter": null,
+
+      // "~2.2.0",
+      "karma-coverage": null,
+
+      //#endregion
+      //#region DOCS
+      // @trusted=major
+      "@compodoc/compodoc": "~1.1.25",
+
+      // @trusted=major
+      "typedoc": "~0.26.5",
+
+      // @trusted=major
+      "typedoc-plugin-markdown": "~4.2.3",
+
+      // generate changelog based on commits metadata
+      // @trusted=major
+      "conventional-changelog-cli": "~5.0.0",
+
+      // "@storybook/addon-docs": "~8.1.6",
+      // "@storybook/addon-essentials": "~8.1.6",
+      // "@storybook/addon-interactions": "~8.1.6",
+      // "@storybook/addon-links": "~8.1.6",
+      // "@storybook/addon-mdx-gfm": "^8.1.6",
+      // "@storybook/addon-storysource": "^8.1.6",
+      // "@storybook/addon-viewport": "^8.1.6",
+      // "@storybook/angular": "~8.1.6",
+      // "@storybook/blocks": "~8.1.6",
+      // "@storybook/manager-api": "~8.1.6",
+      // "@storybook/test": "~8.1.6",
+      // "@storybook/testing-library": "~0.2.2 ",
+      // "@storybook/theming": "~8.1.6",
+      // "storybook": "~8.1.6",
+      //#endregion
+      //#region electron
+      "electron": "25.2.0",
+
+      "electron-builder": "24.4.0",
+      "electron-debug": "3.2.0",
+      "electron-reloader": "1.2.3",
+
+      //  @trusted=patch
+      "node-polyfill-webpack-plugin": "2.0.1",
+
+      //  @trusted=patch
+      "wait-on": "8.0.1",
+      "@types/wait-on": "5.3.4",
+
+      // electron needs webpack for ng build
+      //  @trusted=patch
+      "webpack": "~5.80",
+
+      //  @trusted=patch
+      "webpack-dev-middleware": "~6.1.3",
+
+      //  @trusted=patch
+      "webpack-dev-server": "~5.0.4",
+
+      //#endregion
+      //#region FORMLY
+      // "@ngx-formly/bootstrap": "6.0.0-next.8",
+      // @trusted=major
+      "@ngx-formly/core": "~6.3.6",
+
+      // "@ngx-formly/ionic": "6.0.0-next.8", disabled for now
+      // @trusted=major
+      "@ngx-formly/material": "~6.3.6",
+
+      //#endregion
+      //#region VALIDATION
+      // validation decorator based (https://github.com/typestack/class-validator)
+      //  @trusted=patch
+      "class-validator": "~0.14.1",
+
+      //  @trusted=patch
+      "class-transformer": "0.5.1",
+
+      // amazing schema validation (decide betwwen yup vs joi)
+      //  @trusted=patch
+      "yup": "~1.3.3",
+
+      //  @trusted=patch
+      "joi": "~17.13.3",
+
+      // validation function based
+      //  @trusted=patch
+      "validator": "~13.5.2",
+
+      // fast json schema vlaidation
+      //  @trusted=patch
+      "ajv": "~8.17.1",
+
+      //#endregion
+      //#region THREADS / WORKERS
+      // threads lib: (https://github.com/andywer/threads.js)
+      //  @trusted=patch
+      "threads": "1.7.0",
+
+      // TODO old to remove @deprecated
+      "task.js": "^0.1.5",
+
+      //  @trusted=patch
+      "file-type": "~19.1.1",
+
+      //#endregion
+      //#region MEDIA (IMAGE/VIDEO/AUDIO) MANIPULATION
+      // nodejs no deps image manipulation
+      //  @trusted=patch
+      "jimp": "~0.22.12",
+
+      // embed/customize videos
+      //  @trusted=patch
+      "video.js": "~8.3.0",
+
+      // embed/customize audio
+      //  @trusted=patch
+      "howler": "~2.2.4",
+
+      // browser image manipulation
+      //  @trusted=patch
+      "pica": "9.0.1",
+
+      //#endregion
+      //#region ICONS
+      //  @trusted=patch
+      "font-awesome": "4.7.0",
+
+      //  @trusted=patch
+      "material-design-icons": "3.0.1",
+
+      //  @trusted=patch
+      "@iconify/icons-fa-solid": "~1.2.4",
+
+      //  @trusted=patch
+      "@iconify/icons-mdi": "~1.2.48",
+
+      //  @trusted=patch
+      "@mdi/js": "~7.4.47",
+
+      //#endregion
+
+      //#region DATES
+      // handle dates
+      // @trusted=major
+      "ngx-moment": "6.0.2",
+
+      // usefull pipe for angular
+      // @trusted=major
+      "ngx-pipes": "3.2.2",
+
+      "dateformat": "^3.0.3",
+      "@types/dateformat": "^1.0.1",
+
+      // api change in new version
+      // "dateformat": "~4.6.3",
+      // "@types/dateformat": "~5.0.2",
+
+      //#endregion
+
+      //#region WYSIG
+      // good for higlighting in read only mode
+      // @trusted=major
+      "ngx-highlightjs": "~12.0.0",
+
+      // highlighting and editing at the same time!
+      // @trusted=major
+      "ngx-ace-wrapper": "~17.0.0",
+
+      // wysig editor with copy / paste images
+      // @trusted=major
+      "ngx-editor": "~17.5.4",
+
+      // @trusted=major
+      "ngx-monaco-editor": "12.0.0",
+
+      // @trusted=major
+      "ngx-photo-editor": "0.4.4",
+
+      // @trusted=major
+      "ngx-infinite-scroll": "18.0.0",
+
+      //#endregion
+      //#region STRING MANIPULATIONS
+      // compare advanced strings
+      // @trusted=patch
+      "@types/diff": "~5.2.1",
+
+      // usefull if you wanna ecode in hash text
+      // @trusted=patch
+      "diff": "~4.0.2",
+
+      // @trusted=patch
+      "base32": "~0.0.7",
+
+      // compare npm pacakages  versions
+      // @trusted=patch
+      "@types/semver": "~7.5.8",
+
+      // @trusted=patch
+      "semver": "~7.6.3",
+
+      // @trusted=patch,
+      "turndown": "~7.2.0",
+
+      // format code
+      // @trusted=patch
+      "typescript-formatter": "~7.2.2",
+
+      //#endregion
+      //#region CLI
+      // "commander": "10.0.1",
+      // ----- TRANSLATIONS
+      // angular apps translation
+      // @trusted=major
+      "@ngx-translate/core": "~15.0.0",
+
+      // @trusted=major
+      "@ngx-translate/http-loader": "~8.0.0",
+
+      //#endregion
+      //#region FLASHY UI EXTENSIONS
+      // awesome typing effect
+      // @trusted=major
+      "ngx-typed-js": "2.1.1",
+
+      //#endregion
+      //#region UI EXTENSIONS
+      // top right corner notifications
+      // "ngx-toastr": "14.2.2",
+      // @trusted=major
+      "@ngneat/overview": "~6.1.1",
+
+      // @trusted=major
+      "@ngneat/hot-toast": "~7.0.0",
+
+      // beautifull modal / notifications
+      // @trusted=patch
+      "sweetalert2": "~11.7.32",
+
+      // @trusted=patch
+      "@sweetalert2/ngx-sweetalert2": "~12.4.0",
+
+      // top horizontal request progress bard, v9 dla angular 15 (inuse)
+      // @trusted=major
+      "ngx-progressbar": "~11.1.0",
+
+      // "@ngx-loading-bar/core":"6.0.2" ,
+      // "@ngx-loading-bar/http-client": "6.0.2",
+      // "@ngx-loading-bar/router": "6.0.2",
+      // slim scroll, v10 for angular 15
+      // @trusted=major
+      "ngx-scrollbar": "~15.1.2",
+
+      // easy rxjs destroy
+      "@ngneat/until-destroy": "~10.0.0",
+
+      // handle bootstrap components
+      // "ngx-bootstrap": "8.0.0",
+      // "ng-bootstrap": "11.0.1", // bootstrap feels old
+      // @trusted=patch
+      "bootstrap": "~5.3.3",
+
+      // creating zips in browser/node!
+      // @trusted=patch
+      "jszip": "3.10.1",
+
+      // exporting zips from browser
+      // @trusted=patch
+      "file-saver": "2.0.5",
+
+      // "@types/file-saver": "2.0.5",
+      // easy lazy loading
+      // @trusted=major
+      "ng-in-viewport": "~16.1.0",
+
+      // use csss variable from js inside scss
+      // @trusted=major
+      "angular-material-css-vars": "~7.0.0",
+
+      // perfect lock for buttons when loading
+      // @trusted=major
+      "ng-lock": "~18.0.1",
+
+      // faster track by
+      // @trusted=major
+      "ng-for-track-by-property": "~18.0.1",
+
+      // scroll to the top button for angular
+      // @trusted=major
+      "ngx-scrolltop": "~18.0.0",
+
+      // @trusted=major
+      "@angular-material-extensions/password-strength": "~16.0.0",
+
+      // check when element is being resized (jquery plugin) @deprecated
+      // @trusted=major @deprecated
+      "element-resize-detector": "~1.2.4",
+
+      // @trusted=major @deprecated
+      "angular-resize-event": "~3.2.0",
+
+      // "jquery-focuspoint": "1.1.3",
+      // @trusted=patch
+      "image-focus": "1.2.1",
+
+      // @trusted=patch
+      "animate.css": "~4.1.1",
+
+      // @trusted=patch
+      "rallax.js": "2.0.4",
+
+      // nice menu for mobile apps (is based on deprecated flex layout)
+      // "@angular-material-extensions/fab-menu": "6.1.0",
+      // additonal thing for material https://ng-matero.github.io/extensions/components/progress/overview
+      //  + data/grid table for materia pagination table (better than @swimlane/ngx-datatable)
+      //  + loading material button,
+      //  + checkbox arra group,
+      //  + datetime picker
+      //  + dialog wrapper for simple  yes/no/ok messages
+      //  + general big drawer -> perfect for side menus
+      //  + material loader for whole div
+      //  + progress bar with percentage number
+      //  + select/multiselect (chips)
+      //  + rating slider with numbers
+      //  + material split div panels similar to (https://github.com/angular-split/angular-split)
+      //  + tooltips
+      //  + color picker
+      // @trusted=major
+      "@ng-matero/extensions": "~18.1.2",
+
+      // @trusted=major
+      "primeflex": "3.3.1",
+
+      // @trusted=major
+      "primeicons": "~7.0.0",
+
+      // @trusted=major @angular
+      "primeng": "~17.18.8",
+
+      //#endregion
+      //#region LINT
+      // @trusted=major
+      "@angular-eslint/builder": "~18.2.0",
+
+      // @trusted=major
+      "@angular-eslint/eslint-plugin": "~18.2.0",
+
+      // @trusted=major
+      "@angular-eslint/eslint-plugin-template": "~18.2.0",
+
+      // @trusted=major
+      "@angular-eslint/schematics": "~18.2.0",
+
+      // @trusted=major
+      "@angular-eslint/template-parser": "~18.2.0",
+
+      // @trusted=major
+      "@typescript-eslint/eslint-plugin": "~8.0.1",
+
+      // @trusted=major
+      "@typescript-eslint/parser": "~8.0.1",
+
+      // @trusted=major
+      "eslint": "~9.9.0",
+
+      // @trusted=major
+      "eslint-config-prettier": "9.1.0",
+
+      // @trusted=major
+      "eslint-plugin-prettier": "~5.2.1",
+
+      // @trusted=major
+      "prettier": "~3.3.3",
+
+      // @trusted=major
+      "prettier-eslint": "16.3.0",
+
+      // @trusted=major
+      "eslint-plugin-import": "latest",
+
+      // @trusted=major
+      "eslint-plugin-jsdoc": "latest",
+
+      // @trusted=major
+      "eslint-plugin-prefer-arrow": "latest",
+
+      // @trusted=major
+      "eslint-plugin-react": "latest",
+
+      // @trusted=patch @deprecated
+      "tslint": "~6.1.3",
+
+      //#region lint comit
+      // @schuchard/prettier
+      // "lint-staged": "13.2.2",
+      // "@commitlint/cli": "^12.1.1",
+      // "@commitlint/config-conventional": "^12.1.1",
+      // "@commitlint/prompt-cli": "^12.1.1",
+      //#endregion
+      //#endregion
+      //#region USE IT
+      // @trusted=patch
+      "ts-json-schema-generator": "~2.3.0-next.5",
+
+      // can be installed with visual stdio as dependency on windows
+      // "@parcel/watcher": "2.3.0",
+      // wrong types in current verison => replace with isomorphic-storage
+      // @trusted=major
+      "ngx-store": "3.1.1",
+
+      // SECUTIRY FIXES
+      // @trusted=patch
+      "json5": "~2.2.3",
+
+      // @trusted=patch
+      "lodash": "~4.17.21",
+
+      // @trusted=major
+      "moment": "~2.30.1",
+
+      // @trusted=minor
+      "pretty-error": "4.0.0",
+
+      // @trusted=minor
+      "http-proxy": "1.18.1",
+
+      // "minimist": "1.2.0",
+      //#endregion
+      //#region CHECK/EXPLORE
+      // HANDLE HOT KEYS  @ngneat/hotkeys
+      // INPUT MASKS FOR EMIAL, IPs, ETC.  @ngneat/input-mask inputmask@5 @types/inputmask@5
+      // FAKE LOADING POST CONTENT https://github.com/ngneat/content-loader
+      // DOCS SERACH MENU cmd+k menu @ngneat/overview @ngneat/cmdk
+      // MOBILE DEEP MENU jQUERY PLUGIN https://github.com/alizahid/slinky -> create or find angular plugin
+      // -------
+      // PROPER CLASS INJECTIONS https://github.com/typestack/typedi => usefull for typescript-class-helpers
+      // PROPER CLASS MAPPIGN usefull => https://github.com/typestack/class-transformer
+      // ADD SOMEDAY
+      // cheerio: "1.0.0-rc.12",
+      // "impress.js":"1.1.0",
+      // @trusted=major
+      "ng2-pdfjs-viewer": "~18.0.0",
+
+      // @trusted=major
+      "google-libphonenumber": "~3.2.38",
+
+      // "print-js": "^1.6.0",
+      // "@ngx-formly/primeng":"~6.1.8",
+      // "ng-swagger-gen": "~2.3.1",
+
+      "copy-paste": "1.5.3",
+
+      // @trusted=major
+      "@vercel/ncc": "~0.38.1",
+
+      //#endregion
+
+      //#region URGENT TO UPDATE
+      // @trusted=major
+      "reflect-metadata": "~0.2.2",
+
+      // @trusted=major
+      "q": "1.5.1",
+
+      //#endregion
+
+      //#region TODO RESOLVE
+      "randomcolor": "^0.5.3",
+
+      // @trusted=major
+      "uuid": "~10.0.0",
+
+      // @trusted=patch
+      "buffer-shims": "1.0.0",
+
+      // @trusted=patch
+      "content-type": "~1.0.5",
+
+      // @trusted=major
+      "cheerio": "~1.0.0",
+
+      // @trusted=patch
+      "string-similarity": "~4.0.4",
+
+      // @trusted=major
+      "underscore": "~1.13.7",
+
+      "json-stringify-safe": "^5.0.1",
+      "@types/json-stringify-safe": "~5.0.3",
+      "circular-json": "^0.5.1",
+
+      // @trusted=patch
+      "json5-writer": "0.2.0",
+
+      "@types/json5": "0.0.29",
+      "@types/lodash": "4.14.92",
+      "lnk": "~1.0.1",
+
+      // @trusted=patch
+      "cross-spawn": "7.0.3",
+
+      // @trusted=patch
+      "chokidar": "3.5.3",
+
+      "@types/chokidar": "~2.1.3",
+      "cpr": "^3.0.1",
+      "mkdirp": "^0.5.1",
+      "rimraf": "^2.6.2",
+
+      // @trusted=patch
+      "fs-extra": "8.1.0",
+
+      "jscodeshift": "^0.6.3",
+
+      // @trusted=patch
+      "@types/fs-extra": "^7.0.0",
+
+      // @trusted=patch
+      "@types/rimraf": "^2.0.2",
+
+      "open": "7.2.1",
+
+      // @trusted=patch
+      "@types/chai": "~4.3.17",
+
+      // @trusted=patch
+      "@types/mocha": "~10.0.7",
+
+      // @trusted=patch
+      "detect-mocha": "0.1.0",
+
+      // @trusted=patch
+      "nodemon": "~2.0.22",
+
+      // @deprecated
+      "enum-values": "1.2.1",
+
+      "typescript-string-enums": "^1.0.0",
+
+      //#endregion
+
+      //#region BACKEND FILES/SYSTEM
+      // @trusted=patch
+      "vscode": "1.1.37",
+
+      "cross-env": "7.0.2",
+      "node-localstorage": "2.1.6",
+
+      // @trusted=patch
+      "concurrently": "~8.2.2",
+
+      // @trusted=patch
+      "file-loader": "~1.1.11",
+
+      // @trusted=patch
+      "istanbul-instrumenter-loader": "~3.0.1",
+
+      // @trusted=patch
+      "karma-cli": "~1.0.1",
+
+      // @trusted=patch
+      "callsite-record": "~4.1.5",
+
+      // @trusted=patch
+      "@types/vinyl": "~2.0.12",
+
+      // @trusted=patch @deprecated
+      "omelette": "~0.4.17",
+
+      // @trusted=patch
+      "minimist": "~1.2.8",
+
+      // @trusted=patch
+      "fuzzy": "0.1.3",
+
+      // @trusted=patch
+      "@types/watch": "~1.0.6",
+
+      // @trusted=patch
+      "watch": "1.0.2",
+
+      "portfinder": "1.0.21",
+
+      // @trusted=patch
+      "@types/node-notifier": "~8.0.5",
+
+      "node-notifier": "~10.0.1",
+      // TODO provide types in tnp-core
+      "@types/glob": "^5.0.35",
+
+      //@useBy=tnp-core
+      "glob": "^7.1.2",
+      "fast-glob": "~3.3.2",
+
+      // @useBy=tnp-helpers      @useBy=tnp-core
+      "sloc": "^0.2.0",
+
+      // @trusted=major
+      "simple-git": "3.25.0",
+
+      "fkill": "6.1.0",
+      "ps-list": "6.1.0",
+      "check-node-version": "^3.2.0",
+      "command-exists": "^1.2.2",
+      "@types/systeminformation": "~3.54.1",
+      "systeminformation": "^3.45.7",
+      "ps-node": "^0.1.6",
+      "npm-get-dependents": "^1.0.1",
+      "is-elevated": "~3.0.0",
+      "sudo-block": "~3.0.0",
+      "sort-package-json": "^1.11.0",
+      "npm-run": "^4.1.2",
+      "lockfile": "^1.0.4",
+      "@types/lockfile": "~1.0.4",
+      "hostile": "~1.3.3",
+      "cfonts": "3.3.0",
+      "columnify": "1.6.0",
+      "console-png": "^1.2.1",
+      // not maintained but so nice
+      // "multispinner":"0.2.1",
+
+      // @trusted=patch
+      "progress": "2.0.3",
+
+      // @trusted=patch
+      "@types/progress": "~2.0.7",
+
+      "ora": "3.4.0",
+
+      // @trusted=patch
+      "enquirer": "2.4.1",
+
+      // @trusted=patch
+      "prompts": "2.4.2",
+
+      // @deprecated
+      "inquirer": "~7.3.3",
+
+      // @deprecated
+      "inquirer-autocomplete-prompt": "~1.4.0",
+
+      "inquirer-autocomplete-standalone": "~0.8.1",
+
+      "inquirer-select-pro": "1.0.0-alpha.7",
+
+      // @trusted=patch
+      "@inquirer/prompts": "~5.3.8",
+
+      // @trusted=patch needed for yes/no prompt
+      "inquirer-toggle": "^1.0.1",
+
+      // "inquirer-select-pro": "^1.0.0-alpha.6",
+      // "inquirer-sortable-checkbox": "^1.0.1",
+
+      // "@bartheleway/inquirer-table-multiple": "^0.0.3",
+      // "inquirer-action-select": "^0.0.3",
+      // "inquirer-interactive-list-prompt": "^1.0.4",
+      // @trusted=patch
+      "chalk": "^2.3.2",
+
+      //#endregion
+
+      //#region BACKEND HTTP SERVER
+      // @trusted=minor
+      "@types/http-proxy": "~1.17.15",
+
+      // @trusted=minor
+      "http-server": "~0.13.0",
+
+      // @trusted=minor
+      "@types/express": "~4.17.21",
+
+      // @trusted=minor
+      "errorhandler": "~1.5.1",
+
+      // @trusted=minor
+      "express": "~4.19.2",
+
+      // @trusted=minor
+      "method-override": "^2.3.10",
+
+      // @trusted=minor
+      "accepts": "~1.3.8",
+
+      // @trusted=minor
+      "body-parser": "~1.20.2",
+
+      // @trusted=minor
+      "cookie-parser": "~1.4.6",
+
+      // @trusted=minor
+      "cors": "~2.8.5",
+
+      // @trusted=minor
+      "http-proxy-middleware": "~0.22.0-alpha",
+
+      // @trusted=minor
+      "@types/http-proxy-middleware": "~1.0.0",
+
+      // @trusted=minor
+      "compression": "1.7.4",
+
+      // handle user session auth
+      // @trusted=minor
+      "express-session": "~1.18.0",
+
+      // smooth file uplload
+      "@types/express-fileupload": "~1.5.0",
+
+      // @trusted=minor
+      "express-fileupload": "~1.4.0",
+
+      // for data for nodejs (browser has it build it)
+      // @trusted=minor
+      "form-data": "4.0.0",
+
+      // secure express app
+      // @trusted=minor
+      "helmet": "~7.1.0",
+
+      // @trusted=minor
+      "@types/oauth2orize": "~1.11.5",
+
+      // @trusted=minor
+      "@types/password-hash": "~1.2.24",
+
+      // @trusted=minor
+      "bcryptjs": "~2.4.3",
+
+      // @trusted=minor
+      "passport": "~0.7.0",
+
+      // @trusted=minor
+      "passport-http-bearer": "1.0.1",
+
+      // @trusted=minor
+      //#endregion
+
+      "password-hash": "1.2.2",
+
+      //#region DOCKER
+      // @trusted=patch
+      "@types/dockerode": "3.3.32",
+      // @trusted=patch
+      "dockerode": "4.0.2",
+      // @trusted=patch
+      "pm2": "5.4.3",
+      //#endregion
+
+      //#region my packages
+      "taon-typeorm": "~18.0.21",
+
+      // "taon-crud": "18.0.5",
+      // "taon-ports": "18.0.5",
+      // "taon-ui": "18.0.6",
+      // "tnp-cli": "18.0.5",
+      "record-replay-req-res-scenario": "~18.0.21",
+      "ng-talkback": "~18.0.21",
+      "vpn-split": "~18.0.20",
+      "node-cli-tester": "~18.0.21",
+      "static-columns": "~18.0.32",
+      "taon-storage": "~18.0.31",
+      "tnp-core": "~18.0.60",
+      "tnp-config": "~18.0.27",
+      "ng2-logger": "~18.0.27",
+      "typescript-class-helpers": "~18.0.26",
+      "tnp-models": "~18.0.23",
+      "json10-writer": "~18.0.23",
+      "tnp-helpers": "~18.0.22",
+      "incremental-compiler": "~18.0.26",
+      // "any-project-cli": "18.0.6",
+      // "taon-crud-deamon": "18.0.6",
+      // "tnp-db": "18.0.6",
+      "magic-renamer": "~18.0.34",
+      "isomorphic-region-loader": "~18.0.22",
+      "tnp": "~18.0.28",
+      "lodash-walk-object": "~18.0.22",
+      "json10": "~18.0.22",
+      "ng2-rest": "~18.0.22",
+      "ng2-rest-swagger-generator": "~18.0.19",
+
+      //#endregion
+      "taon": "~18.0.28",
+    },
+  },
+}

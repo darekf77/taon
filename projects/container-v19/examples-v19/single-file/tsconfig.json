@@ -1,0 +1,21 @@
+{
+  "extends": "./tsconfig.isomorphic.json",
+  "compilerOptions": {
+    "strictNullChecks": false,
+    "rootDir": "./src",
+    "paths": {
+      "single-file": [
+        "./src/lib"
+      ],
+      "single-file/*": [
+        "./src/lib/*"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "src/assets"
+  ]
+}

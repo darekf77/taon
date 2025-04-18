@@ -1,0 +1,21 @@
+{
+  "extends": "./tsconfig.isomorphic.json",
+  "compilerOptions": {
+    "strictNullChecks": false,
+    "rootDir": "./src",
+    "paths": {
+      "realtime-messages-from-be-to-fe": [
+        "./src/lib"
+      ],
+      "realtime-messages-from-be-to-fe/*": [
+        "./src/lib/*"
+      ]
+    }
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "src/assets"
+  ]
+}

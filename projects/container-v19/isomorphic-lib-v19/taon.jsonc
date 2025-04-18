@@ -1,0 +1,13 @@
+{
+  "type": "isomorphic-lib",
+  "version": "v19",
+  "dependenciesNamesForNpmLib": [],
+  "isCoreProject": true,
+  "resources": ["README.md"],
+
+  "packageJsonOverride": {
+    "author": "Dariusz Filipiak",
+    "license": "UNLICENSED",
+    "private": true
+  }
+}
