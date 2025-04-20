@@ -1082,7 +1082,7 @@ export class EndpointContext {
   //#endregion
 
   //#region methods & getters / reinit controllers db example data
-  async reinitControllers() {
+  async reinitControllers(): Promise<void> {
     if (this.remoteHost || Object.keys(this.config.migrations).length > 0) {
       return;
     }
@@ -1105,7 +1105,7 @@ export class EndpointContext {
     //   `[taon] REINITING CONTROLLERS ${this.contextName} DONE`,
     // );
   }
-  async initClasses() {
+  async initClasses(): Promise<void> {
     if (this.remoteHost) {
       return;
     }
@@ -1179,11 +1179,19 @@ export class EndpointContext {
     const url = this.host
       ? new URL(this.host)
       : this.remoteHost
-        ? new URL(this.remoteHost)
-        : void 0;
+      ? new URL(this.remoteHost)
+      : void 0;
     return url;
   }
   //#endregion
+
+  /**
+   * Port from uri as number
+   * @returns {Number | undefined}
+   */
+  get port(): Number | undefined {
+    return this.uri?.port ? Number(this.uri.port) : undefined;
+  }
 
   //#region methods & getters / is https server
   get isHttpServer() {
@@ -1288,8 +1296,29 @@ export class EndpointContext {
 
   //#endregion
 
+  //#region methods & getters / destroy
+  async destroy(): Promise<void> {
+    //#region @websqlFunc
+    if (this.connection) {
+      await this.connection?.destroy();
+      delete this.connection;
+    }
+
+    if (this.serverTcpUdp) {
+      await new Promise(resolve => {
+        this.serverTcpUdp?.close(() => {
+          resolve(true);
+        });
+      });
+      delete this.serverTcpUdp;
+    }
+    delete this.expressApp;
+    //#endregion
+  }
+  //#endregion
+
   //#region methods & getters / init connection
-  async initDatabaseConnection() {
+  async initDatabaseConnection(): Promise<void> {
     //#region @websqlFunc
     if (this.remoteHost) {
       return;

@@ -1,6 +1,6 @@
-@import '../taon.scss';
+@use '../taon.scss' as taon;
 
-@include section;
+@include taon.section;
 
 :host {
   display: block;

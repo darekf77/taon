@@ -4,7 +4,7 @@
 - 🔲 2FA authentication
 - 🔲 simple online payments
 
-## Taon v19.X.X
+## Taon v19.X.X (CURRENT VERSION)
 
 - 🔲 angular v19 support
 - 🔲 2FA authentication keycloak
@@ -13,13 +13,6 @@
 - 🔲 organization build based on standalone (single process with multiple entrypoints build)
 - 🔲 organization multi window electron app
 - 🔲 cloud build: electron, cli, lib, vscode
-
-## Taon v18.X.X (CURRENT VERSION)
-
-- ✅ angular v18 support
-- ✅ firedev -> taon (rebranding)
-- 🔲 docs for new framework api
-- ✅ docs update for new cli
 - 🔲 docs examples for better understranding
 - 🔲 relaltime development FE/BE and BE/BE
 - 🔲 basic authentication
@@ -28,6 +21,13 @@
 - 🔲 local release electron, cli, vscode ext.
 - 🔲 script installation for server (curl -o- https://taon.dev/install-on-server-script.sh | bash)
 - 🔲 release standalone package as @organization/package
+
+## Taon v18.X.X 
+
+- ✅ angular v18 support
+- ✅ firedev -> taon (rebranding)
+- ✅ docs for new framework api
+- ✅ docs update for new cli
 
 ## Taon (Firedev) v17.X.X
 

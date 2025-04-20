@@ -200,8 +200,7 @@
       // NOTE: I cant use bun inside ts code if I am not executing code through bun run
       // "@types/bun": "^1.1.5",
 
-      // @trusted=major
-      "typescript": "~5.7.2",
+      "typescript": "5.7.2",
 
       //  @trusted=patch
       "type-fest": "~4.39.1",

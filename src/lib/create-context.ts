@@ -12,6 +12,42 @@ import { TaonAdminService } from './ui/taon-admin-mode-configuration/taon-admin.
 // import { Taon } from 'taon/src';
 //#endregion
 
+export const createContextTemplate = <
+  //#region context generic args
+  CTX extends Record<string, object>,
+  CTRL extends Record<string, new (...args: any[]) => any>,
+  ENTITY extends Record<string, new (...args: any[]) => any>,
+  REPO extends Record<string, new (...args: any[]) => any>,
+  PROVIDER extends Record<string, new (...args: any[]) => any>,
+  SUBSCRIBER extends Record<string, new (...args: any[]) => any>,
+  MIGRATION extends Record<string, new (...args: any[]) => any>,
+  //#endregion
+>(
+  configFn: (
+    env: any,
+  ) => Models.ContextOptions<
+    CTX,
+    CTRL,
+    ENTITY,
+    REPO,
+    PROVIDER,
+    SUBSCRIBER,
+    MIGRATION
+  >,
+) => {
+  return () => {
+    return createContext<
+      CTX,
+      CTRL,
+      ENTITY,
+      REPO,
+      PROVIDER,
+      SUBSCRIBER,
+      MIGRATION
+    >(configFn);
+  };
+};
+
 export const createContext = <
   //#region context generic args
   CTX extends Record<string, object>,
@@ -139,6 +175,7 @@ export const createContext = <
       onlyMigrationRevertToTimestamp?: number;
     }): Promise<EndpointContext> => {
       return await new Promise(async (resolve, reject) => {
+        //#region init in set timeout
         setTimeout(async () => {
           await endpointContextRef.init({
             ...overrideOptions,
@@ -187,7 +224,7 @@ export const createContext = <
               );
             await endpointContextRef.reinitControllers();
           }
-          ///#region TODO this may be usefull but for now
+          //#region TODO this may be usefull but for now
           // 2 separate contexts are fine
           // const shouldStartRemoteHost = endpointContextRef.mode !== 'remote-backend(tcp+udp)';
           // if(shouldStartRemoteHost) {
@@ -214,9 +251,9 @@ export const createContext = <
 
           resolve(endpointContextRef);
         });
+        //#endregion
       });
     },
-    //#endregion
     /**
      * realtime communication with server
      * Udp socket.io (or ipc) based.

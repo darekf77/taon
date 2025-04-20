@@ -20,6 +20,7 @@ import { NgZone } from '@angular/core';
 export * from './ui';
 //#endregion
 
+export { EndpointContext } from './endpoint-context';
 export { BaseRepository } from './base-classes/base-repository';
 export { BaseController } from './base-classes/base-controller';
 export { BaseProvider } from './base-classes/base-provider';
@@ -56,6 +57,7 @@ export namespace Taon {
   export const isElectron = coreHelpers.Helpers.isElectron;
   //#endregion
   export const createContext = createContextFn.createContext;
+  export const createContextTemplate = createContextFn.createContextTemplate;
 
   export const inject = injectFn.inject;
 
