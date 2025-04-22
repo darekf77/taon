@@ -2,7 +2,28 @@
   "type": "isomorphic-lib",
   "version": "v19",
   "dependenciesNamesForNpmLib": [],
+  "autoReleaseConfigAllowedItems": [
+   {
+    "artifactName": "npm-lib-and-cli-tool"
+   },
+  //  {
+  //   "artifactName": "angular-node-app"
+  //  },
+  //  {
+  //   "artifactName": "docs-webapp"
+  //  },
+  //  {
+  //   "artifactName": "vscode-plugin"
+  //  },
+  //  {
+  //   "artifactName": "electron-app"
+  //  },
+  //  {
+  //   "artifactName": "mobile-app"
+  //  }
+  ],
   "isCoreProject": true,
+
   "resources": ["README.md"],
 
   "packageJsonOverride": {
