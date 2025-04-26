@@ -15,7 +15,7 @@
     "./**/*"
   ],
   "exclude": [
-    "node_modules",
+ #   "node_modules",  I want watching!
     "preview",
     "docs",
     "dist",

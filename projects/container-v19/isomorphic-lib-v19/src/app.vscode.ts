@@ -1,5 +1,5 @@
-import { Utils } from 'tnp-core';
-import { CommandType, executeCommand } from 'tnp-helpers';
+import { Utils } from 'tnp-core/src';
+import { CommandType, executeCommand } from 'tnp-helpers/src';
 import type { ExtensionContext } from 'vscode';
 
 const group = 'Isomorphic Lib V 18 CLI essentials';
@@ -51,4 +51,3 @@ export function deactivate() {}
 export default { commands };
 
 
-        
