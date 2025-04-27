@@ -1,6 +1,6 @@
 THIS FILE IS GENERATED - DO NOT MODIFY
 
-Assets from this folder are being shipped with this npm package (taon@19.0.3)
+Assets from this folder are being shipped with this npm package (taon)
 created from this project.
 
 THIS FILE IS GENERATED - DO NOT MODIFY
