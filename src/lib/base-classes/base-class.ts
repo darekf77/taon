@@ -1,12 +1,8 @@
 //#region imports
-import { Helpers, _ } from 'tnp-core/src';
-import { EndpointContext } from '../endpoint-context';
-import { Symbols } from '../symbols';
+import { walk } from 'lodash-walk-object/src';
+import { _ } from 'tnp-core/src';
+
 import { ClassHelpers } from '../helpers/class-helpers';
-import type { BaseRepository } from './base-repository';
-//#region @browser
-import { inject } from '@angular/core';
-//#endregion
 //#endregion
 
 export class BaseClass<CloneT extends BaseClass = any> {
@@ -19,9 +15,22 @@ export class BaseClass<CloneT extends BaseClass = any> {
   //#endregion
 
   //#region clone
-  public clone(override: Partial<CloneT>): CloneT {
+  public clone(override?: Partial<CloneT>): CloneT {
     const classFn = ClassHelpers.getClassFnFromObject(this);
-    const result = _.merge(new classFn(), _.merge(_.cloneDeep(this), override));
+    const result = _.merge(new classFn(), _.cloneDeep(this));
+    walk.Object(
+      override || {},
+      (value, lodashPath) => {
+        if (_.isNil(value) || _.isFunction(value) || _.isObject(value)) {
+          // skipping
+        } else {
+          _.set(result, lodashPath, value);
+        }
+      },
+      {
+        walkGetters: false,
+      },
+    );
     // console.log({result})
     return result;
   }
