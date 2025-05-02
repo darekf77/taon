@@ -101,7 +101,9 @@ if (_.isNumber(possiblePortFromWorkspace) && !_.isNumber(port)) {
   port = possiblePortFromWorkspace;
 }
 
-let relativePath = './tmp-local-copyto-proj-dist/node_modules/' + path.basename(__dirname)  + '/app';
+const PROJECT_NPM_NAME = require('./dist/lib/build-info._auto-generated_.js').PROJECT_NPM_NAME;
+console.log({PROJECT_NPM_NAME})
+let relativePath = './tmp-local-copyto-proj-dist/node_modules/' + PROJECT_NPM_NAME  + '/app';
 
 // console.log(`[run.js] RELATIVEPATHoverride: ${RELATIVEPATHoverride}`)
 if (RELATIVEPATHoverride) {
