@@ -18,6 +18,7 @@ const host = 'http://localhost:' + HOST_BACKEND_PORT;
 //#region @browser
 @Component({
   selector: 'app-single-file',
+  standalone: false,
   template: `hello from single file example<br />
     Angular version: {{ angularVersion }}<br />
     <br />
@@ -95,7 +96,7 @@ class UserController extends Taon.Base.CrudController<User> {
 //#region  single file example context
 const MainContext = Taon.createContext(() => ({
   host,
-  disabledRealtime: true,
+  disabledRealtime: false,
   contextName: 'MainContext',
   contexts: { BaseContext },
   controllers: {

@@ -2,18 +2,29 @@
   "extends": "./tsconfig.isomorphic.json",
   "compilerOptions": {
     "strictNullChecks": false,
-    "rootDir": "./src",
+    "rootDir": "./",
     "paths": {
-      "realtime-class-subscriber": [
+      "@lib": [
         "./src/lib"
       ],
-      "realtime-class-subscriber/*": [
+      "@lib/*": [
+        "./src/lib/*"
+      ],
+      "realtime-class-subscriber/src": [
+        "./src/lib"
+      ],
+      "realtime-class-subscriber/src/*": [
         "./src/lib/*"
       ]
-    }
+    },
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "esModuleInterop": true
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "environments/**/*.ts",
+    "env.ts"
   ],
   "exclude": [
     "src/assets"

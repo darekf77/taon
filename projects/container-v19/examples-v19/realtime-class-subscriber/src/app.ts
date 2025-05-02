@@ -1,5 +1,7 @@
 //#region imports
-import { Taon, BaseContext } from 'taon/src';
+import { CommonModule } from '@angular/common';
+import { Component, inject, Injectable, NgModule, OnInit } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   Observable,
   Subject,
@@ -9,18 +11,15 @@ import {
   of,
   scan,
 } from 'rxjs';
+import { Taon, BaseContext } from 'taon/src';
+import { Helpers } from 'tnp-core/src';
+import { _ } from 'tnp-core/src';
+
 import {
   CLIENT_DEV_NORMAL_APP_PORT,
   CLIENT_DEV_WEBSQL_APP_PORT,
   HOST_BACKEND_PORT,
 } from './app.hosts';
-import { Helpers } from 'tnp-core/src';
-import { _ } from 'tnp-core/src';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-//#region @browser
-import { Component, inject, Injectable } from '@angular/core';
-import { CommonModule } from '@angular/common';
-//#endregion
 //#endregion
 
 //#region constants
@@ -38,18 +37,15 @@ const saveNewUserEventKey = 'saveNewUserEventKey';
     <br />
     <button (click)="saveNewUser()">save new user</button>
     <br />`,
-  imports: [CommonModule],
-  standalone: true,
+  standalone: false,
 })
 @UntilDestroy()
-export class RealtimeClassSubscriberComponent {
+export class RealtimeClassSubscriberComponent implements OnInit {
   $destroy = new Subject();
   readonly messages$: Observable<string[]> = of([]);
 
   saveNewUser() {
-    MainContext.realtime.client.triggerCustomEvent(
-      saveNewUserEventKey,
-    );
+    MainContext.realtime.client.triggerCustomEvent(saveNewUserEventKey);
   }
 
   ngOnInit(): void {
@@ -155,4 +151,15 @@ async function start() {
 }
 
 export default start;
+//#endregion
+
+//#region  realtime-class-subscriber module
+//#region @browser
+@NgModule({
+  declarations: [RealtimeClassSubscriberComponent],
+  imports: [CommonModule],
+  exports: [RealtimeClassSubscriberComponent],
+})
+export class RealtimeClassSubscriberModule {}
+//#endregion
 //#endregion

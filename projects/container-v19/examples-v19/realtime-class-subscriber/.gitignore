@@ -17,21 +17,17 @@ app.hosts.ts
 /.taon
 /.tnp
 /docs-config.schema.json
-/**/*._auto-generated_.ts
 /**/BUILD-INFO.md
-/linked-repos
-
 /tests-environments
 /src/lib/lib-info.md
 /src/migrations/migrations-info.md
 /src/tests/mocha-tests-info.md
 /src/assets/shared/shared_folder_info.txt
+.vscode/launch.json
 
 # System Files
 .DS_Store
 Thumbs.db
-
-
 /node_modules
 /tmp*
 /dist*
@@ -53,14 +49,18 @@ Thumbs.db
 /index.js
 /index.d.ts
 /index.js.map
+/taon-config-standalone.schema.json
+/taon-config-container.schema.json
 /webpack.config.js
-/webpack.backend-dist-build.js
 /run.js
-/run-org.js
+/update-vscode-package-json.js
+/eslint.config.js
+/projects/tmp*
+!tsconfig*
+!webpack.*
+
 # =====================
 !taon.jsonc
 *.filetemplate
-
-
-
-/.vscode/launch.json
+/*.sqlite
+/*.rest

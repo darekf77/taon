@@ -3,30 +3,20 @@
   "compilerOptions": {
     "declaration": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "importHelpers": true,
     "moduleResolution": "node",
     "module": "commonjs",
     "skipLibCheck": true,
     "sourceMap": true,
-    "target": "es5",
-    "downlevelIteration": true,
+    "target": "es2022",
     "typeRoots": [
       "node_modules/@types"
     ],
     "lib": [
-      "es2015",
-      "es2015.promise",
-      "es2015.generator",
-      "es2015.collection",
-      "es2015.core",
-      "es2015.reflect",
-      "es2016",
+      "es2022",
       "dom"
     ],
     "types": [
-      "node",
-      "jest"
+      "node"
     ],
     "rootDir": "./tmp-src",
     "outDir": "dist"
@@ -35,7 +25,6 @@
     "tmp-src/**/*"
   ],
   "exclude": [
-    "node_modules",
     "preview",
     "projects",
     "docs",
@@ -45,7 +34,6 @@
     "examples",
     "browser",
     "module",
-    "tmp-src",
     "src/tests",
     "src/assets",
     "src/**/*.spec.ts",

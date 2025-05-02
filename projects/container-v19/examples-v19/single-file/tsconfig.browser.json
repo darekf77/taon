@@ -1,21 +1,20 @@
 {
   "extends": "../tsconfig.isomorphic.json",
   "compilerOptions": {
-    "target": "es2015",
-    "module": "esnext",
     "rootDir": "./",
     "baseUrl": "./",
     "sourceMap": true,
+    "target": "ES2022",
+    "module": "ES2022",
     "lib": [
-      "dom",
-      "es2018"
+      "ES2022",
+      "dom"
     ]
   },
   "include": [
     "./**/*"
   ],
   "exclude": [
-    "node_modules",
     "preview",
     "docs",
     "dist",

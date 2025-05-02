@@ -2,18 +2,29 @@
   "extends": "./tsconfig.isomorphic.json",
   "compilerOptions": {
     "strictNullChecks": false,
-    "rootDir": "./src",
+    "rootDir": "./",
     "paths": {
-      "single-file": [
+      "@lib": [
         "./src/lib"
       ],
-      "single-file/*": [
+      "@lib/*": [
+        "./src/lib/*"
+      ],
+      "single-file/src": [
+        "./src/lib"
+      ],
+      "single-file/src/*": [
         "./src/lib/*"
       ]
-    }
+    },
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "esModuleInterop": true
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "environments/**/*.ts",
+    "env.ts"
   ],
   "exclude": [
     "src/assets"

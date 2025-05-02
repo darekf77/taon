@@ -1,24 +1,18 @@
 {
+  "type": "isomorphic-lib",
+  "version": "v19",
+  "dependenciesNamesForNpmLib": [],
+  "linkedProjects": [],
+
   "resources": [
     "README.md"
   ],
-  "type": "isomorphic-lib",
-  "version": "v19",
-  "overrided": {
-    "ignoreDepsPattern": [],
-    "includeAsDev": [],
-    "includeOnly": [],
-    "dependencies": {},
-    "linkedFolders": [],
-    "npmFixes": []
-  },
-  "linkedProjects": [],
-  "smartContainerBuildTarget": "",
-  "linkedRepos": [],
-  "libReleaseOptions": {
-    "cliBuildNoDts": false,
-    "cliBuildObscure": false,
-    "cliBuildUglify": false,
-    "cliBuildIncludeNodeModules": false
+
+  "packageJsonOverride": {
+    "author": "Dariusz Filipiak",
+
+    "scripts": {
+      "mkdocs": "python3 -m mkdocs"
+    }
   }
 }
