@@ -1,8 +1,11 @@
-## Changes v18.1.0
+## Changes v19
+
+- ✅ angular 19 support
+
+## Changes v18
 
 - ✅ firedev -> taon rebranding
 - ✅ angular 18 support
-
 
 ## Changes v16
 
