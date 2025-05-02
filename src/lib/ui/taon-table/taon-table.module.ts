@@ -1,15 +1,15 @@
-//#region @browser
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatSelectModule } from '@angular/material/select';
-import { TaonTableComponent } from './taon-table.component';
-import { MtxGridModule } from '@ng-matero/extensions/grid';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatInputModule } from '@angular/material/input';
-import { StaticColumnsModule } from 'static-columns/src';
-import { MatIconModule } from '@angular/material/icon';
 import { MatButton, MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MtxGridModule } from '@ng-matero/extensions/grid';
+import { StaticColumnsModule } from 'static-columns/src';
+
+import { TaonTableComponent } from './taon-table.component';
 
 @NgModule({
   imports: [
@@ -28,4 +28,3 @@ import { MatButton, MatButtonModule } from '@angular/material/button';
   declarations: [TaonTableComponent],
 })
 export class TaonTableModule {}
-//#endregion

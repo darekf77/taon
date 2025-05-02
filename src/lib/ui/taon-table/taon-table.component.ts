@@ -8,13 +8,11 @@ import {
   EventEmitter,
   ViewChild,
   ElementRef,
+  OnDestroy,
 } from '@angular/core';
-import * as _ from 'lodash';
-import { Log, Level } from 'ng2-logger/src';
-import { Taon } from 'taon/src';
-import { CLASS } from 'typescript-class-helpers/src';
 import { PageEvent } from '@angular/material/paginator';
 import { MtxGridColumn } from '@ng-matero/extensions/grid';
+import { Log, Level } from 'ng2-logger/src';
 import {
   Subscription,
   debounceTime,
@@ -25,7 +23,10 @@ import {
   share,
   tap,
 } from 'rxjs';
+import { Taon } from 'taon/src';
+import { _ } from 'tnp-core/src';
 import { json5 } from 'tnp-core/src';
+import { CLASS } from 'typescript-class-helpers/src';
 //#endregion
 
 //#region constants
@@ -49,12 +50,14 @@ const defaultColumns = [
   styleUrls: ['./taon-table.component.scss'],
   standalone: false,
 })
-export class TaonTableComponent {
+export class TaonTableComponent implements OnDestroy, OnInit {
   //#region fields
   @Input() public pageNumber: number = 1;
   @Input() public pageSize: number = 5;
   @Input() public allowedColumns: string[] = [];
-  @Input() public entity: typeof Taon.Base.Entity | string;
+  get entity(): typeof Taon.Base.Entity {
+    return this.entityCrudController?.entityClassResolveFn();
+  }
   @Input() public expansionTemplate: TemplateRef<any>;
   @Input() public rows = _.times(20, id => {
     return {
@@ -62,6 +65,7 @@ export class TaonTableComponent {
       name: `Amazing ${id} row `,
     };
   });
+  @Input() entityCrudController: Taon.Base.CrudController<any>;
   @Input() public columns: MtxGridColumn[] = defaultColumns as MtxGridColumn[];
   @Input() public pageSizeOptions: number[] = [5, 10, 20];
   @Output() public expansionChange = new EventEmitter();
@@ -93,12 +97,9 @@ export class TaonTableComponent {
 
   //#region hooks / on init
   async ngOnInit() {
-    if (_.isString(this.entity)) {
-      this.entity = CLASS.getBy(this.entity) as any;
-    }
-
     this.sub.add(this.searchInputChange$.subscribe());
-    if (!!this.entity) {
+    const entityClass = this.entity;
+    if (!!entityClass) {
       this.rows = [];
     }
     this.expandable = !!this.expansionTemplate;
@@ -109,7 +110,6 @@ export class TaonTableComponent {
     //   columnsConfigSameAsDefault
     // })
 
-    const entityClass = this.entity;
     if (entityClass && columnsConfigSameAsDefault) {
       log.i(
         'this.crud.entity',
@@ -190,38 +190,42 @@ export class TaonTableComponent {
 
   //#region methods / retrive data
   async retriveData() {
-    // if (!this.entity) {
-    //   return;
-    // }
-    // this.isLoading = true;
-    // // console.log('PAGINTION FETCH DATA START!')
-    // const controller = ((this.entity as any).ctrl as Taon.CRUD.Base<any>);
-    // if (controller) {
-    //   const data = await controller.pagination(this.pageNumber, this.pageSize).received;
-    //   // console.log('PAGINTION DATA', {
-    //   //   data,
-    //   // })
-    //   const totalElements = Number(data.headers.get(Morphi.SYMBOL.X_TOTAL_COUNT));
-    //   const rows = data.body.json;
-    //   // console.log('PAGINTION DATA', {
-    //   //   rows,
-    //   //   totalElements,
-    //   // })
-    //   this.totalElements = totalElements;
-    //   this.rows = rows.map(d => {
-    //     for (const key in d) {
-    //       if (Object.prototype.hasOwnProperty.call(d, key)) {
-    //         const elem = d[key];
-    //         if (_.isObject(elem)) {
-    //           d[key] = json5.stringify(d[key]);
-    //         }
-    //       }
-    //     }
-    //     // console.log({ d })
-    //     return d;
-    //   })
-    // }
-    // this.isLoading = false;
+    if (!this.entity) {
+      return;
+    }
+    this.isLoading = true;
+    // console.log('PAGINTION FETCH DATA START!')
+    const controller = this.entityCrudController;
+    if (controller) {
+      const data = await controller.pagination(this.pageNumber, this.pageSize)
+        .received;
+
+      // console.log('PAGINTION DATA', {
+      //   data,
+      // });
+      const totalElements = Number(
+        data.headers.get(Taon.symbols.old.X_TOTAL_COUNT),
+      );
+      const rows = data.body.json;
+      console.log('PAGINTION DATA', {
+        rows,
+        totalElements,
+      });
+      this.totalElements = totalElements;
+      this.rows = rows.map(d => {
+        for (const key in d) {
+          if (Object.prototype.hasOwnProperty.call(d, key)) {
+            const elem = d[key];
+            if (_.isObject(elem)) {
+              d[key] = json5.stringify(d[key]);
+            }
+          }
+        }
+        // console.log({ d })
+        return d;
+      });
+    }
+    this.isLoading = false;
   }
   //#endregion
 
