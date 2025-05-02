@@ -17,7 +17,8 @@ if (environment.production) {
 }
 
 async function init() {
-  if (Helpers.isWebSQL) { // @ts-ignore
+  if (Helpers.isWebSQL) {
+    // @ts-ignore
     const { default: initSqlJs } = await import('sql.js');
     // or if you are in a browser:
     // const initSqlJs = window.initSqlJs;
@@ -31,17 +32,18 @@ async function init() {
         // console.log(`Trying to get sql.js wasm from: ${wasmPath}`)
         return wasmPath;
         // return `https://sql.js.org/dist/${file}`;
-      }
+      },
     });
 
     // @ts-ignore
     window['SQL'] = SQL;
     console.log('WEBSQL LOADED');
   } else {
-    console.log('WEBSQL NOT LOADED')
+    console.log('WEBSQL NOT LOADED');
   }
   await Stor.awaitPendingOperatios();
-  platformBrowserDynamic().bootstrapModule(AppModule)
+  platformBrowserDynamic()
+    .bootstrapModule(AppModule)
     .catch(err => console.error(err));
 }
 
