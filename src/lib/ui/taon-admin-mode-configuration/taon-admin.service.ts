@@ -1,11 +1,8 @@
 //#region import
+import { Subject } from 'rxjs';
 import { Stor } from 'taon-storage/src';
 import { Helpers, _ } from 'tnp-core/src';
-import { Subject, take, takeUntil, tap } from 'rxjs';
-import type { TaonAdminModeConfigurationComponent } from './taon-admin-mode-configuration.component';
-import { globalPublicStorage } from '../../storage';
-import { config } from 'tnp-config/src';
-import { Injectable } from '@angular/core';
+
 //#endregion
 
 const ENV = Helpers.isBrowser ? window['ENV'] : global['ENV'];
@@ -16,7 +13,6 @@ export class TaonAdminService {
   private static _instance: TaonAdminService;
   public static get Instance() {
     if (!this._instance) {
-
       this._instance = new TaonAdminService();
     }
     return this._instance;
