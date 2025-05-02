@@ -43,7 +43,7 @@ export namespace ClassHelpers {
       (classFnOrObject[Symbols.classNameStaticProperty]
         ? classFnOrObject[Symbols.classNameStaticProperty]
         : classFnOrObject?.constructor[Symbols.classNameStaticProperty]) ||
-      CLASS.getName(classFnOrObject)
+      (_.isFunction(classFnOrObject) ? CLASS.getName(classFnOrObject) : void 0)
     );
   };
   //#endregion
