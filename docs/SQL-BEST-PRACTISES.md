@@ -3,16 +3,16 @@
 ## End transactions in proper way
 let say we have migration started:
 ```ts
-queryRunner.startTransaction();
+await queryRunner.startTransaction();
 ```
 to end transaction:
 ```ts
-queryRunner.release();  // IT IS NOT ENOUGH
+await queryRunner.release();  // IT IS NOT ENOUGH
                         // and this may cause weird errors
 
 // proper 'end' of transaction
-queryRunner.commitTransaction();
-queryRunner.release();
+await queryRunner.commitTransaction();
+await queryRunner.release();
 ```
 
 
