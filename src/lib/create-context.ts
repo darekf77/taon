@@ -97,25 +97,25 @@ export const createContext = <
       // },
       //#endregion
       get controllers() {
-        return config.controllers;
+        return config.controllers as any; // TODO QUICK_FIX new typescript generated wrong types
       },
       get repositories() {
-        return config.repositories;
+        return config.repositories as any; // TODO QUICK_FIX new typescript generated wrong types
       },
       get providers() {
-        return config.providers;
+        return config.providers as any; // TODO QUICK_FIX new typescript generated wrong types
       },
       get subscribers() {
-        return config.subscribers;
+        return config.subscribers as any; // TODO QUICK_FIX new typescript generated wrong types
       },
       get migrations() {
-        return config.migrations;
+        return config.migrations as any; // TODO QUICK_FIX new typescript generated wrong types
       },
     },
     //#endregion
     //#region contexts
     get contexts() {
-      return config.contexts;
+      return config.contexts as any; // TODO QUICK_FIX new typescript generated wrong types
     },
     get contextName() {
       return config.contextName;
