@@ -1,8 +1,11 @@
 <br />
-<columns-container>
+<columns-container *ngIf="!hideSearch">
   <column grow>
     <mat-form-field class="search-input">
-      <input matInput placeholder="Type to search table..." #search />
+      <input
+        matInput
+        placeholder="Type to search table..."
+        #search />
     </mat-form-field>
   </column>
   <column [width]="80">

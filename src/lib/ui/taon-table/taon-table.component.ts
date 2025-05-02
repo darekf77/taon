@@ -14,6 +14,7 @@ import { PageEvent } from '@angular/material/paginator';
 import { MtxGridColumn } from '@ng-matero/extensions/grid';
 import { Log, Level } from 'ng2-logger/src';
 import {
+  Observable,
   Subscription,
   debounceTime,
   defer,
@@ -55,9 +56,7 @@ export class TaonTableComponent implements OnDestroy, OnInit {
   @Input() public pageNumber: number = 1;
   @Input() public pageSize: number = 5;
   @Input() public allowedColumns: string[] = [];
-  get entity(): typeof Taon.Base.Entity {
-    return this.entityCrudController?.entityClassResolveFn();
-  }
+
   @Input() public expansionTemplate: TemplateRef<any>;
   @Input() public rows = _.times(20, id => {
     return {
@@ -68,21 +67,12 @@ export class TaonTableComponent implements OnDestroy, OnInit {
   @Input() entityCrudController: Taon.Base.CrudController<any>;
   @Input() public columns: MtxGridColumn[] = defaultColumns as MtxGridColumn[];
   @Input() public pageSizeOptions: number[] = [5, 10, 20];
+  @Input() public hideSearch: boolean;
   @Output() public expansionChange = new EventEmitter();
 
   @Output() public addingItem = new EventEmitter<void>();
   @ViewChild('search', { static: true }) search?: ElementRef<HTMLElement>;
-  private searchInputChange$ = defer(() =>
-    fromEvent<KeyboardEvent>(this.search?.nativeElement as any, 'keyup'),
-  ).pipe(
-    map(c => c.target['value']),
-    debounceTime(500),
-    distinctUntilChanged(),
-    share(),
-    tap(data => {
-      console.log({ data });
-    }),
-  );
+  private searchInputChange$: Observable<string>;
 
   public expandable: boolean = false;
   public showPaginator = true;
@@ -91,13 +81,30 @@ export class TaonTableComponent implements OnDestroy, OnInit {
   private sub: Subscription = new Subscription();
   //#endregion
 
-  constructor() {}
+  get entity(): typeof Taon.Base.Entity {
+    return this.entityCrudController?.entityClassResolveFn();
+  }
 
   //#region hooks
 
   //#region hooks / on init
   async ngOnInit() {
-    this.sub.add(this.searchInputChange$.subscribe());
+    if (!this.hideSearch) {
+      this.searchInputChange$ = defer(() =>
+        fromEvent<KeyboardEvent>(this.search?.nativeElement as any, 'keyup'),
+      ).pipe(
+        map(c => c.target['value']),
+        debounceTime(500),
+        distinctUntilChanged(),
+        share(),
+        tap(data => {
+          console.log({ data });
+        }),
+      );
+
+      this.sub.add(this.searchInputChange$.subscribe());
+    }
+
     const entityClass = this.entity;
     if (!!entityClass) {
       this.rows = [];
@@ -163,7 +170,7 @@ export class TaonTableComponent implements OnDestroy, OnInit {
       this.showPaginator = false;
     }
 
-    await this.retriveData();
+    await this.getData();
   }
   //#endregion
 
@@ -184,12 +191,12 @@ export class TaonTableComponent implements OnDestroy, OnInit {
     // });
     this.pageNumber = e.pageIndex + 1;
     this.pageSize = e.pageSize;
-    await this.retriveData();
+    await this.getData();
   }
   //#endregion
 
   //#region methods / retrive data
-  async retriveData() {
+  async getData(): Promise<void> {
     if (!this.entity) {
       return;
     }
