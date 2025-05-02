@@ -1,9 +1,6 @@
-//#region @browser
-import { inject as angularInject } from '@angular/core';
-//#endregion
-import { Symbols } from './symbols';
-import type { EndpointContext } from './endpoint-context';
 import type { BaseInjector } from './base-classes/base-injector';
+import type { EndpointContext } from './endpoint-context';
+import { Symbols } from './symbols';
 
 export const inject = <T>(entity: () => new (...args: any[]) => T): T => {
   return new Proxy(
@@ -43,10 +40,6 @@ export const inject = <T>(entity: () => new (...args: any[]) => T): T => {
           // );
           return methodOrProperty;
         }
-        //#region @browser
-        // debugger
-        return angularInject(ctor)[propName];
-        //#endregion
       },
     },
   ) as T;
@@ -93,7 +86,6 @@ export const inject = <T>(entity: () => new (...args: any[]) => T): T => {
 //               }
 
 //               Taon.injectSubscriberEvents( MyContext.getInstance(()=> MyClassSubscriber), '${eventName as any}' )
-
 
 //               `,
 //               );
