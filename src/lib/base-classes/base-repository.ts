@@ -28,6 +28,7 @@ import { ClassHelpers } from '../helpers/class-helpers';
 import { MySqlQuerySource } from 'taon-type-sql/src';
 import { TaonRepository } from '../decorators/classes/repository-decorator';
 import { BaseInjector } from './base-injector';
+import type { BaseEntity } from './base-entity';
 //#endregion
 
 const INDEX_KEYS_NO_FOR_UPDATE = ['id'];
@@ -533,21 +534,27 @@ export abstract class BaseRepository<
   async update(item: Entity) {
     //#region @websqlFunc
     const { id } = item as any;
-    return await this.updateById(id, item);
+    return await this.updateById<Entity>(id, item);
     //#endregion
   }
 
-  async updateById(id: number | string, item: Entity) {
+  private allowedTypesToUpdate = ['simple-json', 'simple-array', 'json'];
+  async updateById<ENTITY = Entity>(
+    id: number | string,
+    item: Entity,
+  ): Promise<ENTITY> {
     //#region @websqlFunc
     const allowedPropsToUpdate = [];
     for (const key in item) {
+      const metadataColumn = this.repo.metadata.ownColumns.find(
+        c => c.propertyName === key,
+      );
       if (
         _.isObject(item) &&
         item.hasOwnProperty(key) &&
-        typeof item[key] !== 'object' &&
-        !_.isUndefined(
-          this.repo.metadata.ownColumns.find(c => c.propertyName === key),
-        )
+        (typeof item[key] !== 'object' ||
+          this.allowedTypesToUpdate.includes(metadataColumn?.type as any)) &&
+        !_.isUndefined(metadataColumn)
       ) {
         allowedPropsToUpdate.push(key);
       }
@@ -579,7 +586,7 @@ export abstract class BaseRepository<
       where: { id } as any,
     });
 
-    return model;
+    return model as any as ENTITY;
     //#endregion
   }
   async bulkUpdate(items: Entity[]) {

@@ -197,7 +197,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
     //#region @websqlFunc
 
     return async () => {
-      const model = await this.db.updateById(id, item as any);
+      const model = await this.db.updateById<Entity>(id, item as any);
       return model;
     };
     //#endregion
@@ -213,7 +213,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
     //#region @websqlFunc
 
     return async () => {
-      const model = await this.db.updateById(id, item as any);
+      const model = await this.db.updateById<Entity>(id, item as any);
       return model;
     };
     //#endregion
