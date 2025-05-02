@@ -214,10 +214,10 @@ export class TaonTableComponent implements OnDestroy, OnInit {
         data.headers.get(Taon.symbols.old.X_TOTAL_COUNT),
       );
       const rows = data.body.json;
-      console.log('PAGINTION DATA', {
-        rows,
-        totalElements,
-      });
+      // console.log('PAGINTION DATA', {
+      //   rows,
+      //   totalElements,
+      // });
       this.totalElements = totalElements;
       this.rows = rows.map(d => {
         for (const key in d) {
