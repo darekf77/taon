@@ -1,0 +1,9 @@
+<h4>MyEntity Page</h4>
+
+@loading(helloWorld)
+  <p>Loading message...</p>
+@else
+  @if (helloWorld as msg)
+    <h2>{{ msg }}</h2>
+  @else
+    <p>No message</p>
