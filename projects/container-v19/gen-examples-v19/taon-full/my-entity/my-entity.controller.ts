@@ -1,7 +1,8 @@
 //#region imports
 import { Taon, ClassHelpers } from 'taon/src';
-import { MyEntity } from './my-entity';
 import { _ } from 'tnp-core/src';
+
+import { MyEntity } from './my-entity';
 import { MyEntityRepository } from './my-entity.repository';
 //#endregion
 

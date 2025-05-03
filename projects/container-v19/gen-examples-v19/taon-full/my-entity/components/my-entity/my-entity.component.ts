@@ -1,6 +1,7 @@
 //#region imports
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+
 import { MyEntity } from '../../my-entity';
 //#endregion
 

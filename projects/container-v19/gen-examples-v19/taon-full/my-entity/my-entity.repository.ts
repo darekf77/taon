@@ -1,15 +1,16 @@
 //#region imports
 import { Taon, ClassHelpers } from 'taon/src';
-import { MyEntity } from './my-entity';
-import { _ } from 'tnp-core/src';
 import { Raw } from 'taon-typeorm/src';
+import { _ } from 'tnp-core/src';
+
+import { MyEntity } from './my-entity';
 //#endregion
 
 @Taon.Controller({
   className: 'MyEntityRepository',
 })
 export class MyEntityRepository extends Taon.Base.Repository<MyEntity> {
-  entityClassResolveFn: ()=> typeof MyEntity = () => MyEntity;
+  entityClassResolveFn: () => typeof MyEntity = () => MyEntity;
 
   /**
    * TODO remove this demo example method
@@ -18,8 +19,8 @@ export class MyEntityRepository extends Taon.Base.Repository<MyEntity> {
     //#region @websqlFunc
     const result = await this.count({
       where: {
-        id: Raw(alias => `${alias} % 2 = 0`)
-      }
+        id: Raw(alias => `${alias} % 2 = 0`),
+      },
     });
     return result;
     //#endregion
