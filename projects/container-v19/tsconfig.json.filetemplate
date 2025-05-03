@@ -8,7 +8,7 @@
     },
     "include": [
       "environments/**/*.ts",
+      "gen-examples-v19/**/*.ts",
       "env.ts"
     ]
   }
-  
