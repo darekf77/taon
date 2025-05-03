@@ -1,15 +1,10 @@
 //#region imports
 import { Helpers, UtilsOs } from 'tnp-core/src';
+
 import { EndpointContext } from './endpoint-context';
-import { Models } from './models';
-
 import { ENV } from './env';
-//#region @browser
-import { TaonAdminService } from './ui/taon-admin-mode-configuration/taon-admin.service';
-//#endregion
-
-// import { Symbols } from './symbols';
-// import { Taon } from 'taon/src';
+import { Models } from './models';
+import { TaonAdminService } from './ui/taon-admin-mode-configuration/taon-admin.service'; // @browser
 //#endregion
 
 export const createContextTemplate = <
@@ -272,3 +267,5 @@ export const createContext = <
   return res;
 };
 //#endregion
+
+export type TaonContext = ReturnType<typeof createContext>;
