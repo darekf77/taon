@@ -1,32 +1,13 @@
-import { Utils } from 'tnp-core/src';
-import { CommandType, executeCommand } from 'tnp-helpers/src';
-import type { ExtensionContext } from 'vscode';
+import { vscodeExtMethods } from 'tnp/src';
+import { executeCommand } from 'tnp-helpers/src'; // @backend
+import { ExtensionContext } from 'vscode';
 
-const group = 'Taon CLI essentials';
-
-export const commands: CommandType[] = (
-  [
-    {
-      title: 'hello world',
-    },
-    {
-      title: 'hey!',
-    },
-  ] as CommandType[]
-).map(c => {
-  if (!c.command) {
-    c.command = `extension.${Utils.camelize(c.title)}`;
-  }
-  if (!c.group) {
-    c.group = group;
-  }
-  return c;
-});
-
+const commands = vscodeExtMethods('TAON');
 export function activate(context: ExtensionContext) {
+  //#region @backendFunc
   for (let index = 0; index < commands.length; index++) {
     const {
-      title = '',
+      title,
       command = '',
       exec = '',
       options,
@@ -35,6 +16,7 @@ export function activate(context: ExtensionContext) {
     const sub = executeCommand(
       title,
       command,
+      // @ts-ignore
       exec,
       options,
       isDefaultBuildCommand,
@@ -44,11 +26,9 @@ export function activate(context: ExtensionContext) {
       context.subscriptions.push(sub);
     }
   }
+  //#endregion
 }
 
 export function deactivate() {}
 
 export default { commands };
-
-
-        
