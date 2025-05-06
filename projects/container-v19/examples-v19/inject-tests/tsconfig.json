@@ -4,10 +4,16 @@
     "strictNullChecks": false,
     "rootDir": "./src",
     "paths": {
-      "inject-tests": [
+      "@lib": [
         "./src/lib"
       ],
-      "inject-tests/*": [
+      "@lib/*": [
+        "./src/lib/*"
+      ],
+      "inject-tests/src": [
+        "./src/lib"
+      ],
+      "inject-tests/src/*": [
         "./src/lib/*"
       ]
     }

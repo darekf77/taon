@@ -18,6 +18,7 @@ import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-inject-tests',
   template: `hello world`,
+  standalone: false,
   styles: [
     `
       body {

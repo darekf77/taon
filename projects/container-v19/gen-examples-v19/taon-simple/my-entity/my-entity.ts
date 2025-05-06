@@ -9,13 +9,9 @@ import { MyEntityDefaultsValues } from './my-entity.defaults-values';
   className: 'MyEntity',
   createTable: true,
 })
-export class MyEntity extends Taon.Base.AbstractEntity<any> {
+export class MyEntity extends Taon.Base.AbstractEntity<MyEntity> {
   //#region @websql
-  @Taon.Orm.Column.Custom({
-    type: 'varchar',
-    length: 100,
-    default: MyEntityDefaultsValues.description,
-  })
+  @Taon.Orm.Column.String(MyEntityDefaultsValues.description)
   //#endregion
   description?: string;
 }
