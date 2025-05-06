@@ -9,8 +9,8 @@ import { UserRepository } from './user.repository';
 export class UserController extends Taon.Base.CrudController<User> {
   entityClassResolveFn = () => User;
 
-  backend?: UserRepository = this.injectCustomRepo(UserRepository);
-  back = this.injectRepo(User);
+  userCustomRepository?: UserRepository = this.injectCustomRepo(UserRepository);
+  userCrudRepository = this.injectRepo(User);
 
   async initExampleDbData(): Promise<any> {
     //#region @websqlFunc
@@ -28,16 +28,16 @@ export class UserController extends Taon.Base.CrudController<User> {
     user.theme = 'dark';
 
     // console.log(ClassHelpers.getFullInternalName(this));
-    await this.backend.create(admin);
+    await this.userCustomRepository.createUser(admin);
 
-    await this.backend.bulkCreate([admin, user]);
-    const all = await this.backend.getAll();
-    const findByEmail = await this.backend.findByEmail('test@test.pl');
-    console.log(
-      `amCustomRepository `,
-      this.backend.amCustomRepository,
-      findByEmail,
-    );
+    // await this.userCustomRepository.bulkCreate([admin, user]);
+    const all = await this.userCustomRepository.getAll();
+    // const findByEmail = await this.userCustomRepository.findByEmail('test@test.pl');
+    // console.log(
+    //   `amCustomRepository `,
+    //   this.userCustomRepository.amCustomRepository,
+    //   findByEmail,
+    // );
     console.log('All users', all);
     //#endregion
   }

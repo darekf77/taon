@@ -33,6 +33,8 @@ import type { BaseEntity } from './base-entity';
 
 const INDEX_KEYS_NO_FOR_UPDATE = ['id'];
 
+const REPOS_CACHE = Symbol('repository cache inside instance');
+
 @TaonRepository({ className: 'BaseRepository' })
 export abstract class BaseRepository<
   Entity extends { id?: any },
@@ -46,7 +48,7 @@ export abstract class BaseRepository<
   abstract entityClassResolveFn: () => any;
   constructor(
     // Injected through BaseCrudController
-    private __entityClassResolveFn: () => any,
+    __entityClassResolveFn: () => any,
   ) {
     super();
     // @ts-ignore
@@ -90,12 +92,17 @@ export abstract class BaseRepository<
   //#endregion
 
   //#region repository
-  //#region @websql
-  private __repository: Repository<Entity>;
-  //#endregion
-  protected get repository() {
+  protected get repository(): Repository<Entity> {
     //#region @websqlFunc
-    return this.__repository;
+    if (this[REPOS_CACHE]) {
+      return this[REPOS_CACHE];
+    }
+    const repo = this.ctx.repos.get(
+      ClassHelpers.getName(this.entityClassResolveFn()),
+    ) as Repository<Entity>;
+
+    this[REPOS_CACHE] = repo;
+    return this[REPOS_CACHE];
     //#endregion
   }
 
@@ -111,7 +118,7 @@ export abstract class BaseRepository<
   /**
    * alias to repository
    */
-  protected get repo() {
+  protected get repo(): Repository<Entity> {
     //#region @websqlFunc
     return this.repository;
     //#endregion
@@ -119,68 +126,10 @@ export abstract class BaseRepository<
 
   public get repositoryExists(): boolean {
     //#region @websqlFunc
-    return !!this.__repository;
+    return !!this.repository;
     //#endregion
   }
 
-  //#endregion
-
-  //#region init
-
-  async __init(context?: any) {
-    //#region @websql
-    if (this.__repository) {
-      return;
-    }
-    let entityClassFn: any = this.entityClassResolveFn();
-    if (!entityClassFn) {
-      Helpers.warn(
-        `Entity class not provided for repository ${ClassHelpers.getName(
-          this,
-        )}`,
-      );
-      return;
-    }
-    const ctx: EndpointContext = this.__endpoint_context__;
-    if (ctx.remoteHost) {
-      return;
-    }
-    const connection = ctx.connection;
-
-    if (!connection) {
-      throw new Error(`
-
-        Connection not found for context ${ctx.contextName}
-
-
-        Maybe you forgot to init database ?
-
-        Taon.createContext({
-        ...
-        database:true
-        ...
-        })
-
-        `);
-    }
-
-    if (!entityClassFn) {
-      Helpers.warn(
-        `Entity class not found for repository ${ClassHelpers.getName(this)}`,
-      );
-      return;
-    }
-
-    this.__repository = (await connection.getRepository(
-      ClassHelpers.getOrginalClass(entityClassFn),
-    )) as any;
-    // console.log(
-    //   `Inited repository for (${ClassHelpers.getName(this)}/` +
-    //     `${ClassHelpers.getName(entityClassFn)}/${ClassHelpers.getName(context)}`,
-    //   this.repository,
-    // );
-    //#endregion
-  }
   //#endregion
 
   //#region crud operations / typeorm / has id
@@ -214,6 +163,9 @@ export abstract class BaseRepository<
     },
   ): Promise<Entity> {
     //#region @websqlFunc
+    // if (!this.repo) {
+    //   debugger;
+    // }
     let model = await this.repo.create(item);
 
     model = await this.repo.save(model, options);

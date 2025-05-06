@@ -36,29 +36,73 @@ export namespace Orm {
     export import Custom = tsorm.Column;
 
     /**
+     * 100 default characters varchar
+     */
+    export const String = <T = string>(defaultValue: T = null, length = 100) =>
+      tsorm.Column({
+        type: 'varchar',
+        length,
+        nullable: _.isNil(defaultValue),
+        default: defaultValue,
+      });
+
+    /**
      * 100 characters varchar
      */
-    export const String = <T = string>(defaultValue:T = null) =>
-      tsorm.Column({ type: 'varchar', length: 100, nullable: _.isNil(defaultValue)   , default: defaultValue });
+    export const String100 = <T = string>(defaultValue: T = null) =>
+      tsorm.Column({
+        type: 'varchar',
+        length: 100,
+        nullable: _.isNil(defaultValue),
+        default: defaultValue,
+      });
+
+    /**
+     * 100 characters varchar
+     */
+    export const String45 = <T = string>(defaultValue: T = null) =>
+      tsorm.Column({
+        type: 'varchar',
+        length: 45,
+        nullable: _.isNil(defaultValue),
+        default: defaultValue,
+      });
 
     /**
      * 500 characters varchar
      */
-    export const String500 = <T = string>(defaultValue:T = null) =>
-      tsorm.Column({ type: 'varchar', length: 500, nullable: _.isNil(defaultValue)   , default: defaultValue });
+    export const String500 = <T = string>(defaultValue: T = null) =>
+      tsorm.Column({
+        type: 'varchar',
+        length: 500,
+        nullable: _.isNil(defaultValue),
+        default: defaultValue,
+      });
 
-    export const Number = () =>
-      tsorm.Column({ type: 'int',  nullable: true });
+    /**
+     * 200 characters varchar
+     */
+    export const String200 = <T = string>(defaultValue: T = null) =>
+      tsorm.Column({
+        type: 'varchar',
+        length: 200,
+        nullable: _.isNil(defaultValue),
+        default: defaultValue,
+      });
+
+    export const Number = () => tsorm.Column({ type: 'int', nullable: true });
 
     export const DecimalNumber = () =>
-      tsorm.Column({ type: 'float',  nullable: true });
-
+      tsorm.Column({ type: 'float', nullable: true });
 
     export const SimpleJson = () =>
       tsorm.Column({ type: 'simple-json', nullable: true });
 
-    export const Boolean = (defaultValue: boolean) =>
-      tsorm.Column({ type: 'boolean', default: defaultValue });
+    export const Boolean = (defaultValue: boolean | null) =>
+      tsorm.Column({ type: 'boolean', nullable: true, default: defaultValue });
+
+    export const DateTIme = (defaultValue: boolean | null = null) =>
+      tsorm.Column({ type: 'datetime', nullable: true, default: defaultValue });
 
     // TODO has limitation => comma in name
     // export const SimpleArray = () => tsorm.Column({ type: 'simple-array', nullable: true });

@@ -1,7 +1,26 @@
-/* eslint-disable @typescript-eslint/typedef */
 //#region imports
-//#region @websql
-import { EventSubscriber } from 'taon-typeorm/src';
+import type { Server } from 'http';
+import { Http2Server } from 'http2'; // @backend
+import { URL } from 'url'; // @backend
+
+import type { NgZone } from '@angular/core'; // @browser
+import axios from 'axios';
+import * as bodyParser from 'body-parser'; // @backend
+import * as cookieParser from 'cookie-parser'; // @backend
+import * as cors from 'cors'; // @backend
+import * as express from 'express'; // @backend
+import type { Application } from 'express';
+import * as fileUpload from 'express-fileupload'; // @backend
+import * as expressSession from 'express-session'; // @backend
+import { JSON10 } from 'json10/src';
+import * as methodOverride from 'method-override'; // @backend
+import {
+  Mapping,
+  Models as ModelsNg2Rest,
+  Resource,
+  RestHeaders,
+} from 'ng2-rest/src';
+import { from, Subject } from 'rxjs';
 import type {
   TransactionRollbackEvent,
   TransactionCommitEvent,
@@ -11,62 +30,39 @@ import type {
   RemoveEvent,
   UpdateEvent,
   InsertEvent,
-} from 'taon-typeorm/src';
-import { Entity as TypeormEntity, Tree } from 'taon-typeorm/src';
-//#endregion
-//#region @backend
-import * as express from 'express';
-import * as expressSession from 'express-session';
-import * as cors from 'cors';
-import * as bodyParser from 'body-parser';
-import * as cookieParser from 'cookie-parser';
-import * as methodOverride from 'method-override';
-import * as fileUpload from 'express-fileupload';
-import { Http2Server } from 'http2';
-import { URL } from 'url';
-import { fse, http, https } from 'tnp-core/src';
-//#endregion
-//#region @browser
-import { TaonAdminService } from './ui/taon-admin-mode-configuration/taon-admin.service';
-//#endregion
-import { UtilsOs, Utils } from 'tnp-core/src';
-import { crossPlatformPath } from 'tnp-core/src';
-import { Models } from './models';
-import { ClassHelpers } from './helpers/class-helpers';
-import { Symbols } from './symbols';
-import { _, Helpers } from 'tnp-core/src';
-import type { createContext } from './create-context';
-import { DITaonContainer } from './dependency-injection/di-container';
-import { TaonControllerOptions } from './decorators/classes/controller-decorator';
-import { TaonHelpers } from './helpers/taon-helpers';
-import {
-  Mapping,
-  Models as ModelsNg2Rest,
-  Resource,
-  RestHeaders,
-} from 'ng2-rest/src';
-import { JSON10 } from 'json10/src';
-import { path } from 'tnp-core/src';
-import { from, Subject } from 'rxjs';
-import { EntityProcess } from './entity-process';
-import { getResponseValue } from './get-response-value';
-import type { Application } from 'express';
-import axios from 'axios';
-import type { NgZone } from '@angular/core';
+  Repository,
+} from 'taon-typeorm/src'; // @websql
+import { EventSubscriber } from 'taon-typeorm/src'; // @websql
+import { Entity as TypeormEntity, Tree } from 'taon-typeorm/src'; // @websql
 import {
   DataSource,
   DataSourceOptions,
   getMetadataArgsStorage,
 } from 'taon-typeorm/src';
-import { TaonEntityOptions } from './decorators/classes/entity-decorator';
-import type { Server } from 'http';
-import { ENV } from './env';
+import { fse, http, https } from 'tnp-core/src'; // @backend
+import { UtilsOs, Utils } from 'tnp-core/src';
+import { crossPlatformPath } from 'tnp-core/src';
+import { _, Helpers } from 'tnp-core/src';
+import { path } from 'tnp-core/src';
+
 import type { BaseClass } from './base-classes/base-class';
-import { RealtimeCore } from './realtime/realtime-core';
-import { TaonSubscriberOptions } from './decorators/classes/subscriber-decorator';
-import { BaseSubscriberForEntity } from './base-classes/base-subscriber-for-entity';
 import type { BaseMigration } from './base-classes/base-migration';
+import { BaseSubscriberForEntity } from './base-classes/base-subscriber-for-entity';
 import { ContextDbMigrations } from './context-db-migrations';
+import { createContext } from './create-context';
+import { TaonControllerOptions } from './decorators/classes/controller-decorator';
+import { TaonEntityOptions } from './decorators/classes/entity-decorator';
+import { TaonSubscriberOptions } from './decorators/classes/subscriber-decorator';
+import { DITaonContainer } from './dependency-injection/di-container';
+import { EntityProcess } from './entity-process';
+import { ENV } from './env';
+import { getResponseValue } from './get-response-value';
+import { ClassHelpers } from './helpers/class-helpers';
+import { TaonHelpers } from './helpers/taon-helpers';
+import { Models } from './models';
+import { RealtimeCore } from './realtime/realtime-core';
+import { Symbols } from './symbols';
+import { TaonAdminService } from './ui/taon-admin-mode-configuration/taon-admin.service'; // @browser
 //#endregion
 
 export class EndpointContext {
@@ -75,11 +71,15 @@ export class EndpointContext {
   //#region @browser
   private static ngZone: NgZone;
   //#endregion
-  static initNgZone(ngZone: NgZone) {
+
+  //#region @browser
+  static initNgZone(ngZone: NgZone): void {
     //#region @browser
     this.ngZone = ngZone;
     //#endregion
   }
+  //#endregion
+
   // public static findForTraget(classFnOrObject: any): EndpointContext {
   //   const obj = ClassHelpers.getClassFnFromObject(classFnOrObject) || {};
   //   return (
@@ -125,6 +125,12 @@ export class EndpointContext {
     routePath: string;
     method: Models.Http.Rest.HttpMethod;
   }[] = [];
+  //#endregion
+
+  //#region fields / typeorm repositories
+  //#region @websql
+  public repos = new Map<string, Repository<any>>();
+  //#endregion
   //#endregion
 
   public readonly skipWritingServerRoutes: boolean = false;
@@ -646,18 +652,21 @@ export class EndpointContext {
   //#endregion
 
   //#region methods & getters / start server
-  startServer() {
+  async startServer(): Promise<void> {
     //#region @backendFunc
     if (this.remoteHost || this.isRunOrRevertOnlyMigrationAppStart) {
       return;
     }
     if (this.mode === 'backend-frontend(tcp+udp)') {
-      // this.displayRoutes(this.expressApp);
-      this.serverTcpUdp.listen(Number(this.uri.port), () => {
-        Helpers.log(`[taon][express-server]listening on port: ${this.uri.port}, hostname: ${this.uri.pathname},
+      return await new Promise(resolve => {
+        // this.displayRoutes(this.expressApp);
+        this.serverTcpUdp.listen(Number(this.uri.port), () => {
+          Helpers.log(`[taon][express-server]listening on port: ${this.uri.port}, hostname: ${this.uri.pathname},
             address: ${this.uri.protocol}//localhost:${this.uri.port}${this.uri.pathname}
             env: ${this.expressApp.settings.env}
             `);
+          resolve(void 0);
+        });
       });
     } else {
       this.logFramework &&
@@ -712,7 +721,6 @@ export class EndpointContext {
   //#endregion
 
   //#region methods & getters / clone class
-  // eslint-disable-next-line @typescript-eslint/typedef
   private cloneClassWithNewMetadata = <
     T extends { new (...args: any[]): any },
   >({
@@ -738,18 +746,18 @@ export class EndpointContext {
       }
       return class extends BaseClass {
         // static ['_'] = BaseClass['_'];
-        // eslint-disable-next-line @typescript-eslint/typedef
+
         // @ts-ignore
         static [Symbols.orignalClass] = BaseClass;
-        // eslint-disable-next-line @typescript-eslint/typedef
+
         // @ts-ignore
         static [Symbols.fullClassNameStaticProperty] = `${ctx.contextName}.${className}`;
-        // eslint-disable-next-line @typescript-eslint/typedef
+
         // @ts-ignore
         static [Symbols.classNameStaticProperty] = className;
-        // eslint-disable-next-line @typescript-eslint/typedef
+
         static [Symbols.ctxInClassOrClassObj] = ctx;
-        // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/typedef
+        // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
         static __getFullPathForClass__(arr = []) {
           const name = this[Symbols.fullClassNameStaticProperty];
           arr.push(name);
@@ -908,15 +916,13 @@ export class EndpointContext {
   //#region methods & getters / inject
   inject<T>(
     ctor: new (...args: any[]) => T,
-    options?: {
+    options: {
       localInstance?: boolean;
       contextClassInstance?: BaseClass;
       locaInstanceConstructorArgs?: ConstructorParameters<typeof ctor>;
+      parentInstanceThatWillGetInjectedStuff: object;
     },
   ): T {
-    if (!options) {
-      options = {} as any;
-    }
     const className = ClassHelpers.getName(ctor);
 
     const locaInstanceConstructorArgs =
@@ -930,22 +936,32 @@ export class EndpointContext {
       const ctxClassFn = this.getClassFunByClassName(className);
       let entityName: string = '';
 
-      if (className === 'BaseRepository') {
-        const entityFn = locaInstanceConstructorArgs[0];
-        const entity = entityFn && entityFn();
-        entityName = entity && ClassHelpers.getName(entity);
-      }
+      // entity thing is only for repositories local repositories
+      // if (className === 'BaseRepository') {
+      const entityFn = _.first(locaInstanceConstructorArgs);
+      const entity = entityFn && entityFn();
+      entityName = (entity && ClassHelpers.getName(entity)) || '';
+      // console.log(`entityName `, entityName);
+      // }
 
       if (!options.contextClassInstance[this.localInstaceObjSymbol]) {
         options.contextClassInstance[this.localInstaceObjSymbol] = {};
       }
       const instanceKey = className + (entityName ? `.${entityName}` : '');
+
       const existed =
         options.contextClassInstance[this.localInstaceObjSymbol][instanceKey];
+
       if (existed) {
-        // console.log(`exited `, existed)
+        // console.log(
+        //   `EXISTED ${ClassHelpers.getName(options.parentInstanceThatWillGetInjectedStuff)} Inject ${className} instanceKey "${instanceKey}"`,
+        // );
         return existed;
       }
+
+      // console.log(
+      //   `NEW ${ClassHelpers.getName(options.parentInstanceThatWillGetInjectedStuff)} Inject ${className} instanceKey "${instanceKey}"`,
+      // );
 
       if (!ctxClassFn) {
         throw new Error(`Not able to inject "${className}" inside context "${this.contextName}"
@@ -990,7 +1006,10 @@ export class EndpointContext {
     //   }
     // }
 
-    return this.inject(ctor, { localInstance: false });
+    return this.inject(ctor, {
+      localInstance: false,
+      parentInstanceThatWillGetInjectedStuff: this,
+    });
   }
   //#endregion
 
@@ -1095,20 +1114,30 @@ export class EndpointContext {
     // console.log('CONTROLLERS TO REINIT', controllers);
     for (const ctrl of controllers) {
       if (_.isFunction(ctrl.initExampleDbData)) {
-        await Helpers.runSyncOrAsync({
-          functionFn: ctrl.initExampleDbData,
-          context: ctrl,
-        });
+        await ctrl.initExampleDbData();
       }
     }
     // Helpers.taskDone(
     //   `[taon] REINITING CONTROLLERS ${this.contextName} DONE`,
     // );
   }
+
   async initClasses(): Promise<void> {
     if (this.remoteHost) {
       return;
     }
+
+    //#region @websql
+    for (const classFun of this.getClassFunByArr(
+      Models.ClassType.ENTITY,
+    ) as any[]) {
+      const repo = (await this.connection.getRepository(
+        ClassHelpers.getOrginalClass(classFun),
+      )) as any;
+      this.repos.set(ClassHelpers.getName(classFun), repo);
+    }
+    //#endregion
+
     for (const classTypeName of [
       Models.ClassType.PROVIDER,
       Models.ClassType.REPOSITORY,
@@ -1117,26 +1146,11 @@ export class EndpointContext {
       Models.ClassType.MIGRATION,
     ]) {
       //#region init class static _ property
-      // Helpers.taskStarted(
-      //   `[taon] REINITING _ CLASS FN ${classTypeName} ${this.contextName} STARTED`,
-      // );
       for (const classFun of this.getClassFunByArr(classTypeName) as any[]) {
         if (_.isFunction(classFun._)) {
-          await Helpers.runSyncOrAsync({
-            functionFn: classFun._,
-            context: classFun,
-          });
-          // const orgClass = ClassHelpers.getOrginalClass(classFun);
-          // // orgClass['ctrl'] = classFun['ctrl'];
-          // await Helpers.runSyncOrAsync({
-          //   functionFn: orgClass._,
-          //   context: orgClass,
-          // });
+          await classFun._();
         }
       }
-      // Helpers.taskStarted(
-      //   `[taon] REINITING _ CLASS FN ${classTypeName} ${this.contextName} DONE`,
-      // );
       //#endregion
     }
 
@@ -1152,10 +1166,7 @@ export class EndpointContext {
       // );
       for (const ctrl of this.getClassesInstancesArrBy(classTypeName)) {
         if (_.isFunction(ctrl._)) {
-          await Helpers.runSyncOrAsync({
-            functionFn: ctrl._,
-            context: ctrl,
-          });
+          await ctrl._();
         }
       }
       // Helpers.taskStarted(
@@ -1179,8 +1190,8 @@ export class EndpointContext {
     const url = this.host
       ? new URL(this.host)
       : this.remoteHost
-      ? new URL(this.remoteHost)
-      : void 0;
+        ? new URL(this.remoteHost)
+        : void 0;
     return url;
   }
   //#endregion
@@ -1267,6 +1278,7 @@ export class EndpointContext {
       return;
     }
     const entities = this.getClassFunByArr(Models.ClassType.ENTITY);
+
     for (const entity of entities) {
       const options = Reflect.getMetadata(
         Symbols.metadata.options.entity,
@@ -1275,9 +1287,10 @@ export class EndpointContext {
       const createTable = _.isUndefined(options.createTable)
         ? true
         : options.createTable;
+
       const nameForEntity = ClassHelpers.getName(entity);
 
-      if (_.isUndefined(options.createTable) ? true : options.createTable) {
+      if (createTable) {
         this.logDb &&
           console.info(
             `[taon][typeorm] create table for entity "${nameForEntity}" ? '${createTable}'`,

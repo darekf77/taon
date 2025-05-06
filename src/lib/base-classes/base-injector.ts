@@ -1,10 +1,12 @@
 //#region imports
 import { Helpers, _ } from 'tnp-core/src';
+
 import { EndpointContext } from '../endpoint-context';
-import { Symbols } from '../symbols';
 import { ClassHelpers } from '../helpers/class-helpers';
-import type { BaseRepository } from './base-repository';
+import { Symbols } from '../symbols';
+
 import { BaseClass } from './base-class';
+import type { BaseRepository } from './base-repository';
 //#endregion
 
 export class BaseInjector<CloneT extends BaseClass = any> {
@@ -22,12 +24,7 @@ export class BaseInjector<CloneT extends BaseClass = any> {
    * class initialization hook
    * taon after class instace creation
    */
-  async _() {
-    const reposToInit = this.__repositories_to_init__;
-    for (const repo of reposToInit) {
-      await repo.__init(this);
-    }
-  }
+  async _() {}
   //#endregion
 
   //#region context
@@ -59,7 +56,6 @@ export class BaseInjector<CloneT extends BaseClass = any> {
       resolveClassFromContext: 'BaseRepository',
       locaInstanceConstructorArgs: [() => entityForCrud],
     });
-    this.__repositories_to_init__.push(repoProxy as any);
     return repoProxy as any;
   }
   //#endregion
@@ -71,26 +67,37 @@ export class BaseInjector<CloneT extends BaseClass = any> {
     const repoProxy = this.__inject<T>(cutomRepositoryClass, {
       localInstance: true,
       locaInstanceConstructorArgs: [
-        () => cutomRepositoryClass.prototype.entityClassResolveFn(),
+        () => {
+          const classToProcess =
+            this.ctx.allClassesInstances[
+              ClassHelpers.getName(cutomRepositoryClass)
+            ];
+
+          return classToProcess.entityClassResolveFn();
+        },
       ],
     });
-    this.__repositories_to_init__.push(repoProxy as any);
     return repoProxy;
   }
   //#endregion
 
   //#region inject / custom repo
   /**
-   * aliast to .injectRepository()
+   * aliast to this.injectRepository()
    */
   injectCustomRepo<T>(cutomRepositoryClass: new (...args: any[]) => T): T {
     const repoProxy = this.injectCustomRepository<T>(cutomRepositoryClass);
-    this.__repositories_to_init__.push(repoProxy as any);
     return repoProxy;
   }
   //#endregion
 
   //#region inject / controller
+  /**
+   * example usage:
+   * ...
+   * exampleController = this.injectController(ExampleController);
+   * ...
+   */
   injectController<T>(ctor: new (...args: any[]) => T): T {
     return this.__inject<T>(ctor, { localInstance: false });
   }
@@ -98,7 +105,10 @@ export class BaseInjector<CloneT extends BaseClass = any> {
 
   //#region inject / ctrl
   /**
-   * aliast to .injectController()
+   * example usage:
+   * ...
+   * exampleSubscriber = this.injectSubscriber(ExampleSubscriber)
+   * ...
    */
   injectSubscriber<T>(ctor: new (...args: any[]) => T): T {
     return this.__inject<T>(ctor, { localInstance: false });
@@ -133,11 +143,6 @@ export class BaseInjector<CloneT extends BaseClass = any> {
   }
   //#endregion
 
-  /**
-   * Repositories to init (by controller)
-   */
-  protected __repositories_to_init__ = [] as BaseRepository<any>[];
-
   //#region inject / __ inject
   /**
    * Inject: Controllers, Providers, Repositories, Services, etc.
@@ -152,7 +157,15 @@ export class BaseInjector<CloneT extends BaseClass = any> {
        * controllers, providers can be local or global
        */
       localInstance: boolean;
+      /**
+       * Name of class that should be resolved from context
+       * (in case ctor === undefined)
+       */
       resolveClassFromContext?: string;
+      /**
+       * Args passed to constructor of BaseRepository
+       * (for now just first arg is relevant)
+       */
       locaInstanceConstructorArgs?: ConstructorParameters<typeof ctor>;
     },
   ): T {
@@ -183,6 +196,7 @@ export class BaseInjector<CloneT extends BaseClass = any> {
             var instance: T = resultContext.inject(ctor, {
               ...options,
               contextClassInstance,
+              parentInstanceThatWillGetInjectedStuff: this,
             });
             if (!instance) {
               throw new Error(
@@ -230,6 +244,7 @@ export class BaseInjector<CloneT extends BaseClass = any> {
             var instance: T = resultContext.inject(ctor, {
               ...options,
               contextClassInstance,
+              parentInstanceThatWillGetInjectedStuff: this,
             });
             if (!instance) {
               const classNameNotResolved =

@@ -2,7 +2,7 @@ import { vscodeExtMethods } from 'tnp/src';
 import { executeCommand } from 'tnp-helpers/src'; // @backend
 import { ExtensionContext } from 'vscode';
 
-const commands = vscodeExtMethods('TAON');
+const commands = vscodeExtMethods('taon');
 export function activate(context: ExtensionContext) {
   //#region @backendFunc
   for (let index = 0; index < commands.length; index++) {

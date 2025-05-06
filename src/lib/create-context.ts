@@ -193,7 +193,7 @@ export const createContext = <
           // );
           // debugger;
           endpointContextRef.initControllers();
-          endpointContextRef.startServer();
+          await endpointContextRef.startServer();
           //#region @websql
           endpointContextRef.writeActiveRoutes();
           //#endregion

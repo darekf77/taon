@@ -17,7 +17,9 @@ export const inject = <T>(entity: () => new (...args: any[]) => T): T => {
         ] as EndpointContext;
         const resultContext = contextFromClass;
         if (resultContext) {
-          let instance = resultContext.inject(ctor) as BaseInjector;
+          let instance = resultContext.inject(ctor, {
+            parentInstanceThatWillGetInjectedStuff: this,
+          }) as BaseInjector;
           // console.log('instance', instance);
 
           if (propName === 'getOriginalPrototype') {
