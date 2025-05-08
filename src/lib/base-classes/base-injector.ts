@@ -6,6 +6,7 @@ import { ClassHelpers } from '../helpers/class-helpers';
 import { Symbols } from '../symbols';
 
 import { BaseClass } from './base-class';
+import { BaseCustomRepository } from './base-custom-repository';
 import type { BaseRepository } from './base-repository';
 //#endregion
 
@@ -61,7 +62,7 @@ export class BaseInjector<CloneT extends BaseClass = any> {
   //#endregion
 
   //#region inject / custom repository
-  injectCustomRepository<T>(
+  injectCustomRepository<T extends BaseCustomRepository>(
     cutomRepositoryClass: new (...args: any[]) => T,
   ): T {
     const repoProxy = this.__inject<T>(cutomRepositoryClass, {
@@ -85,7 +86,9 @@ export class BaseInjector<CloneT extends BaseClass = any> {
   /**
    * aliast to this.injectRepository()
    */
-  injectCustomRepo<T>(cutomRepositoryClass: new (...args: any[]) => T): T {
+  injectCustomRepo<T extends BaseCustomRepository>(
+    cutomRepositoryClass: new (...args: any[]) => T,
+  ): T {
     const repoProxy = this.injectCustomRepository<T>(cutomRepositoryClass);
     return repoProxy;
   }

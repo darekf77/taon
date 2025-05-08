@@ -22,6 +22,7 @@ export * from './ui';
 
 export { EndpointContext } from './endpoint-context';
 export { BaseRepository } from './base-classes/base-repository';
+export { BaseCustomRepository } from './base-classes/base-custom-repository';
 export { BaseController } from './base-classes/base-controller';
 export { BaseProvider } from './base-classes/base-provider';
 export { BaseEntity } from './base-classes/base-entity';

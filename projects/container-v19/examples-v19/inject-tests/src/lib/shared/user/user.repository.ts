@@ -22,7 +22,7 @@ export class UserRepository extends Taon.Base.Repository<User> {
   }
 
   async createUser(partialUser: Partial<User>) {
-    let user = await this.create(new User().clone(partialUser));
+    let user = await this.save(new User().clone(partialUser));
     const email = await this.emailCustomRepository.createEmail(user.email);
     await this.emailRepo.save(
       new Email().clone({ address: email.address + new Date().getTime() }),

@@ -17,7 +17,7 @@ export class EmailRepository extends Taon.Base.Repository<Email> {
    */
   async createEmail(address: string): Promise<Email> {
     //#region @websqlFunc
-    const email = await this.create(new Email().clone({ address }));
+    const email = await this.save(new Email().clone({ address }));
     return email;
     //#endregion
   }

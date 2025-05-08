@@ -1,17 +1,17 @@
 //#region imports
-import type {
-  DataSource,
-  DeepPartial,
-  DeleteResult,
-  FindManyOptions,
-  FindOneOptions,
-  FindOptionsWhere,
-  InsertResult,
+import {
+  type DataSource,
+  type DeepPartial,
+  type DeleteResult,
+  type FindManyOptions,
+  type FindOneOptions,
+  type FindOptionsWhere,
+  type InsertResult,
   // ObjectID // TODO why is this not in taon-typeorm,
-  RemoveOptions,
-  Repository,
-  SaveOptions,
-  UpdateResult,
+  type RemoveOptions,
+  type Repository,
+  type SaveOptions,
+  type UpdateResult,
 } from 'taon-typeorm/src';
 // @taon-ignore
 import type { QueryDeepPartialEntity } from 'taon-typeorm/lib/typeorm/query-builder/QueryPartialEntity';
@@ -29,6 +29,8 @@ import { MySqlQuerySource } from 'taon-type-sql/src';
 import { TaonRepository } from '../decorators/classes/repository-decorator';
 import { BaseInjector } from './base-injector';
 import type { BaseEntity } from './base-entity';
+import { BaseCustomRepository } from './base-custom-repository';
+import { Models } from '../models';
 //#endregion
 
 const INDEX_KEYS_NO_FOR_UPDATE = ['id'];
@@ -38,7 +40,7 @@ const REPOS_CACHE = Symbol('repository cache inside instance');
 @TaonRepository({ className: 'BaseRepository' })
 export abstract class BaseRepository<
   Entity extends { id?: any },
-> extends BaseInjector {
+> extends BaseCustomRepository {
   //#region dummy fields
   // static ids:number  = 0;
   // id:number  = BaseRepository.ids++;
@@ -184,13 +186,33 @@ export abstract class BaseRepository<
    * -> it will actuall create new entity in db
    * in oposite to typeorm create method
    */
-  async create(
-    item: Entity,
-    options?: SaveOptions & {
-      reload: false;
-    },
-  ): Promise<Entity> {
-    return this.save(item, options);
+  /**
+   * Creates a new entity instance.
+   */
+  create(): Entity;
+
+  /**
+   * Creates new entities and copies all entity properties from given objects into their new entities.
+   * Note that it copies only properties that are present in entity schema.
+   */
+  create(entityLikeArray: DeepPartial<Entity>[]): Entity[];
+
+  /**
+   * Creates a new entity instance and copies all entity properties from this object into a new entity.
+   * Note that it copies only properties that are present in entity schema.
+   */
+  create(entityLike: DeepPartial<Entity>): Entity;
+
+  /**
+   * Creates a new entity instance or instances.
+   * Can copy properties from the given object into new entities.
+   */
+  create(
+    plainEntityLikeOrPlainEntityLikes?:
+      | DeepPartial<Entity>
+      | DeepPartial<Entity>[],
+  ): Entity | Entity[] {
+    return this.repo.create(plainEntityLikeOrPlainEntityLikes as any);
   }
 
   async bulkSave(
@@ -221,20 +243,6 @@ export abstract class BaseRepository<
   }
 
   //#region old typeorm version
-  // /**
-  //  * Creates a new entity instance.
-  //  */
-  // create(): Entity;
-  // /**
-  //  * Creates new entities and copies all entity properties from given objects into their new entities.
-  //  * Note that it copies only properties that are present in entity schema.
-  //  */
-  // create(entityLikeArray: Entity[]): Entity[];
-  // /**
-  //  * Creates a new entity instance and copies all entity properties from this object into a new entity.
-  //  * Note that it copies only properties that are present in entity schema.
-  //  */
-  // create(entityLike: Entity): Entity;
   /**
    * Saves all given entities in the database.
    * If entities do not exist in the database then inserts, otherwise updates.

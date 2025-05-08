@@ -23,7 +23,7 @@ export class UserController extends Taon.Base.CrudController<User> {
     user.password = 'test';
 
     console.log(ClassHelpers.getFullInternalName(this));
-    this.db.create(admin);
+    this.db.save(admin);
 
     await this.db.bulkSave([admin, user]);
     const all = await this.db.find();

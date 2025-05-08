@@ -4,6 +4,7 @@ import * as baseClass from './base-class';
 import * as baseContext from './base-context';
 import * as controller from './base-controller';
 import * as crudController from './base-crud-controller';
+import * as customRepository from './base-custom-repository';
 import * as entity from './base-entity';
 import * as baseMigration from './base-migration';
 import * as provider from './base-provider';
@@ -18,6 +19,7 @@ export namespace Base {
   export import Provider = provider.BaseProvider;
   export import Class = baseClass.BaseClass;
   export import Repository = repository.BaseRepository;
+  export import CustomRepository = customRepository.BaseCustomRepository;
   export import SubscriberForEntity = baseSubscriberEntity.BaseSubscriberForEntity;
   export import Migration = baseMigration.BaseMigration;
   export import AngularService = baseService.BaseAngularsService;
