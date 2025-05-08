@@ -20,7 +20,7 @@ import type { UpsertOptions } from 'taon-typeorm/lib/typeorm/repository/UpsertOp
 // import { QueryDeepPartialEntity } from 'taon-typeorm/src';
 // import { UpsertOptions } from 'taon-typeorm/src';
 
-import type { DataSource as DataSourceType } from 'taon-typeorm/src';
+import type { DataSource as DataSourceType, QueryRunner, SelectQueryBuilder } from 'taon-typeorm/src';
 import { EndpointContext } from '../endpoint-context';
 import { Helpers } from 'tnp-core/src';
 import { _ } from 'tnp-core/src';
@@ -815,6 +815,19 @@ export abstract class BaseRepository<
    */
   query(query: string, parameters?: any[]): Promise<any> {
     return this.repo.query(query, parameters);
+  }
+  //#endregion
+
+  //#region crud operations / typeorm / query
+  /**
+   * Executes a raw SQL query and returns a raw database results.
+   * Raw query execution is supported only by relational databases (MongoDB is not supported).
+   */
+   createQueryBuilder(
+          alias?: string,
+          queryRunner?: QueryRunner,
+      ): SelectQueryBuilder<Entity> {
+    return this.repo.createQueryBuilder(alias, queryRunner);
   }
   //#endregion
 
