@@ -13,10 +13,8 @@ import {
   type SaveOptions,
   type UpdateResult,
 } from 'taon-typeorm/src';
-// @taon-ignore
-import type { QueryDeepPartialEntity } from 'taon-typeorm/lib/typeorm/query-builder/QueryPartialEntity';
-// @taon-ignore
-import type { UpsertOptions } from 'taon-typeorm/lib/typeorm/repository/UpsertOptions';
+import type { QueryDeepPartialEntity } from 'taon-typeorm/src';
+import type { UpsertOptions } from 'taon-typeorm/src';
 // import { QueryDeepPartialEntity } from 'taon-typeorm/src';
 // import { UpsertOptions } from 'taon-typeorm/src';
 
