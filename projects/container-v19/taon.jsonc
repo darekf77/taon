@@ -642,7 +642,7 @@
       // @trusted=major
       "ngx-bootstrap": "~19.0.2",
       // @trusted=major
-      "ng-bootstrap": "^18.0.0",
+      "@ng-bootstrap/ng-bootstrap": "^18.0.0",
       // @trusted=patch
       "bootstrap": "~5.3.5",
 
