@@ -639,10 +639,15 @@
       "@ngneat/until-destroy": "~10.0.0",
 
       // handle bootstrap components
-      // "ngx-bootstrap": "8.0.0",
-      // "ng-bootstrap": "11.0.1", // bootstrap feels old
+      // @trusted=major
+      "ngx-bootstrap": "~19.0.2",
+      // @trusted=major
+      "ng-bootstrap": "^18.0.0",
       // @trusted=patch
       "bootstrap": "~5.3.5",
+
+      // google re-captcha
+      "@semantic-components/re-captcha": "0.34.0",
 
       // creating zips in browser/node!
       // @trusted=patch
