@@ -10,12 +10,11 @@ import { _ } from 'tnp-core';
   templateUrl: './my-entity.component.html',
   styleUrls: ['./my-entity.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
   //#endregion
 })
-export class MyEntityComponent {
-  constructor() { }
-
-  ngOnInit() {
+export class MyEntityComponent implements OnInit {
+  ngOnInit(): void {
 
   }
 }

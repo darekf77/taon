@@ -8,7 +8,7 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { Subscription } from 'rxjs';
-// import { _ } from 'tnp-core';
+import { _ } from 'tnp-core';
 
 @Component({
   selector: 'app-my-entity',
@@ -16,12 +16,9 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./my-entity.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MyEntityComponent {
-  @HostBinding('style.minHeight.px') @Input() height: number = 100;
-  @Output() myEntityDataChanged = new EventEmitter();
-  @Input() myEntityData: any = {};
-
-  constructor() {}
-
-  ngOnInit() {}
+export class MyEntityComponent implements OnInit {
+  // @HostBinding('style.minHeight.px') @Input() height: number = 100;
+  // @Output() myEntityDataChanged = new EventEmitter();
+  // @Input() myEntityData: any = {};
+  ngOnInit():void {}
 }

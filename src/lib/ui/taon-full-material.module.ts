@@ -42,6 +42,9 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
 
+/**
+ * @deprecated too heavy!
+ */
 @NgModule({
   exports: [
     A11yModule,

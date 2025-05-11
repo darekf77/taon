@@ -9,28 +9,12 @@ import { _ } from 'tnp-core';
   selector: 'app-my-entity',
   templateUrl: './my-entity.container.html',
   styleUrls: ['./my-entity.container.scss'],
+  standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
   //#endregion
 })
-export class MyEntityContainer {
+export class MyEntityContainer implements OnInit {
+  ngOnInit(): void {
 
-  // @Input() MyEntity = MyEntity;
-  // myEntity$ = this.MyEntity.$getAll().pipe(map(data => {
-  //   return data.body.json;
-  // }))
-
-  myId: number;
-
-  @Input({
-    required: false
-  })
-  set id(v: string) {
-    this.myId = Number(v);
   }
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-
 }
