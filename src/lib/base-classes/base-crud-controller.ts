@@ -1,7 +1,8 @@
 //#region imports
-import { Symbols } from '../symbols';
-import { BaseController } from './base-controller';
-import { BaseRepository } from './base-repository';
+import { Helpers, _ } from 'tnp-core/src';
+
+import { TaonController } from '../decorators/classes/controller-decorator';
+import { TaonEntityOptions } from '../decorators/classes/entity-decorator';
 import {
   GET,
   PUT,
@@ -11,17 +12,13 @@ import {
   PATCH,
 } from '../decorators/http/http-methods-decorators';
 import { Query, Path, Body } from '../decorators/http/http-params-decorators';
-import { MySqlQuerySource } from 'taon-type-sql/src';
-import { Models } from '../models';
-import { Helpers, _ } from 'tnp-core/src';
-import {
-  TaonController,
-  TaonControllerOptions,
-} from '../decorators/classes/controller-decorator';
 import { ClassHelpers } from '../helpers/class-helpers';
-
+import { Models } from '../models';
+import { Symbols } from '../symbols';
 import { Validators } from '../validators';
-import { TaonEntityOptions } from '../decorators/classes/entity-decorator';
+
+import { BaseController } from './base-controller';
+import { BaseRepository } from './base-repository';
 //#endregion
 
 /**
@@ -41,7 +38,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
   //#endregion
 
   //#region init
-  async _() {
+  async _(): Promise<void> {
     if (!_.isFunction(this.entityClassResolveFn)) {
       Helpers.warn(
         `Skipping initing CRUD controller ${ClassHelpers.getName(

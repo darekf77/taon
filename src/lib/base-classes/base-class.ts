@@ -11,7 +11,7 @@ export class BaseClass<CloneT extends BaseClass = any> {
    * class initialization hook
    * taon after class instance creation
    */
-  async _() {}
+  async _(): Promise<void> {}
   //#endregion
 
   //#region clone

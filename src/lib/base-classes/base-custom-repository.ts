@@ -1,4 +1,4 @@
-//#region Imports
+//#region imports
 import { _ } from 'tnp-core/src';
 
 import { TaonRepository } from '../decorators/classes/repository-decorator';

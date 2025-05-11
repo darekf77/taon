@@ -5,7 +5,6 @@ import {
   Component,
   inject,
   Input,
-  OnInit,
   Signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -24,18 +23,13 @@ import { MyEntityComponent } from '../my-entity/my-entity.component';
   providers: [MyEntityApiService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class MyEntityPageComponent implements OnInit {
+export class MyEntityPageComponent {
   @Input() taonCtx: TaonContext;
   helloWorld?: Signal<string>;
   readonly myEntityApiService: MyEntityApiService = inject(MyEntityApiService);
-  ngOnInit(): void {
-    this.myEntityApiService.init(this.taonCtx);
-
+  constructor() {
     this.helloWorld = toSignal(this.myEntityApiService.helloWorld('myEntity'), {
       initialValue: '',
-      // suspense: 'Loading...',
-      // Optionally: error handling
-      // error: (e) => `Error: ${e.message}`
     });
   }
 }

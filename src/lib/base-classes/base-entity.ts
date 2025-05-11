@@ -1,9 +1,6 @@
 import { Entity } from 'taon-typeorm/src'; // @websql
 import { RelationPath } from 'taon-typeorm/src';
 
-import { EndpointContext } from '../endpoint-context';
-import { Symbols } from '../symbols';
-
 import { BaseClass } from './base-class';
 
 let EntityDecorator = () => {

@@ -46,6 +46,7 @@ import { _, Helpers } from 'tnp-core/src';
 import { path } from 'tnp-core/src';
 
 import type { BaseClass } from './base-classes/base-class';
+import type { BaseInjector } from './base-classes/base-injector';
 import type { BaseMigration } from './base-classes/base-migration';
 import { BaseSubscriberForEntity } from './base-classes/base-subscriber-for-entity';
 import { ContextDbMigrations } from './context-db-migrations';
@@ -918,7 +919,7 @@ export class EndpointContext {
     ctor: new (...args: any[]) => T,
     options: {
       localInstance?: boolean;
-      contextClassInstance?: BaseClass;
+      contextClassInstance?: BaseInjector;
       locaInstanceConstructorArgs?: ConstructorParameters<typeof ctor>;
       parentInstanceThatWillGetInjectedStuff: object;
     },

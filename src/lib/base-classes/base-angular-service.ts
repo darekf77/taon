@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core'; // @browser
+import { Injectable, inject } from '@angular/core'; // @browser
 
+import { TAON_CONTEXT } from '../constants';
 import { TaonContext } from '../create-context';
 
 /**
@@ -10,11 +11,7 @@ import { TaonContext } from '../create-context';
 @Injectable()
 //#endregion
 export abstract class BaseAngularsService {
-  protected currentContext: TaonContext;
-  public init(currentContext: TaonContext): void {
-    this.currentContext = currentContext;
-    this.initControllers();
-  }
-
-  protected abstract initControllers(): void;
+  //#region @browser
+  currentContext: TaonContext = inject(TAON_CONTEXT);
+  //#endregion
 }

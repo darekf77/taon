@@ -1,7 +1,9 @@
-import { _ } from 'tnp-core/src';
-import { ClassHelpers } from '../helpers/class-helpers';
-import { BaseInjector } from './base-injector';
 import { MigrationInterface, QueryRunner } from 'taon-typeorm/src';
+import { _ } from 'tnp-core/src';
+
+import { ClassHelpers } from '../helpers/class-helpers';
+
+import { BaseInjector } from './base-injector';
 
 export class BaseMigration extends BaseInjector implements MigrationInterface {
   /**

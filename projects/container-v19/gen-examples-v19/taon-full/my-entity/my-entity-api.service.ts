@@ -22,7 +22,8 @@ export class MyEntityApiService extends Taon.Base.AngularService {
       .received.observable.pipe(map(res => res.responseText as string));
   }
 
-  protected initControllers(): void {
+  constructor() {
+    super();
     this.myEntityController = Taon.inject(() =>
       this.currentContext.getClass(MyEntityController),
     );

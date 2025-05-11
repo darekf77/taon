@@ -5,12 +5,12 @@ import { EndpointContext } from '../endpoint-context';
 import { ClassHelpers } from '../helpers/class-helpers';
 import { Symbols } from '../symbols';
 
-import { BaseClass } from './base-class';
 import { BaseCustomRepository } from './base-custom-repository';
 import type { BaseRepository } from './base-repository';
 //#endregion
 
-export class BaseInjector<CloneT extends BaseClass = any> {
+export class BaseInjector {
+  //#region proxy dummy function
   /**
    * for proxy purposes
    */
@@ -19,13 +19,14 @@ export class BaseInjector<CloneT extends BaseClass = any> {
    * for proxy purposes
    */
   getOriginalConstructor: () => any;
+  //#endregion
 
   //#region class initialization hook
   /**
    * class initialization hook
    * taon after class instace creation
    */
-  async _() {}
+  async _(): Promise<void> {}
   //#endregion
 
   //#region context
@@ -33,14 +34,14 @@ export class BaseInjector<CloneT extends BaseClass = any> {
    * @deprecated use ctx instead
    * Current endpoint context
    */
-  get __endpoint_context__() {
+  get __endpoint_context__(): EndpointContext {
     return this[Symbols.ctxInClassOrClassObj] as EndpointContext;
   }
 
   /**
    * get  current endpoint context
    */
-  get ctx() {
+  get ctx(): EndpointContext {
     return this.__endpoint_context__;
   }
   //#endregion
@@ -274,14 +275,5 @@ export class BaseInjector<CloneT extends BaseClass = any> {
   }
   //#endregion
 
-  //#endregion
-
-  //#region clone
-  public clone(override: Partial<CloneT>): CloneT {
-    const classFn = ClassHelpers.getClassFnFromObject(this);
-    const result = _.merge(new classFn(), _.merge(_.cloneDeep(this), override));
-    // console.log({result})
-    return result;
-  }
   //#endregion
 }
