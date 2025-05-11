@@ -72,13 +72,13 @@ export class RealtimeCore {
     this.ctx.logRealtime &&
       console.log(`[taon] realtime strategy: ${this.strategy}`);
     if (Helpers.isWebSQL) {
-      this.server = new RealtimeServer(this);
+      this.server = new RealtimeServer(this as any);
       // console.log('DONE INITING SERVER');
-      this.client = new RealtimeClient(this);
+      this.client = new RealtimeClient(this as any);
       // console.log('DONE INITING CLIENT');
     } else {
-      this.client = new RealtimeClient(this);
-      this.server = new RealtimeServer(this);
+      this.client = new RealtimeClient(this as any);
+      this.server = new RealtimeServer(this as any);
     }
   }
   //#endregion
