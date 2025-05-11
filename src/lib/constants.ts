@@ -4,7 +4,18 @@ export type TaonEntityKeysToOmit =
   | '__endpoint_context__'
   | 'ctx'
   | 'inject'
-  | '_';
+  | '_'
+  | 'relation'
+  | 'relations'
+  | 'inject'
+  | 'injectRepo'
+  | 'injectCustomRepository'
+  | 'injectCustomRepo'
+  | 'injectController'
+  | 'injectCtrl'
+  | 'injectGlobalProvider'
+  | 'injectLocalProvider'
+  | 'injectContextProvider'
 
 export const TaonEntityKeysToOmitArr: TaonEntityKeysToOmit[] = [
   'ctrl',
@@ -13,6 +24,17 @@ export const TaonEntityKeysToOmitArr: TaonEntityKeysToOmit[] = [
   'ctx',
   'inject',
   '_',
+  'relation',
+  'relations',
+  'inject',
+  'injectRepo',
+  'injectCustomRepository',
+  'injectCustomRepo',
+  'injectController',
+  'injectCtrl',
+  'injectGlobalProvider',
+  'injectLocalProvider',
+  'injectContextProvider',
 ];
 
 import { InjectionToken } from '@angular/core';
