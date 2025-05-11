@@ -1,4 +1,1 @@
-// styles.scss
-$basename: '<<<TO_REPLACE_BASENAME>>>';
-
-@import './app/<<<TO_REPLACE_PROJ_NAME>>>/global';
+@use './app/<<<TO_REPLACE_PROJ_NAME>>>/global' as *;
