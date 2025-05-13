@@ -726,6 +726,9 @@
       // @trusted=major @angular
       "primeng": "~19.1.0",
 
+      // @trusted=major @angular
+      "@primeng/themes":"~19.1.2",
+
       //#endregion
       //#region LINT
       // @trusted=major
