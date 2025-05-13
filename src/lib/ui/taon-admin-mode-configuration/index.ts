@@ -1,3 +1,3 @@
-//#region @browser
-export * from './taon-admin-mode-configuration.component';
-//#endregion
+export * from './taon-admin-mode-configuration.component'; // @browser
+export * from './taon-admin.models';
+export * from './taon-admin.service'; // @browser
