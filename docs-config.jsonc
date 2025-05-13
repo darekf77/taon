@@ -1,18 +1,66 @@
 {
-  "site_name": "taon",
+  "site_name": "Taon Documentation",
   "externalDocs": {
     "mdfiles": [
-      // {
-      //   "overrideTitle": "Examples",
-      //   "packageNameWithPath": "taon/projects/container-v18/examples-v18/README.md",
-      // },
       {
         "magicRenameRules": "tnp -> taon",
         "packageNameWithPath": "tnp/ALL_COMMANDS.md",
+        "overrideTitle": "CLI",
       },
     ],
-    "projects": []
+    "projects": [
+      {
+        "packageNameWithPath": "taon/TODO.md",
+        "overrideTitle": "TODO",
+      },
+      // {
+      //   "packageNameWithPath": "taon/CHANGELOG.md",
+      //   "overrideTitle": "CHANGELOG",
+      // },
+      {
+        "packageNameWithPath" : "tnp/docs/PHILOSOPHY.md",
+        "overrideTitle": "Philosophy",
+      },
+      {
+        "packageNameWithPath": "taon/docs/FRAMEWORK.md",
+        "overrideTitle": "FRAMEWORK",
+      },
+      {
+        "packageNameWithPath": "tnp/CI-CD.md",
+        "overrideTitle": "CI/CD",
+      },
+      {
+        "packageNameWithPath": "tnp/docs/EXAMPLES.md",
+        "overrideTitle": "Examples",
+      },
+      // {
+      //   "overrideTitle": "Examples",
+      //   "packageNameWithPath": [
+      //     "taon/projects/container-v18/examples-v18/circural-deps-ctx/README.md",
+      //     "taon/projects/container-v18/examples-v18/crud/README.md",
+      //     "taon/projects/container-v18/examples-v18/realtime-subscribers/README.md",
+      //   ],
+      // },
+      {
+        "packageNameWithPath": "taon/README.md",
+        "overrideTitle": "Start",
+      },
+    ],
   },
-  "omitFilesPatters": ["BUILD-INFO"],
-  "priorityOrder": ["README"]
+  "omitFilesPatters": ["BUILD-INFO.md", "README.md"],
+  "mapTitlesNames": {
+    "FRAMEWORK.md": "Framework",
+  },
+  "priorityOrder": [
+    "Start",
+    "Philosophy",
+    "Framework",
+    "CLI",
+    "Examples",
+    "CI/CD",
+    "TODO",
+    "CHANGELOG",
+  ],
+  "customCssPath": "mkdocs.custom.css",
+  "customJsPath": "mkdocs.custom.js",
 }
