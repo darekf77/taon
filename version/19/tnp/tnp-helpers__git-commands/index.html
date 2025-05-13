@@ -1,0 +1,695 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.9">
+    
+    
+      
+        <title>Git - Taon Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.4af4bdda.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../mkdocs.custom.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#git" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Taon Documentation" class="md-header__button md-logo" aria-label="Taon Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Taon Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Git
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+    
+  
+  Start
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../docs/PHILOSOPHY/" class="md-tabs__link">
+        
+  
+    
+  
+  Philosophy
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../docs/FRAMEWORK/" class="md-tabs__link">
+        
+  
+    
+  
+  Framework
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../CLI/" class="md-tabs__link">
+        
+  
+    
+  
+  CLI
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../docs/EXAMPLES/" class="md-tabs__link">
+        
+  
+    
+  
+  Examples
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../CI-CD/" class="md-tabs__link">
+        
+  
+    
+  
+  CI/CD
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../TODO/" class="md-tabs__link">
+        
+  
+    
+  
+  TODO
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../CHANGELOG/" class="md-tabs__link">
+        
+  
+    
+  
+  CHANGELOG
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Taon Documentation" class="md-nav__button md-logo" aria-label="Taon Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Taon Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Start
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../docs/PHILOSOPHY/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Philosophy
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../docs/FRAMEWORK/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Framework
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CLI/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CLI
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../docs/EXAMPLES/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Examples
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../CI-CD/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CI/CD
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../TODO/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    TODO
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../CHANGELOG/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CHANGELOG
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="git">Git</h1>
+<h2 id="handy-shortcuts">Handy shortcuts</h2>
+<p><code>tnp soft</code>  =&gt; <code>git reset --soft HEAD~1</code></p>
+<p><code>tnp hosts</code>  =&gt; open hosts files in VSCode</p>
+<p><code>tnp count:commits</code>  =&gt; show origin of project</p>
+<p><code>tnp remove:submodules my-not-wanted-git-submodules</code>  =&gt; remove unwanted git submodules</p>
+<h2 id="remotes">Remotes</h2>
+<p><code>tnp origin</code>  =&gt; show origin of project</p>
+<p><code>tnp remote</code>  =&gt; <code>tnp origin</code> </p>
+<p><code>tnp origins</code>  =&gt; show all origins of project</p>
+<p><code>tnp remotes</code>  =&gt; <code>tnp origins</code></p>
+<h2 id="rebase">Rebase</h2>
+<p><code>tnp rebase</code>  =&gt; rebase current branch with default branch</p>
+<p><code>tnp rebase branch-to-rebase</code>  =&gt; rebase current branch with changes from branch-to-rebase</p>
+<h2 id="stash">Stash</h2>
+<p><code>tnp stash</code>  =&gt; stash only staged files</p>
+<p><code>tnp stashall</code>  =&gt; stash all files</p>
+<h2 id="reset-change-branch">Reset + change branch</h2>
+<p><code>tnp branch</code>  =&gt; git fetch / display menu with branches to select / select branch</p>
+<p><code>tnp reset</code>  =&gt; <code>git fetch</code> + remove tmp files for project + <code>tnp branch</code> (include children)</p>
+<p><code>tnp reset my-branch</code>  =&gt; same as <code>tnp reset</code> but specific branch</p>
+<p><code>tnp reset</code>  =&gt; reset hard and pull (recrusively)</p>
+<h2 id="pull">Pull</h2>
+<p><code>tnp pull</code>  =&gt; pull current branch or current workspace projects one after another</p>
+<p><code>tnp repull</code>  =&gt; <code>git reset hard --HEAD~10</code> + <code>tnp pull</code></p>
+<h2 id="push">Push</h2>
+<p><code>tnp pushall</code> =&gt; push code to all remotes(origins) defined in .git/config</p>
+<p><code>tnp pall</code> =&gt; <code>tnp pushall</code></p>
+<p><code>tnp push</code>  =&gt; (optionally git add +)  commit with message based on branch name + push current branch</p>
+<h2 id="smart-conventional-commits-branching">Smart Conventional Commits Branching</h2>
+<p><strong>Checkout branch + add changes + commit message + push branch</strong></p>
+<p>Create special branches (with metadata inside name) that can be use later with command
+<code>tnp push</code><br> to "re-push" changes and use matadata from branch name 
+ as commit message.</p>
+<h3 id="fix">fix</h3>
+<p>Quick commit and push bugfix<br>
+<code>tnp pfix JIRA-379089 JIRA-380320 proper counter message [my-lib]</code> <br> 
+&lt;=&gt;<br>
+<code>git checkout -b bugfix/JIRA-379089-JIRA-380320--my-lib--proper-counter-message</code> + <br>
+<code>git add</code> + <br>
+<code>git commit -m "fix(my-lib): proper counter message JIRA-379089 JIRA-380320"</code> + <br>
+<code>git push origin bugfix/JIRA-379089-JIRA-380320--my-lib--proper-counter-message</code></p>
+<p>tnp pfix &lt;=&gt; tnp pushfix &lt;=&gt; tnp push:fix</p>
+<h3 id="feature">feature</h3>
+<p>Quick commit and push feature<br>
+<code>tnp pf JIRA-379089 JIRA-380320 admin notification [my-lib]</code>  <br>
+&lt;&gt;=&gt;<br>
+<code>git checkout -b feature/JIRA-379089-JIRA-380320--my-lib--admin-notification</code> + <br>
+<code>git add</code> + <br>
+<code>git commit -m "feat(my-lib): admin notification JIRA-379089 JIRA-380320"</code> + <br>
+<code>git push origin feature/JIRA-379089-JIRA-380320--my-lib--admin-notification</code></p>
+<p>tnp pf &lt;=&gt; tnp pushfeature &lt;=&gt; tnp push:feature</p>
+<h3 id="chore">chore</h3>
+<p>Quick commit and push chore <br>
+<code>tnp pc JIRA-379089 update deps</code><br />
+&lt;=&gt;  <br>
+<code>git checkout -b chore/JIRA-379089-update-deps</code> + <br>
+<code>git add</code> + <br>
+<code>git commit -m "chore: update deps JIRA-379089"</code> + <br>
+<code>git push origin  chore/JIRA-379089-update-deps</code></p>
+<p>tnp pc &lt;=&gt; tnp chore &lt;=&gt; tnp pchore</p>
+<h3 id="docs">docs</h3>
+<p>Quick commit and push docs update <br>
+<code>tnp pd explained installation</code><br>
+ &lt;=&gt; <br>
+<code>git checkout -b docs/explained-installation</code> + <br>
+<code>git add</code> + <br>
+<code>git commit -m "docs:explained installation"</code> + <br>
+<code>git push origin docs/explained-installation</code></p>
+<p>tnp pd &lt;=&gt; tnp pdocs</p>
+<h3 id="test">test</h3>
+<p>Quick commit and push tests update <br>
+<code>tnp ptest admin permission new use case</code><br>
+ &lt;=&gt; <br>
+<code>git checkout -b test/admin-permission-new-use-case</code> + <br>
+<code>git add</code> + <br>
+<code>git commit -m "test: admin permission new use case"</code> + <br>
+<code>git push origin test/admin-permission-new-use-case</code></p>
+<p>tnp push:test &lt;=&gt; tnp ptest  &lt;=&gt; tnp ptests</p>
+<h3 id="styl">styl</h3>
+<p>Quick commit and push style update (formatting, linting etc.) <br>
+<code>tnp pstyle proper project methods</code><br>
+ &lt;=&gt; <br>
+<code>git checkout -b style/proper-project-methods</code> + <br>
+<code>git add</code> + <br>
+<code>git commit -m "style: proper project methods"</code> + <br>
+<code>git push origin style/proper-project-methods</code></p>
+<p>tnp pstyl &lt;=&gt; tnp pstyle</p>
+<h3 id="refactor">refactor</h3>
+<p>Quick commit and push code refactor <br>
+<code>tnp pref new permission module</code><br>
+ &lt;=&gt; <br>
+<code>git checkout -b refactor/new-permission-module</code> + <br>
+<code>git add</code> + <br>
+<code>git commit -m "refactor: new permission module"</code> + <br>
+<code>git push origin refactor/new-permission-module</code></p>
+<p>tnp pref &lt;=&gt; tnp prefactor</p>
+<h3 id="release">release</h3>
+<p>Quick commit and push release commit <br>
+<code>tnp prelease</code><br>
+ &lt;=&gt; <br>
+<code>git checkout -b release/version-v1-2-3</code> + <br>
+<code>git add</code> + <br>
+<code>git commit -m "release: version v1.2.3"</code> + <br>
+<code>git push origin release/version-1-2-3</code></p>
+<p>tnp prel &lt;=&gt; tnp prelase</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs", "navigation.sections", "toc.integrate", "navigation.top", "search.suggest", "search.highlight", "content.tabs.link", "content.code.annotation", "content.code.copy"], "search": "../../assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.c8b220af.min.js"></script>
+      
+        <script src="../../mkdocs.custom.js"></script>
+      
+    
+  </body>
+</html>
