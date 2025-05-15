@@ -41,7 +41,8 @@ backend/frontend **[*isomorphic](https://en.wikipedia.org/wiki/Isomorphic_JavaSc
 **[READ DOCUMENTATION](https://taon.dev/#/docs)**
 
 ### Initial requirements of taon
-1. Git (gitbash [https://gitforwindows.org](https://gitforwindows.org) on windows) 
+1. Installed git 
+ (on windows only supported [gitbash](https://gitforwindows.org) or [new powershell pwsh](https://github.com/PowerShell/PowerShell))
 
 2. Increased watchers limit (only on linux):
 ```bash
@@ -68,7 +69,7 @@ brew install mkdocs-material
 
 
 ## Required version of NodeJS
-- Windows 10/11 (gitbash): >= v18
+- Windows 10/11 (gitbash,pwsh): >= v18
 - MacOS: >= v18
 - Linux: >= v18
 
