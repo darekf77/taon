@@ -1,3 +1,4 @@
+//#region @notForNpm
 import { vscodeExtMethods } from 'tnp/src';
 import { executeCommand } from 'tnp-helpers/src'; // @backend
 import { ExtensionContext } from 'vscode';
@@ -32,3 +33,4 @@ export function activate(context: ExtensionContext) {
 export function deactivate() {}
 
 export default { commands };
+//#endregion
