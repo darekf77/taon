@@ -4,7 +4,7 @@
 TAON  **T**ypescript **A**ngular **O**rm **N**ode )
 
 
-( BETA VERSION - MAJOR REFACTOR IN PROGRESS )
+( ALPHA VERSION - For early testing and feedback only. )
 
 **Taon** 🔥🔥🔥 is a solution (**global cli tool** & **framework** & **cloud**) for
 
