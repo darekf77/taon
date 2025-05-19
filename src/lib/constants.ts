@@ -15,7 +15,7 @@ export type TaonEntityKeysToOmit =
   | 'injectCtrl'
   | 'injectGlobalProvider'
   | 'injectLocalProvider'
-  | 'injectContextProvider'
+  | 'injectContextProvider';
 
 export const TaonEntityKeysToOmitArr: TaonEntityKeysToOmit[] = [
   'ctrl',
@@ -45,4 +45,12 @@ let TAON_CONTEXT: InjectionToken<TaonContext>;
 //#region @browser
 TAON_CONTEXT = new InjectionToken<TaonContext>('TAON_CONTEXT');
 //#endregion
-export { TAON_CONTEXT };
+
+let CURRENT_HOST_BACKEND_PORT: InjectionToken<number>;
+//#region @browser
+CURRENT_HOST_BACKEND_PORT = new InjectionToken<number>(
+  'CURRENT_HOST_BACKEND_PORT',
+);
+//#endregion
+
+export { TAON_CONTEXT, CURRENT_HOST_BACKEND_PORT };

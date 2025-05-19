@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core'; // @browser
 
-import { TAON_CONTEXT } from '../constants';
+import { CURRENT_HOST_BACKEND_PORT, TAON_CONTEXT } from '../constants';
 import { TaonContext } from '../create-context';
 
 /**
@@ -12,6 +12,22 @@ import { TaonContext } from '../create-context';
 //#endregion
 export abstract class BaseAngularsService {
   //#region @browser
-  currentContext: TaonContext = inject(TAON_CONTEXT);
+  protected readonly currentContext: TaonContext = inject(TAON_CONTEXT);
   //#endregion
+  protected readonly CURRENT_HOST_BACKEND_PORT: number | undefined;
+
+  constructor() {
+    //#region @browser
+    this.CURRENT_HOST_BACKEND_PORT = inject(CURRENT_HOST_BACKEND_PORT);
+    // #endregion
+  }
+
+  /**
+   * @deprecated
+   * Returns the host URL for the backend service
+   * that is running on localhost (normal NodeJS/ExpressJS mode).
+   */
+  get host(): string {
+    return `http://localhost:${this.CURRENT_HOST_BACKEND_PORT}`;
+  }
 }
