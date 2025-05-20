@@ -1,15 +1,15 @@
 //#region imports
+import type { ipcRenderer } from 'electron'; // @browser
+import * as Electron from 'electron'; // @backend
+import { ipcMain } from 'electron'; // @backend
 import { Server, ServerOptions } from 'socket.io';
-import { EndpointContext } from '../../endpoint-context';
-import { RealtimeStrategy } from './realtime-strategy';
 import type { io, ManagerOptions, SocketOptions } from 'socket.io-client';
-import type { ipcRenderer } from 'electron';
+
+import { EndpointContext } from '../../endpoint-context';
 import { Symbols } from '../../symbols';
-//#region @backend
-import * as Electron from 'electron';
-import { ipcMain } from 'electron';
-//#endregion
 import { RealtimeModels } from '../realtime.models';
+
+import { RealtimeStrategy } from './realtime-strategy';
 //#endregion
 
 //#region mock server ipc
@@ -223,7 +223,9 @@ export class MockSocketIpc {
   //#region fields & getters
 
   //#region fields & getters / ipc renderer
+  //#region @browser
   ipcRenderer!: typeof ipcRenderer;
+  //#endregion
   //#endregion
 
   //#region fields & getters / event handlers by name
@@ -245,12 +247,15 @@ export class MockSocketIpc {
    * @param namespaceName instead url for ipc
    */
   constructor(public namespaceName: string) {
+    //#region @browser
     this.ipcRenderer = (window as any).require('electron').ipcRenderer;
+    //#endregion
   }
   //#endregion
 
   //#region on
   on(eventName: string, callback: (event: any, ...args: any[]) => void) {
+    //#region @browser
     if (!this.socketEventHandlers[eventName]) {
       this.socketEventHandlers[eventName] = new Set();
     }
@@ -265,11 +270,13 @@ export class MockSocketIpc {
       const connectionEventKey = `(${this.name}) "connection"`;
       this.ipcRenderer.send(connectionEventKey, this.name);
     }
+    //#endregion
   }
   //#endregion
 
   //#region off
   off(event: string, callback?: (event: any, ...args: any[]) => void) {
+    //#region @browser
     if (!this.socketEventHandlers[event]) {
       return;
     }
@@ -284,13 +291,16 @@ export class MockSocketIpc {
     this.ipcRenderer.removeListener(removeListener, data => {
       callback(data);
     });
+    //#endregion
   }
   //#endregion
 
   //#region emit
   emit(event: string, ...args: any[]) {
+    //#region @browser
     const emitEvent = `(${this.name}) "${event}"`;
     this.ipcRenderer.send(emitEvent, ...args);
+    //#endregion
   }
   //#endregion
 }

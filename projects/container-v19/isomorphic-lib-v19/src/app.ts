@@ -1,11 +1,14 @@
 //#region imports
-import { CommonModule } from '@angular/common';
-import { NgModule, inject, Injectable } from '@angular/core';
-import { Component, OnInit } from '@angular/core';
-import { VERSION } from '@angular/core';
+import { CommonModule } from '@angular/common'; // @browser
+import { NgModule, inject, Injectable } from '@angular/core'; // @browser
+import { Component, OnInit } from '@angular/core'; // @browser
+import { VERSION } from '@angular/core'; // @browser
+import Aura from '@primeng/themes/aura'; // @browser
+import { MaterialCssVarsModule } from 'angular-material-css-vars'; // @browser
+import { providePrimeNG } from 'primeng/config'; // @browser
 import { Observable, map } from 'rxjs';
-import { Taon, BaseContext } from 'taon';
-import { Helpers, UtilsOs } from 'tnp-core';
+import { Taon, BaseContext, TAON_CONTEXT } from 'taon/src';
+import { Helpers, UtilsOs } from 'tnp-core/src';
 
 import {
   HOST_BACKEND_PORT,
@@ -64,8 +67,25 @@ export class UserApiService {
 //#region  isomorphic-lib-v19 module
 //#region @browser
 @NgModule({
+  providers: [
+    {
+      provide: TAON_CONTEXT,
+      useValue: MainContext,
+    },
+    providePrimeNG({ // inited ng prime - remove if not needed
+      theme: {
+        preset: Aura
+      }
+    })
+  ],
   exports: [IsomorphicLibV19Component],
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    MaterialCssVarsModule.forRoot({  // inited angular material - remove if not needed
+      primary: '#4758b8',
+      accent: '#fedfdd',
+   }),
+  ],
   declarations: [IsomorphicLibV19Component],
 })
 export class IsomorphicLibV19Module { }
@@ -87,6 +107,9 @@ class User extends Taon.Base.AbstractEntity {
 class UserController extends Taon.Base.CrudController<User> {
   entityClassResolveFn = ()=> User;
   //#region @websql
+  /**
+   * @deprecated use migrations instead
+   */
   async initExampleDbData(): Promise<void> {
     const superAdmin = new User();
     superAdmin.name = 'super-admin';
@@ -102,6 +125,9 @@ var MainContext = Taon.createContext(()=>({
   frontendHost,
   contextName: 'MainContext',
   contexts:{ BaseContext },
+  migrations: {
+    // PUT TAON MIGRATIONS HERE
+  },
   controllers: {
     UserController,
     // PUT TAON CONTROLLERS HERE

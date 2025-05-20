@@ -1,10 +1,9 @@
 @use './vars.scss' as vars;
-@use 'primeflex/primeflex.scss';
-/* You can add global styles to this file, and also import other style files */
-@import '~@angular/material/prebuilt-themes/indigo-pink.css';
+@use 'bootstrap/scss/bootstrap' as *;
 
-// @import "primeng/resources/themes/lara-light-blue/theme.css"; // not needed anymore
-// @import "primeng/resources/primeng.css"; // not needed anymore
+@import '~@angular/material/prebuilt-themes/indigo-pink.css';
+@import 'primeflex/primeflex.css';
+@import 'primeflex/themes/primeone-light.css';
 @import 'primeicons/primeicons.css';
 @import 'animate.css/animate.min.css';
 
@@ -37,8 +36,8 @@
   display: block !important;
 }
 
-// TODO QUICK FIX for weird chrome padding
-body {
-  margin: 0px !important;
-  overflow: hidden;
+
+body, html {
+  margin: 0px !important; // TODO QUICK FIX for weird chrome padding
+  overflow: hidden; // for ngx-scrollbar to work
 }

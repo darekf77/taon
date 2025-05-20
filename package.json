@@ -334,6 +334,7 @@
     "zone.js": "~0.13.0"
   },
   "description": "Isomorphic solution for backend and frontend",
+  "main": "dist/app.electron.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/darekf77/taon.git"

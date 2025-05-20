@@ -8,6 +8,8 @@ import axios from 'axios';
 import * as bodyParser from 'body-parser'; // @backend
 import * as cookieParser from 'cookie-parser'; // @backend
 import * as cors from 'cors'; // @backend
+import { ipcMain } from 'electron'; // @backend
+import { ipcRenderer } from 'electron'; // @browser
 import * as express from 'express'; // @backend
 import type { Application } from 'express';
 import * as fileUpload from 'express-fileupload'; // @backend
@@ -1767,7 +1769,7 @@ export class EndpointContext {
         methodConfig,
         expressPath,
       );
-      Helpers.ipcMain.on(ipcKeyName, async (event, paramsFromBrowser) => {
+      ipcMain.on(ipcKeyName, async (event, paramsFromBrowser) => {
         const responseJsonData = await getResult(
           paramsFromBrowser,
           void 0,
@@ -2058,7 +2060,8 @@ export class EndpointContext {
           const headers = {};
           const { request, response } = TaonHelpers.websqlMocks(headers);
 
-          Helpers.ipcRenderer.once(
+          //#region @browser
+          ipcRenderer.once(
             TaonHelpers.ipcKeyNameResponse(target, methodConfig, expressPath),
             (event, responseData) => {
               let res: any = responseData;
@@ -2089,10 +2092,11 @@ export class EndpointContext {
               }
             },
           );
-          Helpers.ipcRenderer.send(
+          ipcRenderer.send(
             TaonHelpers.ipcKeyNameRequest(target, methodConfig, expressPath),
             args,
           );
+          //#endregion
         });
         received['observable'] = from(received);
         return {
