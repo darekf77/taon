@@ -1,6 +1,6 @@
 {
   "name": "taon",
-  "version": "19.0.19",
+  "version": "19.0.20",
   "scripts": {
     "mkdocs": "python3 -m mkdocs",
     "taon init": "taon init",
@@ -165,7 +165,6 @@
     "electron": "30.0.1",
     "electron-builder": "24.13.3",
     "electron-debug": "3.2.0",
-    "electron-reloader": "1.2.3",
     "element-resize-detector": "~1.2.4",
     "enquirer": "2.4.1",
     "enum-values": "1.2.1",
