@@ -416,11 +416,13 @@
       // "storybook": "~8.1.6",
       //#endregion
       //#region electron
-      "electron": "25.2.0",
+      "electron": "30.0.1",
 
-      "electron-builder": "24.4.0",
+      "electron-builder": "24.13.3",
       "electron-debug": "3.2.0",
       "electron-reloader": "1.2.3",
+
+      "@nut-tree-fork/nut-js": "4.2.6",
 
       //  @trusted=patch
       "node-polyfill-webpack-plugin": "2.0.1",
