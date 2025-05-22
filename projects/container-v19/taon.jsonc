@@ -420,7 +420,8 @@
 
       "electron-builder": "24.13.3",
       "electron-debug": "3.2.0",
-      "electron-reloader": "1.2.3",
+      // crap.. hangs frontend randomly
+      // "electron-reloader": "1.2.3",
 
       "@nut-tree-fork/nut-js": "4.2.6",
 
