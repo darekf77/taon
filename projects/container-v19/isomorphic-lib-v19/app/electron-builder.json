@@ -4,35 +4,39 @@
     "output": "release/"
   },
   "files": [
-    "**/*",
-    "!**/*.ts",
-    "!*.map",
-    "!package.json",
-    "!package-lock.json",
+    "./electron/index.js",
+    "./electron/package.json",
+    "./electron/sql-wasm.wasm",
     {
-      "from": "../electron",
-      "filter": ["**/*"]
+      "from": "./electron/index.js",
+      "to": "./index.js"
+    },
+    {
+      "from": "./electron/package.json",
+      "to": "package.json"
+    },
+    {
+      "from": "./electron/node_modules",
+      "to": "./electron/node_modules"
+    },
+    {
+      "from": "./dist/",
+      "to": "./dist/"
     }
   ],
   "win": {
-    "icon": "src/assets/icons",
-    "target": [
-      "portable"
-    ]
+    "icon": "assets/icons",
+    "target": ["portable"]
   },
   "portable": {
-    "splashImage": "src/assets/icons/electron/electron.bmp"
+    "splashImage": "assets/icons/electron.bmp"
   },
   "mac": {
-    "icon": "src/assets/icons/electron",
-    "target": [
-      "dmg"
-    ]
+    "icon": "assets/icons/electron",
+    "target": ["dmg"]
   },
   "linux": {
-    "icon": "src/assets/icons/electron",
-    "target": [
-      "AppImage"
-    ]
+    "icon": "assets/icons/electron",
+    "target": ["AppImage"]
   }
 }
