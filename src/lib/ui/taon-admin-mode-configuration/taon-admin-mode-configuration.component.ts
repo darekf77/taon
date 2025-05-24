@@ -25,12 +25,11 @@ import { Subject, takeUntil, tap } from 'rxjs';
 import { StaticColumnsModule } from 'static-columns/src';
 import { BreakpointsService } from 'static-columns/src';
 import { Stor } from 'taon-storage/src';
+import { TaonFullMaterialModule } from 'taon/src';
+import { TaonNotificationsModule } from 'taon/src';
+import { TaonProgressBarModule } from 'taon/src';
+import { TaonSessionPasscodeComponent } from 'taon/src';
 import { Helpers, _ } from 'tnp-core/src';
-
-import { TaonFullMaterialModule } from '../taon-full-material.module';
-import { TaonNotificationsModule } from '../taon-notifications';
-import { TaonProgressBarModule } from '../taon-progress-bar';
-import { TaonSessionPasscodeComponent } from '../taon-session-passcode';
 
 import { TaonAdminService } from './taon-admin.service';
 
