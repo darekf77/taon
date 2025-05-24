@@ -418,7 +418,7 @@
       //#region electron
       "electron": "30.0.1",
 
-      "electron-builder": "24.13.3",
+      "electron-builder": "~26.0.12",
       "electron-debug": "3.2.0",
       // crap.. hangs frontend randomly
       // "electron-reloader": "1.2.3",
