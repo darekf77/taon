@@ -9,6 +9,10 @@
       
       
       
+        <link rel="prev" href="../../../CLI/">
+      
+      
+        <link rel="next" href="../../CI-CD/">
       
       
       <link rel="icon" href="../../../assets/images/favicon.png">
@@ -16,7 +20,7 @@
     
     
       
-        <title>ADDITIONAL COMMANDS - Taon Documentation</title>
+        <title>Cloud-Service - Taon Documentation</title>
       
     
     
@@ -68,7 +72,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#running-nodejs-backend-app" class="md-skip">
+        <a href="#cloud-service" class="md-skip">
           Skip to content
         </a>
       
@@ -102,7 +106,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              ADDITIONAL COMMANDS
+              Cloud-Service
             
           </span>
         </div>
@@ -239,9 +243,11 @@
         
   
   
+    
   
-    <li class="md-tabs__item">
-      <a href="../CLOUD-SERVICE/" class="md-tabs__link">
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
         
   
     
@@ -440,10 +446,30 @@
       
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../CLOUD-SERVICE/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Cloud-Service
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -452,6 +478,35 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#behavior-on-server-vs-on-localhost" class="md-nav__link">
+    <span class="md-ellipsis">
+      Behavior - on server vs on localhost
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -551,53 +606,76 @@
                   
 
 
-  <h1>ADDITIONAL COMMANDS</h1>
-
-<h2 id="running-nodejs-backend-app">Running nodejs backend app</h2>
-<p>Usually you <strong>don't</strong> use this command for development </p>
-<p>-&gt; <strong>debugger</strong> from Visual Studio Code is for this 
-(F5 on keyboard, Task "Debug/Start Server"). 
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>tnp<span class="w"> </span>run
-</code></pre></div></p>
-<h2 id="tnp-extension-for-visual-studio-code">Tnp extension for Visual Studio Code</h2>
-<p>Install essential vscode plugins from project workspace recommended</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>tnp<span class="w"> </span>vscode:ext
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>tnp<span class="w"> </span>ext
-</code></pre></div>
-<h2 id="tnp-global-config-for-visual-studio-code">Tnp global config for Visual Studio Code</h2>
-<p>Apply best global config for VScode</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>tnp<span class="w"> </span>vscode:global
-</code></pre></div>
-<h2 id="install-mkdocs-manually">Install mkdocs manually</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>pip3<span class="w"> </span>install<span class="w"> </span>mkdocs
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>pip3<span class="w"> </span>install<span class="w"> </span>mkdocs-material<span class="w"> </span>--user
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>brew<span class="w"> </span>install<span class="w"> </span>mkdocs
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>brew<span class="w"> </span>install<span class="w"> </span>mkdocs-material
-</code></pre></div>
-<h2 id="pause">Pause</h2>
-<p>Pause terminal test
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>tnp<span class="w"> </span>pause
-</code></pre></div></p>
-<h2 id="github-pages-from-docs-to-branch">Github pages from /docs to branch</h2>
-<p>Pause terminal test
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>tnp<span class="w"> </span>ghPagesInit
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>tnp<span class="w"> </span>gh:pages:init
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>tnp<span class="w"> </span>ghpagesinit
-<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>tnp<span class="w"> </span>ghPagesInit<span class="w"> </span>--full<span class="w"> </span><span class="c1"># full process with deleting /docs files</span>
-<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>tnp<span class="w"> </span>ghPagesInit<span class="w"> </span>--provider<span class="w"> </span>bitbucket<span class="w"> </span><span class="c1"># specify different provider</span>
-</code></pre></div></p>
-<h2 id="show-version-of-projects-inside-container">Show version of projects inside container</h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>tnp<span class="w"> </span>versions
-</code></pre></div>
-<h2 id="download-video-as-mp3">Download video as mp3</h2>
-<p>Download mp3 from url (got to ~/Download/mp3-from-websites)</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>tnp<span class="w"> </span>mp3<span class="w"> </span>&lt;url<span class="w"> </span>to<span class="w"> </span>video&gt;
-</code></pre></div>
-<h2 id="download-video-as-mp4-video">Download video as mp4 video</h2>
-<p>Download mp4 from url (got to ~/Download/mp4-from-websites)</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>tnp<span class="w"> </span>mp4<span class="w"> </span>&lt;url<span class="w"> </span>to<span class="w"> </span>video&gt;
-</code></pre></div>
+<h1 id="cloud-service">CLOUD-SERVICE</h1>
+<p>Taon, out of the box, provides users with a local service for easy project/port/domain management and deployment. It also gives an insight into what the real bare-bones Taon Cloud service feels like. Essentially, <em>Taon Service</em> is the same as <em>Taon Cloud</em>.
+<br>
+<br>
+By default, each Taon command checks if a working and healthy local Taon service is available. If not, a new terminal console inside the system starts with the Taon user-friendly UI console.</p>
+<p><img alt="alt text" src="../image-3.png" /></p>
+<p><strong>Taon UI Console</strong> – basically, it’s everything you would ever need for deploying and managing your remote projects through SSH. No need for a browser UI, no distractions, security concerns. </p>
+<h2 id="behavior-on-server-vs-on-localhost">Behavior - on server vs on localhost</h2>
+<table>
+  <tr>
+    <th style="font-weight:normal;">Function</th>
+    <th><u>Remote Server</u></th>
+    <th><u>Localhost</u></th>
+  </tr>
+  <tr>
+    <td><b>Manage Projects</b><br>(cloud)</td>
+    <td> 
+      -||-
+    </td>
+    <td> 
+      discover/monitor/change/deploy/remove your
+    git project
+    </td>
+  </tr>
+  <tr>
+    <td><b>Manage Domains</b><br>(cloud)</td>
+    <td> 
+      - display all domains that are assigned for server public ip<br>
+      - (in future - deep service integration with providers that will let you skip learning about redirecting/assigning domains => just buy/configure domain from here!)
+    </td>
+    <td> 
+      - manage /etc/host file<br>
+      - create fake domains for temporary simulation of real service/website
+    </td>
+  </tr>
+  <tr>
+    <td><b>Manage Ports</b><br>(cloud)</td>
+    <td> 
+      -||-
+    </td>
+    <td> 
+      - assign automatically ports to projects when starting local build (no more --port needed, everything )<br>
+      - project from same location use the same ports everytime to avoid confusion <br>
+      - for: projects, services, dockers
+    </td>
+  </tr>
+  <tr>
+    <td><b>Manage Deployments</b><br>(cloud)</td>
+    <td> 
+      - main place where you can specify quickly what to
+      deploy and where<br>
+      - deploy projects/artifacts<br>
+      - deploy groups of projects/artifacts<br>
+    </td>
+    <td> 
+      - local cloud has the same functionality, but of 
+      course stuff is only available inside your local
+      network
+    </td>
+  </tr>
+  <tr>
+    <td><b>Manage Environments</b><br>(cloud)</td>
+    <td> 
+      -||-
+    </td>
+    <td> 
+      modify/preview environment assigned for each deployed project artifact
+    </td>
+  </tr>
+</table>
 
 
 
