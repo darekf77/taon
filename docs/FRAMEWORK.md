@@ -48,6 +48,7 @@ for backend and frontend:
 /lib # all backend es5 javascript code
 /browser # browser code for normal NodeJs/Angular development
 /websql # special version of browser code for WEBSQL development
+/scss # folder with all scss file from /src
 /bin # cli related files
 /assets/shared # shared assets from project /src/assets/shared folder
 ```
@@ -197,6 +198,57 @@ function myFunc():string {
 *When you should use @websqlOnly* ?
 
 \-> when you are converting NodeJS only backend to websql mode friendly backend
+
+### Inline imports/exports code removal
+Taon lets you exclude from backend(or browser, or websql) code specific imports/exports by 
+setting special tag at the end of import/export (not above, not below - at the end)<br>
+
+When you automatically orders your imports/export with prettier/eslint - every tag is being preserved.
+<br><br>
+*Taon code*
+```ts
+import {
+  Taon,
+  Connection,
+} from 'taon/src';
+import fse from 'fs-extra'; // @backend
+import {
+  tap,
+  filter,
+} from 'rxjs'; // @browser
+
+import { User } from './user';
+```
+<br><br>
+*backend*
+```ts
+import {
+  Taon,
+  Connection,
+} from 'taon/src';
+import fse from 'fs-extra'; // @backend
+/* */
+/* */
+/* */
+/* */
+
+import { User } from './user';
+```
+<br><br>
+*browser*
+```ts
+import {
+  Taon,
+  Connection,
+} from 'taon/src';
+/* */
+import {
+  tap,
+  filter,
+} from 'rxjs'; // @browser
+
+import { User } from './user';
+```
 
 ## Taon TypeScript building blocks
 

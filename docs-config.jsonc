@@ -30,6 +30,10 @@
         "overrideTitle": "CI/CD",
       },
       {
+        "packageNameWithPath": "tnp/docs/CLOUD-SERVICE.md",
+        "overrideTitle": "Cloud-Service",
+      },
+      {
         "packageNameWithPath": "tnp/docs/EXAMPLES.md",
         "overrideTitle": "Examples",
       },
@@ -56,8 +60,9 @@
     "Philosophy",
     "Framework",
     "CLI",
-    "Examples",
+    "Cloud-Service",
     "CI/CD",
+    "Examples",
     "TODO",
     "CHANGELOG",
   ],
