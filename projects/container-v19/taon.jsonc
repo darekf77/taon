@@ -1141,6 +1141,7 @@
 
       //#region my packages
       "taon-typeorm": "~19.0.0",
+      "taon-ui": "~19.0.2",
 
       // "taon-crud": "18.0.5",
       // "taon-ports": "18.0.5",
