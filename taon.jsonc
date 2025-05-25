@@ -10,14 +10,20 @@
     "json10",
     "lodash-walk-object",
     "taon-type-sql",
-    "socket.io"
+    "socket.io",
   ],
 
   "additionalNpmNames": [],
 
-  "autoReleaseConfigAllowedItems": [{
-    "artifactName": "npm-lib-and-cli-tool"
-  }],
+  "autoReleaseConfigAllowedItems": [
+    {
+      "artifactName": "npm-lib-and-cli-tool",
+    },
+    // {
+    //   "artifactName": "docs-webapp",
+    //   "releaseType": "static-pages",
+    // },
+  ],
 
   "resources": ["README.md", "bin"],
 
@@ -25,7 +31,7 @@
     "author": "Dariusz Filipiak",
 
     "bugs": {
-      "url": "https://github.com/darekf77/taon/issues"
+      "url": "https://github.com/darekf77/taon/issues",
     },
 
     "description": "Isomorphic solution for backend and frontend",
@@ -35,11 +41,11 @@
 
     "repository": {
       "type": "git",
-      "url": "git+https://github.com/darekf77/taon.git"
+      "url": "git+https://github.com/darekf77/taon.git",
     },
 
     "scripts": {
-      "mkdocs": "python3 -m mkdocs"
-    }
-  }
+      "mkdocs": "python3 -m mkdocs",
+    },
+  },
 }
