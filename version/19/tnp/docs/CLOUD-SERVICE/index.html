@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.4">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.5">
     
     
       
@@ -616,64 +616,48 @@ By default, each Taon command checks if a working and healthy local Taon service
 <h2 id="behavior-on-server-vs-on-localhost">Behavior - on server vs on localhost</h2>
 <table>
   <tr>
-    <th style="font-weight:normal;">Function</th>
-    <th><u>Remote Server</u></th>
-    <th><u>Localhost</u></th>
+    <th style="font-weight: normal">Manager</th>
+    <th><u>Projects</u></th>
+    <th><u>Domains</u></th>
+    <th><u>Ports</u></th>
+    <th><u>Deployments</u></th>
+    <th><u>Environments</u></th>
   </tr>
   <tr>
-    <td><b>Manage Projects</b><br>(cloud)</td>
-    <td> 
-      -||-
-    </td>
-    <td> 
-      discover/monitor/change/deploy/remove your
-    git project
-    </td>
-  </tr>
-  <tr>
-    <td><b>Manage Domains</b><br>(cloud)</td>
-    <td> 
-      - display all domains that are assigned for server public ip<br>
-      - (in future - deep service integration with providers that will let you skip learning about redirecting/assigning domains => just buy/configure domain from here!)
-    </td>
-    <td> 
-      - manage /etc/host file<br>
+    <td>Localhost</td>
+    <td>discover / monitor / change / deploy / remove your git projects</td>
+    <td>
+      - manage /etc/host file<br />
       - create fake domains for temporary simulation of real service/website
     </td>
-  </tr>
-  <tr>
-    <td><b>Manage Ports</b><br>(cloud)</td>
-    <td> 
-      -||-
-    </td>
-    <td> 
-      - assign automatically ports to projects when starting local build (no more --port needed, everything )<br>
-      - project from same location use the same ports everytime to avoid confusion <br>
+    <td>
+      - assign automatically ports to projects when starting local build (no
+      more --port needed, everything )<br />
+      - project from same location use the same ports everytime to avoid
+      confusion <br />
       - for: projects, services, dockers
     </td>
-  </tr>
-  <tr>
-    <td><b>Manage Deployments</b><br>(cloud)</td>
-    <td> 
-      - main place where you can specify quickly what to
-      deploy and where<br>
-      - deploy projects/artifacts<br>
-      - deploy groups of projects/artifacts<br>
+    <td>
+      - main place where you can specify quickly what to deploy and where<br />
+      - deploy projects/artifacts<br />
+      - deploy groups of projects/artifacts<br />
     </td>
-    <td> 
-      - local cloud has the same functionality, but of 
-      course stuff is only available inside your local
-      network
-    </td>
-  </tr>
-  <tr>
-    <td><b>Manage Environments</b><br>(cloud)</td>
-    <td> 
-      -||-
-    </td>
-    <td> 
+    <td>
       modify/preview environment assigned for each deployed project artifact
     </td>
+  </tr>
+  <tr>
+    <td>Cloud</td>
+    <td>-||-</td>
+    <td>
+      - display all domains that are assigned for server public ip<br />
+      - (in future - deep service integration with providers that will let you
+      skip learning about redirecting/assigning domains => just buy/configure
+      domain from here!)
+    </td>
+    <td>-||-</td>
+    <td>-||-</td>
+    <td>-||-</td>
   </tr>
 </table>
 
@@ -730,10 +714,10 @@ By default, each Taon command checks if a working and healthy local Taon service
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs", "navigation.sections", "toc.integrate", "navigation.top", "search.suggest", "search.highlight", "content.tabs.link", "content.code.annotation", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.c011b7c0.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs", "navigation.sections", "toc.integrate", "navigation.top", "search.suggest", "search.highlight", "content.tabs.link", "content.code.annotation", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.7389ff0e.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.c18c5fb9.min.js"></script>
       
         <script src="../../../mkdocs.custom.js"></script>
       
