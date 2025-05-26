@@ -128,11 +128,11 @@ rm -rf ~/.taon  # taon local packages repository
 Installation happens when you first time use taon
 ```jsonc
 [
-  // tool for minifying js (WILL EB REMOVED SOON FROM GLOBAL DEPS)
+  // tool for minifying js (WILL BE REMOVED SOON FROM GLOBAL DEPSS)
   { name: 'ncc', version: '0.36.0', installName: '@vercel/ncc' },
-  // zip extractor.. no needed anymore (WILL EB REMOVED SOON FROM GLOBAL DEPS)
+  // zip extractor.. no needed anymore (WILL BE REMOVED SOON FROM GLOBAL DEPSS)
   { name: 'extract-zip', version: '1.6.7' },
-  // copy catalogs (WILL EB REMOVED SOON FROM GLOBAL DEPS)
+  // copy catalogs (WILL BE REMOVED SOON FROM GLOBAL DEPSS)
   { name: 'cpr' },
   // check version of your nodejs
   { name: 'check-node-version' },
@@ -142,11 +142,11 @@ Installation happens when you first time use taon
   { name: 'rimraf', version: '3.0.2' },
   //handy for recreating catalogs
   { name: 'mkdirp' },
-  // rename files in build  (WILL EB REMOVED SOON FROM GLOBAL DEPS)
+  // rename files in build  (WILL BE REMOVED SOON FROM GLOBAL DEPSS)
   { name: 'renamer', version: '2.0.1' },
-  // run/watch node server (WILL EB REMOVED SOON FROM GLOBAL DEPS)
+  // run/watch node server (WILL BE REMOVED SOON FROM GLOBAL DEPSS)
   { name: 'nodemon' },
-  // check circural deps (WILL EB REMOVED SOON FROM GLOBAL DEPS)
+  // check circural deps (WILL BE REMOVED SOON FROM GLOBAL DEPSS)
   { name: 'madge' },
   // package manager
   { name: 'yarn' },
@@ -156,21 +156,21 @@ Installation happens when you first time use taon
   { name: 'prettier' },
   // process killer
   { name: 'fkill', installName: 'fkill-cli' },
-  // for unit tests runner (WILL EB REMOVED SOON FROM GLOBAL DEPS)
+  // for unit tests runner (WILL BE REMOVED SOON FROM GLOBAL DEPSS)
   { name: 'mocha' },
   // for unit tests runner
   { name: 'jest' },
-  // run ts code directly
+  // run ts code directly  (WILL BE REMOVED SOON FROM GLOBAL DEPSS)
   { name: 'ts-node' },
   // oficial vsce package striped out from some restrictions
   { name: 'taon-vsce' },
-  // analyze you final bundle (WILL EB REMOVED SOON FROM GLOBAL DEPS)
+  // analyze you final bundle (WILL BE REMOVED SOON FROM GLOBAL DEPSS)
   { name: 'webpack-bundle-analyzer' },
   // strip types from TypeScript
   { name: 'babel', installName: 'babel-cli' },
-  // create js bundle that are not human readable (WILL EB REMOVED SOON FROM GLOBAL DEPS)
+  // create js bundle that are not human readable (WILL BE REMOVED SOON FROM GLOBAL DEPSS)
   { name: 'javascript-obfuscator', version: '4' },
-  // minify js (WILL EB REMOVED SOON FROM GLOBAL DEPS)
+  // minify js (WILL BE REMOVED SOON FROM GLOBAL DEPSS)
   { name: 'uglifyjs', installName: 'uglify-js' },
 ]
 ```
