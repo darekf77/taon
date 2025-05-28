@@ -25,18 +25,36 @@
     }
   ],
   "win": {
-    "icon": "assets/icons",
-    "target": ["portable"]
+    "icon": "assets/icons/electron",
+    "target": [
+      {
+        "target": "dir",
+        "arch": ["x64", "arm64"]
+      }
+    ]
   },
   "portable": {
     "splashImage": "assets/icons/electron.bmp"
   },
   "mac": {
     "icon": "assets/icons/electron",
-    "target": ["dmg"]
+    "target": [
+      {
+        "target": "dir",
+        "arch": ["x64", "arm64"]
+      }
+    ]
   },
+
   "linux": {
     "icon": "assets/icons/electron",
-    "target": ["AppImage"]
-  }
+    "target": [
+      {
+        "target": "dir",
+        "arch": ["x64", "arm64"]
+      }
+    ]
+  },
+  "appId": "com.yourcompany.yourapp",
+  "productName": "YourApp"
 }
