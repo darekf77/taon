@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core'; // @browser
 
 import { CURRENT_HOST_BACKEND_PORT, TAON_CONTEXT } from '../constants';
 import { TaonContext } from '../create-context';
+import { inject as taonInject } from '../inject';
 
 /**
  * TODO prevent calling methods when not initialized
@@ -29,5 +30,9 @@ export abstract class BaseAngularsService {
    */
   get host(): string {
     return `http://localhost:${this.CURRENT_HOST_BACKEND_PORT}`;
+  }
+
+  injectController<T>(ctor: new (...args: any[]) => T): T {
+    return taonInject(() => ctor) as T;
   }
 }
