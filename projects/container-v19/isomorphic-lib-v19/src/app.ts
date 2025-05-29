@@ -10,19 +10,11 @@ import { Observable, map } from 'rxjs';
 import { Taon, BaseContext, TAON_CONTEXT } from 'taon/src';
 import { Helpers, UtilsOs } from 'tnp-core/src';
 
-import {
-  HOST_BACKEND_PORT,
-  CLIENT_DEV_WEBSQL_APP_PORT,
-  CLIENT_DEV_NORMAL_APP_PORT,
-} from './app.hosts';
+import { HOST_URL, FRONTEND_HOST_URL } from './app.hosts';
 //#endregion
 
 console.log('hello world');
-console.log('Your server will start on port '+ HOST_BACKEND_PORT);
-const host = 'http://localhost:' + HOST_BACKEND_PORT;
-const frontendHost =
-  'http://localhost:' +
-  (Helpers.isWebSQL ? CLIENT_DEV_WEBSQL_APP_PORT : CLIENT_DEV_NORMAL_APP_PORT);
+console.log('Your server will start on port ' + HOST_URL.split(':')[2]);
 
 //#region isomorphic-lib-v19 component
 //#region @browser
@@ -121,8 +113,8 @@ class UserController extends Taon.Base.CrudController<User> {
 
 //#region  isomorphic-lib-v19 context
 var MainContext = Taon.createContext(()=>({
-  host,
-  frontendHost,
+  host: HOST_URL,
+  frontendHost: FRONTEND_HOST_URL,
   contextName: 'MainContext',
   contexts:{ BaseContext },
   migrations: {

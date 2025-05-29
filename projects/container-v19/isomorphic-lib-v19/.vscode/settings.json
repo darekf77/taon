@@ -2,7 +2,9 @@
   "files.exclude": {},
   "workbench.colorCustomizations": {
     "activityBar.background": "#0084ff",
-    "activityBar.foreground": "#000000"
+    "activityBar.foreground": "#000000",
+    "statusBar.background": "#39379a",
+    "statusBar.debuggingBackground": "#15d8ff"
   },
   "editor.rulers": [
     80,
@@ -91,5 +93,8 @@
   "search.useIgnoreFiles": false,
   "search.include": [
     "**/src/**"
-  ]
+  ],
+  "files.watcherExclude": {
+    "local_release/**": true
+  }
 }
