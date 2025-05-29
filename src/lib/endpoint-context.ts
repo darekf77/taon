@@ -9,7 +9,7 @@ import * as bodyParser from 'body-parser'; // @backend
 import * as cookieParser from 'cookie-parser'; // @backend
 import * as cors from 'cors'; // @backend
 import { ipcMain } from 'electron'; // @backend
-import { ipcRenderer } from 'electron'; // @browser
+
 import * as express from 'express'; // @backend
 import type { Application } from 'express';
 import * as fileUpload from 'express-fileupload'; // @backend
@@ -1436,7 +1436,7 @@ export class EndpointContext {
   //#endregion
 
   //#region methods & getters / initialize metadata
-  initControllers() {
+  async initControllers(): Promise<void> {
     if (this.isRunOrRevertOnlyMigrationAppStart) {
       return;
     }
@@ -1495,7 +1495,8 @@ export class EndpointContext {
       //#endregion
 
       // console.log('methods', classConfig.methods);
-      Object.keys(classConfig.methods).forEach(methodName => {
+      const methodNames = Object.keys(classConfig.methods);
+      for (const methodName of methodNames) {
         const methodConfig: Models.MethodConfig =
           classConfig.methods[methodName];
         // debugger
@@ -1534,9 +1535,14 @@ export class EndpointContext {
           //   methodConfig,
           //   expressPath,
           // );
-          this.initClient(controllerClassFn, type, methodConfig, expressPath);
+          await this.initClient(
+            controllerClassFn,
+            type,
+            methodConfig,
+            expressPath,
+          );
         }
-      });
+      }
 
       //#region @backend
       if (!Helpers.isRunningIn.cliMode()) {
@@ -2026,14 +2032,14 @@ export class EndpointContext {
   /**
    * client can be browser or nodejs (when remote host)
    */
-  private initClient(
+  private async initClient(
     //#region parameters
     target: Function,
     type: Models.Http.Rest.HttpMethod,
     methodConfig: Models.Http.Rest.MethodConfig,
     expressPath: string,
     //#endregion
-  ): void {
+  ): Promise<void> {
     const ctx = this;
     // : { received: any; /* Rest<any, any>  */ }
     this.logHttp && console.log(`${type?.toUpperCase()} ${expressPath} `);
@@ -2055,6 +2061,7 @@ export class EndpointContext {
     //#region handle electron ipc request
 
     if (Helpers.isElectron) {
+      const { ipcRenderer } = await import('electron');
       target.prototype[methodConfig.methodName] = function (...args) {
         const received = new Promise(async (resolve, reject) => {
           const headers = {};

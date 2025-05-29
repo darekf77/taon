@@ -3,6 +3,7 @@ import {
   CLIENT_DEV_NORMAL_APP_PORT,
   CLIENT_DEV_WEBSQL_APP_PORT,
 } from './app.hosts';
+
 import {
   path,
   //#region @backend
@@ -13,6 +14,7 @@ import {
 Helpers.hideNodeWarnings();
 //#region @backend
 import { app, BrowserWindow, screen } from 'electron';
+
 import start from './app';
 let win: BrowserWindow | null = null;
 const args = process.argv.slice(1);

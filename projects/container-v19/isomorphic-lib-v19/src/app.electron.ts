@@ -3,15 +3,11 @@ import { app, BrowserWindow, screen } from 'electron';
 import { path, fse } from 'tnp-core';
 
 import start from './app';
-import {
-  CLIENT_DEV_NORMAL_APP_PORT,
-  CLIENT_DEV_WEBSQL_APP_PORT,
-} from './app.hosts';
+import { FRONTEND_HOST_URL_ELECTRON } from './app.hosts';
 
 let win: BrowserWindow | null = null;
 const args = process.argv.slice(1);
 const serve = args.some(val => val === '--serve');
-const websql = args.some(val => val === '--websql');
 
 function createWindow(): BrowserWindow {
   const size = screen.getPrimaryDisplay().workAreaSize;
@@ -36,10 +32,7 @@ function createWindow(): BrowserWindow {
     win.webContents.openDevTools();
 
     // require('electron-reloader')(module); // this hangs frontend randomly
-    win.loadURL(
-      'http://localhost:' +
-        (websql ? CLIENT_DEV_WEBSQL_APP_PORT : CLIENT_DEV_NORMAL_APP_PORT),
-    );
+    win.loadURL(FRONTEND_HOST_URL_ELECTRON);
   } else {
     // Path when running electron executable
     let pathIndex = './index.html';
