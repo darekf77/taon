@@ -219,6 +219,11 @@
       //  @trusted=patch
       "@babel/cli": "~7.25.9",
 
+      // minifying js code
+      "uglify-js": "~3.19.3",
+      // uglify-js code
+      "javascript-obfuscator": "~4.1.1",
+
       //  @trusted=patch
       "@types/q": "~1.5.8",
 
@@ -489,6 +494,15 @@
       "file-type": "~17.1.6",
 
       //#endregion
+      //#region GRAPHICS GAMES
+      // box 2d physics engine
+      // planck-js
+      // 2d game engine
+      // phaser
+      // p5.js 2d graphics engine
+      // babylonjs 3d engine
+      //#endregion
+
       //#region MEDIA (IMAGE/VIDEO/AUDIO) MANIPULATION
       // nodejs no deps image manipulation
       //  @trusted=patch
@@ -655,6 +669,10 @@
       // creating zips in browser/node!
       // @trusted=patch
       "jszip": "3.10.1",
+      // creating zips in nodejs
+      "yazl": "~3.3.1",
+      // extracting zips in nodejs
+      "yauzl": "~3.2.0",
 
       // exporting zips from browser
       // @trusted=patch
@@ -730,7 +748,7 @@
       "primeng": "~19.1.0",
 
       // @trusted=major @angular
-      "@primeng/themes":"~19.1.2",
+      "@primeng/themes": "~19.1.2",
 
       //#endregion
       //#region LINT
