@@ -19,7 +19,9 @@ export abstract class BaseAngularsService {
 
   constructor() {
     //#region @browser
-    this.CURRENT_HOST_BACKEND_PORT = inject(CURRENT_HOST_BACKEND_PORT);
+    this.CURRENT_HOST_BACKEND_PORT = inject(CURRENT_HOST_BACKEND_PORT, {
+      optional: true,
+    });
     // #endregion
   }
 
@@ -33,6 +35,10 @@ export abstract class BaseAngularsService {
   }
 
   injectController<T>(ctor: new (...args: any[]) => T): T {
-    return taonInject(() => ctor) as T;
+    let currentContext: TaonContext;
+    //#region @browser
+    currentContext = this.currentContext;
+    //#endregion
+    return taonInject(() => currentContext.getClass(ctor)) as T;
   }
 }
