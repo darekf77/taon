@@ -8,7 +8,7 @@ import { MaterialCssVarsModule } from 'angular-material-css-vars'; // @browser
 import { providePrimeNG } from 'primeng/config'; // @browser
 import { Observable, map } from 'rxjs';
 import { Taon, BaseContext, TAON_CONTEXT } from 'taon/src';
-import { Helpers, UtilsOs } from 'tnp-core/src';
+import { UtilsOs } from 'tnp-core/src';
 
 import { HOST_URL, FRONTEND_HOST_URL } from './app.hosts';
 //#endregion
@@ -21,20 +21,31 @@ console.log('Your server will start on port ' + HOST_URL.split(':')[2]);
 @Component({
   selector: 'app-isomorphic-lib-v19',
   standalone: false,
-  template: `hello from isomorphic-lib-v19<br>
-    Angular version: {{ angularVersion }}<br>
-    <br>
+  template: `hello from isomorphic-lib-v19<br />
+    Angular version: {{ angularVersion }}<br />
+    <br />
     users from backend
     <ul>
-      <li *ngFor="let user of (users$ | async)"> {{ user | json }} </li>
+      <li *ngFor="let user of users$ | async">{{ user | json }}</li>
     </ul>
-  `,
-  styles: [` body { margin: 0px !important; } `],
+    hello world from backend: <strong>{{ hello$ | async }}</strong> `,
+  styles: [
+    `
+      body {
+        margin: 0px !important;
+      }
+    `,
+  ],
 })
 export class IsomorphicLibV19Component {
-  angularVersion = VERSION.full + ` mode: ${UtilsOs.isRunningInWebSQL() ? ' (websql)' : '(normal)'}`;
+  angularVersion =
+    VERSION.full +
+    ` mode: ${UtilsOs.isRunningInWebSQL() ? ' (websql)' : '(normal)'}`;
   userApiService = inject(UserApiService);
   readonly users$: Observable<User[]> = this.userApiService.getAll();
+  readonly hello$ = this.userApiService.userController
+    .helloWorld()
+    .received.observable.pipe(map(r => r.body.text));
 }
 //#endregion
 //#endregion
@@ -42,15 +53,14 @@ export class IsomorphicLibV19Component {
 //#region  isomorphic-lib-v19 api service
 //#region @browser
 @Injectable({
-  providedIn:'root'
+  providedIn: 'root',
 })
-export class UserApiService {
-  userController = Taon.inject(()=> MainContext.getClass(UserController))
-  getAll() {
-    return this.userController.getAll()
-      .received
-      .observable
-      .pipe(map(r => r.body.json));
+export class UserApiService extends Taon.Base.AngularService {
+  userController = this.injectController(UserController);
+  getAll(): Observable<User[]> {
+    return this.userController
+      .getAll()
+      .received.observable.pipe(map(r => r.body.json));
   }
 }
 //#endregion
@@ -62,25 +72,27 @@ export class UserApiService {
   providers: [
     {
       provide: TAON_CONTEXT,
-      useValue: MainContext,
+      useFactory: () => MainContext,
     },
-    providePrimeNG({ // inited ng prime - remove if not needed
+    providePrimeNG({
+      // inited ng prime - remove if not needed
       theme: {
-        preset: Aura
-      }
-    })
+        preset: Aura,
+      },
+    }),
   ],
   exports: [IsomorphicLibV19Component],
   imports: [
     CommonModule,
-    MaterialCssVarsModule.forRoot({  // inited angular material - remove if not needed
+    MaterialCssVarsModule.forRoot({
+      // inited angular material - remove if not needed
       primary: '#4758b8',
       accent: '#fedfdd',
-   }),
+    }),
   ],
   declarations: [IsomorphicLibV19Component],
 })
-export class IsomorphicLibV19Module { }
+export class IsomorphicLibV19Module {}
 //#endregion
 //#endregion
 
@@ -97,49 +109,61 @@ class User extends Taon.Base.AbstractEntity {
 //#region  isomorphic-lib-v19 controller
 @Taon.Controller({ className: 'UserController' })
 class UserController extends Taon.Base.CrudController<User> {
-  entityClassResolveFn = ()=> User;
-  //#region @websql
-  /**
-   * @deprecated use migrations instead
-   */
-  async initExampleDbData(): Promise<void> {
-    const superAdmin = new User();
-    superAdmin.name = 'super-admin';
-    await this.db.save(superAdmin);
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+  entityClassResolveFn = () => User;
+
+  @Taon.Http.GET()
+  helloWorld(): Taon.Response<string> {
+    return async (req, res) => 'hello world';
   }
-  //#endregion
 }
 //#endregion
 
+//#region  isomorphic-lib-v19 migration
+//#region @websql
+@Taon.Migration({
+  className: 'UserMigration',
+})
+class UserMigration extends Taon.Base.Migration {
+  userController = this.injectRepo(User);
+  async up(): Promise<any> {
+    const superAdmin = new User();
+    superAdmin.name = 'super-admin';
+    await this.userController.save(superAdmin);
+  }
+}
+//#endregion
+//#endregion
+
 //#region  isomorphic-lib-v19 context
-var MainContext = Taon.createContext(()=>({
+var MainContext = Taon.createContext(() => ({
   host: HOST_URL,
   frontendHost: FRONTEND_HOST_URL,
   contextName: 'MainContext',
-  contexts:{ BaseContext },
+  contexts: { BaseContext },
   migrations: {
-    // PUT TAON MIGRATIONS HERE
+    //#region @websql
+    UserMigration,
+    //#endregion
   },
   controllers: {
     UserController,
-    // PUT TAON CONTROLLERS HERE
   },
   entities: {
     User,
-    // PUT TAON ENTITIES HERE
   },
   database: true,
   // disabledRealtime: true,
 }));
 //#endregion
 
-async function start() {
-
+async function start(): Promise<void> {
   await MainContext.initialize();
 
   if (Taon.isBrowser) {
-    const users = (await MainContext.getClassInstance(UserController).getAll().received)
-      .body?.json;
+    const users = (
+      await MainContext.getClassInstance(UserController).getAll().received
+    ).body?.json;
     console.log({
       'users from backend': users,
     });
