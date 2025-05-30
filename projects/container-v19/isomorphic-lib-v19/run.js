@@ -13,7 +13,7 @@ if (process.platform === 'win32') {
 // console.log(`[run.js] process.argv`, process.argv)
 
 const argsMinimist = require('minimist')(process.argv);
-const pathToTmpEnv = path.join(process.cwd(), 'tmp-environment.json');
+const pathToTmpEnv = path.join(process.cwd(), 'dist/lib/env.backend.js');
 const pathToPackageJson = path.join(process.cwd(), 'package.json');
 const pathToDist = path.join(process.cwd(), 'dist');
 const pathToDistApp = path.join(pathToDist, 'app.js');
@@ -33,9 +33,7 @@ var sandbox = {
 function assignENV() {
   let ENV = '{}';
   if (fse.existsSync(pathToTmpEnv)) {
-    ENV = fse.readFileSync(pathToTmpEnv, {
-      encoding: 'utf8'
-    });
+    ENV = require(pathToTmpEnv);
   } else {
     console.warn('ENV will be not available... tmp-environment.json missing... ')
   }
