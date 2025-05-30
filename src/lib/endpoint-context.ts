@@ -2061,7 +2061,7 @@ export class EndpointContext {
     //#region handle electron ipc request
 
     if (Helpers.isElectron) {
-      const { ipcRenderer } = await import('electron');
+      const ipcRenderer = (window as any).require('electron').ipcRenderer;
       target.prototype[methodConfig.methodName] = function (...args) {
         const received = new Promise(async (resolve, reject) => {
           const headers = {};
