@@ -1,7 +1,5 @@
 import { environment } from './environments/environment';
 const basename = '<<<TO_REPLACE_BASENAME>>>';
-// @ts-ignore
-window.ENV.basename = basename;
 import * as localForge from 'localforage';
 // @ts-ignore
 window['localforage'] = localForge;
