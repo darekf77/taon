@@ -1,6 +1,6 @@
 {
   "name": "taon",
-  "version": "19.0.31",
+  "version": "19.0.32",
   "scripts": {
     "mkdocs": "python3 -m mkdocs",
     "taon init": "taon init",
@@ -169,6 +169,7 @@
     "enquirer": "2.4.1",
     "enum-values": "1.2.1",
     "errorhandler": "~1.5.1",
+    "esbuild": "~0.25.1",
     "eslint": "~9.24.0",
     "eslint-config-prettier": "~10.1.2",
     "eslint-plugin-import": "latest",
