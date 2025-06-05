@@ -1,4 +1,3 @@
 // EXPORT SCSS STYLES FOR THIS APP or LIBRARY IN THIS FILE
-@use './lib/index.scss' as *;
+@forward './lib/index.scss';
 
-              
