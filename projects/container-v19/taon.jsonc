@@ -865,6 +865,7 @@
 
       // @trusted=major
       "@vercel/ncc": "~0.38.3",
+      "esbuild": "~0.25.1",
 
       //#endregion
 
