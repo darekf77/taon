@@ -2,15 +2,23 @@ import { Utils } from 'tnp-core/src';
 import { CommandType, executeCommand } from 'tnp-helpers/src';
 import type { ExtensionContext } from 'vscode';
 
-const group = 'Isomorphic Lib V 18 CLI essentials';
+const group = 'IsomorphicLibV19 CLI essentials';
 
 export const commands: CommandType[] = (
   [
     {
-      title: 'hello world',
+      title: 'hello world IsomorphicLibV19',
+      exec: ({ vscode }) => {
+        vscode.window.showInformationMessage('Hello World! IsomorphicLibV19');
+      },
     },
     {
-      title: 'hey!',
+      title: 'hey IsomorphicLibV19! show platform',
+      exec: ({ vscode }) => {
+        vscode.window.showInformationMessage(
+          `IsomorphicLibV19 platform is "${process.platform}"`,
+        );
+      },
     },
   ] as CommandType[]
 ).map(c => {
@@ -23,7 +31,7 @@ export const commands: CommandType[] = (
   return c;
 });
 
-export function activate(context: ExtensionContext) {
+export function activate(context: ExtensionContext): void {
   for (let index = 0; index < commands.length; index++) {
     const {
       title = '',
@@ -46,8 +54,6 @@ export function activate(context: ExtensionContext) {
   }
 }
 
-export function deactivate() {}
+export function deactivate(): void {}
 
 export default { commands };
-
-
