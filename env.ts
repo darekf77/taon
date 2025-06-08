@@ -2,8 +2,9 @@ import type { EnvOptions } from 'tnp/src';
 
 const env: Partial<EnvOptions> = {
   website: {
-    domain: 'taon.example.domain.com',
+    domain: 'docs.taon.dev',
     title: 'Taon',
+    useDomain: true,
   },
 };
 export default env;
