@@ -117,7 +117,7 @@ class UserController extends Taon.Base.CrudController<User> {
 
   @Taon.Http.GET()
   helloWorld(): Taon.Response<string> {
-    //#region @websql
+    //#region @websqlFunc
     return async (req, res) => 'hello world';
     //#endregion
   }
