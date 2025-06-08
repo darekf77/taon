@@ -82,6 +82,7 @@ export namespace Taon {
     const BaseContext = (await import('./base-classes/base-context'))
       .BaseContext;
     const context = createContext(() => ({
+      appId: 'default-app-not-used-anymore',
       contextName: 'default',
       host: options.host,
       contexts: { BaseContext },

@@ -1,4 +1,6 @@
 //#region imports
+import * as os from 'os'; // @backend
+
 import { CommonModule } from '@angular/common'; // @browser
 import { NgModule, inject, Injectable } from '@angular/core'; // @browser
 import { Component, OnInit } from '@angular/core'; // @browser
@@ -114,7 +116,21 @@ class UserController extends Taon.Base.CrudController<User> {
 
   @Taon.Http.GET()
   helloWorld(): Taon.Response<string> {
+    //#region @websql
     return async (req, res) => 'hello world';
+    //#endregion
+  }
+
+  @Taon.Http.GET()
+  getOsPlatform(): Taon.Response<string> {
+    //#region @websqlFunc
+    return async (req, res) => {
+      //#region @backend
+      return os.platform(); // for normal nodejs backend return real value
+      //#endregion
+      return 'no-platform-inside-browser-and-websql-mode';
+    };
+    //#endregion
   }
 }
 //#endregion
@@ -138,6 +154,7 @@ class UserMigration extends Taon.Base.Migration {
 //#region  isomorphic-lib-v19 context
 var MainContext = Taon.createContext(() => ({
   host: HOST_URL,
+  appId: 'isomorphic-lib-v19',
   frontendHost: FRONTEND_HOST_URL,
   contextName: 'MainContext',
   contexts: { BaseContext },
@@ -159,8 +176,11 @@ var MainContext = Taon.createContext(() => ({
 
 async function start(): Promise<void> {
   await MainContext.initialize();
+  //#region @backend
+  console.log(`Hello in NodeJs backend! os=${os.platform()}`);
+  //#endregion
 
-  if (Taon.isBrowser) {
+  if (UtilsOs.isBrowser) {
     const users = (
       await MainContext.getClassInstance(UserController).getAll().received
     ).body?.json;

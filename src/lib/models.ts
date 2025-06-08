@@ -164,6 +164,8 @@ export namespace Models {
     SUBSCRIBERS,
     MIGRATIONS,
   > {
+    appId: string;
+
     contextName: string;
     /**
      * host/port for initing backend server

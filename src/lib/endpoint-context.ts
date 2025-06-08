@@ -41,7 +41,7 @@ import {
   DataSourceOptions,
   getMetadataArgsStorage,
 } from 'taon-typeorm/src';
-import { fse, http, https } from 'tnp-core/src'; // @backend
+import { fse, http, https, os } from 'tnp-core/src'; // @backend
 import { UtilsOs, Utils } from 'tnp-core/src';
 import { crossPlatformPath } from 'tnp-core/src';
 import { _, Helpers } from 'tnp-core/src';
@@ -595,10 +595,25 @@ export class EndpointContext {
           `[taon][database] Automatically resolving database config for mode ${this.mode}`,
         );
       switch (this.mode) {
-        //#region resolve database config for mode backend-frontend(tcp+udp)
+        //#region resolve database config for backend-frontend(ipc-electron)
         case 'backend-frontend(ipc-electron)':
+          let dbLocationInOs: string;
+          //#region @backend
+          if (UtilsOs.isElectron) {
+            dbLocationInOs = crossPlatformPath([
+              os.userInfo().homedir,
+              `.taon/databases-for-electron-apps/${this.appId}/${this.contextName}.sqlite`,
+            ]);
+            if (!Helpers.exists(path.dirname(dbLocationInOs))) {
+              Helpers.mkdirp(path.dirname(dbLocationInOs));
+            }
+          }
+          //#endregion
+
           databaseConfig = Models.DatabaseConfig.from({
-            location: `db-${this.contextName}.sqlite`,
+            location: UtilsOs.isElectron
+              ? dbLocationInOs
+              : `db-${this.contextName}.sqlite`,
             type: 'sqljs',
             recreateMode: 'DROP_DB+MIGRATIONS',
             logging: this.logDb,
@@ -1217,10 +1232,14 @@ export class EndpointContext {
   /**
    * ipc/udp needs this
    */
-  public get contextName() {
+  public get contextName(): string {
     return this.config.contextName;
   }
   //#endregion
+
+  public get appId(): string {
+    return this.config.appId;
+  }
 
   //#region methods & getters / public assets
   public get publicAssets() {
@@ -1597,7 +1616,9 @@ export class EndpointContext {
     this.logFramework && console.log(`[taon] routes file: ${fileName} `);
     // Helpers.log(JSON.stringify(routes, null, 4))
     //#region @backend
-    Helpers.writeFile(fileName, routes);
+    if (!UtilsOs.isElectron) {
+      Helpers.writeFile(fileName, routes);
+    }
     //#endregion
     //#endregion
   }

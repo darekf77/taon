@@ -116,6 +116,11 @@ export const createContext = <
       return config.contextName;
     },
     //#endregion
+
+    get appId() {
+      return config.appId;
+    },
+
     //#region context
     /**
      * @deprecated

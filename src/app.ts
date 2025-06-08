@@ -97,6 +97,7 @@ class UserController extends Taon.Base.CrudController<User> {
 //#region  taon context
 const MainContext = Taon.createContext(() => ({
   host,
+  appId: 'taon.dev.sample-app',
   contextName: 'MainContext',
   contexts: { BaseContext },
   controllers: {
