@@ -13,6 +13,7 @@ import { Taon, BaseContext, TAON_CONTEXT } from 'taon/src';
 import { UtilsOs } from 'tnp-core/src';
 
 import { HOST_URL, FRONTEND_HOST_URL } from './app.hosts';
+import { APP_ID } from './lib/build-info._auto-generated_';
 //#endregion
 
 console.log('hello world');
@@ -154,7 +155,7 @@ class UserMigration extends Taon.Base.Migration {
 //#region  isomorphic-lib-v19 context
 var MainContext = Taon.createContext(() => ({
   host: HOST_URL,
-  appId: 'com.domain.example.isomorphic-lib-v19',
+  appId: APP_ID,
   frontendHost: FRONTEND_HOST_URL,
   contextName: 'MainContext',
   contexts: { BaseContext },

@@ -1,35 +1,38 @@
 {
-  "type": "isomorphic-lib",
-  "version": "v19",
-  "dependenciesNamesForNpmLib": [],
-  "autoReleaseConfigAllowedItems": [
-   {
-    "artifactName": "npm-lib-and-cli-tool"
-   },
-  //  {
-  //   "artifactName": "angular-node-app"
-  //  },
-  //  {
-  //   "artifactName": "docs-webapp"
-  //  },
-  //  {
-  //   "artifactName": "vscode-plugin"
-  //  },
-  //  {
-  //   "artifactName": "electron-app"
-  //  },
-  //  {
-  //   "artifactName": "mobile-app"
-  //  }
-  ],
-  "isCoreProject": true,
+ "type": "isomorphic-lib",
+ "version": "v19",
+ "dependenciesNamesForNpmLib": [],
+ "appId": "com.domain.example.isomorphic-lib-v19",
 
-  "resources": ["README.md"],
+ "autoReleaseConfigAllowedItems": [
+  {
+   "artifactName": "npm-lib-and-cli-tool"
+  },
+ //  {
+ //   "artifactName": "angular-node-app"
+ //  },
+ //  {
+ //   "artifactName": "docs-webapp"
+ //  },
+ //  {
+ //   "artifactName": "vscode-plugin"
+ //  },
+ //  {
+ //   "artifactName": "electron-app"
+ //  },
+ //  {
+ //   "artifactName": "mobile-app"
+ //  }
+ ],
 
-  "packageJsonOverride": {
-   "author": "Dariusz Filipiak",
-   "license": "UNLICENSED",
-   "private": true,
-   "scripts": {}
-  }
+ "isCoreProject": true,
+ "resources": ["README.md"],
+
+ "packageJsonOverride": {
+  "author": "Dariusz Filipiak",
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {},
+  "description": "Description for isomorphic-lib-v19. Hello world!"
+ }
 }
