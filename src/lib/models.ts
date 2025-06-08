@@ -164,7 +164,7 @@ export namespace Models {
     SUBSCRIBERS,
     MIGRATIONS,
   > {
-    appId: string;
+    appId?: string;
 
     contextName: string;
     /**

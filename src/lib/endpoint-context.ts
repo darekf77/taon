@@ -602,7 +602,9 @@ export class EndpointContext {
           if (UtilsOs.isElectron) {
             dbLocationInOs = crossPlatformPath([
               os.userInfo().homedir,
-              `.taon/databases-for-electron-apps/${this.appId}/${this.contextName}.sqlite`,
+              `.taon/databases-for-electron-apps/${
+                this.appId || _.snakeCase(process.cwd()).replace(/\_/, '.')
+              }/${this.contextName}.sqlite`,
             ]);
             if (!Helpers.exists(path.dirname(dbLocationInOs))) {
               Helpers.mkdirp(path.dirname(dbLocationInOs));

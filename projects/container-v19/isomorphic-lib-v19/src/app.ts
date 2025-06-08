@@ -154,7 +154,7 @@ class UserMigration extends Taon.Base.Migration {
 //#region  isomorphic-lib-v19 context
 var MainContext = Taon.createContext(() => ({
   host: HOST_URL,
-  appId: 'isomorphic-lib-v19',
+  appId: 'com.domain.example.isomorphic-lib-v19',
   frontendHost: FRONTEND_HOST_URL,
   contextName: 'MainContext',
   contexts: { BaseContext },
