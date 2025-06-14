@@ -28,7 +28,7 @@
     "icon": "assets/icons/electron",
     "target": [
       {
-        "target": "dir",
+        "target": "zip",
         "arch": ["x64", "arm64"]
       }
     ]
@@ -40,7 +40,7 @@
     "icon": "assets/icons/electron",
     "target": [
       {
-        "target": "dir",
+        "target": "zip",
         "arch": ["x64", "arm64"]
       }
     ]
@@ -50,7 +50,7 @@
     "icon": "assets/icons/electron",
     "target": [
       {
-        "target": "dir",
+        "target": "zip",
         "arch": ["x64", "arm64"]
       }
     ]
