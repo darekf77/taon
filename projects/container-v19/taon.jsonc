@@ -685,6 +685,9 @@
       "yazl": "~3.3.1",
       // extracting zips in nodejs
       "yauzl": "~3.2.0",
+      // handling 7z files in nodejs, splitting files into part and extracting them
+      "node-7z": "~3.0.0",
+      "7zip-bin": "~5.2.0",
 
       // exporting zips from browser
       // @trusted=patch
