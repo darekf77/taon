@@ -73,8 +73,6 @@
       //#region FIND ALTERNATIVE
       "svg-png-converter": null,
 
-      "sharp": null,
-      "@types/sharp": null,
       "@iconify/react": null,
       "@types/socket.io": null,
       "@types/socket.io-client": null,
@@ -516,6 +514,10 @@
       //#endregion
 
       //#region MEDIA (IMAGE/VIDEO/AUDIO) MANIPULATION
+      // image manipulation
+      "sharp": "~0.34.2",
+      "pwa-asset-generator": "~8.0.5",
+
       // nodejs no deps image manipulation
       //  @trusted=patch
       "jimp": "~0.22.12",
