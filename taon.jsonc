@@ -30,15 +30,16 @@
 
   "packageJsonOverride": {
     "author": "Dariusz Filipiak",
-
     "bugs": {
       "url": "https://github.com/darekf77/taon/issues",
     },
 
     "description": "Isomorphic solution for backend and frontend",
+
     "homepage": "https://github.com/darekf77/taon#readme",
     "license": "MIT",
     "private": false,
+    "publisher": "taon-dev",
 
     "repository": {
       "type": "git",

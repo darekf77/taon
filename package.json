@@ -363,6 +363,7 @@
   },
   "description": "Isomorphic solution for backend and frontend",
   "main": "dist/app.electron.js",
+  "publisher": "taon-dev",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/darekf77/taon.git"
