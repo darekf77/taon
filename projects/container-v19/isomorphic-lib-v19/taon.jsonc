@@ -30,9 +30,9 @@
 
  "packageJsonOverride": {
   "author": "Dariusz Filipiak",
+  "description": "Description for isomorphic-lib-v19. Hello world!",
   "license": "UNLICENSED",
   "private": true,
-  "scripts": {},
-  "description": "Description for isomorphic-lib-v19. Hello world!"
+  "scripts": {}
  }
 }

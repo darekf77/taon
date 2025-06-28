@@ -518,6 +518,7 @@
       // image manipulation
       "sharp": "~0.34.2",
       "pwa-asset-generator": "~8.0.5",
+      "favicons": "~7.2.0",
 
       // nodejs no deps image manipulation
       //  @trusted=patch

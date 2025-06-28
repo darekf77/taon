@@ -2,11 +2,15 @@
   "type": "container",
   "version": "v19",
   "dependenciesNamesForNpmLib": [],
+  "appId": "com.domain.example.examples-v19",
   "linkedProjects": ["electron-remote-service"],
   "monorepo": true,
   "resources": ["README.md"],
   "smartContainerBuildTarget": "",
+
   "packageJsonOverride": {
-    "author": "Dariusz Filipiak"
+    "author": "Dariusz Filipiak",
+    "scripts": {},
+    "description": "Description for examples-v19. Hello world!"
   }
 }

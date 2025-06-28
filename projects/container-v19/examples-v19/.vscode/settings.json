@@ -59,18 +59,24 @@
     "recent.json": true,
     "angular.json": true
   },
+
   "workbench.colorCustomizations": {
     "activityBar.background": "#ce9243",
-    "activityBar.foreground": "#313129"
+    "activityBar.foreground": "#313129",
+    "statusBar.background": "#47dc58",
+    "statusBar.debuggingBackground": "#15d8ff"
   },
+
   "editor.rulers": [
     100,
     120
   ],
+
   "html.format.wrapAttributes": "force-aligned",
   "workbench.colorTheme": "Default Light+",
   "tslint.autoFixOnSave": true,
   "tslint.enable": true,
+
   "search.exclude": {
     "bin": true,
     "local_release": true,
@@ -98,11 +104,14 @@
     "**/.tnp": true,
     "projects": true
   },
+
   "window.title": "projects/container-v19/examples-v19  [ ${activeEditorShort} ]",
   "search.useIgnoreFiles": false,
+
   "search.include": [
     "**/src/**"
   ],
+
   "json.schemas": [
     {
       "fileMatch": [
@@ -110,5 +119,9 @@
       ],
       "url": "./taon-config-container.schema.json"
     }
-  ]
+  ],
+
+  "files.watcherExclude": {
+    "local_release/**": true
+  }
 }
