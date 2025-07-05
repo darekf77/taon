@@ -175,6 +175,11 @@ export const createContext = <
       onlyMigrationRevertToTimestamp?: number;
     }): Promise<EndpointContext> => {
       return await new Promise(async (resolve, reject) => {
+        if(UtilsOs.isRunningInSSRMode()) {
+          resolve(endpointContextRef);
+          return;
+        }
+
         //#region init in set timeout
         setTimeout(async () => {
           await endpointContextRef.init({

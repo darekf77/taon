@@ -10,8 +10,8 @@ import { CommonModule } from '@angular/common';
 //#endregion
 //#endregion
 
-console.log('hello world');
-console.log('Your server will start on port ' + HOST_BACKEND_PORT);
+console.log('[taon app] hello world');
+console.log('[taon app] Your server will start on port ' + HOST_BACKEND_PORT);
 const host = 'http://localhost:' + HOST_BACKEND_PORT;
 
 //#region taon component

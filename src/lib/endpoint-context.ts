@@ -2068,15 +2068,10 @@ export class EndpointContext {
     this.logHttp && console.log(`${type?.toUpperCase()} ${expressPath} `);
     // console.log('INITING', methodConfig); // TODO inject in static
     //#region resolve storage
-    let storage: any;
-    if (Helpers.isBrowser) {
-      storage = window;
+    let storage = {};
+    if(typeof globalThis !== 'undefined') {
+      storage = globalThis;
     }
-    //#region @backend
-    if (Helpers.isNode) {
-      storage = global;
-    }
-    //#endregion
     //#endregion
 
     const orgMethods = target.prototype[methodConfig.methodName];

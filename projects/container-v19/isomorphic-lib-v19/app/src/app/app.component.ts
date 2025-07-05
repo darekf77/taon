@@ -1,22 +1,21 @@
 import {
   Component,
   ComponentFactoryResolver,
+  Inject,
   NgZone,
+  PLATFORM_ID,
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
 import { Taon } from 'taon'; // <- this is to replace by taon
 // @ts-ignore
 import start from './---projectname---/app';
-import { CommonModule } from '@angular/common';
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  standalone: false,
 })
 export class AppComponent {
   @ViewChild('container', { read: ViewContainerRef, static: true })
@@ -27,12 +26,14 @@ export class AppComponent {
   constructor(
     ngzone: NgZone,
     private componentFactoryResolver: ComponentFactoryResolver,
+    @Inject(PLATFORM_ID) private platformId: Object,
   ) {
     Taon.initNgZone(ngzone);
   }
 
   async ngOnInit() {
-    removeElement('taonpreloadertoremove');
+    this.removeElement('taonpreloadertoremove');
+
     this.container.clear();
 
     // Create a factory for the DynamicComponent
@@ -42,7 +43,9 @@ export class AppComponent {
         '<<<TO_REPLACE_COMPONENT>>>',
       );
 
-    document.body.style.backgroundColor = 'TAON_TO_REPLACE_COLOR';
+    if (isPlatformBrowser(this.platformId)) {
+      document.body.style.backgroundColor = 'TAON_TO_REPLACE_COLOR';
+    }
     this.removedPreloader = true;
     // @ts-ignore
     await start();
@@ -50,9 +53,12 @@ export class AppComponent {
     // Add the DynamicComponent to the container
     this.container.createComponent(componentFactory);
   }
-}
 
-function removeElement(id) {
-  var elem = document.getElementById(id);
-  return elem.parentNode.removeChild(elem);
+  removeElement(id) {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    var elem = document.getElementById(id);
+    return elem.parentNode.removeChild(elem);
+  }
 }
