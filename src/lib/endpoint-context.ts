@@ -58,7 +58,6 @@ import { TaonEntityOptions } from './decorators/classes/entity-decorator';
 import { TaonSubscriberOptions } from './decorators/classes/subscriber-decorator';
 import { DITaonContainer } from './dependency-injection/di-container';
 import { EntityProcess } from './entity-process';
-import { ENV } from './env';
 import { getResponseValue } from './get-response-value';
 import { ClassHelpers } from './helpers/class-helpers';
 import { TaonHelpers } from './helpers/taon-helpers';
@@ -286,7 +285,7 @@ export class EndpointContext {
     this.onlyMigrationRun = onlyMigrationRun;
     // @ts-ignore
     this.onlyMigrationRevertToTimestamp = onlyMigrationRevertToTimestamp;
-    this.config = this.configFn(ENV);
+    this.config = this.configFn({});
     if (_.isObject(this.config.database)) {
       this.config.database = Models.DatabaseConfig.from(
         this.config.database as Models.DatabaseConfig,
@@ -2136,33 +2135,30 @@ export class EndpointContext {
     //#region resolve variables
     const MIN_TIMEOUT = 500;
     const MIN_TIMEOUT_STEP = 200;
-    let win: any;
-    if (typeof window !== 'undefined') {
-      win = window;
-    }
-    win = win || globalThis;
+
+    const globalThisVar = globalThis; // TODO not a good idea! probably should be in context
 
     const timeout =
-      win[Symbols.old.WEBSQL_REST_PROGRESS_TIMEOUT] || MIN_TIMEOUT;
+      globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_TIMEOUT] || MIN_TIMEOUT;
 
-    let updateFun: Subject<number> = win[Symbols.old.WEBSQL_REST_PROGRESS_FUN];
-    if (!win[Symbols.old.WEBSQL_REST_PROGRESS_FUN]) {
-      win[Symbols.old.WEBSQL_REST_PROGRESS_FUN] = new Subject();
+    let updateFun: Subject<number> = globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN];
+    if (!globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN]) {
+      globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN] = new Subject();
     }
-    updateFun = win[Symbols.old.WEBSQL_REST_PROGRESS_FUN];
+    updateFun = globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN];
 
     let startFun: Subject<void> =
-      win[Symbols.old.WEBSQL_REST_PROGRESS_FUN_START];
-    if (!win[Symbols.old.WEBSQL_REST_PROGRESS_FUN_START]) {
-      win[Symbols.old.WEBSQL_REST_PROGRESS_FUN_START] = new Subject();
+      globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN_START];
+    if (!globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN_START]) {
+      globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN_START] = new Subject();
     }
-    startFun = win[Symbols.old.WEBSQL_REST_PROGRESS_FUN_START];
+    startFun = globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN_START];
 
-    let doneFun: Subject<void> = win[Symbols.old.WEBSQL_REST_PROGRESS_FUN_DONE];
-    if (!win[Symbols.old.WEBSQL_REST_PROGRESS_FUN_DONE]) {
-      win[Symbols.old.WEBSQL_REST_PROGRESS_FUN_DONE] = new Subject();
+    let doneFun: Subject<void> = globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN_DONE];
+    if (!globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN_DONE]) {
+      globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN_DONE] = new Subject();
     }
-    doneFun = win[Symbols.old.WEBSQL_REST_PROGRESS_FUN_DONE];
+    doneFun = globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN_DONE];
 
     let periodsToUpdate = 0;
     if (timeout >= MIN_TIMEOUT) {

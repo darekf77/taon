@@ -5,13 +5,8 @@ import { Subject } from 'rxjs';
 import { Helpers, _ } from 'tnp-core/src';
 
 //#endregion
-let win: any;
-if (typeof window !== 'undefined') {
-  win = window;
-}
-win = win || globalThis;
 
-const ENV = Helpers.isBrowser ? win?.ENV : global['ENV'];
+const ENV = globalThis['ENV'];
 
 // @Injectable({ providedIn: 'root' }) TODO make it angular service
 export class TaonAdminService {

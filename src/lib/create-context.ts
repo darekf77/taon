@@ -2,7 +2,6 @@
 import { Helpers, UtilsOs } from 'tnp-core/src';
 
 import { EndpointContext } from './endpoint-context';
-import { ENV } from './env';
 import { Models } from './models';
 import { TaonAdminService } from './ui/taon-admin-mode-configuration/taon-admin.service'; // @browser
 //#endregion
@@ -66,7 +65,7 @@ export const createContext = <
     MIGRATION
   >,
 ) => {
-  let config = configFn(ENV);
+  let config = configFn({});
 
   const endpointContextRef = new EndpointContext(config, configFn);
 
