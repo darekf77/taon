@@ -42,7 +42,11 @@ export class AppComponent {
         '<<<TO_REPLACE_COMPONENT>>>',
       );
 
-    document.body.style.backgroundColor = 'TAON_TO_REPLACE_COLOR';
+    const colorToReplace = 'TAON_TO_REPLACE_COLOR';
+    if (colorToReplace) {
+      document.body.style.backgroundColor = colorToReplace;
+    }
+
     this.removedPreloader = true;
     // @ts-ignore
     await start();
