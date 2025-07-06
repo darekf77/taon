@@ -1,11 +1,17 @@
 //#region import
 import { Subject } from 'rxjs';
-import { Stor } from 'taon-storage/src';
+// TODO @LAST fix taon storage for ssr
+// import { Stor } from 'taon-storage/src';
 import { Helpers, _ } from 'tnp-core/src';
 
 //#endregion
+let win: any;
+if (typeof window !== 'undefined') {
+  win = window;
+}
+win = win || globalThis;
 
-const ENV = Helpers.isBrowser ? window['ENV'] : global['ENV'];
+const ENV = Helpers.isBrowser ? win?.ENV : global['ENV'];
 
 // @Injectable({ providedIn: 'root' }) TODO make it angular service
 export class TaonAdminService {
@@ -26,19 +32,20 @@ export class TaonAdminService {
 
   //#region fields & getters / popup is open
 
-  @(Stor.property.in.localstorage.for(TaonAdminService).withDefaultValue(false))
+  // TODO @LAST fix taon storage for ssr
+  // @(Stor.property.in.localstorage.for(TaonAdminService).withDefaultValue(false))
   public adminPanelIsOpen: boolean;
   //#endregion
 
   //#region fields & getters / draggable popup instead side view for admin
 
-  @(Stor.property.in.localstorage.for(TaonAdminService).withDefaultValue(false))
+  // @(Stor.property.in.localstorage.for(TaonAdminService).withDefaultValue(false))
   public draggablePopupMode: boolean;
   //#endregion
 
   //#region fields & getters / draggable popup instead side view for admin
 
-  @(Stor.property.in.localstorage.for(TaonAdminService).withDefaultValue(false))
+  // @(Stor.property.in.localstorage.for(TaonAdminService).withDefaultValue(false))
   public draggablePopupModeFullScreen: boolean;
   //#endregion
 
@@ -46,7 +53,7 @@ export class TaonAdminService {
   /**
    * Property used in taon
    */
-  @(Stor.property.in.localstorage.for(TaonAdminService).withDefaultValue(false))
+  // @(Stor.property.in.localstorage.for(TaonAdminService).withDefaultValue(false))
   public keepWebsqlDbDataAfterReload: boolean;
   //#endregion
 

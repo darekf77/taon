@@ -1,5 +1,10 @@
 import { Helpers } from 'tnp-core/src';
 
-const ENV = Helpers.isBrowser ? window['ENV'] : global['ENV'];
+let win: any;
+if (typeof window !== 'undefined') {
+  win = window;
+}
+win = win || globalThis;
+const ENV = Helpers.isBrowser ? win?.ENV : global['ENV'];
 
 export { ENV };

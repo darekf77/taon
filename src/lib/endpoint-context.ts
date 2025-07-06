@@ -2068,15 +2068,8 @@ export class EndpointContext {
     this.logHttp && console.log(`${type?.toUpperCase()} ${expressPath} `);
     // console.log('INITING', methodConfig); // TODO inject in static
     //#region resolve storage
-    let storage: any;
-    if (Helpers.isBrowser) {
-      storage = window;
-    }
-    //#region @backend
-    if (Helpers.isNode) {
-      storage = global;
-    }
-    //#endregion
+    // TODO not a good idea
+    const storage = globalThis;
     //#endregion
 
     const orgMethods = target.prototype[methodConfig.methodName];
@@ -2143,29 +2136,33 @@ export class EndpointContext {
     //#region resolve variables
     const MIN_TIMEOUT = 500;
     const MIN_TIMEOUT_STEP = 200;
-    const timeout =
-      window[Symbols.old.WEBSQL_REST_PROGRESS_TIMEOUT] || MIN_TIMEOUT;
-
-    let updateFun: Subject<number> =
-      window[Symbols.old.WEBSQL_REST_PROGRESS_FUN];
-    if (!window[Symbols.old.WEBSQL_REST_PROGRESS_FUN]) {
-      window[Symbols.old.WEBSQL_REST_PROGRESS_FUN] = new Subject();
+    let win: any;
+    if (typeof window !== 'undefined') {
+      win = window;
     }
-    updateFun = window[Symbols.old.WEBSQL_REST_PROGRESS_FUN];
+    win = win || globalThis;
+
+    const timeout =
+      win[Symbols.old.WEBSQL_REST_PROGRESS_TIMEOUT] || MIN_TIMEOUT;
+
+    let updateFun: Subject<number> = win[Symbols.old.WEBSQL_REST_PROGRESS_FUN];
+    if (!win[Symbols.old.WEBSQL_REST_PROGRESS_FUN]) {
+      win[Symbols.old.WEBSQL_REST_PROGRESS_FUN] = new Subject();
+    }
+    updateFun = win[Symbols.old.WEBSQL_REST_PROGRESS_FUN];
 
     let startFun: Subject<void> =
-      window[Symbols.old.WEBSQL_REST_PROGRESS_FUN_START];
-    if (!window[Symbols.old.WEBSQL_REST_PROGRESS_FUN_START]) {
-      window[Symbols.old.WEBSQL_REST_PROGRESS_FUN_START] = new Subject();
+      win[Symbols.old.WEBSQL_REST_PROGRESS_FUN_START];
+    if (!win[Symbols.old.WEBSQL_REST_PROGRESS_FUN_START]) {
+      win[Symbols.old.WEBSQL_REST_PROGRESS_FUN_START] = new Subject();
     }
-    startFun = window[Symbols.old.WEBSQL_REST_PROGRESS_FUN_START];
+    startFun = win[Symbols.old.WEBSQL_REST_PROGRESS_FUN_START];
 
-    let doneFun: Subject<void> =
-      window[Symbols.old.WEBSQL_REST_PROGRESS_FUN_DONE];
-    if (!window[Symbols.old.WEBSQL_REST_PROGRESS_FUN_DONE]) {
-      window[Symbols.old.WEBSQL_REST_PROGRESS_FUN_DONE] = new Subject();
+    let doneFun: Subject<void> = win[Symbols.old.WEBSQL_REST_PROGRESS_FUN_DONE];
+    if (!win[Symbols.old.WEBSQL_REST_PROGRESS_FUN_DONE]) {
+      win[Symbols.old.WEBSQL_REST_PROGRESS_FUN_DONE] = new Subject();
     }
-    doneFun = window[Symbols.old.WEBSQL_REST_PROGRESS_FUN_DONE];
+    doneFun = win[Symbols.old.WEBSQL_REST_PROGRESS_FUN_DONE];
 
     let periodsToUpdate = 0;
     if (timeout >= MIN_TIMEOUT) {
