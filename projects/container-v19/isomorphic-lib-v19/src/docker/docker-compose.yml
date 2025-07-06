@@ -1,0 +1,8 @@
+version: '3.8'
+
+services:
+  hello:
+    build: ./hello-world
+    ports:
+      - "3000:3000"
+
