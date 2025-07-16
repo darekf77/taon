@@ -5,7 +5,7 @@ FROM node:20-alpine
 WORKDIR /app
 
 # Copy source code
-COPY . .
+COPY dist/ .
 
 # Expose port
 EXPOSE 3000
