@@ -261,6 +261,9 @@
       //  @trusted=minor
       "lowdb": "7.0.1",
 
+      // handle sql db in docker
+      "mariadb": "~3.4.4",
+
       // dependencies of typeorm
       //  @trusted=patch
       "cli-highlight": "2.1.11",
