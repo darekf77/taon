@@ -16,9 +16,6 @@ var sandbox = {
   global
 }
 
-let { port } = require('minimist')(process.argv);
-port = !isNaN(Number(port)) ? Number(port) : void 0;
-
 const encoding = 'utf8';
 var secondsWaitAfterDistDetected = 5;
 
@@ -64,15 +61,9 @@ if (!relativePath.startsWith('./')) {
   relativePath = `./${relativePath}`;
 }
 
-if (isNaN(Number(port))) {
-  port = 4000;
-}
-
-
 const script = new vm.Script(`
 var app = require("${relativePath}").default;
 app({
-   port:${port},
    onlyMigrationRun: ${argsMinimist.onlyMigrationRun},
    onlyMigrationRevertToTimestamp: ${argsMinimist.onlyMigrationRevertToTimestamp},
    args: [${process.argv.slice(2).map(c => `"${c}"`).join(',')}]
