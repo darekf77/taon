@@ -5,10 +5,13 @@ FROM node:22-alpine
 WORKDIR /app
 
 # Copy source code
-COPY dist/ .
+COPY . .
+
+# Install Node.js deps
+RUN npm install
 
 # Expose port
 EXPOSE 3000
 
 # Run the app
-CMD ["node", "index.js"]
+CMD ["node", "run.js"]
