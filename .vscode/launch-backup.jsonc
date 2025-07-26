@@ -23,7 +23,7 @@
       "runtimeArgs": [
         "--serve",
         ".",
-        "--remote-debugging-port=9894"
+        "--remote-debugging-port=9888"
       ],
       "windows": {
         "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
@@ -34,7 +34,7 @@
       "request": "attach",
       "name": "Attach to global cli tool",
       "autoAttachChildProcesses": false,
-      "port": 9229,
+      "port": 9222,
       "skipFiles": [
         "<node_internals>/**"
       ]

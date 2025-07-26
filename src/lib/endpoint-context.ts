@@ -70,6 +70,11 @@ import { TaonAdminService } from './ui/taon-admin-mode-configuration/taon-admin.
 export class EndpointContext {
   //#region static
 
+  /**
+   * JUST FOR TESTING PURPOSES
+   */
+  public readonly USE_MARIADB_MYSQL_IN_DOCKER: boolean = false;
+
   //#region @browser
   private static ngZone: NgZone;
   //#endregion
@@ -576,19 +581,31 @@ export class EndpointContext {
     //#region @websqlFunc
     let databaseConfig: Models.DatabaseConfig = Models.DatabaseConfig.from({});
     if (UtilsOs.isRunningInDocker()) {
-      Helpers.info('Running in docker, using in mysql database');
-      // TODO auto resolve database config in docker
-      databaseConfig = Models.DatabaseConfig.from({
-        database: `db-${this.contextName}.sqlite`,
-        type: 'mysql',
-        recreateMode: 'PRESERVE_DATA+MIGRATIONS',
-        logging: this.logDb,
-        databasePort: 3306,
-        databaseHost: 'localhost',
-        databaseUsername: 'root',
-        databasePassword: 'admin',
-      });
+      if (this.USE_MARIADB_MYSQL_IN_DOCKER) {
+        // Helpers.info('Running in docker, using in mysql database');
+        // // TODO auto resolve database config in docker
+        // databaseConfig = Models.DatabaseConfig.from({
+        //   database: `db-${this.contextName}.sqlite`,
+        //   type: 'mysql',
+        //   recreateMode: 'PRESERVE_DATA+MIGRATIONS',
+        //   logging: this.logDb,
+        //   databasePort: 3306,
+        //   databaseHost: 'localhost',
+        //   databaseUsername: 'root',
+        //   databasePassword: 'admin',
+        // });
+      } else {
+        // TOOD @LAST for now.. just use sqljs in docker
+        databaseConfig = databaseConfig = Models.DatabaseConfig.from({
+          location: `db-${this.contextName}.sqlite`,
+          type: 'sqljs',
+          useLocalForage: true, // !!window['localforage'], // TODO this need to be checked in runtime
+          recreateMode: 'PRESERVE_DATA+MIGRATIONS',
+          logging: this.logDb,
+        });
+      }
     } else {
+      //#region auto resolve db config
       this.logFramework &&
         Helpers.info(
           `[taon][database] Automatically resolving database config for mode ${this.mode}`,
@@ -655,6 +672,7 @@ export class EndpointContext {
           break;
         //#endregion
       }
+      //#endregion
     }
     return databaseConfig.databaseConfigTypeORM;
     //#endregion
@@ -1367,6 +1385,17 @@ export class EndpointContext {
 
     const subscribers = this.getClassFunByArr(Models.ClassType.SUBSCRIBER);
 
+    let autoSave = false;
+    if (!_.isNil(this.databaseConfig.autoSave)) {
+      autoSave = this.databaseConfig.autoSave;
+    } else {
+      if (this.USE_MARIADB_MYSQL_IN_DOCKER) {
+        autoSave = !UtilsOs.isRunningInDocker(); // in docker I am using mysql or posgress
+      } else {
+        autoSave = true; // on docker with sqljs I need to save db
+      }
+    }
+
     const dataSourceDbConfig = _.isObject(this.databaseConfig)
       ? ({
           type: this.databaseConfig.type,
@@ -1382,9 +1411,7 @@ export class EndpointContext {
           synchronize: this.isRunOrRevertOnlyMigrationAppStart
             ? false
             : this.databaseConfig.synchronize,
-          autoSave: !_.isNil(this.databaseConfig.autoSave)
-            ? this.databaseConfig.autoSave
-            : !UtilsOs.isRunningInDocker(), // in docker I am using mysql or posgress
+          autoSave,
           dropSchema: this.isRunOrRevertOnlyMigrationAppStart
             ? false
             : this.databaseConfig.dropSchema,
@@ -2141,7 +2168,8 @@ export class EndpointContext {
     const timeout =
       globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_TIMEOUT] || MIN_TIMEOUT;
 
-    let updateFun: Subject<number> = globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN];
+    let updateFun: Subject<number> =
+      globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN];
     if (!globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN]) {
       globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN] = new Subject();
     }
@@ -2154,7 +2182,8 @@ export class EndpointContext {
     }
     startFun = globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN_START];
 
-    let doneFun: Subject<void> = globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN_DONE];
+    let doneFun: Subject<void> =
+      globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN_DONE];
     if (!globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN_DONE]) {
       globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN_DONE] = new Subject();
     }
