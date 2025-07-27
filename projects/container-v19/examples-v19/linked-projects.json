@@ -34,6 +34,10 @@
       "repoUrl": "git@github.com:darekf77/sample-migration.git",
       "defaultBranch": "master",
       "relativeClonePath": "sample-migration"
+    },
+    {
+      "defaultBranch": "master",
+      "relativeClonePath": "multiple-contexts-inheritance"
     }
   ]
 }

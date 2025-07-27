@@ -1,8 +1,27 @@
 {
-  "name": "examples-v19",
+  "name": "multiple-contexts-inheritance",
   "version": "0.0.0",
-  "scripts": {},
-  "author": "Dariusz Filipiak",
+  "scripts": {
+    "taon init": "taon init",
+    "taon start": "taon start",
+    "taon build:lib": "taon build:lib",
+    "taon build:watch:lib": "taon build:watch:lib",
+    "taon build:watch:app": "taon build:watch:app",
+    "taon build:watch:electron": "taon build:watch:electron",
+    "taon docs": "taon docs",
+    "taon docs:watch": "taon docs:watch",
+    "taon clear": "taon clear",
+    "taon release": "taon release",
+    "taon release:auto": "taon release:auto",
+    "taon release:install:locally": "taon release:install:locally",
+    "taon migration:create": "taon migration:create",
+    "taon migration:run": "taon migration:run",
+    "taon migration:revert": "taon migration:revert",
+    "taon vscode:temp:show": "taon vscode:temp:show",
+    "taon vscode:temp:hide": "taon vscode:temp:hide"
+  },
+  "author": "Darek",
+  "private": true,
   "dependencies": {
     "7zip-bin": "~5.2.0",
     "@angular-builders/custom-webpack": "~19.0.1",
@@ -338,7 +357,7 @@
     "yup": "~1.0.0-beta.8",
     "zone.js": "~0.13.0"
   },
-  "description": "Description for examples-v19. Hello world!",
+  "description": "Description for multiple-contexts-inheritance. Hello world!",
   "main": "dist/app.electron.js",
   "bin": {}
 }

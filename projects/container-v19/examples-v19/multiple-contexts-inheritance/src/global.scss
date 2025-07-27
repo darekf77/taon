@@ -1,0 +1,43 @@
+@use './vars.scss' as vars;
+@use 'bootstrap/scss/bootstrap' as *;
+
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+@import 'primeflex/primeflex.css';
+@import 'primeflex/themes/primeone-light.css';
+@import 'primeicons/primeicons.css';
+@import 'animate.css/animate.min.css';
+
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: url("#{ vars.$basename }assets/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2")
+    format('woff2');
+}
+
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
+.ng-scroll-content {
+  // TODO QUICK_FIX for modal mode
+  display: block !important;
+}
+
+
+body, html {
+  margin: 0px !important; // TODO QUICK FIX for weird chrome padding
+  overflow: hidden; // for ngx-scrollbar to work
+}

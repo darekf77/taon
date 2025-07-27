@@ -10,7 +10,7 @@
 
   "packageJsonOverride": {
     "author": "Dariusz Filipiak",
-    "scripts": {},
-    "description": "Description for examples-v19. Hello world!"
+    "description": "Description for examples-v19. Hello world!",
+    "scripts": {}
   }
 }

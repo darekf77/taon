@@ -1,0 +1,14 @@
+{
+  "site_name": "multiple-contexts-inheritance",
+  "externalDocs": {
+    "mdfiles": [],
+    "projects": []
+  },
+  "omitFilesPatters": [],
+  "priorityOrder": [],
+  "mapTitlesNames": {
+    "README.md": "Introduction"
+  },
+  "customCssPath": "custom.css",
+  "customJsPath": "custom.js"
+}
