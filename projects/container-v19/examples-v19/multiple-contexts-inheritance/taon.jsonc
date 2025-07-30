@@ -6,6 +6,7 @@
   "packageJsonOverride": {
     "author": "Darek",
     "description": "Description for multiple-contexts-inheritance. Hello world!",
-    "private": true
+    "private": true,
+    "scripts": {}
   }
 }

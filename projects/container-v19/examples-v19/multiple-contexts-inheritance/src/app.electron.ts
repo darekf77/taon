@@ -1,6 +1,6 @@
 //#region @notForNpm
 import { app, BrowserWindow, screen } from 'electron';
-import { path, fse } from 'tnp-core';
+import { path, fse } from 'tnp-core/src';
 
 import start from './app';
 import { FRONTEND_HOST_URL_ELECTRON } from './app.hosts';
