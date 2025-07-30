@@ -1,0 +1,38 @@
+
+services:
+  angular-app-node:
+    container_name: angular-app-node
+    build:
+      context: ./angular-app-node
+      dockerfile: ./Dockerfile
+    ports:
+      - "${FRONTEND_NORMAL_APP_PORT}:80"
+    environment:
+      HOST_BACKEND_PORT_1: "${HOST_BACKEND_PORT_1}"
+      HOST_URL_1: "${HOST_URL_1}"
+      FRONTEND_HOST_URL_1: "${FRONTEND_HOST_URL_1}"
+    networks:
+      # - shared_net
+      - isomorphic-lib-v19-app-network
+
+  backend-app-node:
+    container_name: backend-app-node
+    build:
+      context: ./backend-app-node
+      dockerfile: ./Dockerfile
+    ports:
+      - "${HOST_BACKEND_PORT_1}:3000"
+    environment:
+      HOST_BACKEND_PORT_1: "${HOST_BACKEND_PORT_1}"
+      HOST_URL_1: "${HOST_URL_1}"
+      FRONTEND_HOST_URL_1: "${FRONTEND_HOST_URL_1}"
+    networks:
+      # - shared_net
+      - isomorphic-lib-v19-app-network
+
+networks:
+  isomorphic-lib-v19-app-network:
+    driver: bridge
+# networks:
+#   shared_net:
+#     external: true

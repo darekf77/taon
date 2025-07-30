@@ -159,11 +159,11 @@ var MainContext = Taon.createContext(() => ({
   frontendHost: FRONTEND_HOST_URL,
   contextName: 'MainContext',
   contexts: { BaseContext },
+  //#region @websql
   migrations: {
-    //#region @websql
     UserMigration,
-    //#endregion
   },
+  //#endregion
   controllers: {
     UserController,
   },

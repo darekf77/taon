@@ -1,0 +1,12 @@
+{
+  "name": "angular-app-node",
+  "version": "1.0.0",
+  "main": "run.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "~4.19.2"
+  }
+}
