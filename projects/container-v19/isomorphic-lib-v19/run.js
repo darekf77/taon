@@ -1,7 +1,6 @@
 const process= require('process');
 process.removeAllListeners('warning');
 const path = require('path');
-const _ = require('lodash');
 const fse = require('fs-extra');
 
 const argsMinimist = require('minimist')(process.argv);

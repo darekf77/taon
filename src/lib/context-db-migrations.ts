@@ -88,7 +88,7 @@ export class ContextDbMigrations {
   //#endregion
 
   //#region methods & getters / make sure migration table exists
-  async ensureMigrationTableExists() {
+  async ensureMigrationTableExists(): Promise<void> {
     //#region @websqlFunc
     if (this.ctx.remoteHost || !this.ctx.connection) {
       return;

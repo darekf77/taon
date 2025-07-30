@@ -6,6 +6,11 @@ import { Models } from './models';
 import { TaonAdminService } from './ui/taon-admin-mode-configuration/taon-admin.service'; // @browser
 //#endregion
 
+/**
+ * @returns function that returns context function.
+ * Context function can be used to dynamically
+ * create context with specific configuration.
+ */
 export const createContextTemplate = <
   //#region context generic args
   CTX extends Record<string, object>,
@@ -42,6 +47,10 @@ export const createContextTemplate = <
   };
 };
 
+/**
+ * REQURIED PROPERTY:
+ * - contextName
+ */
 export const createContext = <
   //#region context generic args
   CTX extends Record<string, object>,
