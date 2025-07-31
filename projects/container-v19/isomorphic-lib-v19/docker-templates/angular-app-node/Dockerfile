@@ -1,17 +1,20 @@
-# Use a minimal Node.js image
-FROM node:22-alpine
+# Use official Nginx image
+FROM nginx:alpine
 
 # Set working directory
-WORKDIR /app
+WORKDIR /usr/share/nginx/html
 
-# Copy source code
-COPY . .
+# Remove default nginx index page
+RUN rm -rf ./*
 
-# Install Node.js deps
-RUN npm install
+# Copy your built frontend files into the container
+COPY . /usr/share/nginx/html
+
+# Optional: copy custom nginx config
+# COPY nginx.conf /etc/nginx/nginx.conf
 
 # Expose port
 EXPOSE 80
 
-# Run the app
-CMD ["node", "index.js"]
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]

@@ -1,41 +1,23 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0" />
-    <title>Hello from angular dummy app</title>
-  </head>
-  <body>
-    <h1>Hello from angular dummy app!</h1>
-    <p>This is a simple Angular application running in a Docker container.</p>
-    <div id="window-env-data"></div>
-    <br>
-    <script>
-      fetch(`http://localhost:${window.ENV.HOST_BACKEND_PORT_1}`)
-        .then(response => response.json())
-        .then(data => {
-          const codeElement = document.createElement('div');
-          codeElement.innerHTML =
-            'DATA FROM BACKEND process.ENV <br>' +
-            `<code>` +
-            JSON.stringify(data, null, 2) +
-            `</code><br><br>`;
-          document.body.appendChild(codeElement);
-        })
-        .catch(error => console.error('Error fetching data:', error));
-
-      const envDataElement = document.getElementById('window-env-data');
-      if (window.ENV) {
-        envDataElement.innerHTML =
-          'DATA FROM window.ENV <br>' +
-          `<code>` +
-          JSON.stringify(window.ENV, null, 2) +
-          `</code><br><br>`;
-      } else {
-        envDataElement.textContent = 'No ENV data available';
-      }
-    </script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dummy Angular App</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    h1 {
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <h1>Welcome to Angular App</h1>
+  <p>This is a dummy index.html file for your Angular application.</p>
+</body>
 </html>
