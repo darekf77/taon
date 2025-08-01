@@ -13,7 +13,6 @@
     "socket.io",
   ],
 
-  "additionalNpmNames": [],
   "appId": "dev.taon.app",
 
   "autoReleaseConfigAllowedItems": [
