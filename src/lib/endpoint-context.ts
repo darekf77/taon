@@ -757,15 +757,27 @@ export class EndpointContext {
     }
     if (this.mode === 'backend-frontend(tcp+udp)') {
       return await new Promise(resolve => {
-        // this.displayRoutes(this.expressApp);
-        this.serverTcpUdp.listen(Number(this.uri.port), '0.0.0.0', () => {
-          Helpers.log(`Express server started 0.0.0.0:${this.uri.port}`);
+        if (UtilsOs.isRunningInDocker()) {
+          // this.displayRoutes(this.expressApp);
+          this.serverTcpUdp.listen(Number(this.uri.port), '0.0.0.0', () => {
+            Helpers.log(`Express server (inside docker) started 0.0.0.0:${this.uri.port}`);
+            Helpers.log(`[taon][express-server]listening on port: ${this.uri.port}, hostname: ${this.uri.pathname},
+    address: ${this.uri.protocol}//localhost:${this.uri.port}${this.uri.pathname}
+    env: ${this.expressApp.settings.env}
+    `);
+            resolve(void 0);
+          });
+        } else {
+          // this.displayRoutes(this.expressApp);
+        this.serverTcpUdp.listen(Number(this.uri.port),() => {
+          Helpers.log(`Express server (inside nodejs app) started on localhost:${this.uri.port}`);
           Helpers.log(`[taon][express-server]listening on port: ${this.uri.port}, hostname: ${this.uri.pathname},
             address: ${this.uri.protocol}//localhost:${this.uri.port}${this.uri.pathname}
             env: ${this.expressApp.settings.env}
             `);
           resolve(void 0);
         });
+        }
       });
     } else {
       this.logFramework &&
