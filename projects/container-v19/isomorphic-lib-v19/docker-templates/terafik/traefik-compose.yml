@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  traefik:
+    image: "traefik:v3.5"
+    container_name: traefik
+    command:
+      - "--api.dashboard=true"
+      - "--ping=true"
+      - "--ping.entrypoint=web"
+
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+
+      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.myresolver.acme.email=you@domain.com"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      # Optional: slow ACME
+      - "--certificatesresolvers.myresolver.acme.httpChallenge.delay=10s"
+
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./letsencrypt:/letsencrypt:rw
+
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "-q", "http://localhost:80/ping" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+    restart: unless-stopped
