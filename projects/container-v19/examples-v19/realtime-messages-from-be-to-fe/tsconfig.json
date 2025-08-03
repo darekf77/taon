@@ -4,10 +4,16 @@
     "strictNullChecks": false,
     "rootDir": "./src",
     "paths": {
-      "realtime-messages-from-be-to-fe": [
+      "@lib": [
         "./src/lib"
       ],
-      "realtime-messages-from-be-to-fe/*": [
+      "@lib/*": [
+        "./src/lib/*"
+      ],
+      "realtime-messages-from-be-to-fe/src": [
+        "./src/lib"
+      ],
+      "realtime-messages-from-be-to-fe/src/*": [
         "./src/lib/*"
       ]
     }

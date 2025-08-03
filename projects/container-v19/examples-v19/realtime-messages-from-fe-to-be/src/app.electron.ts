@@ -39,7 +39,6 @@ async function createWindow(): Promise<BrowserWindow> {
     debug();
     win.webContents.openDevTools();
 
-    require('electron-reloader')(module);
     win.loadURL(
       'http://localhost:' +
         (websql ? CLIENT_DEV_WEBSQL_APP_PORT : CLIENT_DEV_NORMAL_APP_PORT),

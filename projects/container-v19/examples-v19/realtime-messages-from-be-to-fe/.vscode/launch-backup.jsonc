@@ -1,0 +1,60 @@
+// THIS FILE IS GENERATED - DO NOT MODIFY
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug/Start Server",
+      "program": "${workspaceFolder}/run.js",
+      "args": [],
+      "runtimeArgs": [
+        "--preserve-symlinks"
+      ]
+    },
+    {
+      "name": "Debug/Start Electron",
+      "type": "node",
+      "request": "launch",
+      "protocol": "inspector",
+      "cwd": "${workspaceFolder}",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron",
+      "trace": "verbose",
+      "runtimeArgs": [
+        "--serve",
+        ".",
+        "--remote-debugging-port=9888"
+      ],
+      "windows": {
+        "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/electron.cmd"
+      }
+    },
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Attach to global cli tool",
+      "autoAttachChildProcesses": false,
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "port": 9222
+    },
+    {
+      "name": "Debug/Start Vscode Plugin",
+      "type": "extensionHost",
+      "request": "launch",
+      "runtimeExecutable": "${execPath}",
+      "sourceMaps": true,
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/**",
+        "!**/node_modules/**"
+      ],
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/tmp-vscode-proj/development/realtime-messages-from-be-to-fe"
+      ],
+      "preLaunchTask": "Update package.json vscode metadata"
+    }
+  ],
+  "compounds": []
+}
+// THIS FILE IS GENERATED - DO NOT MODIFY

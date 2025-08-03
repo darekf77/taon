@@ -143,7 +143,7 @@
   "editor.inlineSuggest.enabled": true,
   "prettier.endOfLine": "auto",
   "prettier.prettierPath": "./node_modules/prettier",
-  "window.title": "container-v18/examples-v18/realtime-messages-from-be-to-fe  [ ${activeEditorShort} ]",
+  "window.title": "container-v19/examples-v19/realtime-messages-from-be-to-fe  [ ${activeEditorShort} ]",
   "search.useIgnoreFiles": false,
   "search.include": [
     "**/src/**"
@@ -151,9 +151,20 @@
   "json.schemas": [
     {
       "fileMatch": [
-        "/docs-config.jsonc"
+        "/taon.jsonc"
       ],
-      "url": "./docs-config.schema.json"
+      "url": "./taon-config-standalone.schema.json"
     }
-  ]
+  ],
+  "files.watcherExclude": {
+    "local_release/**": true
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[dockercompose]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  }
 }

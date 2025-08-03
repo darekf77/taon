@@ -5,6 +5,7 @@ import {
   CLIENT_DEV_NORMAL_APP_PORT,
   CLIENT_DEV_WEBSQL_APP_PORT,
   HOST_BACKEND_PORT,
+  HOST_CONFIG,
 } from './app.hosts';
 import { Helpers } from 'tnp-core/src';
 //#region @browser
@@ -45,9 +46,8 @@ export class RealtimeMessagesFromFeToBeComponent {
 
 //#region  realtime-subscribers context
 const MainContext = Taon.createContext(() => ({
-  host: host1 + '/ny-niga',
+  ...HOST_CONFIG['app.ts']['MainContext'],
   useIpcWhenElectron: true,
-  frontendHost: frontendHost1,
   contextName: 'MainContext',
   contexts: { BaseContext },
   controllers: {},

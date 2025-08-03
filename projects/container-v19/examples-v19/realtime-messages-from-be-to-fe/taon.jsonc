@@ -1,5 +1,13 @@
 {
-  "resources": [],
+  "type": "isomorphic-lib",
   "version": "v19",
-  "type": "isomorphic-lib"
+  "appId": "com.domain.example.realtime-messages-from-be-to-fe",
+  "resources": [],
+
+  "packageJsonOverride": {
+    "author": "Dariusz Filipiak",
+    "private": true,
+    "scripts": {},
+    "description": "Description for realtime-messages-from-be-to-fe. Hello world!"
+  }
 }

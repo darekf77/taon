@@ -7,7 +7,7 @@ import {
   //#region @backend
   fse,
   //#endregion
-} from 'tnp-core';
+} from 'tnp-core/src';
 //#region @backend
 import { app, BrowserWindow, screen } from 'electron';
 import start from './app';
@@ -39,7 +39,6 @@ async function createWindow(): Promise<BrowserWindow> {
     debug();
     win.webContents.openDevTools();
 
-    require('electron-reloader')(module);
     win.loadURL(
       'http://localhost:' +
         (websql ? CLIENT_DEV_WEBSQL_APP_PORT : CLIENT_DEV_NORMAL_APP_PORT),
