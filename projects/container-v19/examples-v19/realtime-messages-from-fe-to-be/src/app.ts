@@ -24,9 +24,11 @@ const eventsKey = 'eventsKey';
 //#region realtime-subscribers component
 //#region @browser
 @Component({
+  standalone: false,
   template: `push global event to backend with click of a button<br />
     <br />
     <button (click)="notifyBackend()">notify backend</button> `,
+
 })
 export class RealtimeMessagesFromFeToBeComponent {
   counter = 0;
@@ -43,7 +45,7 @@ export class RealtimeMessagesFromFeToBeComponent {
 
 //#region  realtime-subscribers context
 const MainContext = Taon.createContext(() => ({
-  host: host1,
+  host: host1 + '/ny-niga',
   useIpcWhenElectron: true,
   frontendHost: frontendHost1,
   contextName: 'MainContext',

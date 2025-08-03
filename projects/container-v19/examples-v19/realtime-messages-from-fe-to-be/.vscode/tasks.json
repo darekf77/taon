@@ -1,0 +1,37 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Update package.json vscode metadata",
+      "type": "shell",
+      "command": "cd tmp-vscode-proj/development/realtime-messages-from-fe-to-be && node --no-deprecation update-vscode-package-json.js app.vscode",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": [
+        {
+          "owner": "custom",
+          "pattern": [
+            {
+              "regexp": "^(.*)$",
+              "file": 1,
+              "line": 1,
+              "column": 1,
+              "message": 1
+            }
+          ],
+          "background": {
+            "activeOnStart": true,
+            "beginsPattern": "Update package.json vscode plugin metadata...",
+            "endsPattern": "Done update package.json"
+          }
+        }
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    }
+  ]
+}

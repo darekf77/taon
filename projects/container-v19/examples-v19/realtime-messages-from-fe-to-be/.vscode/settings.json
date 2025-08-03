@@ -65,7 +65,9 @@
   },
   "workbench.colorCustomizations": {
     "activityBar.background": "#0084ff",
-    "activityBar.foreground": "#000000"
+    "activityBar.foreground": "#000000",
+    "statusBar.background": "#5dbb65",
+    "statusBar.debuggingBackground": "#15d8ff"
   },
   "editor.rulers": [
     80,
@@ -142,7 +144,7 @@
   "editor.inlineSuggest.enabled": true,
   "prettier.endOfLine": "auto",
   "prettier.prettierPath": "./node_modules/prettier",
-  "window.title": "container-v18/examples-v18/realtime-messages-from-fe-to-be  [ ${activeEditorShort} ]",
+  "window.title": "container-v19/examples-v19/realtime-messages-from-fe-to-be  [ ${activeEditorShort} ]",
   "search.useIgnoreFiles": false,
   "search.include": [
     "**/src/**"
@@ -150,9 +152,20 @@
   "json.schemas": [
     {
       "fileMatch": [
-        "/docs-config.jsonc"
+        "/taon.jsonc"
       ],
-      "url": "./docs-config.schema.json"
+      "url": "./taon-config-standalone.schema.json"
     }
-  ]
+  ],
+  "files.watcherExclude": {
+    "local_release/**": true
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  },
+  "[dockercompose]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": false
+  }
 }
