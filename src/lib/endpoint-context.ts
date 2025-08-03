@@ -51,6 +51,7 @@ import type { BaseClass } from './base-classes/base-class';
 import type { BaseInjector } from './base-classes/base-injector';
 import type { BaseMigration } from './base-classes/base-migration';
 import { BaseSubscriberForEntity } from './base-classes/base-subscriber-for-entity';
+import { apiPrefix } from './constants';
 import { ContextDbMigrations } from './context-db-migrations';
 import { createContext } from './create-context';
 import { TaonControllerOptions } from './decorators/classes/controller-decorator';
@@ -129,7 +130,7 @@ export class EndpointContext {
 
   //#region fields / active routes
   public readonly activeRoutes: {
-    routePath: string;
+    expressPath: string;
     method: Models.Http.Rest.HttpMethod;
   }[] = [];
   //#endregion
@@ -363,6 +364,12 @@ export class EndpointContext {
       this.mode = 'remote-backend(tcp+udp)';
     }
 
+    // console.log(`
+
+    //   useIpcWhenElectron: ${this.config.useIpcWhenElectron}
+    //   Helpers.isElectron: ${Helpers.isElectron}
+
+    //   `)
     if (this.config.useIpcWhenElectron && Helpers.isElectron) {
       if (Helpers.isWebSQL) {
         this.mode = 'backend-frontend(websql-electron)';
@@ -370,6 +377,12 @@ export class EndpointContext {
         this.mode = 'backend-frontend(ipc-electron)';
       }
     }
+
+    // mode === undefined for BaseContext => ok behavior
+    // console.log(`Mode for BE/FE communication: ${this.mode}`);
+    // if(!this.mode) {
+    //   console.log(this.config)
+    // }
 
     if (!this.mode && !this.config.abstract) {
       Helpers.error(
@@ -759,24 +772,28 @@ export class EndpointContext {
       return await new Promise(resolve => {
         if (UtilsOs.isRunningInDocker()) {
           // this.displayRoutes(this.expressApp);
-          this.serverTcpUdp.listen(Number(this.uri.port), '0.0.0.0', () => {
-            Helpers.log(`Express server (inside docker) started 0.0.0.0:${this.uri.port}`);
-            Helpers.log(`[taon][express-server]listening on port: ${this.uri.port}, hostname: ${this.uri.pathname},
-    address: ${this.uri.protocol}//localhost:${this.uri.port}${this.uri.pathname}
+          this.serverTcpUdp.listen(Number(this.uriPort), '0.0.0.0', () => {
+            Helpers.log(
+              `Express server (inside docker) started 0.0.0.0:${this.uriPort}`,
+            );
+            Helpers.log(`[taon][express-server]listening on port: ${this.uriPort}, hostname: ${this.uriPathname},
+    address: ${this.uriProtocol}//localhost:${this.uriPort}${this.uriPathname}
     env: ${this.expressApp.settings.env}
     `);
             resolve(void 0);
           });
         } else {
           // this.displayRoutes(this.expressApp);
-        this.serverTcpUdp.listen(Number(this.uri.port),() => {
-          Helpers.log(`Express server (inside nodejs app) started on localhost:${this.uri.port}`);
-          Helpers.log(`[taon][express-server]listening on port: ${this.uri.port}, hostname: ${this.uri.pathname},
-            address: ${this.uri.protocol}//localhost:${this.uri.port}${this.uri.pathname}
+          this.serverTcpUdp.listen(Number(this.uriPort), () => {
+            Helpers.log(
+              `Express server (inside nodejs app) started on localhost:${this.uriPort}`,
+            );
+            Helpers.log(`[taon][express-server]listening on port: ${this.uriPort}, hostname: ${this.uriPathname},
+            address: ${this.uriProtocol}//localhost:${this.uriPort}${this.uriPathname}
             env: ${this.expressApp.settings.env}
             `);
-          resolve(void 0);
-        });
+            resolve(void 0);
+          });
         }
       });
     } else {
@@ -1303,21 +1320,66 @@ export class EndpointContext {
       : this.remoteHost
         ? new URL(this.remoteHost)
         : void 0;
+
     return url;
   }
   //#endregion
+
+  get uriPort(): string | undefined {
+    return this.uri?.port;
+  }
+
+  get uriProtocol(): string | undefined {
+    return this.uri?.protocol;
+  }
+
+  /**
+   * Examples
+   * http://localhost:3000
+   * https://localhost (from localhost:80)   *
+   */
+  get uriOrigin(): string | undefined {
+    return this.uri?.origin;
+  }
+
+  /**
+   * Exampels
+   * http://localhost:3000/path/to/somewhere
+   * https://localhost/path/to/somewhere (from localhost:80)
+   */
+  // get uriOriginWithPathname(): string | undefined {
+  //   return this.uri?.origin
+  //     ? this.uri?.origin + this.uriPathnameOrNothingIfRoot.replace(/\/$/, '')
+  //     : undefined;
+  // }
+
+  get uriPathname(): string | undefined {
+    return this.uri?.pathname;
+  }
+
+  /**
+   * Examples
+   * http://localhost:3000/path/to/somewhere -> '/path/to/somewhere'
+   * http://localhost:3000 -> '' #
+   * https://localhost/path/to/  -> '/path/to/somewhere' # remove last slash
+   */
+  get uriPathnameOrNothingIfRoot(): string {
+    const isNonRootProperPathName =
+      this.uri?.pathname && this.uri.pathname !== '/';
+    return isNonRootProperPathName ? this.uri.pathname.replace(/\/$/, '') : '';
+  }
 
   /**
    * Port from uri as number
    * @returns {Number | undefined}
    */
   get port(): Number | undefined {
-    return this.uri?.port ? Number(this.uri.port) : undefined;
+    return this.uri?.port ? Number(this.uriPort) : undefined;
   }
 
   //#region methods & getters / is https server
   get isHttpServer() {
-    return this.uri.protocol === 'https:';
+    return this.uriProtocol === 'https:';
   }
   //#endregion
 
@@ -1569,7 +1631,7 @@ export class EndpointContext {
       return;
     }
     const allControllers = this.getClassFunByArr(Models.ClassType.CONTROLLER);
-    // console.log('allControllers', allControllers)11
+    // console.log('allControllers', allControllers);
     for (const controllerClassFn of allControllers) {
       controllerClassFn[Symbols.classMethodsNames] =
         ClassHelpers.getMethodsNames(controllerClassFn);
@@ -1590,15 +1652,19 @@ export class EndpointContext {
       if (TaonHelpers.isGoodPath(classConfig.path)) {
         classConfig.calculatedPath = classConfig.path;
       } else {
-        classConfig.calculatedPath =
-          `${parentscalculatedPath}/${ClassHelpers.getName(controllerClassFn)}`
-            .replace(/\/\//g, '/')
-            .split('/')
-            .reduce((acc, bc) => {
-              return _.last(acc) === bc ? acc : [...acc, bc];
-            }, [])
-            .join('/');
+        classConfig.calculatedPath = (
+          `${this.uriPathnameOrNothingIfRoot}` +
+          `/${apiPrefix}/${this.contextName}/tcp${parentscalculatedPath}/` +
+          `${ClassHelpers.getName(controllerClassFn)}`
+        )
+          .replace(/\/\//g, '/')
+          .split('/')
+          .reduce((acc, bc) => {
+            return _.last(acc) === bc ? acc : [...acc, bc];
+          }, [])
+          .join('/');
       }
+      // console.log('calculatedPath', classConfig.calculatedPath);
 
       _.slice(configs, 1).forEach(bc => {
         const alreadyIs = classConfig.methods;
@@ -1633,11 +1699,11 @@ export class EndpointContext {
           ? `/${methodConfig.path?.replace(/\//, '')}`
           : TaonHelpers.getExpressPath(classConfig, methodConfig);
 
-        // console.log({ expressPath })
+        // console.log({ expressPath });
         if (Helpers.isNode || Helpers.isWebSQL) {
           //#region @websql
 
-          const { routePath, method } = this.initServer(
+          const route = this.initServer(
             type,
             methodConfig,
             classConfig,
@@ -1646,8 +1712,8 @@ export class EndpointContext {
           );
 
           this.activeRoutes.push({
-            routePath,
-            method,
+            expressPath: route.expressPath,
+            method: route.method,
           });
           //#endregion
         }
@@ -1692,27 +1758,27 @@ export class EndpointContext {
     ) {
       return;
     }
-    const contexts: EndpointContext[] = [this];
+    // const contexts: EndpointContext[] = [this];
     //#region @websql
 
     const troutes = Utils.uniqArray(
       this.activeRoutes.map(f => {
-        return `${f.method} ${f.routePath}`;
+        return `${f.method} ${f.expressPath}`;
       }),
     ).map(f => {
-      const [method, routePath] = f.split(' ');
+      const [method, expressPath] = f.split(' ');
       return (
-        `\n### ${_.startCase(_.last(routePath.split('/')))}\n` +
+        `\n### ${_.startCase(_.last(expressPath.split('/')))}\n` +
         TaonHelpers.fillUpTo(method.toUpperCase() + ' ', 10) +
-        this.uri.href.replace(/\/$/, '') +
-        routePath
+        this.uriOrigin +
+        expressPath
       );
 
       // return `${TaonHelpers.string(method.toUpperCase() + ':')
-      // .fillUpTo(10)}${context.uri.href.replace(/\/$/, '')}${routePath}`
+      // .fillUpTo(10)}${context.uriHref.replace(/\/$/, '')}${expressPath}`
     });
     const routes = [
-      ...['', `#  ROUTES FOR HOST ${this.uri.href} `],
+      ...['', `#  ROUTES FOR HOST ${this.uriOrigin} `],
       ...troutes,
     ].join('\n');
     const fileName = crossPlatformPath([
@@ -1858,7 +1924,7 @@ export class EndpointContext {
     expressPath: string,
     target: Function,
     //#endregion
-  ): any {
+  ): { expressPath: string; method: Models.Http.Rest.HttpMethod } {
     //#region resolve variables
     //#region @websql
     const requestHandler =
@@ -1870,7 +1936,7 @@ export class EndpointContext {
           };
     //#endregion
 
-    const url = this.uri;
+    // const url = this.uri;
 
     //#region get result
     const getResult = async (resolvedParams, req, res) => {
@@ -1890,12 +1956,7 @@ export class EndpointContext {
     };
     //#endregion
 
-    url.pathname = url.pathname.replace(/\/$/, '');
-    expressPath = url.pathname.startsWith('/')
-      ? `${url.pathname}${expressPath}`
-      : expressPath;
-    expressPath = expressPath.replace(/\/\//g, '/');
-    // console.log(`BACKEND: expressPath: ${ expressPath } `)
+    // console.log(`BACKEND: expressPath: "${expressPath}" `);
     //#endregion
 
     if (Helpers.isElectron) {
@@ -1911,13 +1972,16 @@ export class EndpointContext {
           void 0,
           void 0,
         );
-        event.sender.send(
-          TaonHelpers.ipcKeyNameResponse(target, methodConfig, expressPath),
-          responseJsonData,
+        const sendToIpsMainOn = TaonHelpers.ipcKeyNameResponse(
+          target,
+          methodConfig,
+          expressPath,
         );
+        // console.log({ sendToIpsMainOn });
+        event.sender.send(sendToIpsMainOn, responseJsonData);
       });
       return {
-        routePath: expressPath,
+        expressPath,
         method: methodConfig.type,
       };
       //#endregion
@@ -2152,7 +2216,7 @@ export class EndpointContext {
     }
 
     return {
-      routePath: expressPath,
+      expressPath: expressPath,
       method: methodConfig.type,
     };
   }
@@ -2203,7 +2267,7 @@ export class EndpointContext {
                     body: void 0,
                     isArray: void 0 as any,
                     method: methodConfig.type,
-                    url: `${ctx.uri.origin}${
+                    url: `${ctx.uriOrigin}${
                       '' // TODO express path
                     }${methodConfig.path} `,
                   },
@@ -2345,7 +2409,7 @@ export class EndpointContext {
               body: void 0,
               isArray: void 0 as any,
               method: methodConfig.type,
-              url: `${ctx.uri.origin}${
+              url: `${ctx.uriOrigin}${
                 '' // TODO express path
               }${methodConfig.path} `,
             },
@@ -2396,15 +2460,15 @@ export class EndpointContext {
 
       if (!storage[Symbols.old.ENDPOINT_META_CONFIG])
         storage[Symbols.old.ENDPOINT_META_CONFIG] = {};
-      if (!storage[Symbols.old.ENDPOINT_META_CONFIG][ctx.uri.href])
-        storage[Symbols.old.ENDPOINT_META_CONFIG][ctx.uri.href] = {};
+      if (!storage[Symbols.old.ENDPOINT_META_CONFIG][ctx.uriOrigin])
+        storage[Symbols.old.ENDPOINT_META_CONFIG][ctx.uriOrigin] = {};
       const endpoints = storage[Symbols.old.ENDPOINT_META_CONFIG];
       let rest: ModelsNg2Rest.ResourceModel<any, any>;
-      if (!endpoints[ctx.uri.href][expressPath]) {
+      if (!endpoints[ctx.uriOrigin][expressPath]) {
         let headers = {};
         if (methodConfig.contentType && !methodConfig.responseType) {
           rest = Resource.create(
-            ctx.uri.href,
+            ctx.uriOrigin,
             expressPath,
             Symbols.old.MAPPING_CONFIG_HEADER as any,
             Symbols.old.CIRCURAL_OBJECTS_MAP_BODY as any,
@@ -2415,7 +2479,7 @@ export class EndpointContext {
           );
         } else if (methodConfig.contentType && methodConfig.responseType) {
           rest = Resource.create(
-            ctx.uri.href,
+            ctx.uriOrigin,
             expressPath,
             Symbols.old.MAPPING_CONFIG_HEADER as any,
             Symbols.old.CIRCURAL_OBJECTS_MAP_BODY as any,
@@ -2427,7 +2491,7 @@ export class EndpointContext {
           );
         } else if (!methodConfig.contentType && methodConfig.responseType) {
           rest = Resource.create(
-            ctx.uri.href,
+            ctx.uriOrigin,
             expressPath,
             Symbols.old.MAPPING_CONFIG_HEADER as any,
             Symbols.old.CIRCURAL_OBJECTS_MAP_BODY as any,
@@ -2437,16 +2501,16 @@ export class EndpointContext {
           );
         } else {
           rest = Resource.create(
-            ctx.uri.href,
+            ctx.uriOrigin,
             expressPath,
             Symbols.old.MAPPING_CONFIG_HEADER as any,
             Symbols.old.CIRCURAL_OBJECTS_MAP_BODY as any,
           );
         }
 
-        endpoints[ctx.uri.href][expressPath] = rest;
+        endpoints[ctx.uriOrigin][expressPath] = rest;
       } else {
-        rest = endpoints[ctx.uri.href][expressPath] as any;
+        rest = endpoints[ctx.uriOrigin][expressPath] as any;
       }
 
       const method = type.toLowerCase();

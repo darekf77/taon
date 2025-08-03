@@ -1,23 +1,16 @@
-import {
-  CLIENT_DEV_NORMAL_APP_PORT,
-  CLIENT_DEV_WEBSQL_APP_PORT,
-} from './app.hosts';
-import {
-  path,
-  //#region @backend
-  fse,
-  //#endregion
-} from 'tnp-core/src';
-//#region @backend
+//#region @notForNpm
 import { app, BrowserWindow, screen } from 'electron';
+import { path, fse } from 'tnp-core/src';
+
 import start from './app';
+import { FRONTEND_HOST_URL_ELECTRON } from './app.hosts';
+import { ENV_ELECTRON_APP_BUILD_ANGULAR_PROD } from './lib/env';
 
 let win: BrowserWindow | null = null;
 const args = process.argv.slice(1);
 const serve = args.some(val => val === '--serve');
-const websql = args.some(val => val === '--websql');
 
-async function createWindow(): Promise<BrowserWindow> {
+function createWindow(): BrowserWindow {
   const size = screen.getPrimaryDisplay().workAreaSize;
 
   // Create the browser window.
@@ -39,10 +32,8 @@ async function createWindow(): Promise<BrowserWindow> {
     debug();
     win.webContents.openDevTools();
 
-    win.loadURL(
-      'http://localhost:' +
-        (websql ? CLIENT_DEV_WEBSQL_APP_PORT : CLIENT_DEV_NORMAL_APP_PORT),
-    );
+    // require('electron-reloader')(module); // this hangs frontend randomly
+    win.loadURL(FRONTEND_HOST_URL_ELECTRON);
   } else {
     // Path when running electron executable
     let pathIndex = './index.html';
@@ -54,6 +45,11 @@ async function createWindow(): Promise<BrowserWindow> {
 
     const url = new URL(path.join('file:', __dirname, pathIndex));
     win.loadURL(url.href);
+
+    if (!ENV_ELECTRON_APP_BUILD_ANGULAR_PROD) {
+      // Open the DevTools.
+      win.webContents.openDevTools();
+    }
   }
 
   // Emitted when the window is closed.
@@ -64,13 +60,12 @@ async function createWindow(): Promise<BrowserWindow> {
     win = null;
   });
 
-
-
   return win;
 }
 
 async function startElectron() {
   await start();
+  console.log('Electron app started');
   try {
     // This method will be called when Electron has finished
     // initialization and is ready to create browser windows.

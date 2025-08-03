@@ -6,8 +6,8 @@
 
   "packageJsonOverride": {
     "author": "Dariusz Filipiak",
+    "description": "Description for realtime-messages-from-be-to-fe. Hello world!",
     "private": true,
-    "scripts": {},
-    "description": "Description for realtime-messages-from-be-to-fe. Hello world!"
+    "scripts": {}
   }
 }

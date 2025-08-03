@@ -1,10 +1,15 @@
 //#region imports
-import { Symbols } from '../symbols';
-import { Helpers, _ } from 'tnp-core/src';
-import { RealtimeCore } from './realtime-core';
-import { ClassHelpers } from '../helpers/class-helpers';
-import type { BaseEntity } from '../base-classes/base-entity';
+import { URL } from 'url'; // @backend
+
 import { Observable, Subject } from 'rxjs';
+import { Helpers, _ } from 'tnp-core/src';
+
+import type { BaseEntity } from '../base-classes/base-entity';
+import { ClassHelpers } from '../helpers/class-helpers';
+import { Symbols } from '../symbols';
+
+import { RealtimeCore } from './realtime-core';
+
 //#endregion
 
 export class RealtimeServer {
@@ -34,27 +39,33 @@ export class RealtimeServer {
     }
 
     //#region prepare namespaces pathes
-    const nspPath = {
-      global: this.core.pathFor(),
-      realtime: this.core.pathFor(
-        Symbols.REALTIME.NAMESPACE(this.core.ctx.contextName),
-      ),
-    };
+    const nspPathGlobal = this.core.pathFor();
+    const nspPathRealtime = this.core.pathFor(
+      Symbols.REALTIME.NAMESPACE(this.core.ctx.contextName),
+    );
 
     //#endregion
 
     // console.log('[backend] nspPath', nspPath);
 
+    const fronendURL = new URL(
+      this.core.ctx.config.frontendHost.replace(/\/$/, ''),
+    );
+
+    const cors = {
+      origin: fronendURL.origin, // only origin needs to be set - pathname not needed
+      methods: this.core.allHttpMethods,
+    };
+
+    // console.log('frontendHost', this.core.ctx.config.frontendHost);
+    // console.log('cors', cors);
+
     //#region prepare global BE socket
     this.core.connectSocketBE = this.core.strategy.ioServer(
-      Helpers.isWebSQL ? this.core.ctx.uri.origin : this.core.ctx.serverTcpUdp,
+      Helpers.isWebSQL ? this.core.ctx.uriOrigin : this.core.ctx.serverTcpUdp,
       {
-        path: nspPath.global.pathname,
-
-        cors: {
-          origin: this.core.ctx.config.frontendHost,
-          methods: this.core.allHttpMethods,
-        },
+        path: nspPathGlobal.pathname,
+        cors,
       }, // @ts-ignore
       this.core.ctx,
     );
@@ -62,12 +73,12 @@ export class RealtimeServer {
     this.core.ctx.logRealtime &&
       console.info(
         `[backend] CREATE GLOBAL NAMESPACE: '${this.core.connectSocketBE.path()}'` +
-          ` , path: '${nspPath.global.pathname}'`,
+          ` , path: '${nspPathGlobal.pathname}'`,
       );
 
     this.core.connectSocketBE.on('connection', clientSocket => {
       console.info(
-        `[backend] client connected to namespace "${nspPath.global.pathname}", ` +
+        `[backend] client connected to namespace "${nspPathGlobal.pathname}", ` +
           ` host: ${this.core.ctx.host}`,
       );
     });
@@ -77,14 +88,11 @@ export class RealtimeServer {
     //#region prepare realtime BE socket
     this.core.socketBE = this.core.strategy.ioServer(
       Helpers.isWebSQL || Helpers.isElectron
-        ? this.core.ctx.uri.origin
+        ? this.core.ctx.uriOrigin
         : this.core.ctx.serverTcpUdp,
       {
-        path: nspPath.realtime.pathname,
-        cors: {
-          origin: this.core.ctx.config.frontendHost,
-          methods: this.core.allHttpMethods,
-        },
+        path: nspPathRealtime.pathname,
+        cors,
       }, // @ts-ignore
       this.core.ctx,
     );
@@ -92,12 +100,12 @@ export class RealtimeServer {
     this.core.ctx.logRealtime &&
       console.info(
         `[backend] CREATE REALTIME NAMESPACE: '${this.core.socketBE.path()}'` +
-          ` , path: '${nspPath.realtime.pathname}' `,
+          ` , path: '${nspPathRealtime.pathname}' `,
       );
 
     this.core.socketBE.on('connection', backendSocketForClient => {
       console.info(
-        `[backend] client connected to namespace "${nspPath.realtime.pathname}", ` +
+        `[backend] client connected to namespace "${nspPathRealtime.pathname}", ` +
           ` host: ${this.core.ctx.host}`,
       );
 

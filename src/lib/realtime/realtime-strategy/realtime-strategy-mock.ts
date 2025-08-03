@@ -332,7 +332,7 @@ export class RealtimeStrategyMock extends RealtimeStrategy {
 
   //#region server & io
   ioServer(url: string, opt: ServerOptions) {
-    const server = MockServer.from(url || this.ctx.uri.origin);
+    const server = MockServer.from(url || this.ctx.uriOrigin);
     return server.of(opt?.path || '/') as any;
   }
 
@@ -341,7 +341,7 @@ export class RealtimeStrategyMock extends RealtimeStrategy {
       uri: string,
       opts?: Partial<ManagerOptions & SocketOptions>,
     ): MockSocket => {
-      return new MockSocket(uri || this.ctx.uri.origin, opts as any);
+      return new MockSocket(uri || this.ctx.uriOrigin, opts as any);
     };
     return clientIo as any;
   }

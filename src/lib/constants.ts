@@ -54,3 +54,5 @@ CURRENT_HOST_BACKEND_PORT = new InjectionToken<number>(
 //#endregion
 
 export { TAON_CONTEXT, CURRENT_HOST_BACKEND_PORT };
+
+export const apiPrefix = 'api';

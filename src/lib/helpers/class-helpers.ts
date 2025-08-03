@@ -258,20 +258,20 @@ export namespace ClassHelpers {
   //#endregion
 
   //#region get path for
-  export const getCalculatedPathFor = (target: Function) => {
-    const configs = getControllerConfigs(target);
+  // export const getCalculatedPathFor = (target: Function) => {
+  //   const configs = getControllerConfigs(target);
 
-    const parentscalculatedPath = _.slice(configs, 1)
-      .reverse()
-      .map(bc => {
-        if (TaonHelpers.isGoodPath(bc.path)) {
-          return bc.path;
-        }
-        return bc.className;
-      })
-      .join('/');
+  //   const parentscalculatedPath = _.slice(configs, 1)
+  //     .reverse()
+  //     .map(bc => {
+  //       if (TaonHelpers.isGoodPath(bc.path)) {
+  //         return bc.path;
+  //       }
+  //       return bc.className;
+  //     })
+  //     .join('/');
 
-    return `/${parentscalculatedPath}/${ClassHelpers.getName(target)}`;
-  };
+  //   return `/${parentscalculatedPath}/${ClassHelpers.getName(target)}`;
+  // };
   //#endregion
 }

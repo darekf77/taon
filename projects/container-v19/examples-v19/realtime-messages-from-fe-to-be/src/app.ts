@@ -1,24 +1,14 @@
 //#region imports
+import { CommonModule } from '@angular/common';// @browser
+import { Component, NgModule } from '@angular/core'; // @browser
 import { Taon, BaseContext } from 'taon/src';
-import { Observable, map, scan } from 'rxjs';
+
 import {
-  CLIENT_DEV_NORMAL_APP_PORT,
-  CLIENT_DEV_WEBSQL_APP_PORT,
-  HOST_BACKEND_PORT,
   HOST_CONFIG,
 } from './app.hosts';
-import { Helpers } from 'tnp-core/src';
-//#region @browser
-import { Component, NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-//#endregion
 //#endregion
 
 //#region constants
-const host1 = 'http://localhost:' + HOST_BACKEND_PORT;
-const frontendHost1 =
-  'http://localhost:' +
-  (Helpers.isWebSQL ? CLIENT_DEV_WEBSQL_APP_PORT : CLIENT_DEV_NORMAL_APP_PORT);
 const eventsKey = 'eventsKey';
 //#endregion
 
@@ -29,7 +19,6 @@ const eventsKey = 'eventsKey';
   template: `push global event to backend with click of a button<br />
     <br />
     <button (click)="notifyBackend()">notify backend</button> `,
-
 })
 export class RealtimeMessagesFromFeToBeComponent {
   counter = 0;

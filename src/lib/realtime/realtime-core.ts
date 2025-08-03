@@ -1,6 +1,12 @@
 //#region imports
+import { Server } from 'socket.io';
+import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 import { Socket as SocketClient } from 'socket.io-client';
+import { Helpers } from 'tnp-core/src';
+
+import { apiPrefix } from '../constants';
 import type { EndpointContext } from '../endpoint-context';
+
 import { RealtimeClient } from './realtime-client';
 import { RealtimeServer } from './realtime-server';
 import type { RealtimeStrategy } from './realtime-strategy';
@@ -9,9 +15,7 @@ import {
   RealtimeStrategyMock,
   RealtimeStrategySocketIO,
 } from './realtime-strategy';
-import { DefaultEventsMap } from 'socket.io/dist/typed-events';
-import { Server } from 'socket.io';
-import { Helpers } from 'tnp-core/src';
+
 //#endregion
 
 /**
@@ -85,6 +89,7 @@ export class RealtimeCore {
 
   //#region methods & getters / resovle staraegy
   private resolveStrategy(): RealtimeStrategy {
+    // console.log(`[taon] resolveStrategy for this.ctx.mode ${this.ctx.mode}`);
     if (
       this.ctx.mode === 'backend-frontend(websql)' ||
       this.ctx.mode === 'backend-frontend(websql-electron)'
@@ -107,16 +112,15 @@ export class RealtimeCore {
 
   //#region path for
   public pathFor(namespace?: string) {
-    const uri = this.ctx.uri;
-
     let nsp = namespace ? namespace : '';
     nsp = nsp === '/' ? '' : nsp;
-    const pathname = uri.pathname !== '/' ? uri.pathname : '';
-    let prefix = `taonContext`;
+    let prefix = `${apiPrefix}/${this.ctx.contextName}/udp`;
     if (Helpers.isElectron) {
       prefix = ``;
     }
-    const href = `${uri.origin}${pathname}/${prefix}${prefix && nsp ? '-' + nsp : nsp}`;
+    const href =
+      `${this.ctx.uriOrigin}${this.ctx.uriPathnameOrNothingIfRoot}` +
+      `/${prefix}${prefix && nsp ? '-' + nsp : nsp}`;
     // console.log(`HREF: ${href}, nsp: ${nsp}`)
     return new URL(href) as URL;
   }

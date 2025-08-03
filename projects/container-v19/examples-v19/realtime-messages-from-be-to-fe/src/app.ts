@@ -28,6 +28,7 @@ const eventsKey = 'eventsKey';
     <ul>
       <li *ngFor="let message of messages$ | async">{{ message }}</li>
     </ul> `,
+  standalone: false,
 })
 export class RealtimeMessagesFromBeToFeComponent {
   readonly messages$: Observable<string[]> =
