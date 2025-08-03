@@ -64,8 +64,9 @@
     "**/docs-config.schema.json": true
   },
   "workbench.colorCustomizations": {
-    "activityBar.background": "#0084ff",
-    "activityBar.foreground": "#000000"
+    "activityBar.background": "#3fa4cf",
+    "statusBar.background": "#3648b0",
+    "statusBar.debuggingBackground": "#15d8ff"
   },
   "editor.rulers": [
     80,
