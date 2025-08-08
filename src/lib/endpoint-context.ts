@@ -1392,6 +1392,10 @@ export class EndpointContext {
   }
   //#endregion
 
+  public get activeContext(): string | null {
+    return this.config.activeContext || null;
+  }
+
   public get appId(): string {
     return this.config.appId;
   }

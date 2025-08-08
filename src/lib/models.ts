@@ -168,6 +168,11 @@ export namespace Models {
 
     contextName: string;
     /**
+     * if defined and different from contextName
+     * - context will NOT be initialized
+     */
+    activeContext?: string | null;
+    /**
      * host/port for initing backend server
      */
     host?: string;
