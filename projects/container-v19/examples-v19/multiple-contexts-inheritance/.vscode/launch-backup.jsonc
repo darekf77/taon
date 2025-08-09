@@ -34,10 +34,10 @@
       "request": "attach",
       "name": "Attach to global cli tool",
       "autoAttachChildProcesses": false,
-      "port": 9222,
       "skipFiles": [
         "<node_internals>/**"
-      ]
+      ],
+      "port": 9222
     },
     {
       "name": "Debug/Start Vscode Plugin",
