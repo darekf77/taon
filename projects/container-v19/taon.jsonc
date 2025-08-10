@@ -600,7 +600,7 @@
       "ngx-infinite-scroll": "~19.0.0",
 
        // @trusted=major
-      "ngx-spinner ": "~19.0.0",
+      "ngx-spinner": "~19.0.0",
 
       //#endregion
       //#region STRING MANIPULATIONS
