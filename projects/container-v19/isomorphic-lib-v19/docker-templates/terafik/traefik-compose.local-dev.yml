@@ -1,0 +1,48 @@
+version: "3.9"
+
+networks:
+  traefik-net:
+    external: true
+
+services:
+  traefik:
+    image: "traefik:v3.5"
+    networks:
+      - traefik-net
+    container_name: traefik
+    command:
+      # Dashboard
+      - "--api.dashboard=true"
+      - "--api.insecure=true"
+      # Healthcheck endpoint on HTTPS
+      - "--ping=true"
+      - "--ping.entrypoint=websecure"
+
+      # Docker provider
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+
+      # Entrypoints
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+
+      # Enable TLS on websecure (self-signed for local dev)
+      - "--entrypoints.websecure.http.tls=true"
+
+    ports:
+      - "80:80"       # HTTP
+      - "443:443"     # HTTPS (self-signed)
+      - "8080:8080"   # Dashboard
+
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+    healthcheck:
+      # accept self-signed cert
+      test: ["CMD", "wget", "--spider", "-q", "--no-check-certificate", "https://localhost:443/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+
+    restart: unless-stopped

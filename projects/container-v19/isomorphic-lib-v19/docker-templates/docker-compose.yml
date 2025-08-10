@@ -12,8 +12,9 @@ services:
       FRONTEND_HOST_URL_1: "${FRONTEND_HOST_URL_1}"
       FRONTEND_NORMAL_APP_PORT_1: "${FRONTEND_NORMAL_APP_PORT_1}"
     networks:
-      # - shared_net
-      - isomorphic-lib-v19-app-network
+      - traefik-net
+  # - shared_net
+  # - isomorphic-lib-v19-app-network
 
   backend-app-node:
     container_name: backend-app-node
@@ -28,13 +29,19 @@ services:
       FRONTEND_HOST_URL_1: "${FRONTEND_HOST_URL_1}"
       FRONTEND_NORMAL_APP_PORT_1: "${FRONTEND_NORMAL_APP_PORT_1}"
     networks:
-      # - shared_net
-      - isomorphic-lib-v19-app-network
+      - traefik-net
+# - shared_net
+# - isomorphic-lib-v19-app-network
 
-networks:
-  isomorphic-lib-v19-app-network:
-    driver: bridge
+# networks:
+#   isomorphic-lib-v19-app-network:
+#     driver: bridge
 
 # networks:
 #   shared_net:
 #     external: true
+
+
+networks:
+  traefik-net:
+    external: true

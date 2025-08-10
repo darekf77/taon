@@ -173,17 +173,30 @@ export namespace Models {
      */
     activeContext?: string | null;
     /**
+     * IMPORTANT! provide full url that starts with http:// or https://
      * host/port for initing backend server
      */
     host?: string;
+
     /**
+     * Needs to be specified in docker environment only
+     */
+    hostPortNumber?: number;
+    /**
+     * IMPORTANT! provide full url that starts with http:// or https://
      * frontend host only needed when we are
      * using withCredentials for axios
      * and session cookie
      * or realtime communication
      */
     frontendHost?: string;
+
     /**
+     * Needs to be specified in docker environment only
+     */
+    frontendHostPortNumber?: number;
+    /**
+     * IMPORTANT! provide full url that starts with http:// or https://
      * backend way of communication
      * between taon backends/processes
      */
@@ -237,7 +250,10 @@ export namespace Models {
   export class MethodConfig {
     methodName: string;
     /**
+     * @deprecated don't use in production - keep stuff encapsulated
      * path is global in express app
+     * ! BE CAREFUL ! global path IS NOT GLOBAL inside dockerized app
+     *  (/api/contextName is automatically added to global path in docker)
      */
     global?: boolean;
     /**

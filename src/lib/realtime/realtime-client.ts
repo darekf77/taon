@@ -32,6 +32,21 @@ export class RealtimeClient {
     };
     // console.log('[browser] nspPath', nspPath);
 
+    if (
+      this.core.ctx.config.frontendHost &&
+      this.core.ctx.config.frontendHost !== ''
+    ) {
+      console.log(`[${this.core.ctx.contextName}] USING FRONTEND HOST ${this.core.ctx.config.frontendHost}`);
+      nspPath.global = new URL(
+        `${this.core.ctx.frontendHostUri.origin}${nspPath.global.pathname}`,
+      );
+      nspPath.realtime = new URL(
+        `${this.core.ctx.frontendHostUri.origin}${nspPath.realtime.pathname}`,
+      );
+    } else {
+      console.log(`[${this.core.ctx.contextName}] NOT USING FRONTEND HOST`);
+    }
+
     this.core.ctx.logRealtime &&
       console.info(
         '[CLIENT] NAMESPACE GLOBAL ',
@@ -165,7 +180,8 @@ to use socket realtime connection;
       };
       //#endregion
 
-      const subManagerId = this.getUniqueIdentifierForConnection(roomSubOptions);
+      const subManagerId =
+        this.getUniqueIdentifierForConnection(roomSubOptions);
       if (!this.subsManagers[subManagerId]) {
         this.subsManagers[subManagerId] = new RealtimeSubsManager(
           roomSubOptions,
@@ -237,7 +253,9 @@ to use socket realtime connection;
   //#endregion
 
   //#region methods & getters / get room id from
-  private getUniqueIdentifierForConnection(options: RealtimeModels.SubsManagerOpt) {
+  private getUniqueIdentifierForConnection(
+    options: RealtimeModels.SubsManagerOpt,
+  ) {
     const url = new URL(options.core.ctx.host);
     return `${this.core.ctx.contextName}:${url.origin}|${options.roomName}|${options.property}|${options.customEvent}`;
   }

@@ -1,11 +1,15 @@
 version: "3.9"
+networks:
+  traefik-net:
+    external: true
 
 services:
   traefik:
     image: "traefik:v3.5"
     container_name: traefik
+    networks:
+      - traefik-net
     command:
-      - "--api.dashboard=true"
       - "--ping=true"
       - "--ping.entrypoint=web"
 
@@ -27,7 +31,6 @@ services:
     ports:
       - "80:80"
       - "443:443"
-      - "8080:8080"
 
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro

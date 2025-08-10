@@ -48,12 +48,8 @@ export class RealtimeServer {
 
     // console.log('[backend] nspPath', nspPath);
 
-    const fronendURL = new URL(
-      this.core.ctx.config.frontendHost.replace(/\/$/, ''),
-    );
-
     const cors = {
-      origin: fronendURL.origin, // only origin needs to be set - pathname not needed
+      origin: this.core.ctx.frontendHostUri.origin, // only origin needs to be set - pathname not needed
       methods: this.core.allHttpMethods,
     };
 

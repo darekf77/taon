@@ -254,6 +254,10 @@ export class EndpointContext {
   //#endregion
 
   //#region constructor
+  /**
+   * Inside docker there is not need for https secure server
+   */
+  private isRunningInsideDocker = false;
   constructor(
     private originalConfig: Models.ContextOptions<
       any,
@@ -267,7 +271,9 @@ export class EndpointContext {
     private configFn: (
       env: any,
     ) => Models.ContextOptions<any, any, any, any, any, any, any>,
-  ) {}
+  ) {
+    this.isRunningInsideDocker = UtilsOs.isRunningInDocker();
+  }
   //#endregion
 
   //#region methods & getters / init
@@ -555,7 +561,15 @@ export class EndpointContext {
         this.expressApp = express();
 
         this.initMiddlewares();
-        this.serverTcpUdp = this.isHttpServer
+        const shouldStartHttpsSecureServer =
+          this.isHttpServer && !this.isRunningInsideDocker;
+        this.logFramework &&
+          Helpers.info(`
+
+          Starting server ${shouldStartHttpsSecureServer ? 'with' : 'without'} HTTPS secure server
+
+          `);
+        this.serverTcpUdp = shouldStartHttpsSecureServer
           ? new https.Server(
               {
                 key: this.config.https?.key,
@@ -621,12 +635,12 @@ export class EndpointContext {
       console.log(`
 
 
-         IS RUNNING IN DOCKER: ${UtilsOs.isRunningInDocker()}
+         IS RUNNING IN DOCKER: ${this.isRunningInsideDocker}
 
     `);
     //#region @websqlFunc
     let databaseConfig: Models.DatabaseConfig = Models.DatabaseConfig.from({});
-    if (UtilsOs.isRunningInDocker()) {
+    if (this.isRunningInsideDocker) {
       if (this.USE_MARIADB_MYSQL_IN_DOCKER) {
         // Helpers.info('Running in docker, using in mysql database');
         // // TODO auto resolve database config in docker
@@ -770,7 +784,7 @@ export class EndpointContext {
     }
     if (this.mode === 'backend-frontend(tcp+udp)') {
       return await new Promise(resolve => {
-        if (UtilsOs.isRunningInDocker()) {
+        if (this.isRunningInsideDocker) {
           // this.displayRoutes(this.expressApp);
           this.serverTcpUdp.listen(Number(this.uriPort), '0.0.0.0', () => {
             Helpers.log(
@@ -1314,6 +1328,14 @@ export class EndpointContext {
   //#endregion
 
   //#region methods & getters / uri
+  get frontendHostUri() {
+    const url = this.config?.frontendHost?.startsWith('http')
+      ? this.config.frontendHost
+      : `${globalThis?.location?.protocol || 'http:'}//${this.config?.frontendHost}`;
+    const uri = new URL(url.replace(/\/$/, ''));
+    return uri;
+  }
+
   get uri() {
     const url = this.host
       ? new URL(this.host)
@@ -1326,6 +1348,9 @@ export class EndpointContext {
   //#endregion
 
   get uriPort(): string | undefined {
+    if (!this.uri?.origin?.includes('localhost')) {
+      return this.config?.hostPortNumber?.toString();
+    }
     return this.uri?.port;
   }
 
@@ -1530,7 +1555,7 @@ export class EndpointContext {
       autoSave = this.databaseConfig.autoSave;
     } else {
       if (this.USE_MARIADB_MYSQL_IN_DOCKER) {
-        autoSave = !UtilsOs.isRunningInDocker(); // in docker I am using mysql or posgress
+        autoSave = !this.isRunningInsideDocker; // in docker I am using mysql or posgress
       } else {
         autoSave = true; // on docker with sqljs I need to save db
       }
@@ -1699,8 +1724,21 @@ export class EndpointContext {
           classConfig.methods[methodName];
         // debugger
         const type: Models.Http.Rest.HttpMethod = methodConfig.type;
+
+        // this is quick fix - in docker global path should not be used
+        const globalPathPart =
+          this.isRunningInsideDocker ||
+          !this.frontendHostUri?.origin?.includes('localhost') // fe with domain -> is in docker
+            ? `${this.uriPathnameOrNothingIfRoot.replace(/\/$/, '')}/${apiPrefix}/${this.contextName}`.replace(
+                /\/\//,
+                '/',
+              )
+            : '';
         const expressPath = methodConfig.global
-          ? `/${methodConfig.path?.replace(/\//, '')}`
+          ? `${globalPathPart}/${methodConfig.path?.replace(/\/$/, '')}`.replace(
+              /\/\//,
+              '/',
+            )
           : TaonHelpers.getExpressPath(classConfig, methodConfig);
 
         // console.log({ expressPath });

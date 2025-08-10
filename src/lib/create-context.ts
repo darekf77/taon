@@ -75,7 +75,12 @@ export const createContext = <
   >,
 ) => {
   let config = configFn({});
+  // console.log(
+  //   `
 
+  //   [Taon] Creating context ${config.contextName}...`,
+  //   {config},
+  // );
   const endpointContextRef = new EndpointContext(config, configFn);
 
   const res = {
