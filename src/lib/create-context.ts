@@ -185,18 +185,19 @@ export const createContext = <
       return await new Promise(async (resolve, reject) => {
         //#region init in set timeout
         setTimeout(async () => {
-          // const
-          const activeContext = config?.activeContext || null;
-          if (
-            _.isString(activeContext) &&
-            activeContext !== '' &&
-            activeContext !== config?.contextName
-          ) {
-            console.warn(
-              `[taon] Context ${endpointContextRef.contextName} is not active context, skipping initialization.`,
-            );
-            resolve(endpointContextRef);
-            return;
+          if (UtilsOs.isRunningInDocker()) {
+            const activeContext = config?.activeContext || null;
+            if (
+              _.isString(activeContext) &&
+              activeContext !== '' &&
+              activeContext !== config?.contextName
+            ) {
+              console.warn(
+                `[taon] Context ${endpointContextRef.contextName} is not active context, skipping initialization.`,
+              );
+              resolve(endpointContextRef);
+              return;
+            }
           }
 
           await endpointContextRef.init({
