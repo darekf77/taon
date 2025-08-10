@@ -8,5 +8,8 @@ const env: Partial<EnvOptions> = {
     angularProd: true,
     websql: true,
   },
+  website: {
+    useDomain: true,
+  },
 };
 export default env;

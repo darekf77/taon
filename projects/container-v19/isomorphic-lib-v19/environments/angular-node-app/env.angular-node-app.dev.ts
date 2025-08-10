@@ -7,5 +7,8 @@ const env: Partial<EnvOptions> = {
     ...baseEnv.build,
     angularProd: true,
   },
+  website: {
+    useDomain: true,
+  },
 };
 export default env;
