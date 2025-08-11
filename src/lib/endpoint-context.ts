@@ -705,7 +705,7 @@ export class EndpointContext {
           //#region @backend
           if (UtilsOs.isElectron) {
             dbLocationInOs = crossPlatformPath([
-              os.userInfo().homedir,
+              UtilsOs.getRealHomeDir(),
               `.taon/databases-for-electron-apps/${
                 this.appId || _.snakeCase(process.cwd()).replace(/\_/, '.')
               }/${this.contextName}.sqlite`,

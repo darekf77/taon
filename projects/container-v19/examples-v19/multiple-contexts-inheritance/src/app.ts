@@ -12,7 +12,7 @@ import { Observable, map } from 'rxjs';
 import { Taon, BaseContext, TAON_CONTEXT } from 'taon/src';
 import { UtilsOs } from 'tnp-core/src';
 
-import { HOST_URL, FRONTEND_HOST_URL } from './app.hosts';
+import { HOST_URL, FRONTEND_HOST_URL, HOST_CONFIG } from './app.hosts';
 import { APP_ID } from './lib/build-info._auto-generated_';
 //#endregion
 
@@ -154,10 +154,7 @@ class UserMigration extends Taon.Base.Migration {
 
 //#region  isomorphic-lib-v19 context
 var MainContext = Taon.createContext(() => ({
-  host: HOST_URL,
-  appId: APP_ID,
-  frontendHost: FRONTEND_HOST_URL,
-  contextName: 'MainContext',
+  ...HOST_CONFIG['app.ts']['MainContext'],
   contexts: { BaseContext },
   migrations: {
     //#region @websql
