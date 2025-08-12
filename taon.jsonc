@@ -25,6 +25,8 @@
     // },
   ],
 
+  "removeAfterPullingFromGit": ["projects"],
+
   "resources": ["README.md", "bin"],
 
   "packageJsonOverride": {
