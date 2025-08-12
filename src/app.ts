@@ -84,13 +84,6 @@ class User extends Taon.Base.AbstractEntity {
 @Taon.Controller({ className: 'UserController' })
 class UserController extends Taon.Base.CrudController<User> {
   entityClassResolveFn = () => User;
-  //#region @websql
-  async initExampleDbData(): Promise<void> {
-    const superAdmin = new User();
-    superAdmin.name = 'super-admin';
-    await this.db.save(superAdmin);
-  }
-  //#endregion
 }
 //#endregion
 

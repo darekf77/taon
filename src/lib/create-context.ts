@@ -240,49 +240,51 @@ export const createContext = <
           //#endregion
 
           await endpointContextRef.initClasses();
-          let keepWebsqlDbDataAfterReload = false;
-          //#region @browser
-          keepWebsqlDbDataAfterReload =
-            TaonAdminService.Instance?.keepWebsqlDbDataAfterReload;
-          //#endregion
+          if (endpointContextRef.databaseConfig) {
+            let keepWebsqlDbDataAfterReload = false;
+            //#region @browser
+            keepWebsqlDbDataAfterReload =
+              TaonAdminService.Instance?.keepWebsqlDbDataAfterReload;
+            //#endregion
 
-          if (!Helpers.isNode && keepWebsqlDbDataAfterReload) {
-            !UtilsOs.isRunningInCliMode() &&
-              Helpers.info(
-                `[taon] Keeping websql data after reload ` +
-                  `(context=${endpointContextRef.contextName}).`,
+            if (!Helpers.isNode && keepWebsqlDbDataAfterReload) {
+              !UtilsOs.isRunningInCliMode() &&
+                Helpers.info(
+                  `[taon] Keeping websql data after reload ` +
+                    `(context=${endpointContextRef.contextName}).`,
+                );
+            } else {
+              !UtilsOs.isRunningInCliMode() &&
+                Helpers.info(
+                  `[taon] Dropping all tables and data ` +
+                    `(context=${endpointContextRef.contextName}).`,
+                );
+            }
+
+            //#region TODO this may be usefull but for now
+            // 2 separate contexts are fine
+            // const shouldStartRemoteHost = endpointContextRef.mode !== 'remote-backend(tcp+udp)';
+            // if(shouldStartRemoteHost) {
+            //   const endpointContextRemoteHostRef = new EndpointContext(config, configFn);
+            //   await endpointContextRemoteHostRef.init({
+            //     overrideRemoteHost: endpointContextRef.host,
+            //     overrideHost: null,
+            //   });
+            //   endpointContextRemoteHostRef.initMetadata();
+
+            //   endpointContextRef.__contextForControllerInstanceAccess = endpointContextRemoteHostRef;
+            // }
+            //#endregion
+
+            if (endpointContextRef.onlyMigrationRun) {
+              await endpointContextRef.dbMigrations.runAllNotCompletedMigrations();
+            } else if (endpointContextRef.onlyMigrationRevertToTimestamp) {
+              await endpointContextRef.dbMigrations.revertMigrationToTimestamp(
+                endpointContextRef.onlyMigrationRevertToTimestamp,
               );
-          } else {
-            !UtilsOs.isRunningInCliMode() &&
-              Helpers.info(
-                `[taon] Dropping all tables and data ` +
-                  `(context=${endpointContextRef.contextName}).`,
-              );
-            await endpointContextRef.reinitControllers();
-          }
-          //#region TODO this may be usefull but for now
-          // 2 separate contexts are fine
-          // const shouldStartRemoteHost = endpointContextRef.mode !== 'remote-backend(tcp+udp)';
-          // if(shouldStartRemoteHost) {
-          //   const endpointContextRemoteHostRef = new EndpointContext(config, configFn);
-          //   await endpointContextRemoteHostRef.init({
-          //     overrideRemoteHost: endpointContextRef.host,
-          //     overrideHost: null,
-          //   });
-          //   endpointContextRemoteHostRef.initMetadata();
-
-          //   endpointContextRef.__contextForControllerInstanceAccess = endpointContextRemoteHostRef;
-          // }
-          //#endregion
-
-          if (endpointContextRef.onlyMigrationRun) {
-            await endpointContextRef.dbMigrations.runAllNotCompletedMigrations();
-          } else if (endpointContextRef.onlyMigrationRevertToTimestamp) {
-            await endpointContextRef.dbMigrations.revertMigrationToTimestamp(
-              endpointContextRef.onlyMigrationRevertToTimestamp,
-            );
-          } else {
-            await endpointContextRef.dbMigrations.runAllNotCompletedMigrations();
+            } else {
+              await endpointContextRef.dbMigrations.runAllNotCompletedMigrations();
+            }
           }
 
           resolve(endpointContextRef);

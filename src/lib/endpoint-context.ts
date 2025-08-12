@@ -49,7 +49,11 @@ import { path } from 'tnp-core/src';
 
 import type { BaseClass } from './base-classes/base-class';
 import type { BaseInjector } from './base-classes/base-injector';
-import type { BaseMiddleware } from './base-classes/base-middleware';
+import type {
+  BaseMiddleware,
+  TaonMiddlewareInterceptOptions,
+} from './base-classes/base-middleware';
+export type { TaonMiddlewareInterceptOptions } from './base-classes/base-middleware';
 import type { BaseMigration } from './base-classes/base-migration';
 import { BaseSubscriberForEntity } from './base-classes/base-subscriber-for-entity';
 import { apiPrefix } from './constants';
@@ -577,7 +581,7 @@ export class EndpointContext {
         //#region @backend
         this.expressApp = express();
 
-        this.initMiddlewares();
+        await this.initBackendMiddlewares();
         const shouldStartHttpsSecureServer =
           this.isHttpServer && !this.isRunningInsideDocker;
         this.logFramework &&
@@ -602,6 +606,8 @@ export class EndpointContext {
           );
         });
         //#endregion
+
+        await this.initFrontnedMiddlewares();
       }
       //#endregion
 
@@ -1261,28 +1267,7 @@ export class EndpointContext {
   }
   //#endregion
 
-  //#region methods & getters / reinit controllers db example data
-  async reinitControllers(): Promise<void> {
-    if (this.remoteHost || Object.keys(this.config.migrations).length > 0) {
-      return;
-    }
-    // Helpers.taskStarted(
-    //   `[taon] REINITING CONTROLLERS ${this.contextName} STARTED`,
-    // );
-    const controllers = this.getClassesInstancesArrBy(
-      Models.ClassType.CONTROLLER,
-    );
-    // console.log('CONTROLLERS TO REINIT', controllers);
-    for (const ctrl of controllers) {
-      if (_.isFunction(ctrl.initExampleDbData)) {
-        await ctrl.initExampleDbData();
-      }
-    }
-    // Helpers.taskDone(
-    //   `[taon] REINITING CONTROLLERS ${this.contextName} DONE`,
-    // );
-  }
-
+  //#region methods & getters / init classes
   async initClasses(): Promise<void> {
     if (this.remoteHost) {
       return;
@@ -1560,7 +1545,7 @@ export class EndpointContext {
   //#region methods & getters / init connection
   async initDatabaseConnection(): Promise<void> {
     //#region @websqlFunc
-    if (this.remoteHost) {
+    if (this.remoteHost || !this.databaseConfig) {
       return;
     }
     const entities = this.getClassFunByArr(Models.ClassType.ENTITY).map(
@@ -1871,7 +1856,50 @@ export class EndpointContext {
   //#endregion
 
   //#region methods & getters / init middlewares
-  private async initMiddlewares() {
+
+  private async initFrontnedMiddlewares(): Promise<void> {
+    const middlewares = this.getClassesInstancesArrBy(
+      Models.ClassType.MIDDLEWARE,
+    );
+    for (const middleware of middlewares) {
+      const middlewareInstance: BaseMiddleware = middleware as any;
+      if (_.isFunction(middlewareInstance.intercept)) {
+        ((
+          instance: BaseMiddleware,
+          contextName: string,
+          apiPart: string,
+          uriPathnameOrNothingIfRoot: string,
+        ) => {
+          const interceptorName = `${contextName}-${ClassHelpers.getName(instance)}`;
+          Resource.request.interceptors.set(interceptorName, async req => {
+            console.log('request', req);
+            const url = new URL(req.url);
+            if (
+              url.pathname.startsWith(
+                `${uriPathnameOrNothingIfRoot}/${apiPart}/${contextName}/`,
+              )
+            ) {
+              await instance.intercept({
+                client: {
+                  req,
+                },
+              });
+            } else {
+              // console.log('not fit frontend', url.href);
+            }
+            return req;
+          });
+        })(
+          middlewareInstance,
+          this.contextName,
+          apiPrefix,
+          this.uriPathnameOrNothingIfRoot,
+        );
+      }
+    }
+  }
+
+  private async initBackendMiddlewares(): Promise<void> {
     //#region @backend
     const app = this.expressApp;
 
@@ -1880,9 +1908,45 @@ export class EndpointContext {
     );
     for (const middleware of middlewares) {
       const middlewareInstance: BaseMiddleware = middleware as any;
-      // if (_.isFunction(ctrl.initExampleDbData)) {
-      //   await ctrl.initExampleDbData();
-      // }
+      if (_.isFunction(middlewareInstance.intercept)) {
+        ((
+          instance: BaseMiddleware,
+          contextName: string,
+          apiPart: string,
+          uriPathnameOrNothingIfRoot: string,
+        ) => {
+          const asyncHandler = fn => (req, res, next) => {
+            Promise.resolve(fn(req, res, next)).catch(next);
+          };
+
+          const middlewareFn = asyncHandler(
+            async (req: express.Request, res: express.Response, next) => {
+              if (
+                req.originalUrl.startsWith(
+                  `${uriPathnameOrNothingIfRoot}/${apiPart}/${contextName}/`,
+                )
+              ) {
+                await instance.intercept({
+                  server: {
+                    req,
+                    res,
+                  },
+                });
+              } else {
+                // console.log('not fit backend', url.href);
+              }
+              next();
+            },
+          );
+
+          app.use(middlewareFn);
+        })(
+          middlewareInstance,
+          this.contextName,
+          apiPrefix,
+          this.uriPathnameOrNothingIfRoot,
+        );
+      }
     }
 
     // if (this.middlewares) {

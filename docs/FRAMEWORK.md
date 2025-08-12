@@ -337,13 +337,6 @@ class UserController extends Taon.Base.CrudController<User> {
     };
   }
 
-  //#region @websql
-  async initExampleDbData(): Promise<void> {
-    const superAdmin = new User();
-    superAdmin.name = 'super-admin';
-    await this.db.save(superAdmin);
-  }
-  //#endregion
 }
 
 // # and later inside Angular code

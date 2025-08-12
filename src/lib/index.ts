@@ -34,6 +34,7 @@ export { inject } from './inject';
 export { Models } from './models';
 export * from './constants';
 export { ClassHelpers } from './helpers/class-helpers';
+export type { TaonMiddlewareInterceptOptions } from './base-classes/base-middleware';
 // TODO export all things
 
 export namespace Taon {
