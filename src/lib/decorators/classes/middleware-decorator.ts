@@ -5,7 +5,7 @@ import { Symbols } from '../../symbols';
 /**
  * Provider decorator
  */
-export function TaonProvider<T = any>(options?: TaonProviderOptions<T>) {
+export function TaonMiddleware<T = any>(options?: TaonMiddlewareOptions<T>) {
   return function (constructor: Function) {
     Reflect.defineMetadata(
       Symbols.metadata.options.provider,
@@ -21,7 +21,7 @@ export function TaonProvider<T = any>(options?: TaonProviderOptions<T>) {
   };
 }
 
-export class TaonProviderOptions<
+export class TaonMiddlewareOptions<
   T = any,
 > extends Models.DecoratorAbstractOpt {
   // global?: boolean;

@@ -1,14 +1,15 @@
-import { CoreModels } from 'tnp-core/src';
 import { Response, RequestHandler } from 'express';
 import {
   Response as ExpressResponse,
   Request as ExpressRequest,
 } from 'express';
-import { _ } from 'tnp-core/src';
 import { Models as ModelsNg2Rest } from 'ng2-rest/src';
-import { ClassHelpers } from './helpers/class-helpers';
+import { _ } from 'tnp-core/src';
+import { CoreModels } from 'tnp-core/src';
+
 import type { TaonControllerOptions } from './decorators/classes/controller-decorator';
 import type { TaonEntityOptions } from './decorators/classes/entity-decorator';
+import { ClassHelpers } from './helpers/class-helpers';
 
 export namespace Models {
   export type FrameworkMode =
@@ -26,6 +27,7 @@ export namespace Models {
     PROVIDER = 'PROVIDER',
     SUBSCRIBER = 'SUBSCRIBER',
     MIGRATION = 'MIGRATION',
+    MIDDLEWARE = 'MIDDLEWARE',
   }
 
   export const ClassTypeKey = {
@@ -35,8 +37,9 @@ export namespace Models {
     [ClassType.PROVIDER]: 'providers',
     [ClassType.SUBSCRIBER]: 'subscribers',
     [ClassType.MIGRATION]: 'migrations',
+    [ClassType.MIDDLEWARE]: 'middlewares',
   } as {
-    [key in ClassType]: keyof ContextOptions<any, any, any, any, any, any, any>;
+    [key in ClassType]: keyof ContextOptions<any, any, any, any, any, any, any, any>;
   };
 
   //#endregion
@@ -163,6 +166,7 @@ export namespace Models {
     PROVIDERS,
     SUBSCRIBERS,
     MIGRATIONS,
+    MIDDLEWARES
   > {
     appId?: string;
 
@@ -207,26 +211,85 @@ export namespace Models {
      * Default: true
      */
     useIpcWhenElectron?: boolean;
+    /**
+     * taon contexts here
+     * (module like structure)
+     */
     contexts?: CONTEXTS;
+    /**
+     * taon controller here
+     * (glue between frontend and backend)
+     */
     controllers?: CONTROLLERS;
+    /**
+     * taon entities
+     * (entities are used to create tables in db)
+     */
     entities?: ENTITIES;
+    /**
+     * taon repositories
+     * (repositories are used to access data from db)
+     */
     repositories?: REPOSITORIES;
+    /**
+     * taon providers
+     * (context singletons)
+     */
     providers?: PROVIDERS;
+    /**
+     * taon subscribers
+     * (subscribers are used to listen to db events)
+     */
     subscribers?: SUBSCRIBERS;
+    /**
+     * taon migrations
+     * (migrations are used to update db schema and achieve proper CI/CD)
+     */
     migrations?: MIGRATIONS;
+    /**
+     * taon middlewares
+     * middlewares are used to intercept requests
+     * and responses in the context
+     */
+    middlewares?: MIDDLEWARES;
+    /**
+     * Config for express session
+     */
     session?: ISession;
+    /**
+     * taon is not going to write .rest files to cwd()
+     */
     skipWritingServerRoutes?: boolean;
+    /**
+     * TODO - this is still in progress
+     * @deprecated
+     */
     productionMode?: boolean;
+    /**
+     * If you want your context to never be started as separated server
+     * use abstract: true
+     * @default: false
+     */
     abstract?: boolean;
     logs?: boolean | ConnectionOptionsLogs;
     database?: boolean | Partial<DatabaseConfig>;
+    /**
+     * disable default realtime communication through TCP upgrade sockets
+     */
     disabledRealtime?: boolean;
+    /**
+     * Will be removed soon - cloud will handle certs and https
+     * @deprecated
+     */
     https?: {
       key: string;
       cert: string;
     };
+    /**
+     * TODO - will be removed soon
+     * @deprecated
+     */
     publicAssets?: { serverPath: string; locationOnDisk: string }[];
-    middlewares?: MiddlewareType[];
   }
   //#endregion
 

@@ -49,6 +49,7 @@ import { path } from 'tnp-core/src';
 
 import type { BaseClass } from './base-classes/base-class';
 import type { BaseInjector } from './base-classes/base-injector';
+import type { BaseMiddleware } from './base-classes/base-middleware';
 import type { BaseMigration } from './base-classes/base-migration';
 import { BaseSubscriberForEntity } from './base-classes/base-subscriber-for-entity';
 import { apiPrefix } from './constants';
@@ -147,6 +148,7 @@ export class EndpointContext {
   private injectableTypesfromContexts = [
     Models.ClassType.CONTROLLER,
     Models.ClassType.PROVIDER,
+    Models.ClassType.MIDDLEWARE,
     Models.ClassType.REPOSITORY,
     Models.ClassType.SUBSCRIBER,
     Models.ClassType.MIGRATION,
@@ -211,7 +213,7 @@ export class EndpointContext {
   /**
    * available after init()
    */
-  public config: Models.ContextOptions<any, any, any, any, any, any, any>;
+  public config: Models.ContextOptions<any, any, any, any, any, any, any, any>;
   //#endregion
 
   //#region fields / logs
@@ -266,11 +268,12 @@ export class EndpointContext {
       any,
       any,
       any,
+      any,
       any
     >,
     private configFn: (
       env: any,
-    ) => Models.ContextOptions<any, any, any, any, any, any, any>,
+    ) => Models.ContextOptions<any, any, any, any, any, any, any, any>,
   ) {
     this.isRunningInsideDocker = UtilsOs.isRunningInDocker();
   }
@@ -481,6 +484,13 @@ export class EndpointContext {
       ...this.config.providers,
     };
 
+    this.config.middlewares = {
+      ...(await this.getRecrusiveClassesfromContextsObj(
+        Models.ClassType.MIDDLEWARE,
+      )),
+      ...this.config.middlewares,
+    };
+
     this.config.subscribers = {
       ...(await this.getRecrusiveClassesfromContextsObj(
         Models.ClassType.SUBSCRIBER,
@@ -525,6 +535,13 @@ export class EndpointContext {
       ctx: this,
       classType: Models.ClassType.PROVIDER,
     });
+    this.config.middlewares = this.cloneClassesObjWithNewMetadata({
+      classesInput: this.config.middlewares,
+      config: this.config,
+      ctx: this,
+      classType: Models.ClassType.MIDDLEWARE,
+    });
+
     this.config.subscribers = this.cloneClassesObjWithNewMetadata({
       classesInput: this.config.subscribers,
       config: this.config,
@@ -874,7 +891,7 @@ export class EndpointContext {
   }: {
     BaseClass: T;
     className: string;
-    config: Models.ContextOptions<any, any, any, any, any, any, any>;
+    config: Models.ContextOptions<any, any, any, any, any, any, any, any>;
     ctx: EndpointContext;
     classType: Models.ClassType;
   }): T => {
@@ -956,7 +973,7 @@ export class EndpointContext {
     classType,
   }: {
     classesInput: any;
-    config: Models.ContextOptions<any, any, any, any, any, any, any>;
+    config: Models.ContextOptions<any, any, any, any, any, any, any, any>;
     ctx: EndpointContext;
     classType: Models.ClassType;
   }) => {
@@ -1180,6 +1197,8 @@ export class EndpointContext {
         return this.config.entities;
       case Models.ClassType.PROVIDER:
         return this.config.providers;
+      case Models.ClassType.MIDDLEWARE:
+        return this.config.middlewares;
       case Models.ClassType.REPOSITORY:
         return this.config.repositories;
       case Models.ClassType.SUBSCRIBER:
@@ -1195,7 +1214,7 @@ export class EndpointContext {
 
   /**
    * Only for injectable types
-   * Only for classType: CONTROLLER, REPOSITORY, PROVIDER
+   * Only for classType: CONTROLLER, REPOSITORY, PROVIDER, MIDDLEWARES
    */
   getClassFunByClassName(className: string): Function {
     for (const classTypeName of this.allTypesfromContexts) {
@@ -1281,6 +1300,7 @@ export class EndpointContext {
     //#endregion
 
     for (const classTypeName of [
+      Models.ClassType.MIDDLEWARE,
       Models.ClassType.PROVIDER,
       Models.ClassType.REPOSITORY,
       Models.ClassType.CONTROLLER,
@@ -1297,6 +1317,7 @@ export class EndpointContext {
     }
 
     for (const classTypeName of [
+      Models.ClassType.MIDDLEWARE,
       Models.ClassType.PROVIDER,
       Models.ClassType.REPOSITORY,
       Models.ClassType.CONTROLLER,
@@ -1850,15 +1871,26 @@ export class EndpointContext {
   //#endregion
 
   //#region methods & getters / init middlewares
-  private initMiddlewares() {
+  private async initMiddlewares() {
     //#region @backend
     const app = this.expressApp;
-    if (this.middlewares) {
-      this.middlewares.forEach(m => {
-        const [fun, args] = m;
-        app.use(fun.apply(null, args));
-      });
+
+    const middlewares = this.getClassesInstancesArrBy(
+      Models.ClassType.MIDDLEWARE,
+    );
+    for (const middleware of middlewares) {
+      const middlewareInstance: BaseMiddleware = middleware as any;
+      // if (_.isFunction(ctrl.initExampleDbData)) {
+      //   await ctrl.initExampleDbData();
+      // }
     }
+
+    // if (this.middlewares) {
+    //   this.middlewares.forEach(m => {
+    //     const [fun, args] = m;
+    //     app.use(fun.apply(null, args));
+    //   });
+    // }
 
     this.expressApp.get('/helloworld', (req, res) => {
       res.send(`Hello, world from context ${this.contextName}`);

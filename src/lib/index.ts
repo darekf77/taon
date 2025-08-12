@@ -6,6 +6,7 @@ import * as base from './base-classes/base';
 import * as createContextFn from './create-context';
 import * as controllerDecorator from './decorators/classes/controller-decorator';
 import * as entityDecorator from './decorators/classes/entity-decorator';
+import * as middlewareDecorator from './decorators/classes/middleware-decorator';
 import * as migrationDecorator from './decorators/classes/migration-decorator';
 import * as providerDecorator from './decorators/classes/provider-decorator';
 import * as repositoryDecorator from './decorators/classes/repository-decorator';
@@ -50,6 +51,7 @@ export namespace Taon {
   export import Repository = repositoryDecorator.TaonRepository;
   export import Subscriber = subscriberDecorator.TaonSubscriber;
   export import Migration = migrationDecorator.TaonMigration;
+  export import Middleware = middlewareDecorator.TaonMiddleware;
   //#endregion
   //#region aliases to helpers
   export const isBrowser = coreHelpers.Helpers.isBrowser;

@@ -6,6 +6,7 @@ import * as controller from './base-controller';
 import * as crudController from './base-crud-controller';
 import * as customRepository from './base-custom-repository';
 import * as entity from './base-entity';
+import * as baseMiddleware from './base-middleware';
 import * as baseMigration from './base-migration';
 import * as provider from './base-provider';
 import * as repository from './base-repository';
@@ -22,6 +23,7 @@ export namespace Base {
   export import CustomRepository = customRepository.BaseCustomRepository;
   export import SubscriberForEntity = baseSubscriberEntity.BaseSubscriberForEntity;
   export import Migration = baseMigration.BaseMigration;
+  export import Middleware = baseMiddleware.BaseMiddleware;
   export import AngularService = baseService.BaseAngularsService;
   export const Context = baseContext.BaseContext;
 }

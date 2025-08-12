@@ -130,19 +130,18 @@ export class BaseInjector {
 
   //#region inject / global provider
   /**
-   * global provider available in every context
+   * inject middleware for context
    */
-  injectGlobalProvider<T>(ctor: new (...args: any[]) => T): T {
+  injectMiddleware<T>(ctor: new (...args: any[]) => T): T {
     return this.__inject<T>(ctor, { localInstance: false });
   }
   //#endregion
 
   //#region inject / context provider
   /**
-   * context scoped provider
-   * TODO
+   * inject provider for context
    */
-  injectContextProvider<T>(ctor: new (...args: any[]) => T): T {
+  injectProvider<T>(ctor: new (...args: any[]) => T): T {
     return this.__inject<T>(ctor, { localInstance: false });
   }
   //#endregion
@@ -213,7 +212,7 @@ export class BaseInjector {
 
               Please add "${
                 ClassHelpers.getName(ctor) || ctor.name
-              }" to (entites or contorllers or providers or repositories)
+              }" to (entites or contorllers or providers or repositories or middlewares)
 
               `,
               );
@@ -261,7 +260,7 @@ export class BaseInjector {
 
               Please add "${
                 ClassHelpers.getName(ctor) || ctor.name
-              }" to (entites or contorllers or providers or repositories)
+              }" to (entites or contorllers or providers or repositories or middlewares)
 
               `,
               );

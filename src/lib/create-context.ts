@@ -20,6 +20,7 @@ export const createContextTemplate = <
   PROVIDER extends Record<string, new (...args: any[]) => any>,
   SUBSCRIBER extends Record<string, new (...args: any[]) => any>,
   MIGRATION extends Record<string, new (...args: any[]) => any>,
+  MIDDLEWARE extends Record<string, new (...args: any[]) => any>,
   //#endregion
 >(
   configFn: (
@@ -31,7 +32,8 @@ export const createContextTemplate = <
     REPO,
     PROVIDER,
     SUBSCRIBER,
-    MIGRATION
+    MIGRATION,
+    MIDDLEWARE
   >,
 ) => {
   return () => {
@@ -42,7 +44,8 @@ export const createContextTemplate = <
       REPO,
       PROVIDER,
       SUBSCRIBER,
-      MIGRATION
+      MIGRATION,
+      MIDDLEWARE
     >(configFn);
   };
 };
@@ -60,6 +63,7 @@ export const createContext = <
   PROVIDER extends Record<string, new (...args: any[]) => any>,
   SUBSCRIBER extends Record<string, new (...args: any[]) => any>,
   MIGRATION extends Record<string, new (...args: any[]) => any>,
+  MIDDLEWARES extends Record<string, new (...args: any[]) => any>,
   //#endregion
 >(
   configFn: (
@@ -71,7 +75,8 @@ export const createContext = <
     REPO,
     PROVIDER,
     SUBSCRIBER,
-    MIGRATION
+    MIGRATION,
+    MIDDLEWARES
   >,
 ) => {
   let config = configFn({});
@@ -118,6 +123,9 @@ export const createContext = <
       },
       get migrations() {
         return config.migrations as any; // TODO QUICK_FIX new typescript generated wrong types
+      },
+      get middlewares() {
+        return config.middlewares as any; // TODO QUICK_FIX new typescript generated wrong types
       },
     },
     //#endregion
