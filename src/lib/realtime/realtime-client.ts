@@ -34,9 +34,12 @@ export class RealtimeClient {
 
     if (
       this.core.ctx.config.frontendHost &&
-      this.core.ctx.config.frontendHost !== ''
+      this.core.ctx.config.frontendHost !== '' &&
+      this.core.ctx.isRunningInsideDocker
     ) {
-      console.log(`[${this.core.ctx.contextName}] USING FRONTEND HOST ${this.core.ctx.config.frontendHost}`);
+      console.log(
+        `[${this.core.ctx.contextName}] USING FRONTEND HOST ${this.core.ctx.config.frontendHost}`,
+      );
       nspPath.global = new URL(
         `${this.core.ctx.frontendHostUri.origin}${nspPath.global.pathname}`,
       );

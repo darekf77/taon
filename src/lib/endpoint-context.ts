@@ -263,7 +263,7 @@ export class EndpointContext {
   /**
    * Inside docker there is not need for https secure server
    */
-  private isRunningInsideDocker = false;
+  public readonly isRunningInsideDocker: boolean = false;
   constructor(
     private originalConfig: Models.ContextOptions<
       any,
