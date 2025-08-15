@@ -581,6 +581,10 @@ export class EndpointContext {
         //#region @backend
         this.expressApp = express();
 
+        if (process.env.NODE_ENV === 'production') {
+          this.expressApp.set('trust proxy', 1);
+        }
+
         await this.initBackendMiddlewares();
         const shouldStartHttpsSecureServer =
           this.isHttpServer && !this.isRunningInsideDocker;
@@ -808,6 +812,7 @@ export class EndpointContext {
     if (this.mode === 'backend-frontend(tcp+udp)') {
       return await new Promise(resolve => {
         if (this.isRunningInsideDocker) {
+
           // this.displayRoutes(this.expressApp);
           this.serverTcpUdp.listen(Number(this.uriPort), '0.0.0.0', () => {
             Helpers.log(
@@ -815,7 +820,7 @@ export class EndpointContext {
             );
             Helpers.log(`[taon][express-server]listening on port: ${this.uriPort}, hostname: ${this.uriPathname},
     address: ${this.uriProtocol}//localhost:${this.uriPort}${this.uriPathname}
-    env: ${this.expressApp.settings.env}
+    ExpressJS mode: ${this.expressApp.settings.env}
     `);
             resolve(void 0);
           });
@@ -826,8 +831,8 @@ export class EndpointContext {
               `Express server (inside nodejs app) started on localhost:${this.uriPort}`,
             );
             Helpers.log(`[taon][express-server]listening on port: ${this.uriPort}, hostname: ${this.uriPathname},
-            address: ${this.uriProtocol}//localhost:${this.uriPort}${this.uriPathname}
-            env: ${this.expressApp.settings.env}
+    address: ${this.uriProtocol}//localhost:${this.uriPort}${this.uriPathname}
+    expressJS mode: ${this.expressApp.settings.env}
             `);
             resolve(void 0);
           });
