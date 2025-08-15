@@ -15,30 +15,28 @@ export abstract class BaseAngularsService {
   //#region @browser
   protected readonly currentContext: TaonContext = inject(TAON_CONTEXT);
   //#endregion
-  protected readonly CURRENT_HOST_BACKEND_PORT: number | undefined;
-
   constructor() {
-    //#region @browser
-    this.CURRENT_HOST_BACKEND_PORT = inject(CURRENT_HOST_BACKEND_PORT, {
-      optional: true,
-    });
-    // #endregion
+
   }
 
-  /**
-   * @deprecated
-   * Returns the host URL for the backend service
-   * that is running on localhost (normal NodeJS/ExpressJS mode).
-   */
-  get host(): string {
-    return `http://localhost:${this.CURRENT_HOST_BACKEND_PORT}`;
-  }
-
-  injectController<T>(ctor: new (...args: any[]) => T): T {
-    let currentContext: TaonContext;
-    //#region @browser
-    currentContext = this.currentContext;
-    //#endregion
-    return taonInject(() => currentContext.getClass(ctor)) as T;
+  injectController<T>(
+    ctor: new (...args: any[]) => T,
+    /**
+     * optional override context
+     */
+    overrideCurrentContext?: TaonContext,
+  ): T {
+    return taonInject(() => {
+      let currentContext: TaonContext;
+      //#region @browser
+      currentContext = overrideCurrentContext ? overrideCurrentContext : this.currentContext;
+      //#endregion
+      if (!currentContext) {
+        throw new Error(
+          'No context available. Make sure to initialize the context before injecting controllers.',
+        );
+      }
+      return currentContext ? currentContext.getClass(ctor): void 0;
+    }) as T;
   }
 }

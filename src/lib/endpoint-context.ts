@@ -1640,7 +1640,7 @@ export class EndpointContext {
 
 
         `,
-          dataSourceDbConfig,
+          // dataSourceDbConfig,
           { 'this.connection': !!this.connection },
         );
         console.log(
