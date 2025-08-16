@@ -1,27 +1,57 @@
+import type crypto from 'crypto';
+
+import type express from 'express';
+import type multer from 'multer';
+
 import { ClassHelpers } from '../../helpers/class-helpers';
-import { Symbols } from '../../symbols';
 import { Models } from '../../models';
+import { Symbols } from '../../symbols';
 
 /**
  * Controller decorator
  */
-export function TaonController(options?: TaonControllerOptions) {
+export function TaonController<ControllerClass = any>(
+  controllerOptions?: TaonControllerOptions<ControllerClass>,
+) {
   return function (constructor: Function) {
-    ClassHelpers.setName(constructor, options?.className);
+    ClassHelpers.setName(constructor, controllerOptions?.className);
     Reflect.defineMetadata(
       Symbols.metadata.options.controller,
-      options,
+      controllerOptions,
       constructor,
     );
     Reflect.defineMetadata(
       Symbols.metadata.className,
-      options?.className || constructor.name,
+      controllerOptions?.className || constructor.name,
       constructor,
     );
   };
 }
 
-export class TaonControllerOptions extends Models.DecoratorAbstractOpt {
+export type TaonFileUploadMethodConfig = {
+  (options: {
+    multer?: typeof multer;
+    crypto: typeof crypto;
+    cwd?: string;
+    expressPath?: string;
+  }): express.RequestHandler;
+};
+
+export type TaonFileUploadOptionsObj<ControllerClass> = {
+  [methodName in keyof Partial<ControllerClass>]: TaonFileUploadMethodConfig;
+};
+
+export type TaonFileUploadOptions<ControllerClass> =
+  | false
+  | {
+      [methodName in keyof Partial<ControllerClass>]:
+        | false
+        | TaonFileUploadMethodConfig;
+    };
+
+export class TaonControllerOptions<
+  ControllerClass = any,
+> extends Models.DecoratorAbstractOpt {
   /**
    * typeorm realtime subscribtion // TODO disabled for now, does not make sense ?s
    */
@@ -30,4 +60,10 @@ export class TaonControllerOptions extends Models.DecoratorAbstractOpt {
    * override default path for controller api
    */
   path?: string;
+
+  /**
+   * enable or diable file upload for controller
+   * Provide boolean or multer options for each method
+   */
+  fileUpload?: TaonFileUploadOptions<ControllerClass>;
 }

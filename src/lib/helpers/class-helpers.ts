@@ -237,12 +237,12 @@ export namespace ClassHelpers {
     target: Function,
     configs: Models.ControllerConfig[] = [],
     callerTarget?: Function,
-  ): Models.RuntimeControllerConfig[] => {
+  ): Models.ControllerConfig[] => {
     if (!_.isFunction(target)) {
       throw `[typescript-class-helper][getClassConfig] Cannot get class config from: ${target}`;
     }
 
-    let config: Models.RuntimeControllerConfig;
+    let config: Models.ControllerConfig;
     const parentClass = Object.getPrototypeOf(target);
     const parentName = parentClass ? ClassHelpers.getName(parentClass) : void 0;
     const isValidParent = _.isFunction(parentClass) && parentName !== '';

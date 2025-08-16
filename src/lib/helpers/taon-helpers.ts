@@ -46,7 +46,7 @@ export namespace TaonHelpers {
 
   //#region get expores path
   export const getExpressPath = (
-    c: Models.RuntimeControllerConfig,
+    c: Models.ControllerConfig<any>,
     pathOrClassConfig: Models.MethodConfig,
   ) => {
     if (typeof pathOrClassConfig === 'string')

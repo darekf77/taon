@@ -7,7 +7,11 @@ import { Models as ModelsNg2Rest } from 'ng2-rest/src';
 import { _ } from 'tnp-core/src';
 import { CoreModels } from 'tnp-core/src';
 
-import type { TaonControllerOptions } from './decorators/classes/controller-decorator';
+import {
+  TaonControllerOptions,
+  TaonFileUploadOptions,
+  TaonFileUploadOptionsObj,
+} from './decorators/classes/controller-decorator';
 import type { TaonEntityOptions } from './decorators/classes/entity-decorator';
 import { ClassHelpers } from './helpers/class-helpers';
 
@@ -39,7 +43,16 @@ export namespace Models {
     [ClassType.MIGRATION]: 'migrations',
     [ClassType.MIDDLEWARE]: 'middlewares',
   } as {
-    [key in ClassType]: keyof ContextOptions<any, any, any, any, any, any, any, any>;
+    [key in ClassType]: keyof ContextOptions<
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any
+    >;
   };
 
   //#endregion
@@ -166,7 +179,7 @@ export namespace Models {
     PROVIDERS,
     SUBSCRIBERS,
     MIGRATIONS,
-    MIDDLEWARES
+    MIDDLEWARES,
   > {
     appId?: string;
 
@@ -338,20 +351,14 @@ export namespace Models {
   //#endregion
 
   //#region models / controller config
-  export class ControllerConfig extends DecoratorAbstractOpt {
-    realtime?: boolean;
-    path: string;
-    uniqueKey?: string;
+  export class ControllerConfig<ControllerClass = any> extends TaonControllerOptions {
     methods: { [methodName: string]: MethodConfig } = {};
-  }
-  //#endregion
-
-  //#region models / runtime controller config
-  export class RuntimeControllerConfig extends ControllerConfig {
     calculatedPath?: string;
+    calculateFileUploadOptions?: TaonFileUploadOptionsObj<ControllerClass>;
     browserTransformFn?: (entity: any) => any;
   }
   //#endregion
+
 
   //#region models / http
   export namespace Http {

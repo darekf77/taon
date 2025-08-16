@@ -1,4 +1,5 @@
 //#region imports
+import crypto from 'crypto'; // @backend
 import type { Server } from 'http';
 import { Http2Server } from 'http2'; // @backend
 import { URL } from 'url'; // @backend
@@ -16,6 +17,7 @@ import * as expressSession from 'express-session'; // @backend
 import { JSON10 } from 'json10/src';
 import { walk } from 'lodash-walk-object/src';
 import * as methodOverride from 'method-override'; // @backend
+import multer from 'multer'; // @backend
 import {
   Mapping,
   Models as ModelsNg2Rest,
@@ -59,7 +61,11 @@ import { BaseSubscriberForEntity } from './base-classes/base-subscriber-for-enti
 import { apiPrefix } from './constants';
 import { ContextDbMigrations } from './context-db-migrations';
 import { createContext } from './create-context';
-import { TaonControllerOptions } from './decorators/classes/controller-decorator';
+import {
+  TaonControllerOptions,
+  TaonFileUploadOptions,
+  TaonFileUploadOptionsObj,
+} from './decorators/classes/controller-decorator';
 import { TaonEntityOptions } from './decorators/classes/entity-decorator';
 import { TaonSubscriberOptions } from './decorators/classes/subscriber-decorator';
 import { DITaonContainer } from './dependency-injection/di-container';
@@ -812,7 +818,6 @@ export class EndpointContext {
     if (this.mode === 'backend-frontend(tcp+udp)') {
       return await new Promise(resolve => {
         if (this.isRunningInsideDocker) {
-
           // this.displayRoutes(this.expressApp);
           this.serverTcpUdp.listen(Number(this.uriPort), '0.0.0.0', () => {
             Helpers.log(
@@ -1676,9 +1681,40 @@ export class EndpointContext {
       controllerClassFn[Symbols.classMethodsNames] =
         ClassHelpers.getMethodsNames(controllerClassFn);
       const configs = ClassHelpers.getControllerConfigs(controllerClassFn);
+      console.log({ configs });
       // console.log(`Class config for ${ClassHelpers.getName(controllerClassFn)}`, configs)
-      const classConfig: Models.RuntimeControllerConfig = configs[0];
+      const classConfig: Models.ControllerConfig = configs[0];
 
+      //#region update class calculate file upload optoins
+
+      const defaultFileUploadOptions: TaonFileUploadOptionsObj<any> = {};
+
+      const calculateFileUploadOptions: TaonFileUploadOptions<any> = _.slice(
+        configs,
+        1,
+      )
+        .reverse()
+        .reduce((a, b) => {
+          if (!_.isNil(b.fileUpload)) {
+            if (_.isBoolean(b.fileUpload)) {
+              if (b.fileUpload === false) {
+                return {};
+              }
+            } else if (_.isObject(b.fileUpload)) {
+              return _.merge(a, b);
+            }
+            return a;
+          }
+          return a;
+        }, defaultFileUploadOptions);
+
+      classConfig.calculateFileUploadOptions =
+        calculateFileUploadOptions as any;
+
+      console.log({ calculateFileUploadOptions });
+      //#endregion
+
+      //#region update class calculate path
       const parentscalculatedPath = _.slice(configs, 1)
         .reverse()
         .map(bc => {
@@ -1704,6 +1740,8 @@ export class EndpointContext {
           }, [])
           .join('/');
       }
+      //#endregion
+
       // console.log('calculatedPath', classConfig.calculatedPath);
 
       _.slice(configs, 1).forEach(bc => {
@@ -2063,11 +2101,13 @@ export class EndpointContext {
     //#region parameters
     type: Models.Http.Rest.HttpMethod,
     methodConfig: Models.MethodConfig,
-    classConfig: Models.RuntimeControllerConfig,
+    classConfig: Models.ControllerConfig<any>,
     expressPath: string,
     target: Function,
     //#endregion
   ): { expressPath: string; method: Models.Http.Rest.HttpMethod } {
+    console.log({ classConfig });
+
     //#region resolve variables
     //#region @websql
     const requestHandler =
