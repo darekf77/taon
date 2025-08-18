@@ -1,12 +1,11 @@
 import { Mapping } from 'ng2-rest/src';
-import { ClassHelpers } from '../../helpers/class-helpers';
-import { CLASS } from 'typescript-class-helpers/src';
-import { Symbols } from '../../symbols';
+import { Entity as TypeormEntity, Tree } from 'taon-typeorm/src'; // @websql
 import { _ } from 'tnp-core/src';
-import { Models } from '../../models';
-//#region @websql
-import { Entity as TypeormEntity, Tree } from 'taon-typeorm/src';
-//#endregion
+import { CLASS } from 'typescript-class-helpers/src';
+
+import { ClassHelpers } from '../../helpers/class-helpers';
+import { Symbols } from '../../symbols';
+import { DecoratorAbstractOpt } from '../decorator-abstract-opt';
 
 /**
  * Entity decorator
@@ -45,7 +44,7 @@ export function TaonEntity<T = any>(options?: TaonEntityOptions<T>) {
   };
 }
 
-export class TaonEntityOptions<T = any> extends Models.DecoratorAbstractOpt {
+export class TaonEntityOptions<T = any> extends DecoratorAbstractOpt {
   /**
    * default unique property is "id"
    * for your entity it may be something else

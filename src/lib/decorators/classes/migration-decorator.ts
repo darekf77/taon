@@ -1,7 +1,9 @@
-import { ClassHelpers } from '../../helpers/class-helpers';
-import { Symbols } from '../../symbols';
-import { Models } from '../../models';
 import { _ } from 'tnp-core/src';
+
+import { ClassHelpers } from '../../helpers/class-helpers';
+import { Models } from '../../models';
+import { Symbols } from '../../symbols';
+import { DecoratorAbstractOpt } from '../decorator-abstract-opt';
 
 /**
  * Migration decorator
@@ -22,6 +24,4 @@ export function TaonMigration(options: TaonMigrationOptions) {
   } as any;
 }
 
-export class TaonMigrationOptions<
-  T = any,
-> extends Models.DecoratorAbstractOpt {}
+export class TaonMigrationOptions<T = any> extends DecoratorAbstractOpt {}

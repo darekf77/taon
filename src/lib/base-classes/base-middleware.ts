@@ -1,37 +1,62 @@
-import type { HttpHandlerFn, HttpRequest } from '@angular/common/http'; // @browser
-import type { AxiosRequestConfig } from 'axios';
+import type { HttpHandlerFn, HttpRequest } from '@angular/common/http';
+import type { AxiosRequestConfig, AxiosResponse } from 'axios';
 import type express from 'express';
+import type multer from 'multer';
+import {
+  AxiosTaonHttpHandler,
+  TaonClientMiddlewareInterceptOptions,
+  TaonServerMiddlewareInterceptOptions,
+} from 'ng2-rest/src';
+import { Observable } from 'rxjs';
 
 import { BaseInjector } from './base-injector';
-
-export interface TaonMiddlewareInterceptOptions {
-  client?:
-    | {
-        //#region @browser
-        req: AxiosRequestConfig<unknown>;
-        // next: HttpHandlerFn;
-        //#endregion
-      }
-    | undefined;
-  server?:
-    | {
-        //#region @websql
-        req: express.Request;
-        res: express.Response;
-        // next: express.NextFunction;
-        //#endregion
-      }
-    | undefined;
-}
 
 /**
  * TODO
  * - global provider available in all contexts
  * - provider available in own context
  */
-export abstract class BaseMiddleware extends BaseInjector {
-  abstract intercept({
-    server,
-    client,
-  }: TaonMiddlewareInterceptOptions): Promise<void>;
+export abstract class BaseMiddleware extends BaseInjector {}
+
+export interface TaonAddtionalMiddlewareMethodInfo {
+  methodName: string;
+  expressPath: string;
+}
+
+export interface BaseMiddleware {
+  /**
+   * Global interceptor for whole context
+   * backend request
+   */
+  interceptServer({
+    req,
+    res,
+    next,
+  }: TaonServerMiddlewareInterceptOptions): Promise<void> | void;
+
+  /**
+   * Global interceptor for whole context
+   * client requests
+   */
+  interceptClient({
+    req,
+    next,
+  }: TaonClientMiddlewareInterceptOptions): Observable<AxiosResponse<any>>;
+
+  /**
+   * Specyfic controller method interceptor
+   */
+  interceptServerMethod(
+    { req, res, next }: TaonServerMiddlewareInterceptOptions,
+    { methodName, expressPath }: TaonAddtionalMiddlewareMethodInfo,
+  ): Promise<void> | void;
+
+  /**
+   * Controller method frontned interceptor
+   * TODO not needed ?
+   */
+  interceptClientMethod(
+    { req, next }: TaonClientMiddlewareInterceptOptions,
+    { methodName, expressPath }: TaonAddtionalMiddlewareMethodInfo,
+  ): Observable<AxiosResponse<any>>;
 }

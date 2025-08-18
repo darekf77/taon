@@ -29,12 +29,16 @@ export { BaseProvider } from './base-classes/base-provider';
 export { BaseEntity } from './base-classes/base-entity';
 export { BaseContext } from './base-classes/base-context';
 export { BaseMigration } from './base-classes/base-migration';
+export { TaonAddtionalMiddlewareMethodInfo } from './base-classes/base-middleware';
 export { createContext, TaonContext } from './create-context';
 export { inject } from './inject';
 export { Models } from './models';
 export * from './constants';
 export { ClassHelpers } from './helpers/class-helpers';
-export type { TaonMiddlewareInterceptOptions } from './base-classes/base-middleware';
+export type {
+  TaonClientMiddlewareInterceptOptions,
+  TaonServerMiddlewareInterceptOptions,
+} from 'ng2-rest/src';
 // TODO export all things
 
 export namespace Taon {

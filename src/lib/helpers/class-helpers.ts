@@ -1,13 +1,16 @@
+//#region imports
+import * as FormData from 'form-data'; // @backend
+import { _, Utils } from 'tnp-core/src';
+import { CLASS } from 'typescript-class-helpers/src';
+
+import { ControllerConfig } from '../decorators/classes/controller-config';
+import type { TaonControllerOptions } from '../decorators/classes/controller-options';
+import { TaonEntityOptions } from '../decorators/classes/entity-decorator';
+import { Models } from '../models';
 import { Symbols } from '../symbols';
 import { Validators } from '../validators';
-import { _, Utils } from 'tnp-core/src';
-import { Models } from '../models';
-import { TaonControllerOptions } from '../decorators/classes/controller-decorator';
+
 import { TaonHelpers } from './taon-helpers';
-import { TaonEntityOptions } from '../decorators/classes/entity-decorator';
-import { CLASS } from 'typescript-class-helpers/src';
-//#region @backend
-import * as FormData from 'form-data';
 //#endregion
 
 export namespace ClassHelpers {
@@ -139,13 +142,13 @@ export namespace ClassHelpers {
   //#region get all metadata for controller
   export const getControllerConfig = (
     target: Function,
-  ): Models.ControllerConfig | undefined => {
+  ): ControllerConfig | undefined => {
     const classMetadataOptions: TaonControllerOptions = Reflect.getMetadata(
       Symbols.metadata.options.controller,
       target,
     );
-    const classMetadata: Models.ControllerConfig = _.merge(
-      new Models.ControllerConfig(),
+    const classMetadata: ControllerConfig = _.merge(
+      new ControllerConfig(),
       classMetadataOptions,
     );
 
@@ -193,6 +196,13 @@ export namespace ClassHelpers {
   ];
   //#endregion
 
+  /**
+   * Express async handler for middleware functions.
+   */
+  export const asyncHandler = fn => (req, res, next) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
+
   export const getMethodsNames = (
     classOrClassInstance: any,
     allMethodsNames = [],
@@ -235,14 +245,14 @@ export namespace ClassHelpers {
   //#region get controller configs
   export const getControllerConfigs = (
     target: Function,
-    configs: Models.ControllerConfig[] = [],
+    configs: ControllerConfig[] = [],
     callerTarget?: Function,
-  ): Models.RuntimeControllerConfig[] => {
+  ): ControllerConfig[] => {
     if (!_.isFunction(target)) {
       throw `[typescript-class-helper][getClassConfig] Cannot get class config from: ${target}`;
     }
 
-    let config: Models.RuntimeControllerConfig;
+    let config: ControllerConfig;
     const parentClass = Object.getPrototypeOf(target);
     const parentName = parentClass ? ClassHelpers.getName(parentClass) : void 0;
     const isValidParent = _.isFunction(parentClass) && parentName !== '';

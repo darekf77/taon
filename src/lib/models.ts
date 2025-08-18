@@ -1,4 +1,4 @@
-import { Response, RequestHandler } from 'express';
+import type { RequestHandler } from 'express';
 import {
   Response as ExpressResponse,
   Request as ExpressRequest,
@@ -7,8 +7,8 @@ import { Models as ModelsNg2Rest } from 'ng2-rest/src';
 import { _ } from 'tnp-core/src';
 import { CoreModels } from 'tnp-core/src';
 
-import type { TaonControllerOptions } from './decorators/classes/controller-decorator';
-import type { TaonEntityOptions } from './decorators/classes/entity-decorator';
+import type { BaseMiddleware } from './base-classes/base-middleware';
+import type { TaonHttpDecoratorOptions } from './decorators/http/http-methods-decorators';
 import { ClassHelpers } from './helpers/class-helpers';
 
 export namespace Models {
@@ -39,7 +39,16 @@ export namespace Models {
     [ClassType.MIGRATION]: 'migrations',
     [ClassType.MIDDLEWARE]: 'middlewares',
   } as {
-    [key in ClassType]: keyof ContextOptions<any, any, any, any, any, any, any, any>;
+    [key in ClassType]: keyof ContextOptions<
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any
+    >;
   };
 
   //#endregion
@@ -166,7 +175,7 @@ export namespace Models {
     PROVIDERS,
     SUBSCRIBERS,
     MIGRATIONS,
-    MIDDLEWARES
+    MIDDLEWARES,
   > {
     appId?: string;
 
@@ -290,12 +299,10 @@ export namespace Models {
      * @deprecated
      */
     publicAssets?: { serverPath: string; locationOnDisk: string }[];
-  }
-  //#endregion
-
-  //#region models / decorator abstract options
-  export class DecoratorAbstractOpt {
-    className: string;
+    /**
+     * by default cwd === process.cwd()
+     */
+    cwd?: string;
   }
   //#endregion
 
@@ -310,14 +317,14 @@ export namespace Models {
   //#endregion
 
   //#region models / method config
-  export class MethodConfig {
+  /**
+   * @link './decorators/http/http-methods-decorators.ts' TaonHttpDecoratorOptions
+   */
+  export class MethodConfig
+    implements Pick<TaonHttpDecoratorOptions, 'path' | 'middlewares'>
+  {
     methodName: string;
-    /**
-     * @deprecated don't use in production - keep stuff encapsulated
-     * path is global in express app
-     * ! BE CAREFUL ! global path IS NOT GLOBAL inside dockerized app
-     *  (/api/contextName is automatically added to global path in docker)
-     */
+
     global?: boolean;
     /**
      * override default content type
@@ -330,26 +337,8 @@ export namespace Models {
     path: string;
     descriptor: PropertyDescriptor;
     type: CoreModels.HttpMethod;
-    //#region @websql
-    requestHandler: any;
-    //#endregion
     parameters: { [paramName: string]: ParamConfig } = {};
-  }
-  //#endregion
-
-  //#region models / controller config
-  export class ControllerConfig extends DecoratorAbstractOpt {
-    realtime?: boolean;
-    path: string;
-    uniqueKey?: string;
-    methods: { [methodName: string]: MethodConfig } = {};
-  }
-  //#endregion
-
-  //#region models / runtime controller config
-  export class RuntimeControllerConfig extends ControllerConfig {
-    calculatedPath?: string;
-    browserTransformFn?: (entity: any) => any;
+    middlewares?: (typeof BaseMiddleware)[];
   }
   //#endregion
 

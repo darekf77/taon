@@ -1,11 +1,8 @@
+import { _ } from 'tnp-core/src';
+
 import { ClassHelpers } from '../../helpers/class-helpers';
 import { Symbols } from '../../symbols';
-import { Models } from '../../models';
-import {
-  Repository as TypeormRepository,
-  EntityRepository,
-} from 'taon-typeorm/src';
-import { _ } from 'tnp-core/src';
+import { DecoratorAbstractOpt } from '../decorator-abstract-opt';
 
 /**
  * Repository decorator
@@ -26,6 +23,4 @@ export function TaonRepository(options: TaonRepositoryOptions) {
   };
 }
 
-export class TaonRepositoryOptions<
-  T = any,
-> extends Models.DecoratorAbstractOpt {}
+export class TaonRepositoryOptions<T = any> extends DecoratorAbstractOpt {}

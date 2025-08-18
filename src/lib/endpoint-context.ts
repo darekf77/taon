@@ -9,7 +9,7 @@ import * as bodyParser from 'body-parser'; // @backend
 import * as cookieParser from 'cookie-parser'; // @backend
 import * as cors from 'cors'; // @backend
 import { ipcMain } from 'electron'; // @backend
-import * as express from 'express'; // @backend
+import * as express from 'express';
 import type { Application } from 'express';
 import * as fileUpload from 'express-fileupload'; // @backend
 import * as expressSession from 'express-session'; // @backend
@@ -49,17 +49,13 @@ import { path } from 'tnp-core/src';
 
 import type { BaseClass } from './base-classes/base-class';
 import type { BaseInjector } from './base-classes/base-injector';
-import type {
-  BaseMiddleware,
-  TaonMiddlewareInterceptOptions,
-} from './base-classes/base-middleware';
-export type { TaonMiddlewareInterceptOptions } from './base-classes/base-middleware';
+import type { BaseMiddleware } from './base-classes/base-middleware';
 import type { BaseMigration } from './base-classes/base-migration';
 import { BaseSubscriberForEntity } from './base-classes/base-subscriber-for-entity';
 import { apiPrefix } from './constants';
 import { ContextDbMigrations } from './context-db-migrations';
 import { createContext } from './create-context';
-import { TaonControllerOptions } from './decorators/classes/controller-decorator';
+import type { ControllerConfig } from './decorators/classes/controller-config';
 import { TaonEntityOptions } from './decorators/classes/entity-decorator';
 import { TaonSubscriberOptions } from './decorators/classes/subscriber-decorator';
 import { DITaonContainer } from './dependency-injection/di-container';
@@ -586,6 +582,7 @@ export class EndpointContext {
         }
 
         await this.initBackendMiddlewares();
+        await this.initCustomBackendMiddlewares();
         const shouldStartHttpsSecureServer =
           this.isHttpServer && !this.isRunningInsideDocker;
         this.logFramework &&
@@ -611,7 +608,7 @@ export class EndpointContext {
         });
         //#endregion
 
-        await this.initFrontnedMiddlewares();
+        await this.initCustomClientMiddlewares();
       }
       //#endregion
 
@@ -812,7 +809,6 @@ export class EndpointContext {
     if (this.mode === 'backend-frontend(tcp+udp)') {
       return await new Promise(resolve => {
         if (this.isRunningInsideDocker) {
-
           // this.displayRoutes(this.expressApp);
           this.serverTcpUdp.listen(Number(this.uriPort), '0.0.0.0', () => {
             Helpers.log(
@@ -1428,6 +1424,10 @@ export class EndpointContext {
   }
   //#endregion
 
+  public get cwd(): string {
+    return this.config.cwd || process.cwd();
+  }
+
   public get activeContext(): string | null {
     return this.config.activeContext || null;
   }
@@ -1676,9 +1676,11 @@ export class EndpointContext {
       controllerClassFn[Symbols.classMethodsNames] =
         ClassHelpers.getMethodsNames(controllerClassFn);
       const configs = ClassHelpers.getControllerConfigs(controllerClassFn);
-      // console.log(`Class config for ${ClassHelpers.getName(controllerClassFn)}`, configs)
-      const classConfig: Models.RuntimeControllerConfig = configs[0];
 
+      // console.log(`Class config for ${ClassHelpers.getName(controllerClassFn)}`, configs)
+      const classConfig: ControllerConfig = configs[0];
+
+      //#region update class calculate path
       const parentscalculatedPath = _.slice(configs, 1)
         .reverse()
         .map(bc => {
@@ -1704,6 +1706,8 @@ export class EndpointContext {
           }, [])
           .join('/');
       }
+      //#endregion
+
       // console.log('calculatedPath', classConfig.calculatedPath);
 
       _.slice(configs, 1).forEach(bc => {
@@ -1785,7 +1789,7 @@ export class EndpointContext {
           await this.initClient(
             controllerClassFn,
             type,
-            methodConfig,
+            methodConfig as any,
             expressPath,
           );
         }
@@ -1862,97 +1866,77 @@ export class EndpointContext {
 
   //#region methods & getters / init middlewares
 
-  private async initFrontnedMiddlewares(): Promise<void> {
+  private async initCustomClientMiddlewares(): Promise<void> {
+    const middlewares = this.getClassesInstancesArrBy(
+      Models.ClassType.MIDDLEWARE,
+    )
+      .map(f => f as BaseMiddleware)
+      .filter(f => _.isFunction(f.interceptClient));
+
+    middlewares.forEach(instance => {
+      const contextName = this.contextName;
+      const interceptorName = `${contextName}-${ClassHelpers.getName(instance)}`;
+      Resource.request.interceptors.set(interceptorName, {
+        intercept: ({ req, next }) => {
+          const url = new URL(req.url);
+          if (
+            url.pathname.startsWith(
+              `${this.uriPathnameOrNothingIfRoot}/${apiPrefix}/${contextName}/`,
+            )
+          ) {
+            // console.log('intercepting', url.pathname, req);
+            return instance.interceptClient({
+              req,
+              next,
+            });
+          }
+          return next.handle(req);
+        },
+      });
+    });
+  }
+
+  private async initCustomBackendMiddlewares(): Promise<void> {
+    //#region @backend
+    const app = this.expressApp;
     const middlewares = this.getClassesInstancesArrBy(
       Models.ClassType.MIDDLEWARE,
     );
+
     for (const middleware of middlewares) {
       const middlewareInstance: BaseMiddleware = middleware as any;
-      if (_.isFunction(middlewareInstance.intercept)) {
-        ((
-          instance: BaseMiddleware,
-          contextName: string,
-          apiPart: string,
-          uriPathnameOrNothingIfRoot: string,
-        ) => {
-          const interceptorName = `${contextName}-${ClassHelpers.getName(instance)}`;
-          Resource.request.interceptors.set(interceptorName, async req => {
-            console.log('request', req);
-            const url = new URL(req.url);
+      if (_.isFunction(middlewareInstance.interceptServer)) {
+        const middlewareFn = ClassHelpers.asyncHandler(
+          async (
+            req: express.Request,
+            res: express.Response,
+            next: express.NextFunction,
+          ) => {
             if (
-              url.pathname.startsWith(
-                `${uriPathnameOrNothingIfRoot}/${apiPart}/${contextName}/`,
+              req.originalUrl.startsWith(
+                `${this.uriPathnameOrNothingIfRoot}/${apiPrefix}/${this.contextName}/`,
               )
             ) {
-              await instance.intercept({
-                client: {
-                  req,
-                },
+              await middlewareInstance.interceptServer({
+                req,
+                res,
+                next,
               });
             } else {
-              // console.log('not fit frontend', url.href);
+              next();
             }
-            return req;
-          });
-        })(
-          middlewareInstance,
-          this.contextName,
-          apiPrefix,
-          this.uriPathnameOrNothingIfRoot,
+          },
         );
+
+        app.use(middlewareFn);
       }
     }
+    //#endregion
   }
 
   private async initBackendMiddlewares(): Promise<void> {
     //#region @backend
     const app = this.expressApp;
-
-    const middlewares = this.getClassesInstancesArrBy(
-      Models.ClassType.MIDDLEWARE,
-    );
-    for (const middleware of middlewares) {
-      const middlewareInstance: BaseMiddleware = middleware as any;
-      if (_.isFunction(middlewareInstance.intercept)) {
-        ((
-          instance: BaseMiddleware,
-          contextName: string,
-          apiPart: string,
-          uriPathnameOrNothingIfRoot: string,
-        ) => {
-          const asyncHandler = fn => (req, res, next) => {
-            Promise.resolve(fn(req, res, next)).catch(next);
-          };
-
-          const middlewareFn = asyncHandler(
-            async (req: express.Request, res: express.Response, next) => {
-              if (
-                req.originalUrl.startsWith(
-                  `${uriPathnameOrNothingIfRoot}/${apiPart}/${contextName}/`,
-                )
-              ) {
-                await instance.intercept({
-                  server: {
-                    req,
-                    res,
-                  },
-                });
-              } else {
-                // console.log('not fit backend', url.href);
-              }
-              next();
-            },
-          );
-
-          app.use(middlewareFn);
-        })(
-          middlewareInstance,
-          this.contextName,
-          apiPrefix,
-          this.uriPathnameOrNothingIfRoot,
-        );
-      }
-    }
 
     // if (this.middlewares) {
     //   this.middlewares.forEach(m => {
@@ -2054,6 +2038,7 @@ export class EndpointContext {
         next();
       });
     })();
+
     //#endregion
   }
   //#endregion
@@ -2063,21 +2048,47 @@ export class EndpointContext {
     //#region parameters
     type: Models.Http.Rest.HttpMethod,
     methodConfig: Models.MethodConfig,
-    classConfig: Models.RuntimeControllerConfig,
+    classConfig: ControllerConfig,
     expressPath: string,
     target: Function,
     //#endregion
   ): { expressPath: string; method: Models.Http.Rest.HttpMethod } {
     //#region resolve variables
-    //#region @websql
-    const requestHandler =
-      methodConfig.requestHandler &&
-      typeof methodConfig.requestHandler === 'function'
-        ? methodConfig.requestHandler
-        : (req, res, next) => {
-            next();
-          };
-    //#endregion
+
+    const middlewareHandlers = (
+      Array.isArray(methodConfig.middlewares) &&
+      methodConfig.middlewares?.length > 0
+        ? methodConfig.middlewares
+        : []
+    )
+      .map(middlewareClassFun => {
+        const middlewareInstance: BaseMiddleware = this.getInstanceBy(
+          middlewareClassFun as any,
+        );
+        if (
+          middlewareInstance &&
+          _.isFunction(middlewareInstance.interceptServerMethod)
+        ) {
+          const middlewareFn = ClassHelpers.asyncHandler(
+            async (
+              req: express.Request,
+              res: express.Response,
+              next: express.NextFunction,
+            ) => {
+              middlewareInstance.interceptServerMethod(
+                {
+                  req,
+                  res,
+                  next,
+                },
+                { methodName: methodConfig.methodName, expressPath },
+              );
+            },
+          );
+          return middlewareFn;
+        }
+      })
+      .filter(f => !!f) as express.RequestHandler[];
 
     // const url = this.uri;
 
@@ -2090,7 +2101,7 @@ export class EndpointContext {
            */
           this.getInstanceBy(target as any),
           /**
-           * Params for metjod @GET, @PUT etc.
+           * Params for method @GET, @PUT etc.
            */
           resolvedParams,
         );
@@ -2136,6 +2147,7 @@ export class EndpointContext {
       if (Helpers.isWebSQL) {
         if (!this.expressApp[type.toLowerCase()]) {
           this.expressApp[type.toLowerCase()] = () => {};
+          // TODO add middlewares for WEBSQL and ELECTRON mode
         }
       }
       //#endregion
@@ -2145,7 +2157,7 @@ export class EndpointContext {
       this.logHttp && console.log(`[${type.toUpperCase()}] ${expressPath} `);
       this.expressApp[type.toLowerCase()](
         expressPath,
-        requestHandler,
+        ...middlewareHandlers,
         async (req, res) => {
           // console.log(`[${type.toUpperCase()}] ${expressPath} `);
           //#region process params
@@ -2373,11 +2385,33 @@ export class EndpointContext {
     //#region parameters
     target: Function,
     type: Models.Http.Rest.HttpMethod,
-    methodConfig: Models.Http.Rest.MethodConfig,
+    methodConfig: Models.MethodConfig, // Models.Http.Rest.MethodConfig,
     expressPath: string,
     //#endregion
   ): Promise<void> {
     const ctx = this;
+
+    const middlewares = methodConfig.middlewares
+      .map(f => this.getInstanceBy(f as any) as BaseMiddleware)
+      .filter(f => _.isFunction(f.interceptClientMethod));
+
+    middlewares.forEach(instance => {
+      Resource.request.methodsInterceptors.set(expressPath, {
+        intercept: ({ req, next }) => {
+          return instance.interceptClientMethod(
+            {
+              req,
+              next,
+            },
+            {
+              methodName: methodConfig.methodName,
+              expressPath,
+            },
+          );
+        },
+      });
+    });
+
     // : { received: any; /* Rest<any, any>  */ }
     this.logHttp && console.log(`${type?.toUpperCase()} ${expressPath} `);
     // console.log('INITING', methodConfig); // TODO inject in static

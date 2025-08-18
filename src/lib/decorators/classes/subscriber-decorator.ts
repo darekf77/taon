@@ -1,7 +1,8 @@
+import { _ } from 'tnp-core/src';
+
 import { ClassHelpers } from '../../helpers/class-helpers';
 import { Symbols } from '../../symbols';
-import { Models } from '../../models';
-import { _ } from 'tnp-core/src';
+import { DecoratorAbstractOpt } from '../decorator-abstract-opt';
 
 /**
  * Subscriber decorator
@@ -22,9 +23,6 @@ export function TaonSubscriber(options: TaonSubscriberOptions) {
   } as any;
 }
 
-export class TaonSubscriberOptions<
-  T = any,
-> extends Models.DecoratorAbstractOpt {
+export class TaonSubscriberOptions<T = any> extends DecoratorAbstractOpt {
   allowedEvents?: (keyof T)[];
 }
-

@@ -1,6 +1,9 @@
-import { _ } from 'tnp-core/src';
 import * as JSON5 from 'json5';
+import { _ } from 'tnp-core/src';
+
+import type { ControllerConfig } from '../decorators/classes/controller-config';
 import { Models } from '../models';
+
 import { ClassHelpers } from './class-helpers';
 
 export namespace TaonHelpers {
@@ -46,7 +49,7 @@ export namespace TaonHelpers {
 
   //#region get expores path
   export const getExpressPath = (
-    c: Models.RuntimeControllerConfig,
+    c: ControllerConfig,
     pathOrClassConfig: Models.MethodConfig,
   ) => {
     if (typeof pathOrClassConfig === 'string')

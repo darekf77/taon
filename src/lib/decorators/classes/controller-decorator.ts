@@ -1,11 +1,14 @@
 import { ClassHelpers } from '../../helpers/class-helpers';
 import { Symbols } from '../../symbols';
-import { Models } from '../../models';
+
+import type { TaonControllerOptions } from './controller-options';
 
 /**
  * Controller decorator
  */
-export function TaonController(options?: TaonControllerOptions) {
+export function TaonController<ControllerClass = any>(
+  options?: TaonControllerOptions<ControllerClass>,
+) {
   return function (constructor: Function) {
     ClassHelpers.setName(constructor, options?.className);
     Reflect.defineMetadata(
@@ -19,15 +22,4 @@ export function TaonController(options?: TaonControllerOptions) {
       constructor,
     );
   };
-}
-
-export class TaonControllerOptions extends Models.DecoratorAbstractOpt {
-  /**
-   * typeorm realtime subscribtion // TODO disabled for now, does not make sense ?s
-   */
-  realtime?: boolean;
-  /**
-   * override default path for controller api
-   */
-  path?: string;
 }

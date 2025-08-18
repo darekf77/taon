@@ -1,7 +1,10 @@
+import { Models as ModelsNg2Rest } from 'ng2-rest/src';
 import { CoreModels, _ } from 'tnp-core/src';
+
+import { BaseMiddleware } from '../../base-classes/base-middleware';
 import { Models } from '../../models';
 import { Symbols } from '../../symbols';
-import { Models as ModelsNg2Rest } from 'ng2-rest/src';
+
 const metaReq = (
   method: Models.Http.Rest.HttpMethod,
   path: string,
@@ -21,7 +24,7 @@ const metaReq = (
     options = { pathOrOptions, pathIsGlobal } as any;
   }
 
-  const { overrideContentType, overridResponseType } = options;
+  const { overrideContentType, overrideResponseType, middlewares } = options;
 
   let methodConfig: Models.MethodConfig = Reflect.getMetadata(
     Symbols.metadata.options.controllerMethod,
@@ -39,6 +42,7 @@ const metaReq = (
   }
 
   methodConfig.methodName = propertyKey;
+  methodConfig.middlewares = middlewares || [];
   methodConfig.type = method;
   if (!path) {
     let paramsPathConcatedPath = '';
@@ -62,7 +66,7 @@ const metaReq = (
   methodConfig.descriptor = descriptor;
   methodConfig.global = pathIsGlobal;
   methodConfig.contentType = overrideContentType;
-  methodConfig.responseType = overridResponseType;
+  methodConfig.responseType = overrideResponseType;
   Reflect.defineMetadata(
     Symbols.metadata.options.controllerMethod,
     methodConfig,
@@ -74,9 +78,10 @@ const metaReq = (
 
 export interface TaonHttpDecoratorOptions {
   /**
-   * ! BE CAREFULL
-   * This method is only for very special cases
-   * Path for the method is automatically generated
+   * @deprecated don't use in production - keep stuff encapsulated
+   * path is global in express app
+   * ! BE CAREFUL ! global path IS NOT GLOBAL inside dockerized app
+   *  (/api/contextName is automatically added to global path in docker)
    */
   path?: string;
   /**
@@ -85,7 +90,8 @@ export interface TaonHttpDecoratorOptions {
    */
   pathIsGlobal?: boolean;
   overrideContentType?: CoreModels.ContentType;
-  overridResponseType?: ModelsNg2Rest.ResponseTypeAxios;
+  overrideResponseType?: ModelsNg2Rest.ResponseTypeAxios;
+  middlewares?: (typeof BaseMiddleware)[];
 }
 
 export function GET(

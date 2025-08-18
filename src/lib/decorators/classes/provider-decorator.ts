@@ -1,6 +1,6 @@
 import { ClassHelpers } from '../../helpers/class-helpers';
-import { Models } from '../../models';
 import { Symbols } from '../../symbols';
+import { DecoratorAbstractOpt } from '../decorator-abstract-opt';
 
 /**
  * Provider decorator
@@ -21,8 +21,6 @@ export function TaonProvider<T = any>(options?: TaonProviderOptions<T>) {
   };
 }
 
-export class TaonProviderOptions<
-  T = any,
-> extends Models.DecoratorAbstractOpt {
-  // global?: boolean;
+export class TaonProviderOptions<T = any> extends DecoratorAbstractOpt {
+  // providers is a singleton for each context
 }
