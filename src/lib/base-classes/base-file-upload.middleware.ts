@@ -1,14 +1,14 @@
 //#region imports
-import crypto from 'crypto';
+import * as crypto from 'crypto';
 
 import express from 'express';
-import multer from 'multer';
+import * as multer from 'multer';
 import {
   TaonClientMiddlewareInterceptOptions,
   TaonServerMiddlewareInterceptOptions,
 } from 'ng2-rest/src';
 import { Observable } from 'rxjs';
-import { crossPlatformPath, path } from 'tnp-core/src';
+import { crossPlatformPath, fse, path } from 'tnp-core/src';
 
 import { TaonMiddleware } from '../decorators/classes/middleware-decorator';
 
@@ -29,7 +29,7 @@ export class BaseFileUploadMiddleware extends BaseMiddleware {
     { req, res, next }: TaonServerMiddlewareInterceptOptions,
     { methodName, expressPath }: TaonAddtionalMiddlewareMethodInfo,
   ): Promise<void> {
-    return this.middleware(expressPath)(req, res, next);
+    return this.middleware()(req, res, next);
   }
 
   //#region upload Dir
@@ -41,15 +41,22 @@ export class BaseFileUploadMiddleware extends BaseMiddleware {
   //#region storage
   storage(): multer.StorageEngine {
     //#region @backendFunc
+    const uploadDir = this.uploadDir();
+    if (!fse.existsSync(uploadDir)) {
+      try {
+        fse.mkdirSync(uploadDir, { recursive: true });
+      } catch (error) {}
+    }
     return multer.diskStorage({
-      destination: (_req, _file, cb) => cb(null, this.uploadDir()),
+      destination: (_req, _file, cb) => cb(null, uploadDir),
       filename: (_req, file, cb) => {
         const ext = path.extname(file.originalname).toLowerCase();
         const base = path
           .basename(file.originalname, ext)
           .replace(/[^\w.-]/g, '_');
         const uniq = `${Date.now()}-${crypto.randomBytes(6).toString('hex')}`;
-        cb(null, `${base}-${uniq}${ext}`);
+        const filenameToProcess = `${base}-${uniq}${ext}`;
+        cb(null, filenameToProcess);
       },
     });
     //#endregion
@@ -62,22 +69,23 @@ export class BaseFileUploadMiddleware extends BaseMiddleware {
     return multer({
       storage: this.storage(),
       limits: { fileSize: 1024 * 1024 * 1024 }, // 1 GiB cap; tweak as needed
-      fileFilter: (_req, file, cb) => {
-        // accept only .zip by filename extension
-        if (path.extname(file.originalname).toLowerCase() !== '.zip') {
-          return cb(new Error('Only .zip files are allowed'));
-        }
-        cb(null, true);
-      },
+      // TODO implement file filter if needed
+      // fileFilter: (_req, file, cb) => {
+      //   // accept only .zip by filename extension
+      //   if (path.extname(file.originalname).toLowerCase() !== '.zip') {
+      //     return cb(new Error('Only .zip files are allowed'));
+      //   }
+      //   cb(null, true);
+      // },
     });
     //#endregion
   }
   //#endregion
 
   //#region middleware
-  middleware(expressPath: string): express.RequestHandler {
+  middleware(): express.RequestHandler {
     //#region @backendFunc
-    return this.upload().single(expressPath);
+    return this.upload().any();
     //#endregion
   }
   //#endregion

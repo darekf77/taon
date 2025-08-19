@@ -3,7 +3,7 @@ import { crossPlatformPath, fse, path } from 'tnp-core/src'; // @backend
 
 import { TaonController } from '../decorators/classes/controller-decorator';
 import { POST } from '../decorators/http/http-methods-decorators';
-import { Body } from '../decorators/http/http-params-decorators';
+import { Body, Path, Query } from '../decorators/http/http-params-decorators';
 import type { Models } from '../models';
 
 import { BaseFileUploadMiddleware } from './base-file-upload.middleware';
@@ -29,25 +29,27 @@ export class BaseController extends BaseInjector {
   })
   uploadFormDataToServer(
     @Body() formData: FormData,
-  ): Models.Http.Response<MulterFileUploadResponse> {
+  ): Models.Http.Response<MulterFileUploadResponse[]> {
     //#region @backendFunc
     return async (req, res) => {
-      const f = req.file;
-      if (!f) {
-        throw 'No file received';
+      const files = req.files;
+      if (!files) {
+        throw 'No file(s) received';
       }
-
-      // Response info
-      const savedAbs = path.resolve(f.path);
-      const savedRel = path.relative(process.cwd(), savedAbs);
-      return {
-        ok: true,
-        originalName: f.originalname,
-        savedAs: path.basename(savedAbs),
-        savedPath: savedRel,
-        size: f.size,
-        mimetype: f.mimetype,
-      };
+      return (files as any[]).map(f => {
+        const savedAbs = crossPlatformPath(path.resolve(f.path));
+        const savedRel = crossPlatformPath(
+          path.relative(this.ctx.cwd, savedAbs),
+        );
+        return {
+          ok: true,
+          originalName: f.originalname,
+          savedAs: path.basename(savedAbs),
+          savedPath: savedRel,
+          size: f.size,
+          mimetype: f.mimetype,
+        };
+      });
     };
     //#endregion
   }
@@ -56,7 +58,7 @@ export class BaseController extends BaseInjector {
   //#region upload local file to server
   async uploadLocalFileToServer(
     absFilePath: string,
-  ): Promise<MulterFileUploadResponse> {
+  ): Promise<MulterFileUploadResponse[]> {
     //#region @backendFunc
     const stat = fse.statSync(absFilePath);
     const stream = fse.createReadStream(absFilePath);

@@ -2076,7 +2076,7 @@ export class EndpointContext {
               res: express.Response,
               next: express.NextFunction,
             ) => {
-              middlewareInstance.interceptServerMethod(
+              await middlewareInstance.interceptServerMethod(
                 {
                   req,
                   res,
