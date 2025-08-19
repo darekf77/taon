@@ -8,6 +8,7 @@ import {
   TaonServerMiddlewareInterceptOptions,
 } from 'ng2-rest/src';
 import { Observable } from 'rxjs';
+import { CoreModels } from 'tnp-core/src';
 
 import { BaseInjector } from './base-injector';
 
@@ -21,6 +22,7 @@ export abstract class BaseMiddleware extends BaseInjector {}
 export interface TaonAddtionalMiddlewareMethodInfo {
   methodName: string;
   expressPath: string;
+  httpRequestType: CoreModels.HttpMethod;
 }
 
 export interface BaseMiddleware {
@@ -48,7 +50,7 @@ export interface BaseMiddleware {
    */
   interceptServerMethod(
     { req, res, next }: TaonServerMiddlewareInterceptOptions,
-    { methodName, expressPath }: TaonAddtionalMiddlewareMethodInfo,
+    { methodName, expressPath, httpRequestType }: TaonAddtionalMiddlewareMethodInfo,
   ): Promise<void> | void;
 
   /**
@@ -57,6 +59,6 @@ export interface BaseMiddleware {
    */
   interceptClientMethod(
     { req, next }: TaonClientMiddlewareInterceptOptions,
-    { methodName, expressPath }: TaonAddtionalMiddlewareMethodInfo,
+    { methodName, expressPath, httpRequestType }: TaonAddtionalMiddlewareMethodInfo,
   ): Observable<AxiosResponse<any>>;
 }

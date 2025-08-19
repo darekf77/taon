@@ -11,7 +11,8 @@ import * as cors from 'cors'; // @backend
 import { ipcMain } from 'electron'; // @backend
 import * as express from 'express';
 import type { Application } from 'express';
-import * as fileUpload from 'express-fileupload'; // @backend
+//  multer in taon middleware will do better job than express-fileupload
+// import * as fileUpload from 'express-fileupload'; // @backend
 import * as expressSession from 'express-session'; // @backend
 import { JSON10 } from 'json10/src';
 import { walk } from 'lodash-walk-object/src';
@@ -1949,7 +1950,7 @@ export class EndpointContext {
       res.send(`Hello, world from context ${this.contextName}`);
     });
 
-    app.use(fileUpload());
+    // app.use(fileUpload());
     app.use(bodyParser.urlencoded({ extended: true }));
     app.use(bodyParser.json());
     app.use(methodOverride());
@@ -2046,7 +2047,7 @@ export class EndpointContext {
   //#region methods & getters / init methods node
   private initServer(
     //#region parameters
-    type: Models.Http.Rest.HttpMethod,
+    httpMethodType: Models.Http.Rest.HttpMethod,
     methodConfig: Models.MethodConfig,
     classConfig: ControllerConfig,
     expressPath: string,
@@ -2081,7 +2082,11 @@ export class EndpointContext {
                   res,
                   next,
                 },
-                { methodName: methodConfig.methodName, expressPath },
+                {
+                  methodName: methodConfig.methodName,
+                  expressPath,
+                  httpRequestType: methodConfig.type,
+                },
               );
             },
           );
@@ -2145,8 +2150,8 @@ export class EndpointContext {
       //#region apply dummy websql express routers
       //#region @websql
       if (Helpers.isWebSQL) {
-        if (!this.expressApp[type.toLowerCase()]) {
-          this.expressApp[type.toLowerCase()] = () => {};
+        if (!this.expressApp[httpMethodType.toLowerCase()]) {
+          this.expressApp[httpMethodType.toLowerCase()] = () => {};
           // TODO add middlewares for WEBSQL and ELECTRON mode
         }
       }
@@ -2154,8 +2159,9 @@ export class EndpointContext {
       //#endregion
 
       //#region @backend
-      this.logHttp && console.log(`[${type.toUpperCase()}] ${expressPath} `);
-      this.expressApp[type.toLowerCase()](
+      this.logHttp &&
+        console.log(`[${httpMethodType.toUpperCase()}] ${expressPath} `);
+      this.expressApp[httpMethodType.toLowerCase()](
         expressPath,
         ...middlewareHandlers,
         async (req, res) => {
@@ -2384,7 +2390,7 @@ export class EndpointContext {
   private async initClient(
     //#region parameters
     target: Function,
-    type: Models.Http.Rest.HttpMethod,
+    httpRequestType: Models.Http.Rest.HttpMethod,
     methodConfig: Models.MethodConfig, // Models.Http.Rest.MethodConfig,
     expressPath: string,
     //#endregion
@@ -2396,24 +2402,28 @@ export class EndpointContext {
       .filter(f => _.isFunction(f.interceptClientMethod));
 
     middlewares.forEach(instance => {
-      Resource.request.methodsInterceptors.set(expressPath, {
-        intercept: ({ req, next }) => {
-          return instance.interceptClientMethod(
-            {
-              req,
-              next,
-            },
-            {
-              methodName: methodConfig.methodName,
-              expressPath,
-            },
-          );
+      Resource.request.methodsInterceptors.set(
+        `${methodConfig.type?.toUpperCase()}-${expressPath}`,
+        {
+          intercept: ({ req, next }) => {
+            return instance.interceptClientMethod(
+              {
+                req,
+                next,
+              },
+              {
+                methodName: methodConfig.methodName,
+                expressPath,
+                httpRequestType: httpRequestType,
+              },
+            );
+          },
         },
-      });
+      );
     });
 
     // : { received: any; /* Rest<any, any>  */ }
-    this.logHttp && console.log(`${type?.toUpperCase()} ${expressPath} `);
+    this.logHttp && console.log(`${httpRequestType?.toUpperCase()} ${expressPath} `);
     // console.log('INITING', methodConfig); // TODO inject in static
     //#region resolve storage
     // TODO not a good idea
@@ -2690,7 +2700,7 @@ export class EndpointContext {
         rest = endpoints[ctx.uriOrigin][expressPath] as any;
       }
 
-      const method = type.toLowerCase();
+      const method = httpRequestType.toLowerCase();
       const isWithBody = method === 'put' || method === 'post';
       const pathPrams = {};
       let queryParams = {};
