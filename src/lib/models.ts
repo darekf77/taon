@@ -371,7 +371,13 @@ export namespace Models {
     export type MixResponse<T> = SyncResponse<T> | ExpressContext<T>;
 
     export interface ClientAction<T> {
+      /**
+       * @deprecated use request() mehods instead
+       */
       received?: Rest.PromiseObservableMix<Rest.HttpResponse<T>>;
+      request?(
+        axiosConfig?: ModelsNg2Rest.Ng2RestAxiosRequestConfig,
+      ): Rest.PromiseObservableMix<Rest.HttpResponse<T>>;
     }
 
     export interface AsyncResponse<T> {

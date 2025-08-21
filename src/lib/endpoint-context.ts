@@ -2397,6 +2397,7 @@ export class EndpointContext {
   ): Promise<void> {
     const ctx = this;
 
+    //#region init middlewares
     const middlewares = methodConfig.middlewares
       .map(f => this.getInstanceBy(f as any) as BaseMiddleware)
       .filter(f => _.isFunction(f.interceptClientMethod));
@@ -2421,9 +2422,11 @@ export class EndpointContext {
         },
       );
     });
+    //#endregion
 
     // : { received: any; /* Rest<any, any>  */ }
-    this.logHttp && console.log(`${httpRequestType?.toUpperCase()} ${expressPath} `);
+    this.logHttp &&
+      console.log(`${httpRequestType?.toUpperCase()} ${expressPath} `);
     // console.log('INITING', methodConfig); // TODO inject in static
     //#region resolve storage
     // TODO not a good idea
@@ -2482,7 +2485,10 @@ export class EndpointContext {
         received['observable'] = from(received);
         return {
           received,
-        };
+          request(axiosConfig: ModelsNg2Rest.Ng2RestAxiosRequestConfig) {
+            return received;
+          },
+        } as Models.Http.ClientAction<any>;
       };
       return;
     }
@@ -2628,18 +2634,26 @@ export class EndpointContext {
       if (Helpers.isWebSQL) {
         return {
           received,
-        };
+          request(axiosConfig: ModelsNg2Rest.Ng2RestAxiosRequestConfig) {
+            // console.log('request', axiosConfgi);
+            return received;
+          },
+        } as Models.Http.ClientAction<any>;
       }
     };
     if (Helpers.isWebSQL) {
-      return;
+      // @ts-ignore
+      return undefined as any as Models.Http.ClientAction<any>;
     }
     //#endregion
     //#endregion
 
     //#region handle normal request
 
-    target.prototype[methodConfig.methodName] = function (this: {}, ...args) {
+    target.prototype[methodConfig.methodName] = function (
+      this: {},
+      ...args
+    ): Models.Http.ClientAction<any> {
       // console.log('[init method browser] FRONTEND expressPath', expressPath)
       // const productionMode = FrameworkContext.isProductionMode;
 
@@ -2701,7 +2715,7 @@ export class EndpointContext {
       }
 
       const method = httpRequestType.toLowerCase();
-      const isWithBody = method === 'put' || method === 'post';
+
       const pathPrams = {};
       let queryParams = {};
       let bodyObject = {};
@@ -2831,12 +2845,15 @@ instead
       }
       //#endregion
 
-      const httpResultObj = {
-        received: isWithBody
-          ? rest.model(pathPrams)[method](bodyObject, [queryParams])
-          : rest.model(pathPrams)[method]([queryParams]),
+      const httpResultObj: Models.Http.ClientAction<any> = {
+        received: rest.model(pathPrams)[method](bodyObject, [queryParams]),
+        request(axiosConfig?: ModelsNg2Rest.Ng2RestAxiosRequestConfig) {
+          return rest
+            .model(pathPrams)
+            [method](bodyObject, [queryParams], axiosConfig);
+        },
       };
-      return httpResultObj;
+      return httpResultObj as Models.Http.ClientAction<any>;
     };
     //#endregion
   }
