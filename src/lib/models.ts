@@ -374,7 +374,7 @@ export namespace Models {
       /**
        * @deprecated use request() mehods instead
        */
-      received?: Rest.PromiseObservableMix<Rest.HttpResponse<T>>;
+      readonly received?: Rest.PromiseObservableMix<Rest.HttpResponse<T>>;
       request?(
         axiosConfig?: ModelsNg2Rest.Ng2RestAxiosRequestConfig,
       ): Rest.PromiseObservableMix<Rest.HttpResponse<T>>;

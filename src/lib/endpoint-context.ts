@@ -2846,7 +2846,9 @@ instead
       //#endregion
 
       const httpResultObj: Models.Http.ClientAction<any> = {
-        received: rest.model(pathPrams)[method](bodyObject, [queryParams]),
+        get received() {
+          return rest.model(pathPrams)[method](bodyObject, [queryParams])
+        },
         request(axiosConfig?: ModelsNg2Rest.Ng2RestAxiosRequestConfig) {
           return rest
             .model(pathPrams)
