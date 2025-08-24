@@ -42,7 +42,7 @@ const metaReq = (
   }
 
   methodConfig.methodName = propertyKey;
-  methodConfig.middlewares = middlewares || [];
+  methodConfig.middlewares = middlewares;
   methodConfig.type = method;
   if (!path) {
     let paramsPathConcatedPath = '';
@@ -76,6 +76,14 @@ const metaReq = (
   // console.log('methods updated', methodConfig);
 };
 
+export type TaonMiddlewareInheritanceObj = {
+  [parentMiddlewaresName: string]: typeof BaseMiddleware;
+};
+
+export type TaonMiddlewareFunction = (
+  parentMiddlewares: TaonMiddlewareInheritanceObj,
+) => TaonMiddlewareInheritanceObj;
+
 export interface TaonHttpDecoratorOptions {
   /**
    * @deprecated don't use in production - keep stuff encapsulated
@@ -91,7 +99,7 @@ export interface TaonHttpDecoratorOptions {
   pathIsGlobal?: boolean;
   overrideContentType?: CoreModels.ContentType;
   overrideResponseType?: ModelsNg2Rest.ResponseTypeAxios;
-  middlewares?: (typeof BaseMiddleware)[];
+  middlewares?: TaonMiddlewareFunction;
 }
 
 export function GET(

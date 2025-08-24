@@ -8,7 +8,11 @@ import { _ } from 'tnp-core/src';
 import { CoreModels } from 'tnp-core/src';
 
 import type { BaseMiddleware } from './base-classes/base-middleware';
-import type { TaonHttpDecoratorOptions } from './decorators/http/http-methods-decorators';
+import type {
+  TaonHttpDecoratorOptions,
+  TaonMiddlewareFunction,
+  TaonMiddlewareInheritanceObj,
+} from './decorators/http/http-methods-decorators';
 import { ClassHelpers } from './helpers/class-helpers';
 
 export namespace Models {
@@ -338,7 +342,21 @@ export namespace Models {
     descriptor: PropertyDescriptor;
     type: CoreModels.HttpMethod;
     parameters: { [paramName: string]: ParamConfig } = {};
-    middlewares?: (typeof BaseMiddleware)[];
+    /**
+     * Middlewars from controller method options
+     */
+    middlewares?: TaonMiddlewareFunction;
+    /**
+     * Calculated middlewares object from parents controllers
+     */
+    calculatedMiddlewaresMethodObj?: TaonMiddlewareInheritanceObj;
+    /**
+     * Middlewares array in proper order and ready to be used in
+     * express or in axios interceptors.
+     */
+    get calculatedMiddlewares(): (typeof BaseMiddleware)[] {
+      return Object.values(this.calculatedMiddlewaresMethodObj || {});
+    }
   }
   //#endregion
 

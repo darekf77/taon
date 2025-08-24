@@ -1,4 +1,5 @@
 import { DecoratorAbstractOpt } from '../decorator-abstract-opt';
+import type { TaonMiddlewareFunction } from '../http/http-methods-decorators';
 
 export class TaonControllerOptions<
   ControllerClass = any,
@@ -11,4 +12,8 @@ export class TaonControllerOptions<
    * override default path for controller api
    */
   path?: string;
+  /**
+   * Middlewares to be applied to all methods in the controller
+   */
+  middlewares?: TaonMiddlewareFunction;
 }
