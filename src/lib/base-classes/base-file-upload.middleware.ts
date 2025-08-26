@@ -14,7 +14,7 @@ import { TaonMiddleware } from '../decorators/classes/middleware-decorator';
 
 import {
   BaseMiddleware,
-  TaonAddtionalMiddlewareMethodInfo,
+  TaonAdditionalMiddlewareMethodInfo,
 } from './base-middleware';
 //#endregion
 
@@ -27,7 +27,7 @@ import {
 export class BaseFileUploadMiddleware extends BaseMiddleware {
   async interceptServerMethod(
     { req, res, next }: TaonServerMiddlewareInterceptOptions,
-    { methodName, expressPath }: TaonAddtionalMiddlewareMethodInfo,
+    { methodName, expressPath }: TaonAdditionalMiddlewareMethodInfo,
   ): Promise<void> {
     return this.middleware()(req, res, next);
   }

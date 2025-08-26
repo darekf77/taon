@@ -19,7 +19,7 @@ import { BaseInjector } from './base-injector';
  */
 export abstract class BaseMiddleware extends BaseInjector {}
 
-export interface TaonAddtionalMiddlewareMethodInfo {
+export interface TaonAdditionalMiddlewareMethodInfo {
   methodName: string;
   expressPath: string;
   httpRequestType: CoreModels.HttpMethod;
@@ -50,7 +50,7 @@ export interface BaseMiddleware {
    */
   interceptServerMethod(
     { req, res, next }: TaonServerMiddlewareInterceptOptions,
-    { methodName, expressPath, httpRequestType }: TaonAddtionalMiddlewareMethodInfo,
+    { methodName, expressPath, httpRequestType }: TaonAdditionalMiddlewareMethodInfo,
   ): Promise<void> | void;
 
   /**
@@ -59,6 +59,6 @@ export interface BaseMiddleware {
    */
   interceptClientMethod(
     { req, next }: TaonClientMiddlewareInterceptOptions,
-    { methodName, expressPath, httpRequestType }: TaonAddtionalMiddlewareMethodInfo,
+    { methodName, expressPath, httpRequestType }: TaonAdditionalMiddlewareMethodInfo,
   ): Observable<AxiosResponse<any>>;
 }
