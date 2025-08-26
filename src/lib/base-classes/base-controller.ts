@@ -25,7 +25,10 @@ export class BaseController extends BaseInjector {
   //#region upload form data to server
   @POST({
     overrideContentType: 'multipart/form-data',
-    middlewares: [BaseFileUploadMiddleware],
+    middlewares: ({ parentMiddlewares }) => ({
+      ...parentMiddlewares,
+      BaseFileUploadMiddleware,
+    }),
   })
   uploadFormDataToServer(
     @Body() formData: FormData,

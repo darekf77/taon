@@ -1,7 +1,8 @@
 import * as JSON5 from 'json5';
 import { _ } from 'tnp-core/src';
 
-import type { ControllerConfig } from '../decorators/classes/controller-config';
+import type { ControllerConfig } from '../config/controller-config';
+import { MethodConfig } from '../config/method-config';
 import { Models } from '../models';
 
 import { ClassHelpers } from './class-helpers';
@@ -50,7 +51,7 @@ export namespace TaonHelpers {
   //#region get expores path
   export const getExpressPath = (
     c: ControllerConfig,
-    pathOrClassConfig: Models.MethodConfig,
+    pathOrClassConfig: Partial<MethodConfig>,
   ) => {
     if (typeof pathOrClassConfig === 'string')
       return `${c.calculatedPath}${pathOrClassConfig}`.replace(/\/$/, '');
@@ -117,7 +118,7 @@ export namespace TaonHelpers {
   //#region ips key name repsonse
   export const ipcKeyNameResponse = (
     target: Function,
-    methodConfig: Models.MethodConfig,
+    methodConfig: Partial<MethodConfig>,
     expressPath: string,
   ) => {
     return [
@@ -133,7 +134,7 @@ export namespace TaonHelpers {
   //#region ipc key name request
   export const ipcKeyNameRequest = (
     target: Function,
-    methodConfig: Models.MethodConfig,
+    methodConfig: Partial<MethodConfig>,
     expressPath: string,
   ) => {
     return [

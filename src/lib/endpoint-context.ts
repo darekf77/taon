@@ -42,6 +42,7 @@ import {
   DataSourceOptions,
   getMetadataArgsStorage,
 } from 'taon-typeorm/src';
+import { config } from 'tnp-config/src';
 import { fse, http, https, os } from 'tnp-core/src'; // @backend
 import { UtilsOs, Utils } from 'tnp-core/src';
 import { crossPlatformPath } from 'tnp-core/src';
@@ -53,10 +54,12 @@ import type { BaseInjector } from './base-classes/base-injector';
 import type { BaseMiddleware } from './base-classes/base-middleware';
 import type { BaseMigration } from './base-classes/base-migration';
 import { BaseSubscriberForEntity } from './base-classes/base-subscriber-for-entity';
+import type { ControllerConfig } from './config/controller-config';
+import { MethodConfig } from './config/method-config';
+import { ParamConfig } from './config/param-config';
 import { apiPrefix } from './constants';
 import { ContextDbMigrations } from './context-db-migrations';
 import { createContext } from './create-context';
-import type { ControllerConfig } from './decorators/classes/controller-config';
 import { TaonEntityOptions } from './decorators/classes/entity-decorator';
 import { TaonSubscriberOptions } from './decorators/classes/subscriber-decorator';
 import { DITaonContainer } from './dependency-injection/di-container';
@@ -589,7 +592,9 @@ export class EndpointContext {
         this.logFramework &&
           Helpers.info(`
 
-          Starting server ${shouldStartHttpsSecureServer ? 'with' : 'without'} HTTPS secure server
+          Starting server ${
+            shouldStartHttpsSecureServer ? 'with' : 'without'
+          } HTTPS secure server
 
           `);
         this.serverTcpUdp = shouldStartHttpsSecureServer
@@ -1339,7 +1344,9 @@ export class EndpointContext {
   get frontendHostUri() {
     const url = this.config?.frontendHost?.startsWith('http')
       ? this.config.frontendHost
-      : `${globalThis?.location?.protocol || 'http:'}//${this.config?.frontendHost}`;
+      : `${globalThis?.location?.protocol || 'http:'}//${
+          this.config?.frontendHost
+        }`;
     const uri = new URL(url.replace(/\/$/, ''));
     return uri;
   }
@@ -1355,17 +1362,13 @@ export class EndpointContext {
   }
   //#endregion
 
-  get uriPort(): string | undefined {
-    if (!this.uri?.origin?.includes('localhost')) {
-      return this.config?.hostPortNumber?.toString();
-    }
-    return this.uri?.port;
-  }
-
+  //#region methods & getters / host uri protocol
   get uriProtocol(): string | undefined {
     return this.uri?.protocol;
   }
+  //#endregion
 
+  //#region methods & getters / host uri origin
   /**
    * Examples
    * http://localhost:3000
@@ -1374,7 +1377,9 @@ export class EndpointContext {
   get uriOrigin(): string | undefined {
     return this.uri?.origin;
   }
+  //#endregion
 
+  //#region methods & getters / host uri pathname
   /**
    * Exampels
    * http://localhost:3000/path/to/somewhere
@@ -1389,7 +1394,9 @@ export class EndpointContext {
   get uriPathname(): string | undefined {
     return this.uri?.pathname;
   }
+  //#endregion
 
+  //#region methods & getters / uri pathname or nothing if root
   /**
    * Examples
    * http://localhost:3000/path/to/somewhere -> '/path/to/somewhere'
@@ -1401,6 +1408,16 @@ export class EndpointContext {
       this.uri?.pathname && this.uri.pathname !== '/';
     return isNonRootProperPathName ? this.uri.pathname.replace(/\/$/, '') : '';
   }
+  //#endregion
+
+  //#region port from uri
+  get uriPort(): string | undefined {
+    if (!this.uri?.origin?.includes('localhost')) {
+      return this.config?.hostPortNumber?.toString();
+    }
+    return this.uri?.port;
+  }
+  // TODO do i need 2 getters for port?
 
   /**
    * Port from uri as number
@@ -1409,6 +1426,7 @@ export class EndpointContext {
   get port(): Number | undefined {
     return this.uri?.port ? Number(this.uriPort) : undefined;
   }
+  //#endregion
 
   //#region methods & getters / is https server
   get isHttpServer() {
@@ -1425,17 +1443,23 @@ export class EndpointContext {
   }
   //#endregion
 
+  //#region methods & getters / current working directory
   public get cwd(): string {
     return this.config.cwd || process.cwd();
   }
+  //#endregion
 
+  //#region methods & getters / active context
   public get activeContext(): string | null {
     return this.config.activeContext || null;
   }
+  //#endregion
 
+  //#region methods & getters / app id
   public get appId(): string {
     return this.config.appId;
   }
+  //#endregion
 
   //#region methods & getters / public assets
   public get publicAssets() {
@@ -1667,61 +1691,119 @@ export class EndpointContext {
   //#endregion
 
   //#region methods & getters / initialize metadata
+
+  //#region methods & getters / update class calculate path
+  private updateCalculatedPathsForControllers(
+    rawConfigs: ControllerConfig[],
+    classConfig: ControllerConfig,
+    controllerClassFn: Function,
+  ): void {
+    const parentsCalculatedPath = _.slice(rawConfigs, 1)
+      .reverse()
+      .map(bc => {
+        if (TaonHelpers.isGoodPath(bc.path)) {
+          return bc.path;
+        }
+        return bc.className;
+      })
+      .join('/');
+
+    if (TaonHelpers.isGoodPath(classConfig.path)) {
+      classConfig.calculatedPath = classConfig.path;
+    } else {
+      classConfig.calculatedPath = (
+        `${this.uriPathnameOrNothingIfRoot}` +
+        `/${apiPrefix}/${this.contextName}/tcp${parentsCalculatedPath}/` +
+        `${ClassHelpers.getName(controllerClassFn)}`
+      )
+        .replace(/\/\//g, '/')
+        .split('/')
+        .reduce((acc, bc) => {
+          return _.last(acc) === bc ? acc : [...acc, bc];
+        }, [])
+        .join('/');
+    }
+
+    // console.log('calculatedPath', classConfig.calculatedPath);
+  }
+  //#endregion
+
+  //#region methods & getters / dedupe class configs
+  private mergeControllerMethodsConfigs(
+    rawConfigs: ControllerConfig[],
+    classConfig: ControllerConfig,
+    controllerClassFn: Function,
+  ): void {
+    const currentControllerMethodsConfig = classConfig.methods;
+
+    _.slice(rawConfigs, 1).forEach(bc => {
+      const parentControllerMethods = _.cloneDeep(bc.methods);
+
+      for (const methodsName in parentControllerMethods) {
+        if (parentControllerMethods.hasOwnProperty(methodsName)) {
+          if (!currentControllerMethodsConfig[methodsName]) {
+            //#region add non existed method
+            const methodConfig = parentControllerMethods[methodsName];
+            currentControllerMethodsConfig[methodsName] = methodConfig;
+            //#endregion
+          }
+        }
+      }
+    });
+  }
+  //#endregion
+
   async initControllers(): Promise<void> {
     if (this.isRunOrRevertOnlyMigrationAppStart) {
       return;
     }
     const allControllers = this.getClassFunByArr(Models.ClassType.CONTROLLER);
+    // debugger
     // console.log('allControllers', allControllers);
     for (const controllerClassFn of allControllers) {
+      // console.log(ClassHelpers.getClassConfig(controllerClassFn));
+
+      // const controllerName = ClassHelpers.getName(controllerClassFn);
+
+      // console.log(
+      //   `for ${controllerName}`,
+      //   ClassHelpers.getClassConfig(controllerClassFn),
+      // );
+
       controllerClassFn[Symbols.classMethodsNames] =
         ClassHelpers.getMethodsNames(controllerClassFn);
-      const configs = ClassHelpers.getControllerConfigs(controllerClassFn);
 
+      const rawConfigs = ClassHelpers.getControllerConfigs(controllerClassFn);
+      // console.log(controllerName, { rawConfigs });
       // console.log(`Class config for ${ClassHelpers.getName(controllerClassFn)}`, configs)
-      const classConfig: ControllerConfig = configs[0];
+      const classConfig: ControllerConfig = rawConfigs[0];
 
-      //#region update class calculate path
-      const parentscalculatedPath = _.slice(configs, 1)
-        .reverse()
-        .map(bc => {
-          if (TaonHelpers.isGoodPath(bc.path)) {
-            return bc.path;
-          }
-          return bc.className;
-        })
-        .join('/');
+      this.updateCalculatedPathsForControllers(
+        rawConfigs,
+        classConfig,
+        controllerClassFn,
+      );
+      this.mergeControllerMethodsConfigs(
+        rawConfigs,
+        classConfig,
+        controllerClassFn,
+      );
 
-      if (TaonHelpers.isGoodPath(classConfig.path)) {
-        classConfig.calculatedPath = classConfig.path;
-      } else {
-        classConfig.calculatedPath = (
-          `${this.uriPathnameOrNothingIfRoot}` +
-          `/${apiPrefix}/${this.contextName}/tcp${parentscalculatedPath}/` +
-          `${ClassHelpers.getName(controllerClassFn)}`
-        )
-          .replace(/\/\//g, '/')
-          .split('/')
-          .reduce((acc, bc) => {
-            return _.last(acc) === bc ? acc : [...acc, bc];
-          }, [])
-          .join('/');
-      }
-      //#endregion
-
-      // console.log('calculatedPath', classConfig.calculatedPath);
-
-      _.slice(configs, 1).forEach(bc => {
-        const alreadyIs = classConfig.methods;
-        const toMerge = _.cloneDeep(bc.methods);
-        for (const key in toMerge) {
-          if (toMerge.hasOwnProperty(key) && !alreadyIs[key]) {
-            const element = toMerge[key];
-            alreadyIs[key] = element;
-          }
+      //#region combine middlewares from controllers
+      classConfig.calculatedMiddlewaresControllerObj = {};
+      [...rawConfigs].reverse().forEach(rc => {
+        if (_.isFunction(rc.middlewares)) {
+          classConfig.calculatedMiddlewaresControllerObj = rc.middlewares({
+            parentMiddlewares: classConfig.calculatedMiddlewaresControllerObj,
+            className(middlewareClass) {
+              return ClassHelpers.getName(controllerClassFn);
+            },
+          });
         }
       });
+      //#endregion
 
+      //#region group start
       //#region @backend
       if (!Helpers.isRunningIn.cliMode()) {
         //#endregion
@@ -1732,37 +1814,72 @@ export class EndpointContext {
         //#region @backend
       }
       //#endregion
+      //#endregion
 
-      // console.log('methods', classConfig.methods);
+      //#region init client or server methods
       const methodNames = Object.keys(classConfig.methods);
       for (const methodName of methodNames) {
-        const methodConfig: Models.MethodConfig =
+        const methodConfig: Partial<MethodConfig> =
           classConfig.methods[methodName];
-        // debugger
-        const type: Models.Http.Rest.HttpMethod = methodConfig.type;
+
+        //#region combine all class methods middlewares
+        let calculatedMiddlewaresMethodObj = {};
+
+        [...rawConfigs].reverse().forEach(rc => {
+          if (rc.methods[methodName]) {
+            const parentMethodConfig = rc.methods[methodName];
+
+            if (_.isFunction(parentMethodConfig.middlewares)) {
+              calculatedMiddlewaresMethodObj = parentMethodConfig.middlewares({
+                parentMiddlewares: calculatedMiddlewaresMethodObj,
+                className(middlewareClass) {
+                  return ClassHelpers.getName(controllerClassFn);
+                },
+              });
+            }
+          }
+        });
+
+        // add class middlewares to method middlewares
+        methodConfig.calculatedMiddlewaresMethodObj = {
+          ...calculatedMiddlewaresMethodObj,
+          ...classConfig.calculatedMiddlewaresControllerObj,
+        };
+        methodConfig.calculatedMiddlewares = Object.values(
+          methodConfig.calculatedMiddlewaresMethodObj || {},
+        );
+        //#endregion
+
+        // methodConfig.calculatedMiddlewares = TODO
+
+        //#region initialized method express path
+        const httpMethodType: Models.Http.Rest.HttpMethod = methodConfig.type;
 
         // this is quick fix - in docker global path should not be used
         const globalPathPart =
           this.isRunningInsideDocker ||
           !this.frontendHostUri?.origin?.includes('localhost') // fe with domain -> is in docker
-            ? `${this.uriPathnameOrNothingIfRoot.replace(/\/$/, '')}/${apiPrefix}/${this.contextName}`.replace(
-                /\/\//,
-                '/',
-              )
+            ? `${this.uriPathnameOrNothingIfRoot.replace(
+                /\/$/,
+                '',
+              )}/${apiPrefix}/${this.contextName}`.replace(/\/\//, '/')
             : '';
         const expressPath = methodConfig.global
-          ? `${globalPathPart}/${methodConfig.path?.replace(/\/$/, '')}`.replace(
-              /\/\//,
-              '/',
-            )
+          ? `${globalPathPart}/${methodConfig.path?.replace(
+              /\/$/,
+              '',
+            )}`.replace(/\/\//, '/')
           : TaonHelpers.getExpressPath(classConfig, methodConfig);
 
+        //#endregion
+
+        //#region init server
         // console.log({ expressPath });
         if (Helpers.isNode || Helpers.isWebSQL) {
           //#region @websql
 
           const route = this.initServer(
-            type,
+            httpMethodType,
             methodConfig,
             classConfig,
             expressPath,
@@ -1775,7 +1892,9 @@ export class EndpointContext {
           });
           //#endregion
         }
+        //#endregion
 
+        //#region init client
         const shouldInitClient =
           Helpers.isBrowser || this.remoteHost || Helpers.isWebSQL;
         // console.log('shouldInitClient', shouldInitClient);
@@ -1789,13 +1908,16 @@ export class EndpointContext {
           // );
           await this.initClient(
             controllerClassFn,
-            type,
+            httpMethodType,
             methodConfig as any,
             expressPath,
           );
         }
+        //#endregion
       }
+      //#endregion
 
+      //#region group end
       //#region @backend
       if (!Helpers.isRunningIn.cliMode()) {
         //#endregion
@@ -1803,12 +1925,13 @@ export class EndpointContext {
         //#region @backend
       }
       //#endregion
+      //#endregion
     }
   }
   //#endregion
 
   //#region methods & getters / write active routes
-  public writeActiveRoutes() {
+  public writeActiveRoutes(): void {
     if (
       this.remoteHost ||
       this.isRunOrRevertOnlyMigrationAppStart ||
@@ -1874,9 +1997,11 @@ export class EndpointContext {
       .map(f => f as BaseMiddleware)
       .filter(f => _.isFunction(f.interceptClient));
 
-    middlewares.forEach(instance => {
+    middlewares.forEach(middlewareInstanceName => {
       const contextName = this.contextName;
-      const interceptorName = `${contextName}-${ClassHelpers.getName(instance)}`;
+      const interceptorName = `${contextName}-${ClassHelpers.getName(
+        middlewareInstanceName,
+      )}`;
       Resource.request.interceptors.set(interceptorName, {
         intercept: ({ req, next }) => {
           const url = new URL(req.url);
@@ -1886,7 +2011,7 @@ export class EndpointContext {
             )
           ) {
             // console.log('intercepting', url.pathname, req);
-            return instance.interceptClient({
+            return middlewareInstanceName.interceptClient({
               req,
               next,
             });
@@ -2048,20 +2173,18 @@ export class EndpointContext {
   private initServer(
     //#region parameters
     httpMethodType: Models.Http.Rest.HttpMethod,
-    methodConfig: Models.MethodConfig,
+    methodConfig: Partial<MethodConfig>,
     classConfig: ControllerConfig,
     expressPath: string,
     target: Function,
     //#endregion
   ): { expressPath: string; method: Models.Http.Rest.HttpMethod } {
     //#region resolve variables
+    // console.log(
+    //   `CLIENT: expressPath: "${expressPath}" interceptor for method: ${methodConfig.calculatedMiddlewares.length}`,
+    // );
 
-    const middlewareHandlers = (
-      Array.isArray(methodConfig.middlewares) &&
-      methodConfig.middlewares?.length > 0
-        ? methodConfig.middlewares
-        : []
-    )
+    const middlewareHandlers = methodConfig.calculatedMiddlewares
       .map(middlewareClassFun => {
         const middlewareInstance: BaseMiddleware = this.getInstanceBy(
           middlewareClassFun as any,
@@ -2256,8 +2379,7 @@ export class EndpointContext {
           }
 
           Object.keys(methodConfig.parameters).forEach(paramName => {
-            let p: Models.Http.Rest.ParamConfig =
-              methodConfig.parameters[paramName];
+            let p: Partial<ParamConfig> = methodConfig.parameters[paramName];
             if (p.paramType === 'Path' && tParams) {
               args.push(tParams[p.paramName]);
             }
@@ -2388,39 +2510,42 @@ export class EndpointContext {
    * client can be browser or nodejs (when remote host)
    */
   private async initClient(
-    //#region parameters
     target: Function,
     httpRequestType: Models.Http.Rest.HttpMethod,
-    methodConfig: Models.MethodConfig, // Models.Http.Rest.MethodConfig,
+    methodConfig: Partial<MethodConfig>, // Models.Http.Rest.MethodConfig,
     expressPath: string,
-    //#endregion
   ): Promise<void> {
     const ctx = this;
 
+    // console.log(
+    //   `CLIENT: expressPath: "${expressPath}" interceptor for method: ${methodConfig.calculatedMiddlewares?.length} `,
+    // );
+
     //#region init middlewares
-    const middlewares = methodConfig.middlewares
+    const middlewares = methodConfig.calculatedMiddlewares;
+    const middlewaresInstances = middlewares
       .map(f => this.getInstanceBy(f as any) as BaseMiddleware)
       .filter(f => _.isFunction(f.interceptClientMethod));
 
-    middlewares.forEach(instance => {
-      Resource.request.methodsInterceptors.set(
-        `${methodConfig.type?.toUpperCase()}-${expressPath}`,
-        {
-          intercept: ({ req, next }) => {
-            return instance.interceptClientMethod(
-              {
-                req,
-                next,
-              },
-              {
-                methodName: methodConfig.methodName,
-                expressPath,
-                httpRequestType: httpRequestType,
-              },
-            );
-          },
+    middlewaresInstances.forEach(instance => {
+      const middlewareName = ClassHelpers.getName(instance);
+      // middlewareName - only needed for inheritace and uniqness of interceptors
+      const interceptorKey = `${middlewareName}-${methodConfig.type?.toUpperCase()}-${expressPath}`;
+      Resource.request.methodsInterceptors.set(interceptorKey, {
+        intercept: ({ req, next }) => {
+          return instance.interceptClientMethod(
+            {
+              req,
+              next,
+            },
+            {
+              methodName: methodConfig.methodName,
+              expressPath,
+              httpRequestType: httpRequestType,
+            },
+          );
         },
-      );
+      });
     });
     //#endregion
 
@@ -2720,7 +2845,7 @@ export class EndpointContext {
       let queryParams = {};
       let bodyObject = {};
       args.forEach((param, i) => {
-        let currentParam: Models.Http.Rest.ParamConfig = void 0 as any;
+        let currentParam: Partial<ParamConfig> = void 0 as any;
 
         for (let pp in methodConfig.parameters) {
           let v = methodConfig.parameters[pp];
@@ -2728,6 +2853,18 @@ export class EndpointContext {
             currentParam = v;
             break;
           }
+        }
+
+        if (!currentParam) {
+          const errorMessage =
+            `[${config.frameworkName}] Unable to resolve parameter` +
+            ` at index ${i} for method ${methodConfig.methodName} at path ${expressPath}.`;
+
+          //#region @backend
+          console.error(errorMessage);
+          process.exit(0);
+          //#endregion
+          throw new Error(errorMessage);
         }
 
         if (currentParam.paramType === 'Path') {
@@ -2847,7 +2984,7 @@ instead
 
       const httpResultObj: Models.Http.ClientAction<any> = {
         get received() {
-          return rest.model(pathPrams)[method](bodyObject, [queryParams])
+          return rest.model(pathPrams)[method](bodyObject, [queryParams]);
         },
         request(axiosConfig?: ModelsNg2Rest.Ng2RestAxiosRequestConfig) {
           return rest

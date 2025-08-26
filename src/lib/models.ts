@@ -7,8 +7,13 @@ import { Models as ModelsNg2Rest } from 'ng2-rest/src';
 import { _ } from 'tnp-core/src';
 import { CoreModels } from 'tnp-core/src';
 
+import { BaseClass } from './base-classes/base-class';
 import type { BaseMiddleware } from './base-classes/base-middleware';
-import type { TaonHttpDecoratorOptions } from './decorators/http/http-methods-decorators';
+import type {
+  TaonHttpDecoratorOptions,
+  TaonMiddlewareFunction,
+  TaonMiddlewareInheritanceObj,
+} from './decorators/http/http-methods-decorators';
 import { ClassHelpers } from './helpers/class-helpers';
 
 export namespace Models {
@@ -306,41 +311,9 @@ export namespace Models {
   }
   //#endregion
 
-  //#region models / param config
-  export class ParamConfig {
-    paramName: string;
-    paramType: CoreModels.ParamType;
-    index: number;
-    defaultType: any;
-    expireInSeconds?: number;
-  }
-  //#endregion
 
-  //#region models / method config
-  /**
-   * @link './decorators/http/http-methods-decorators.ts' TaonHttpDecoratorOptions
-   */
-  export class MethodConfig
-    implements Pick<TaonHttpDecoratorOptions, 'path' | 'middlewares'>
-  {
-    methodName: string;
 
-    global?: boolean;
-    /**
-     * override default content type
-     */
-    contentType?: any;
-    /**
-     * override default axiso response type
-     */
-    responseType?: any;
-    path: string;
-    descriptor: PropertyDescriptor;
-    type: CoreModels.HttpMethod;
-    parameters: { [paramName: string]: ParamConfig } = {};
-    middlewares?: (typeof BaseMiddleware)[];
-  }
-  //#endregion
+
 
   //#region models / http
   export namespace Http {

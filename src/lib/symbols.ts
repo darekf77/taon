@@ -1,5 +1,5 @@
-import { _ } from 'tnp-core/src';
 import { OrignalClassKey } from 'taon-typeorm/src';
+import { _ } from 'tnp-core/src';
 import { SYMBOL } from 'typescript-class-helpers/src';
 
 export namespace Symbols {
@@ -90,12 +90,11 @@ export namespace Symbols {
 
   export const REALTIME = new Realtime();
 
+
   export const metadata = {
     className: `class:realname`,
     options: {
-      runtimeController: `runtime:controller:options`,
       controller: `controller:options`,
-      controllerMethod: `controller:method:options`,
       entity: `entity:options`,
       repository: `repository:options`,
       provider: `provider:options`,

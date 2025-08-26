@@ -1,4 +1,6 @@
 import { _ } from 'tnp-core/src';
+
+import { MethodConfig } from './config/method-config';
 import { Models } from './models';
 
 export namespace Validators {
@@ -33,8 +35,8 @@ export namespace Validators {
 
   //#region validate method config
   export const checkIfMethodsWithReponseTYpeAlowed = (
-    methods: Models.MethodConfig[],
-    current: Models.MethodConfig,
+    methods: MethodConfig[],
+    current: MethodConfig,
   ) => {
     const defaultResponseType = 'text or JSON';
     if (!current.responseType) {

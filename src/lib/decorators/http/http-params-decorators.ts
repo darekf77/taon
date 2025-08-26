@@ -1,3 +1,4 @@
+import { ClassHelpers } from '../../helpers/class-helpers';
 import { Models } from '../../models';
 import { Symbols } from '../../symbols';
 
@@ -10,38 +11,17 @@ function metaParam(
   propertyKey: string | symbol,
   parameterIndex: number,
 ) {
-  let methodConfig: Models.MethodConfig = Reflect.getMetadata(
-    Symbols.metadata.options.controllerMethod,
-    target.constructor,
-    propertyKey,
-  );
-  if (!methodConfig) {
-    methodConfig = new Models.MethodConfig();
-    Reflect.defineMetadata(
-      Symbols.metadata.options.controllerMethod,
-      methodConfig,
-      target.constructor,
-      propertyKey,
-    );
-  }
-
+  const methodCfg = ClassHelpers.ensureMethodConfig(target, propertyKey);
   const nameKey = name ? name : param;
-  const p = (methodConfig.parameters[nameKey] = !methodConfig.parameters[
-    nameKey
-  ]
-    ? new Models.ParamConfig()
-    : methodConfig.parameters[nameKey]);
-  p.index = parameterIndex;
-  p.paramName = name;
-  p.paramType = param;
-  p.defaultType = defaultValue;
-  p.expireInSeconds = expire;
-  Reflect.defineMetadata(
-    Symbols.metadata.options.controllerMethod,
-    methodConfig,
-    target.constructor,
-    propertyKey,
-  );
+  // const key = name || `${param}_${parameterIndex}`;
+  methodCfg.parameters[nameKey] = {
+    index: parameterIndex,
+    paramName: name,
+    paramType: param,
+    defaultType: defaultValue,
+    expireInSeconds: expire,
+  };
+
   // console.log('params updated', methodConfig);
 }
 

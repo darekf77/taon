@@ -1,4 +1,4 @@
+import { BaseClass } from '../base-classes/base-class';
 export class DecoratorAbstractOpt {
-  className: string;
+  declare className: string;
 }
-

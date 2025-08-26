@@ -3,6 +3,8 @@ import { walk } from 'lodash-walk-object/src';
 import { _ } from 'tnp-core/src';
 
 import { ClassHelpers } from '../helpers/class-helpers';
+import { cloneObj } from '../helpers/clone-obj';
+
 //#endregion
 
 export class BaseClass<CloneT extends BaseClass = any> {
@@ -17,22 +19,7 @@ export class BaseClass<CloneT extends BaseClass = any> {
   //#region clone
   public clone(override?: Partial<CloneT>): CloneT {
     const classFn = ClassHelpers.getClassFnFromObject(this);
-    const result = _.merge(new classFn(), _.cloneDeep(this));
-    walk.Object(
-      override || {},
-      (value, lodashPath) => {
-        if (_.isNil(value) || _.isFunction(value) || _.isObject(value)) {
-          // skipping
-        } else {
-          _.set(result, lodashPath, value);
-        }
-      },
-      {
-        walkGetters: false,
-      },
-    );
-    // console.log({result})
-    return result;
+    return cloneObj<CloneT>(override, classFn);
   }
   //#endregion
 }

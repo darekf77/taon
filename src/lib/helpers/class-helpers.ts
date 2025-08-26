@@ -3,8 +3,11 @@ import * as FormData from 'form-data'; // @backend
 import { _, Utils } from 'tnp-core/src';
 import { CLASS } from 'typescript-class-helpers/src';
 
-import { ControllerConfig } from '../decorators/classes/controller-config';
-import type { TaonControllerOptions } from '../decorators/classes/controller-options';
+import {
+  controllerConfigFrom,
+  ControllerConfig,
+} from '../config/controller-config';
+import { MethodConfig } from '../config/method-config';
 import { TaonEntityOptions } from '../decorators/classes/entity-decorator';
 import { Models } from '../models';
 import { Symbols } from '../symbols';
@@ -81,9 +84,10 @@ export namespace ClassHelpers {
       ? classFnOrObject
       : classFnOrObject.constructor;
     const config = Reflect.getMetadata(
-      Symbols.metadata.options.controller,
+      Symbols.metadata.options.entity,
       classFn,
     ) as TaonEntityOptions;
+
     return config.uniqueKeyProp;
   };
   //#endregion
@@ -136,37 +140,6 @@ export namespace ClassHelpers {
       return true;
     }
     return hasParentClassWithName(targetProto, className, targets);
-  };
-  //#endregion
-
-  //#region get all metadata for controller
-  export const getControllerConfig = (
-    target: Function,
-  ): ControllerConfig | undefined => {
-    const classMetadataOptions: TaonControllerOptions = Reflect.getMetadata(
-      Symbols.metadata.options.controller,
-      target,
-    );
-    const classMetadata: ControllerConfig = _.merge(
-      new ControllerConfig(),
-      classMetadataOptions,
-    );
-
-    // Iterate over all methods of the class
-    const methodNames = ClassHelpers.getMethodsNames(target); //  Object.getOwnPropertyNames(target.prototype);
-    // console.log(`methodNames for ${ClassHelpers.getName(target)} `, methodNames)
-    for (const methodName of methodNames) {
-      const methodMetadata: Models.MethodConfig = Reflect.getMetadata(
-        Symbols.metadata.options.controllerMethod,
-        target,
-        methodName,
-      );
-      // console.log('methodMetadata for ' + methodName, methodMetadata)
-      if (methodMetadata) {
-        classMetadata.methods[methodName] = methodMetadata;
-      }
-    }
-    return classMetadata;
   };
   //#endregion
 
@@ -249,7 +222,7 @@ export namespace ClassHelpers {
     callerTarget?: Function,
   ): ControllerConfig[] => {
     if (!_.isFunction(target)) {
-      throw `[typescript-class-helper][getClassConfig] Cannot get class config from: ${target}`;
+      throw `[typescript-class-helper][getControllerConfigs] Cannot get class config from: ${target}`;
     }
 
     let config: ControllerConfig;
@@ -257,7 +230,7 @@ export namespace ClassHelpers {
     const parentName = parentClass ? ClassHelpers.getName(parentClass) : void 0;
     const isValidParent = _.isFunction(parentClass) && parentName !== '';
 
-    config = getControllerConfig(target);
+    config = controllerConfigFrom(getClassConfig(target));
 
     configs.push(config);
 
@@ -267,21 +240,74 @@ export namespace ClassHelpers {
   };
   //#endregion
 
-  //#region get path for
-  // export const getCalculatedPathFor = (target: Function) => {
-  //   const configs = getControllerConfigs(target);
+  //#region ensure configs
 
-  //   const parentscalculatedPath = _.slice(configs, 1)
-  //     .reverse()
-  //     .map(bc => {
-  //       if (TaonHelpers.isGoodPath(bc.path)) {
-  //         return bc.path;
-  //       }
-  //       return bc.className;
-  //     })
-  //     .join('/');
+  // Ensure ClassConfig on constructor, clone parent if needed
+  export const ensureClassConfig = (
+    target: Function,
+  ): Partial<ControllerConfig> => {
+    let cfg: Partial<ControllerConfig> = Reflect.getOwnMetadata(
+      Symbols.metadata.options.controller, // META_KEYS.class,
+      target,
+    );
 
-  //   return `/${parentscalculatedPath}/${ClassHelpers.getName(target)}`;
-  // };
+    if (!cfg) {
+      cfg = { methods: {} };
+
+      const parent = Object.getPrototypeOf(target);
+      if (parent && parent !== Function.prototype) {
+        const parentCfg: Partial<ControllerConfig> = Reflect.getMetadata(
+          Symbols.metadata.options.controller, // META_KEYS.class,
+          parent,
+        );
+        if (parentCfg) {
+          // Deep copy each method config so child gets its own objects
+          const clonedMethods: Record<
+            string | symbol,
+            Partial<MethodConfig>
+          > = {};
+          for (const [k, v] of Object.entries(parentCfg.methods)) {
+            clonedMethods[k] = {
+              ...v,
+              parameters: { ...v.parameters }, // shallow clone parameters too
+            };
+          }
+
+          cfg = {
+            ...parentCfg,
+            methods: clonedMethods,
+          };
+        }
+      }
+
+      Reflect.defineMetadata(Symbols.metadata.options.controller, cfg, target);
+    }
+
+    return cfg;
+  };
+
+  // Ensure MethodConfig inside ClassConfig
+  export const ensureMethodConfig = (
+    target: any,
+    propertyKey: string | symbol,
+  ): Partial<MethodConfig> => {
+    const classCfg = ensureClassConfig(target.constructor);
+    let methodCfg: Partial<MethodConfig> =
+      classCfg.methods[propertyKey?.toString()];
+    if (!methodCfg) {
+      methodCfg = { methodName: propertyKey?.toString(), parameters: {} };
+      classCfg.methods[propertyKey?.toString()] = methodCfg as MethodConfig;
+    }
+    return methodCfg;
+  };
+
+  export const getClassConfig = (
+    constructor: Function,
+  ): Partial<ControllerConfig> | undefined => {
+    return Reflect.getMetadata(
+      Symbols.metadata.options.controller,
+      constructor,
+    );
+  };
   //#endregion
 }

@@ -2,6 +2,7 @@ import { Models as ModelsNg2Rest } from 'ng2-rest/src';
 import { CoreModels, _ } from 'tnp-core/src';
 
 import { BaseMiddleware } from '../../base-classes/base-middleware';
+import { ClassHelpers } from '../../helpers/class-helpers';
 import { Models } from '../../models';
 import { Symbols } from '../../symbols';
 
@@ -14,6 +15,8 @@ const metaReq = (
   pathOrOptions: string | TaonHttpDecoratorOptions,
   pathIsGlobal: boolean,
 ) => {
+  const methodConfig = ClassHelpers.ensureMethodConfig(target, propertyKey);
+
   let options: TaonHttpDecoratorOptions;
   if (typeof pathOrOptions === 'object') {
     options = pathOrOptions;
@@ -26,23 +29,8 @@ const metaReq = (
 
   const { overrideContentType, overrideResponseType, middlewares } = options;
 
-  let methodConfig: Models.MethodConfig = Reflect.getMetadata(
-    Symbols.metadata.options.controllerMethod,
-    target.constructor,
-    propertyKey,
-  );
-  if (!methodConfig) {
-    methodConfig = new Models.MethodConfig();
-    Reflect.defineMetadata(
-      Symbols.metadata.options.controllerMethod,
-      methodConfig,
-      target.constructor,
-      propertyKey,
-    );
-  }
-
   methodConfig.methodName = propertyKey;
-  methodConfig.middlewares = middlewares || [];
+  methodConfig.middlewares = middlewares;
   methodConfig.type = method;
   if (!path) {
     let paramsPathConcatedPath = '';
@@ -67,14 +55,22 @@ const metaReq = (
   methodConfig.global = pathIsGlobal;
   methodConfig.contentType = overrideContentType;
   methodConfig.responseType = overrideResponseType;
-  Reflect.defineMetadata(
-    Symbols.metadata.options.controllerMethod,
-    methodConfig,
-    target.constructor,
-    propertyKey,
-  );
-  // console.log('methods updated', methodConfig);
 };
+
+export type TaonMiddlewareInheritanceObj = {
+  [parentMiddlewaresName: string]: typeof BaseMiddleware;
+};
+
+export type TaonMiddlewareFunction = (options: {
+  /**
+   * middlewares inherited from parent class
+   */
+  parentMiddlewares: TaonMiddlewareInheritanceObj;
+  /**
+   * Get real class name - needed when code is minified
+   */
+  className: (middlewareClass: Function) => string;
+}) => TaonMiddlewareInheritanceObj;
 
 export interface TaonHttpDecoratorOptions {
   /**
@@ -91,7 +87,7 @@ export interface TaonHttpDecoratorOptions {
   pathIsGlobal?: boolean;
   overrideContentType?: CoreModels.ContentType;
   overrideResponseType?: ModelsNg2Rest.ResponseTypeAxios;
-  middlewares?: (typeof BaseMiddleware)[];
+  middlewares?: TaonMiddlewareFunction;
 }
 
 export function GET(

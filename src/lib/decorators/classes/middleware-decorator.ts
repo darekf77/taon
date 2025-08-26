@@ -5,7 +5,9 @@ import { DecoratorAbstractOpt } from '../decorator-abstract-opt';
 /**
  * Provider decorator
  */
-export function TaonMiddleware<T = any>(options?: TaonMiddlewareOptions<T>) {
+export function TaonMiddleware<T = any>(
+  options?: TaonMiddlewareOptions<T>,
+) {
   return function (constructor: Function) {
     Reflect.defineMetadata(
       Symbols.metadata.options.provider,
