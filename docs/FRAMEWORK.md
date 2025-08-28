@@ -13,8 +13,9 @@ Taon has 2 types of projects:
   + watch mode for development
 - **container** 
   + contains multiple *standalone* projects <br>
-  + all projects can be init/clean/build/release together
-  + not possible watch mode for development
+  + all projects can be init/clean/build/release together <br>
+  (you have to add "all" suffix like *build:all*)
+  + not possible watch mode for development with all packages
 
 #### Standalone
 
@@ -31,7 +32,7 @@ is the same as basename of project folder.
 #### Container
 
 Scoped/organization projects are simply standalone projects inside container
-(with proper "isOrganization" in `taon.jsonc`).
+(with proper "**organization : true**" in `taon.jsonc`).
 
 Name of publish package is taken from container name:
 
@@ -218,6 +219,7 @@ import {
 } from 'rxjs'; // @browser
 
 import { User } from './user';
+const lodash= require('lodash'); // @backend TAG DOES NOT WORK
 ```
 <br><br>
 *backend*
@@ -233,6 +235,7 @@ import fse from 'fs-extra'; // @backend
 /* */
 
 import { User } from './user';
+const lodash= require('lodash'); // @backend TAG DOES NOT WORK
 ```
 <br><br>
 *browser*
@@ -248,6 +251,7 @@ import {
 } from 'rxjs'; // @browser
 
 import { User } from './user';
+const lodash= require('lodash'); // @backend TAG DOES NOT WORK
 ```
 
 ## Taon TypeScript building blocks
@@ -264,8 +268,10 @@ works well with inheritance and allows you to achieve the highest possible
 Purpose of taon context:
 
 - aggregate all (backend + frontend bridge) building blocks
-- start UDP/TCP server<br>
-   (multiple contexts === multiple servers in 1 NodeJs app)
+- starts TCP/Sockets/IPC server <br>
+- multiple contexts === multiple servers in 1 NodeJs app in development
+- **deployable config** => all detected configs from /src/app.* or /src/app/**/*.*
+- each **deployable** config is automatically a seprated NodeJS process when deployed
 - initialization of database (only 1 db per context allowed)
 
 ```ts
@@ -287,8 +293,21 @@ const MainContext = Taon.createContext(() => ({
   logs: true,
 }));
 
+// automatically detected by Taon CLI
+// HOST_CONFIG => generated in app.hosts.ts
+const DeployableContext = Taon.createContext(() => ({
+  ...HOST_CONFIG['DeployableContext'], 
+  // generated HOST_CONFIG includes contextName, host,
+  // frontendHost and more...
+  contexts: { MainContext }, // everything inherited from MainContext
+}));
+
 async function start() {
   await MainContext.initialize(); // you have to initialize you config before using
+
+  await DeployableContext.initialize(); 
+  // you should initialize all your deployable configs in start function
+
  //... 
 }
 
@@ -305,14 +324,54 @@ const BiggerBackendContext = Taon.createContext(() => ({
 }));
 
 ```
+Context can be use also as a way to accecss remote 
+backend <br> (**remoteHost** property).<br>
+ With context templates you can easily share code of local or remote servers.
+```ts
+export const UserContextTemplate = Taon.createContextTemplate(() => ({
+  contextName: 'PortsContext',
+  contexts: { BaseContext },
+  controllers: { UserController },
+  entities: { User },
+  migrations: { ...MIGRATIONS_CLASSES_FOR_PortsContext },
+  skipWritingServerRoutes: true,
+  logs: {
+    migrations: true,
+  },
+}));
+
+// UserContextTemplate as any; => for now required.. TypeScript can't handle it
+const localConfig = UserContextTemplate;
+const remoteConfig = UserContextTemplate;
+
+export async start() {
+await localConfig.initialize(); // normal context (creates server and db)
+
+// whole context is being reused -> only remote host added for remote requests
+await remoteConfig.initialize({ // remote context
+  overrideRemoteHost: `http://remote.server.com`,
+});
+
+const users = ( // remote users
+  await remoteConfig.getClassInstance(UserController).getAll().request()
+).body?.json;
+
+console.log({
+  'users remote backend': users,
+});
+
+}
+
+```
+
 
 ### Taon entities
 
-Entity class that can be use as Dto. Based no https://typeorm.io/entities
+Entity class that can be use as Dto. Based no typeorm entites https://typeorm.io/entities
 
 ```ts
 @Taon.Entity({ className: 'User' })
-class User extends Taon.Base.AbstractEntity {
+class User extends Taon.Base.AbstractEntity { // id, version included
   //#region @websql
   @Taon.Orm.Column.String()
   //#endregion
@@ -320,10 +379,39 @@ class User extends Taon.Base.AbstractEntity {
 }
 ```
 
+
+```ts
+@Taon.Entity({ className: 'Project' })
+class Project extends Taon.Base.Entity {
+  //#region @websql
+  @Taon.Orm.Column.String()
+  //#endregion
+  location?: string;
+}
+```
+
 ### Taon controller
 
 Injectable to angular's api service -
 glue/bridge between backend and frontend.
+
+```ts
+@Taon.Controller({ className: 'UserController' })
+class UserController extends Taon.Base.CrudController<User> {
+   // This crud controllers there are methods like getAll(), update() etc.
+   // Crud controller structure is similar to taon repository for entity 
+   // structure.
+
+   @Taon.Http.GET()
+    helloWorld(): Taon.Response<string> {
+      //#region @websqlFunc
+      return async (req, res) => 'hello world';
+      //#endregion
+    }
+}
+```
+
+and crud controller with automatically generated REST API:
 
 ```ts
 @Taon.Controller({ className: 'UserController' })
@@ -336,26 +424,38 @@ class UserController extends Taon.Base.CrudController<User> {
       return new Date().toString();
     };
   }
-
 }
+```
+### Taon api service
 
-// # and later inside Angular code
+Api service is a place where you can:
+- inject your taon controllers 
+- modify reposnse or request for backend
+- keep a state (service i) 
 
+```ts
 @Injectable({
-  providedIn:'root'
+  // PLEASE DON'T USE providedIn:'root' - This should not be a singleton 
+  // for whole application -> only for specyfic injected context
 })
-export class UserApiService {
-  userControlller = Taon.inject(()=> MainContext.getClass(UserController))
+export class UserApiService extends Taon.Base.AngularService {
+  // for now - only injectable here are controllers
+  // controllers should be a "glue" between backend and frontend
+  userControlller = this.injectController(UserController);
 
   getAll() { // observables api
     return this.userControlller.getAll()
-      .received
+      .request({
+        // axios request config
+      })
       .observable
       .pipe(map(r => r.body.json));
   }
 
   async getTime() { // proimses api
-    const data = await this.userControlller.whatTimeIsIt().received;
+    const data = await this.userControlller.whatTimeIsIt().request();
+    // old api uses .received instead .request()
+    // const data = await this.userControlller.whatTimeIsIt().received; 
     return data.body.text;
   }
 }
@@ -374,13 +474,22 @@ You should use Repositories only inside server code.
 }) 
 export class UserRepository extends Taon.Base.Repository<User> {
   entityClassResolveFn = () => User;
-  amCustomRepository = 'testingisnoin';
+  
   async findByEmail(email: string) {
     //#region @websqlFunc
     return this.repo.findOne({ where: { email } });
     //#endregion
   }
 }
+```
+There is also a way to create custom repository without crud methods
+```ts
+
+@TaonRepository({ className: 'BaseCustomRepository' })
+export abstract class BaseCustomRepository extends BaseInjector {
+  // your custom methods
+}
+
 ```
 
 ### Taon subscribers
@@ -396,7 +505,7 @@ You should use Subscribers only inside server code.
 })
 export class TaonSubscriber extends Taon.Base.SubscriberForEntity {
   listenTo() {
-    return MainContext.getClass(UserEntity);
+    return UserEntity;
   }
 
   afterInsert(entity: any) {
@@ -512,7 +621,7 @@ export class MyMiddlewareInterceptor extends Taon.Base
   }
 }
 ```
-Example of using middleware in controller and method:
+Example of using middlewares in controller and method:
 ```ts
 @Taon.Controller({
   className: 'SessionController',
@@ -565,7 +674,7 @@ export class MainContext_1735315075962_firstMigration extends Taon.Base
 Depending on where you use you backend/frontend - taon framework uses different
 mechanism for realtime communication:
 
-- normal NodeJs backend => UDP socket communication based on socket.io
+- normal NodeJs backend => TCP(upgrade) socket communication based on socket.io (UDP in future)
 - electron backend => IPC for realtime communication
 - websql browser backend => mock of realtime communication based on RxJS library
 
@@ -577,7 +686,7 @@ You can listen/subscribe to custom events or entities events in every simple fas
 })
 export class RealtimeClassSubscriber extends Taon.Base.SubscriberForEntity {
   listenTo() {
-    return MainContext.getClass(UserEntity);
+    return UserEntity;
   }
 
   afterInsert(entity: any) {

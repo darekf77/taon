@@ -18,11 +18,14 @@
       //   "overrideTitle": "CHANGELOG",
       // },
       {
-        "packageNameWithPath" : "tnp/docs/PHILOSOPHY.md",
+        "packageNameWithPath": "tnp/docs/PHILOSOPHY.md",
         "overrideTitle": "Philosophy",
       },
       {
-        "packageNameWithPath": "taon/docs/FRAMEWORK.md",
+        "packageNameWithPath": [
+          "taon/docs/FRAMEWORK.md",
+          "taon/docs/DATA-TRANSPORT-LAYER.md",
+        ],
         "overrideTitle": "FRAMEWORK",
       },
       {
@@ -32,6 +35,10 @@
       {
         "packageNameWithPath": "tnp/docs/CLOUD-SERVICE.md",
         "overrideTitle": "Cloud-Service",
+      },
+      {
+        "packageNameWithPath": "tnp/docs/TAON-VS-OTHERS.md",
+        "overrideTitle": "Taon vs Others",
       },
       {
         "packageNameWithPath": "tnp/docs/EXAMPLES.md",
@@ -51,7 +58,7 @@
       },
     ],
   },
-  "omitFilesPatters": ["BUILD-INFO.md", "README.md"],
+  "omitFilesPatters": ["BUILD-INFO.md", "README.md","CHANGELOG.md"],
   "mapTitlesNames": {
     "FRAMEWORK.md": "Framework",
   },
@@ -61,10 +68,11 @@
     "Framework",
     "CLI",
     "Cloud-Service",
+    "Taon vs Others",
     "CI/CD",
     "Examples",
     "TODO",
-    "CHANGELOG",
+    // "CHANGELOG",
   ],
   "customCssPath": "mkdocs.custom.css",
   "customJsPath": "mkdocs.custom.js",

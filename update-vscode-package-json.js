@@ -21,10 +21,14 @@ if (params.watch) {
 
 function updatePackageJson() {
   const pathToConfig = path.join(process.cwd(), 'out', fileName);
+  delete require.cache[require.resolve(pathToConfig)]; // clear cache in watch mode
   const extModule = require(pathToConfig).default;
   const commands = extModule.commands || [];
 
-  console.log('Commands:', commands.map(t => `${t.group}: ${t.title}`).sort( (a,b) => a.localeCompare(b) ) );
+  console.log(
+    'Commands:',
+    commands.map(t => `${t.group}: ${t.title}`).sort((a, b) => a.localeCompare(b))
+  );
 
   const pkgjsonpath = path.join(process.cwd(), 'package.json');
   const pkgjson = JSON.parse(fs.readFileSync(pkgjsonpath, 'utf8'));
@@ -32,15 +36,18 @@ function updatePackageJson() {
   pkgjson.contributes = pkgjson.contributes || {};
   pkgjson.contributes.commands = [];
   pkgjson.contributes.submenus = [];
-  pkgjson.contributes.menus = pkgjson.contributes.menus || {};
+  pkgjson.contributes.menus = {};
   pkgjson.contributes.menus["explorer/context"] = [];
   pkgjson.contributes.menus["editor/title/context"] = [];
-  pkgjson.contributes.menus = pkgjson.contributes.menus || {};
 
   const visibleCommands = commands.filter(c => !c.hideContextMenu);
-  const groups = _.uniq(visibleCommands.map(c => c.group).filter(Boolean));
 
-  // Define submenus
+  // split standalone vs grouped
+  const standalone = visibleCommands.filter(c => !c.group);
+  const grouped = visibleCommands.filter(c => c.group);
+  const groups = _.uniq(grouped.map(c => c.group));
+
+  // Define submenus for grouped commands
   pkgjson.contributes.submenus = groups.map(group => ({
     id: `${_.kebabCase(group)}.submenu`,
     label: group
@@ -52,7 +59,7 @@ function updatePackageJson() {
     title: c.title
   }));
 
-  // Attach submenu triggers to context menus
+  // Attach submenu triggers for grouped commands
   for (const group of groups) {
     const submenuId = `${_.kebabCase(group)}.submenu`;
     pkgjson.contributes.menus["explorer/context"].push({
@@ -63,16 +70,25 @@ function updatePackageJson() {
       submenu: submenuId,
       group: "navigation"
     });
+
+    // Put group commands inside submenu
+    pkgjson.contributes.menus[submenuId] = grouped
+      .filter(c => c.group === group)
+      .map(c => ({
+        command: c.command
+      }));
   }
 
-  // Place each command into its corresponding submenu
-  for (const group of groups) {
-    const submenuId = `${_.kebabCase(group)}.submenu`;
-    const groupCommands = visibleCommands.filter(c => c.group === group);
-
-    pkgjson.contributes.menus[submenuId] = groupCommands.map(c => ({
-      command: c.command
-    }));
+  // Add standalone commands directly (no submenu)
+  for (const c of standalone) {
+    pkgjson.contributes.menus["explorer/context"].push({
+      command: c.command,
+      group: "navigation"
+    });
+    pkgjson.contributes.menus["editor/title/context"].push({
+      command: c.command,
+      group: "navigation"
+    });
   }
 
   fs.writeFileSync(pkgjsonpath, JSON.stringify(pkgjson, null, 2), 'utf8');

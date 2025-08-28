@@ -1,26 +1,27 @@
 ## Taon v20.X.X
 
 - 🔲 angular v20 support
-- 🔲 2FA authentication
 - 🔲 simple online payments
+- 🔲 2FA authentication keycloak
+- 🔲 organization multi window electron app
+- 🔲 relaltime development BE/BE
+- 🔲 SSR for angular
 
 ## Taon v19.X.X (CURRENT VERSION)
 
-- 🔲 angular v19 support
-- 🔲 2FA authentication keycloak
-- 🔲 simple online payments
+- ✅ angular v19 support
+
 - 🔲 fast/stable packeges installer solution
 - 🔲 organization build based on standalone (single process with multiple entrypoints build)
-- 🔲 organization multi window electron app
 - 🔲 cloud build: electron, cli, lib, vscode
 - 🔲 docs examples for better understranding
-- 🔲 relaltime development FE/BE and BE/BE
+- ✅ relaltime development FE/BE
 - 🔲 basic authentication
-- 🔲 excellent isomorphic development programmer experience
+- ✅ excellent isomorphic development programmer experience
 - 🔲 simple CD/CI develop/build/deploy process
-- 🔲 local release electron, cli, vscode ext.
+- ✅ local release electron, cli, vscode ext.
 - 🔲 script installation for server (curl -o- https://taon.dev/install-on-server-script.sh | bash)
-- 🔲 release standalone package as @organization/package
+- ✅ release standalone package as @organization/package
 
 ## Taon v18.X.X 
 

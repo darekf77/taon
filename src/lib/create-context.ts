@@ -294,7 +294,7 @@ export const createContext = <
     },
     /**
      * realtime communication with server
-     * Udp socket.io (or ipc) based.
+     * TCP(upgrade) socket.io (or ipc) based.
      */
     get realtime() {
       return {
