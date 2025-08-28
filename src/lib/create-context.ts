@@ -89,50 +89,7 @@ export const createContext = <
   const endpointContextRef = new EndpointContext(config, configFn);
 
   const res = {
-    //#region types
-    types: {
-      //#region entites for
-      // get entities() {
-      //   return config.entities;
-      // },
-      // entitiesFor(classInstace: BaseInjector) {
-      //   const ctx = classInstace.__endpoint_context__;
-      //   if (!entitiesCache[ctx.contextName]) {
-      //     entitiesCache[ctx.contextName] = {};
-      //     for (const entityClassName of Object.keys(config.entities)) {
-      //       entitiesCache[ctx.contextName][entityClassName] =
-      //         config.entities[entityClassName][
-      //           Taon.symbols.orignalClassClonesObj
-      //         ][ctx.contextName];
-      //     }
-      //   }
-      //   return entitiesCache[ctx.contextName] as typeof config.entities;
-      // },
-      //#endregion
-      get controllers() {
-        return config.controllers as any; // TODO QUICK_FIX new typescript generated wrong types
-      },
-      get repositories() {
-        return config.repositories as any; // TODO QUICK_FIX new typescript generated wrong types
-      },
-      get providers() {
-        return config.providers as any; // TODO QUICK_FIX new typescript generated wrong types
-      },
-      get subscribers() {
-        return config.subscribers as any; // TODO QUICK_FIX new typescript generated wrong types
-      },
-      get migrations() {
-        return config.migrations as any; // TODO QUICK_FIX new typescript generated wrong types
-      },
-      get middlewares() {
-        return config.middlewares as any; // TODO QUICK_FIX new typescript generated wrong types
-      },
-    },
-    //#endregion
     //#region contexts
-    get contexts() {
-      return config.contexts as any; // TODO QUICK_FIX new typescript generated wrong types
-    },
     get contextName() {
       return config.contextName;
     },
