@@ -21,7 +21,7 @@ export interface MulterFileUploadResponse {
 @TaonController<BaseController>({
   className: 'BaseController',
 })
-export class BaseController extends BaseInjector {
+export class BaseController<T=any> extends BaseInjector {
   //#region upload form data to server
   @POST({
     overrideContentType: 'multipart/form-data',
