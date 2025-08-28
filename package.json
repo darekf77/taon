@@ -1,8 +1,8 @@
 {
   "name": "taon",
-  "version": "19.0.56",
+  "version": "19.0.58",
   "scripts": {
-    "mkdocs": "mkdocs",
+    "mkdocs": "python3 -m mkdocs",
     "taon init": "taon init",
     "taon start": "taon start",
     "taon build:lib": "taon build:lib",
