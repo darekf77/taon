@@ -1,0 +1,1258 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../FRAMEWORK/">
+      
+      
+        <link rel="next" href="../tnp/docs/CLOUD-SERVICE/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.18">
+    
+    
+      
+        <title>CLI - Taon Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.7e37652d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../mkdocs.custom.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#create-new-project" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Taon Documentation" class="md-header__button md-logo" aria-label="Taon Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Taon Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              CLI
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Start
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../tnp/docs/PHILOSOPHY/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Philosophy
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../FRAMEWORK/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Framework
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  CLI
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../tnp/docs/CLOUD-SERVICE/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Cloud-Service
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../tnp/docs/TAON-VS-OTHERS/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Taon vs Others
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../tnp/CI-CD/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  CI/CD
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../tnp/docs/EXAMPLES/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Examples
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../TODO/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  TODO
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Taon Documentation" class="md-nav__button md-logo" aria-label="Taon Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Taon Documentation
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Start
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tnp/docs/PHILOSOPHY/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Philosophy
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../FRAMEWORK/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Framework
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    CLI
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    CLI
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#create-new-project" class="md-nav__link">
+    <span class="md-ellipsis">
+      Create new project
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#build-release-artifacts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Build &amp; Release artifacts
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Build &amp; Release artifacts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#build-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      Build process
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Build process">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#scenario-1-developing-websitenpm-library" class="md-nav__link">
+    <span class="md-ellipsis">
+      Scenario 1: developing website/npm library
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scenario-2-developing-electron-appnpm-library" class="md-nav__link">
+    <span class="md-ellipsis">
+      Scenario 2: developing electron app/npm library
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scenario-3-developing-vscode-extensionnpm-library" class="md-nav__link">
+    <span class="md-ellipsis">
+      Scenario 3: developing vscode extension/npm library
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#release-process" class="md-nav__link">
+    <span class="md-ellipsis">
+      Release process
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#link-project-or-bundle" class="md-nav__link">
+    <span class="md-ellipsis">
+      Link project or bundle
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#migrations-for-databases" class="md-nav__link">
+    <span class="md-ellipsis">
+      Migrations (for databases)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing" class="md-nav__link">
+    <span class="md-ellipsis">
+      Testing
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#branding" class="md-nav__link">
+    <span class="md-ellipsis">
+      Branding
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#refactor" class="md-nav__link">
+    <span class="md-ellipsis">
+      Refactor
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#os" class="md-nav__link">
+    <span class="md-ellipsis">
+      Os
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Os">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#java-tomcat" class="md-nav__link">
+    <span class="md-ellipsis">
+      java &amp; tomcat
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#etchost" class="md-nav__link">
+    <span class="md-ellipsis">
+      /etc/host
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#git" class="md-nav__link">
+    <span class="md-ellipsis">
+      Git
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Git">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#handy-shortcuts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Handy shortcuts
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remotes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Remotes
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rebase" class="md-nav__link">
+    <span class="md-ellipsis">
+      Rebase
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#stash" class="md-nav__link">
+    <span class="md-ellipsis">
+      Stash
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reset-change-branch" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reset + change branch
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pull-pull" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pull &amp; Pull
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#smart-conventional-commits-branching" class="md-nav__link">
+    <span class="md-ellipsis">
+      Smart Conventional Commits Branching
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Smart Conventional Commits Branching">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fix" class="md-nav__link">
+    <span class="md-ellipsis">
+      fix
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#feature" class="md-nav__link">
+    <span class="md-ellipsis">
+      feature
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chore" class="md-nav__link">
+    <span class="md-ellipsis">
+      chore
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#docs" class="md-nav__link">
+    <span class="md-ellipsis">
+      docs
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#test" class="md-nav__link">
+    <span class="md-ellipsis">
+      test
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#styl" class="md-nav__link">
+    <span class="md-ellipsis">
+      styl
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#refactor_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      refactor
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#release" class="md-nav__link">
+    <span class="md-ellipsis">
+      release
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tnp/docs/CLOUD-SERVICE/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Cloud-Service
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tnp/docs/TAON-VS-OTHERS/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Taon vs Others
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tnp/CI-CD/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    CI/CD
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tnp/docs/EXAMPLES/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Examples
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../TODO/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    TODO
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>CLI</h1>
+
+<h2 id="create-new-project">Create new project</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># create single standalone project</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>taon<span class="w"> </span>new<span class="w"> </span>my-standalone-project
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># create container with on standalone project</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>taon<span class="w"> </span>new<span class="w"> </span>my-projects-container/my-project
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># create folder/container my-container-org and mark it as organization</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>taon<span class="w"> </span>new<span class="w"> </span>@my-container-org/my-project
+</code></pre></div>
+<h2 id="build-release-artifacts">Build &amp; Release artifacts</h2>
+<p>Supported artifacts by taon cli:</p>
+<ul>
+<li>npm lib (entrypoint <strong>./src/lib/index.ts</strong>)</li>
+<li>cli tool (entrypoint <strong>./src/cli.ts</strong>)</li>
+<li>fe/be angular/node app  (entrypoint <strong>./src/app.ts</strong>)</li>
+<li>electron app  (entrypoint <strong>./src/app.electron.ts</strong>)</li>
+<li>vscode plugin (entrypoint <strong>./src/app.vscode.ts</strong>)</li>
+<li>mobile cordova app (entrypoint <strong>./src/app.mobile.ts</strong>)</li>
+<li>docs (mkdocs, storybook, compodoc) <strong>**/*.md, **/*.story.ts</strong></li>
+</ul>
+<h3 id="build-process">Build process</h3>
+<p>Single easy to remember build command</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>taon<span class="w"> </span>build:lib<span class="w"> </span><span class="c1"># &quot;ng build&quot;  form npm lib and whole /src</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>taon<span class="w"> </span>bl
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>taon<span class="w"> </span>build:watch:lib<span class="w"> </span><span class="c1"># &quot;ng build --watch&quot;  form npm lib and whole /src</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>taon<span class="w"> </span>bwl
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="c1"># REMEMBER: lib build command but be executed before each app/electron build</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>taon<span class="w"> </span>build:watch:app<span class="w"> </span><span class="c1"># &quot;ng serve&quot; for website apps</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>taon<span class="w"> </span>bwa
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>taon<span class="w"> </span>build:watch:electron<span class="w"> </span><span class="c1"># &quot;ng serve&quot; for electron apps</span>
+<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>taon<span class="w"> </span>bwe
+</code></pre></div>
+<h4 id="scenario-1-developing-websitenpm-library">Scenario 1: developing website/npm library</h4>
+<p>first terminal
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>taon<span class="w"> </span>build:watch:lib<span class="w"> </span><span class="c1"># or taon bwl</span>
+</code></pre></div>
+second terminal (wait for this command until lib build finish)
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>taon<span class="w"> </span>build:watch:app<span class="w"> </span><span class="c1"># or taon bwa</span>
+</code></pre></div></p>
+<h4 id="scenario-2-developing-electron-appnpm-library">Scenario 2: developing electron app/npm library</h4>
+<p>first terminal
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>taon<span class="w"> </span>build:watch:lib<span class="w"> </span><span class="c1"># or taon bwl</span>
+</code></pre></div>
+second terminal (wait for this command until lib build finish)
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>taon<span class="w"> </span>build:watch:electron<span class="w"> </span><span class="c1"># or taon bwe</span>
+</code></pre></div></p>
+<h4 id="scenario-3-developing-vscode-extensionnpm-library">Scenario 3: developing vscode extension/npm library</h4>
+<p>first terminal
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>taon<span class="w"> </span>build:watch:lib<span class="w"> </span><span class="c1"># or taon bwl</span>
+</code></pre></div>
+Each start of VSCode debugger recreates menu options </p>
+<h3 id="release-process">Release process</h3>
+<p>Single easy to remember release command</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># show release menu</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>taon<span class="w"> </span>release
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>taon<span class="w"> </span>r
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="c1"># release all stuff from taon.jsonc autoReleaseConfigAllowedItems</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>taon<span class="w"> </span>auto:release
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>taon<span class="w"> </span>ar
+</code></pre></div>
+<h2 id="link-project-or-bundle">Link project or bundle</h2>
+<p>Similar command to npm link for taon projects
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># - link local lib/cli development build as global cli tool</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="c1"># - link local repo cli as global cli tools</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>taon<span class="w"> </span>link
+</code></pre></div></p>
+<h2 id="migrations-for-databases">Migrations (for databases)</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>taon<span class="w"> </span>migration<span class="w"> </span><span class="c1"># migration menu</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>taon<span class="w"> </span>m
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="c1"># create migration file (with classes for all detected contexts)</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>taon<span class="w"> </span>migration:create<span class="w"> </span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>taon<span class="w"> </span>mc
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w"> </span><span class="c1"># run all migrations (for all contexts)</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>taon<span class="w"> </span>migration:run<span class="w">   </span><span class="c1"># similar to &#39;taon run&#39;, but won&#39;t start express</span>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>taon<span class="w"> </span>mr<span class="w">              </span><span class="c1"># server and it will stop after contexts</span>
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a><span class="w">                    </span><span class="c1"># initialize() functions...</span>
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a><span class="w"> </span><span class="c1"># revert migration to timestamp</span>
+<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>taon<span class="w"> </span>migration:revert<span class="w"> </span>timestamp<span class="w">  </span><span class="c1"># similar to &#39;taon run&#39;, but won&#39;t start express</span>
+<a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>taon<span class="w"> </span>mr<span class="w"> </span>timestamp<span class="w">                </span><span class="c1"># server and it will stop after contexts</span>
+<a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a><span class="w">                                </span><span class="c1"># initialize() functions...</span>
+</code></pre></div>
+<h2 id="testing">Testing</h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># Unit/Integration tests (jest)</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>taon<span class="w"> </span><span class="nb">test</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>taon<span class="w"> </span>t
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>taon<span class="w"> </span>test:watch
+<a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>taon<span class="w"> </span>tw
+<a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>
+<a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="c1"># recreate jest snapshots</span>
+<a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>taon<span class="w"> </span>test:up:snapshots
+<a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>taon<span class="w"> </span>tu
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="c1"># E2e testing (playwright)</span>
+<a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a>taon<span class="w"> </span>e2e
+<a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a>taon<span class="w"> </span>e2e:watch
+</code></pre></div>
+<h2 id="branding">Branding</h2>
+<p>Recreate favicons, pwa assets from logo.png</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>taon<span class="w"> </span>branding
+</code></pre></div>
+<h2 id="refactor">Refactor</h2>
+<p>For every file:
+- fix prettier
+- fix eslint
+- wrap imports in region</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>taon<span class="w"> </span>refactor
+</code></pre></div>
+<h2 id="os">Os</h2>
+<p><code>taon check:port 80 443 8080</code>  =&gt; check if port(s) are taken</p>
+<p><code>taon copy from-path to-path</code>  =&gt; copy file or folder </p>
+<p><code>taon ln from-path to-path</code>  =&gt; link file or folder</p>
+<p><code>taon refresh</code> =&gt; refresh linked projects configuration
+(after deleting or adding new repo)</p>
+<p><code>taon settings:vscode</code> =&gt; set random nice colors for you vscode window</p>
+<h3 id="java-tomcat">java &amp; tomcat</h3>
+<p><code>taon select:java</code>  =&gt; select java for $JAVA_HOME</p>
+<p><code>taon select:tomcat</code>  =&gt; select tomcat for $TOMCAT_HOME</p>
+<h3 id="etchost">/etc/host</h3>
+<p><code>taon simulateDomain my-test-domain.com</code>  =&gt; modify /etc/host in a nice way</p>
+<p><code>taon hosts</code>  =&gt; open /etc/hosts files in VSCode</p>
+<h2 id="git">Git</h2>
+<h3 id="handy-shortcuts">Handy shortcuts</h3>
+<p><code>taon soft</code>  =&gt; <code>git reset --soft HEAD~1</code></p>
+<p><code>taon count:commits</code>  =&gt; show origin of project</p>
+<p><code>taon remove:submodules</code>  =&gt; remove all submodules from repo</p>
+<p><code>taon remove:submodule my-not-wanted-git-submodules</code>  =&gt; remove submodule by folder name</p>
+<p><code>taon remove:tag git-tag-name-optionally</code> =&gt; remove git tag (if not provided name - select menu appears)</p>
+<p><code>taon last:tag</code> =&gt; display info aboutlast tag</p>
+<p><code>taon clone git-repo-address-to-clone</code> =&gt; display info aboutlast tag</p>
+<h3 id="remotes">Remotes</h3>
+<p><code>taon origin</code>  =&gt; show origin of project</p>
+<p><code>taon remote</code>  =&gt; <code>taon origin</code> </p>
+<p><code>taon origins</code>  =&gt; show all origins of project</p>
+<p><code>taon remotes</code>  =&gt; <code>taon origins</code></p>
+<p><code>taon rename:origin http://my-new-origin</code>  =&gt; replaces default origin new provided</p>
+<p><code>taon set:origin http://my-new-origin</code>  =&gt; alias to rename:origin</p>
+<p><code>taon set:remote:ssh</code>  =&gt; changes http remote to ssh remote</p>
+<p><code>taon set:remote:http</code>  =&gt; changes ssh remote to https remote</p>
+<h3 id="rebase">Rebase</h3>
+<p><code>taon rebase</code>  =&gt; rebase current branch with default branch</p>
+<p><code>taon rebase branch-to-rebase</code>  =&gt; rebase current branch with changes from branch-to-rebase</p>
+<h3 id="stash">Stash</h3>
+<p><code>taon stash</code>  =&gt; stash only staged files</p>
+<p><code>taon stashall</code>  =&gt; stash all files</p>
+<h3 id="reset-change-branch">Reset + change branch</h3>
+<p><code>taon branch</code>  =&gt; git fetch / display menu with branches to select / select branch</p>
+<p><code>taon reset</code>  =&gt; <code>git fetch</code> + remove tmp files for project + <code>taon branch</code> (include children)</p>
+<p><code>taon reset my-branch</code>  =&gt; same as <code>taon reset</code> but specific branch</p>
+<p><code>taon reset</code>  =&gt; reset hard and pull (recrusively)</p>
+<h3 id="pull-pull">Pull &amp; Pull</h3>
+<p><code>taon pull</code>  =&gt; pull current branch or current workspace projects one after another</p>
+<p><code>taon pul</code> =&gt; <code>taon pushall</code></p>
+<p><code>taon repull</code>  =&gt; <code>git reset hard --HEAD~10</code> + <code>taon pull</code></p>
+<p><code>taon pushall</code> =&gt; push code to all remotes(origins) defined in .git/config</p>
+<p><code>taon pall</code> =&gt; <code>taon pushall</code></p>
+<p><code>taon push</code>  =&gt; (optionally git add +)  commit with message based on branch name + push current branch</p>
+<p><code>taon pp</code> =&gt;  push and pull</p>
+<h3 id="smart-conventional-commits-branching">Smart Conventional Commits Branching</h3>
+<p><strong>Checkout branch + add changes + commit message + push branch</strong></p>
+<p>Create special branches (with metadata inside name) that can be use later with command
+<code>taon push</code><br> to "re-push" changes and use matadata from branch name 
+ as commit message.</p>
+<h4 id="fix">fix</h4>
+<p>Quick commit and push bugfix<br>
+<code>taon pfix JIRA-379089 JIRA-380320 proper counter message [my-lib]</code> <br> 
+&lt;=&gt;<br>
+<code>git checkout -b bugfix/JIRA-379089-JIRA-380320--my-lib--proper-counter-message</code> + <br>
+<code>git add</code> + <br>
+<code>git commit -m "fix(my-lib): proper counter message JIRA-379089 JIRA-380320"</code> + <br>
+<code>git push origin bugfix/JIRA-379089-JIRA-380320--my-lib--proper-counter-message</code></p>
+<p>taon pfix &lt;=&gt; taon pushfix &lt;=&gt; taon push:fix</p>
+<h4 id="feature">feature</h4>
+<p>Quick commit and push feature<br>
+<code>taon pf JIRA-379089 JIRA-380320 admin notification [my-lib]</code>  <br>
+&lt;&gt;=&gt;<br>
+<code>git checkout -b feature/JIRA-379089-JIRA-380320--my-lib--admin-notification</code> + <br>
+<code>git add</code> + <br>
+<code>git commit -m "feat(my-lib): admin notification JIRA-379089 JIRA-380320"</code> + <br>
+<code>git push origin feature/JIRA-379089-JIRA-380320--my-lib--admin-notification</code></p>
+<p>taon pf &lt;=&gt; taon pushfeature &lt;=&gt; taon push:feature</p>
+<h4 id="chore">chore</h4>
+<p>Quick commit and push chore <br>
+<code>taon pc JIRA-379089 update deps</code><br />
+&lt;=&gt;  <br>
+<code>git checkout -b chore/JIRA-379089-update-deps</code> + <br>
+<code>git add</code> + <br>
+<code>git commit -m "chore: update deps JIRA-379089"</code> + <br>
+<code>git push origin  chore/JIRA-379089-update-deps</code></p>
+<p>taon pc &lt;=&gt; taon chore &lt;=&gt; taon pchore</p>
+<h4 id="docs">docs</h4>
+<p>Quick commit and push docs update <br>
+<code>taon pd explained installation</code><br>
+ &lt;=&gt; <br>
+<code>git checkout -b docs/explained-installation</code> + <br>
+<code>git add</code> + <br>
+<code>git commit -m "docs:explained installation"</code> + <br>
+<code>git push origin docs/explained-installation</code></p>
+<p>taon pd &lt;=&gt; taon pdocs</p>
+<h4 id="test">test</h4>
+<p>Quick commit and push tests update <br>
+<code>taon ptest admin permission new use case</code><br>
+ &lt;=&gt; <br>
+<code>git checkout -b test/admin-permission-new-use-case</code> + <br>
+<code>git add</code> + <br>
+<code>git commit -m "test: admin permission new use case"</code> + <br>
+<code>git push origin test/admin-permission-new-use-case</code></p>
+<p>taon push:test &lt;=&gt; taon ptest  &lt;=&gt; taon ptests</p>
+<h4 id="styl">styl</h4>
+<p>Quick commit and push style update (formatting, linting etc.) <br>
+<code>taon pstyle proper project methods</code><br>
+ &lt;=&gt; <br>
+<code>git checkout -b style/proper-project-methods</code> + <br>
+<code>git add</code> + <br>
+<code>git commit -m "style: proper project methods"</code> + <br>
+<code>git push origin style/proper-project-methods</code></p>
+<p>taon pstyl &lt;=&gt; taon pstyle</p>
+<h4 id="refactor_1">refactor</h4>
+<p>Quick commit and push code refactor <br>
+<code>taon pref new permission module</code><br>
+ &lt;=&gt; <br>
+<code>git checkout -b refactor/new-permission-module</code> + <br>
+<code>git add</code> + <br>
+<code>git commit -m "refactor: new permission module"</code> + <br>
+<code>git push origin refactor/new-permission-module</code></p>
+<p>taon pref &lt;=&gt; taon prefactor</p>
+<h4 id="release">release</h4>
+<p>Quick commit and push release commit <br>
+<code>taon prelease</code><br>
+ &lt;=&gt; <br>
+<code>git checkout -b release/version-v1-2-3</code> + <br>
+<code>git add</code> + <br>
+<code>git commit -m "release: version v1.2.3"</code> + <br>
+<code>git push origin release/version-1-2-3</code></p>
+<p>taon prel &lt;=&gt; taon prelase</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.tabs", "navigation.sections", "toc.integrate", "navigation.top", "search.suggest", "search.highlight", "content.tabs.link", "content.code.annotation", "content.code.copy"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+        <script src="../mkdocs.custom.js"></script>
+      
+    
+  </body>
+</html>
