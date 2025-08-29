@@ -27,7 +27,7 @@
 
   "removeAfterPullingFromGit": ["projects"],
 
-  "resources": ["README.md", "bin"],
+  "resources": ["README.md", "bin", "icon-menu-taon.svg"],
 
   "packageJsonOverride": {
     "author": "Dariusz Filipiak",
@@ -35,9 +35,30 @@
       "url": "https://github.com/darekf77/taon/issues",
     },
 
+    "contributes": {
+      "views": {
+        "projectsContainer": [
+          {
+            "id": "projectsView",
+            "name": "Taon Projects",
+          },
+        ],
+      },
+      "viewsContainers": {
+        "activitybar": [
+          {
+            "icon": "./icon-menu-taon.svg",
+            "id": "projectsContainer",
+            "title": "Taon Projects",
+          },
+        ],
+      },
+    },
+
     "description": "Isomorphic solution for backend and frontend",
 
     "homepage": "https://github.com/darekf77/taon#readme",
+
     "license": "MIT",
     "private": false,
     "publisher": "taon-dev",
@@ -50,5 +71,5 @@
     "scripts": {
       "mkdocs": "python3 -m mkdocs",
     },
-  }
+  },
 }
