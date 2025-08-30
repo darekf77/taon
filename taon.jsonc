@@ -37,9 +37,9 @@
 
     "contributes": {
       "views": {
-        "projectsContainer": [
+        "projectsContainerTaon": [
           {
-            "id": "projectsView",
+            "id": "projectsViewTaon",
             "name": "Taon Projects",
           },
         ],
@@ -48,7 +48,7 @@
         "activitybar": [
           {
             "icon": "./icon-menu-taon.svg",
-            "id": "projectsContainer",
+            "id": "projectsContainerTaon",
             "title": "Taon Projects",
           },
         ],

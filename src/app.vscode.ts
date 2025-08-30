@@ -1,11 +1,15 @@
 //#region @notForNpm
-import { vscodeExtMethods } from 'tnp/src';
+import { vscodeExtMethods, activateMenuTnp, deactivateMenuTnp } from 'tnp/src';
 import { executeCommand } from 'tnp-helpers/src'; // @backend
-import { ExtensionContext } from 'vscode';
+import type { ExtensionContext } from 'vscode';
+const FRAMEWORK_NAME = 'taon';
 
-const commands = vscodeExtMethods('taon');
-export function activate(context: ExtensionContext) {
+const commands = vscodeExtMethods(FRAMEWORK_NAME);
+export async function activate(context: ExtensionContext) {
   //#region @backendFunc
+  const vscode = await import('vscode');
+  activateMenuTnp(context, vscode, FRAMEWORK_NAME);
+
   for (let index = 0; index < commands.length; index++) {
     const {
       title,
@@ -30,7 +34,11 @@ export function activate(context: ExtensionContext) {
   //#endregion
 }
 
-export function deactivate() {}
+export function deactivate() {
+  //#region @backendFunc
+  deactivateMenuTnp();
+  //#endregion
+}
 
 export default { commands };
 //#endregion
