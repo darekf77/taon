@@ -332,8 +332,8 @@ export abstract class BaseRepository<
   /**
    * alias to remove
    */
-  async delete(idOrEntity: number | string | Entity): Promise<Entity> {
-    return this.remove(idOrEntity);
+  async delete(idOrEntity: number | string | Partial<Entity>): Promise<Entity> {
+    return this.remove(idOrEntity as any);
   }
 
   /**
