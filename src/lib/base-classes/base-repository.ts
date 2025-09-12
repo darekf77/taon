@@ -18,7 +18,11 @@ import type { UpsertOptions } from 'taon-typeorm/src';
 // import { QueryDeepPartialEntity } from 'taon-typeorm/src';
 // import { UpsertOptions } from 'taon-typeorm/src';
 
-import type { DataSource as DataSourceType, QueryRunner, SelectQueryBuilder } from 'taon-typeorm/src';
+import type {
+  DataSource as DataSourceType,
+  QueryRunner,
+  SelectQueryBuilder,
+} from 'taon-typeorm/src';
 import { EndpointContext } from '../endpoint-context';
 import { Helpers } from 'tnp-core/src';
 import { _ } from 'tnp-core/src';
@@ -320,6 +324,14 @@ export abstract class BaseRepository<
     const deletedEntity = await this.repo.findOne({
       where: { id: idOrEntity } as any,
     });
+
+    if (!deletedEntity) {
+      Helpers.warn(
+        `[BaseRepository] Entity "${ClassHelpers.getName(this.repo.target)}" ` +
+          `with id ${idOrEntity} not found, cannot remove`,
+      );
+      return;
+    }
 
     const idCopy = deletedEntity.id;
     await this.repo.remove(deletedEntity);
@@ -821,10 +833,10 @@ export abstract class BaseRepository<
    * Executes a raw SQL query and returns a raw database results.
    * Raw query execution is supported only by relational databases (MongoDB is not supported).
    */
-   createQueryBuilder(
-          alias?: string,
-          queryRunner?: QueryRunner,
-      ): SelectQueryBuilder<Entity> {
+  createQueryBuilder(
+    alias?: string,
+    queryRunner?: QueryRunner,
+  ): SelectQueryBuilder<Entity> {
     return this.repo.createQueryBuilder(alias, queryRunner);
   }
   //#endregion
