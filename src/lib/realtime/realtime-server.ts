@@ -25,8 +25,7 @@ export class RealtimeServer {
 
   //#region methods & getters / init
   private init() {
-    //#region @websql
-
+    //#region @browser
     if (!this.core.ctx.config.frontendHost) {
       console.warn(`[Taon][Realtime]
 
@@ -37,6 +36,9 @@ export class RealtimeServer {
 
       `);
     }
+    //#endregion
+
+    //#region @websql
 
     //#region prepare namespaces pathes
     const nspPathGlobal = this.core.pathFor();

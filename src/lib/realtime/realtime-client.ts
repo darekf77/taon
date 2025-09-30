@@ -15,9 +15,7 @@ export class RealtimeClient {
   constructor(private core: RealtimeCore) {
     this.core = core;
     if (!core.ctx.disabledRealtime) {
-      //#region @browser
       this.init();
-      //#endregion
     }
   }
 
@@ -37,7 +35,7 @@ export class RealtimeClient {
       this.core.ctx.config.frontendHost !== '' &&
       this.core.ctx.isRunningInsideDocker
     ) {
-      console.log(
+      Helpers.logInfo(
         `[${this.core.ctx.contextName}] USING FRONTEND HOST ${this.core.ctx.config.frontendHost}`,
       );
       nspPath.global = new URL(
@@ -47,7 +45,7 @@ export class RealtimeClient {
         `${this.core.ctx.frontendHostUri.origin}${nspPath.realtime.pathname}`,
       );
     } else {
-      console.log(`[${this.core.ctx.contextName}] NOT USING FRONTEND HOST`);
+      Helpers.logInfo(`[${this.core.ctx.contextName}] NOT USING FRONTEND HOST`);
     }
 
     this.core.ctx.logRealtime &&

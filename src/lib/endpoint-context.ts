@@ -620,12 +620,15 @@ export class EndpointContext {
 
       //#region prepare realtime
       if (!this.config.abstract) {
-        this.disabledRealtime = !!this.config.disabledRealtime;
+        this.disabledRealtime = this.config.disabledRealtime;
         //#region @backend
-        if (Helpers.isRunningIn.cliMode()) {
-          // TODO for now...
-          this.disabledRealtime = true;
-        }
+//         if (UtilsOs.isRunningInCliMode() && !_.isNil(this.config.disabledRealtime)) {
+//             // TODO for now...
+//   Helpers.logInfo(`Realtime disable on backend for cli mode`);
+        //             this.disabledRealtime = true;
+// } else {
+        //   Helpers.logInfo(`Realtime enabled on backend`);
+        //         }
         //#endregion
         this.realtime = new RealtimeCore(this);
       }
