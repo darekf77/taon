@@ -146,12 +146,9 @@ export const createContext = <
      * - create controller instances for context
      * - init database (if enable) + migation scripts
      */
-    initialize: async (overrideOptions?: {
-      overrideHost?: string;
-      overrideRemoteHost?: string;
-      onlyMigrationRun?: boolean;
-      onlyMigrationRevertToTimestamp?: number;
-    }): Promise<EndpointContext> => {
+    initialize: async (
+      overrideOptions?: Models.TaonInitializeParams,
+    ): Promise<EndpointContext> => {
       return await new Promise(async (resolve, reject) => {
         //#region init in set timeout
         setTimeout(async () => {
@@ -198,25 +195,26 @@ export const createContext = <
 
           await endpointContextRef.initClasses();
           if (endpointContextRef.databaseConfig) {
-            let keepWebsqlDbDataAfterReload = false;
+            //#region handle websql reload data
             //#region @browser
+            let keepWebsqlDbDataAfterReload = false;
             keepWebsqlDbDataAfterReload =
               TaonAdminService.Instance?.keepWebsqlDbDataAfterReload;
-            //#endregion
 
-            if (!Helpers.isNode && keepWebsqlDbDataAfterReload) {
+            if (keepWebsqlDbDataAfterReload) {
               !UtilsOs.isRunningInCliMode() &&
                 Helpers.info(
                   `[taon] Keeping websql data after reload ` +
                     `(context=${endpointContextRef.contextName}).`,
                 );
             } else {
-              !UtilsOs.isRunningInCliMode() &&
-                Helpers.info(
-                  `[taon] Dropping all tables and data ` +
-                    `(context=${endpointContextRef.contextName}).`,
-                );
+              Helpers.info(
+                `[taon] Dropping all tables and data ` +
+                  `(context=${endpointContextRef.contextName}).`,
+              );
             }
+            //#endregion
+            //#endregion
 
             //#region TODO this may be usefull but for now
             // 2 separate contexts are fine
@@ -233,15 +231,28 @@ export const createContext = <
             // }
             //#endregion
 
+            //#region run migrations tasks
             if (endpointContextRef.onlyMigrationRun) {
+              Helpers.log(
+                `[taon] Running only migrations (context=${endpointContextRef.contextName}).`,
+              );
               await endpointContextRef.dbMigrations.runAllNotCompletedMigrations();
             } else if (endpointContextRef.onlyMigrationRevertToTimestamp) {
+              Helpers.log(
+                `[taon] Reverting migrations to timestamp ${
+                  endpointContextRef.onlyMigrationRevertToTimestamp
+                } (context=${endpointContextRef.contextName}).`,
+              );
               await endpointContextRef.dbMigrations.revertMigrationToTimestamp(
                 endpointContextRef.onlyMigrationRevertToTimestamp,
               );
             } else {
+              Helpers.log(
+                `[taon] Running all not applied migrations (context=${endpointContextRef.contextName}).`,
+              );
               await endpointContextRef.dbMigrations.runAllNotCompletedMigrations();
             }
+            //#endregion
           }
 
           resolve(endpointContextRef);

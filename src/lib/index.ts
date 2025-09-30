@@ -33,7 +33,9 @@ export { TaonAdditionalMiddlewareMethodInfo } from './base-classes/base-middlewa
 export { createContext, TaonContext } from './create-context';
 export { inject } from './inject';
 export { Models } from './models';
+export { BaseFileUploadMiddleware } from './base-classes/base-file-upload.middleware';
 export * from './constants';
+export { MulterFileUploadResponse } from './base-classes/base-controller';
 export { ClassHelpers } from './helpers/class-helpers';
 export type {
   TaonClientMiddlewareInterceptOptions,

@@ -14,6 +14,11 @@ global.i0 = {
 }
 const process= require('process');
 process.removeAllListeners('warning');
+
+var ora = require('ora');
+var spinner = ora();
+global.spinner = spinner;
+
 //#endregion
 
 //#region resolve constants
@@ -136,10 +141,7 @@ if (procType === 'child-of-root') {
 
 if (startSpinner) {
   //#region start spinner in processs
-  var ora = require('ora');
-  var spinner = ora();
   spinner.start();
-  global.spinner = spinner;
 
   const child_process = require('child_process');
   const orgArgvForChild = orgArgv.filter(a => !a.startsWith('-spinner'));

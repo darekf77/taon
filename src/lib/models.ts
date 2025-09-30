@@ -311,10 +311,6 @@ export namespace Models {
   }
   //#endregion
 
-
-
-
-
   //#region models / http
   export namespace Http {
     export import Rest = ModelsNg2Rest;
@@ -406,6 +402,13 @@ export namespace Models {
   export interface StartParams {
     port: number;
     args: string[];
+    onlyMigrationRun?: boolean;
+    onlyMigrationRevertToTimestamp?: number;
+  }
+
+  export interface TaonInitializeParams {
+    overrideHost?: string;
+    overrideRemoteHost?: string;
     onlyMigrationRun?: boolean;
     onlyMigrationRevertToTimestamp?: number;
   }

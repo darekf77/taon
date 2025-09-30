@@ -50,6 +50,7 @@ import { _, Helpers } from 'tnp-core/src';
 import { path } from 'tnp-core/src';
 
 import type { BaseClass } from './base-classes/base-class';
+import type { BaseController } from './base-classes/base-controller';
 import type { BaseInjector } from './base-classes/base-injector';
 import type { BaseMiddleware } from './base-classes/base-middleware';
 import type { BaseMigration } from './base-classes/base-migration';
@@ -351,6 +352,8 @@ export class EndpointContext {
       );
     }
 
+    // console.log(`config for ${this.contextName}`, this.config);
+
     //#region resolve if skipping writing server routes
     //@ts-expect-error overriding readonly
     this.skipWritingServerRoutes = _.isBoolean(
@@ -622,13 +625,13 @@ export class EndpointContext {
       if (!this.config.abstract) {
         this.disabledRealtime = this.config.disabledRealtime;
         //#region @backend
-//         if (UtilsOs.isRunningInCliMode() && !_.isNil(this.config.disabledRealtime)) {
-//             // TODO for now...
-//   Helpers.logInfo(`Realtime disable on backend for cli mode`);
-        //             this.disabledRealtime = true;
-// } else {
+        // if (UtilsOs.isRunningInCliMode() && !_.isNil(this.config.disabledRealtime)) {
+        //   // TODO for now...
+        //   Helpers.logInfo(`Realtime disable on backend for cli mode`);
+        //   this.disabledRealtime = true;
+        // } else {
         //   Helpers.logInfo(`Realtime enabled on backend`);
-        //         }
+        // }
         //#endregion
         this.realtime = new RealtimeCore(this);
       }
@@ -1755,6 +1758,22 @@ export class EndpointContext {
     });
   }
   //#endregion
+  async initControllersHook(allInitedEndpointContexts: {
+    [contextName: string]: EndpointContext;
+  }): Promise<void> {
+    if (this.isRunOrRevertOnlyMigrationAppStart) {
+      return;
+    }
+    const allControllers = this.getClassFunByArr(Models.ClassType.CONTROLLER);
+    for (const controllerClassFn of allControllers) {
+      const instance = this.getInstanceBy(
+        controllerClassFn as any,
+      ) as BaseController;
+      if (_.isFunction(instance.afterAllCtxInited)) {
+        await instance.afterAllCtxInited(allInitedEndpointContexts);
+      }
+    }
+  }
 
   async initControllers(): Promise<void> {
     if (this.isRunOrRevertOnlyMigrationAppStart) {
