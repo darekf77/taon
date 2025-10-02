@@ -13,8 +13,11 @@ import { BaseInjector } from './base-injector';
 export interface MulterFileUploadResponse {
   ok: boolean;
   originalName: string;
+  /**
+   * name change to this to avoid confusion with originalname
+   * (similar to originalname with added uniq part)
+   */
   savedAs: string;
-  savedPath: string;
   size: number;
   mimetype: string;
 }
@@ -50,19 +53,19 @@ export class BaseController<T = any> extends BaseInjector {
       }
       const responseArr = (files as any[]).map(f => {
         const savedAbs = crossPlatformPath(path.resolve(f.path));
-        const savedRel = crossPlatformPath(
-          path.relative(this.ctx.cwd, savedAbs),
-        );
+        // const savedRel = crossPlatformPath(
+        //   path.relative(this.ctx.cwd, savedAbs),
+        // );
         return {
           ok: true,
           originalName: f.originalname,
           savedAs: path.basename(savedAbs),
-          savedPath: savedRel,
+          // savedPath: void 0, // not needed
           size: f.size,
           mimetype: f.mimetype,
         };
       });
-
+      // console.log(responseArr);
       for (const res of responseArr) {
         await this.afterFileUploadAction(res);
       }
