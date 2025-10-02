@@ -75,10 +75,11 @@ export class RealtimeServer {
       );
 
     this.core.connectSocketBE.on('connection', clientSocket => {
-      console.info(
-        `[backend] client connected to namespace "${nspPathGlobal.pathname}", ` +
-          ` host: ${this.core.ctx.host}`,
-      );
+      this.core.ctx.logRealtime &&
+        console.info(
+          `[backend] client connected to namespace "${nspPathGlobal.pathname}", ` +
+            ` host: ${this.core.ctx.host}`,
+        );
     });
 
     //#endregion
@@ -102,10 +103,11 @@ export class RealtimeServer {
       );
 
     this.core.socketBE.on('connection', backendSocketForClient => {
-      console.info(
-        `[backend] client connected to namespace "${nspPathRealtime.pathname}", ` +
-          ` host: ${this.core.ctx.host}`,
-      );
+      this.core.ctx.logRealtime &&
+        console.info(
+          `[backend] client connected to namespace "${nspPathRealtime.pathname}", ` +
+            ` host: ${this.core.ctx.host}`,
+        );
 
       backendSocketForClient.on(
         Symbols.REALTIME.ROOM_SUBSCRIBE_CUSTOM(this.core.ctx.contextName),
