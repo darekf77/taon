@@ -401,8 +401,11 @@ export class EndpointContext {
     // }
 
     if (!this.mode && !this.config.abstract) {
+      const errMsg =
+        `You need to provide host or remoteHost or ` +
+        `useIpcWhenElectron (or mark it as abstract)`;
       Helpers.error(
-        `[taon] Context "${this.contextName}": You need to provide host or remoteHost or useIpcWhenElectron`,
+        `[taon] Context "${this.contextName}": ${errMsg}`,
         false,
         true,
       );
