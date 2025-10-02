@@ -1,13 +1,17 @@
 //#region imports
-import { _ } from 'tnp-core/src';
-import { RealtimeCore } from './realtime-core';
-import { Symbols } from '../symbols';
 import { Observable } from 'rxjs';
+import { _, UtilsOs } from 'tnp-core/src';
+import { Helpers } from 'tnp-core/src';
+
+import type { BaseEntity } from '../base-classes/base-entity';
 import { ClassHelpers } from '../helpers/class-helpers';
+import { Symbols } from '../symbols';
+
+import { RealtimeCore } from './realtime-core';
 import { RealtimeSubsManager } from './realtime-subs-manager';
 import { RealtimeModels } from './realtime.models';
-import type { BaseEntity } from '../base-classes/base-entity';
-import { Helpers } from 'tnp-core/src';
+
+
 //#endregion
 
 export class RealtimeClient {
@@ -257,7 +261,12 @@ to use socket realtime connection;
   private getUniqueIdentifierForConnection(
     options: RealtimeModels.SubsManagerOpt,
   ) {
-    const url = new URL(options.core.ctx.host);
+    let url: URL;
+    if(UtilsOs.isBrowser) {
+      url = new URL(options.core.ctx.host);
+    } else {
+      url = new URL(options.core.ctx.remoteHost); // backend-to-backend use remote host
+    }
     return `${this.core.ctx.contextName}:${url.origin}|${options.roomName}|${options.property}|${options.customEvent}`;
   }
   //#endregion
