@@ -11,7 +11,6 @@ import { RealtimeCore } from './realtime-core';
 import { RealtimeSubsManager } from './realtime-subs-manager';
 import { RealtimeModels } from './realtime.models';
 
-
 //#endregion
 
 export class RealtimeClient {
@@ -40,7 +39,8 @@ export class RealtimeClient {
       this.core.ctx.isRunningInsideDocker
     ) {
       Helpers.logInfo(
-        `[${this.core.ctx.contextName}] USING FRONTEND HOST ${this.core.ctx.config.frontendHost}`,
+        `[${this.core.ctx.contextName}] USING FRONTEND HOST` +
+          ` ${this.core.ctx.config.frontendHost} FOR REALTIME`,
       );
       nspPath.global = new URL(
         `${this.core.ctx.frontendHostUri.origin}${nspPath.global.pathname}`,
@@ -49,7 +49,9 @@ export class RealtimeClient {
         `${this.core.ctx.frontendHostUri.origin}${nspPath.realtime.pathname}`,
       );
     } else {
-      Helpers.logInfo(`[${this.core.ctx.contextName}] NOT USING FRONTEND HOST`);
+      Helpers.logInfo(
+        `[${this.core.ctx.contextName}] Not using frontend host for realtime`,
+      );
     }
 
     this.core.ctx.logRealtime &&
@@ -262,7 +264,7 @@ to use socket realtime connection;
     options: RealtimeModels.SubsManagerOpt,
   ) {
     let url: URL;
-    if(UtilsOs.isBrowser) {
+    if (UtilsOs.isBrowser) {
       url = new URL(options.core.ctx.host);
     } else {
       url = new URL(options.core.ctx.remoteHost); // backend-to-backend use remote host
