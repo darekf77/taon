@@ -267,7 +267,13 @@ to use socket realtime connection;
     if (UtilsOs.isBrowser) {
       url = new URL(options.core.ctx.host);
     } else {
-      url = new URL(options.core.ctx.remoteHost); // backend-to-backend use remote host
+      if (options.core.ctx.remoteHost) {
+        // backend-to-backend communication between remote contexts
+        url = new URL(options.core.ctx.remoteHost);
+      } else {
+        // backend-to-backend communication between contexts
+        url = new URL(options.core.ctx.host);
+      }
     }
     return `${this.core.ctx.contextName}:${url.origin}|${options.roomName}|${options.property}|${options.customEvent}`;
   }
