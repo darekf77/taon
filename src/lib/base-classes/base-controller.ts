@@ -1,10 +1,11 @@
 import * as FormData from 'form-data'; // @backend
-import { crossPlatformPath, fse, path } from 'tnp-core/src'; // @backend
+import { CoreModels, crossPlatformPath, fse, path } from 'tnp-core/src';
 
 import { TaonController } from '../decorators/classes/controller-decorator';
 import { POST } from '../decorators/http/http-methods-decorators';
 import { Body, Path, Query } from '../decorators/http/http-params-decorators';
 import type { EndpointContext } from '../endpoint-context';
+import type { ContextsEndpointStorage } from '../endpoint-context-storage';
 import type { Models } from '../models';
 
 import { BaseFileUploadMiddleware } from './base-file-upload.middleware';
@@ -30,8 +31,8 @@ export class BaseController<T = any> extends BaseInjector {
    * Hook that is called when taon app is inited
    * (all contexts are created and inited)
    */
-  async afterAllCtxInited(allContexts?: {
-    [contextName: string]: EndpointContext;
+  async afterAllCtxInited(options: {
+    ctxStorage: ContextsEndpointStorage;
   }): Promise<void> {}
 
   //#region upload form data to server

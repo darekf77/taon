@@ -1,9 +1,10 @@
 //#region imports
-import { Helpers, UtilsOs, _ } from 'tnp-core/src';
+import { CoreModels, Helpers, UtilsOs, _ } from 'tnp-core/src';
 
 import { EndpointContext } from './endpoint-context';
 import { Models } from './models';
 import { TaonAdminService } from './ui/taon-admin-mode-configuration/taon-admin.service'; // @browser
+import { ContextsEndpointStorage } from './endpoint-context-storage';
 //#endregion
 
 /**
@@ -254,6 +255,8 @@ export const createContext = <
             }
             //#endregion
           }
+
+          ContextsEndpointStorage.Instance.set(endpointContextRef);
 
           resolve(endpointContextRef);
         });

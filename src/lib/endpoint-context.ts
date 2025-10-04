@@ -43,6 +43,7 @@ import {
   getMetadataArgsStorage,
 } from 'taon-typeorm/src';
 import { config } from 'tnp-config/src';
+import { CoreModels } from 'tnp-core/src';
 import { fse, http, https, os } from 'tnp-core/src'; // @backend
 import { UtilsOs, Utils } from 'tnp-core/src';
 import { crossPlatformPath } from 'tnp-core/src';
@@ -64,6 +65,7 @@ import { createContext } from './create-context';
 import { TaonEntityOptions } from './decorators/classes/entity-decorator';
 import { TaonSubscriberOptions } from './decorators/classes/subscriber-decorator';
 import { DITaonContainer } from './dependency-injection/di-container';
+import type { ContextsEndpointStorage } from './endpoint-context-storage';
 import { EntityProcess } from './entity-process';
 import { getResponseValue } from './get-response-value';
 import { ClassHelpers } from './helpers/class-helpers';
@@ -74,7 +76,7 @@ import { Symbols } from './symbols';
 import { TaonAdminService } from './ui/taon-admin-mode-configuration/taon-admin.service'; // @browser
 //#endregion
 
-export class EndpointContext {
+export class EndpointContext  {
   //#region static
 
   /**
@@ -1761,9 +1763,9 @@ export class EndpointContext {
     });
   }
   //#endregion
-  async initControllersHook(allInitedEndpointContexts: {
-    [contextName: string]: EndpointContext;
-  }): Promise<void> {
+  async initControllersHook(
+    ctxStorage: ContextsEndpointStorage,
+  ): Promise<void> {
     if (this.isRunOrRevertOnlyMigrationAppStart) {
       return;
     }
@@ -1773,7 +1775,7 @@ export class EndpointContext {
         controllerClassFn as any,
       ) as BaseController;
       if (_.isFunction(instance.afterAllCtxInited)) {
-        await instance.afterAllCtxInited(allInitedEndpointContexts);
+        await instance.afterAllCtxInited({ ctxStorage });
       }
     }
   }

@@ -36,6 +36,7 @@ export { Models } from './models';
 export { BaseFileUploadMiddleware } from './base-classes/base-file-upload.middleware';
 export * from './constants';
 export { MulterFileUploadResponse } from './base-classes/base-controller';
+export { ContextsEndpointStorage } from './endpoint-context-storage';
 export { ClassHelpers } from './helpers/class-helpers';
 export type {
   TaonClientMiddlewareInterceptOptions,
