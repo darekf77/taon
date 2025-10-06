@@ -73,8 +73,12 @@ export class RealtimeCore {
     this.ctx = ctx;
     this.strategy = this.resolveStrategy();
 
-    this.ctx.logRealtime &&
-      console.log(`[taon] realtime strategy: ${this.strategy}`);
+    //     this.ctx.logRealtime &&
+    //       console.log(`
+
+    // [ctx=${this.ctx.contextName}] realtime strategy: ${this.strategy}, context type: ${this.ctx.contextType}
+
+    //         `);
     if (Helpers.isWebSQL) {
       this.server = new RealtimeServer(this as any);
       // console.log('DONE INITING SERVER');
@@ -114,7 +118,9 @@ export class RealtimeCore {
   public pathFor(namespace?: string) {
     let nsp = namespace ? namespace : '';
     nsp = nsp === '/' ? '' : nsp;
-    let prefix = `${apiPrefix}/${this.ctx.contextName}/udp`;
+    const contextNameForCommunication = this.ctx.contextNameForCommunication;
+
+    let prefix = `${apiPrefix}/${contextNameForCommunication}/udp`;
     if (Helpers.isElectron) {
       prefix = ``;
     }

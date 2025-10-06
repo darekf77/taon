@@ -90,7 +90,7 @@ export class ContextDbMigrations {
   //#region methods & getters / make sure migration table exists
   async ensureMigrationTableExists(): Promise<void> {
     //#region @websqlFunc
-    if (this.ctx.remoteHost || !this.ctx.connection) {
+    if (this.ctx.isRemoteHost || !this.ctx.connection) {
       return;
     }
     const queryRunner = this.ctx.connection.createQueryRunner();
@@ -152,7 +152,7 @@ export class ContextDbMigrations {
 
   async revertMigrationToTimestamp(timestamp: number) {
     //#region @websqlFunc
-    if (this.ctx.remoteHost || !this.ctx.connection) {
+    if (this.ctx.isRemoteHost || !this.ctx.connection) {
       return;
     }
     if (!UtilsMigrations.isValidTimestamp(timestamp)) {
@@ -253,7 +253,7 @@ export class ContextDbMigrations {
   //#region methods & getters / clear migration table
   async clearMigrationTable() {
     //#region @websqlFunc
-    if (this.ctx.remoteHost || !this.ctx.connection) {
+    if (this.ctx.isRemoteHost || !this.ctx.connection) {
       return;
     }
     const queryRunner = this.ctx.connection.createQueryRunner();
@@ -277,7 +277,7 @@ export class ContextDbMigrations {
   //#region methods & getters / mark all migrations as applied
   async markAllMigrationsAsApplied() {
     //#region @websqlFunc
-    if (this.ctx.remoteHost || !this.ctx.connection) {
+    if (this.ctx.isRemoteHost || !this.ctx.connection) {
       return;
     }
     const migrationsClassFns: Function[] = this.ctx.getClassFunByArr(
@@ -354,7 +354,7 @@ export class ContextDbMigrations {
   //#region methods & getters / run all migrations
   async runAllNotCompletedMigrations() {
     //#region @websqlFunc
-    if (this.ctx.remoteHost || !this.ctx.connection) {
+    if (this.ctx.isRemoteHost || !this.ctx.connection) {
       return;
     }
     const migrationsClassFns: Function[] = this.ctx.getClassFunByArr(

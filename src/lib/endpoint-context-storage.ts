@@ -25,7 +25,9 @@ export class ContextsEndpointStorage {
   }
 
   get arr(): EndpointContext[] {
-    return Array.from(this.taonEndpointContexts.values());
+    return Array.from(this.taonEndpointContexts.values()).filter(
+      f => f.contextType === 'normal',
+    );
   }
 
   getBy(

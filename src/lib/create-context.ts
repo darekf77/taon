@@ -55,7 +55,7 @@ export const createContextTemplate = <
  * REQURIED PROPERTY:
  * - contextName
  */
-export const createContext = <
+const createContextFn = <
   //#region context generic args
   CTX extends Record<string, object>,
   CTRL extends Record<string, new (...args: any[]) => any>,
@@ -79,7 +79,9 @@ export const createContext = <
     MIGRATION,
     MIDDLEWARES
   >,
+  cloneOptions: Models.TaonCtxCloneParams,
 ) => {
+  cloneOptions = cloneOptions || {};
   let config = configFn({});
   // console.log(
   //   `
@@ -87,7 +89,11 @@ export const createContext = <
   //   [Taon] Creating context ${config.contextName}...`,
   //   {config},
   // );
-  const endpointContextRef = new EndpointContext(config, configFn);
+  const endpointContextRef = new EndpointContext(
+    config,
+    configFn,
+    cloneOptions,
+  );
 
   const res = {
     //#region contexts
@@ -98,6 +104,26 @@ export const createContext = <
 
     get appId() {
       return config.appId;
+    },
+
+    cloneAsRemote: (cloneOpt?: { overrideRemoteHost?: string }) => {
+      cloneOpt = cloneOpt || {};
+      const opt: Models.TaonCtxCloneParams = {
+        ...cloneOpt,
+        sourceContext: endpointContextRef,
+        useAsRemoteContext: true,
+      };
+      return createContextFn(configFn, opt);
+    },
+
+    cloneAsNormal: (cloneOpt?: { overrideHost?: string }) => {
+      cloneOpt = cloneOpt || {};
+      const opt: Models.TaonCtxCloneParams = {
+        ...cloneOpt,
+        sourceContext: endpointContextRef,
+        useAsRemoteContext: false,
+      };
+      return createContextFn(configFn, opt);
     },
 
     //#region context
@@ -234,23 +260,26 @@ export const createContext = <
 
             //#region run migrations tasks
             if (endpointContextRef.onlyMigrationRun) {
-              Helpers.log(
-                `[taon] Running only migrations (context=${endpointContextRef.contextName}).`,
-              );
+              endpointContextRef.logMigrations &&
+                Helpers.log(
+                  `[taon] Running only migrations (context=${endpointContextRef.contextName}).`,
+                );
               await endpointContextRef.dbMigrations.runAllNotCompletedMigrations();
             } else if (endpointContextRef.onlyMigrationRevertToTimestamp) {
-              Helpers.log(
-                `[taon] Reverting migrations to timestamp ${
-                  endpointContextRef.onlyMigrationRevertToTimestamp
-                } (context=${endpointContextRef.contextName}).`,
-              );
+              endpointContextRef.logMigrations &&
+                Helpers.log(
+                  `[taon] Reverting migrations to timestamp ${
+                    endpointContextRef.onlyMigrationRevertToTimestamp
+                  } (context=${endpointContextRef.contextName}).`,
+                );
               await endpointContextRef.dbMigrations.revertMigrationToTimestamp(
                 endpointContextRef.onlyMigrationRevertToTimestamp,
               );
             } else {
-              Helpers.log(
-                `[taon] Running all not applied migrations (context=${endpointContextRef.contextName}).`,
-              );
+              endpointContextRef.logMigrations &&
+                Helpers.log(
+                  `[taon] Running all not applied migrations (context=${endpointContextRef.contextName}).`,
+                );
               await endpointContextRef.dbMigrations.runAllNotCompletedMigrations();
             }
             //#endregion
@@ -282,4 +311,35 @@ export const createContext = <
 };
 //#endregion
 
+export const createContext = <
+  //#region context generic args
+  CTX extends Record<string, object>,
+  CTRL extends Record<string, new (...args: any[]) => any>,
+  ENTITY extends Record<string, new (...args: any[]) => any>,
+  REPO extends Record<string, new (...args: any[]) => any>,
+  PROVIDER extends Record<string, new (...args: any[]) => any>,
+  SUBSCRIBER extends Record<string, new (...args: any[]) => any>,
+  MIGRATION extends Record<string, new (...args: any[]) => any>,
+  MIDDLEWARES extends Record<string, new (...args: any[]) => any>,
+  //#endregion
+>(
+  configFn: (
+    env: any,
+  ) => Models.ContextOptions<
+    CTX,
+    CTRL,
+    ENTITY,
+    REPO,
+    PROVIDER,
+    SUBSCRIBER,
+    MIGRATION,
+    MIDDLEWARES
+  >,
+) => {
+  return createContextFn(configFn, { useAsRemoteContext: false });
+};
+
 export type TaonContext = ReturnType<typeof createContext>;
+
+// const AA = createContext(() => ({ contextName: 'aa' }));
+// const BB = AA.cloneAsRemoteContext();

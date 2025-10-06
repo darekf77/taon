@@ -18,6 +18,12 @@ export class RealtimeClient {
   constructor(private core: RealtimeCore) {
     this.core = core;
     if (!core.ctx.disabledRealtime) {
+      // this.core.ctx.logRealtime &&
+      //   Helpers.info(`
+
+      //   [ctx=${this.core.ctx.contextName}] init RealtimeClient (type: ${this.core.ctx.contextType})
+
+      //   `);
       this.init();
     }
   }
@@ -38,10 +44,11 @@ export class RealtimeClient {
       this.core.ctx.config.frontendHost !== '' &&
       this.core.ctx.isRunningInsideDocker
     ) {
-      Helpers.logInfo(
-        `[${this.core.ctx.contextName}] USING FRONTEND HOST` +
-          ` ${this.core.ctx.config.frontendHost} FOR REALTIME`,
-      );
+      this.core.ctx.logRealtime &&
+        Helpers.logInfo(
+          `[${this.core.ctx.contextName}] USING FRONTEND HOST` +
+            ` ${this.core.ctx.config.frontendHost} FOR REALTIME`,
+        );
       nspPath.global = new URL(
         `${this.core.ctx.frontendHostUri.origin}${nspPath.global.pathname}`,
       );
@@ -49,9 +56,10 @@ export class RealtimeClient {
         `${this.core.ctx.frontendHostUri.origin}${nspPath.realtime.pathname}`,
       );
     } else {
-      Helpers.logInfo(
-        `[${this.core.ctx.contextName}] Not using frontend host for realtime`,
-      );
+      this.core.ctx.logRealtime &&
+        Helpers.logInfo(
+          `[${this.core.ctx.contextName}] Not using frontend host for realtime`,
+        );
     }
 
     this.core.ctx.logRealtime &&
@@ -254,7 +262,7 @@ to use socket realtime connection;
    * @param customEvent global event name
    * @param dataToPush
    */
-  public triggerCustomEvent(customEvent: string, dataToPush?: any) {
+  public triggerCustomEvent(customEvent: string, dataToPush?: any): void {
     this.core.socketFE.emit(customEvent, dataToPush);
   }
   //#endregion
@@ -262,20 +270,10 @@ to use socket realtime connection;
   //#region methods & getters / get room id from
   private getUniqueIdentifierForConnection(
     options: RealtimeModels.SubsManagerOpt,
-  ) {
-    let url: URL;
-    if (UtilsOs.isBrowser) {
-      url = new URL(options.core.ctx.host);
-    } else {
-      if (options.core.ctx.remoteHost) {
-        // backend-to-backend communication between remote contexts
-        url = new URL(options.core.ctx.remoteHost);
-      } else {
-        // backend-to-backend communication between contexts
-        url = new URL(options.core.ctx.host);
-      }
-    }
-    return `${this.core.ctx.contextName}:${url.origin}|${options.roomName}|${options.property}|${options.customEvent}`;
+  ): string {
+    let url: URL = new URL(options.core.ctx.host);
+    let contextNameForCommunication = options.core.ctx.contextNameForCommunication;
+    return `${contextNameForCommunication}:${url.origin}|${options.roomName}|${options.property}|${options.customEvent}`;
   }
   //#endregion
 }

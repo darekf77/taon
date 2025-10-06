@@ -14,6 +14,7 @@ import type {
   TaonMiddlewareFunction,
   TaonMiddlewareInheritanceObj,
 } from './decorators/http/http-methods-decorators';
+import type { EndpointContext } from './endpoint-context';
 import { ClassHelpers } from './helpers/class-helpers';
 
 export namespace Models {
@@ -213,12 +214,7 @@ export namespace Models {
      * Needs to be specified in docker environment only
      */
     frontendHostPortNumber?: number;
-    /**
-     * IMPORTANT! provide full url that starts with http:// or https://
-     * backend way of communication
-     * between taon backends/processes
-     */
-    remoteHost?: string;
+
     /**
      * User ipc for communication between BE/FE
      * when electron is used as a platform
@@ -407,10 +403,15 @@ export namespace Models {
   }
 
   export interface TaonInitializeParams {
-    overrideHost?: string;
-    overrideRemoteHost?: string;
     onlyMigrationRun?: boolean;
     onlyMigrationRevertToTimestamp?: number;
+  }
+
+  export interface TaonCtxCloneParams {
+    useAsRemoteContext?: boolean;
+    overrideRemoteHost?: string;
+    overrideHost?: string;
+    sourceContext?: EndpointContext;
   }
 
   //#endregion

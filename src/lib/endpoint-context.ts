@@ -76,7 +76,7 @@ import { Symbols } from './symbols';
 import { TaonAdminService } from './ui/taon-admin-mode-configuration/taon-admin.service'; // @browser
 //#endregion
 
-export class EndpointContext  {
+export class EndpointContext {
   //#region static
 
   /**
@@ -147,6 +147,12 @@ export class EndpointContext  {
   //#region @websql
   public repos = new Map<string, Repository<any>>();
   //#endregion
+  //#endregion
+
+  //#region fields / source context
+  get sourceContext(): EndpointContext | undefined {
+    return this.cloneOptions?.sourceContext;
+  }
   //#endregion
 
   public readonly skipWritingServerRoutes: boolean = false;
@@ -281,7 +287,15 @@ export class EndpointContext  {
     private configFn: (
       env: any,
     ) => Models.ContextOptions<any, any, any, any, any, any, any, any>,
+    /**
+     * (@default: false)
+     * If TRUE context is NOT going to create db/express server/http endpoints
+     * PURPOSE OF THIS PROPERTY
+     * -> ONLY remote access from backend or frontend to specific backend
+     */
+    private readonly cloneOptions: Models.TaonCtxCloneParams,
   ) {
+    this.cloneOptions = this.cloneOptions || {};
     this.isRunningInsideDocker = UtilsOs.isRunningInDocker();
   }
   //#endregion
@@ -289,15 +303,11 @@ export class EndpointContext  {
   //#region methods & getters / init
   public async init(options?: {
     initFromRecrusiveContextResovle?: boolean;
-    overrideHost?: string | null;
-    overrideRemoteHost?: string | null;
     onlyMigrationRun?: boolean;
     onlyMigrationRevertToTimestamp?: number;
   }) {
     const {
       initFromRecrusiveContextResovle,
-      overrideHost,
-      overrideRemoteHost,
       onlyMigrationRun,
       onlyMigrationRevertToTimestamp,
     } = options || {}; // TODO use it ?
@@ -313,22 +323,22 @@ export class EndpointContext  {
         this.config.database as Models.DatabaseConfig,
       ).databaseConfigTypeORM;
     }
-    if (overrideHost && overrideRemoteHost) {
-      Helpers.throw(
-        `[taon-config] You can't have overrideHost and overrideRemoteHost at the same time`,
-      );
-    }
-
-    this.config.host = !_.isUndefined(overrideHost)
-      ? overrideHost
-      : this.config.host;
-    this.config.remoteHost = !_.isUndefined(overrideRemoteHost)
-      ? overrideRemoteHost
-      : this.config.remoteHost;
 
     this.config.host = this.host === null ? void 0 : this.host;
-    this.config.remoteHost =
-      this.remoteHost === null ? void 0 : this.remoteHost;
+
+    if (
+      this.cloneOptions.overrideHost &&
+      !this.cloneOptions.useAsRemoteContext
+    ) {
+      this.config.host = this.cloneOptions.overrideHost;
+    }
+
+    if (
+      this.cloneOptions.overrideRemoteHost &&
+      this.cloneOptions.useAsRemoteContext
+    ) {
+      this.config.host = this.cloneOptions.overrideRemoteHost;
+    }
 
     if (
       this.config.host &&
@@ -336,24 +346,13 @@ export class EndpointContext  {
       !this.config.host.startsWith('https://')
     ) {
       Helpers.throw(
-        `[taon-config] Your 'host' must start with http:// or https://`,
+        `[taon-config] Your${this.host ? ' remote' : ''} 'host' must start with http:// or https://`,
       );
     }
 
     if (_.isUndefined(this.config.useIpcWhenElectron)) {
       this.config.useIpcWhenElectron = true;
     }
-
-    if (
-      this.config.remoteHost &&
-      !this.config.remoteHost.startsWith('http://') &&
-      !this.config.remoteHost.startsWith('https://')
-    ) {
-      Helpers.throw(
-        `[taon-config] Your 'remoteHost' must start with http:// or https://`,
-      );
-    }
-
     // console.log(`config for ${this.contextName}`, this.config);
 
     //#region resolve if skipping writing server routes
@@ -373,12 +372,7 @@ export class EndpointContext  {
       //#endregion
     }
 
-    if (this.config.remoteHost) {
-      if (this.config.host) {
-        Helpers.throw(
-          `[taon] You can't have remoteHost and host at the same time`,
-        );
-      }
+    if (this.isRemoteHost) {
       this.mode = 'remote-backend(tcp+udp)';
     }
 
@@ -404,10 +398,10 @@ export class EndpointContext  {
 
     if (!this.mode && !this.config.abstract) {
       const errMsg =
-        `You need to provide host or remoteHost or ` +
-        `useIpcWhenElectron (or mark it as abstract)`;
+        `You need to provide host property or ` +
+        `useIpcWhenElectron or mark it as abstract`;
       Helpers.error(
-        `[taon] Context "${this.contextName}": ${errMsg}`,
+        `[taon][Context=${this.contextName}]: ${errMsg}`,
         false,
         true,
       );
@@ -466,7 +460,7 @@ export class EndpointContext  {
     }
     //#endregion
 
-    //#region prepare & gather all classes recrusively
+    //#region prepare & gather all classes recursively
     this.config.contexts = this.config.contexts || {};
     this.config.entities = this.config.entities || {};
     this.config.controllers = this.config.controllers || {};
@@ -638,6 +632,12 @@ export class EndpointContext  {
         //   Helpers.logInfo(`Realtime enabled on backend`);
         // }
         //#endregion
+
+        this.logRealtime &&
+          Helpers.info(
+            `[ctx=${this.contextName}] Init Realtime for ${this.mode}`,
+          );
+
         this.realtime = new RealtimeCore(this);
       }
       //#endregion
@@ -651,10 +651,10 @@ export class EndpointContext  {
           `[taon] Create abstract context: ${this.config.contextName}`,
         );
     } else {
-      if (this.config.remoteHost) {
+      if (this.isRemoteHost) {
         this.logFramework &&
           Helpers.info(
-            `[taon] Create context for remote host: ${this.config.remoteHost}`,
+            `[taon] Create context for remote host: ${this.config.host}`,
           );
       } else {
         this.logFramework &&
@@ -820,7 +820,7 @@ export class EndpointContext  {
   //#region methods & getters / start server
   async startServer(): Promise<void> {
     //#region @backendFunc
-    if (this.remoteHost || this.isRunOrRevertOnlyMigrationAppStart) {
+    if (this.isRemoteHost || this.isRunOrRevertOnlyMigrationAppStart) {
       return;
     }
     if (this.mode === 'backend-frontend(tcp+udp)') {
@@ -828,10 +828,12 @@ export class EndpointContext  {
         if (this.isRunningInsideDocker) {
           // this.displayRoutes(this.expressApp);
           this.serverTcpUdp.listen(Number(this.uriPort), '0.0.0.0', () => {
-            Helpers.log(
-              `Express server (inside docker) started 0.0.0.0:${this.uriPort}`,
-            );
-            Helpers.log(`[taon][express-server]listening on port: ${this.uriPort}, hostname: ${this.uriPathname},
+            this.logFramework &&
+              Helpers.log(
+                `[ctx=${this.contextName}] Express server (inside docker) started 0.0.0.0:${this.uriPort}`,
+              );
+            this.logFramework &&
+              Helpers.log(`[taon][express-server]listening on port: ${this.uriPort}, hostname: ${this.uriPathname},
     address: ${this.uriProtocol}//localhost:${this.uriPort}${this.uriPathname}
     ExpressJS mode: ${this.expressApp.settings.env}
     `);
@@ -840,10 +842,12 @@ export class EndpointContext  {
         } else {
           // this.displayRoutes(this.expressApp);
           this.serverTcpUdp.listen(Number(this.uriPort), () => {
-            Helpers.log(
-              `Express server (inside nodejs app) started on localhost:${this.uriPort}`,
-            );
-            Helpers.log(`[taon][express-server]listening on port: ${this.uriPort}, hostname: ${this.uriPathname},
+            this.logFramework &&
+              Helpers.log(
+                `[ctx=${this.contextName}] Express server (inside nodejs app) started on localhost:${this.uriPort}`,
+              );
+            this.logFramework &&
+              Helpers.log(`[taon][express-server]listening on port: ${this.uriPort}, hostname: ${this.uriPathname},
     address: ${this.uriProtocol}//localhost:${this.uriPort}${this.uriPathname}
     expressJS mode: ${this.expressApp.settings.env}
             `);
@@ -1287,7 +1291,7 @@ export class EndpointContext  {
 
   //#region methods & getters / init classes
   async initClasses(): Promise<void> {
-    if (this.remoteHost) {
+    if (this.isRemoteHost) {
       return;
     }
 
@@ -1362,13 +1366,8 @@ export class EndpointContext  {
     return uri;
   }
 
-  get uri() {
-    const url = this.host
-      ? new URL(this.host)
-      : this.remoteHost
-        ? new URL(this.remoteHost)
-        : void 0;
-
+  get uri(): URL | undefined {
+    const url = this.host ? new URL(this.host) : void 0;
     return url;
   }
   //#endregion
@@ -1446,11 +1445,52 @@ export class EndpointContext  {
   //#endregion
 
   //#region methods & getters / public assets
+  public get isRemoteHost(): boolean {
+    return !!this.cloneOptions?.useAsRemoteContext;
+  }
+  //#endregion
+
+  //#region methods & getters / public assets
   /**
    * ipc/udp needs this
    */
   public get contextName(): string {
-    return this.config.contextName;
+    // console.log(this.originalConfig);
+    return this.config?.contextName || this.originalConfig?.contextName;
+  }
+  //#endregion
+
+  //#region methods & getters / public assets
+  /**
+   * ipc/udp needs this
+   */
+  public get contextNameForCommunication(): string {
+    let contextName = this.contextName;
+    if (this.isRemoteHost) {
+      if (this.sourceContext?.contextName) {
+        contextName = this.sourceContext?.contextName;
+      } else {
+        // console.log(
+        //   `CANT GET SOURCE CONTEXT NAME FOR REMOTE CONTEXT ${this.contextName}`,
+        // );
+      }
+    }
+    return contextName;
+  }
+  //#endregion
+
+  //#region methods & getters / public assets
+  /**
+   * Check context type
+   */
+  public get contextType(): 'normal' | 'remote' | 'abstract' | 'invalid' {
+    if (this.config.abstract) {
+      return 'abstract';
+    }
+    if (this.host) {
+      return this.isRemoteHost ? 'remote' : 'normal';
+    }
+    return 'invalid';
   }
   //#endregion
 
@@ -1484,12 +1524,6 @@ export class EndpointContext  {
   }
   //#endregion
 
-  //#region methods & getters / remote host
-  get remoteHost() {
-    return this.config.remoteHost;
-  }
-  //#endregion
-
   //#region methods & getters / host
   get host() {
     return this.config.host;
@@ -1505,7 +1539,7 @@ export class EndpointContext  {
   //#region methods & getters / init subscribers
   async initSubscribers() {
     //#region @websqlFunc
-    if (this.remoteHost) {
+    if (this.isRemoteHost) {
       return;
     }
     const subscriberClasses = this.getClassFunByArr(
@@ -1527,7 +1561,7 @@ export class EndpointContext  {
   //#region methods & getters / init entities
   async initEntities() {
     //#region @websql
-    if (this.remoteHost) {
+    if (this.isRemoteHost) {
       return;
     }
     const entities = this.getClassFunByArr(Models.ClassType.ENTITY);
@@ -1586,7 +1620,7 @@ export class EndpointContext  {
   //#region methods & getters / init connection
   async initDatabaseConnection(): Promise<void> {
     //#region @websqlFunc
-    if (this.remoteHost || !this.databaseConfig) {
+    if (this.isRemoteHost || !this.databaseConfig) {
       return;
     }
     const entities = this.getClassFunByArr(Models.ClassType.ENTITY).map(
@@ -1719,12 +1753,14 @@ export class EndpointContext  {
       })
       .join('/');
 
+    const contextNameForCommunication = this.contextNameForCommunication;
+
     if (TaonHelpers.isGoodPath(classConfig.path)) {
       classConfig.calculatedPath = classConfig.path;
     } else {
       classConfig.calculatedPath = (
         `${this.uriPathnameOrNothingIfRoot}` +
-        `/${apiPrefix}/${this.contextName}/tcp${parentsCalculatedPath}/` +
+        `/${apiPrefix}/${contextNameForCommunication}/tcp${parentsCalculatedPath}/` +
         `${ClassHelpers.getName(controllerClassFn)}`
       )
         .replace(/\/\//g, '/')
@@ -1923,7 +1959,7 @@ export class EndpointContext  {
 
         //#region init client
         const shouldInitClient =
-          Helpers.isBrowser || this.remoteHost || Helpers.isWebSQL;
+          Helpers.isBrowser || this.isRemoteHost || Helpers.isWebSQL;
         // console.log('shouldInitClient', shouldInitClient);
         if (shouldInitClient) {
           // console.log(
@@ -1960,7 +1996,7 @@ export class EndpointContext  {
   //#region methods & getters / write active routes
   public writeActiveRoutes(): void {
     if (
-      this.remoteHost ||
+      this.isRemoteHost ||
       this.isRunOrRevertOnlyMigrationAppStart ||
       this.skipWritingServerRoutes
     ) {
@@ -2296,7 +2332,7 @@ export class EndpointContext  {
       //#endregion
     }
 
-    if (!this.remoteHost) {
+    if (!this.isRemoteHost) {
       //#region apply dummy websql express routers
       //#region @websql
       if (Helpers.isWebSQL) {

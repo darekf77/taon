@@ -16,11 +16,12 @@ export class RealtimeServer {
   // private jobs = {};
   constructor(private core: RealtimeCore) {
     this.core = core;
-    if (!core.ctx.disabledRealtime) {
-      //#region @websql
-      this.init();
-      //#endregion
+    if (core.ctx.disabledRealtime || this.core.ctx.isRemoteHost) {
+      return;
     }
+    //#region @websql
+    this.init();
+    //#endregion
   }
 
   //#region methods & getters / init
@@ -211,7 +212,7 @@ export class RealtimeServer {
 
     let roomName: string;
 
-    if (this.core.ctx.disabledRealtime) {
+    if (this.core.ctx.disabledRealtime || this.core.ctx.isRemoteHost) {
       return;
     }
 
