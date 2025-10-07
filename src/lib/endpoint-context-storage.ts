@@ -1,6 +1,9 @@
+import { CoreModels } from 'tnp-core/src';
+
 import type { EndpointContext } from './endpoint-context';
 
 export class ContextsEndpointStorage {
+  SPECIAL_APP_READY_MESSAGE = CoreModels.SPECIAL_APP_READY_MESSAGE;
   private taonEndpointContexts = new Map<string, EndpointContext>();
 
   //#region singleton
@@ -39,3 +42,6 @@ export class ContextsEndpointStorage {
     return this.taonEndpointContexts.get(context.contextName) as any;
   }
 }
+
+// TODO QUICK_FIX @LAST encapsulate this => move to separate package
+globalThis['$$$ContextsEndpointStorage$$$'] = ContextsEndpointStorage.Instance;
