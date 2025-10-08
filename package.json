@@ -1,6 +1,6 @@
 {
   "name": "taon",
-  "version": "19.0.64",
+  "version": "19.0.65",
   "scripts": {
     "mkdocs": "python3 -m mkdocs",
     "taon init": "taon init",
