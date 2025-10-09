@@ -83,10 +83,10 @@ export abstract class BaseCrudController<Entity> extends BaseController {
   //#endregion
 
   //#region bufferd changes
-  @GET(`/:id/property/:property`)
+  @GET()
   bufforedChanges(
-    @Path(`id`) id: number | string,
-    @Path(`property`) property: string,
+    @Query(`id`) id: number | string,
+    @Query(`property`) property: string,
     @Query('alreadyLength') alreadyLength?: number,
   ): Models.Http.Response<string | any[]> {
     //#region @websqlFunc
@@ -174,8 +174,8 @@ export abstract class BaseCrudController<Entity> extends BaseController {
   //#endregion
 
   //#region get by id
-  @GET(`/:id`)
-  getBy(@Path(`id`) id: number | string): Models.Http.Response<Entity> {
+  @GET()
+  getBy(@Query(`id`) id: number | string): Models.Http.Response<Entity> {
     //#region @websqlFunc
     return async () => {
       const model = await this.db.getBy(id);
@@ -186,9 +186,9 @@ export abstract class BaseCrudController<Entity> extends BaseController {
   //#endregion
 
   //#region update by id
-  @PUT(`/:id`)
+  @PUT()
   updateById(
-    @Path(`id`) id: number | string,
+    @Query(`id`) id: number | string,
     @Body() item: Entity,
   ): Models.Http.Response<Entity> {
     //#region @websqlFunc
@@ -202,9 +202,9 @@ export abstract class BaseCrudController<Entity> extends BaseController {
   //#endregion
 
   //#region patch by id
-  @PATCH(`/:id`)
+  @PATCH()
   patchById(
-    @Path(`id`) id: number | string,
+    @Query(`id`) id: number | string,
     @Body() item: Entity,
   ): Models.Http.Response<Entity> {
     //#region @websqlFunc
@@ -233,8 +233,8 @@ export abstract class BaseCrudController<Entity> extends BaseController {
   //#endregion
 
   //#region delete by id
-  @DELETE(`/:id`)
-  deleteById(@Path(`id`) id: number): Models.Http.Response<Entity> {
+  @DELETE()
+  deleteById(@Query(`id`) id: number): Models.Http.Response<Entity> {
     //#region @websqlFunc
     return async () => {
       const model = await this.db.deleteById(id);
@@ -245,9 +245,9 @@ export abstract class BaseCrudController<Entity> extends BaseController {
   //#endregion
 
   //#region bulk delete
-  @DELETE(`/bulkDelete/:ids`)
+  @DELETE()
   bulkDelete(
-    @Path(`ids`) ids: (number | string)[],
+    @Query(`ids`) ids: (number | string)[],
   ): Models.Http.Response<(number | string | Entity)[]> {
     //#region @websqlFunc
     return async () => {
