@@ -1,18 +1,23 @@
 //#region imports
-import { Taon, BaseContext } from 'taon/src';
-import { _ } from 'tnp-core/src';
+import * as os from 'os'; // @backend
+
+import { CommonModule } from '@angular/common'; // @browser
+import { NgModule, inject, Injectable } from '@angular/core'; // @browser
+import { Component, OnInit } from '@angular/core'; // @browser
+import { VERSION } from '@angular/core'; // @browser
+import Aura from '@primeng/themes/aura'; // @browser
+import { MaterialCssVarsModule } from 'angular-material-css-vars'; // @browser
+import { providePrimeNG } from 'primeng/config'; // @browser
 import { Observable, map } from 'rxjs';
-import { HOST_BACKEND_PORT } from './app.hosts';
-//#region @browser
-import { NgModule, inject, Injectable } from '@angular/core';
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-//#endregion
+import { Taon, BaseContext, TAON_CONTEXT, EndpointContext } from 'taon/src';
+import { UtilsOs } from 'tnp-core/src';
+
+import { HOST_CONFIG } from './app.hosts';
 //#endregion
 
-console.log('[taon app] hello world');
-console.log('[taon app] Your server will start on port ' + HOST_BACKEND_PORT);
-const host = 'http://localhost:' + HOST_BACKEND_PORT;
+console.log('hello world');
+console.log('Your backend host ' + HOST_CONFIG['MainContext'].host);
+console.log('Your frontend host ' + HOST_CONFIG['MainContext'].frontendHost);
 
 //#region taon component
 //#region @browser
@@ -20,11 +25,13 @@ const host = 'http://localhost:' + HOST_BACKEND_PORT;
   selector: 'app-taon',
   standalone: false,
   template: `hello from taon<br />
+    Angular version: {{ angularVersion }}<br />
     <br />
     users from backend
     <ul>
       <li *ngFor="let user of users$ | async">{{ user | json }}</li>
-    </ul> `,
+    </ul>
+    hello world from backend: <strong>{{ hello$ | async }}</strong> `,
   styles: [
     `
       body {
@@ -34,8 +41,15 @@ const host = 'http://localhost:' + HOST_BACKEND_PORT;
   ],
 })
 export class TaonComponent {
+  angularVersion =
+    VERSION.full +
+    ` mode: ${UtilsOs.isRunningInWebSQL() ? ' (websql)' : '(normal)'}`;
   userApiService = inject(UserApiService);
   readonly users$: Observable<User[]> = this.userApiService.getAll();
+  readonly hello$ = this.userApiService.userController
+    .helloWorld()
+    .request()
+    .observable.pipe(map(r => r.body.text));
 }
 //#endregion
 //#endregion
@@ -45,9 +59,9 @@ export class TaonComponent {
 @Injectable({
   providedIn: 'root',
 })
-export class UserApiService {
-  userController = Taon.inject(() => MainContext.getClass(UserController));
-  getAll() {
+export class UserApiService extends Taon.Base.AngularService {
+  userController = this.injectController(UserController);
+  getAll(): Observable<User[]> {
     return this.userController
       .getAll()
       .request()
@@ -60,8 +74,27 @@ export class UserApiService {
 //#region  taon module
 //#region @browser
 @NgModule({
+  providers: [
+    {
+      provide: TAON_CONTEXT,
+      useFactory: () => MainContext,
+    },
+    providePrimeNG({
+      // inited ng prime - remove if not needed
+      theme: {
+        preset: Aura,
+      },
+    }),
+  ],
   exports: [TaonComponent],
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    MaterialCssVarsModule.forRoot({
+      // inited angular material - remove if not needed
+      primary: '#4758b8',
+      accent: '#fedfdd',
+    }),
+  ],
   declarations: [TaonComponent],
 })
 export class TaonModule {}
@@ -71,52 +104,112 @@ export class TaonModule {}
 //#region  taon entity
 @Taon.Entity({ className: 'User' })
 class User extends Taon.Base.AbstractEntity {
-  public static from(obj: Pick<User, 'name'>): User {
-    return new User().clone(obj);
-  }
   //#region @websql
   @Taon.Orm.Column.String()
   //#endregion
   name?: string;
+
+  getHello(): string {
+    return `hello ${this.name}`;
+  }
 }
 //#endregion
 
 //#region  taon controller
 @Taon.Controller({ className: 'UserController' })
 class UserController extends Taon.Base.CrudController<User> {
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   entityClassResolveFn = () => User;
+
+  @Taon.Http.GET()
+  helloWorld(): Taon.Response<string> {
+    //#region @websqlFunc
+    return async (req, res) => {
+      console.log('helloWorld called');
+      return 'hello world from backend';
+    };
+    //#endregion
+  }
+
+  @Taon.Http.GET()
+  getOsPlatform(): Taon.Response<string> {
+    //#region @websqlFunc
+    return async (req, res) => {
+      //#region @backend
+      return os.platform(); // for normal nodejs backend return real value
+      //#endregion
+      return 'no-platform-inside-browser-and-websql-mode';
+    };
+    //#endregion
+  }
 }
 //#endregion
 
+//#region  taon migration
+//#region @websql
+@Taon.Migration({
+  className: 'UserMigration',
+})
+class UserMigration extends Taon.Base.Migration {
+  userController = this.injectRepo(User);
+  async up(): Promise<any> {
+    const superAdmin = new User();
+    superAdmin.name = 'super-admin';
+    await this.userController.save(superAdmin);
+  }
+}
+//#endregion
+//#endregion
+
 //#region  taon context
-const MainContext = Taon.createContext(() => ({
-  host,
-  appId: 'taon.dev.sample-app',
-  contextName: 'MainContext',
+var MainContext = Taon.createContext(() => ({
+  ...HOST_CONFIG['MainContext'],
   contexts: { BaseContext },
+  //#region @websql
+  /**
+   * This is dummy migration - you DO NOT NEED need this migrations object
+   * if you are using HOST_CONFIG['MainContext'] that contains 'migrations' object.
+   * DELETE THIS 'migrations' object if you use taon CLI that generates
+   * migrations automatically inside /src/migrations folder.
+   */
+  migrations: {
+    UserMigration,
+  },
+  //#endregion
   controllers: {
     UserController,
-    // PUT TAON CONTORLLERS HERE
   },
   entities: {
     User,
-    // PUT TAON ENTITIES HERE
   },
   database: true,
-  disabledRealtime: true,
+  // disabledRealtime: true,
 }));
 //#endregion
 
-async function start() {
+async function start(startParams?: Taon.StartParams): Promise<void> {
   await MainContext.initialize();
 
-  if (Taon.isBrowser) {
+  //#region @backend
+  if (
+    startParams.onlyMigrationRun ||
+    startParams.onlyMigrationRevertToTimestamp
+  ) {
+    process.exit(0);
+  }
+  //#endregion
+
+  //#region @backend
+  console.log(`Hello in NodeJs backend! os=${os.platform()}`);
+  //#endregion
+
+  if (UtilsOs.isBrowser) {
     const users = (
-      await MainContext.getClassInstance(UserController).getAll().received
+      await MainContext.getClassInstance(UserController).getAll().request()
     ).body?.json;
-    console.log({
-      'users from backend': users,
-    });
+    for (const user of users || []) {
+      console.log(`user: ${user.name} - ${user.getHello()}`);
+    }
   }
 }
 
