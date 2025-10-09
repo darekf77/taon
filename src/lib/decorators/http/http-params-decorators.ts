@@ -25,6 +25,9 @@ function metaParam(
   // console.log('params updated', methodConfig);
 }
 
+/**
+ * @deprecated use Taon.Http.Param.Path (is more safe and cleaner)
+ */
 export function Path(name: string) {
   return function (
     target: any,
