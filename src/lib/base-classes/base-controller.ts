@@ -26,7 +26,9 @@ export interface MulterFileUploadResponse {
 @TaonController<BaseController>({
   className: 'BaseController',
 })
-export class BaseController<T = any> extends BaseInjector {
+export class BaseController<
+  UPLOAD_FILE_QUERY_PARAMS = {},
+> extends BaseInjector {
   /**
    * Hook that is called when taon app is inited
    * (all contexts are created and inited)
@@ -45,6 +47,7 @@ export class BaseController<T = any> extends BaseInjector {
   })
   uploadFormDataToServer(
     @Body() formData: FormData,
+    @Query() queryParams?: UPLOAD_FILE_QUERY_PARAMS,
   ): Models.Http.Response<MulterFileUploadResponse[]> {
     //#region @backendFunc
     return async (req, res) => {
@@ -68,7 +71,7 @@ export class BaseController<T = any> extends BaseInjector {
       });
       // console.log(responseArr);
       for (const res of responseArr) {
-        await this.afterFileUploadAction(res);
+        await this.afterFileUploadAction(res, queryParams);
       }
       return responseArr;
     };
@@ -82,7 +85,8 @@ export class BaseController<T = any> extends BaseInjector {
    * through `uploadFormDataToServer` or `uploadLocalFileToServer`
    */
   protected afterFileUploadAction(
-    file: MulterFileUploadResponse,
+    file?: MulterFileUploadResponse,
+    queryParams?: UPLOAD_FILE_QUERY_PARAMS,
   ): void | Promise<void> {
     // empty
   }
@@ -94,6 +98,7 @@ export class BaseController<T = any> extends BaseInjector {
       Models.Http.Rest.Ng2RestAxiosRequestConfig,
       'onUploadProgress'
     >,
+    queryParams?: UPLOAD_FILE_QUERY_PARAMS,
   ): Promise<MulterFileUploadResponse[]> {
     //#region @backendFunc
     const stat = fse.statSync(absFilePath);
@@ -105,7 +110,9 @@ export class BaseController<T = any> extends BaseInjector {
       knownLength: stat.size,
     });
 
-    const data = await this.uploadFormDataToServer(form).request(options || {});
+    const data = await this.uploadFormDataToServer(form, queryParams).request(
+      options || {},
+    );
     return data.body.json;
     //#endregion
   }
