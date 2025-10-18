@@ -1,5 +1,11 @@
 import * as FormData from 'form-data'; // @backend
-import { CoreModels, crossPlatformPath, fse, path } from 'tnp-core/src';
+import {
+  CoreModels,
+  crossPlatformPath,
+  fse,
+  path,
+  UtilsTerminal,
+} from 'tnp-core/src';
 
 import { TaonController } from '../decorators/classes/controller-decorator';
 import { POST } from '../decorators/http/http-methods-decorators';
@@ -117,4 +123,46 @@ export class BaseController<
     //#endregion
   }
   //#endregion
+
+  async check() {
+    await this.waitForProperStatusChange({
+      request: () => this.uploadFormDataToServer(void 0, void 0).request(),
+      statusCheck: resp => resp.body.json[0].ok,
+    });
+  }
+
+  /**
+   * Easy way to wait for status change with http (1s default) pooling.
+   */
+  async waitForProperStatusChange<T>(options: {
+    /**
+     * Request for pooling
+     */
+    request: () => ReturnType<Models.Http.Response<T>['request']>;
+    poolingInterval?: number;
+    maxTries?: number;
+    /**
+     * condition to be met
+     */
+    statusCheck: (
+      response: Awaited<ReturnType<typeof options.request>>,
+    ) => boolean;
+  }): Promise<void> {
+    const poolingInterval = options.poolingInterval || 1000;
+    const taonRequest = options.request;
+    let maxTries = options.maxTries || Number.POSITIVE_INFINITY;
+    let i = 0;
+    while (true) {
+      await UtilsTerminal.waitMilliseconds(poolingInterval);
+      const resp = await taonRequest();
+      if (options.statusCheck(resp)) {
+        return;
+      }
+      if (i++ > maxTries) {
+        throw new Error(
+          `Timeout waiting for adding deployments to be finished. Waited for ${maxTries} seconds`,
+        );
+      }
+    }
+  }
 }
