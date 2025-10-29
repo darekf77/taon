@@ -200,7 +200,7 @@ export class RealtimeServer {
   //#region methods & getters / trigger changes
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private triggerChanges(
-    entityObjOrClass: Function,
+    entityObjOrClass: Function | object,
     property?: string,
     valueOfUniqueProperty?: number | string,
     customEvent?: string,
@@ -273,7 +273,7 @@ export class RealtimeServer {
 
   //#region methods & getters / trigger entity changes
   public triggerEntityChanges(
-    entityObjOrClass: Function,
+    entityObjOrClass: Function | object,
     idToTrigger?: number | string,
   ) {
     if (this.core.ctx.disabledRealtime) {

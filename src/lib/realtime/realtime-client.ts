@@ -122,27 +122,36 @@ export class RealtimeClient {
 
   //#region methods & getters  / listen changes entity
   /**
+   * Usage:
+   * myContext.realtimeClient.listenChangesEntity(myEntityInstance);
+   *
+   *
    * Changes trigger on backend needs to be done manually.. example code:
    *
-   * ...
-   * Context.Realtime.Server.TrigggerEntityChanges(myEntityInstance);
+   * myContext.realtimeServer.triggerEntityChanges(myEntityInstance);
    * ...
    */
-  listenChangesEntity(
-    entityClassFn: Function,
-    idOrUniqValue: any,
-    options: RealtimeModels.ChangeOption,
-  ) {
+  listenChangesEntity<RESULT = any>(
+    entityClassFnOrObj: Function | object,
+    idOrUniqValue?: any,
+    options?: RealtimeModels.ChangeOption,
+  ): Observable<RESULT> {
     options = options || ({} as any);
+
+    if (_.isObject(entityClassFnOrObj)) {
+      const classFn = ClassHelpers.getClassFnFromObject(entityClassFnOrObj);
+      const uniqueKey = ClassHelpers.getUniqueKey(classFn);
+      idOrUniqValue = uniqueKey;
+    }
 
     //#region parameters validation
     const { property, customEvent } = options;
-    const className = !customEvent && ClassHelpers.getName(entityClassFn);
+    const className = !customEvent && ClassHelpers.getName(entityClassFnOrObj);
 
     if (_.isString(property)) {
       if (property.trim() === '') {
         throw new Error(
-          `[Taon][listenChangesEntity.. incorect property '' for ${className}`,
+          `[Taon][listenChangesEntity.. incorrect property '' for ${className}`,
         );
       }
     }
@@ -216,41 +225,28 @@ to use socket realtime connection;
   //#endregion
 
   //#region listen changes entity table
-  listenChangesEntityTable(entityClassFn: Function) {
+  /**
+   * Listen changes entity table
+   * Example: for pagination, lists update ...
+   */
+  listenChangesEntityTable<RESULT = any>(
+    entityClassFn: Function,
+  ): Observable<RESULT> {
     const className = ClassHelpers.getName(entityClassFn);
-    return this.listenChangesEntity(entityClassFn, void 0, {
+    return this.listenChangesEntity<RESULT>(entityClassFn, void 0, {
       customEvent: Symbols.REALTIME.TABLE_CHANGE(
         this.core.ctx.contextName,
         className,
       ),
     });
   }
-
-  //#endregion
-
-  //#region listen change entity object
-  /**
-   * Changes trigger on backend needs to be done manually.. example code:
-   *
-   * ...
-   * Context.Realtime.Server.TrigggerEntityChanges(myEntityInstance);
-   * // or
-   * Context.Realtime.Server.TrigggerEntityPropertyChanges(myEntityInstance,{ property: 'geolocationX' });
-   * ...
-   */
-  listenChangesEntityObj<T extends BaseEntity>(
-    entity: T,
-    options?: RealtimeModels.ChangeOption,
-  ) {
-    const classFn = ClassHelpers.getClassFnFromObject(entity);
-    const uniqueKey = ClassHelpers.getUniqueKey(classFn);
-    return this.listenChangesEntity(classFn, entity[uniqueKey], options);
-  }
   //#endregion
 
   //#region listen changes custom event
-  listenChangesCustomEvent(customEvent: string) {
-    return this.listenChangesEntity(void 0, void 0, {
+  listenChangesCustomEvent<RESULT = any>(
+    customEvent: string,
+  ): Observable<RESULT> {
+    return this.listenChangesEntity<RESULT>(void 0, void 0, {
       customEvent,
     });
   }
@@ -272,7 +268,8 @@ to use socket realtime connection;
     options: RealtimeModels.SubsManagerOpt,
   ): string {
     let url: URL = new URL(options.core.ctx.host);
-    let contextNameForCommunication = options.core.ctx.contextNameForCommunication;
+    let contextNameForCommunication =
+      options.core.ctx.contextNameForCommunication;
     return `${contextNameForCommunication}:${url.origin}|${options.roomName}|${options.property}|${options.customEvent}`;
   }
   //#endregion
