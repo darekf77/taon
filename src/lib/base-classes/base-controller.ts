@@ -1,5 +1,12 @@
 import * as FormData from 'form-data'; // @backend
-import { CoreModels, crossPlatformPath, fse, path } from 'tnp-core/src';
+import {
+  CoreModels,
+  crossPlatformPath,
+  fse,
+  Helpers,
+  path,
+  UtilsTerminal,
+} from 'tnp-core/src';
 
 import { TaonController } from '../decorators/classes/controller-decorator';
 import { POST } from '../decorators/http/http-methods-decorators';
@@ -117,4 +124,80 @@ export class BaseController<
     //#endregion
   }
   //#endregion
+
+  // async check() {
+  //   await this._waitForProperStatusChange({
+  //     request: () => this.uploadFormDataToServer(void 0, void 0).request(),
+  //     statusCheck: resp => resp.body.json[0].ok,
+  //   });
+  // }
+
+  /**
+   * Easy way to wait for status change with http (1s default) pooling.
+   *
+   * example (in sub class):
+   * ```ts
+      async check() {
+          await this.waitForProperStatusChange({
+            request: () => this.uploadFormDataToServer(void 0, void 0).request(),
+            statusCheck: resp => resp.body.json[0].ok,
+          });
+        }
+   * ```
+   */
+  public async _waitForProperStatusChange<T>(options: {
+    actionName: string;
+    /**
+     * Request for pooling
+     */
+    request: () => ReturnType<Models.Http.Response<T>['request']>;
+    poolingInterval?: number;
+    /**
+     * default infinite tries
+     */
+    maxTries?: number;
+    /**
+     * default 5 allowed http errors
+     */
+    allowedHttpErrors?: number;
+    /**
+     * condition to be met
+     */
+    statusCheck: (
+      response: Awaited<ReturnType<typeof options.request>>,
+    ) => boolean;
+  }): Promise<void> {
+    const poolingInterval = options.poolingInterval || 1000;
+    const taonRequest = options.request;
+    let maxTries = options.maxTries || Number.POSITIVE_INFINITY;
+    let i = 0;
+    let httpErrorsCount = 0;
+    while (true) {
+      await UtilsTerminal.waitMilliseconds(poolingInterval);
+      try {
+        const resp = await taonRequest();
+        if (options.statusCheck(resp)) {
+          return;
+        }
+      } catch (error: Error | any) {
+        Helpers.error(
+          `Error during "${options.actionName}" : ${(error as Error)?.message}`,
+          true,
+          true,
+        );
+        httpErrorsCount++;
+        if (httpErrorsCount > (options.allowedHttpErrors || 5)) {
+          throw new Error(
+            `Too many http errors (${httpErrorsCount}) for "${options.actionName}".`,
+          );
+        }
+      }
+
+      if (i++ > maxTries) {
+        throw new Error(
+          `Timeout waiting for "${options.actionName}" to be finished. Waited for ${maxTries} seconds`,
+        );
+      }
+    }
+  }
 }
