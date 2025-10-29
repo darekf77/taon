@@ -25,12 +25,15 @@ import { BaseRepository } from './base-repository';
  * Please override property entityClassFn with entity class.
  */
 @TaonController({ className: 'BaseCrudController' })
-export abstract class BaseCrudController<Entity> extends BaseController {
+export abstract class BaseCrudController<
+  Entity,
+  UPLOAD_FILE_QUERY_PARAMS = {},
+> extends BaseController<UPLOAD_FILE_QUERY_PARAMS> {
   //#region fields
   protected db: BaseRepository<Entity>;
 
   /**
-   * Please provide entity as class propery entityClassFn:
+   * Please provide entity as class property entityClassFn:
    * @returns class function
    *
    */
@@ -68,7 +71,7 @@ export abstract class BaseCrudController<Entity> extends BaseController {
         this,
       )}.
 
-      Please provide entity as class propery entityClassFn:
+      Please provide entity as class property entityClassFn:
 
       class ${ClassHelpers.getName(this)} extends BaseCrudController<Entity> {
         // ...
