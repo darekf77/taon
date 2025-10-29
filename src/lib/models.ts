@@ -172,6 +172,7 @@ export namespace Models {
     framework?: boolean;
     db?: boolean;
     migrations?: boolean;
+    routes?: boolean;
   };
   export interface ContextOptions<
     CONTEXTS,

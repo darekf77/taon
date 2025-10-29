@@ -251,6 +251,13 @@ export class EndpointContext {
     return this.config?.logs === true;
   }
 
+  get logRoutes(): boolean {
+    if (_.isObject(this.config?.logs)) {
+      return !!(this.config.logs as Models.ConnectionOptionsLogs).routes;
+    }
+    return this.config?.logs === true;
+  }
+
   get logDb(): boolean {
     if (_.isObject(this.config?.logs)) {
       return !!(this.config.logs as Models.ConnectionOptionsLogs).db;
@@ -1995,11 +2002,7 @@ export class EndpointContext {
 
   //#region methods & getters / write active routes
   public writeActiveRoutes(): void {
-    if (
-      this.isRemoteHost ||
-      this.isRunOrRevertOnlyMigrationAppStart ||
-      this.skipWritingServerRoutes
-    ) {
+    if (this.isRemoteHost || this.isRunOrRevertOnlyMigrationAppStart) {
       return;
     }
     // const contexts: EndpointContext[] = [this];
@@ -2025,6 +2028,7 @@ export class EndpointContext {
       ...['', `#  ROUTES FOR HOST ${this.uriOrigin} `],
       ...troutes,
     ].join('\n');
+
     const fileName = crossPlatformPath([
       //#region @backend
       process.cwd(),
@@ -2033,9 +2037,9 @@ export class EndpointContext {
     ]);
 
     this.logFramework && console.log(`[taon] routes file: ${fileName} `);
-    // Helpers.log(JSON.stringify(routes, null, 4))
+    this.logRoutes && console.log(routes);
     //#region @backend
-    if (!UtilsOs.isElectron) {
+    if (!UtilsOs.isElectron && !this.skipWritingServerRoutes) {
       Helpers.writeFile(fileName, routes);
     }
     //#endregion
@@ -2345,8 +2349,8 @@ export class EndpointContext {
       //#endregion
 
       //#region @backend
-      this.logHttp &&
-        console.log(`[${httpMethodType.toUpperCase()}] ${expressPath} `);
+      // this.logHttp &&
+      //   console.log(`[${httpMethodType.toUpperCase()}] ${expressPath} `);
       this.expressApp[httpMethodType.toLowerCase()](
         expressPath,
         ...middlewareHandlers,
@@ -2613,8 +2617,8 @@ export class EndpointContext {
     //#endregion
 
     // : { received: any; /* Rest<any, any>  */ }
-    this.logHttp &&
-      console.log(`${httpRequestType?.toUpperCase()} ${expressPath} `);
+    // this.logHttp &&
+    //   console.log(`${httpRequestType?.toUpperCase()} ${expressPath} `);
     // console.log('INITING', methodConfig); // TODO inject in static
     //#region resolve storage
     // TODO not a good idea
