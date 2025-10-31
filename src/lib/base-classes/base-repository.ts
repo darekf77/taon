@@ -235,6 +235,9 @@ export abstract class BaseRepository<
     //#endregion
   }
 
+  /**
+   * @deprecated use bulkSave instead
+   */
   async bulkCreate(
     items: Entity[],
     options?: SaveOptions & {

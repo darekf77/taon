@@ -237,10 +237,10 @@ export abstract class BaseCrudController<
 
   //#region delete by id
   @DELETE()
-  deleteById(@Query(`id`) id: number): Models.Http.Response<Entity> {
+  deleteById(@Query(`id`) id: number | string): Models.Http.Response<Entity> {
     //#region @websqlFunc
     return async () => {
-      const model = await this.db.deleteById(id);
+      const model = await this.db.deleteById(id as any);
       return model;
     };
     //#endregion
@@ -274,10 +274,10 @@ export abstract class BaseCrudController<
 
   //#region create
   @POST()
-  create(@Body() item: Entity): Models.Http.Response<Entity> {
+  save(@Body() item: Entity): Models.Http.Response<Entity> {
     //#region @websqlFunc
     return async () => {
-      const model = await this.db.create(item as any);
+      const model = await this.db.save(item);
       return model as Entity;
     };
     //#endregion
