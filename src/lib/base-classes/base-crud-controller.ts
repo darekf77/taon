@@ -261,6 +261,17 @@ export abstract class BaseCrudController<
   }
   //#endregion
 
+  //#region bulk delete
+  @DELETE()
+  clearTable(): Models.Http.Response<void> {
+    //#region @websqlFunc
+    return async () => {
+      await this.db.clear()
+    };
+    //#endregion
+  }
+  //#endregion
+
   //#region create
   @POST()
   create(@Body() item: Entity): Models.Http.Response<Entity> {
