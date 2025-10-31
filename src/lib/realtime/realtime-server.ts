@@ -12,6 +12,17 @@ import { RealtimeCore } from './realtime-core';
 
 //#endregion
 
+/**
+ * Server for realtime communication
+ * you can trigger:
+ * - entity changes (any property in table changed)
+ * - entity custom property changes (specific property changed)
+ * - entity table changes (new instance added, instance removed)
+ * - custom events
+ *
+ * and also listen to:
+ * - custom events from yourself
+ */
 export class RealtimeServer {
   // private jobs = {};
   constructor(private core: RealtimeCore) {
@@ -274,8 +285,12 @@ export class RealtimeServer {
   //#region methods & getters / trigger entity changes
   public triggerEntityChanges(
     entityObjOrClass: Function | object,
+    /**
+     * value of unique key property of entity instance
+     * (this value is not needed if entityObjOrClass is instance of entity)
+     */
     idToTrigger?: number | string,
-  ) {
+  ): void {
     if (this.core.ctx.disabledRealtime) {
       const className = ClassHelpers.getName(entityObjOrClass);
 
@@ -289,11 +304,19 @@ export class RealtimeServer {
   //#endregion
 
   //#region methods & getters / trigger entity property changes
-  public triggerEntityPropertyChanges<ENTITY extends BaseEntity>(
-    entityObjOrClass: new (...args) => ENTITY,
-    property: keyof ENTITY | (keyof ENTITY)[],
+  public triggerEntityPropertyChanges(
+    entityObjOrClass: Function | object,
+    /**
+     * property name or array of property names that changed
+     * for entity instance
+     */
+    property: string | string[],
+    /**
+     * value of unique key property of entity instance
+     * (this value is not needed if entityObjOrClass is instance of entity)
+     */
     idToTrigger?: number | string,
-  ) {
+  ): void {
     if (this.core.ctx.disabledRealtime) {
       const className = ClassHelpers.getName(entityObjOrClass);
 
@@ -320,7 +343,9 @@ export class RealtimeServer {
   //#endregion
 
   //#region methods & getters / trigger entity table changes
-  public triggerEntityTableChanges(entityClassOrInstance: Function | object) {
+  public triggerEntityTableChanges(
+    entityClassOrInstance: Function | object,
+  ): void {
     const className = ClassHelpers.getName(entityClassOrInstance);
 
     if (this.core.ctx.disabledRealtime) {
@@ -344,7 +369,7 @@ export class RealtimeServer {
   //#region custom changes
 
   //#region methods & getters / trigger custom event
-  public triggerCustomEvent(customEvent: string, dataToPush: any) {
+  public triggerCustomEvent(customEvent: string, dataToPush: any): void {
     this.triggerChanges(void 0, void 0, void 0, customEvent, dataToPush);
   }
   //#endregion

@@ -13,6 +13,14 @@ import { RealtimeModels } from './realtime.models';
 
 //#endregion
 
+/**
+ * Client for realtime communication
+ * you can listen to:
+ * - entity changes (any property in table changed)
+ * - entity custom property changes (specific property changed)
+ * - entity table changes (new instance added, instance removed)
+ * - custom events
+ */
 export class RealtimeClient {
   private subsManagers: { [path: string]: RealtimeSubsManager } = {};
   constructor(private core: RealtimeCore) {
@@ -29,7 +37,7 @@ export class RealtimeClient {
   }
 
   //#region methods & getters / init
-  private init() {
+  private init(): void {
     //#region prepare naspaces pathes
     const nspPath = {
       global: this.core.pathFor(),
@@ -133,15 +141,19 @@ export class RealtimeClient {
    */
   listenChangesEntity<RESULT = any>(
     entityClassFnOrObj: Function | object,
-    idOrUniqValue?: any,
     options?: RealtimeModels.ChangeOption,
   ): Observable<RESULT> {
     options = options || ({} as any);
 
     if (_.isObject(entityClassFnOrObj)) {
-      const classFn = ClassHelpers.getClassFnFromObject(entityClassFnOrObj);
-      const uniqueKey = ClassHelpers.getUniqueKey(classFn);
-      idOrUniqValue = uniqueKey;
+      const orgObj = entityClassFnOrObj as BaseEntity;
+      entityClassFnOrObj =
+        ClassHelpers.getClassFnFromObject(entityClassFnOrObj);
+
+      const uniqueKey = ClassHelpers.getUniqueKey(entityClassFnOrObj);
+      if (uniqueKey) {
+        options.idOrUniqValue = orgObj[uniqueKey];
+      }
     }
 
     //#region parameters validation
@@ -187,12 +199,12 @@ to use socket realtime connection;
               this.core.ctx.contextName,
               className,
               property,
-              idOrUniqValue,
+              options.idOrUniqValue,
             )
           : Symbols.REALTIME.ROOM_NAME_UPDATE_ENTITY(
               this.core.ctx.contextName,
               className,
-              idOrUniqValue,
+              options.idOrUniqValue,
             );
       }
 
@@ -233,7 +245,7 @@ to use socket realtime connection;
     entityClassFn: Function,
   ): Observable<RESULT> {
     const className = ClassHelpers.getName(entityClassFn);
-    return this.listenChangesEntity<RESULT>(entityClassFn, void 0, {
+    return this.listenChangesEntity<RESULT>(entityClassFn, {
       customEvent: Symbols.REALTIME.TABLE_CHANGE(
         this.core.ctx.contextName,
         className,
@@ -246,7 +258,7 @@ to use socket realtime connection;
   listenChangesCustomEvent<RESULT = any>(
     customEvent: string,
   ): Observable<RESULT> {
-    return this.listenChangesEntity<RESULT>(void 0, void 0, {
+    return this.listenChangesEntity<RESULT>(void 0, {
       customEvent,
     });
   }
