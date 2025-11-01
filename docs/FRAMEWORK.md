@@ -646,6 +646,54 @@ export class SessionController extends Taon.Base.Controller {
   }
 ```
 
+#### Error handling inside controllers
+```ts
+@Taon.Controller({
+  className: 'SampleController'
+})
+export class SampleController extends Taon.Base.Controller {
+  @Taon.Http.GET()
+  helloWorld(
+    @Taon.Http.Param.Query('errorType')
+    errorType?: 'short' | 'stack' | 'customCode' | 'taonError',
+  ): Taon.Response<string> {
+    //#region @websqlFunc
+    return async (req, res) => {
+
+      // 1. Method -> Clean & simple error message
+      if (errorType === 'short') {
+        throw 'short error message here';
+      }
+
+      // 2. Method -> Error message with stack trace
+      if (errorType === 'stack') {
+        throw new Error('message with stack trace here');
+      }
+
+      // 3. Method -> ExpressJS way of custom errors
+      if (errorType === 'customCode') {
+        res.status(444).json({
+            customErrorMessage: 'Helo my friend'
+        });
+        return; // NEEDED for this method
+      }
+
+       // 4. Method -> Taon way of custom errors 
+      if (errorType === 'taonError') {
+        Taon.error({
+          message: 'This is custom Taon error',
+          code: "CUSTOM_ERR",
+          status: 499,
+        });
+        // 'return' function not needed here
+      }
+      
+      return `hello world`;
+    };
+    //#endregion
+  }
+```
+
 ### Taon migrations
 
 Auto generated migration class files for

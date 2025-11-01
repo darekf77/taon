@@ -32,7 +32,11 @@ export { BaseMigration } from './base-classes/base-migration';
 export { TaonAdditionalMiddlewareMethodInfo } from './base-classes/base-middleware';
 export { createContext, TaonContext } from './create-context';
 export { inject } from './inject';
-export { Models } from './models';
+export {
+  Models,
+  TaonErrorResponseWrapper,
+  TaonHttpResponseError,
+} from './models';
 export { BaseFileUploadMiddleware } from './base-classes/base-file-upload.middleware';
 export * from './constants';
 export { MulterFileUploadResponse } from './base-classes/base-controller';
@@ -42,9 +46,22 @@ export type {
   TaonClientMiddlewareInterceptOptions,
   TaonServerMiddlewareInterceptOptions,
 } from 'ng2-rest/src';
+
 // TODO export all things
 
 export namespace Taon {
+  export const error = (
+    opt: Pick<
+      models.TaonErrorResponseWrapper,
+      'message' | 'status' | 'details' | 'code'
+    >,
+  ): void => {
+    throw (() => {
+      return opt;
+    });
+  };
+  export import ErrorResponseWrapper = models.TaonErrorResponseWrapper;
+  export import HttpResponseError = models.TaonHttpResponseError;
   export import Response = models.Models.Http.Response;
   export import Http = http.Http;
   export import Base = base.Base;

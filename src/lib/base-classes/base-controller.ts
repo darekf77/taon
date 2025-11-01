@@ -13,7 +13,11 @@ import { POST } from '../decorators/http/http-methods-decorators';
 import { Body, Path, Query } from '../decorators/http/http-params-decorators';
 import type { EndpointContext } from '../endpoint-context';
 import type { ContextsEndpointStorage } from '../endpoint-context-storage';
-import type { Models } from '../models';
+import type {
+  Models,
+  TaonErrorResponseWrapper,
+  TaonHttpResponseError,
+} from '../models';
 
 import { BaseFileUploadMiddleware } from './base-file-upload.middleware';
 import { BaseInjector } from './base-injector';
@@ -150,7 +154,13 @@ export class BaseController<
     /**
      * Request for pooling
      */
-    request: () => ReturnType<Models.Http.Response<T>['request']>;
+    request: (opt?: {
+      /**
+       * optional index number to identify request in logs
+       * (starts from 0 and increments by 1 on each try)
+       */
+      reqIndexNum?: number;
+    }) => ReturnType<Models.Http.Response<T>['request']>;
     poolingInterval?: number;
     /**
      * default infinite tries
@@ -166,6 +176,14 @@ export class BaseController<
     statusCheck: (
       response: Awaited<ReturnType<typeof options.request>>,
     ) => boolean;
+    /**
+     * if return true.. loop will continue
+     * if false .. will exit the loop
+     */
+    loopRequestsOnBackendError?: (opt: {
+      errorData: Error | TaonHttpResponseError;
+      reqIndexNum?: number;
+    }) => boolean | Promise<boolean>;
   }): Promise<void> {
     const poolingInterval = options.poolingInterval || 1000;
     const taonRequest = options.request;
@@ -175,11 +193,25 @@ export class BaseController<
     while (true) {
       await UtilsTerminal.waitMilliseconds(poolingInterval);
       try {
-        const resp = await taonRequest();
+        const resp = await taonRequest({
+          reqIndexNum: i,
+        });
         if (options.statusCheck(resp)) {
           return;
         }
-      } catch (error: Error | any) {
+      } catch (error: Error | TaonErrorResponseWrapper | any) {
+        if (options.loopRequestsOnBackendError) {
+          const resBool = await options.loopRequestsOnBackendError({
+            errorData: error,
+            reqIndexNum: i,
+          });
+          if (resBool) {
+            i++;
+            continue;
+          } else {
+            return;
+          }
+        }
         Helpers.error(
           `Error during "${options.actionName}" : ${(error as Error)?.message}`,
           true,
