@@ -3,7 +3,11 @@ import {
   Response as ExpressResponse,
   Request as ExpressRequest,
 } from 'express';
-import { Models as ModelsNg2Rest } from 'ng2-rest/src';
+import {
+  Models as ModelsNg2Rest,
+  RestErrorResponseWrapper,
+  RestResponseWrapper,
+} from 'ng2-rest/src';
 import { _ } from 'tnp-core/src';
 import { CoreModels } from 'tnp-core/src';
 
@@ -16,6 +20,10 @@ import type {
 } from './decorators/http/http-methods-decorators';
 import type { EndpointContext } from './endpoint-context';
 import { ClassHelpers } from './helpers/class-helpers';
+
+// ! TODO make it as a nice way to wrap normal request
+export class TaonRestResponseWrapper extends RestResponseWrapper {}
+
 
 export namespace Models {
   export type FrameworkMode =
@@ -354,37 +362,6 @@ export namespace Models {
     }
 
     export type Response<T = string> = AsyncResponse<T> & ClientAction<T>;
-
-    export class Errors {
-      public toString = (): string => {
-        return this.message;
-      };
-
-      private constructor(
-        public message: string,
-        private code: ModelsNg2Rest.HttpCode = 400,
-      ) {}
-
-      private static create(
-        message: string,
-        code: ModelsNg2Rest.HttpCode = 400,
-      ) {
-        return new Errors(message, code);
-      }
-
-      public static entityNotFound(entity?: Function) {
-        return Errors.create(
-          `Entity ${ClassHelpers.getName(entity)} not found`,
-        );
-      }
-
-      public static custom(
-        message: string,
-        code: ModelsNg2Rest.HttpCode = 400,
-      ) {
-        return Errors.create(message, code);
-      }
-    }
 
     //#region @websql
     export interface AuthCallBack {

@@ -1,10 +1,11 @@
-import { Models } from './models';
 import {
   Response as ExpressResponse,
   Request as ExpressRequest,
 } from 'express';
-import { TaonHelpers } from './helpers/taon-helpers';
 import { Helpers } from 'tnp-core/src';
+
+import { TaonHelpers } from './helpers/taon-helpers';
+import { Models } from './models';
 
 export const getResponseValue = <T>(
   response: Models.Http.Response<T>,
@@ -21,9 +22,6 @@ export const getResponseValue = <T>(
         const result = await asyncResponse(req, res);
         resolve(result as any);
       } catch (e) {
-        console.error(e);
-        console.error('[taon] Error during function call inside controller');
-        Helpers.renderError(e);
         reject(e);
       }
     } else {

@@ -1,5 +1,11 @@
 import * as FormData from 'form-data'; // @backend
 import {
+  Models as ModelsNg2Rest,
+  RestErrorResponseWrapper,
+  RestResponseWrapper,
+  HttpResponseError,
+} from 'ng2-rest/src';
+import {
   CoreModels,
   crossPlatformPath,
   fse,
@@ -150,22 +156,40 @@ export class BaseController<
     /**
      * Request for pooling
      */
-    request: () => ReturnType<Models.Http.Response<T>['request']>;
+    request: (opt?: {
+      /**
+       * optional index number to identify request in logs
+       * (starts from 0 and increments by 1 on each try)
+       */
+      reqIndexNum?: number;
+      httpErrorsCount?: number;
+    }) => ReturnType<Models.Http.Response<T>['request']>;
     poolingInterval?: number;
     /**
      * default infinite tries
      */
     maxTries?: number;
     /**
-     * default 5 allowed http errors
+     * default infiniti allowed http errors
      */
     allowedHttpErrors?: number;
     /**
      * condition to be met
      */
-    statusCheck: (
+    statusCheck?: (
       response: Awaited<ReturnType<typeof options.request>>,
     ) => boolean;
+    /**
+     * if return true.. loop will continue
+     * if false .. will exit the loop
+     */
+    loopRequestsOnBackendError?: (opt: {
+      unknownError: Error;
+      unknownHttpError: HttpResponseError<any>;
+      taonError: HttpResponseError<RestErrorResponseWrapper>;
+      reqIndexNum?: number;
+      httpErrorsCount?: number;
+    }) => boolean | Promise<boolean>;
   }): Promise<void> {
     const poolingInterval = options.poolingInterval || 1000;
     const taonRequest = options.request;
@@ -175,18 +199,41 @@ export class BaseController<
     while (true) {
       await UtilsTerminal.waitMilliseconds(poolingInterval);
       try {
-        const resp = await taonRequest();
-        if (options.statusCheck(resp)) {
+        const resp = await taonRequest({
+          reqIndexNum: i,
+          httpErrorsCount,
+        });
+        if (options.statusCheck && options.statusCheck(resp)) {
           return;
         }
-      } catch (error: Error | any) {
-        Helpers.error(
-          `Error during "${options.actionName}" : ${(error as Error)?.message}`,
-          true,
-          true,
-        );
+      } catch (error: Error | HttpResponseError | any) {
         httpErrorsCount++;
-        if (httpErrorsCount > (options.allowedHttpErrors || 5)) {
+        if (options.loopRequestsOnBackendError) {
+          const isProperTaonError =
+            error instanceof HttpResponseError &&
+            error.body.json[CoreModels.TaonHttpErrorCustomProp];
+          const isHttpError =
+            error instanceof HttpResponseError && !isProperTaonError;
+          const isUnknownError = !(error instanceof HttpResponseError);
+
+          const resBool = await options.loopRequestsOnBackendError({
+            taonError: isProperTaonError ? error : void 0,
+            unknownHttpError: isHttpError ? error : void 0,
+            unknownError: isUnknownError ? (error as Error) : void 0,
+            reqIndexNum: i,
+            httpErrorsCount,
+          });
+          if (resBool) {
+            i++;
+            continue;
+          } else {
+            return;
+          }
+        }
+        if (
+          httpErrorsCount >
+          (options.allowedHttpErrors || Number.POSITIVE_INFINITY)
+        ) {
           throw new Error(
             `Too many http errors (${httpErrorsCount}) for "${options.actionName}".`,
           );

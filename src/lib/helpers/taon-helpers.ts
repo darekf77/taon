@@ -25,6 +25,15 @@ export namespace TaonHelpers {
   };
   //#endregion
 
+  export const firstStringOrElemFromArray = (
+    stringOrArrayOfString: string[] | string,
+  ): string => {
+    if (Array.isArray(stringOrArrayOfString)) {
+      return _.first(stringOrArrayOfString);
+    }
+    return stringOrArrayOfString;
+  };
+
   //#region try transform params
   export const tryTransformParam = param => {
     if (typeof param === 'string') {

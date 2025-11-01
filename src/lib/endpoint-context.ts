@@ -21,6 +21,7 @@ import {
   Mapping,
   Models as ModelsNg2Rest,
   Resource,
+  RestErrorResponseWrapper,
   RestHeaders,
 } from 'ng2-rest/src';
 import { from, Subject } from 'rxjs';
@@ -2354,20 +2355,24 @@ export class EndpointContext {
       this.expressApp[httpMethodType.toLowerCase()](
         expressPath,
         ...middlewareHandlers,
-        async (req, res) => {
+        async (req: express.Request, res: express.Response) => {
           // console.log(`[${type.toUpperCase()}] ${expressPath} `);
           //#region process params
           const args: any[] = [];
 
           let tBody = req.body;
           let tParams = req.params;
-          let tQuery = req.query;
+          let tQuery: Object = req.query;
 
           if (req.headers[Symbols.old.CIRCURAL_OBJECTS_MAP_BODY]) {
             try {
               tBody = JSON.parse(
                 JSON.stringify(tBody),
-                JSON.parse(req.headers[Symbols.old.CIRCURAL_OBJECTS_MAP_BODY]),
+                JSON.parse(
+                  TaonHelpers.firstStringOrElemFromArray(
+                    req.headers[Symbols.old.CIRCURAL_OBJECTS_MAP_BODY],
+                  ),
+                ),
               );
             } catch (e) {}
           }
@@ -2377,7 +2382,9 @@ export class EndpointContext {
               tQuery = JSON.parse(
                 JSON.stringify(tQuery),
                 JSON.parse(
-                  req.headers[Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM],
+                  TaonHelpers.firstStringOrElemFromArray(
+                    req.headers[Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM],
+                  ),
                 ),
               );
             } catch (e) {}
@@ -2388,7 +2395,9 @@ export class EndpointContext {
           if (req.headers[Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS]) {
             try {
               const entity = JSON.parse(
-                req.headers[Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS],
+                TaonHelpers.firstStringOrElemFromArray(
+                  req.headers[Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS],
+                ),
               );
               tBody = Mapping.encode(tBody, entity);
             } catch (e) {}
@@ -2396,9 +2405,11 @@ export class EndpointContext {
             Object.keys(tBody).forEach(paramName => {
               try {
                 const entityForParam = JSON.parse(
-                  req.headers[
-                    `${Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS}${paramName} `
-                  ],
+                  TaonHelpers.firstStringOrElemFromArray(
+                    req.headers[
+                      `${Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS}${paramName} `
+                    ],
+                  ),
                 );
                 tBody[paramName] = Mapping.encode(
                   tBody[paramName],
@@ -2413,7 +2424,9 @@ export class EndpointContext {
           if (req.headers[Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS]) {
             try {
               const entity = JSON.parse(
-                req.headers[Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS],
+                TaonHelpers.firstStringOrElemFromArray(
+                  req.headers[Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS],
+                ),
               );
               tQuery = TaonHelpers.parseJSONwithStringJSONs(
                 Mapping.encode(tQuery, entity),
@@ -2423,9 +2436,11 @@ export class EndpointContext {
             Object.keys(tQuery).forEach(queryParamName => {
               try {
                 const entityForParam = JSON.parse(
-                  req.headers[
-                    `${Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${queryParamName} `
-                  ],
+                  TaonHelpers.firstStringOrElemFromArray(
+                    req.headers[
+                      `${Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${queryParamName} `
+                    ],
+                  ),
                 );
                 let beforeTransofrm = tQuery[queryParamName];
                 if (_.isString(beforeTransofrm)) {
@@ -2480,6 +2495,10 @@ export class EndpointContext {
 
           try {
             let result = await getResult(resolvedParams, req, res);
+            if (res.headersSent) {
+              // SKIP FURTHER PROCESSING IF RESPONSE ALREADY SENT
+              return;
+            }
             if (
               result instanceof Blob &&
               (methodConfig.responseType as ModelsNg2Rest.ResponseTypeAxios) ===
@@ -2524,41 +2543,12 @@ export class EndpointContext {
               //#endregion
             }
           } catch (error) {
-            //#region process error
-            if (_.isString(error)) {
-              res.status(400).send(
-                JSON10.stringify({
-                  message: `
-    Error inside: ${req.path}
-
-    ${error}
-
-`,
-                }),
-              );
-            } else if (error instanceof Models.Http.Errors) {
-              Helpers.error(error, true, false);
-              const err: Models.Http.Errors = error;
-              res.status(400).send(JSON10.stringify(err));
-            } else if (error instanceof Error) {
-              const err: Error = error;
-              Helpers.error(error, true, false);
-              res.status(400).send(
-                JSON10.stringify({
-                  stack: err.stack,
-                  message: err.message,
-                }),
-              );
-            } else {
-              Helpers.log(error);
-              Helpers.error(
-                `[Taon] Bad result isomorphic method: ${error} `,
-                true,
-                false,
-              );
-              res.status(400).send(JSON10.stringify(error));
+            if (res.headersSent) {
+              // SKIP FURTHER PROCESSING IF RESPONSE ALREADY SENT
+              return;
             }
-            //#endregion
+
+            this.sendError(res, error, req, expressPath);
           }
         },
       );
@@ -2571,6 +2561,45 @@ export class EndpointContext {
     };
   }
   //#endregion
+
+  protected sendError(
+    res: express.Response,
+    error: unknown,
+    req: express.Request,
+    expressPath: string,
+  ): void {
+    //#region @backendFunc
+    let status = 500;
+    let message = 'Internal Server Error';
+    let details: any = undefined;
+    let success = false;
+    let code = undefined;
+    if (typeof error === 'function') {
+      const obj: RestErrorResponseWrapper = error(res) || {};
+      status = obj.status || 400;
+      message = obj.message;
+      details = obj.details;
+      code = obj.code;
+    } else if (typeof error === 'string') {
+      message = error;
+      status = 400;
+    } else if (error instanceof Error) {
+      message = error.message;
+      details = process.env.NODE_ENV !== 'production' ? error.stack : undefined;
+    } else {
+      message = 'Unexpected error';
+      details = error;
+    }
+
+    res.status(status).json({
+      success,
+      message,
+      details,
+      code,
+      [CoreModels.TaonHttpErrorCustomProp]: true,
+    } as RestErrorResponseWrapper);
+    //#endregion
+  }
 
   //#region methods & getters / init client
   /**
