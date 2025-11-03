@@ -84,7 +84,7 @@ export class BaseController<
       });
       // console.log(responseArr);
       for (const res of responseArr) {
-        await this.afterFileUploadAction(res, queryParams);
+        await this.afterFileUploadAction(res, queryParams || {} as any);
       }
       return responseArr;
     };
