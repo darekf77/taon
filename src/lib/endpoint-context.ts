@@ -2495,8 +2495,14 @@ export class EndpointContext {
 
           try {
             let result = await getResult(resolvedParams, req, res);
-            if (res.headersSent) {
-              // SKIP FURTHER PROCESSING IF RESPONSE ALREADY SENT
+            if (methodConfig.responseType)
+              if (res.headersSent) {
+                // SKIP FURTHER PROCESSING IF RESPONSE ALREADY SENT
+                return;
+              }
+            if (methodConfig.overrideExpressSendAsHtml) {
+              res.setHeader('Content-Type', 'text/html');
+              res.send(result);
               return;
             }
             if (
@@ -2545,6 +2551,11 @@ export class EndpointContext {
           } catch (error) {
             if (res.headersSent) {
               // SKIP FURTHER PROCESSING IF RESPONSE ALREADY SENT
+              return;
+            }
+            if (methodConfig.overrideExpressSendAsHtml) {
+              res.setHeader('Content-Type', 'text/html');
+              res.send(error);
               return;
             }
 

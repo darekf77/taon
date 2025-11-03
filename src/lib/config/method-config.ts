@@ -28,6 +28,7 @@ export class MethodConfig
    * override default axiso response type
    */
   declare responseType?: any;
+  declare overrideExpressSendAsHtml?: boolean;
   declare path: string;
   declare descriptor: PropertyDescriptor;
   declare type: CoreModels.HttpMethod;

@@ -27,7 +27,12 @@ const metaReq = (
     options = { pathOrOptions, pathIsGlobal } as any;
   }
 
-  const { overrideContentType, overrideResponseType, middlewares } = options;
+  const {
+    overrideContentType,
+    overrideResponseType,
+    overrideExpressSendAsHtml,
+    middlewares,
+  } = options;
 
   methodConfig.methodName = propertyKey;
   methodConfig.middlewares = middlewares;
@@ -55,6 +60,7 @@ const metaReq = (
   methodConfig.global = pathIsGlobal;
   methodConfig.contentType = overrideContentType;
   methodConfig.responseType = overrideResponseType;
+  methodConfig.overrideExpressSendAsHtml = overrideExpressSendAsHtml;
 };
 
 export type TaonMiddlewareInheritanceObj = {
@@ -87,6 +93,10 @@ export interface TaonHttpDecoratorOptions {
   pathIsGlobal?: boolean;
   overrideContentType?: CoreModels.ContentType;
   overrideResponseType?: ModelsNg2Rest.ResponseTypeAxios;
+  /**
+   * Express will send response as HTML string with proper headers
+   */
+  overrideExpressSendAsHtml?: boolean;
   middlewares?: TaonMiddlewareFunction;
 }
 
@@ -107,6 +117,52 @@ export function GET(
       descriptor,
       pathOrOptions,
       pathIsGlobal,
+    );
+  };
+}
+
+/**
+ * Method for sending html website from text
+ * Example
+ *
+ * ```ts
+ * ...
+ * // in your taon controller
+ * ..Taon.Http.HTML()
+ * sendHtmlDummyWebsite(): Taon.ResponseHtml {
+ *  return  `
+      <html>
+        <head>
+          <title>Dummy website</title>
+        </head>
+        <body>
+          <h1>This is dummy website</h1>
+          <p>Served as HTML string from Taon controller method</p>
+        </body>
+      </html>
+ *  `; *
+ * }
+ * ...
+ * ```
+ */
+export function HTML(
+  pathOrOptions?: Pick<TaonHttpDecoratorOptions, 'path' | 'pathIsGlobal'>,
+) {
+  return function (
+    target: any,
+    propertyKey: string,
+    descriptor: PropertyDescriptor,
+  ) {
+    const opt = pathOrOptions as TaonHttpDecoratorOptions;
+    opt.overrideExpressSendAsHtml = true;
+    metaReq(
+      'get',
+      opt as string,
+      target,
+      propertyKey,
+      descriptor,
+      pathOrOptions,
+      opt.pathIsGlobal,
     );
   };
 }

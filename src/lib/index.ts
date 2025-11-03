@@ -33,9 +33,7 @@ export { BaseMigration } from './base-classes/base-migration';
 export { TaonAdditionalMiddlewareMethodInfo } from './base-classes/base-middleware';
 export { createContext, TaonContext } from './create-context';
 export { inject } from './inject';
-export {
-  Models,
-} from './models';
+export { Models } from './models';
 export { BaseFileUploadMiddleware } from './base-classes/base-file-upload.middleware';
 export * from './constants';
 export { MulterFileUploadResponse } from './base-classes/base-controller';
@@ -60,6 +58,7 @@ export namespace Taon {
     };
   };
 
+  export type ResponseHtml = models.Models.Http.Response<string>;
   export import Response = models.Models.Http.Response;
   export import Http = http.Http;
   export import Base = base.Base;
