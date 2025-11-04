@@ -17,9 +17,24 @@ export class BaseClass<CloneT extends BaseClass = any> {
   //#endregion
 
   //#region clone
-  public clone(override?: Partial<CloneT>): CloneT {
+  /**
+   *
+   * @param overrideObjOrFn if object is provided it will override values in cloned object,
+   * if function is provided it will be called with old cloned values and should return
+   * object with values to override
+   * @returns cloned instance of the class
+   */
+  public clone(
+    overrideObjOrFn?:
+      | Partial<CloneT>
+      | ((oldValues: Partial<CloneT>) => Partial<CloneT>),
+  ): CloneT {
     const classFn = ClassHelpers.getClassFnFromObject(this);
-    return cloneObj<CloneT>(override, classFn);
+    if (_.isFunction(overrideObjOrFn)) {
+      const oldValues = (_.cloneDeep(this) || {}) as any as Partial<CloneT>;
+      return cloneObj<CloneT>(overrideObjOrFn(oldValues), classFn);
+    }
+    return cloneObj<CloneT>(overrideObjOrFn as any, classFn);
   }
   //#endregion
 }

@@ -30,6 +30,7 @@ export { BaseProvider } from './base-classes/base-provider';
 export { BaseEntity } from './base-classes/base-entity';
 export { BaseContext } from './base-classes/base-context';
 export { BaseMigration } from './base-classes/base-migration';
+export { BaseClass } from './base-classes/base-class';
 export { TaonAdditionalMiddlewareMethodInfo } from './base-classes/base-middleware';
 export { createContext, TaonContext } from './create-context';
 export { inject } from './inject';
