@@ -81,14 +81,16 @@ export type TaonMiddlewareFunction = (options: {
 export interface TaonHttpDecoratorOptions {
   /**
    * @deprecated don't use in production - keep stuff encapsulated
-   * path is global in express app
-   * ! BE CAREFUL ! global path IS NOT GLOBAL inside dockerized app
-   *  (/api/contextName is automatically added to global path in docker)
+   * normally path is generated from method name and its params
    */
   path?: string;
   /**
-   * ! BE CAREFULL
    * If true, the path will be global
+   *
+   * ! BE CAREFUL ! global path IS NOT GLOBAL inside dockerized app
+   * (/api/contextName is automatically added to global path in docker)
+   *
+   * @deprecated don't use in production - keep stuff encapsulated
    */
   pathIsGlobal?: boolean;
   overrideContentType?: CoreModels.ContentType;
