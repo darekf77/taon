@@ -29,11 +29,17 @@ export class BaseClass<CloneT extends BaseClass = any> {
       | Partial<CloneT>
       | ((oldValues: Partial<CloneT>) => Partial<CloneT>),
   ): CloneT {
+    if(_.isString(overrideObjOrFn)) {
+      console.log(overrideObjOrFn);
+      throw new Error('String is not supported as .clone() method argument');
+    }
     const classFn = ClassHelpers.getClassFnFromObject(this);
     if (_.isFunction(overrideObjOrFn)) {
+      // console.log('clone with fn');
       const oldValues = (_.cloneDeep(this) || {}) as any as Partial<CloneT>;
       return cloneObj<CloneT>(overrideObjOrFn(oldValues), classFn);
     }
+    // console.log('clone normal');
     return cloneObj<CloneT>(overrideObjOrFn as any, classFn);
   }
   //#endregion
