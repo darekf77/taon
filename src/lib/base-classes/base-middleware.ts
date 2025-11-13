@@ -1,7 +1,5 @@
-import type { HttpHandlerFn, HttpRequest } from '@angular/common/http';
+//#region imports
 import type { AxiosRequestConfig, AxiosResponse } from 'axios';
-import type express from 'express';
-import type multer from 'multer';
 import {
   AxiosTaonHttpHandler,
   TaonClientMiddlewareInterceptOptions,
@@ -11,6 +9,7 @@ import { Observable } from 'rxjs';
 import { CoreModels } from 'tnp-core/src';
 
 import { BaseInjector } from './base-injector';
+//#endregion
 
 /**
  * TODO
@@ -50,7 +49,11 @@ export interface BaseMiddleware {
    */
   interceptServerMethod(
     { req, res, next }: TaonServerMiddlewareInterceptOptions,
-    { methodName, expressPath, httpRequestType }: TaonAdditionalMiddlewareMethodInfo,
+    {
+      methodName,
+      expressPath,
+      httpRequestType,
+    }: TaonAdditionalMiddlewareMethodInfo,
   ): Promise<void> | void;
 
   /**
@@ -59,6 +62,10 @@ export interface BaseMiddleware {
    */
   interceptClientMethod(
     { req, next }: TaonClientMiddlewareInterceptOptions,
-    { methodName, expressPath, httpRequestType }: TaonAdditionalMiddlewareMethodInfo,
+    {
+      methodName,
+      expressPath,
+      httpRequestType,
+    }: TaonAdditionalMiddlewareMethodInfo,
   ): Observable<AxiosResponse<any>>;
 }

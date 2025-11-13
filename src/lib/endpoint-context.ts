@@ -80,11 +80,6 @@ import { TaonAdminService } from './ui/taon-admin-mode-configuration/taon-admin.
 export class EndpointContext {
   //#region static
 
-  /**
-   * JUST FOR TESTING PURPOSES
-   */
-  public readonly USE_MARIADB_MYSQL_IN_DOCKER: boolean = false;
-
   //#region @browser
   private static ngZone: NgZone;
   //#endregion
@@ -97,16 +92,16 @@ export class EndpointContext {
   }
   //#endregion
 
-  // public static findForTraget(classFnOrObject: any): EndpointContext {
-  //   const obj = ClassHelpers.getClassFnFromObject(classFnOrObject) || {};
-  //   return (
-  //     classFnOrObject[Symbols.ctxInClassOrClassObj] ||
-  //     obj[Symbols.ctxInClassOrClassObj]
-  //   );
-  // }
   //#endregion
 
   //#region fields
+
+  //#region fields / use mariadb mysql in docker
+  /**
+   * JUST FOR TESTING PURPOSES
+   */
+  public readonly USE_MARIADB_MYSQL_IN_DOCKER: boolean = false;
+  //#endregion
 
   //#region fields / flags
   disabledRealtime: boolean = false;
@@ -117,9 +112,13 @@ export class EndpointContext {
   public inited: boolean = false;
   //#endregion
 
+  //#region fields / db migrations
   readonly dbMigrations = new ContextDbMigrations(this);
+  //#endregion
 
+  //#region fields / local instance obj symbol
   private readonly localInstaceObjSymbol = Symbol('localInstaceObjSymbol');
+  //#endregion
 
   //#region fields / all instances of classes from context
   /**
@@ -156,7 +155,9 @@ export class EndpointContext {
   }
   //#endregion
 
+  //#region fields / skip writing server routes
   public readonly skipWritingServerRoutes: boolean = false;
+  //#endregion
 
   //#region fields / types from contexts
   private injectableTypesfromContexts = [
@@ -169,12 +170,12 @@ export class EndpointContext {
   ];
   //#endregion
 
+  //#region fields / all types from contexts
   private allTypesfromContexts = [
     ...this.injectableTypesfromContexts,
     Models.ClassType.ENTITY,
   ];
-
-  // public __contextForControllerInstanceAccess?: EndpointContext;
+  //#endregion
 
   //#region fields / express app
   public expressApp: Application = {} as any;
@@ -1428,7 +1429,7 @@ export class EndpointContext {
   }
   //#endregion
 
-  //#region port from uri
+  //#region methods & getters / port from uri
   get uriPort(): string | undefined {
     if (!this.uri?.origin?.includes('localhost')) {
       return this.config?.hostPortNumber?.toString();
@@ -1452,13 +1453,16 @@ export class EndpointContext {
   }
   //#endregion
 
-  //#region methods & getters / public assets
+  //#region methods & getters / is remote host
+  /**
+   * Check if context is for remote only
+   */
   public get isRemoteHost(): boolean {
     return !!this.cloneOptions?.useAsRemoteContext;
   }
   //#endregion
 
-  //#region methods & getters / public assets
+  //#region methods & getters / context name
   /**
    * ipc/udp needs this
    */
@@ -1468,7 +1472,7 @@ export class EndpointContext {
   }
   //#endregion
 
-  //#region methods & getters / public assets
+  //#region methods & getters / context name for communication
   /**
    * ipc/udp needs this
    */
@@ -1487,7 +1491,7 @@ export class EndpointContext {
   }
   //#endregion
 
-  //#region methods & getters / public assets
+  //#region methods & getters / get context type
   /**
    * Check context type
    */
@@ -1533,13 +1537,13 @@ export class EndpointContext {
   //#endregion
 
   //#region methods & getters / host
-  get host() {
+  get host(): string | undefined {
     return this.config.host;
   }
   //#endregion
 
-  //#region methods & getters / host
-  get orgin() {
+  //#region methods & getters / origin
+  get origin(): string | undefined {
     return this.uri?.origin;
   }
   //#endregion
@@ -2573,6 +2577,7 @@ export class EndpointContext {
   }
   //#endregion
 
+  //#region methods & getters / send error
   protected sendError(
     res: express.Response,
     error: unknown,
@@ -2611,6 +2616,7 @@ export class EndpointContext {
     } as RestErrorResponseWrapper);
     //#endregion
   }
+  //#endregion
 
   //#region methods & getters / init client
   /**
