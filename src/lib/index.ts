@@ -52,9 +52,14 @@ export namespace Taon {
     opt: Pick<
       RestErrorResponseWrapper,
       'message' | 'status' | 'details' | 'code'
-    >,
+    > | string,
   ): void => {
     throw () => {
+      if(typeof opt === 'string'){
+        opt = {
+          message: opt
+        }
+      }
       return opt;
     };
   };
