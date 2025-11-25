@@ -99,8 +99,6 @@ rm -rf ~/.taon  # taon local packages repository
     + essential/core helpers for all projects
 - taon-class-helpers https://github.com/darekf77/typescript-class-helpers
     + helpers for OOP class names based
-- taon-config https://github.com/darekf77/tnp-config
-    + config/models for general purpose
 - taon-cli https://github.com/darekf77/tnp-cli
     + helpers/abstraction for global cli tools NodeJS based
 - taon-helpers https://github.com/darekf77/tnp-helpers
