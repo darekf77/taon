@@ -690,6 +690,7 @@ export class EndpointContext {
     `);
     //#region @websqlFunc
     let databaseConfig: Models.DatabaseConfig = Models.DatabaseConfig.from({});
+    const tcpUdpDatabaseSqliteRelativeFileLocation = `${Models.DatabasesFolder}/db-${this.contextName}.sqlite`;
     if (this.isRunningInsideDocker) {
       if (this.USE_MARIADB_MYSQL_IN_DOCKER) {
         // Helpers.info('Running in docker, using in mysql database');
@@ -721,7 +722,7 @@ export class EndpointContext {
         //#endregion
 
         databaseConfig = databaseConfig = Models.DatabaseConfig.from({
-          location: `db-${this.contextName}.sqlite`,
+          location: tcpUdpDatabaseSqliteRelativeFileLocation,
           type: 'sqljs',
           useLocalForage: false,
           recreateMode: 'PRESERVE_DATA+MIGRATIONS',
@@ -802,7 +803,7 @@ export class EndpointContext {
         case 'backend-frontend(tcp+udp)':
           databaseConfig = Models.DatabaseConfig.from({
             database: `context-db-${this.contextName}`,
-            location: `db-${this.contextName}.sqlite`,
+            location: tcpUdpDatabaseSqliteRelativeFileLocation,
             type: 'sqljs',
             recreateMode: 'DROP_DB+MIGRATIONS',
             logging: this.logDb,

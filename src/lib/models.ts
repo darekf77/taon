@@ -24,8 +24,28 @@ import { ClassHelpers } from './helpers/class-helpers';
 // ! TODO make it as a nice way to wrap normal request
 export class TaonRestResponseWrapper extends RestResponseWrapper {}
 
+export const BaseTaonClassesNames = [
+  'BaseCrudController',
+  'BaseController',
+  'BaseAbstractEntity',
+  'BaseEntity',
+  'BaseContext',
+  'BaseCustomRepository',
+  'BaseFileUploadMiddleware',
+  'BaseMiddleware',
+  'BaseClass',
+  'BaseInjector',
+  'BaseMigration',
+  'BaseProvider',
+  'BaseRepository',
+  'BaseSubscriberForEntity',
+  'BaseCliWorkerController',
+  'PortsController',
+  'PortsContext',
+] as const;
 
 export namespace Models {
+  export const DatabasesFolder = 'databases';
   export type FrameworkMode =
     | 'backend-frontend(tcp+udp)'
     | 'remote-backend(tcp+udp)'
