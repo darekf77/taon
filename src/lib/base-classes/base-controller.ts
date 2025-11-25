@@ -21,8 +21,8 @@ import type { EndpointContext } from '../endpoint-context';
 import type { ContextsEndpointStorage } from '../endpoint-context-storage';
 import type { Models } from '../models';
 
-import { BaseFileUploadMiddleware } from './base-file-upload.middleware';
-import { BaseInjector } from './base-injector';
+import { TaonBaseFileUploadMiddleware } from './base-file-upload.middleware';
+import { TaonBaseInjector } from './base-injector';
 
 export interface MulterFileUploadResponse {
   ok: boolean;
@@ -36,12 +36,12 @@ export interface MulterFileUploadResponse {
   mimetype: string;
 }
 
-@TaonController<BaseController>({
-  className: 'BaseController',
+@TaonController<TaonBaseController>({
+  className: 'TaonBaseController',
 })
-export class BaseController<
+export class TaonBaseController<
   UPLOAD_FILE_QUERY_PARAMS = {},
-> extends BaseInjector {
+> extends TaonBaseInjector {
   /**
    * Hook that is called when taon app is inited
    * (all contexts are created and inited)
@@ -55,7 +55,7 @@ export class BaseController<
     overrideContentType: 'multipart/form-data',
     middlewares: ({ parentMiddlewares }) => ({
       ...parentMiddlewares,
-      BaseFileUploadMiddleware,
+      TaonBaseFileUploadMiddleware,
     }),
   })
   uploadFormDataToServer(

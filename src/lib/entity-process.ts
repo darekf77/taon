@@ -2,7 +2,7 @@
 import { _ } from 'tnp-core/src';
 import { Symbols } from './symbols';
 import { walk } from 'lodash-walk-object/src';
-import { config } from 'tnp-config/src';
+import { config } from 'tnp-core/src';
 import { JSON10 } from 'json10/src';
 import { ClassHelpers } from './helpers/class-helpers';
 import { Mapping } from 'ng2-rest/src';

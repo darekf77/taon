@@ -8,7 +8,7 @@ import {
 import { Observable } from 'rxjs';
 import { CoreModels } from 'tnp-core/src';
 
-import { BaseInjector } from './base-injector';
+import { TaonBaseInjector } from './base-injector';
 //#endregion
 
 /**
@@ -16,7 +16,7 @@ import { BaseInjector } from './base-injector';
  * - global provider available in all contexts
  * - provider available in own context
  */
-export abstract class BaseMiddleware extends BaseInjector {}
+export abstract class TaonBaseMiddleware extends TaonBaseInjector {}
 
 export interface TaonAdditionalMiddlewareMethodInfo {
   methodName: string;
@@ -24,7 +24,7 @@ export interface TaonAdditionalMiddlewareMethodInfo {
   httpRequestType: CoreModels.HttpMethod;
 }
 
-export interface BaseMiddleware {
+export interface TaonBaseMiddleware {
   /**
    * Global interceptor for whole context
    * backend request

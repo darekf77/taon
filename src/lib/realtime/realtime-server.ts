@@ -4,7 +4,7 @@ import { URL } from 'url'; // @backend
 import { Observable, Subject } from 'rxjs';
 import { Helpers, _ } from 'tnp-core/src';
 
-import type { BaseEntity } from '../base-classes/base-entity';
+import type { TaonBaseEntity } from '../base-classes/base-entity';
 import { ClassHelpers } from '../helpers/class-helpers';
 import { Symbols } from '../symbols';
 

@@ -11,8 +11,8 @@ import {
 import { _ } from 'tnp-core/src';
 import { CoreModels } from 'tnp-core/src';
 
-import { BaseClass } from './base-classes/base-class';
-import type { BaseMiddleware } from './base-classes/base-middleware';
+import { TaonBaseClass } from './base-classes/base-class';
+import type { TaonBaseMiddleware } from './base-classes/base-middleware';
 import type {
   TaonHttpDecoratorOptions,
   TaonMiddlewareFunction,

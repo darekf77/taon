@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { _, UtilsOs } from 'tnp-core/src';
 import { Helpers } from 'tnp-core/src';
 
-import type { BaseEntity } from '../base-classes/base-entity';
+import type { TaonBaseEntity } from '../base-classes/base-entity';
 import { ClassHelpers } from '../helpers/class-helpers';
 import { Symbols } from '../symbols';
 
@@ -146,7 +146,7 @@ export class RealtimeClient {
     options = options || ({} as any);
 
     if (_.isObject(entityClassFnOrObj)) {
-      const orgObj = entityClassFnOrObj as BaseEntity;
+      const orgObj = entityClassFnOrObj as TaonBaseEntity;
       entityClassFnOrObj =
         ClassHelpers.getClassFnFromObject(entityClassFnOrObj);
 

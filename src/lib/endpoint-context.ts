@@ -43,7 +43,7 @@ import {
   DataSourceOptions,
   getMetadataArgsStorage,
 } from 'taon-typeorm/src';
-import { config } from 'tnp-config/src';
+import { config } from 'tnp-core/src';
 import { CoreModels } from 'tnp-core/src';
 import { fse, http, https, os } from 'tnp-core/src'; // @backend
 import { UtilsOs, Utils } from 'tnp-core/src';
@@ -51,12 +51,12 @@ import { crossPlatformPath } from 'tnp-core/src';
 import { _, Helpers } from 'tnp-core/src';
 import { path } from 'tnp-core/src';
 
-import type { BaseClass } from './base-classes/base-class';
-import type { BaseController } from './base-classes/base-controller';
-import type { BaseInjector } from './base-classes/base-injector';
-import type { BaseMiddleware } from './base-classes/base-middleware';
-import type { BaseMigration } from './base-classes/base-migration';
-import { BaseSubscriberForEntity } from './base-classes/base-subscriber-for-entity';
+import type { TaonBaseClass } from './base-classes/base-class';
+import type { TaonBaseController } from './base-classes/base-controller';
+import type { TaonBaseInjector } from './base-classes/base-injector';
+import type { TaonBaseMiddleware } from './base-classes/base-middleware';
+import type { TaonBaseMigration } from './base-classes/base-migration';
+import { TaonBaseSubscriberForEntity } from './base-classes/base-subscriber-for-entity';
 import type { ControllerConfig } from './config/controller-config';
 import { MethodConfig } from './config/method-config';
 import { ParamConfig } from './config/param-config';
@@ -399,7 +399,7 @@ export class EndpointContext {
       }
     }
 
-    // mode === undefined for BaseContext => ok behavior
+    // mode === undefined for TaonBaseContext => ok behavior
     // console.log(`Mode for BE/FE communication: ${this.mode}`);
     // if(!this.mode) {
     //   console.log(this.config)
@@ -920,13 +920,13 @@ export class EndpointContext {
   private cloneClassWithNewMetadata = <
     T extends { new (...args: any[]): any },
   >({
-    BaseClass,
+    TaonBaseClass,
     className,
     config,
     ctx,
     classType,
   }: {
-    BaseClass: T;
+    TaonBaseClass: T;
     className: string;
     config: Models.ContextOptions<any, any, any, any, any, any, any, any>;
     ctx: EndpointContext;
@@ -935,16 +935,16 @@ export class EndpointContext {
     // Return a new class that extends the base class
     const cloneClass = () => {
       if (
-        BaseClass[Symbols.fullClassNameStaticProperty] ===
+        TaonBaseClass[Symbols.fullClassNameStaticProperty] ===
         `${ctx.contextName}.${className}`
       ) {
-        return BaseClass;
+        return TaonBaseClass;
       }
-      return class extends BaseClass {
-        // static ['_'] = BaseClass['_'];
+      return class extends TaonBaseClass {
+        // static ['_'] = TaonBaseClass['_'];
 
         // @ts-ignore
-        static [Symbols.orignalClass] = BaseClass;
+        static [Symbols.orignalClass] = TaonBaseClass;
 
         // @ts-ignore
         static [Symbols.fullClassNameStaticProperty] = `${ctx.contextName}.${className}`;
@@ -984,16 +984,16 @@ export class EndpointContext {
     // if (_.isUndefined(cloneClassFunction[Symbols.orignalClassClonesObj])) {
     //   cloneClassFunction[Symbols.orignalClassClonesObj] = {};
     // }
-    // if (_.isUndefined(BaseClass[Symbols.orignalClassClonesObj])) {
-    //   BaseClass[Symbols.orignalClassClonesObj] = {};
+    // if (_.isUndefined(TaonBaseClass[Symbols.orignalClassClonesObj])) {
+    //   TaonBaseClass[Symbols.orignalClassClonesObj] = {};
     // }
     // const all = {
-    //   ...BaseClass[Symbols.orignalClassClonesObj],
+    //   ...TaonBaseClass[Symbols.orignalClassClonesObj],
     //   ...cloneClassFunction[Symbols.orignalClassClonesObj],
     // };
     // all[ctx.contextName] = cloneClassFunction;
     // cloneClassFunction[Symbols.orignalClassClonesObj] = all;
-    // BaseClass[Symbols.orignalClassClonesObj] = all;
+    // TaonBaseClass[Symbols.orignalClassClonesObj] = all;
     //#endregion
 
     return cloneClassFunction;
@@ -1017,9 +1017,9 @@ export class EndpointContext {
     const classes = {};
     // console.log(Object.keys(classesInput))
     for (const key of Object.keys(classesInput || {})) {
-      const BaseClass = classesInput[key];
+      const TaonBaseClass = classesInput[key];
 
-      if (!BaseClass) {
+      if (!TaonBaseClass) {
         Helpers.error(`Class ${key} is not defined in context ${ctx.contextName}
 
         Please check if you have correct import in context file
@@ -1029,18 +1029,18 @@ export class EndpointContext {
 
       var className = Reflect.getMetadata(
         Symbols.metadata.className,
-        BaseClass,
+        TaonBaseClass,
       );
 
-      // console.log('Metadata className', className, BaseClass);
+      // console.log('Metadata className', className, TaonBaseClass);
       // if (!className) {
-      //   console.warn(`Please provide className for ${BaseClass.name} class`);
+      //   console.warn(`Please provide className for ${TaonBaseClass.name} class`);
       // }
       className = className || key;
-      BaseClass[Symbols.classNameStaticProperty] = className;
+      TaonBaseClass[Symbols.classNameStaticProperty] = className;
 
       const clonedClass = this.cloneClassWithNewMetadata({
-        BaseClass,
+        TaonBaseClass,
         className,
         config,
         ctx,
@@ -1114,7 +1114,7 @@ export class EndpointContext {
     ctor: new (...args: any[]) => T,
     options: {
       localInstance?: boolean;
-      contextClassInstance?: BaseInjector;
+      contextClassInstance?: TaonBaseInjector;
       locaInstanceConstructorArgs?: ConstructorParameters<typeof ctor>;
       parentInstanceThatWillGetInjectedStuff: object;
     },
@@ -1133,7 +1133,7 @@ export class EndpointContext {
       let entityName: string = '';
 
       // entity thing is only for repositories local repositories
-      // if (className === 'BaseRepository') {
+      // if (className === 'TaonBaseRepository') {
       const entityFn = _.first(locaInstanceConstructorArgs);
       const entity = entityFn && entityFn();
       entityName = (entity && ClassHelpers.getName(entity)) || '';
@@ -1821,7 +1821,7 @@ export class EndpointContext {
     for (const controllerClassFn of allControllers) {
       const instance = this.getInstanceBy(
         controllerClassFn as any,
-      ) as BaseController;
+      ) as TaonBaseController;
       if (_.isFunction(instance.afterAllCtxInited)) {
         await instance.afterAllCtxInited({ ctxStorage });
       }
@@ -2066,7 +2066,7 @@ export class EndpointContext {
     const middlewares = this.getClassesInstancesArrBy(
       Models.ClassType.MIDDLEWARE,
     )
-      .map(f => f as BaseMiddleware)
+      .map(f => f as TaonBaseMiddleware)
       .filter(f => _.isFunction(f.interceptClient));
 
     middlewares.forEach(middlewareInstanceName => {
@@ -2102,7 +2102,7 @@ export class EndpointContext {
     );
 
     for (const middleware of middlewares) {
-      const middlewareInstance: BaseMiddleware = middleware as any;
+      const middlewareInstance: TaonBaseMiddleware = middleware as any;
       if (_.isFunction(middlewareInstance.interceptServer)) {
         const middlewareFn = ClassHelpers.asyncHandler(
           async (
@@ -2258,7 +2258,7 @@ export class EndpointContext {
 
     const middlewareHandlers = methodConfig.calculatedMiddlewares
       .map(middlewareClassFun => {
-        const middlewareInstance: BaseMiddleware = this.getInstanceBy(
+        const middlewareInstance: TaonBaseMiddleware = this.getInstanceBy(
           middlewareClassFun as any,
         );
         if (
@@ -2637,7 +2637,7 @@ export class EndpointContext {
     //#region init middlewares
     const middlewares = methodConfig.calculatedMiddlewares;
     const middlewaresInstances = middlewares
-      .map(f => this.getInstanceBy(f as any) as BaseMiddleware)
+      .map(f => this.getInstanceBy(f as any) as TaonBaseMiddleware)
       .filter(f => _.isFunction(f.interceptClientMethod));
 
     middlewaresInstances.forEach(instance => {

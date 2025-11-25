@@ -29,9 +29,9 @@ import { _ } from 'tnp-core/src';
 import { ClassHelpers } from '../helpers/class-helpers';
 import { MySqlQuerySource } from 'taon-type-sql/src';
 import { TaonRepository } from '../decorators/classes/repository-decorator';
-import { BaseInjector } from './base-injector';
-import type { BaseEntity } from './base-entity';
-import { BaseCustomRepository } from './base-custom-repository';
+import { TaonBaseInjector } from './base-injector';
+import type { TaonBaseEntity } from './base-entity';
+import { TaonBaseCustomRepository } from './base-custom-repository';
 import { Models } from '../models';
 //#endregion
 
@@ -39,19 +39,19 @@ const INDEX_KEYS_NO_FOR_UPDATE = ['id'];
 
 const REPOS_CACHE = Symbol('repository cache inside instance');
 
-@TaonRepository({ className: 'BaseRepository' })
-export abstract class BaseRepository<
+@TaonRepository({ className: 'TaonBaseRepository' })
+export abstract class TaonBaseRepository<
   Entity extends { id?: any },
-> extends BaseCustomRepository {
+> extends TaonBaseCustomRepository {
   //#region dummy fields
   // static ids:number  = 0;
-  // id:number  = BaseRepository.ids++;
+  // id:number  = TaonBaseRepository.ids++;
   //#endregion
 
   //#region constructor & resolve entity
   abstract entityClassResolveFn: () => any;
   constructor(
-    // Injected through BaseCrudController
+    // Injected through TaonBaseCrudController
     __entityClassResolveFn: () => any,
   ) {
     super();
@@ -69,7 +69,7 @@ export abstract class BaseRepository<
       if (!this.ctx) {
         return; // TODO
         throw new Error(
-          `[BaseRepository] Context not inited for class ${ClassHelpers.getName(
+          `[TaonBaseRepository] Context not inited for class ${ClassHelpers.getName(
             this,
           )}`,
         );
@@ -77,7 +77,7 @@ export abstract class BaseRepository<
       const connection = this.ctx?.connection;
       if (!connection) {
         throw new Error(
-          `[BaseRepository] Database not inited for context ${this.ctx?.contextName}`,
+          `[TaonBaseRepository] Database not inited for context ${this.ctx?.contextName}`,
         );
       }
       this.__dbQuery = new MySqlQuerySource(connection);
@@ -330,7 +330,7 @@ export abstract class BaseRepository<
 
     if (!deletedEntity) {
       Helpers.warn(
-        `[BaseRepository] Entity "${ClassHelpers.getName(this.repo.target)}" ` +
+        `[TaonBaseRepository] Entity "${ClassHelpers.getName(this.repo.target)}" ` +
           `with id ${idOrEntity} not found, cannot remove`,
       );
       return;

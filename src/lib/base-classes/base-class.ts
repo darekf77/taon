@@ -7,7 +7,7 @@ import { cloneObj } from '../helpers/clone-obj';
 
 //#endregion
 
-export class BaseClass<CloneT extends BaseClass = any> {
+export class TaonBaseClass<CloneT extends TaonBaseClass = any> {
   //#region class initialization hook
   /**
    * class initialization hook

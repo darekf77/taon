@@ -1,4 +1,4 @@
-// import type { BaseMiddleware } from '../base-classes/base-middleware';
+// import type { TaonBaseMiddleware } from '../base-classes/base-middleware';
 import { TaonMiddlewareInheritanceObj } from '../decorators/http/http-methods-decorators';
 // import { cloneObj } from '../helpers/clone-obj';
 

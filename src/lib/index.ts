@@ -23,19 +23,19 @@ import * as allSymbols from './symbols';
 export * from './ui';
 
 export { EndpointContext } from './endpoint-context';
-export { BaseRepository } from './base-classes/base-repository';
-export { BaseCustomRepository } from './base-classes/base-custom-repository';
-export { BaseController } from './base-classes/base-controller';
-export { BaseProvider } from './base-classes/base-provider';
-export { BaseEntity } from './base-classes/base-entity';
-export { BaseContext } from './base-classes/base-context';
-export { BaseMigration } from './base-classes/base-migration';
-export { BaseClass } from './base-classes/base-class';
+export { TaonBaseRepository } from './base-classes/base-repository';
+export { TaonBaseCustomRepository } from './base-classes/base-custom-repository';
+export { TaonBaseController } from './base-classes/base-controller';
+export { TaonBaseProvider } from './base-classes/base-provider';
+export { TaonBaseEntity } from './base-classes/base-entity';
+export { TaonBaseContext } from './base-classes/base-context';
+export { TaonBaseMigration } from './base-classes/base-migration';
+export { TaonBaseClass } from './base-classes/base-class';
 export { TaonAdditionalMiddlewareMethodInfo } from './base-classes/base-middleware';
 export { createContext, TaonContext } from './create-context';
 export { inject } from './inject';
 export { Models } from './models';
-export { BaseFileUploadMiddleware } from './base-classes/base-file-upload.middleware';
+export { TaonBaseFileUploadMiddleware } from './base-classes/base-file-upload.middleware';
 export * from './constants';
 export { MulterFileUploadResponse } from './base-classes/base-controller';
 export { ContextsEndpointStorage } from './endpoint-context-storage';
@@ -109,13 +109,13 @@ export namespace Taon {
     entities: Function[];
     controllers: Function[];
   }) => {
-    const BaseContext = (await import('./base-classes/base-context'))
-      .BaseContext;
+    const TaonBaseContext = (await import('./base-classes/base-context'))
+      .TaonBaseContext;
     const context = createContext(() => ({
       appId: 'default-app-not-used-anymore',
       contextName: 'default',
       host: options.host,
-      contexts: { BaseContext },
+      contexts: { TaonBaseContext },
       database: true,
       entities: Array.from(options.entities) as any,
       controllers: Array.from(options.controllers) as any,

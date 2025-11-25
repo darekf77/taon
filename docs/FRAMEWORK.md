@@ -275,13 +275,13 @@ Purpose of taon context:
 - initialization of database (only 1 db per context allowed)
 
 ```ts
-import { Taon, BaseContext } from 'taon/src';
+import { Taon, TaonBaseContext } from 'taon/src';
 
 const MainContext = Taon.createContext(() => ({
   host,
   disabledRealtime: true,
   contextName: 'MainContext',
-  contexts: { BaseContext },
+  contexts: { TaonBaseContext },
   controllers: {
     UserController,
   },
@@ -315,7 +315,7 @@ const BiggerBackendContext = Taon.createContext(() => ({
   host: secondHost,
   disabledRealtime: false,
   contexts: { 
-    BaseContext,
+    TaonBaseContext,
     MainContext, // EVERYTHING inherited from MainContext
   },
   // ...also migrations, repositories, providers, subscribers etc. here
@@ -329,11 +329,11 @@ backend <br> (**remoteHost** property).<br>
  With context templates you can easily share code of local or remote servers.
 ```ts
 export const UserContextTemplate = Taon.createContextTemplate(() => ({
-  contextName: 'PortsContext',
-  contexts: { BaseContext },
+  contextName: 'TaonPortsContext',
+  contexts: { TaonBaseContext },
   controllers: { UserController },
   entities: { User },
-  migrations: { ...MIGRATIONS_CLASSES_FOR_PortsContext },
+  migrations: { ...MIGRATIONS_CLASSES_FOR_TaonPortsContext },
   skipWritingServerRoutes: true,
   logs: {
     migrations: true,
@@ -485,8 +485,8 @@ export class UserRepository extends Taon.Base.Repository<User> {
 There is also a way to create custom repository without crud methods
 ```ts
 
-@TaonRepository({ className: 'BaseCustomRepository' })
-export abstract class BaseCustomRepository extends BaseInjector {
+@TaonRepository({ className: 'TaonBaseCustomRepository' })
+export abstract class TaonBaseCustomRepository extends TaonBaseInjector {
   // your custom methods
 }
 

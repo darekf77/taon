@@ -1,4 +1,4 @@
-import type { BaseInjector } from './base-classes/base-injector';
+import type { TaonBaseInjector } from './base-classes/base-injector';
 import type { EndpointContext } from './endpoint-context';
 import { Symbols } from './symbols';
 
@@ -19,7 +19,7 @@ export const inject = <T>(entity: () => new (...args: any[]) => T): T => {
         if (resultContext) {
           let instance = resultContext.inject(ctor, {
             parentInstanceThatWillGetInjectedStuff: this,
-          }) as BaseInjector;
+          }) as TaonBaseInjector;
           // console.log('instance', instance);
 
           if (propName === 'getOriginalPrototype') {
@@ -72,7 +72,7 @@ export const inject = <T>(entity: () => new (...args: any[]) => T): T => {
 //         return (...args: any[]) => {
 //           if (isFirstSubscription) {
 //             isFirstSubscription = false;
-//             const subscriberClassFN: typeof BaseClass =
+//             const subscriberClassFN: typeof TaonBaseClass =
 //               subscriberClassResolveFn() as any;
 //             const ctx = subscriberClassFN[
 //               Symbols.ctxInClassOrClassObj

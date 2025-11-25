@@ -1,6 +1,6 @@
 //#region imports
 import { Helpers, UtilsMigrations, _ } from 'tnp-core/src';
-import { BaseMigration } from './base-classes/base-migration';
+import { TaonBaseMigration } from './base-classes/base-migration';
 import type { EndpointContext } from './endpoint-context';
 import { Models } from './models';
 import { ClassHelpers } from './helpers/class-helpers';
@@ -167,7 +167,7 @@ export class ContextDbMigrations {
       .reverse();
 
     // Filter migrations that need to be reverted
-    const migrationClassesInstancesToRevert: BaseMigration[] =
+    const migrationClassesInstancesToRevert: TaonBaseMigration[] =
       migrationsClassFns
         .map(classFn => {
           const timestampFromClassName = Number(
@@ -188,7 +188,7 @@ export class ContextDbMigrations {
           return this.ctx.getInstanceBy(classFn as any) as any;
         })
         .filter(f => !!f)
-        .map(f => f as BaseMigration)
+        .map(f => f as TaonBaseMigration)
         .filter(migrationInstance => migrationInstance.isReadyToRun());
 
     const queryRunner = this.ctx.connection.createQueryRunner();
@@ -284,9 +284,9 @@ export class ContextDbMigrations {
       Models.ClassType.MIGRATION,
     );
 
-    const migrationClassesInstances: BaseMigration[] = migrationsClassFns
+    const migrationClassesInstances: TaonBaseMigration[] = migrationsClassFns
       .map(classFn => this.ctx.getInstanceBy(classFn as any))
-      .map(f => f as BaseMigration)
+      .map(f => f as TaonBaseMigration)
       .filter(migrationInstance => migrationInstance.isReadyToRun());
 
     const queryRunner = this.ctx.connection.createQueryRunner();
@@ -365,9 +365,9 @@ export class ContextDbMigrations {
     //   migrationClassesALl: migrationsClassFns.map(f => ClassHelpers.getName(f)),
     // });
 
-    const migrationClassesInstances: BaseMigration[] = migrationsClassFns
+    const migrationClassesInstances: TaonBaseMigration[] = migrationsClassFns
       .map(classFn => this.ctx.getInstanceBy(classFn as any))
-      .map(f => f as BaseMigration)
+      .map(f => f as TaonBaseMigration)
       .filter(migrationInstance => migrationInstance.isReadyToRun());
 
     // console.log({

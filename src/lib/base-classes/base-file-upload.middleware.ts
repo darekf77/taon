@@ -13,7 +13,7 @@ import { crossPlatformPath, fse, path } from 'tnp-core/src';
 import { TaonMiddleware } from '../decorators/classes/middleware-decorator';
 
 import {
-  BaseMiddleware,
+  TaonBaseMiddleware,
   TaonAdditionalMiddlewareMethodInfo,
 } from './base-middleware';
 //#endregion
@@ -22,9 +22,9 @@ import {
  * Configurable file upload middleware (multer based)
  */
 @TaonMiddleware({
-  className: 'BaseFileUploadMiddleware',
+  className: 'TaonBaseFileUploadMiddleware',
 })
-export class BaseFileUploadMiddleware extends BaseMiddleware {
+export class TaonBaseFileUploadMiddleware extends TaonBaseMiddleware {
   async interceptServerMethod(
     { req, res, next }: TaonServerMiddlewareInterceptOptions,
     { methodName, expressPath }: TaonAdditionalMiddlewareMethodInfo,

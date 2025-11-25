@@ -1,18 +1,18 @@
 import { createContext } from '../create-context';
 
-import { BaseFileUploadMiddleware } from './base-file-upload.middleware';
-import { BaseRepository } from './base-repository';
+import { TaonBaseFileUploadMiddleware } from './base-file-upload.middleware';
+import { TaonBaseRepository } from './base-repository';
 
-const BaseContext = createContext(() => ({
-  contextName: 'BaseContext',
+const TaonBaseContext = createContext(() => ({
+  contextName: 'TaonBaseContext',
   abstract: true,
   middlewares: {
-    BaseFileUploadMiddleware,
+    TaonBaseFileUploadMiddleware,
   },
   repositories: {
     // @ts-ignore
-    BaseRepository,
+    TaonBaseRepository,
   },
 }));
 
-export { BaseContext };
+export { TaonBaseContext };

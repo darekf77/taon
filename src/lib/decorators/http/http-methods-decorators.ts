@@ -1,7 +1,7 @@
 import { Models as ModelsNg2Rest } from 'ng2-rest/src';
 import { CoreModels, _ } from 'tnp-core/src';
 
-import { BaseMiddleware } from '../../base-classes/base-middleware';
+import { TaonBaseMiddleware } from '../../base-classes/base-middleware';
 import { ClassHelpers } from '../../helpers/class-helpers';
 import { Models } from '../../models';
 import { Symbols } from '../../symbols';
@@ -64,7 +64,7 @@ const metaReq = (
 };
 
 export type TaonMiddlewareInheritanceObj = {
-  [parentMiddlewaresName: string]: typeof BaseMiddleware;
+  [parentMiddlewaresName: string]: typeof TaonBaseMiddleware;
 };
 
 export type TaonMiddlewareFunction = (options: {

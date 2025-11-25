@@ -2,7 +2,7 @@
 
 import { CoreModels } from 'tnp-core/src';
 
-import type { BaseMiddleware } from '../base-classes/base-middleware';
+import type { TaonBaseMiddleware } from '../base-classes/base-middleware';
 import type {
   TaonHttpDecoratorOptions,
   TaonMiddlewareFunction,
@@ -45,7 +45,7 @@ export class MethodConfig
    * Middlewares array in proper order and ready to be used in
    * express or in axios interceptors.
    */
-  declare calculatedMiddlewares: (typeof BaseMiddleware)[];
+  declare calculatedMiddlewares: (typeof TaonBaseMiddleware)[];
 
   // ! CLONING WILL CONE DESCRIPTOR OF METHOD AND I NEED IT!
   // public clone(override?: Partial<MethodConfig>): MethodConfig {

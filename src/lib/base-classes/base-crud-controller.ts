@@ -17,20 +17,20 @@ import { Models } from '../models';
 import { Symbols } from '../symbols';
 import { Validators } from '../validators';
 
-import { BaseController } from './base-controller';
-import { BaseRepository } from './base-repository';
+import { TaonBaseController } from './base-controller';
+import { TaonBaseRepository } from './base-repository';
 //#endregion
 
 /**
  * Please override property entityClassFn with entity class.
  */
-@TaonController({ className: 'BaseCrudController' })
-export abstract class BaseCrudController<
+@TaonController({ className: 'TaonBaseCrudController' })
+export abstract class TaonBaseCrudController<
   Entity,
   UPLOAD_FILE_QUERY_PARAMS = {},
-> extends BaseController<UPLOAD_FILE_QUERY_PARAMS> {
+> extends TaonBaseController<UPLOAD_FILE_QUERY_PARAMS> {
   //#region fields
-  protected db: BaseRepository<Entity>;
+  protected db: TaonBaseRepository<Entity>;
 
   /**
    * Please provide entity as class property entityClassFn:
@@ -73,7 +73,7 @@ export abstract class BaseCrudController<
 
       Please provide entity as class property entityClassFn:
 
-      class ${ClassHelpers.getName(this)} extends BaseCrudController<Entity> {
+      class ${ClassHelpers.getName(this)} extends TaonBaseCrudController<Entity> {
         // ...
         entityClassResolveFn = ()=> MyEntityClass;
         // ...

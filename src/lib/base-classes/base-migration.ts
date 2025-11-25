@@ -3,9 +3,9 @@ import { _ } from 'tnp-core/src';
 
 import { ClassHelpers } from '../helpers/class-helpers';
 
-import { BaseInjector } from './base-injector';
+import { TaonBaseInjector } from './base-injector';
 
-export class BaseMigration extends BaseInjector implements MigrationInterface {
+export class TaonBaseMigration extends TaonBaseInjector implements MigrationInterface {
   /**
    * by default is READY to run
    */
@@ -18,9 +18,9 @@ export class BaseMigration extends BaseInjector implements MigrationInterface {
   }
 
   async up(queryRunner: QueryRunner): Promise<any> {
-    console.log(`[BaseMigration] Running migration UP "${ClassHelpers.getName(this)}"`);
+    console.log(`[TaonBaseMigration] Running migration UP "${ClassHelpers.getName(this)}"`);
   }
   async down(queryRunner: QueryRunner): Promise<any> {
-    console.log(`[BaseMigration] Running migration DOWN "${ClassHelpers.getName(this)}"`);
+    console.log(`[TaonBaseMigration] Running migration DOWN "${ClassHelpers.getName(this)}"`);
   }
 }

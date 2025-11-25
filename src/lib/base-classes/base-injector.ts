@@ -5,11 +5,11 @@ import { EndpointContext } from '../endpoint-context';
 import { ClassHelpers } from '../helpers/class-helpers';
 import { Symbols } from '../symbols';
 
-import { BaseCustomRepository } from './base-custom-repository';
-import type { BaseRepository } from './base-repository';
+import { TaonBaseCustomRepository } from './base-custom-repository';
+import type { TaonBaseRepository } from './base-repository';
 //#endregion
 
-export class BaseInjector {
+export class TaonBaseInjector {
   //#region proxy dummy function
   /**
    * for proxy purposes
@@ -52,10 +52,10 @@ export class BaseInjector {
   /**
    * inject crud repo for entity
    */
-  injectRepo<T>(entityForCrud: new (...args: any[]) => T): BaseRepository<T> {
+  injectRepo<T>(entityForCrud: new (...args: any[]) => T): TaonBaseRepository<T> {
     const repoProxy = this.__inject(void 0, {
       localInstance: true,
-      resolveClassFromContext: 'BaseRepository',
+      resolveClassFromContext: 'TaonBaseRepository',
       locaInstanceConstructorArgs: [() => entityForCrud],
     });
     return repoProxy as any;
@@ -63,7 +63,7 @@ export class BaseInjector {
   //#endregion
 
   //#region inject / custom repository
-  injectCustomRepository<T extends BaseCustomRepository>(
+  injectCustomRepository<T extends TaonBaseCustomRepository>(
     cutomRepositoryClass: new (...args: any[]) => T,
   ): T {
     const repoProxy = this.__inject<T>(cutomRepositoryClass, {
@@ -87,7 +87,7 @@ export class BaseInjector {
   /**
    * aliast to this.injectRepository()
    */
-  injectCustomRepo<T extends BaseCustomRepository>(
+  injectCustomRepo<T extends TaonBaseCustomRepository>(
     cutomRepositoryClass: new (...args: any[]) => T,
   ): T {
     const repoProxy = this.injectCustomRepository<T>(cutomRepositoryClass);
@@ -166,7 +166,7 @@ export class BaseInjector {
        */
       resolveClassFromContext?: string;
       /**
-       * Args passed to constructor of BaseRepository
+       * Args passed to constructor of TaonBaseRepository
        * (for now just first arg is relevant)
        */
       locaInstanceConstructorArgs?: ConstructorParameters<typeof ctor>;

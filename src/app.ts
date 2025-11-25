@@ -9,7 +9,7 @@ import Aura from '@primeng/themes/aura'; // @browser
 import { MaterialCssVarsModule } from 'angular-material-css-vars'; // @browser
 import { providePrimeNG } from 'primeng/config'; // @browser
 import { Observable, map } from 'rxjs';
-import { Taon, BaseContext, TAON_CONTEXT, EndpointContext } from 'taon/src';
+import { Taon, TaonBaseContext, TAON_CONTEXT, EndpointContext } from 'taon/src';
 import { UtilsOs } from 'tnp-core/src';
 
 import { HOST_CONFIG } from './app.hosts';
@@ -164,7 +164,7 @@ class UserMigration extends Taon.Base.Migration {
 //#region  taon context
 var MainContext = Taon.createContext(() => ({
   ...HOST_CONFIG['MainContext'],
-  contexts: { BaseContext },
+  contexts: { TaonBaseContext },
   //#region @websql
   /**
    * This is dummy migration - you DO NOT NEED need this migrations object

@@ -9,15 +9,15 @@ import {
   RemoveEvent,
   UpdateEvent,
 } from 'taon-typeorm/src';
-import { BaseInjector } from './base-injector';
+import { TaonBaseInjector } from './base-injector';
 import { TaonSubscriber } from '../decorators/classes/subscriber-decorator';
 import { _ } from 'tnp-core/src';
 
 @TaonSubscriber({
-  className: 'BaseSubscriberForEntity',
+  className: 'TaonBaseSubscriberForEntity',
 })
-export abstract class BaseSubscriberForEntity<Entity = any>
-  extends BaseInjector
+export abstract class TaonBaseSubscriberForEntity<Entity = any>
+  extends TaonBaseInjector
   implements EntitySubscriberInterface
 {
   abstract listenTo(): new (...args) => Entity;
