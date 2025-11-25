@@ -44,8 +44,12 @@ export const BaseTaonClassesNames = [
   'PortsContext',
 ] as const;
 
+ export const TaonTempDatabasesFolder = 'databases';
+
+ export const TaonTempRoutesFolder = 'routes';
+
 export namespace Models {
-  export const DatabasesFolder = 'databases';
+  export const DatabasesFolder = TaonTempDatabasesFolder;
   export type FrameworkMode =
     | 'backend-frontend(tcp+udp)'
     | 'remote-backend(tcp+udp)'

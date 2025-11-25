@@ -34,7 +34,12 @@ export { TaonBaseClass } from './base-classes/base-class';
 export { TaonAdditionalMiddlewareMethodInfo } from './base-classes/base-middleware';
 export { createContext, TaonContext } from './create-context';
 export { inject } from './inject';
-export { Models, BaseTaonClassesNames } from './models';
+export {
+  Models,
+  BaseTaonClassesNames,
+  TaonTempDatabasesFolder,
+  TaonTempRoutesFolder,
+} from './models';
 export { TaonBaseFileUploadMiddleware } from './base-classes/base-file-upload.middleware';
 export * from './constants';
 export { MulterFileUploadResponse } from './base-classes/base-controller';
@@ -49,16 +54,18 @@ export type {
 
 export namespace Taon {
   export const error = (
-    opt: Pick<
-      RestErrorResponseWrapper,
-      'message' | 'status' | 'details' | 'code'
-    > | string,
+    opt:
+      | Pick<
+          RestErrorResponseWrapper,
+          'message' | 'status' | 'details' | 'code'
+        >
+      | string,
   ): void => {
     throw () => {
-      if(typeof opt === 'string'){
+      if (typeof opt === 'string') {
         opt = {
-          message: opt
-        }
+          message: opt,
+        };
       }
       return opt;
     };

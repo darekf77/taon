@@ -2039,7 +2039,7 @@ export class EndpointContext {
       //#region @backend
       process.cwd(),
       //#endregion
-      `routes-${this.config.contextName}.rest`,
+      `routes/routes-${this.config.contextName}.rest`,
     ]);
 
     this.logFramework && console.log(`[taon] routes file: ${fileName} `);
