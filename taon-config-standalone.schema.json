@@ -6397,10 +6397,19 @@
         "releaseType": {
           "$ref": "#/definitions/ReleaseType",
           "description": "select release type for automatic release"
+        },
+        "taonInstanceIp": {
+          "type": "string",
+          "description": "IP address of taon instance where to release"
+        },
+        "itemFriendlyName": {
+          "type": "string",
+          "description": "friendly name of item in auto release list configuration"
         }
       },
       "required": [
-        "artifactName"
+        "artifactName",
+        "itemFriendlyName"
       ],
       "additionalProperties": false
     },
