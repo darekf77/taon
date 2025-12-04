@@ -63,13 +63,13 @@ brew install mkdocs-material
 ```
 
 ## Supported OS-es:
-- Win10, Win11 (gitbash)
-- MacOS
-- Linux
+- Win10, Win11 (gitbash, pwsh)
+- MacOS (bash, zsh)
+- Linux (any shell)
 
 
 ## Required version of NodeJS
-- Windows 10/11 (gitbash,pwsh): >= v18
+- Windows 10/11 >= v18
 - MacOS: >= v18
 - Linux: >= v18
 
