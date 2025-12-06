@@ -1,26 +1,30 @@
+## Taon v22.X.X
+  - 🔲 **[cloud-service]** 2FA authentication
+  - 🔲 build organization projects as micro-frontends
+  - 🔲 organization multi window electron app
+
+## Taon v21.X.X
+
+- 🔲 angular v21 support
+- 🔲 angular SSR mode for dockerized production
+- 🔲 angular standalone project structure
+- 🔲 **[cloud-service]** basic command line authentication
+- 🔲 **[cloud-service]** backend readonly mode for deployment
+- 🔲 **[cloud-service]** database replication
+
 ## Taon v20.X.X
 
-- 🔲 angular v20 support
-- 🔲 simple online payments
-- 🔲 2FA authentication keycloak
-- 🔲 organization multi window electron app
-- 🔲 relaltime development BE/BE
-- 🔲 SSR for angular
+< skipping >
 
 ## Taon v19.X.X (CURRENT VERSION)
-
 - ✅ angular v19 support
-
-- 🔲 fast/stable packeges installer solution
-- 🔲 organization build based on standalone (single process with multiple entrypoints build)
-- 🔲 cloud build: electron, cli, lib, vscode
-- 🔲 docs examples for better understranding
-- ✅ relaltime development FE/BE
-- 🔲 basic authentication
+- ✅ fast/stable npm packages solution
+- ✅ cloud build: electron, cli, lib, vscode
+- ✅ docs examples for better understranding
+- ✅ realtime development FE/BE (TCP upgrade, IPC)
 - ✅ excellent isomorphic development programmer experience
-- 🔲 simple CD/CI develop/build/deploy process
+- ✅ simple CD/CI develop/build/deploy process
 - ✅ local release electron, cli, vscode ext.
-- 🔲 script installation for server (curl -o- https://taon.dev/install-on-server-script.sh | bash)
 - ✅ release standalone package as @organization/package
 
 ## Taon v18.X.X 
