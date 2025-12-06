@@ -53,7 +53,10 @@
       //   ],
       // },
       {
-        "packageNameWithPath": "taon/README.md",
+        "packageNameWithPath": [
+          "taon/README.md",
+          "taon/docs/BUILDING-DOCS.md"
+        ],
         "overrideTitle": "Start",
       },
     ],
