@@ -13,3 +13,5 @@ export const start = async (args, frameworkName, mode) => {
   await (startFn as any)(args, frameworkName, mode);
 };
 // DONT CHANGE THIS FILE!
+
+export default start;
