@@ -122,7 +122,7 @@ rm -rf ~/.taon  # taon local repositories, databases, settings, caches.
 Installation happens when you first time use taon
 ```jsonc
 [
-  // alternative not npx ( it wil not download package from npm if is not installed )
+  // alternative to npx ( it wil not download package from npm if is not installed )
   { name: 'npm-run', version: '4.1.2' },
   //handy for removing files
   { name: 'rimraf', version: '3.0.2' },
