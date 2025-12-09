@@ -18,12 +18,13 @@
   "autoReleaseConfigAllowedItems": [
     {
       "artifactName": "npm-lib-and-cli-tool",
-      "taskName": "npm"
+      "taskName": "npm",
     },
-    // {
-    //   "artifactName": "docs-webapp",
-    //   "releaseType": "static-pages",
-    // },
+    {
+      "artifactName": "docs-webapp",
+      "releaseType": "static-pages",
+      "taskName": "mkdocs",
+    },
   ],
 
   "removeAfterPullingFromGit": ["projects"],
