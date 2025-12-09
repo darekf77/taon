@@ -5353,11 +5353,11 @@
         },
         "storeGeneratedAssetsInRepository": {
           "type": "boolean",
-          "default": "false\r\nBy default generated assets from logo.png are not stored\r\nin repository"
+          "default": "false\nBy default generated assets from logo.png are not stored\nin repository"
         },
         "storeLocalReleaseFilesInRepository": {
           "type": "boolean",
-          "default": "true\r\nBy default local release files are stored in repository"
+          "default": "true\nBy default local release files are stored in repository"
         },
         "dependenciesNamesForNpmLib": {
           "type": "array",
@@ -6410,14 +6410,14 @@
           "type": "string",
           "description": "IP address of taon instance where to release"
         },
-        "itemFriendlyName": {
+        "taskName": {
           "type": "string",
           "description": "friendly name of item in auto release list configuration"
         }
       },
       "required": [
         "artifactName",
-        "itemFriendlyName"
+        "taskName"
       ],
       "additionalProperties": false
     },
