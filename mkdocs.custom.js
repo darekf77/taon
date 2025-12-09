@@ -3,22 +3,28 @@ document.addEventListener('DOMContentLoaded', function() {
   console.log('DOM loaded');
 });
 
-const isLocalhost = window.location.href.search('localhost') !== -1;
+// Put this once in your docs (layout.html, main.ts, etc.)
+;(() => {
+  if (window.parent === window) return;
 
-  // docs-sync-to-parent.js
-  // Put in your docs layout / main.ts / app.html
-if (window.parent !== window) {
+  // location.href = '/Start/'
+
+  const isDev = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  const parentOrigin = isDev ? 'http://localhost:4250' : 'https://taon.dev';
+
   const tellParent = () => {
     window.parent.postMessage(
       { type: 'IFRAME_PATH_UPDATE', path: location.pathname + location.search },
-      isLocalhost ? 'http://localhost:4250': 'https://taon.dev'  // ← change only if you use targetOrigin input
+      parentOrigin
     );
   };
 
+  // Initial + all navigations
   tellParent();
   window.addEventListener('popstate', tellParent);
   window.addEventListener('hashchange', tellParent);
 
+  // Monkey-patch history for SPA routers
   ['pushState', 'replaceState'].forEach(method => {
     const orig = history[method];
     history[method] = function (...args) {
@@ -26,29 +32,19 @@ if (window.parent !== window) {
       setTimeout(tellParent, 0);
     };
   });
-}
 
-// 2. Listen for NAVIGATE commands FROM parent
-window.addEventListener('message', (event) => {
-  // Security: only accept from your Angular app
+  // Listen for parent commands → HARD NAVIGATE if path changed
+  window.addEventListener('message', event => {
+    if (event.origin !== parentOrigin) return;
 
-  if(!isLocalhost) {
-    if (event.origin !== 'https://taon.dev') return;
-  }
+    if (event.data?.type === 'NAVIGATE') {
+      const newPath = event.data.path || '/';
+      const current = location.pathname + location.search;
 
-  console.log('Received message in iframe:', event.data);
-
-  if (event.data?.type === 'NAVIGATE') {
-    const newPath = event.data.path || '/';
-    const currentFull = location.pathname + location.search;
-    const currentPath = location.pathname;
-
-    // If it's actually a different page → FULL HARD REFRESH
-    if (newPath !== currentFull && newPath !== currentPath) {
-      // This forces a real HTTP request → fresh page, no SPA cache issues
-      location.href = newPath;
+      if (newPath !== current && newPath !== location.pathname) {
+        // Full hard refresh — guaranteed fresh state
+        location.href = newPath;
+      }
     }
-    // If it's the same → do nothing (prevents loops)
-  }
-});
-
+  });
+})();
