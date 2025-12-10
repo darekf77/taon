@@ -2,7 +2,7 @@
   if (window.parent === window) return;
 
   const isDev = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-  const parentOrigin = isDev ? 'http://localhost:4250' : 'https://taon.dev';
+  const parentOrigin = isDev ? 'http://localhost:4218' : 'https://taon.dev';
 
   let hasSentReady = false;
 
