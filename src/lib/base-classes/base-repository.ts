@@ -1,4 +1,5 @@
 //#region imports
+import { MySqlQuerySource } from 'taon-type-sql/src';
 import {
   type DataSource,
   type DeepPartial,
@@ -15,24 +16,19 @@ import {
 } from 'taon-typeorm/src';
 import type { QueryDeepPartialEntity } from 'taon-typeorm/src';
 import type { UpsertOptions } from 'taon-typeorm/src';
-// import { QueryDeepPartialEntity } from 'taon-typeorm/src';
-// import { UpsertOptions } from 'taon-typeorm/src';
-
 import type {
   DataSource as DataSourceType,
   QueryRunner,
   SelectQueryBuilder,
 } from 'taon-typeorm/src';
-import { EndpointContext } from '../endpoint-context';
 import { Helpers } from 'tnp-core/src';
 import { _ } from 'tnp-core/src';
-import { ClassHelpers } from '../helpers/class-helpers';
-import { MySqlQuerySource } from 'taon-type-sql/src';
+
 import { TaonRepository } from '../decorators/classes/repository-decorator';
-import { TaonBaseInjector } from './base-injector';
-import type { TaonBaseEntity } from './base-entity';
+import { ClassHelpers } from '../helpers/class-helpers';
+
 import { TaonBaseCustomRepository } from './base-custom-repository';
-import { Models } from '../models';
+
 //#endregion
 
 const INDEX_KEYS_NO_FOR_UPDATE = ['id'];
@@ -50,6 +46,7 @@ export abstract class TaonBaseRepository<
 
   //#region constructor & resolve entity
   abstract entityClassResolveFn: () => any;
+
   constructor(
     // Injected through TaonBaseCrudController
     __entityClassResolveFn: () => any,
@@ -357,6 +354,7 @@ export abstract class TaonBaseRepository<
   async deleteById(id: number | string): Promise<Entity> {
     return this.remove(id);
   }
+
   async bulkRemove(
     idsOrEntities: (number | string | Entity)[],
   ): Promise<Entity[]> {
@@ -425,6 +423,7 @@ export abstract class TaonBaseRepository<
       reload: false;
     },
   ): Promise<T[]>;
+
   /**
    * Records the delete date of all given entities.
    */
@@ -432,6 +431,7 @@ export abstract class TaonBaseRepository<
     entities: T[],
     options?: SaveOptions,
   ): Promise<(T & Entity)[]>;
+
   /**
    * Records the delete date of a given entity.
    */
@@ -441,6 +441,7 @@ export abstract class TaonBaseRepository<
       reload: false;
     },
   ): Promise<T>;
+
   /**
    * Records the delete date of a given entity.
    */
@@ -462,6 +463,7 @@ export abstract class TaonBaseRepository<
       reload: false;
     },
   ): Promise<T[]>;
+
   /**
    * Recovers all given entities in the database.
    */
@@ -469,6 +471,7 @@ export abstract class TaonBaseRepository<
     entities: T[],
     options?: SaveOptions,
   ): Promise<(T & Entity)[]>;
+
   /**
    * Recovers a given entity in the database.
    */
@@ -478,6 +481,7 @@ export abstract class TaonBaseRepository<
       reload: false;
     },
   ): Promise<T>;
+
   /**
    * Recovers a given entity in the database.
    */
@@ -512,6 +516,7 @@ export abstract class TaonBaseRepository<
   }
 
   private allowedTypesToUpdate = ['simple-json', 'simple-array', 'json'];
+
   async updateById<ENTITY = Entity>(
     id: number | string,
     item: Entity,
@@ -562,6 +567,7 @@ export abstract class TaonBaseRepository<
     return model as any as ENTITY;
     //#endregion
   }
+
   async bulkUpdate(items: Entity[]) {
     //#region @websqlFunc
     const models = [];

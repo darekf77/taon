@@ -12,6 +12,7 @@ const ENV = globalThis['ENV'];
 export class TaonAdminService {
   //#region singleton
   private static _instance: TaonAdminService;
+
   public static get Instance() {
     if (!this._instance) {
       this._instance = new TaonAdminService();
@@ -22,7 +23,9 @@ export class TaonAdminService {
 
   //#region fields & getters
   public scrollableEnabled = false; // TOOD false by default
+
   private onEditMode = new Subject();
+
   onEditMode$ = this.onEditMode.asObservable();
 
   //#region fields & getters / popup is open

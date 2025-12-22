@@ -3,15 +3,9 @@ import { RelationPath } from 'taon-typeorm/src';
 
 import { TaonBaseClass } from './base-class';
 
-let EntityDecorator = () => {
-  return (target: any) => {};
-};
-
 //#region @websql
-EntityDecorator = Entity;
+@Entity()
 //#endregion
-
-@EntityDecorator()
 export abstract class TaonBaseEntity<
   /**
    * type for cloning

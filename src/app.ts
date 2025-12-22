@@ -7,9 +7,24 @@ import { Component, OnInit } from '@angular/core'; // @browser
 import { VERSION } from '@angular/core'; // @browser
 import Aura from '@primeng/themes/aura'; // @browser
 import { MaterialCssVarsModule } from 'angular-material-css-vars'; // @browser
+// @ts-ignore
 import { providePrimeNG } from 'primeng/config'; // @browser
 import { Observable, map } from 'rxjs';
-import { Taon, TaonBaseContext, TAON_CONTEXT, EndpointContext } from 'taon/src';
+import {
+  Taon,
+  TaonBaseContext,
+  TAON_CONTEXT,
+  EndpointContext,
+  TaonBaseMigration,
+  TaonBaseCrudController,
+  GET,
+  TaonBaseAngularService,
+  TaonBaseAbstractEntity,
+  StringColumn,
+  TaonEntity,
+  TaonController,
+  TaonMigration,
+} from 'taon/src';
 import { UtilsOs } from 'tnp-core/src';
 
 import { HOST_CONFIG } from './app.hosts';
@@ -44,8 +59,11 @@ export class TaonComponent {
   angularVersion =
     VERSION.full +
     ` mode: ${UtilsOs.isRunningInWebSQL() ? ' (websql)' : '(normal)'}`;
+
   userApiService = inject(UserApiService);
+
   readonly users$: Observable<User[]> = this.userApiService.getAll();
+
   readonly hello$ = this.userApiService.userController
     .helloWorld()
     .request()
@@ -59,8 +77,9 @@ export class TaonComponent {
 @Injectable({
   providedIn: 'root',
 })
-export class UserApiService extends Taon.Base.AngularService {
+export class UserApiService extends TaonBaseAngularService {
   userController = this.injectController(UserController);
+
   getAll(): Observable<User[]> {
     return this.userController
       .getAll()
@@ -102,10 +121,10 @@ export class TaonModule {}
 //#endregion
 
 //#region  taon entity
-@Taon.Entity({ className: 'User' })
-class User extends Taon.Base.AbstractEntity {
+@TaonEntity({ className: 'User' })
+class User extends TaonBaseAbstractEntity {
   //#region @websql
-  @Taon.Orm.Column.String()
+  @StringColumn()
   //#endregion
   name?: string;
 
@@ -116,12 +135,12 @@ class User extends Taon.Base.AbstractEntity {
 //#endregion
 
 //#region  taon controller
-@Taon.Controller({ className: 'UserController' })
-class UserController extends Taon.Base.CrudController<User> {
+@TaonController({ className: 'UserController' })
+class UserController extends TaonBaseCrudController<User> {
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   entityClassResolveFn = () => User;
 
-  @Taon.Http.GET()
+  @GET()
   helloWorld(): Taon.Response<string> {
     //#region @websqlFunc
     return async (req, res) => {
@@ -131,7 +150,7 @@ class UserController extends Taon.Base.CrudController<User> {
     //#endregion
   }
 
-  @Taon.Http.GET()
+  @GET()
   getOsPlatform(): Taon.Response<string> {
     //#region @websqlFunc
     return async (req, res) => {
@@ -147,11 +166,12 @@ class UserController extends Taon.Base.CrudController<User> {
 
 //#region  taon migration
 //#region @websql
-@Taon.Migration({
+@TaonMigration({
   className: 'UserMigration',
 })
-class UserMigration extends Taon.Base.Migration {
+class UserMigration extends TaonBaseMigration {
   userController = this.injectRepo(User);
+
   async up(): Promise<any> {
     const superAdmin = new User();
     superAdmin.name = 'super-admin';

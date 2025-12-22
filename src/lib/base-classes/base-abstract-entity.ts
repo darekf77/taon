@@ -1,32 +1,34 @@
-//#region @websql
-import { Entity } from 'taon-typeorm/src';
-//#endregion
-import { Orm } from '../orm';
-import { TaonBaseEntity } from './base-entity';
+import { Entity, VersionColumn } from 'taon-typeorm/src'; // @websql
+
+import {
+  Generated,
+  GeneratedColumn,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+  VirtualColumn,
+} from '../orm';
+
 import type { TaonBaseClass } from './base-class';
-
-// empty decorator
-let EntityDecorator = () => {
-  return (target: any) => {};
-};
+import { TaonBaseEntity } from './base-entity';
 
 //#region @websql
-EntityDecorator = Entity;
+@Entity()
 //#endregion
-
-@EntityDecorator()
 export abstract class TaonBaseAbstractEntity<
   CloneT extends TaonBaseClass = any,
 > extends TaonBaseEntity<CloneT> {
   //#region @websql
-  @Orm.Column.Generated()
+  @PrimaryGeneratedColumn()
   //#endregion
   id: string;
 
   //#region @websql
-  @Orm.Column.Version()
+  @VersionColumn()
   //#endregion
   version: number;
 }
 
-export type AbstractEntityOmitKeys<ENTITY> = Omit<ENTITY, 'id' | 'version'|  '_' | 'clone'>;
+export type AbstractEntityOmitKeys<ENTITY> = Omit<
+  ENTITY,
+  'id' | 'version' | '_' | 'clone'
+>;

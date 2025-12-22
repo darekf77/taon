@@ -15,19 +15,22 @@ import { inject as taonInject } from '../inject';
 //#region @browser
 @Injectable()
 //#endregion
-export abstract class BaseAngularsService {
+export abstract class TaonBaseAngularService {
   //#region @browser
   protected readonly currentContext: TaonContext = inject(TAON_CONTEXT);
+
   /**
    * @deprecated
    * current context host backend port (for localhost backend)
    */
   protected readonly CURRENT_HOST_BACKEND_PORT: number | undefined;
+
   /**
    * @deprecated
    * current context host URL (for localhost backend)
    */
   protected readonly CURRENT_HOST_URL: string | undefined;
+
   //#endregion
   constructor() {
     //#region @browser

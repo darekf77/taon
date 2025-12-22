@@ -1,5 +1,5 @@
 import { Mapping } from 'ng2-rest/src';
-import { Entity as TypeormEntity, Tree } from 'taon-typeorm/src'; // @websql
+import { Entity } from 'taon-typeorm/src';
 import { _ } from 'tnp-core/src';
 import { CLASS } from 'typescript-class-helpers/src';
 
@@ -38,7 +38,7 @@ export function TaonEntity<T = any>(options?: TaonEntityOptions<T>) {
       constructor,
     );
     //#region @websql
-    TypeormEntity(options?.className)(constructor);
+    Entity(options?.className)(constructor);
     //#endregion
     CLASS.setName(constructor, options?.className); // TODO QUICK_FIX for ng2-rest
   };

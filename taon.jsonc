@@ -31,6 +31,8 @@
 
   "resources": ["README.md", "bin", "icon-menu-taon.svg"],
 
+  "shouldGenerateAutogenIndexFile": false,
+
   "packageJsonOverride": {
     "author": "Dariusz Filipiak",
     "bugs": {
