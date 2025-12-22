@@ -1,6 +1,6 @@
 //#region imports
 import { Server } from 'socket.io';
-import { DefaultEventsMap } from 'socket.io/dist/typed-events';
+import { DefaultEventsMap } from 'socket.io';
 import { Socket as SocketClient } from 'socket.io-client';
 import { Helpers } from 'tnp-core/src';
 

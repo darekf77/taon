@@ -1,4 +1,4 @@
-import { DefaultEventsMap } from 'socket.io/dist/typed-events';
+
 import { EndpointContext } from '../../endpoint-context';
 import { RealtimeStrategy } from './realtime-strategy';
 //#region @backend

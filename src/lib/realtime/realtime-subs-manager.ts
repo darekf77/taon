@@ -6,7 +6,7 @@ import { _ } from 'tnp-core/src';
 import { Subscriber } from 'rxjs';
 import { Symbols } from '../symbols';
 import { Socket as SocketClient } from 'socket.io-client';
-import { DefaultEventsMap } from 'socket.io/dist/typed-events';
+import { DefaultEventsMap } from 'socket.io';
 import { RealtimeModels } from './realtime.models';
 //#endregion
 
