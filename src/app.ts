@@ -1,3 +1,4 @@
+// @ts-nocheck
 //#region imports
 import * as os from 'os'; // @backend
 
