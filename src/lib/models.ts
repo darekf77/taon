@@ -1,8 +1,5 @@
 import type { RequestHandler } from 'express';
-import {
-  Response as ExpressResponse,
-  Request as ExpressRequest,
-} from 'express';
+
 import {
   Models as ModelsNg2Rest,
   RestErrorResponseWrapper,
@@ -20,6 +17,7 @@ import type {
 } from './decorators/http/http-methods-decorators';
 import type { EndpointContext } from './endpoint-context';
 import { ClassHelpers } from './helpers/class-helpers';
+import { ExpressRequest, ExpressResponse } from './express-types';
 
 // ! TODO make it as a nice way to wrap normal request
 export class TaonRestResponseWrapper extends RestResponseWrapper {}
@@ -44,9 +42,9 @@ export const BaseTaonClassesNames = [
   'PortsContext',
 ] as const;
 
- export const TaonTempDatabasesFolder = 'databases';
+export const TaonTempDatabasesFolder = 'databases';
 
- export const TaonTempRoutesFolder = 'routes';
+export const TaonTempRoutesFolder = 'routes';
 
 export namespace Models {
   export const DatabasesFolder = TaonTempDatabasesFolder;
@@ -349,8 +347,8 @@ export namespace Models {
     export type FormlyFromType = 'material' | 'bootstrap';
 
     export type ExpressContext<T> = (
-      req: ExpressRequest,
-      res: ExpressResponse,
+      req: ExpressRequest<any>,
+      res: ExpressResponse<any>,
     ) => T;
 
     export type SyncResponse<T> = string | T;
@@ -380,8 +378,8 @@ export namespace Models {
 
     export interface AsyncResponse<T> {
       (
-        req?: ExpressRequest,
-        res?: ExpressResponse,
+        req?: ExpressRequest<any>,
+        res?: ExpressResponse<any>,
       ): Promise<SyncResponse<T> | SyncResponseFunc<T>>;
     }
 

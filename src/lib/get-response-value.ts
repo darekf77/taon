@@ -1,15 +1,12 @@
-import {
-  Response as ExpressResponse,
-  Request as ExpressRequest,
-} from 'express';
 import { Helpers } from 'tnp-core/src';
 
+import { ExpressRequest, ExpressResponse } from './express-types';
 import { TaonHelpers } from './helpers/taon-helpers';
 import { Models } from './models';
 
 export const getResponseValue = <T>(
   response: Models.Http.Response<T>,
-  options?: { req: ExpressRequest; res: ExpressResponse },
+  options?: { req: ExpressRequest<any>; res: ExpressResponse<any> },
 ): Promise<T> => {
   //#region @websqlFunc
   const { req, res } = options || {};
