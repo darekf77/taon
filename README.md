@@ -68,9 +68,9 @@ echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo s
 
 
 ## Required version of NodeJS
-- Windows 10/11 >= v18
-- MacOS: >= v18
-- Linux: >= v18
+- Windows 10/11 >= v22
+- MacOS: >= v22
+- Linux: >= v22
 
 
 ## How to install taon
