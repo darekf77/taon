@@ -10,6 +10,7 @@
     "json10",
     "lodash-walk-object",
     "taon-type-sql",
+    "taon-typeorm",
     "socket.io",
   ],
 
