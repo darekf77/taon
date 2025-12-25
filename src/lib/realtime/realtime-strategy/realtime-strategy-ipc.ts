@@ -1,6 +1,6 @@
 //#region imports
 import type { ipcRenderer } from 'electron'; // @browser
-import * as Electron from 'electron'; // @backend
+import type * as Electron from 'electron';
 import { ipcMain } from 'electron'; // @backend
 import { Server, ServerOptions } from 'socket.io';
 import type { io, ManagerOptions, SocketOptions } from 'socket.io-client';
