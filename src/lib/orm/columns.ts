@@ -106,5 +106,5 @@ export const SimpleJsonColumn = () =>
 export const BooleanColumn = (defaultValue: boolean | null) =>
   Column({ type: 'boolean', nullable: true, default: defaultValue });
 
-export const DateTImeColumn = (defaultValue: boolean | null = null) =>
+export const DateTimeColumn = (defaultValue: boolean | null = null) =>
   Column({ type: 'datetime', nullable: true, default: defaultValue });
