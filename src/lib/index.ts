@@ -283,5 +283,28 @@ export const TAON_FLATTEN_MAPPING = {
     'Taon.Orm.Relation.ManyToMany': 'ManyToMany',
     'Taon.Orm.Relation.ManyToOne': 'ManyToOne',
   },
+  'taon-storage/src': {
+  // =====================
+    // Stor.* (new clean API)
+    // =====================
+    'Stor.Property.In.LocalStorage': 'StorPropertyInLocalStorage',
+    'Stor.Property.In.IndexedDb': 'StorPropertyInIndexedDb',
+
+    // short alias style (if you prefer this pattern in some codebases)
+    'Stor.In.LocalStorage': 'StorPropertyInLocalStorage',
+    'Stor.In.IndexedDb': 'StorPropertyInIndexedDb',
+
+    // =====================
+    // Stor.property.in.* (back-compat chain you mentioned)
+    // =====================
+    'Stor.property.in.localstorage': 'StorPropertyInLocalStorage',
+    'Stor.property.in.indexedb': 'StorPropertyInIndexedDb',
+    'Stor.property.in.indexedDb': 'StorPropertyInIndexedDb',
+
+    // Optional: if your old code had Stor.proper... (typo)
+    'Stor.proper.in.localstorage': 'StorPropertyInLocalStorage',
+    'Stor.proper.in.indexedb': 'StorPropertyInIndexedDb',
+  }
+
 } satisfies Record<string, Record<string, string>>;
 //#endregion
