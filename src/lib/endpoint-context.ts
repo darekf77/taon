@@ -632,6 +632,15 @@ export class EndpointContext {
       //#region prepare realtime
       if (!this.config.abstract) {
         this.disabledRealtime = this.config.disabledRealtime;
+        if (!this.host) {
+          throw `
+
+            host is required for context initialization..
+            (Or maybe you forgot mark ${this.config.contextName} context as abstract?)
+
+          `;
+        }
+
         //#region @backend
         // if (UtilsOs.isRunningInCliMode() && !_.isNil(this.config.disabledRealtime)) {
         //   // TODO for now...
