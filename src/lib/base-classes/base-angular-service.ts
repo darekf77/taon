@@ -1,4 +1,6 @@
-import { Injectable, inject } from '@angular/core'; // @browser
+import { isPlatformServer, isPlatformBrowser } from '@angular/common'; // @browser
+import { Injectable } from '@angular/core'; // @browser
+import { inject, PLATFORM_ID } from '@angular/core'; // @browser
 
 import {
   CURRENT_HOST_BACKEND_PORT,
@@ -17,6 +19,8 @@ import { inject as taonInject } from '../inject';
 //#endregion
 export abstract class TaonBaseAngularService {
   //#region @browser
+  protected readonly platformId = inject(PLATFORM_ID);
+
   protected readonly currentContext: TaonContext = inject(TAON_CONTEXT);
 
   /**
@@ -41,6 +45,26 @@ export abstract class TaonBaseAngularService {
       optional: true,
     });
     // #endregion
+  }
+
+  /**
+   * Returns true if the application is running in SSR (server-side rendering) mode only.
+   */
+  public get isSsrPlatform(): boolean {
+    //#region @browser
+    return isPlatformServer(this.platformId);
+    //#endregion
+    return false;
+  }
+
+  /**
+   * Returns true if the application is running in browser-only mode.
+   */
+  public get isBrowserPlatform(): boolean {
+    //#region @browser
+    return isPlatformBrowser(this.platformId);
+    //#endregion
+    return false;
   }
 
   /**
