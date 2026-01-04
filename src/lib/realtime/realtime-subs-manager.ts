@@ -114,19 +114,12 @@ export class RealtimeSubsManager {
   //#region methods & getters / update
   private update(data: any) {
     // log.data(`realtime update!!!!!  observers=${this.observers?.length} `)
-    const ngZone = this.options.core.ctx.ngZone;
+
     // console.log('updating', data);
-    // console.log('ngzone', ngZone);
     this.observers.forEach(observer => {
       // console.log(`observer closed: ${observer.closed}`,observer);
       if (!observer.closed) {
-        if (ngZone) {
-          ngZone.run(() => {
-            observer.next(data);
-          });
-        } else {
-          observer.next(data);
-        }
+        observer.next(data);
       }
     });
   }
