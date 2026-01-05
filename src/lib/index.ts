@@ -1,5 +1,5 @@
 import 'reflect-metadata'; // TODO this is needed for my decorators to work
-import { NgZone } from '@angular/core'; // @browser
+
 import { RestErrorResponseWrapper } from 'ng2-rest/src';
 import * as coreHelpers from 'tnp-core/src';
 
@@ -143,12 +143,6 @@ export namespace Taon {
 
   export const inject = injectFn.inject;
 
-  //#region @browser
-  export const initNgZone = (ngZone: NgZone) => {
-    endpointContext.EndpointContext.initNgZone(ngZone);
-  };
-  //#endregion
-
   export const symbols = allSymbols.Symbols;
 
   /**
@@ -284,7 +278,7 @@ export const TAON_FLATTEN_MAPPING = {
     'Taon.Orm.Relation.ManyToOne': 'ManyToOne',
   },
   'taon-storage/src': {
-  // =====================
+    // =====================
     // Stor.* (new clean API)
     // =====================
     'Stor.Property.In.LocalStorage': 'StorPropertyInLocalStorage',
@@ -304,7 +298,6 @@ export const TAON_FLATTEN_MAPPING = {
     // Optional: if your old code had Stor.proper... (typo)
     'Stor.proper.in.localstorage': 'StorPropertyInLocalStorage',
     'Stor.proper.in.indexedb': 'StorPropertyInIndexedDb',
-  }
-
+  },
 } satisfies Record<string, Record<string, string>>;
 //#endregion

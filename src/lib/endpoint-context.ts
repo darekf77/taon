@@ -3,7 +3,6 @@ import type { Server } from 'http';
 import { Http2Server } from 'http2'; // @backend
 import { URL } from 'url'; // @backend
 
-import type { NgZone } from '@angular/core'; // @browser
 import axios from 'axios';
 import * as bodyParser from 'body-parser'; // @backend
 import * as cookieParser from 'cookie-parser'; // @backend
@@ -78,22 +77,6 @@ import { TaonAdminService } from './ui/taon-admin-mode-configuration/taon-admin.
 //#endregion
 
 export class EndpointContext {
-  //#region static
-
-  //#region @browser
-  private static ngZone: NgZone;
-  //#endregion
-
-  //#region @browser
-  static initNgZone(ngZone: NgZone): void {
-    //#region @browser
-    this.ngZone = ngZone;
-    //#endregion
-  }
-  //#endregion
-
-  //#endregion
-
   //#region fields
 
   //#region fields / use mariadb mysql in docker
@@ -824,15 +807,6 @@ export class EndpointContext {
     }
     return databaseConfig.databaseConfigTypeORM;
     //#endregion
-  }
-  //#endregion
-
-  //#region methods & getters / ng zone
-  get ngZone(): any {
-    //#region @browser
-    return EndpointContext.ngZone;
-    //#endregion
-    return;
   }
   //#endregion
 
@@ -2746,7 +2720,7 @@ export class EndpointContext {
     //#region @websqlOnly
 
     //#region resolve variables
-    const MIN_TIMEOUT = 500;
+    const MIN_TIMEOUT = 400;
     const MIN_TIMEOUT_STEP = 200;
 
     const globalThisVar = globalThis; // TODO not a good idea! probably should be in context
