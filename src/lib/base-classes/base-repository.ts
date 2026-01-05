@@ -33,12 +33,11 @@ import { TaonBaseCustomRepository } from './base-custom-repository';
 
 const INDEX_KEYS_NO_FOR_UPDATE = ['id'];
 
-const REPOS_CACHE = Symbol('repository cache inside instance');
-
 @TaonRepository({ className: 'TaonBaseRepository' })
 export abstract class TaonBaseRepository<
   Entity extends { id?: any },
 > extends TaonBaseCustomRepository {
+  private REPOS_CACHE_KEY = Symbol('repository cache inside instance');
   //#region dummy fields
   // static ids:number  = 0;
   // id:number  = TaonBaseRepository.ids++;
@@ -95,15 +94,34 @@ export abstract class TaonBaseRepository<
   //#region repository
   protected get repository(): Repository<Entity> {
     //#region @websqlFunc
-    if (this[REPOS_CACHE]) {
-      return this[REPOS_CACHE];
+    if (this[this.REPOS_CACHE_KEY]) {
+      return this[this.REPOS_CACHE_KEY];
     }
-    const repo = this.ctx.repos.get(
-      ClassHelpers.getName(this.entityClassResolveFn()),
-    ) as Repository<Entity>;
+    const resolvedRepoClass = this.entityClassResolveFn();
+    const resolvedRepoName = ClassHelpers.getName(resolvedRepoClass);
 
-    this[REPOS_CACHE] = repo;
-    return this[REPOS_CACHE];
+    const repo = this.ctx.repos.get(resolvedRepoName) as Repository<Entity>;
+
+    // TODO better recognize what is class in context
+    if (!repo) {
+      throw `[TaonBaseRepository] Repository for entity "${resolvedRepoName}"
+      not found in context "${this.ctx?.contextName}".
+
+      Is ${resolvedRepoName} a Taon entity class ?
+
+      OR
+
+      If ${resolvedRepoName} is a Taon Custom Repository, then use this:
+
+      ...
+       ${_.lowerFirst(resolvedRepoName)} = injectCustomRepository(${resolvedRepoName});
+      ...
+
+      `;
+    }
+
+    this[this.REPOS_CACHE_KEY] = repo;
+    return this[this.REPOS_CACHE_KEY];
     //#endregion
   }
 
@@ -327,8 +345,9 @@ export abstract class TaonBaseRepository<
 
     if (!deletedEntity) {
       Helpers.warn(
-        `[TaonBaseRepository] Entity "${ClassHelpers.getName(this.repo.target)}" ` +
-          `with id ${idOrEntity} not found, cannot remove`,
+        `[TaonBaseRepository] Entity "${ClassHelpers.getName(
+          this.repo.target,
+        )}" ` + `with id ${idOrEntity} not found, cannot remove`,
       );
       return;
     }
@@ -503,6 +522,7 @@ export abstract class TaonBaseRepository<
   insert(
     entity: QueryDeepPartialEntity<Entity> | QueryDeepPartialEntity<Entity>[],
   ): Promise<InsertResult> {
+    // debugger;
     return this.repo.insert(entity);
   }
   //#endregion
