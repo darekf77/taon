@@ -93,6 +93,14 @@ export type {
 // TODO export all things
 
 export namespace Taon {
+  export const removeLoader = (afterMS: number = 0): void => {
+    setTimeout(() => {
+      (globalThis?.window as Window)?.document
+        ?.getElementById('taonpreloadertoremove')
+        ?.remove();
+    }, afterMS);
+  };
+
   export const error = (
     opt:
       | Pick<
