@@ -93,6 +93,25 @@ export type {
 // TODO export all things
 
 export namespace Taon {
+  /**
+   * Remove global taon loader from env.ts [loading.preAngularBootstrap]
+   */
+  export const removeLoader = (afterMS: number = 0): Promise<void> => {
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        (globalThis?.window as Window)?.document
+          ?.getElementById('taonpreloadertoremove')
+          ?.remove();
+
+        const body = (globalThis?.window as Window)?.document?.body;
+        if (body && body.style) {
+          body.style.backgroundColor = '';
+        }
+        resolve();
+      }, afterMS);
+    });
+  };
+
   export const error = (
     opt:
       | Pick<
