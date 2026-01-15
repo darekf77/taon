@@ -37,7 +37,7 @@ for building/testing/deploying modern:<br>
 [Electron](https://www.electronjs.org/) desktop apps
 
 \+
-[Ionic](https://www.electronjs.org/) mobile apps (NOT READY YET)
+[Capacitor](https://capacitorjs.com/) mobile apps (NOT READY YET)
 
 \+
 [Visual Studio Code](https://www.electronjs.org/) plugins
