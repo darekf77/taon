@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { ClassHelpers } from '../../helpers/class-helpers';
 import { Symbols } from '../../symbols';
 import { DecoratorAbstractOpt } from '../decorator-abstract-opt';
