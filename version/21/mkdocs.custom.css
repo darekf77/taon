@@ -1,0 +1,53 @@
+:root {
+  --md-primary-fg-color: #ff8c8b;
+  --md-primary-fg-color--light: #ecb7b7;
+  --md-primary-fg-color--dark: #90030c;
+  --md-accent-fg-color: #fb706d;
+  --md-accent-fg-color--light: #fb706d;
+  --md-accent-fg-color--dark: #fb706d;
+}
+
+[data-md-component='logo'] {
+  display: none !important;
+}
+
+/* [aria-label="Navigation"] {
+  label.md-nav__link--active {
+    background: none !important;
+    box-shadow: none !important;
+  }
+} */
+
+[href='.'],
+[href='./'] {
+  background: none !important;
+  box-shadow: none !important;
+}
+
+[data-md-color-scheme='default'] {
+  [data-md-component='main'] {
+    background-color: #ffc0cb73;
+  }
+}
+
+@media screen and (min-width: 60em) {
+  .md-nav--secondary .md-nav__title .md-nav__icon {
+      display: block !important;
+  }
+}
+
+/* [data-md-component="search"], [data-md-component="palette"] {
+  margin-bottom: -102px;
+} */
+
+footer {
+  display: none;
+}
+
+/* .md-nav__title {
+  display: none;
+} */
+
+.md-header__title {
+  margin-left: 0px !important;
+}
