@@ -30,6 +30,12 @@
   }
 }
 
+@media screen and (min-width: 60em) {
+  .md-nav--secondary .md-nav__title .md-nav__icon {
+      display: block !important;
+  }
+}
+
 /* [data-md-component="search"], [data-md-component="palette"] {
   margin-bottom: -102px;
 } */
@@ -38,9 +44,9 @@ footer {
   display: none;
 }
 
-.md-nav__title {
+/* .md-nav__title {
   display: none;
-}
+} */
 
 .md-header__title {
   margin-left: 0px !important;

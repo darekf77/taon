@@ -267,7 +267,10 @@ works well with inheritance and allows you to achieve the highest possible
 
 Purpose of taon context:
 
-- aggregate all (backend + frontend bridge) building blocks
+- There are 2 types of contexts<br>
+  -> **Abstract** (abstract:true) - use in shared lib code<br>
+  -> **Active** (abstract:false) - use in app code with HOST_CONFIG and automatic MIGRATIONS_FOR_your context object<br>
+- aggregates all (backend + frontend bridge) building blocks
 - starts TCP/Sockets/IPC server <br>
 - multiple contexts === multiple servers in 1 NodeJs app in development
 - **deployable config** => all detected configs from /src/app.* or /src/app/**/*.*
@@ -277,11 +280,12 @@ Purpose of taon context:
 ```ts
 import { Taon, TaonBaseContext } from 'taon/src';
 
-const MainContext = Taon.createContext(() => ({
-  host,
-  disabledRealtime: true,
-  contextName: 'MainContext',
-  contexts: { TaonBaseContext },
+const MainAbstractContext = Taon.createContext(() => ({
+  abstract: true,
+  disabledRealtime: true, // childrent do not inherit this
+  contextName: 'MainAbstractContext',
+  contexts: { TaonBaseContext }, 
+  // TaonBaseContext almost always needed
   controllers: {
     UserController,
   },
@@ -295,33 +299,51 @@ const MainContext = Taon.createContext(() => ({
 
 // automatically detected by Taon CLI
 // HOST_CONFIG => generated in app.hosts.ts
-const DeployableContext = Taon.createContext(() => ({
-  ...HOST_CONFIG['DeployableContext'], 
+const DeployableActiveContext = Taon.createContext(() => ({
+  ...HOST_CONFIG['DeployableActiveContext'], 
   // generated HOST_CONFIG includes contextName, host,
   // frontendHost and more...
-  contexts: { MainContext }, // everything inherited from MainContext
+
+  contexts: { MainAbstractContext },
+   // everything inherited from MainAbstractContext
 }));
 
-async function start() {
-  await MainContext.initialize(); // you have to initialize you config before using
-
-  await DeployableContext.initialize(); 
-  // you should initialize all your deployable configs in start function
-
- //... 
+@TaonEntity({className:'User'})
+export ExtendedUser extends User {
+  @StringColumn()
+  middleName:string;
 }
 
-const BiggerBackendContext = Taon.createContext(() => ({
-  host: secondHost,
-  disabledRealtime: false,
+const BiggerBackendActiveContext = Taon.createContext(() => ({
+  ...HOST_CONFIG['BiggerBackendActiveContext'], 
+  disabledRealtime: trie,
   contexts: { 
     TaonBaseContext,
-    MainContext, // EVERYTHING inherited from MainContext
+    MainAbstractContext, 
+    // classes/frameowrk building blocks
+    // inherited from MainAbstractContext
   },
-  // ...also migrations, repositories, providers, subscribers etc. here
+  entities: {
+    User: ExtendedUser 
+    // decorating User entity
+  }
+  // same for:
+  // migrations, repositories, providers etc.
   database: true,
   logs: true,
 }));
+
+async function start() {
+
+  await DeployableActiveContext.initialize(); 
+  // you should initialize all your deployable configs in start function
+
+  await BiggerBackendActiveContext.initialize(); 
+  // you have to initialize you config before using
+
+
+ //... 
+}
 
 ```
 Context can be use also as a way to accecss remote 
@@ -370,10 +392,10 @@ console.log({
 Entity class that can be use as Dto. Based no typeorm entites https://typeorm.io/entities
 
 ```ts
-@Taon.Entity({ className: 'User' })
-class User extends Taon.Base.AbstractEntity { // id, version included
+@TaonEntity({ className: 'User' })
+class User extends TaonBaseAbstractEntity { // id, version included
   //#region @websql
-  @Taon.Orm.Column.String()
+  @StringColumn()
   //#endregion
   name?: string;
 }
@@ -381,10 +403,10 @@ class User extends Taon.Base.AbstractEntity { // id, version included
 
 
 ```ts
-@Taon.Entity({ className: 'Project' })
-class Project extends Taon.Base.Entity {
+@TaonEntity({ className: 'Project' })
+class Project extends TaonBaseEntity {
   //#region @websql
-  @Taon.Orm.Column.String()
+  @StringColumn()
   //#endregion
   location?: string;
 }
@@ -396,13 +418,13 @@ Injectable to angular's api service -
 glue/bridge between backend and frontend.
 
 ```ts
-@Taon.Controller({ className: 'UserController' })
-class UserController extends Taon.Base.CrudController<User> {
+@TaonController({ className: 'UserController' })
+class UserController extends TaonBaseCrudController<User> {
    // This crud controllers there are methods like getAll(), update() etc.
    // Crud controller structure is similar to taon repository for entity 
    // structure.
 
-   @Taon.Http.GET()
+   @GET()
     helloWorld(): Taon.Response<string> {
       //#region @websqlFunc
       return async (req, res) => 'hello world';
@@ -414,11 +436,11 @@ class UserController extends Taon.Base.CrudController<User> {
 and crud controller with automatically generated REST API:
 
 ```ts
-@Taon.Controller({ className: 'UserController' })
-class UserController extends Taon.Base.CrudController<User> {
+@TaonController({ className: 'UserController' })
+class UserController extends TaonBaseCrudController<User> {
   entityClassResolveFn = () => User; // crud controller for quick entity rest api
 
-  @Taon.Http.GET() // acessible on in browser code
+  @GET() // acessible on in browser code
   whatTimeIsIt(): Taon.Response<string> {
     return async () => {
       return new Date().toString();
@@ -438,7 +460,7 @@ Api service is a place where you can:
   // PLEASE DON'T USE providedIn:'root' - This should not be a singleton 
   // for whole application -> only for specyfic injected context
 })
-export class UserApiService extends Taon.Base.AngularService {
+export class UserApiService extends TaonBaseAngularService {
   // for now - only injectable here are controllers
   // controllers should be a "glue" between backend and frontend
   userControlller = this.injectController(UserController);
@@ -469,10 +491,10 @@ Injectable (service like) classes for backend db communication
 You should use Repositories only inside server code.
 
 ```ts
-@Taon.Repository({
+@TaonRepository({
   className: 'UserRepository',
 }) 
-export class UserRepository extends Taon.Base.Repository<User> {
+export class UserRepository extends TaonBaseRepository<User> {
   entityClassResolveFn = () => User;
   
   async findByEmail(email: string) {
@@ -500,10 +522,10 @@ entity events base on <https://typeorm.io/listeners-and-subscribers>
 You should use Subscribers only inside server code.
 
 ```ts
-@Taon.Subscriber({
+@TaonSubscriber({
   className: 'TaonSubscriber',
 })
-export class TaonSubscriber extends Taon.Base.SubscriberForEntity {
+export class TaonSubscriber extends TaonBaseSubscriberForEntity {
   listenTo() {
     return UserEntity;
   }
@@ -521,10 +543,10 @@ Injectable (service like) classes singleton (in context) classes.
 
 
 ```ts
-@Taon.Provider({
+@TaonProvider({
   className: 'TaonConfigProvier',
 })
-export class TaonConfigProvier extends Taon.Base.Provider {
+export class TaonConfigProvier extends TaonBaseProvider {
   config = {
     lang: 'en',
     country: 'Poland'
@@ -551,11 +573,10 @@ There are 3 way of using taon middlewares/interceptors:
 (implement only interceptServerMethod or interceptClientMethod)
 
 ```ts
-@Taon.Middleware({
+@TaonMiddleware({
   className: 'MyMiddlewareInterceptor',
 })
-export class MyMiddlewareInterceptor extends Taon.Base
-  .Middleware {
+export class MyMiddlewareInterceptor extends TaonBaseMiddleware {
 
   /**
    * if you want your interceptor to NOT BE global in context.. set:
@@ -623,15 +644,15 @@ export class MyMiddlewareInterceptor extends Taon.Base
 ```
 Example of using middlewares in controller and method:
 ```ts
-@Taon.Controller({
+@TaonController({
   className: 'SessionController',
   middlewares: ({ parentMiddlewares }) => ({
       ...parentMiddlewares,
       SessionMiddleware,
   }),
 })
-export class SessionController extends Taon.Base.Controller {
-  @Taon.Http.PUT({
+export class SessionController extends TaonBaseController {
+  @PUT({
     middlewares: ({ parentMiddlewares }) => ({
       ...parentMiddlewares,
       AuthorizationMiddleware,
@@ -644,17 +665,18 @@ export class SessionController extends Taon.Base.Controller {
     };
     //#endregion
   }
+}
 ```
 
 #### Error handling inside controllers
 ```ts
-@Taon.Controller({
+@TaonController({
   className: 'SampleController'
 })
-export class SampleController extends Taon.Base.Controller {
-  @Taon.Http.GET()
+export class SampleController extends TaonBaseController {
+  @GET()
   helloWorld(
-    @Taon.Http.Param.Query('errorType')
+    @Query('errorType')
     errorType?: 'short' | 'stack' | 'customCode' | 'taonError',
   ): Taon.Response<string> {
     //#region @websqlFunc
@@ -704,11 +726,10 @@ convenient CI/CD. Work with normal NodeJs backend and Websql browser backend.
 Taon migration can be shipped with library code.
 
 ```ts
-@Taon.Migration({
+@TaonMigration({
   className: 'MainContext_1735315075962_firstMigration',
 })
-export class MainContext_1735315075962_firstMigration extends Taon.Base
-  .Migration {
+export class MainContext_1735315075962_firstMigration extends TaonBaseMigration {
   async up(queryRunner: QueryRunner): Promise<any> {
     // do "something" in db
   }
@@ -731,10 +752,10 @@ mechanism for realtime communication:
 You can listen/subscribe to custom events or entities events in every simple fashion.
 
 ```ts
-@Taon.Subscriber({
+@TaonSubscriber({
   className: 'RealtimeClassSubscriber',
 })
-export class RealtimeClassSubscriber extends Taon.Base.SubscriberForEntity {
+export class RealtimeClassSubscriber extends TaonBaseSubscriberForEntity {
   listenTo() {
     return UserEntity;
   }

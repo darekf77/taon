@@ -68,6 +68,7 @@
     "thebearingedge.vscode-sql-lit",
     "ms-vscode-remote.remote-wsl",
     "kgrzywocz.wsl-path",
-    "imgildev.vscode-angular-generator"
+    "imgildev.vscode-angular-generator",
+    "bierner.color-info"
   ]
 }
