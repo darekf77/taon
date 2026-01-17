@@ -7,7 +7,7 @@ import { DecoratorAbstractOpt } from '../decorator-abstract-opt';
 /**
  * Subscriber decorator
  */
-export function TaonSubscriber(options: TaonSubscriberOptions) {
+export function TaonSubscriber<T=any>(options: TaonSubscriberOptions<T>) {
   return function (constructor: Function) {
     Reflect.defineMetadata(
       Symbols.metadata.options.subscriber,
