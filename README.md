@@ -40,7 +40,7 @@ for building/testing/deploying modern:<br>
 [Capacitor](https://capacitorjs.com/) mobile apps (NOT READY YET)
 
 \+
-[Visual Studio Code](https://www.electronjs.org/) plugins
+[Visual Studio Code](https://www.electronjs.org/)/ [VScodium](https://vscodium.com/) plugins
 
 \+ Documentation websites with:<br>
 - [MkDocs](https://www.mkdocs.org/) beautifull material wrapper for *.md docs files <br>
@@ -65,6 +65,15 @@ echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo s
 - Win10, Win11 (gitbash, pwsh)
 - MacOS 
 - Linux
+
+## Supported editors
+- [Visual Studio Code](https://www.electronjs.org/)
+- [VScodium](https://vscodium.com/)
+<!-- 
+## Not supported yet maybe in the future:
+- [Cursor](https://cursor.com/) 
+- [Theia](https://theia-ide.org/) 
+ -->
 
 
 ## Required version of NodeJS
