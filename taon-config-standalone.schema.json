@@ -5353,11 +5353,11 @@
         },
         "storeGeneratedAssetsInRepository": {
           "type": "boolean",
-          "default": "false\nBy default generated assets from logo.png are not stored\nin repository"
+          "default": "false\r\nBy default generated assets from logo.png are not stored\r\nin repository"
         },
         "storeLocalReleaseFilesInRepository": {
           "type": "boolean",
-          "default": "true\nBy default local release files are stored in repository"
+          "default": "true\r\nBy default local release files are stored in repository"
         },
         "dependenciesNamesForNpmLib": {
           "type": "array",
@@ -5437,6 +5437,10 @@
           "type": "boolean",
           "description": "generate src/lib/index._auto-generated_.ts with all exports from lib ts files"
         },
+        "shouldGenerateAutogenAppRoutesFile": {
+          "type": "boolean",
+          "description": "generate src/app.ts routes, imports and context initializations from ./src/app/*.routes.ts (recursive)"
+        },
         "autoReleaseConfigAllowedItems": {
           "type": "array",
           "items": {
@@ -5452,6 +5456,7 @@
         "optionalDependenciesNamesForNpmLib",
         "packageJsonOverride",
         "peerDependenciesNamesForNpmLib",
+        "shouldGenerateAutogenAppRoutesFile",
         "shouldGenerateAutogenIndexFile",
         "singleFileBundlingPackages",
         "type"
@@ -5467,8 +5472,8 @@
         "v4",
         "v16",
         "v18",
-        "v21",
-        "v21",
+        "v19",
+        "v20",
         "v21",
         "v22"
       ]
@@ -6364,15 +6369,7 @@
       "type": "object",
       "properties": {
         "artifactName": {
-          "type": "string",
-          "enum": [
-            "npm-lib-and-cli-tool",
-            "angular-node-app",
-            "electron-app",
-            "mobile-app",
-            "vscode-plugin",
-            "docs-webapp"
-          ]
+          "$ref": "#/definitions/ReleaseArtifactTaon"
         },
         "envName": {
           "type": "string",
@@ -6398,10 +6395,6 @@
           "type": "number",
           "description": "example for dev environtment > undefined - env.<artifact-name>.dev.ts > 1 - env.<artifact-name>.dev1.ts > 2 - env.<artifact-name>.dev2.ts ..."
         },
-        "skip": {
-          "type": "boolean",
-          "description": "skip release of this artifact"
-        },
         "releaseType": {
           "$ref": "#/definitions/ReleaseType",
           "description": "select release type for automatic release"
@@ -6413,6 +6406,10 @@
         "taskName": {
           "type": "string",
           "description": "friendly name of item in auto release list configuration"
+        },
+        "description": {
+          "type": "string",
+          "description": "Short description of auto release item"
         }
       },
       "required": [
@@ -6420,6 +6417,18 @@
         "taskName"
       ],
       "additionalProperties": false
+    },
+    "ReleaseArtifactTaon": {
+      "type": "string",
+      "enum": [
+        "npm-lib-and-cli-tool",
+        "angular-node-app",
+        "electron-app",
+        "mobile-app",
+        "vscode-plugin",
+        "docs-webapp"
+      ],
+      "description": "All possible release types for taon for MANUAL/CLOUD release"
     },
     "ReleaseType": {
       "type": "string",

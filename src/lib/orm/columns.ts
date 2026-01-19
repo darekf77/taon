@@ -63,7 +63,18 @@ export const String100Column = <T = string>(defaultValue: T = null) =>
   });
 
 /**
- * 100 characters varchar
+ * 20 characters varchar
+ */
+export const String20Column = <T = string>(defaultValue: T = null) =>
+  Column({
+    type: 'varchar',
+    length: 20,
+    nullable: _.isNil(defaultValue),
+    default: defaultValue,
+  });
+
+/**
+ * 45 characters varchar
  */
 export const String45Column = <T = string>(defaultValue: T = null) =>
   Column({
