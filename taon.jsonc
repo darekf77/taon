@@ -2,7 +2,7 @@
   "type": "isomorphic-lib",
   "version": "v21",
 
-  "dependenciesNamesForNpmLib": [
+  "bun": [
     "@angular/common",
     "@angular/core",
     "@ngx-formly/core",
@@ -21,7 +21,13 @@
     "rxjs",
     "socket.io",
     "socket.io-client",
+    "ora"
   ],
+
+  "dependenciesNamesForNpmLib": [
+    "ora",
+  ],
+
 
   "appId": "dev.taon.app",
 
@@ -38,6 +44,7 @@
   ],
 
   "isomorphicDependenciesForNpmLib": [
+    "tnp",
     "json10",
     "lodash-walk-object",
     "ng2-rest",
