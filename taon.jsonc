@@ -3,15 +3,24 @@
   "version": "v21",
 
   "dependenciesNamesForNpmLib": [
-    "tnp",
-    "tslib",
-    "ora",
-    "ng2-rest",
-    "json10",
-    "lodash-walk-object",
-    "taon-type-sql",
-    "taon-typeorm",
+    "@angular/common",
+    "@angular/core",
+    "@ngx-formly/core",
+    "axios",
+    "body-parser",
+    "cookie-parser",
+    "cors",
+    "electron",
+    "express",
+    "express-session",
+    "form-data",
+    "json5",
+    "method-override",
+    "multer",
+    "reflect-metadata",
+    "rxjs",
     "socket.io",
+    "socket.io-client",
   ],
 
   "appId": "dev.taon.app",
@@ -28,10 +37,19 @@
     },
   ],
 
+  "isomorphicDependenciesForNpmLib": [
+    "json10",
+    "lodash-walk-object",
+    "ng2-rest",
+    "taon-type-sql",
+    "taon-typeorm",
+    "tnp-core",
+    "typescript-class-helpers",
+  ],
+
+  "peerDependenciesNamesForNpmLib": [],
   "removeAfterPullingFromGit": ["projects"],
-
   "resources": ["README.md", "bin", "icon-menu-taon.svg"],
-
   "shouldGenerateAutogenIndexFile": false,
 
   "packageJsonOverride": {
