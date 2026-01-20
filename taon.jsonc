@@ -2,6 +2,24 @@
   "type": "isomorphic-lib",
   "version": "v21",
 
+  "dependenciesNamesForNpmLib": [
+    "ora",
+  ],
+
+  "appId": "dev.taon.app",
+
+  "autoReleaseConfigAllowedItems": [
+    {
+      "artifactName": "npm-lib-and-cli-tool",
+      "taskName": "npm",
+    },
+    {
+      "artifactName": "docs-webapp",
+      "releaseType": "static-pages",
+      "taskName": "mkdocs",
+    },
+  ],
+
   "bun": [
     "@angular/common",
     "@angular/core",
@@ -22,25 +40,6 @@
     "socket.io",
     "socket.io-client",
     "ora"
-  ],
-
-  "dependenciesNamesForNpmLib": [
-    "ora",
-  ],
-
-
-  "appId": "dev.taon.app",
-
-  "autoReleaseConfigAllowedItems": [
-    {
-      "artifactName": "npm-lib-and-cli-tool",
-      "taskName": "npm",
-    },
-    {
-      "artifactName": "docs-webapp",
-      "releaseType": "static-pages",
-      "taskName": "mkdocs",
-    },
   ],
 
   "isomorphicDependenciesForNpmLib": [
