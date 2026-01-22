@@ -131,13 +131,13 @@ export namespace Taon {
   };
 
   export type ResponseHtml = models.Models.Http.Response<string>;
-  export import Response = models.Models.Http.Response;
+  export type Response<T = string> = models.Models.Http.Response<T>;
   // TODO new 5.8 typescript is not allowing this
   // export import Http = http.Http;
   // export import Base = base.Base;
   // export import Orm = orm.Orm;
 
-  export import StartParams = models.Models.StartParams;
+  export type StartParams = models.Models.StartParams;
   export const getResponseValue = getResponse.getResponseValue;
 
   //#region class decorators
