@@ -4,6 +4,20 @@
 
   "dependenciesNamesForNpmLib": ["tslib", "ora", "progress", "open"],
 
+  "appId": "dev.taon.app",
+
+  "autoReleaseConfigAllowedItems": [
+    {
+      "artifactName": "npm-lib-and-cli-tool",
+      "taskName": "npm",
+    },
+    {
+      "artifactName": "docs-webapp",
+      "releaseType": "static-pages",
+      "taskName": "mkdocs",
+    },
+  ],
+
   "isomorphicDependenciesForNpmLib": ["tnp"],
 
   "peerDependenciesNamesForNpmLib": [
@@ -33,20 +47,6 @@
     "rxjs/operators",
     "socket.io",
     "socket.io-client",
-  ],
-
-  "appId": "dev.taon.app",
-
-  "autoReleaseConfigAllowedItems": [
-    {
-      "artifactName": "npm-lib-and-cli-tool",
-      "taskName": "npm",
-    },
-    {
-      "artifactName": "docs-webapp",
-      "releaseType": "static-pages",
-      "taskName": "mkdocs",
-    },
   ],
 
   "removeAfterPullingFromGit": ["projects"],
