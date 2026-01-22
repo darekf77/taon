@@ -6,6 +6,35 @@
 
   "isomorphicDependenciesForNpmLib": ["tnp"],
 
+  "peerDependenciesNamesForNpmLib": [
+    "json10",
+    "lodash-walk-object",
+    "ng2-rest",
+    "taon-type-sql",
+    "taon-typeorm",
+    "tnp-core",
+    "typescript-class-helpers",
+    "@angular/common",
+    "@angular/core",
+    "@ngx-formly/core",
+    "axios",
+    "body-parser",
+    "cookie-parser",
+    "cors",
+    "electron",
+    "express",
+    "express-session",
+    "form-data",
+    "json5",
+    "method-override",
+    "multer",
+    "reflect-metadata",
+    "rxjs",
+    "rxjs/operators",
+    "socket.io",
+    "socket.io-client",
+  ],
+
   "appId": "dev.taon.app",
 
   "autoReleaseConfigAllowedItems": [
@@ -20,7 +49,6 @@
     },
   ],
 
-  "peerDependenciesNamesForNpmLib": [],
   "removeAfterPullingFromGit": ["projects"],
   "resources": ["README.md", "bin", "icon-menu-taon.svg"],
   "shouldGenerateAutogenIndexFile": false,
