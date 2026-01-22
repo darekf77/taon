@@ -18,7 +18,7 @@ import * as getResponse from './get-response-value';
 import * as injectFn from './inject';
 import * as models from './models';
 import * as orm from './orm';
-import * as allSymbols from './symbols';
+// import * as allSymbols from './symbols';
 
 // export * from './build-info._auto-generated_';
 export * from './constants';
@@ -97,7 +97,7 @@ export namespace Taon {
    * Remove global taon loader from env.ts [loading.preAngularBootstrap]
    */
   export const removeLoader = (afterMS: number = 0): Promise<void> => {
-    return new Promise<void>((resolve) => {
+    return new Promise<void>(resolve => {
       setTimeout(() => {
         (globalThis?.window as Window)?.document
           ?.getElementById('taonpreloadertoremove')
@@ -161,8 +161,6 @@ export namespace Taon {
   export const createContextTemplate = createContextFn.createContextTemplate;
 
   export const inject = injectFn.inject;
-
-  export const symbols = allSymbols.Symbols;
 
   /**
    * @deprecated

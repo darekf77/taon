@@ -1,10 +1,10 @@
 import * as FormData from 'form-data'; // @backend
 import {
-  Models as ModelsNg2Rest,
   RestErrorResponseWrapper,
   RestResponseWrapper,
   HttpResponseError,
 } from 'ng2-rest/src';
+import { Models as Ng2RestModels } from 'ng2-rest/src';
 import {
   CoreModels,
   crossPlatformPath,
@@ -84,7 +84,7 @@ export class TaonBaseController<
       });
       // console.log(responseArr);
       for (const res of responseArr) {
-        await this.afterFileUploadAction(res, queryParams || {} as any);
+        await this.afterFileUploadAction(res, queryParams || ({} as any));
       }
       return responseArr;
     };
@@ -107,10 +107,7 @@ export class TaonBaseController<
   //#region upload local file to server
   async uploadLocalFileToServer(
     absFilePath: string,
-    options?: Pick<
-      Models.Http.Rest.Ng2RestAxiosRequestConfig,
-      'onUploadProgress'
-    >,
+    options?: Pick<Ng2RestModels.Ng2RestAxiosRequestConfig, 'onUploadProgress'>,
     queryParams?: UPLOAD_FILE_QUERY_PARAMS,
   ): Promise<MulterFileUploadResponse[]> {
     //#region @backendFunc

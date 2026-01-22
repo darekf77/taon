@@ -88,6 +88,7 @@ export class EndpointContext {
 
   //#region fields / flags
   disabledRealtime: boolean = false;
+
   /**
    * check whether context is inited
    * (with init() function )
@@ -178,6 +179,7 @@ export class EndpointContext {
 
   //#region fields / only migration start
   readonly onlyMigrationRun?: boolean = false;
+
   readonly onlyMigrationRevertToTimestamp?: number = undefined;
 
   get isRunOrRevertOnlyMigrationAppStart(): boolean {
@@ -199,9 +201,11 @@ export class EndpointContext {
 
   //#region fields / realtime
   private realtime: RealtimeCore;
+
   get realtimeClient() {
     return this.realtime.client;
   }
+
   get realtimeServer() {
     return this.realtime.server;
   }
@@ -265,6 +269,7 @@ export class EndpointContext {
    * Inside docker there is not need for https secure server
    */
   public readonly isRunningInsideDocker: boolean = false;
+
   constructor(
     private originalConfig: Models.ContextOptions<
       any,
@@ -937,6 +942,7 @@ export class EndpointContext {
         static [Symbols.classNameStaticProperty] = className;
 
         static [Symbols.ctxInClassOrClassObj] = ctx;
+
         // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
         static __getFullPathForClass__(arr = []) {
           const name = this[Symbols.fullClassNameStaticProperty];
@@ -951,9 +957,11 @@ export class EndpointContext {
           }
           return arr.join('/');
         }
+
         static get fullPathForClass(): string {
           return this.__getFullPathForClass__();
         }
+
         [Symbols.ctxInClassOrClassObj] = ctx;
         // You can override prototype properties or methods here if needed
         // static properties override allowed
@@ -1794,6 +1802,7 @@ export class EndpointContext {
       }
     });
   }
+
   //#endregion
   async initControllersHook(
     ctxStorage: ContextsEndpointStorage,

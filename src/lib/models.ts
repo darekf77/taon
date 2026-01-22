@@ -1,5 +1,4 @@
 import type { RequestHandler } from 'express';
-
 import {
   Models as ModelsNg2Rest,
   RestErrorResponseWrapper,
@@ -16,8 +15,8 @@ import type {
   TaonMiddlewareInheritanceObj,
 } from './decorators/http/http-methods-decorators';
 import type { EndpointContext } from './endpoint-context';
-import { ClassHelpers } from './helpers/class-helpers';
 import { ExpressRequest, ExpressResponse } from './express-types';
+import { ClassHelpers } from './helpers/class-helpers';
 
 // ! TODO make it as a nice way to wrap normal request
 export class TaonRestResponseWrapper extends RestResponseWrapper {}
@@ -116,26 +115,37 @@ export namespace Models {
      * database name
      */
     database?: string;
+
     /**
      * only for file base db: sqlite, sqljs
      */
     location?: string;
+
     synchronize: boolean;
+
     dropSchema: boolean;
+
     type?: CoreModels.DatabaseType;
+
     /**
      * Persists db on disk/local-storage if serverless db
      */
     autoSave?: boolean;
+
     /**
      * for websql db mode
      * true by default
      */
     useLocalForage?: boolean;
+
     logging: boolean;
+
     databasePort?: number;
+
     databaseHost?: string;
+
     databaseUsername?: string;
+
     databasePassword?: string;
   }
   //#endregion
@@ -340,8 +350,6 @@ export namespace Models {
 
   //#region models / http
   export namespace Http {
-    export import Rest = ModelsNg2Rest;
-
     export type ContextENDPOINT = { target: Function; initFN: Function };
 
     export type FormlyFromType = 'material' | 'bootstrap';
@@ -370,10 +378,10 @@ export namespace Models {
       /**
        * @deprecated use request() mehods instead
        */
-      readonly received?: Rest.PromiseObservableMix<Rest.HttpResponse<T>>;
+      readonly received?: ModelsNg2Rest.PromiseObservableMix<ModelsNg2Rest.HttpResponse<T>>;
       request?(
         axiosConfig?: ModelsNg2Rest.Ng2RestAxiosRequestConfig,
-      ): Rest.PromiseObservableMix<Rest.HttpResponse<T>>;
+      ): ModelsNg2Rest.PromiseObservableMix<ModelsNg2Rest.HttpResponse<T>>;
     }
 
     export interface AsyncResponse<T> {
