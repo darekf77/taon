@@ -2,9 +2,9 @@
   "type": "isomorphic-lib",
   "version": "v21",
 
-  "dependenciesNamesForNpmLib": [
-    "ora",
-  ],
+  "dependenciesNamesForNpmLib": ["tslib", "ora", "progress", "open"],
+
+  "isomorphicDependenciesForNpmLib": ["tnp"],
 
   "appId": "dev.taon.app",
 
@@ -18,39 +18,6 @@
       "releaseType": "static-pages",
       "taskName": "mkdocs",
     },
-  ],
-
-  "bun": [
-    "@angular/common",
-    "@angular/core",
-    "@ngx-formly/core",
-    "axios",
-    "body-parser",
-    "cookie-parser",
-    "cors",
-    "electron",
-    "express",
-    "express-session",
-    "form-data",
-    "json5",
-    "method-override",
-    "multer",
-    "reflect-metadata",
-    "rxjs",
-    "socket.io",
-    "socket.io-client",
-    "ora"
-  ],
-
-  "isomorphicDependenciesForNpmLib": [
-    "tnp",
-    "json10",
-    "lodash-walk-object",
-    "ng2-rest",
-    "taon-type-sql",
-    "taon-typeorm",
-    "tnp-core",
-    "typescript-class-helpers",
   ],
 
   "peerDependenciesNamesForNpmLib": [],
