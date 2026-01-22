@@ -1,9 +1,11 @@
+import { CoreModels } from 'tnp-core/src';
+
 import { ClassHelpers } from '../../helpers/class-helpers';
 import { Models } from '../../models';
 import { Symbols } from '../../symbols';
 
 function metaParam(
-  param: Models.Http.Rest.ParamType,
+  param: CoreModels.ParamType,
   name: string,
   expire: number,
   defaultValue = undefined,

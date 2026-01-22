@@ -7,7 +7,7 @@ import { Models } from '../../models';
 import { Symbols } from '../../symbols';
 
 const metaReq = (
-  method: Models.Http.Rest.HttpMethod,
+  method: CoreModels.HttpMethod,
   path: string,
   target: Function,
   propertyKey: string,

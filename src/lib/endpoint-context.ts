@@ -122,7 +122,7 @@ export class EndpointContext {
   //#region fields / active routes
   public readonly activeRoutes: {
     expressPath: string;
-    method: Models.Http.Rest.HttpMethod;
+    method: CoreModels.HttpMethod;
   }[] = [];
   //#endregion
 
@@ -1912,7 +1912,7 @@ export class EndpointContext {
         // methodConfig.calculatedMiddlewares = TODO
 
         //#region initialized method express path
-        const httpMethodType: Models.Http.Rest.HttpMethod = methodConfig.type;
+        const httpMethodType: CoreModels.HttpMethod = methodConfig.type;
 
         // this is quick fix - in docker global path should not be used
         const globalPathPart =
@@ -2228,13 +2228,13 @@ export class EndpointContext {
   //#region methods & getters / init methods node
   private initServer(
     //#region parameters
-    httpMethodType: Models.Http.Rest.HttpMethod,
+    httpMethodType: CoreModels.HttpMethod,
     methodConfig: Partial<MethodConfig>,
     classConfig: ControllerConfig,
     expressPath: string,
     target: Function,
     //#endregion
-  ): { expressPath: string; method: Models.Http.Rest.HttpMethod } {
+  ): { expressPath: string; method: CoreModels.HttpMethod } {
     //#region resolve variables
     // console.log(
     //   `CLIENT: expressPath: "${expressPath}" interceptor for method: ${methodConfig.calculatedMiddlewares.length}`,
@@ -2608,7 +2608,7 @@ export class EndpointContext {
    */
   private async initClient(
     target: Function,
-    httpRequestType: Models.Http.Rest.HttpMethod,
+    httpRequestType: CoreModels.HttpMethod,
     methodConfig: Partial<MethodConfig>, // Models.Http.Rest.MethodConfig,
     expressPath: string,
   ): Promise<void> {
