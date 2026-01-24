@@ -64,7 +64,7 @@
 //     //#region @websqlFunc
 //     return async () => {
 //       console.log({ id, test })
-//       return 'hello world from ' + (Helpers.isElectron && Helpers.isNode) ? 'ipc' : 'http';
+//       return 'hello world from ' + (UtilsOs.isElectron && UtilsOs.isNode) ? 'ipc' : 'http';
 //     }
 //     //#endregion
 //   }
@@ -80,7 +80,7 @@
 // async function start(portForBackend?: string) {
 //   console.log({ portForBackend })
 
-//   console.log('Helpers.isElectron', Helpers.isElectron)
+//   console.log('UtilsOs.isElectron', UtilsOs.isElectron)
 //   console.log('Your server will start on port ' + HOST_BACKEND_PORT);
 //   const host = 'http://localhost:' + HOST_BACKEND_PORT;
 

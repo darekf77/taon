@@ -1,7 +1,7 @@
 import 'reflect-metadata'; // TODO this is needed for my decorators to work
 
 import { RestErrorResponseWrapper } from 'ng2-rest/src';
-import * as coreHelpers from 'tnp-core/src';
+import { Helpers, Utils, UtilsOs } from 'tnp-core/src';
 
 import * as base from './base-classes/base';
 import * as createContextFn from './create-context';
@@ -152,10 +152,10 @@ export namespace Taon {
   //#endregion
 
   //#region aliases to helpers
-  export const isBrowser = coreHelpers.Helpers.isBrowser;
-  export const isNode = coreHelpers.Helpers.isNode;
-  export const isWebSQL = coreHelpers.Helpers.isWebSQL;
-  export const isElectron = coreHelpers.Helpers.isElectron;
+  export const isBrowser = UtilsOs.isBrowser;
+  export const isNode = UtilsOs.isNode;
+  export const isWebSQL = UtilsOs.isWebSQL;
+  export const isElectron = UtilsOs.isElectron;
   //#endregion
   export const createContext = createContextFn.createContext;
   export const createContextTemplate = createContextFn.createContextTemplate;

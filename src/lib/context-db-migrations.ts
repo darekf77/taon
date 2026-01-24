@@ -156,7 +156,7 @@ export class ContextDbMigrations {
       return;
     }
     if (!UtilsMigrations.isValidTimestamp(timestamp)) {
-      Helpers.throw(
+      Helpers.throwError(
         `Invalid timestamp provided for migration revert: ${timestamp}`,
       );
     }

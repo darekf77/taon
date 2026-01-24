@@ -2,7 +2,7 @@
 import { URL } from 'url'; // @backend
 
 import { Observable, Subject } from 'rxjs';
-import { Helpers, _ } from 'tnp-core/src';
+import { Helpers, UtilsOs, _ } from 'tnp-core/src';
 
 import type { TaonBaseEntity } from '../base-classes/base-entity';
 import { ClassHelpers } from '../helpers/class-helpers';
@@ -72,7 +72,7 @@ export class RealtimeServer {
 
     //#region prepare global BE socket
     this.core.connectSocketBE = this.core.strategy.ioServer(
-      Helpers.isWebSQL ? this.core.ctx.uriOrigin : this.core.ctx.serverTcpUdp,
+      UtilsOs.isWebSQL ? this.core.ctx.uriOrigin : this.core.ctx.serverTcpUdp,
       {
         path: nspPathGlobal.pathname,
         cors,
@@ -98,7 +98,7 @@ export class RealtimeServer {
 
     //#region prepare realtime BE socket
     this.core.socketBE = this.core.strategy.ioServer(
-      Helpers.isWebSQL || Helpers.isElectron
+      UtilsOs.isWebSQL || UtilsOs.isElectron
         ? this.core.ctx.uriOrigin
         : this.core.ctx.serverTcpUdp,
       {

@@ -2,7 +2,7 @@
 import { Server } from 'socket.io';
 import { DefaultEventsMap } from 'socket.io';
 import { Socket as SocketClient } from 'socket.io-client';
-import { Helpers } from 'tnp-core/src';
+import { Helpers, UtilsOs } from 'tnp-core/src';
 
 import { apiPrefix } from '../constants';
 import type { EndpointContext } from '../endpoint-context';
@@ -79,7 +79,7 @@ export class RealtimeCore {
     // [ctx=${this.ctx.contextName}] realtime strategy: ${this.strategy}, context type: ${this.ctx.contextType}
 
     //         `);
-    if (Helpers.isWebSQL) {
+    if (UtilsOs.isWebSQL) {
       this.server = new RealtimeServer(this as any);
       // console.log('DONE INITING SERVER');
       this.client = new RealtimeClient(this as any);
@@ -121,7 +121,7 @@ export class RealtimeCore {
     const contextNameForCommunication = this.ctx.contextNameForCommunication;
 
     let prefix = `${apiPrefix}/${contextNameForCommunication}/udp`;
-    if (Helpers.isElectron) {
+    if (UtilsOs.isElectron) {
       prefix = ``;
     }
     const href =

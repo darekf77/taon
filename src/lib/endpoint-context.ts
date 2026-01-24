@@ -342,7 +342,7 @@ export class EndpointContext {
       !this.config.host.startsWith('http://') &&
       !this.config.host.startsWith('https://')
     ) {
-      Helpers.throw(
+      Helpers.throwError(
         `[taon-config] Your${this.host ? ' remote' : ''} 'host' must start with http:// or https://`,
       );
     }
@@ -376,11 +376,11 @@ export class EndpointContext {
     // console.log(`
 
     //   useIpcWhenElectron: ${this.config.useIpcWhenElectron}
-    //   Helpers.isElectron: ${Helpers.isElectron}
+    //   UtilsOs.isElectron: ${UtilsOs.isElectron}
 
     //   `)
-    if (this.config.useIpcWhenElectron && Helpers.isElectron) {
-      if (Helpers.isWebSQL) {
+    if (this.config.useIpcWhenElectron && UtilsOs.isElectron) {
+      if (UtilsOs.isWebSQL) {
         this.mode = 'backend-frontend(websql-electron)';
       } else {
         this.mode = 'backend-frontend(ipc-electron)';
@@ -1873,7 +1873,7 @@ export class EndpointContext {
 
       //#region group start
       //#region @backend
-      if (!Helpers.isRunningIn.cliMode()) {
+      if (!UtilsOs.isRunningInCliMode()) {
         //#endregion
         this.logHttp &&
           console.groupCollapsed(
@@ -1943,7 +1943,7 @@ export class EndpointContext {
 
         //#region init server
         // console.log({ expressPath });
-        if (Helpers.isNode || Helpers.isWebSQL) {
+        if (UtilsOs.isNode || UtilsOs.isWebSQL) {
           //#region @websql
 
           const route = this.initServer(
@@ -1964,7 +1964,7 @@ export class EndpointContext {
 
         //#region init client
         const shouldInitClient =
-          Helpers.isBrowser || this.isRemoteHost || Helpers.isWebSQL;
+          UtilsOs.isBrowser || this.isRemoteHost || UtilsOs.isWebSQL;
         // console.log('shouldInitClient', shouldInitClient);
         if (shouldInitClient) {
           // console.log(
@@ -1987,7 +1987,7 @@ export class EndpointContext {
 
       //#region group end
       //#region @backend
-      if (!Helpers.isRunningIn.cliMode()) {
+      if (!UtilsOs.isRunningInCliMode()) {
         //#endregion
         this.logHttp && console.groupEnd();
         //#region @backend
@@ -2306,7 +2306,7 @@ export class EndpointContext {
     // console.log(`BACKEND: expressPath: "${expressPath}" `);
     //#endregion
 
-    if (Helpers.isElectron) {
+    if (UtilsOs.isElectron) {
       //#region @backend
       const ipcKeyName = TaonHelpers.ipcKeyNameRequest(
         target,
@@ -2337,7 +2337,7 @@ export class EndpointContext {
     if (!this.isRemoteHost) {
       //#region apply dummy websql express routers
       //#region @websql
-      if (Helpers.isWebSQL) {
+      if (UtilsOs.isWebSQL) {
         if (!this.expressApp[httpMethodType.toLowerCase()]) {
           this.expressApp[httpMethodType.toLowerCase()] = () => {};
           // TODO add middlewares for WEBSQL and ELECTRON mode
@@ -2668,7 +2668,7 @@ export class EndpointContext {
 
     //#region handle electron ipc request
 
-    if (Helpers.isElectron) {
+    if (UtilsOs.isElectron) {
       const ipcRenderer = (window as any).require('electron').ipcRenderer;
       target.prototype[methodConfig.methodName] = function (...args) {
         const received = new Promise(async (resolve, reject) => {
@@ -2862,7 +2862,7 @@ export class EndpointContext {
       });
       received['observable'] = from(received);
       // debugger
-      if (Helpers.isWebSQL) {
+      if (UtilsOs.isWebSQL) {
         return {
           received,
           request(axiosConfig: ModelsNg2Rest.Ng2RestAxiosRequestConfig) {
@@ -2872,7 +2872,7 @@ export class EndpointContext {
         } as Models.Http.ClientAction<any>;
       }
     };
-    if (Helpers.isWebSQL) {
+    if (UtilsOs.isWebSQL) {
       // @ts-ignore
       return undefined as any as Models.Http.ClientAction<any>;
     }
