@@ -196,5 +196,7 @@
 
   "files.associations": {
     "tsconfig.json": "json"
-  }
+  },
+
+  "search.followSymlinks": false
 }
