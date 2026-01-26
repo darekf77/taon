@@ -2,7 +2,7 @@
   "type": "isomorphic-lib",
   "version": "v21",
 
-  "dependenciesNamesForNpmLib": ["tslib", "ora", "progress", "open"],
+  "dependenciesNamesForNpmLib": ["tslib", "ora", "progress", "open", "cfonts"],
 
   "appId": "dev.taon.app",
 
