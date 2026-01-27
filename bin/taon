@@ -1,6 +1,5 @@
-#!/usr/bin/env node
+#!/usr/bin/env -S node --no-deprecation
 //#region @backend
-//node  --no-deprecation => args doesnt work on linux
 // --stack-trace-limit=10000
 require('./start');
 //#endregion

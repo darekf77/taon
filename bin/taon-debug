@@ -1,4 +1,4 @@
-#!/usr/bin/env node --inspect --no-deprecation
+#!/usr/bin/env -S node --inspect --stack-trace-limit=10000 --no-deprecation
 //#region @backend
 // --stack-trace-limit=10000
 require('./start');
