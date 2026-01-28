@@ -1,12 +1,13 @@
 //#region imports
-import { _ } from 'tnp-core/src';
-import { Symbols } from './symbols';
-import { walk } from 'lodash-walk-object/src';
-import { config } from 'tnp-core/src';
+import type { Response } from 'express';
 import { JSON10 } from 'json10/src';
-import { ClassHelpers } from './helpers/class-helpers';
+import { walk } from 'lodash-walk-object/src';
 import { Mapping } from 'ng2-rest/src';
-import { Response } from 'express';
+import { _ } from 'tnp-core/src';
+import { config } from 'tnp-core/src';
+
+import { ClassHelpers } from './helpers/class-helpers';
+import { Symbols } from './symbols';
 //#endregion
 
 //#region get transform function
@@ -86,7 +87,9 @@ export class EntityProcess {
    * - transform browser fn in decorator
    */
   private advancedManipulation: boolean = false;
+
   private entityMapping: any;
+
   private circural = [];
   //#endregion
 

@@ -8,10 +8,10 @@ import * as bodyParser from 'body-parser'; // @backend
 import * as cookieParser from 'cookie-parser'; // @backend
 import * as cors from 'cors'; // @backend
 import { ipcMain } from 'electron'; // @backend
-import * as express from 'express';
 import type { Application } from 'express';
 //  multer in taon middleware will do better job than express-fileupload
 // import * as fileUpload from 'express-fileupload'; // @backend
+import * as expressType from 'express';
 import * as expressSession from 'express-session'; // @backend
 import { JSON10 } from 'json10/src';
 import { walk } from 'lodash-walk-object/src';
@@ -42,13 +42,13 @@ import {
   DataSourceOptions,
   getMetadataArgsStorage,
 } from 'taon-typeorm/src';
+import { path, requireDefault } from 'tnp-core/src';
 import { config } from 'tnp-core/src';
 import { CoreModels } from 'tnp-core/src';
 import { fse, http, https, os } from 'tnp-core/src'; // @backend
 import { UtilsOs, Utils } from 'tnp-core/src';
 import { crossPlatformPath } from 'tnp-core/src';
 import { _, Helpers } from 'tnp-core/src';
-import { path } from 'tnp-core/src';
 
 import type { TaonBaseClass } from './base-classes/base-class';
 import type { TaonBaseController } from './base-classes/base-controller';
@@ -74,6 +74,11 @@ import { Models } from './models';
 import { RealtimeCore } from './realtime/realtime-core';
 import { Symbols } from './symbols';
 import { TaonAdminService } from './ui/taon-admin-mode-configuration/taon-admin.service'; // @browser
+//#endregion
+
+let express: typeof import('express') = {} as any;
+//#region @backend
+express = requireDefault('express');
 //#endregion
 
 export class EndpointContext {
@@ -2099,9 +2104,9 @@ export class EndpointContext {
       if (_.isFunction(middlewareInstance.interceptServer)) {
         const middlewareFn = ClassHelpers.asyncHandler(
           async (
-            req: express.Request,
-            res: express.Response,
-            next: express.NextFunction,
+            req: expressType.Request,
+            res: expressType.Response,
+            next: expressType.NextFunction,
           ) => {
             if (
               req.originalUrl.startsWith(
@@ -2260,9 +2265,9 @@ export class EndpointContext {
         ) {
           const middlewareFn = ClassHelpers.asyncHandler(
             async (
-              req: express.Request,
-              res: express.Response,
-              next: express.NextFunction,
+              req: expressType.Request,
+              res: expressType.Response,
+              next: expressType.NextFunction,
             ) => {
               await middlewareInstance.interceptServerMethod(
                 {
@@ -2281,7 +2286,7 @@ export class EndpointContext {
           return middlewareFn;
         }
       })
-      .filter(f => !!f) as express.RequestHandler[];
+      .filter(f => !!f) as expressType.RequestHandler[];
 
     // const url = this.uri;
 
@@ -2352,7 +2357,7 @@ export class EndpointContext {
       this.expressApp[httpMethodType.toLowerCase()](
         expressPath,
         ...middlewareHandlers,
-        async (req: express.Request, res: express.Response) => {
+        async (req: expressType.Request, res: expressType.Response) => {
           // console.log(`[${type.toUpperCase()}] ${expressPath} `);
           //#region process params
           const args: any[] = [];
@@ -2572,9 +2577,9 @@ export class EndpointContext {
 
   //#region methods & getters / send error
   protected sendError(
-    res: express.Response,
+    res: expressType.Response,
     error: unknown,
-    req: express.Request,
+    req: expressType.Request,
     expressPath: string,
   ): void {
     //#region @backendFunc

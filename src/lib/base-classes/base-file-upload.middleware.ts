@@ -1,7 +1,7 @@
 //#region imports
 import * as crypto from 'crypto';
 
-import express from 'express';
+import type { RequestHandler } from 'express';
 import * as multer from 'multer';
 import {
   TaonClientMiddlewareInterceptOptions,
@@ -83,7 +83,7 @@ export class TaonBaseFileUploadMiddleware extends TaonBaseMiddleware {
   //#endregion
 
   //#region middleware
-  middleware(): express.RequestHandler {
+  middleware(): RequestHandler {
     //#region @backendFunc
     return this.upload().any();
     //#endregion
