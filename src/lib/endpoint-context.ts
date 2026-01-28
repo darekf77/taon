@@ -4,18 +4,13 @@ import { Http2Server } from 'http2'; // @backend
 import { URL } from 'url'; // @backend
 
 import axios from 'axios';
-import * as bodyParser from 'body-parser'; // @backend
-import * as cookieParser from 'cookie-parser'; // @backend
-import * as cors from 'cors'; // @backend
 import { ipcMain } from 'electron'; // @backend
 import type { Application } from 'express';
 //  multer in taon middleware will do better job than express-fileupload
 // import * as fileUpload from 'express-fileupload'; // @backend
-import * as expressType from 'express';
-import * as expressSession from 'express-session'; // @backend
+import type * as expressType from 'express';
 import { JSON10 } from 'json10/src';
 import { walk } from 'lodash-walk-object/src';
-import * as methodOverride from 'method-override'; // @backend
 import {
   Mapping,
   Models as ModelsNg2Rest,
@@ -76,9 +71,19 @@ import { Symbols } from './symbols';
 import { TaonAdminService } from './ui/taon-admin-mode-configuration/taon-admin.service'; // @browser
 //#endregion
 
-let express: typeof import('express') = {} as any;
+let bodyParser: typeof import('body-parser');
+let cookieParser: typeof import('cookie-parser');
+let cors: typeof import('cors');
+let express: typeof import('express');
+let methodOverride: typeof import('method-override');
+let expressSession: typeof import('express-session');
 //#region @backend
+bodyParser = requireDefault('body-parser');
+cookieParser = requireDefault('cookie-parser');
+cors = requireDefault('cors');
 express = requireDefault('express');
+methodOverride = requireDefault('method-override');
+expressSession = requireDefault('express-session');
 //#endregion
 
 export class EndpointContext {
