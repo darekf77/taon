@@ -4,7 +4,7 @@ import { Http2Server } from 'http2'; // @backend
 import { URL } from 'url'; // @backend
 
 import axios from 'axios';
-import { ipcMain } from 'electron'; // @backend
+import type { ipcMain } from 'electron'; // @backend
 import type { Application } from 'express';
 //  multer in taon middleware will do better job than express-fileupload
 // import * as fileUpload from 'express-fileupload'; // @backend
@@ -2323,7 +2323,8 @@ export class EndpointContext {
         methodConfig,
         expressPath,
       );
-      ipcMain.on(ipcKeyName, async (event, paramsFromBrowser) => {
+      const electron = require('electron');
+      (electron.ipcMain as typeof ipcMain).on(ipcKeyName, async (event, paramsFromBrowser) => {
         const responseJsonData = await getResult(
           paramsFromBrowser,
           void 0,
