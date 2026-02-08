@@ -2021,7 +2021,12 @@ export class EndpointContext {
         return `${f.method} ${f.expressPath}`;
       }),
     ).map(f => {
+
       const [method, expressPath] = f.split(' ');
+if(method.toUpperCase() === 'GET' && this.isRunningInsideDocker) {
+        this.logRoutes && console.log(`apk add curl && curl http://localhost:${this.uriPort}${expressPath}`)
+      }
+
       return (
         `\n### ${_.startCase(_.last(expressPath.split('/')))}\n` +
         TaonHelpers.fillUpTo(method.toUpperCase() + ' ', 10) +
