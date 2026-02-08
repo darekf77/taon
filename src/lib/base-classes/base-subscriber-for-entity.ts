@@ -151,7 +151,7 @@ export abstract class TaonBaseSubscriberForEntity<Entity = any>
    */
   beforeTransactionStart(event: TransactionStartEvent) {
     this.ctx.logDb &&
-      console.log(`BEFORE TRANSACTION STARTED: `, event);
+      console.log(`BEFORE TRANSACTION STARTED`);
   }
 
   /**
@@ -159,7 +159,7 @@ export abstract class TaonBaseSubscriberForEntity<Entity = any>
    */
   afterTransactionStart(event: TransactionStartEvent) {
     this.ctx.logDb &&
-      console.log(`AFTER TRANSACTION STARTED: `, event);
+      console.log(`AFTER TRANSACTION STARTED`);
   }
 
   /**
@@ -167,7 +167,7 @@ export abstract class TaonBaseSubscriberForEntity<Entity = any>
    */
   beforeTransactionCommit(event: TransactionCommitEvent) {
     this.ctx.logDb &&
-      console.log(`BEFORE TRANSACTION COMMITTED: `, event);
+      console.log(`BEFORE TRANSACTION COMMITTED`);
   }
 
   /**
@@ -175,7 +175,7 @@ export abstract class TaonBaseSubscriberForEntity<Entity = any>
    */
   afterTransactionCommit(event: TransactionCommitEvent) {
     this.ctx.logDb &&
-      console.log(`AFTER TRANSACTION COMMITTED: `, event);
+      console.log(`AFTER TRANSACTION COMMITTED`);
   }
 
   /**
@@ -183,7 +183,7 @@ export abstract class TaonBaseSubscriberForEntity<Entity = any>
    */
   beforeTransactionRollback(event: TransactionRollbackEvent) {
     this.ctx.logDb &&
-      console.log(`BEFORE TRANSACTION ROLLBACK: `, event);
+      console.log(`BEFORE TRANSACTION ROLLBACK`);
   }
 
   /**
@@ -191,6 +191,6 @@ export abstract class TaonBaseSubscriberForEntity<Entity = any>
    */
   afterTransactionRollback(event: TransactionRollbackEvent) {
     this.ctx.logDb &&
-      console.log(`AFTER TRANSACTION ROLLBACK: `, event);
+      console.log(`AFTER TRANSACTION ROLLBACK`);
   }
 }
