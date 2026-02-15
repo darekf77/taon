@@ -9,7 +9,8 @@ export const cloneObj = <CloneT>(
   walk.Object(
     override || {},
     (value, lodashPath) => {
-      if (_.isNil(value) || _.isFunction(value) || _.isObject(value)) {
+      const valueIsEmptyArray = Array.isArray(value) && value.length === 0;
+      if (!valueIsEmptyArray && (_.isNil(value) || _.isFunction(value) || _.isObject(value))) {
         // skipping
       } else {
         _.set(result, lodashPath, value);
