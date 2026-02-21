@@ -12,9 +12,11 @@ import type * as expressType from 'express';
 import { JSON10 } from 'json10/src';
 import { walk } from 'lodash-walk-object/src';
 import {
+  HttpResponse,
   Mapping,
-  Models as ModelsNg2Rest,
+  Ng2RestAxiosRequestConfig,
   Resource,
+  ResponseTypeAxios,
   RestErrorResponseWrapper,
   RestHeaders,
 } from 'ng2-rest/src';
@@ -2021,10 +2023,12 @@ export class EndpointContext {
         return `${f.method} ${f.expressPath}`;
       }),
     ).map(f => {
-
       const [method, expressPath] = f.split(' ');
-if(method.toUpperCase() === 'GET' && this.isRunningInsideDocker) {
-        this.logRoutes && console.log(`apk add curl && curl http://localhost:${this.uriPort}${expressPath}`)
+      if (method.toUpperCase() === 'GET' && this.isRunningInsideDocker) {
+        this.logRoutes &&
+          console.log(
+            `apk add curl && curl http://localhost:${this.uriPort}${expressPath}`,
+          );
       }
 
       return (
@@ -2082,7 +2086,7 @@ if(method.toUpperCase() === 'GET' && this.isRunningInsideDocker) {
       const interceptorName = `${contextName}-${ClassHelpers.getName(
         middlewareInstanceName,
       )}`;
-      Resource.request.interceptors.set(interceptorName, {
+      Resource.globalInterceptors.set(interceptorName, {
         intercept: ({ req, next }) => {
           const url = new URL(req.url);
           if (
@@ -2329,20 +2333,23 @@ if(method.toUpperCase() === 'GET' && this.isRunningInsideDocker) {
         expressPath,
       );
       const electron = require('electron');
-      (electron.ipcMain as typeof ipcMain).on(ipcKeyName, async (event, paramsFromBrowser) => {
-        const responseJsonData = await getResult(
-          paramsFromBrowser,
-          void 0,
-          void 0,
-        );
-        const sendToIpsMainOn = TaonHelpers.ipcKeyNameResponse(
-          target,
-          methodConfig,
-          expressPath,
-        );
-        // console.log({ sendToIpsMainOn });
-        event.sender.send(sendToIpsMainOn, responseJsonData);
-      });
+      (electron.ipcMain as typeof ipcMain).on(
+        ipcKeyName,
+        async (event, paramsFromBrowser) => {
+          const responseJsonData = await getResult(
+            paramsFromBrowser,
+            void 0,
+            void 0,
+          );
+          const sendToIpsMainOn = TaonHelpers.ipcKeyNameResponse(
+            target,
+            methodConfig,
+            expressPath,
+          );
+          // console.log({ sendToIpsMainOn });
+          event.sender.send(sendToIpsMainOn, responseJsonData);
+        },
+      );
       return {
         expressPath,
         method: methodConfig.type,
@@ -2520,8 +2527,7 @@ if(method.toUpperCase() === 'GET' && this.isRunningInsideDocker) {
             }
             if (
               result instanceof Blob &&
-              (methodConfig.responseType as ModelsNg2Rest.ResponseTypeAxios) ===
-                'blob'
+              (methodConfig.responseType as ResponseTypeAxios) === 'blob'
             ) {
               // console.log('INSTANCE OF BLOB')
               //#region processs blob result type
@@ -2535,8 +2541,7 @@ if(method.toUpperCase() === 'GET' && this.isRunningInsideDocker) {
               //#endregion
             } else if (
               _.isString(result) &&
-              (methodConfig.responseType as ModelsNg2Rest.ResponseTypeAxios) ===
-                'blob'
+              (methodConfig.responseType as ResponseTypeAxios) === 'blob'
             ) {
               // console.log('BASE64')
               //#region process string buffer TODO refacetor
@@ -2653,7 +2658,7 @@ if(method.toUpperCase() === 'GET' && this.isRunningInsideDocker) {
       const middlewareName = ClassHelpers.getName(instance);
       // middlewareName - only needed for inheritace and uniqness of interceptors
       const interceptorKey = `${middlewareName}-${methodConfig.type?.toUpperCase()}-${expressPath}`;
-      Resource.request.methodsInterceptors.set(interceptorKey, {
+      Resource.methodsInterceptors.set(interceptorKey, {
         intercept: ({ req, next }) => {
           return instance.interceptClientMethod(
             {
@@ -2699,21 +2704,24 @@ if(method.toUpperCase() === 'GET' && this.isRunningInsideDocker) {
               console.log({ responseData });
               try {
                 const body = res;
-                res = new ModelsNg2Rest.HttpResponse(
-                  {
-                    body: void 0,
-                    isArray: void 0 as any,
-                    method: methodConfig.type,
-                    url: `${ctx.uriOrigin}${
-                      '' // TODO express path
-                    }${methodConfig.path} `,
-                  },
+                const responseStrinOrBlob: any =
                   Helpers.isBlob(body) || _.isString(body)
                     ? body
-                    : JSON.stringify(body),
+                    : JSON.stringify(body);
+                res = new HttpResponse(
+                  `${ctx.uriOrigin}${
+                    '' // TODO express path
+                  }${methodConfig.path} `,
+                  methodConfig.type,
+                  responseStrinOrBlob,
                   RestHeaders.from(headers),
-                  void 0,
-                  () => body,
+                  200,
+                  {
+                    // responseMapping: {
+                    //   // entity: ()=>  TODO for electron
+                    // },
+                  },
+                  false,
                 );
 
                 resolve(res);
@@ -2732,7 +2740,7 @@ if(method.toUpperCase() === 'GET' && this.isRunningInsideDocker) {
         received['observable'] = from(received);
         return {
           received,
-          request(axiosConfig: ModelsNg2Rest.Ng2RestAxiosRequestConfig) {
+          request(axiosConfig: Ng2RestAxiosRequestConfig) {
             return received;
           },
         } as Models.Http.ClientAction<any>;
@@ -2843,22 +2851,22 @@ if(method.toUpperCase() === 'GET' && this.isRunningInsideDocker) {
           }
 
           const body = res;
-
-          res = new ModelsNg2Rest.HttpResponse(
-            {
-              body: void 0,
-              isArray: void 0 as any,
-              method: methodConfig.type,
-              url: `${ctx.uriOrigin}${
-                '' // TODO express path
-              }${methodConfig.path} `,
-            },
+          const stringOrBlobData: any =
             Helpers.isBlob(body) || _.isString(body)
               ? body
-              : JSON.stringify(body),
+              : JSON.stringify(body);
+
+          // TODO SHOULD BE IMPLEMENTED IN NG2-REST
+          res = new HttpResponse(
+            `${ctx.uriOrigin}${
+              '' // TODO express path
+            }${methodConfig.path} `,
+            methodConfig.type,
+            stringOrBlobData,
             RestHeaders.from(headers),
-            void 0,
-            () => body,
+            200,
+            {},
+            false,
           );
 
           // TODO blob should be blob not json
@@ -2881,7 +2889,7 @@ if(method.toUpperCase() === 'GET' && this.isRunningInsideDocker) {
       if (UtilsOs.isWebSQL) {
         return {
           received,
-          request(axiosConfig: ModelsNg2Rest.Ng2RestAxiosRequestConfig) {
+          request(axiosConfig: Ng2RestAxiosRequestConfig) {
             // console.log('request', axiosConfgi);
             return received;
           },
@@ -2911,48 +2919,54 @@ if(method.toUpperCase() === 'GET' && this.isRunningInsideDocker) {
       if (!storage[Symbols.old.ENDPOINT_META_CONFIG][ctx.uriOrigin])
         storage[Symbols.old.ENDPOINT_META_CONFIG][ctx.uriOrigin] = {};
       const endpoints = storage[Symbols.old.ENDPOINT_META_CONFIG];
-      let rest: ModelsNg2Rest.ResourceModel<any, any>;
+      let rest: ReturnType<typeof Resource.create>;
+      const requestHeaders = RestHeaders.from({});
       if (!endpoints[ctx.uriOrigin][expressPath]) {
-        let headers = {};
         if (methodConfig.contentType && !methodConfig.responseType) {
-          rest = Resource.create(
-            ctx.uriOrigin,
-            expressPath,
-            Symbols.old.MAPPING_CONFIG_HEADER as any,
-            Symbols.old.CIRCURAL_OBJECTS_MAP_BODY as any,
-            RestHeaders.from({
-              'Content-Type': methodConfig.contentType,
-              Accept: methodConfig.contentType,
-            }),
-          );
+          rest = Resource.create(ctx.uriOrigin, expressPath, {
+            responseMapping: {
+              entity: Symbols.old.MAPPING_CONFIG_HEADER,
+              circular: Symbols.old.CIRCURAL_OBJECTS_MAP_BODY,
+            },
+          });
+          requestHeaders.apply({
+            'Content-Type': methodConfig.contentType,
+            Accept: methodConfig.contentType,
+          });
         } else if (methodConfig.contentType && methodConfig.responseType) {
-          rest = Resource.create(
-            ctx.uriOrigin,
-            expressPath,
-            Symbols.old.MAPPING_CONFIG_HEADER as any,
-            Symbols.old.CIRCURAL_OBJECTS_MAP_BODY as any,
-            RestHeaders.from({
-              'Content-Type': methodConfig.contentType,
-              Accept: methodConfig.contentType,
-              responsetypeaxios: methodConfig.responseType,
-            }),
-          );
+          rest = Resource.create(ctx.uriOrigin, expressPath, {
+            responseMapping: {
+              entity: Symbols.old.MAPPING_CONFIG_HEADER,
+              circular: Symbols.old.CIRCURAL_OBJECTS_MAP_BODY,
+            },
+          });
+          requestHeaders.apply({
+            'Content-Type': methodConfig.contentType,
+            Accept: methodConfig.contentType,
+            responsetypeaxios: methodConfig.responseType,
+          });
         } else if (!methodConfig.contentType && methodConfig.responseType) {
-          rest = Resource.create(
-            ctx.uriOrigin,
-            expressPath,
-            Symbols.old.MAPPING_CONFIG_HEADER as any,
-            Symbols.old.CIRCURAL_OBJECTS_MAP_BODY as any,
-            RestHeaders.from({
-              responsetypeaxios: methodConfig.responseType,
-            }),
-          );
+          rest = Resource.create(ctx.uriOrigin, expressPath, {
+            responseMapping: {
+              entity: Symbols.old.MAPPING_CONFIG_HEADER,
+              circular: Symbols.old.CIRCURAL_OBJECTS_MAP_BODY,
+            },
+          });
+          requestHeaders.apply({
+            responsetypeaxios: methodConfig.responseType,
+          });
         } else {
           rest = Resource.create(
             ctx.uriOrigin,
             expressPath,
-            Symbols.old.MAPPING_CONFIG_HEADER as any,
-            Symbols.old.CIRCURAL_OBJECTS_MAP_BODY as any,
+            {
+              responseMapping: {
+                entity: Symbols.old.MAPPING_CONFIG_HEADER,
+                circular: Symbols.old.CIRCURAL_OBJECTS_MAP_BODY,
+              },
+            },
+            // Symbols.old.MAPPING_CONFIG_HEADER as any,
+            // Symbols.old.CIRCURAL_OBJECTS_MAP_BODY as any,
           );
         }
 
@@ -2996,7 +3010,7 @@ if(method.toUpperCase() === 'GET' && this.isRunningInsideDocker) {
           if (currentParam.paramName) {
             const mapping = Mapping.decode(param, !ctx.isProductionMode);
             if (mapping) {
-              rest.headers.set(
+              requestHeaders.set(
                 `${Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${currentParam.paramName} `,
                 JSON.stringify(mapping),
               );
@@ -3005,7 +3019,7 @@ if(method.toUpperCase() === 'GET' && this.isRunningInsideDocker) {
           } else {
             const mapping = Mapping.decode(param, !ctx.isProductionMode);
             if (mapping) {
-              rest.headers.set(
+              requestHeaders.set(
                 Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS,
                 JSON.stringify(mapping),
               );
@@ -3017,16 +3031,16 @@ if(method.toUpperCase() === 'GET' && this.isRunningInsideDocker) {
           if (currentParam.paramName) {
             if (currentParam.paramName === Symbols.old.MDC_KEY) {
               // parese MDC
-              rest.headers.set(
+              requestHeaders.set(
                 currentParam.paramName,
                 encodeURIComponent(JSON.stringify(param)),
               );
             } else {
-              rest.headers.set(currentParam.paramName, param);
+              requestHeaders.set(currentParam.paramName, param);
             }
           } else {
             for (let header in param) {
-              rest.headers.set(header, param[header]);
+              requestHeaders.set(header, param[header]);
             }
           }
         }
@@ -3054,7 +3068,7 @@ instead
             }
             const mapping = Mapping.decode(param, !ctx.isProductionMode);
             if (mapping) {
-              rest.headers.set(
+              requestHeaders.set(
                 `${Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS}${currentParam.paramName} `,
                 JSON.stringify(mapping),
               );
@@ -3063,7 +3077,7 @@ instead
           } else {
             const mapping = Mapping.decode(param, !ctx.isProductionMode);
             if (mapping) {
-              rest.headers.set(
+              requestHeaders.set(
                 Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS,
                 JSON.stringify(mapping),
               );
@@ -3083,7 +3097,7 @@ instead
             circuralFromItem = circs;
           }),
         );
-        rest.headers.set(
+        requestHeaders.set(
           Symbols.old.CIRCURAL_OBJECTS_MAP_BODY,
           JSON10.stringify(circuralFromItem),
         );
@@ -3097,7 +3111,7 @@ instead
           }),
         );
 
-        rest.headers.set(
+        requestHeaders.set(
           Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM,
           JSON10.stringify(circuralFromQueryParams),
         );
@@ -3106,11 +3120,11 @@ instead
 
       const httpResultObj: Models.Http.ClientAction<any> = {
         get received() {
-          return rest.model(pathPrams)[method](bodyObject, [queryParams]);
+          return rest.model(pathPrams, { headers: requestHeaders })[method](bodyObject, [queryParams]);
         },
-        request(axiosConfig?: ModelsNg2Rest.Ng2RestAxiosRequestConfig) {
+        request(axiosConfig?: Ng2RestAxiosRequestConfig) {
           return rest
-            .model(pathPrams)
+            .model(pathPrams, { headers: requestHeaders })
             [method](bodyObject, [queryParams], axiosConfig);
         },
       };

@@ -3,8 +3,9 @@ import {
   RestErrorResponseWrapper,
   RestResponseWrapper,
   HttpResponseError,
+  Ng2RestAxiosRequestConfig,
 } from 'ng2-rest/src';
-import { Models as Ng2RestModels } from 'ng2-rest/src';
+
 import {
   CoreModels,
   crossPlatformPath,
@@ -107,7 +108,7 @@ export class TaonBaseController<
   //#region upload local file to server
   async uploadLocalFileToServer(
     absFilePath: string,
-    options?: Pick<Ng2RestModels.Ng2RestAxiosRequestConfig, 'onUploadProgress'>,
+    options?: Pick<Ng2RestAxiosRequestConfig, 'onUploadProgress'>,
     queryParams?: UPLOAD_FILE_QUERY_PARAMS,
   ): Promise<MulterFileUploadResponse[]> {
     //#region @backendFunc

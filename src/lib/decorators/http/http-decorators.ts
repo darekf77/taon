@@ -1,10 +1,10 @@
-import { Models } from 'ng2-rest/src';
+export { HttpResponse } from 'ng2-rest/src';
 
 import * as methods from './http-methods-decorators';
 import * as params from './http-params-decorators';
 
-export const HttpResponse = Models.HttpResponse;
-export type HttpResponse = typeof Models.HttpResponse;
+// export const HttpResponse = Models.HttpResponse;
+// export type HttpResponse = typeof Models.HttpResponse;
 
 // TODO new 5.8 typescript is not allowing this
 // export namespace Http {

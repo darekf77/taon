@@ -1,9 +1,13 @@
 import type { RequestHandler } from 'express';
 import {
-  Models as ModelsNg2Rest,
+  HttpResponse,
+  Ng2RestAxiosRequestConfig,
+  Resource,
+  ResourceResponse,
   RestErrorResponseWrapper,
   RestResponseWrapper,
 } from 'ng2-rest/src';
+import { Observable } from 'rxjs';
 import { _ } from 'tnp-core/src';
 import { CoreModels } from 'tnp-core/src';
 
@@ -374,14 +378,18 @@ export namespace Models {
     ) => SyncResponse<T>;
     export type MixResponse<T> = SyncResponse<T> | ExpressContext<T>;
 
+    export type PromiseObservableMix<T> = Promise<T> & {
+      observable: Observable<T>;
+    };
+
     export interface ClientAction<T> {
       /**
        * @deprecated use request() mehods instead
        */
-      readonly received?: ModelsNg2Rest.PromiseObservableMix<ModelsNg2Rest.HttpResponse<T>>;
+      readonly received?: PromiseObservableMix<HttpResponse<T>>;
       request?(
-        axiosConfig?: ModelsNg2Rest.Ng2RestAxiosRequestConfig,
-      ): ModelsNg2Rest.PromiseObservableMix<ModelsNg2Rest.HttpResponse<T>>;
+        axiosConfig?: Ng2RestAxiosRequestConfig,
+      ): PromiseObservableMix<HttpResponse<T>>;
     }
 
     export interface AsyncResponse<T> {
