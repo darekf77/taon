@@ -12,8 +12,9 @@ import type * as expressType from 'express';
 import { JSON10 } from 'json10/src';
 import { walk } from 'lodash-walk-object/src';
 import {
+  decodeMappingForHeaderJson,
+  encodeMapping,
   HttpResponse,
-  Mapping,
   Ng2RestAxiosRequestConfig,
   Resource,
   ResponseTypeAxios,
@@ -944,14 +945,11 @@ export class EndpointContext {
       return class extends TaonBaseClass {
         // static ['_'] = TaonBaseClass['_'];
 
-        // @ts-ignore
-        static [Symbols.orignalClass] = TaonBaseClass;
+        static [CoreModels.OrignalClassKey] = TaonBaseClass;
 
-        // @ts-ignore
         static [Symbols.fullClassNameStaticProperty] = `${ctx.contextName}.${className}`;
 
-        // @ts-ignore
-        static [Symbols.classNameStaticProperty] = className;
+        static [CoreModels.ClassNameStaticProperty] = className;
 
         static [Symbols.ctxInClassOrClassObj] = ctx;
 
@@ -959,13 +957,20 @@ export class EndpointContext {
         static __getFullPathForClass__(arr = []) {
           const name = this[Symbols.fullClassNameStaticProperty];
           arr.push(name);
-          // @ts-ignore
+
           if (
-            this[Symbols.orignalClass] && // @ts-ignore
-            this[Symbols.orignalClass].__getFullPathForClass__
+            this[CoreModels.OrignalClassKey] &&
+            (
+              this[CoreModels.OrignalClassKey] as any as {
+                __getFullPathForClass__: any;
+              }
+            ).__getFullPathForClass__
           ) {
-            // @ts-ignore
-            this[Symbols.orignalClass].__getFullPathForClass__(arr);
+            (
+              this[CoreModels.OrignalClassKey] as any as {
+                __getFullPathForClass__: any;
+              }
+            ).__getFullPathForClass__(arr);
           }
           return arr.join('/');
         }
@@ -1041,7 +1046,7 @@ export class EndpointContext {
       //   console.warn(`Please provide className for ${TaonBaseClass.name} class`);
       // }
       className = className || key;
-      TaonBaseClass[Symbols.classNameStaticProperty] = className;
+      TaonBaseClass[CoreModels.ClassNameStaticProperty] = className;
 
       const clonedClass = this.cloneClassWithNewMetadata({
         TaonBaseClass,
@@ -2419,7 +2424,7 @@ export class EndpointContext {
                   req.headers[Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS],
                 ),
               );
-              tBody = Mapping.encode(tBody, entity);
+              tBody = encodeMapping(tBody, entity);
             } catch (e) {}
           } else {
             Object.keys(tBody).forEach(paramName => {
@@ -2431,7 +2436,7 @@ export class EndpointContext {
                     ],
                   ),
                 );
-                tBody[paramName] = Mapping.encode(
+                tBody[paramName] = encodeMapping(
                   tBody[paramName],
                   entityForParam,
                 );
@@ -2449,7 +2454,7 @@ export class EndpointContext {
                 ),
               );
               tQuery = TaonHelpers.parseJSONwithStringJSONs(
-                Mapping.encode(tQuery, entity),
+                encodeMapping(tQuery, entity),
               );
             } catch (e) {}
           } else {
@@ -2470,7 +2475,7 @@ export class EndpointContext {
                     beforeTransofrm = paresed;
                   } catch (e) {}
                 }
-                const afterEncoding = Mapping.encode(
+                const afterEncoding = encodeMapping(
                   beforeTransofrm,
                   entityForParam,
                 );
@@ -3008,7 +3013,7 @@ export class EndpointContext {
         }
         if (currentParam.paramType === 'Query') {
           if (currentParam.paramName) {
-            const mapping = Mapping.decode(param, !ctx.isProductionMode);
+            const mapping = decodeMappingForHeaderJson(param);
             if (mapping) {
               requestHeaders.set(
                 `${Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${currentParam.paramName} `,
@@ -3017,7 +3022,7 @@ export class EndpointContext {
             }
             queryParams[currentParam.paramName] = param;
           } else {
-            const mapping = Mapping.decode(param, !ctx.isProductionMode);
+            const mapping = decodeMappingForHeaderJson(param);
             if (mapping) {
               requestHeaders.set(
                 Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS,
@@ -3066,7 +3071,7 @@ instead
 // ...
 `);
             }
-            const mapping = Mapping.decode(param, !ctx.isProductionMode);
+            const mapping = decodeMappingForHeaderJson(param);
             if (mapping) {
               requestHeaders.set(
                 `${Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS}${currentParam.paramName} `,
@@ -3075,7 +3080,7 @@ instead
             }
             bodyObject[currentParam.paramName] = param;
           } else {
-            const mapping = Mapping.decode(param, !ctx.isProductionMode);
+            const mapping = decodeMappingForHeaderJson(param);
             if (mapping) {
               requestHeaders.set(
                 Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS,
@@ -3120,7 +3125,9 @@ instead
 
       const httpResultObj: Models.Http.ClientAction<any> = {
         get received() {
-          return rest.model(pathPrams, { headers: requestHeaders })[method](bodyObject, [queryParams]);
+          return rest
+            .model(pathPrams, { headers: requestHeaders })
+            [method](bodyObject, [queryParams]);
         },
         request(axiosConfig?: Ng2RestAxiosRequestConfig) {
           return rest

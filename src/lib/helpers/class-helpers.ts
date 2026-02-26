@@ -1,6 +1,6 @@
 //#region imports
 import * as FormData from 'form-data'; // @backend
-import { _, Utils } from 'tnp-core/src';
+import { _, CoreModels, Utils } from 'tnp-core/src';
 import { CLASS } from 'typescript-class-helpers/src';
 
 import {
@@ -46,16 +46,16 @@ export namespace ClassHelpers {
       throw new Error(`Cannot get name from this object or class.`);
     }
     return (
-      (classFnOrObject[Symbols.classNameStaticProperty]
-        ? classFnOrObject[Symbols.classNameStaticProperty]
-        : classFnOrObject?.constructor[Symbols.classNameStaticProperty]) ||
+      (classFnOrObject[CoreModels.ClassNameStaticProperty]
+        ? classFnOrObject[CoreModels.ClassNameStaticProperty]
+        : classFnOrObject?.constructor[CoreModels.ClassNameStaticProperty]) ||
       (_.isFunction(classFnOrObject) ? CLASS.getName(classFnOrObject) : void 0)
     );
   };
   //#endregion
 
   export const getOrginalClass = (classFnOrObject: any): any => {
-    const org = classFnOrObject[Symbols.orignalClass];
+    const org = classFnOrObject[CoreModels.OrignalClassKey];
     if (!org) {
       return classFnOrObject;
     }
@@ -116,7 +116,7 @@ export namespace ClassHelpers {
   export const setName = (target: Function, className: string): void => {
     // console.log('setName', className, target.name)
     Validators.classNameVlidation(className, target);
-    target[Symbols.classNameStaticProperty] = className;
+    target[CoreModels.ClassNameStaticProperty] = className;
   };
   //#endregion
 

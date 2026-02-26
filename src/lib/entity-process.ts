@@ -2,7 +2,7 @@
 import type { Response } from 'express';
 import { JSON10 } from 'json10/src';
 import { walk } from 'lodash-walk-object/src';
-import { Mapping } from 'ng2-rest/src';
+import { decodeMapping, decodeMappingForHeaderJson } from 'ng2-rest/src';
 import { _ } from 'tnp-core/src';
 import { config } from 'tnp-core/src';
 
@@ -174,7 +174,7 @@ export class EntityProcess {
         breadthWalk: true,
         include,
       });
-      this.entityMapping = Mapping.decode(cleaned, !this.advancedManipulation);
+      this.entityMapping = decodeMappingForHeaderJson(cleaned);
 
       this.response.set(
         Symbols.old.MAPPING_CONFIG_HEADER,

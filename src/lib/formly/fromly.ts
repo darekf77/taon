@@ -1,5 +1,5 @@
 import { FormlyFieldConfig } from '@ngx-formly/core';
-import { Mapping } from 'ng2-rest/src';
+import { decodeMappingForHeaderJson } from 'ng2-rest/src';
 import { _ } from 'tnp-core/src';
 import { CoreModels } from 'tnp-core/src';
 import { CLASS } from 'typescript-class-helpers/src';
@@ -33,9 +33,10 @@ export function getFromlyConfigFor(
     return [];
   }
 
-  const mapping: Mapping.Mapping = Mapping.getModelsMapping(target);
+  const mapping = decodeMappingForHeaderJson(target);
+
   // console.log('mapping', mapping)
-  const fieldNames = CLASS.describeProperites(target);
+  const fieldNames = Object.keys(mapping);
   const checkExclude =
     _.isArray(keysPathesToExclude) && keysPathesToExclude.length > 0;
   const checkInclude =

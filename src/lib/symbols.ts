@@ -1,6 +1,4 @@
-import { OrignalClassKey } from 'taon-typeorm/src';
 import { _ } from 'tnp-core/src';
-import { SYMBOL } from 'typescript-class-helpers/src';
 
 /**
  * for backendSocket.in(ROOM_NAME).emit(EVENT)
@@ -87,9 +85,9 @@ class Realtime {
 
 export namespace Symbols {
   export const ctxInClassOrClassObj = Symbol();
-  export const classNameStaticProperty: string = SYMBOL.ClassNameStaticProperty;
+
   export const fullClassNameStaticProperty: string = `$$fullclassName$$`;
-  export const orignalClass: string = OrignalClassKey;
+
   export const orignalClassClonesObj: string = `$$originalClassClonesObj$$`;
   export const classMethodsNames: string = `$$classMethodsNames$$`;
 
