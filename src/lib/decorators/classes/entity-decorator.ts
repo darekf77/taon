@@ -1,4 +1,8 @@
-import { DefaultModelWithMapping, EncodeSchema, ModelValue } from 'ng2-rest/src';
+import {
+  DefaultModelWithMapping,
+  EncodeSchema,
+  ModelValue,
+} from 'ng2-rest/src';
 import { Entity } from 'taon-typeorm/src';
 import { _ } from 'tnp-core/src';
 import { CLASS } from 'typescript-class-helpers/src';
@@ -16,16 +20,10 @@ export function TaonEntity<T = any>(options?: TaonEntityOptions<T>) {
     options.uniqueKeyProp = options.uniqueKeyProp || ('id' as any);
     ClassHelpers.setName(constructor, options?.className);
 
-    DefaultModelWithMapping<T>(
-      options?.defaultModelValues || {},
-      _.merge(
-        options?.defaultModelMapping || {},
-        (options?.defaultModelMappingDeep || {}) as any,
-      ),
+    DefaultModelWithMapping<any>(
+      options?.defaultModelValues,
+      options?.defaultModelMapping as any,
     )(constructor as any);
-
-    // TODO when entit metadata generator read use this
-    DefaultModelWithMapping<T>(void 0, {})(constructor as any);
 
     Reflect.defineMetadata(
       Symbols.metadata.options.entity,
@@ -50,8 +48,10 @@ export class TaonEntityOptions<T = any> extends DecoratorAbstractOpt {
    * for your entity it may be something else
    */
   uniqueKeyProp?: string;
+
   createTable?: boolean;
-  defaultModelValues?: ModelValue<T>;
-  defaultModelMapping?: EncodeSchema<T>;
-  defaultModelMappingDeep?: { [lodashPathes: string]: string | [string] };
+
+  defaultModelValues?: () => ModelValue<T>;
+
+  defaultModelMapping?: () => EncodeSchema<T>;
 }
