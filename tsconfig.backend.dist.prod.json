@@ -3,10 +3,7 @@
   "compilerOptions": {
     "rootDir": "./tmp-source-dist-prod",
     "outDir": "dist-prod",
-    "module": "ESNext",
-    "target": "ESNext",
-    "importsNotUsedAsValues": "remove",
-    "noEmitHelpers": true
+    "noEmit": true
   },
   "include": [
     "tmp-source-dist-prod/**/*"

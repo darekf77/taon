@@ -2,7 +2,7 @@
 import type { Response } from 'express';
 import { JSON10 } from 'json10/src';
 import { walk } from 'lodash-walk-object/src';
-import { decodeMapping, decodeMappingForHeaderJson } from 'ng2-rest/src';
+import { decodeMappingForHeaderJson } from 'ng2-rest/src';
 import { _ } from 'tnp-core/src';
 import { config } from 'tnp-core/src';
 
@@ -69,12 +69,6 @@ export const singleTransform = (json: any) => {
 //#endregion
 
 export class EntityProcess {
-  //#region init
-  static async init(result: any, response: Response) {
-    return await new EntityProcess(result, response).run();
-  }
-  //#endregion
-
   //#region fields
   /**
    * Data to send
@@ -174,7 +168,9 @@ export class EntityProcess {
         breadthWalk: true,
         include,
       });
-      this.entityMapping = decodeMappingForHeaderJson(cleaned);
+      this.entityMapping = decodeMappingForHeaderJson(cleaned, {
+        useFirstArrayItemClassNameForAllElements: !this.advancedManipulation,
+      });
 
       this.response.set(
         Symbols.old.MAPPING_CONFIG_HEADER,

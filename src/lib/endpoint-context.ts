@@ -2390,6 +2390,7 @@ export class EndpointContext {
           let tQuery: Object = req.query;
 
           if (req.headers[Symbols.old.CIRCURAL_OBJECTS_MAP_BODY]) {
+            //#region handle circural item in body params
             try {
               tBody = JSON.parse(
                 JSON.stringify(tBody),
@@ -2400,9 +2401,11 @@ export class EndpointContext {
                 ),
               );
             } catch (e) {}
+            //#endregion
           }
 
           if (req.headers[Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM]) {
+            //#region handle circular items in query params
             try {
               tQuery = JSON.parse(
                 JSON.stringify(tQuery),
@@ -2413,11 +2416,14 @@ export class EndpointContext {
                 ),
               );
             } catch (e) {}
+            //#endregion
           }
 
           // make class instance from body
           // console.log('req.headers', req.headers)
+
           if (req.headers[Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS]) {
+            //#region encode entity or enties in body from header mapping
             try {
               const entity = JSON.parse(
                 TaonHelpers.firstStringOrElemFromArray(
@@ -2426,7 +2432,11 @@ export class EndpointContext {
               );
               tBody = encodeMapping(tBody, entity);
             } catch (e) {}
+            //#endregion
           } else {
+            // TODO why do i need this ????
+            //#region encode entity or enties in body from header mapping
+
             Object.keys(tBody).forEach(paramName => {
               try {
                 const entityForParam = JSON.parse(
@@ -2442,11 +2452,14 @@ export class EndpointContext {
                 );
               } catch (e) {}
             });
+            //#endregion
           }
 
           // make class instance from query params
           // console.log('req.headers', tQuery)
+
           if (req.headers[Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS]) {
+            //#region encode entity or enties in query parms from header mapping
             try {
               const entity = JSON.parse(
                 TaonHelpers.firstStringOrElemFromArray(
@@ -2457,7 +2470,10 @@ export class EndpointContext {
                 encodeMapping(tQuery, entity),
               );
             } catch (e) {}
+            //#endregion
           } else {
+            // TODO why do i need this ????
+            //#region encode entity or enties in query parms from header mapping
             Object.keys(tQuery).forEach(queryParamName => {
               try {
                 const entityForParam = JSON.parse(
@@ -2483,8 +2499,10 @@ export class EndpointContext {
                   TaonHelpers.parseJSONwithStringJSONs(afterEncoding);
               } catch (e) {}
             });
+            //#endregion
           }
 
+          //#region set proper arguments for backend function
           Object.keys(methodConfig.parameters).forEach(paramName => {
             let p: Partial<ParamConfig> = methodConfig.parameters[paramName];
             if (p.paramType === 'Path' && tParams) {
@@ -2512,6 +2530,8 @@ export class EndpointContext {
               }
             }
           });
+          //#endregion
+
           //#endregion
 
           const resolvedParams = args
@@ -2568,7 +2588,7 @@ export class EndpointContext {
               //#endregion
             } else {
               //#region process json request
-              await EntityProcess.init(result, res);
+              await new EntityProcess(result, res).run()
               //#endregion
             }
           } catch (error) {
@@ -3008,12 +3028,22 @@ export class EndpointContext {
           throw new Error(errorMessage);
         }
 
+        const optionsDecodeHeader = {
+          useFirstArrayItemClassNameForAllElements: true,
+        };
+
         if (currentParam.paramType === 'Path') {
+          //#region handle path params
           pathPrams[currentParam.paramName] = param;
+          //#endregion
         }
         if (currentParam.paramType === 'Query') {
+          //#region handle query params
           if (currentParam.paramName) {
-            const mapping = decodeMappingForHeaderJson(param);
+            const mapping = decodeMappingForHeaderJson(
+              param,
+              optionsDecodeHeader,
+            );
             if (mapping) {
               requestHeaders.set(
                 `${Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${currentParam.paramName} `,
@@ -3022,7 +3052,10 @@ export class EndpointContext {
             }
             queryParams[currentParam.paramName] = param;
           } else {
-            const mapping = decodeMappingForHeaderJson(param);
+            const mapping = decodeMappingForHeaderJson(
+              param,
+              optionsDecodeHeader,
+            );
             if (mapping) {
               requestHeaders.set(
                 Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS,
@@ -3031,8 +3064,10 @@ export class EndpointContext {
             }
             queryParams = _.cloneDeep(param);
           }
+          //#endregion
         }
         if (currentParam.paramType === 'Header') {
+          //#region handler header params
           if (currentParam.paramName) {
             if (currentParam.paramName === Symbols.old.MDC_KEY) {
               // parese MDC
@@ -3048,17 +3083,22 @@ export class EndpointContext {
               requestHeaders.set(header, param[header]);
             }
           }
+          //#endregion
         }
         if (currentParam.paramType === 'Cookie') {
+          //#region handle cookie params
           Resource.Cookies.write(
             currentParam.paramName,
             param,
             currentParam.expireInSeconds,
           );
+          //#endregion
         }
         if (currentParam.paramType === 'Body') {
+          //#region handle body params
           if (currentParam.paramName) {
             if (ClassHelpers.getName(bodyObject) === 'FormData') {
+              //#region prevent posting/putting not full body as FormData
               throw new Error(`[taon - framework] Don use param names when posting / putting FormData.
               Use this:
 // ...
@@ -3070,8 +3110,13 @@ instead
   (@Taon.Http.Param.Body('${currentParam.paramName}') formData: FormData) ...
 // ...
 `);
+              //#endregion
             }
-            const mapping = decodeMappingForHeaderJson(param);
+
+            const mapping = decodeMappingForHeaderJson(
+              param,
+              optionsDecodeHeader,
+            );
             if (mapping) {
               requestHeaders.set(
                 `${Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS}${currentParam.paramName} `,
@@ -3080,7 +3125,10 @@ instead
             }
             bodyObject[currentParam.paramName] = param;
           } else {
-            const mapping = decodeMappingForHeaderJson(param);
+            const mapping = decodeMappingForHeaderJson(
+              param,
+              optionsDecodeHeader,
+            );
             if (mapping) {
               requestHeaders.set(
                 Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS,
@@ -3089,6 +3137,7 @@ instead
             }
             bodyObject = param;
           }
+          //#endregion
         }
       });
 
@@ -3096,6 +3145,7 @@ instead
         typeof bodyObject === 'object' &&
         ClassHelpers.getName(bodyObject) !== 'FormData'
       ) {
+        //#region handle circular objects in body params
         let circuralFromItem = [];
         bodyObject = JSON10.parse(
           JSON10.stringify(bodyObject, void 0, void 0, circs => {
@@ -3106,9 +3156,11 @@ instead
           Symbols.old.CIRCURAL_OBJECTS_MAP_BODY,
           JSON10.stringify(circuralFromItem),
         );
+        //#endregion
       }
 
       if (typeof queryParams === 'object') {
+        //#region handle circular objects in query params
         let circuralFromQueryParams = [];
         queryParams = JSON10.parse(
           JSON10.stringify(queryParams, void 0, void 0, circs => {
@@ -3120,6 +3172,7 @@ instead
           Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM,
           JSON10.stringify(circuralFromQueryParams),
         );
+        //#endregion
       }
       //#endregion
 

@@ -1,5 +1,6 @@
 import {
-  DefaultModelWithMapping,
+  DefaultMapping,
+  DefaultModel,
   EncodeSchema,
   ModelValue,
 } from 'ng2-rest/src';
@@ -18,12 +19,24 @@ export function TaonEntity<T = any>(options?: TaonEntityOptions<T>) {
   return function (constructor: Function) {
     options = options || ({} as any);
     options.uniqueKeyProp = options.uniqueKeyProp || ('id' as any);
+
+    if(!options.className) {
+      const nameForClass = constructor?.name || 'AnyClass';
+      throw `Please define 'classname' property inside decorator of class '${nameForClass}':
+
+      @TaonEntity({
+        className: '${nameForClass}'
+      })
+      class ${constructor?.name} {
+      //...
+
+      `
+    }
+
     ClassHelpers.setName(constructor, options?.className);
 
-    DefaultModelWithMapping<any>(
-      options?.defaultModelValues,
-      options?.defaultModelMapping as any,
-    )(constructor as any);
+    DefaultMapping(options?.defaultModelMapping)(constructor as any);
+    DefaultModel(options.defaultModelMapping)(constructor as any);
 
     Reflect.defineMetadata(
       Symbols.metadata.options.entity,
