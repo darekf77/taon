@@ -5,6 +5,8 @@ global.i0 = {
 const process= require('process');
 process.removeAllListeners('warning');
 
+var argv = process.argv;
+
 global.hideLog = true;
 global.verboseLevel = 0;
 var verboseLevel = argv.find(a => a.startsWith('-verbose='));
@@ -31,4 +33,4 @@ var pathToCliJS = {
 var p = fs.existsSync(pathToCliJS.distDev) ? pathToCliJS.distDev : pathToCliJS.localOrNPm;
 global.globalSystemToolMode = true;
 var run = require(p).start;
-run(process.argv,__filename);
+run(argv,__filename);
