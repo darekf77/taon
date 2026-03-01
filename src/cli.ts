@@ -2,9 +2,9 @@
 global.frameworkName = 'taon';
 //#endregion
 // @taon-ignore
-let tnpStart = require('tnp/cli').start;
+let tnpStart = require('tnp/cli').startCli;
 //#region @notForNpm
-let tnpStartLocal = require('tnp/src').start;
+let tnpStartLocal = require('tnp/src').startCli;
 //#endregion
 
 let startFn = tnpStart;
