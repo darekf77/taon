@@ -5,6 +5,23 @@ global.i0 = {
 const process= require('process');
 process.removeAllListeners('warning');
 
+global.hideLog = true;
+global.verboseLevel = 0;
+var verboseLevel = argv.find(a => a.startsWith('-verbose='));
+if (typeof verboseLevel !== 'undefined') {
+  global.hideLog = false;
+  verboseLevel = Number(verboseLevel.replace('-verbose=', ''));
+  if (!isNaN(verboseLevel)) {
+    global.verboseLevel = verboseLevel;
+  }
+  argv = argv.filter(a => !a.startsWith('-verbose='));
+}
+
+if (argv.includes('-verbose')) {
+  global.hideLog = false;
+  argv = argv.filter(a => a !== '-verbose');
+}
+
 const fs = require('fs');
 const path = require('path');
 var pathToCliJS = {
