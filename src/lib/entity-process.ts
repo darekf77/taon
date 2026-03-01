@@ -164,11 +164,13 @@ export class EntityProcess {
       ].includes(className);
     // console.log('doNothing', doNothing)
     if (!doNothing) {
-      const cleaned = JSON10.cleaned(this.data, void 0, {
-        breadthWalk: true,
-        include,
-      });
-      this.entityMapping = decodeMappingForHeaderJson(cleaned, {
+      // TODO not needed ?
+      // const cleaned = JSON10.cleaned(this.data, void 0, {
+      //   breadthWalk: true,
+      //   include,
+      // });
+      // decodeMappingForHeaderJson is handling nested objects ok
+      this.entityMapping = decodeMappingForHeaderJson(this.data, {
         useFirstArrayItemClassNameForAllElements: !this.advancedManipulation,
       });
 

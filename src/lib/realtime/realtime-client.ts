@@ -143,7 +143,7 @@ export class RealtimeClient {
     entityClassFnOrObj: Function | object,
     options?: RealtimeModels.ChangeOption,
   ): Observable<RESULT> {
-    options = options || ({} as any);
+    options = _.cloneDeep(options || ({} as any));
 
     if (_.isObject(entityClassFnOrObj)) {
       const orgObj = entityClassFnOrObj as TaonBaseEntity;

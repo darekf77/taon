@@ -79,14 +79,19 @@ export namespace ClassHelpers {
   //#endregion
 
   //#region get unique key
-  export const getUniqueKey = (classFnOrObject: any): string => {
+  export const getUniqueKey = (classFnOrObject: any): string | undefined => {
     const classFn = _.isFunction(classFnOrObject)
       ? classFnOrObject
-      : classFnOrObject.constructor;
+      : classFnOrObject?.constructor;
+
     const config = Reflect.getMetadata(
       Symbols.metadata.options.entity,
       classFn,
     ) as TaonEntityOptions;
+
+    if (!config) {
+      return void 0;
+    }
 
     return config.uniqueKeyProp;
   };

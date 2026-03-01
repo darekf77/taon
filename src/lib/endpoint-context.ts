@@ -2425,12 +2425,12 @@ export class EndpointContext {
           if (req.headers[Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS]) {
             //#region encode entity or enties in body from header mapping
             try {
-              const entity = JSON.parse(
+              const mappinForEntityBody = JSON.parse(
                 TaonHelpers.firstStringOrElemFromArray(
                   req.headers[Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS],
                 ),
               );
-              tBody = encodeMapping(tBody, entity);
+              tBody = encodeMapping(tBody, mappinForEntityBody);
             } catch (e) {}
             //#endregion
           } else {
@@ -2439,7 +2439,7 @@ export class EndpointContext {
 
             Object.keys(tBody).forEach(paramName => {
               try {
-                const entityForParam = JSON.parse(
+                const mappingForEntityBodyForParam = JSON.parse(
                   TaonHelpers.firstStringOrElemFromArray(
                     req.headers[
                       `${Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS}${paramName} `
@@ -2448,7 +2448,7 @@ export class EndpointContext {
                 );
                 tBody[paramName] = encodeMapping(
                   tBody[paramName],
-                  entityForParam,
+                  mappingForEntityBodyForParam,
                 );
               } catch (e) {}
             });
@@ -2588,7 +2588,7 @@ export class EndpointContext {
               //#endregion
             } else {
               //#region process json request
-              await new EntityProcess(result, res).run()
+              await new EntityProcess(result, res).run();
               //#endregion
             }
           } catch (error) {
