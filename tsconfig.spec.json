@@ -1,13 +1,11 @@
 {
-  "extends": "./tsconfig.isomorphic.json",
+  "extends": "./tsconfig.json",
   "compilerOptions": {
-    "rootDir": "./tmp-source-dist",
-    "outDir": "dist"
+    "outDir": "./out-tsc/test"
   },
   "include": [
-    "tmp-source-dist/**/*"
-  ],
-  "exclude": [
-    "tmp-source-dist/assets"
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx",
+    "src/**/*.d.ts"
   ]
 }
