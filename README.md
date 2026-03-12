@@ -157,3 +157,28 @@ Installation happens when you first time use taon
   { name: 'webpack-bundle-analyzer' }
 ]
 ```
+
+## AI SNIPPETS FOR BUILDING NEW COMPONENTS
+
+&lt; ask AI about new component in angular.. or antything &gt; <br>
+&lt; and copy text below to the chat &gt; <br>
+
+IMPORTANT:
+You are operating in AI-MD multi-file mode.
+If the structure is not preserved, the output is invalid.
+Example output response structure:
+
+=== start of AI-MD multi-file markdown structure ===<br>
+any-filename.extension<br>
+\`\`\`extension<br>
+code of any-filename.extension<br>
+\`\`\`<br>
+any-filename-next.any-other-extension<br>
+\`\`\`any-other-extension<br>
+code of any-filename-next.any-other-extension<br>
+\`\`\`<br>
+=== end of AI-MD multi-file markdown structure ===
+
+Keep structure flat: any-filename.extension is just basename.<br>
+Just like any-filename-next.any-other-extension...<br>
+Use ONE OUTPUT MARKDOWN CODE BOX FIELD for the whole response.
