@@ -1,13 +1,15 @@
 //#region imports
 
-import { CreateDateColumn, CustomColumn } from '../../orm/columns';
 import { _ } from 'tnp-core/src';
+
+import { TaonBaseAbstractEntity } from '../../base-classes/base-abstract-entity';
+import { TaonBaseEntity } from '../../base-classes/base-entity';
+import { TaonEntity } from '../../decorators/classes/entity-decorator';
+import { CreateDateColumn, CustomColumn } from '../../orm/columns';
 
 import { TaonGlobalStateDefaultsValues } from './taon-global-state.constants';
 import { TaonGlobalStateStatus } from './taon-global-state.models';
-import { TaonBaseEntity } from '../../base-classes/base-entity';
-import { TaonBaseAbstractEntity } from '../../base-classes/base-abstract-entity';
-import { TaonEntity } from '../../decorators/classes/entity-decorator';
+
 //#endregion
 
 @TaonEntity({
