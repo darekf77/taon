@@ -797,6 +797,8 @@ export class EndpointContext {
             TaonAdmin.Instance?.keepWebsqlDbDataAfterReload(); // TODO @LAST
           //#endregion
 
+          // console.log({keepWebsqlDbDataAfterReload})
+
           databaseConfig = databaseConfig = Models.DatabaseConfig.from({
             location: `db-${this.contextName}.sqlite`,
             type: 'sqljs',
@@ -2783,8 +2785,8 @@ export class EndpointContext {
     //#region @websqlOnly
 
     //#region resolve variables
-    const MIN_TIMEOUT = 400;
-    const MIN_TIMEOUT_STEP = 200;
+    const MIN_TIMEOUT = 100;
+    const MIN_TIMEOUT_STEP = 10;
 
     const globalThisVar = globalThis; // TODO not a good idea! probably should be in context
 

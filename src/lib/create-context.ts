@@ -225,8 +225,11 @@ const createContextFn = <
             //#region handle websql reload data
             //#region @browser
             let keepWebsqlDbDataAfterReload = false;
+
             keepWebsqlDbDataAfterReload =
               TaonAdmin.Instance?.keepWebsqlDbDataAfterReload();
+
+            // console.log({ keepWebsqlDbDataAfterReload });
 
             if (keepWebsqlDbDataAfterReload) {
               !UtilsOs.isRunningInCliMode() &&

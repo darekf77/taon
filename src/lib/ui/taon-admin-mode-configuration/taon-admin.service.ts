@@ -17,6 +17,10 @@ export enum TaonAdminPanelMode {
 export class TaonAdmin {
   private static _instance: TaonAdmin;
 
+  static init(): void {
+    TaonAdmin.Instance;
+  }
+
   static get Instance(): TaonAdmin {
     if (!this._instance) {
       this._instance = new TaonAdmin();
@@ -24,7 +28,9 @@ export class TaonAdmin {
     return this._instance;
   }
 
-  private constructor() {}
+  private constructor() {
+    // console.log('TAON ADMIN INSTANCE CREATED');
+  }
 
   //#region fields & getters / admin panel mode
 
@@ -89,8 +95,16 @@ export class TaonAdminService {
     return TaonAdmin.Instance.keepWebsqlDbDataAfterReload;
   }
 
+  admin(): void {
+    this.adminPanelMode.set(TaonAdminPanelMode.FULL_SCREEN);
+  }
+
   show(): void {
     this.adminPanelMode.set(TaonAdminPanelMode.POPUP);
+  }
+
+  hide(): void {
+    this.adminPanelMode.set(TaonAdminPanelMode.NONE);
   }
 
   private devTapCount = 0;
