@@ -794,7 +794,7 @@ export class EndpointContext {
           let keepWebsqlDbDataAfterReload = false;
           //#region @browser
           keepWebsqlDbDataAfterReload =
-            TaonAdminService.Instance?.keepWebsqlDbDataAfterReload; // TODO @LAST
+            TaonAdminService.Instance?.keepWebsqlDbDataAfterReload(); // TODO @LAST
           //#endregion
 
           databaseConfig = databaseConfig = Models.DatabaseConfig.from({
