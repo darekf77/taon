@@ -2,9 +2,9 @@
 import { CoreModels, Helpers, UtilsOs, _ } from 'tnp-core/src';
 
 import { EndpointContext } from './endpoint-context';
-import { Models } from './models';
-import { TaonAdminService } from './ui/taon-admin-mode-configuration/taon-admin.service'; // @browser
 import { ContextsEndpointStorage } from './endpoint-context-storage';
+import { Models } from './models';
+import { TaonAdmin } from './ui/taon-admin-mode-configuration/taon-admin.service'; // @browser
 //#endregion
 
 /**
@@ -226,7 +226,7 @@ const createContextFn = <
             //#region @browser
             let keepWebsqlDbDataAfterReload = false;
             keepWebsqlDbDataAfterReload =
-              TaonAdminService.Instance?.keepWebsqlDbDataAfterReload();
+              TaonAdmin.Instance?.keepWebsqlDbDataAfterReload();
 
             if (keepWebsqlDbDataAfterReload) {
               !UtilsOs.isRunningInCliMode() &&

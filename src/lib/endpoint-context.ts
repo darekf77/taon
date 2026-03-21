@@ -71,7 +71,7 @@ import { TaonHelpers } from './helpers/taon-helpers';
 import { Models } from './models';
 import { RealtimeCore } from './realtime/realtime-core';
 import { Symbols } from './symbols';
-import { TaonAdminService } from './ui/taon-admin-mode-configuration/taon-admin.service'; // @browser
+import { TaonAdmin } from './ui/taon-admin-mode-configuration/taon-admin.service'; // @browser
 //#endregion
 
 let bodyParser: typeof import('body-parser');
@@ -794,7 +794,7 @@ export class EndpointContext {
           let keepWebsqlDbDataAfterReload = false;
           //#region @browser
           keepWebsqlDbDataAfterReload =
-            TaonAdminService.Instance?.keepWebsqlDbDataAfterReload(); // TODO @LAST
+            TaonAdmin.Instance?.keepWebsqlDbDataAfterReload(); // TODO @LAST
           //#endregion
 
           databaseConfig = databaseConfig = Models.DatabaseConfig.from({

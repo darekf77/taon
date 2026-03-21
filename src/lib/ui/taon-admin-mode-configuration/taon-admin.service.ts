@@ -1,6 +1,6 @@
 //#region import
 import { computed, inject, Injectable, signal } from '@angular/core'; // @browser
-import { TaonStor } from 'taon-storage/src';
+import { StorSignal, TaonStor } from 'taon-storage/src';
 import { Helpers, _ } from 'tnp-core/src';
 
 import { BreakpointsService } from './breakpoints.service';
@@ -14,45 +14,17 @@ export enum TaonAdminPanelMode {
   FULL_SCREEN = 'FULL_SCREEN',
 }
 
-//#region @browser
-@Injectable({ providedIn: 'root' })
-//#endregion
-export class TaonAdminService {
-  //#region singleton + constructor
-  private static _instance: TaonAdminService;
+export class TaonAdmin {
+  private static _instance: TaonAdmin;
 
-  public readonly isIframe: boolean =
-    window.location !== window.parent.location;
-
-  private breakpointsService = inject(BreakpointsService);
-
-  constructor() {
-    TaonAdminService._instance = this;
-    window['Taon'] = this;
-    window['taon'] = this;
-
-    this.breakpointsService.listenTo().subscribe(breakpoint => {
-      console.log({ breakpoint });
-      this.isDesktop.set(breakpoint === 'desktop');
-      if (this.isDesktop()) {
-        //
-      } else {
-        this.adminPanelMode.set(TaonAdminPanelMode.NONE);
-      }
-    });
-  }
-
-  static get Instance(): TaonAdminService {
+  static get Instance(): TaonAdmin {
     if (!this._instance) {
-      throw new Error(
-        'TaonAdminService not initialized yet. Make sure Angular bootstrapped first.',
-      );
+      this._instance = new TaonAdmin();
     }
     return this._instance;
   }
-  //#endregion
 
-  public isDesktop = signal(true);
+  private constructor() {}
 
   //#region fields & getters / admin panel mode
 
@@ -77,6 +49,45 @@ export class TaonAdminService {
     TaonAdminService,
   );
   //#endregion
+}
+
+//#region @browser
+@Injectable({ providedIn: 'root' })
+//#endregion
+export class TaonAdminService {
+  //#region singleton + constructor
+
+  public readonly isIframe: boolean =
+    window.location !== window.parent.location;
+
+  private breakpointsService = inject(BreakpointsService);
+
+  constructor() {
+    window['Taon'] = this;
+    window['taon'] = this;
+
+    this.breakpointsService.listenTo().subscribe(breakpoint => {
+      console.log({ breakpoint });
+      this.isDesktop.set(breakpoint === 'desktop');
+      if (this.isDesktop()) {
+        //
+      } else {
+        this.adminPanelMode.set(TaonAdminPanelMode.NONE);
+      }
+    });
+  }
+
+  //#endregion
+
+  public isDesktop = signal(true);
+
+  public get adminPanelMode(): StorSignal<TaonAdminPanelMode> {
+    return TaonAdmin.Instance.adminPanelMode;
+  }
+
+  public get keepWebsqlDbDataAfterReload(): StorSignal<boolean> {
+    return TaonAdmin.Instance.keepWebsqlDbDataAfterReload;
+  }
 
   show(): void {
     this.adminPanelMode.set(TaonAdminPanelMode.POPUP);
@@ -99,7 +110,7 @@ export class TaonAdminService {
     if (this.devTapCount >= 5) {
       this.devTapCount = 0;
 
-      this.show()
+      this.show();
     }
   }
 }
