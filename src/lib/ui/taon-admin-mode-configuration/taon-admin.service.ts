@@ -1,5 +1,12 @@
 //#region import
-import { computed, inject, Injectable, signal } from '@angular/core'; // @browser
+import {
+  computed,
+  inject,
+  Injectable,
+  signal,
+  TemplateRef,
+  WritableSignal,
+} from '@angular/core'; // @browser
 import { StorSignal, TaonStor } from 'taon-storage/src';
 import { Helpers, _ } from 'tnp-core/src';
 
@@ -12,6 +19,11 @@ export enum TaonAdminPanelMode {
   POPUP = 'POPUP',
   SIDE = 'SIDE',
   FULL_SCREEN = 'FULL_SCREEN',
+}
+
+export interface TaonAdminTab {
+  name: string;
+  templateOrIframeLink?: string | TemplateRef<any>;
 }
 
 export class TaonAdmin {
@@ -31,6 +43,8 @@ export class TaonAdmin {
   private constructor() {
     // console.log('TAON ADMIN INSTANCE CREATED');
   }
+
+  public additionalTabs = signal([] as TaonAdminTab[]);
 
   //#region fields & getters / admin panel mode
 
@@ -93,6 +107,10 @@ export class TaonAdminService {
 
   public get keepWebsqlDbDataAfterReload(): StorSignal<boolean> {
     return TaonAdmin.Instance.keepWebsqlDbDataAfterReload;
+  }
+
+  public get additionalTabs(): WritableSignal<TaonAdminTab[]> {
+    return TaonAdmin.Instance.additionalTabs;
   }
 
   admin(): void {
