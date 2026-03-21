@@ -1314,14 +1314,19 @@ export class EndpointContext {
     }
 
     //#region @websql
-    for (const classFun of this.getClassFunByArr(
-      Models.ClassType.ENTITY,
-    ) as any[]) {
-      const repo = (await this.connection.getRepository(
-        ClassHelpers.getOrginalClass(classFun),
-      )) as any;
-      this.repos.set(ClassHelpers.getName(classFun), repo);
+    if (this.connection) {
+      for (const classFun of this.getClassFunByArr(
+        Models.ClassType.ENTITY,
+      ) as any[]) {
+        const repo = (await this.connection.getRepository(
+          ClassHelpers.getOrginalClass(classFun),
+        )) as any;
+        this.repos.set(ClassHelpers.getName(classFun), repo);
+      }
+    } else {
+      Helpers.warn(`Skipping db init for ${this.contextName}.Use database:true to enable db.`)
     }
+
     //#endregion
 
     for (const classTypeName of [

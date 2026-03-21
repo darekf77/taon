@@ -67,7 +67,7 @@ export class TaonAdminService {
     window['taon'] = this;
 
     this.breakpointsService.listenTo().subscribe(breakpoint => {
-      console.log({ breakpoint });
+      // console.log({ breakpoint });
       this.isDesktop.set(breakpoint === 'desktop');
       if (this.isDesktop()) {
         //
