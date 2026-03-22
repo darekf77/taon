@@ -4,7 +4,6 @@ global.i0 = {
 }
 const process= require('process');
 process.removeAllListeners('warning');
-
 var argv = process.argv;
 
 global.hideLog = true;
@@ -32,5 +31,5 @@ var pathToCliJS = {
 }
 var p = fs.existsSync(pathToCliJS.distDev) ? pathToCliJS.distDev : pathToCliJS.localOrNPm;
 global.globalSystemToolMode = true;
-var run = require(p).start;
+var run = require(p).startCli;
 run(argv,__filename);
