@@ -2,7 +2,15 @@
   "type": "isomorphic-lib",
   "version": "v21",
 
-  "dependenciesNamesForNpmLib": ["tslib", "ora", "progress", "open", "cfonts"],
+  "dependenciesNamesForNpmLib": [
+    "tslib",
+    "node-notifier",
+    "dbus-next",
+    "ora",
+    "progress",
+    "open",
+    "cfonts",
+  ],
 
   "appId": "dev.taon.app",
 
