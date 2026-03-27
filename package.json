@@ -247,6 +247,7 @@
     "cross-spawn": "~7.0.6",
     "date-fns": "^4.1.0",
     "dateformat": "^3.0.3",
+    "dbus-next": "0.10.2",
     "detect-mocha": "0.1.0",
     "diff": "~4.0.2",
     "dockerode": "~4.0.9",
