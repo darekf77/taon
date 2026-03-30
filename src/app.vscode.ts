@@ -9,7 +9,7 @@ export async function activate(context: ExtensionContext) {
   //#region @backendFunc
   const vscode = await import('vscode');
 
-  vscodePatchingCodium(context, vscode);
+  vscodePatchingCodium(context, vscode, FRAMEWORK_NAME);
   handleTaonRedirect(context, vscode);
 
   activateMenuTnp(context, vscode, FRAMEWORK_NAME);

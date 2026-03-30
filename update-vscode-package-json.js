@@ -73,7 +73,7 @@ function updatePackageJson() {
   const visibleCommands = commandsList.filter(c => !c.hideContextMenu);
 
   // split standalone vs grouped
-  const standalone = visibleCommands.filter(c => !c.group);
+  const standalone = visibleCommands.filter(c => c.group === null);
   const grouped = visibleCommands.filter(c => c.group);
   const groups = _.uniq(grouped.map(c => c.group));
 
