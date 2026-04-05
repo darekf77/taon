@@ -18,6 +18,7 @@
     {
       "artifactName": "npm-lib-and-cli-tool",
       "taskName": "npm",
+      "askUserBeforeFinalAction": true,
     },
     {
       "artifactName": "docs-webapp",
