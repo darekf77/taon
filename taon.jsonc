@@ -17,8 +17,8 @@
   "autoReleaseConfigAllowedItems": [
     {
       "artifactName": "npm-lib-and-cli-tool",
-      "taskName": "npm",
       "askUserBeforeFinalAction": true,
+      "taskName": "npm",
     },
     {
       "artifactName": "docs-webapp",
