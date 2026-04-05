@@ -47,27 +47,44 @@ export class RealtimeClient {
     };
     // console.log('[browser] nspPath', nspPath);
 
-    if (
-      this.core.ctx.config.frontendHost &&
-      this.core.ctx.config.frontendHost !== '' &&
-      this.core.ctx.isRunningInsideDocker
-    ) {
+    if (this.core.ctx.isRemoteHost) {
+      // NEED for remote host
+      const nodeClientHostOrigin = this.core.ctx.host;
+
       this.core.ctx.logRealtime &&
         Helpers.logInfo(
-          `[${this.core.ctx.contextName}] USING FRONTEND HOST` +
-            ` ${this.core.ctx.config.frontendHost} FOR REALTIME`,
+          `[${this.core.ctx.contextName}] USING REMOTE FRONTEND HOST` +
+            ` ${nodeClientHostOrigin} FOR REMOTE REALTIME`,
         );
       nspPath.global = new URL(
-        `${this.core.ctx.frontendHostUri.origin}${nspPath.global.pathname}`,
+        `${nodeClientHostOrigin}${nspPath.global.pathname}`,
       );
       nspPath.realtime = new URL(
-        `${this.core.ctx.frontendHostUri.origin}${nspPath.realtime.pathname}`,
+        `${nodeClientHostOrigin}${nspPath.realtime.pathname}`,
       );
     } else {
-      this.core.ctx.logRealtime &&
-        Helpers.logInfo(
-          `[${this.core.ctx.contextName}] Not using frontend host for realtime`,
+      if (
+        this.core.ctx.config.frontendHost &&
+        this.core.ctx.config.frontendHost !== '' &&
+        this.core.ctx.isRunningInsideDocker
+      ) {
+        this.core.ctx.logRealtime &&
+          Helpers.logInfo(
+            `[${this.core.ctx.contextName}] USING FRONTEND HOST` +
+              ` ${this.core.ctx.config.frontendHost} FOR REALTIME`,
+          );
+        nspPath.global = new URL(
+          `${this.core.ctx.frontendHostUri.origin}${nspPath.global.pathname}`,
         );
+        nspPath.realtime = new URL(
+          `${this.core.ctx.frontendHostUri.origin}${nspPath.realtime.pathname}`,
+        );
+      } else {
+        this.core.ctx.logRealtime &&
+          Helpers.logInfo(
+            `[${this.core.ctx.contextName}] Not using frontend host for realtime`,
+          );
+      }
     }
 
     this.core.ctx.logRealtime &&

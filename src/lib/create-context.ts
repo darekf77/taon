@@ -302,9 +302,15 @@ const createContextFn = <
     get realtime() {
       return {
         get client() {
+          if(!endpointContextRef) {
+            throw new Error(`Please .initialize() context before using <context>.realtime.client.<anything> `)
+          }
           return endpointContextRef.realtimeClient;
         },
         get server() {
+          if(!endpointContextRef) {
+            throw new Error(`Please .initialize() context  before using <context>.realtime.server.<anything> `)
+          }
           return endpointContextRef.realtimeServer;
         },
       };

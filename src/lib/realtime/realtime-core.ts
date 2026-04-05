@@ -73,12 +73,15 @@ export class RealtimeCore {
     this.ctx = ctx;
     this.strategy = this.resolveStrategy();
 
-    //     this.ctx.logRealtime &&
-    //       console.log(`
+        this.ctx.logRealtime &&
+          console.log(`
 
-    // [ctx=${this.ctx.contextName}] realtime strategy: ${this.strategy}, context type: ${this.ctx.contextType}
+    [ctx=${this.ctx.contextName}]
+    mode = ${this.ctx.mode}
+    realtime strategy = ${this.strategy}
+    context type = ${this.ctx.contextType}
 
-    //         `);
+            `);
     if (UtilsOs.isWebSQL) {
       this.server = new RealtimeServer(this as any);
       // console.log('DONE INITING SERVER');

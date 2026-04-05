@@ -27,7 +27,7 @@ export class RealtimeServer {
   // private jobs = {};
   constructor(private core: RealtimeCore) {
     this.core = core;
-    if (core.ctx.disabledRealtime || this.core.ctx.isRemoteHost) {
+    if (core.ctx.disabledRealtime) {
       return;
     }
     //#region @websql
@@ -223,7 +223,7 @@ export class RealtimeServer {
 
     let roomName: string;
 
-    if (this.core.ctx.disabledRealtime || this.core.ctx.isRemoteHost) {
+    if (this.core.ctx.disabledRealtime) {
       return;
     }
 
@@ -270,6 +270,16 @@ export class RealtimeServer {
             ClassHelpers.getName(entityFn),
             valueOfUniqueProperty,
           );
+    }
+
+    if (this.core.ctx.isRemoteHost) {
+      // USE REMOTE HOST
+      // this allows me to trigger event from other remote server!
+      this.core.socketFE.emit(
+        customEvent ? customEvent : roomName,
+        customEvent ? customEventData : '',
+      );
+      return;
     }
 
     this.core.socketBE.in(roomName).emit(

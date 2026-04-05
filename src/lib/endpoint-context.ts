@@ -213,12 +213,28 @@ export class EndpointContext {
   //#endregion
 
   //#region fields / realtime
-  private realtime: RealtimeCore;
+  private _realtime: RealtimeCore;
 
+  get realtime(): RealtimeCore {
+    if (!this._realtime) {
+      throw new Error(`Please initialize context before accessing
+        .realtime.client or realtime.server properties.
+
+        `);
+    }
+    return this._realtime;
+  }
+
+  set realtime(v) {
+    this._realtime = v;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   get realtimeClient() {
     return this.realtime.client;
   }
 
+  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   get realtimeServer() {
     return this.realtime.server;
   }
@@ -1326,7 +1342,9 @@ export class EndpointContext {
         this.repos.set(ClassHelpers.getName(classFun), repo);
       }
     } else {
-      Helpers.warn(`Skipping db init for ${this.contextName}.Use database:true to enable db.`)
+      Helpers.warn(
+        `Skipping db init for ${this.contextName}.Use database:true to enable db.`,
+      );
     }
 
     //#endregion
@@ -1565,6 +1583,9 @@ export class EndpointContext {
   //#endregion
 
   //#region methods & getters / init subscribers
+  /**
+   * init typeorm subscribers
+   */
   async initSubscribers() {
     //#region @websqlFunc
     if (this.isRemoteHost) {
