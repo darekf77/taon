@@ -7,7 +7,7 @@ const TaonBaseContext = createContext(() => ({
   contextName: 'TaonBaseContext',
   abstract: true,
   contexts: {
-    TaonGlobalStateContext,
+    // TaonGlobalStateContext,
   },
   middlewares: {
     TaonBaseFileUploadMiddleware,
