@@ -17,7 +17,6 @@
   "autoReleaseConfigAllowedItems": [
     {
       "artifactName": "npm-lib-and-cli-tool",
-      "askUserBeforeFinalAction": true,
       "taskName": "npm",
     },
     {
