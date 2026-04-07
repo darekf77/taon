@@ -26,7 +26,7 @@
     },
   ],
 
-  "isomorphicDependenciesForNpmLib": ["tnp"],
+   "isomorphicDependenciesForNpmLib": ["tnp"],
 
   // TODO change it to devDependencies
   "peerDependenciesNamesForNpmLib": [
@@ -59,8 +59,27 @@
   ],
 
   "removeAfterPullingFromGit": ["projects"],
+
   "resources": ["README.md", "bin", "icon-menu-taon.svg"],
   "shouldGenerateAutogenIndexFile": false,
+  "singleFileBundlingPackages": [
+   // electron is replaced by default
+   // {
+   //   "packageName": "electron",
+   //   "artifactName": "npm-lib-and-cli-tool",
+   //   "replaceWithNothing": true,
+   // },
+   {
+     "description": "OS notyfications",
+     "isExternalFor": "*",
+     "packageName": "node-notifier",
+   },
+   {
+     "description": "Linux notyfications without deps",
+     "isExternalFor": "*",
+     "packageName": "dbus-next",
+   },
+ ],
 
   "packageJsonOverride": {
     "author": "Dariusz Filipiak",
