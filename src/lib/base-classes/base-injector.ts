@@ -52,7 +52,9 @@ export class TaonBaseInjector {
   /**
    * inject crud repo for entity
    */
-  injectRepo<T>(entityForCrud: new (...args: any[]) => T): TaonBaseRepository<T> {
+  injectRepo<T>(
+    entityForCrud: new (...args: any[]) => T,
+  ): TaonBaseRepository<T> {
     const repoProxy = this.__inject(void 0, {
       localInstance: true,
       resolveClassFromContext: 'TaonBaseRepository',
@@ -78,6 +80,17 @@ export class TaonBaseInjector {
           return classToProcess.entityClassResolveFn();
         },
       ],
+    });
+    return repoProxy;
+  }
+  //#endregion
+
+  //#region inject / custom repository
+  injectKvRepository<T extends TaonBaseCustomRepository>(
+    cutomRepositoryClass: new (...args: any[]) => T,
+  ): T {
+    const repoProxy = this.__inject<T>(cutomRepositoryClass, {
+      localInstance: false,
     });
     return repoProxy;
   }
@@ -155,7 +168,7 @@ export class TaonBaseInjector {
     ctor: new (...args: any[]) => T,
     options?: {
       /**
-       * (repositories are ONLY/ALWAYS local instances)
+       * (sql db repositories are ONLY/ALWAYS local instances)
        * If true, then local instance will be created
        * controllers, providers can be local or global
        */

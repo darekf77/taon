@@ -196,17 +196,16 @@ export namespace Models {
   //#endregion
 
   //#region models / session
-
-  export type ISession = {
-    secret?: string;
-    saveUninitialized?: boolean;
-    /**
-     * max age of session
-     */
-    cookieMaxAge?: number;
-    secure?: boolean;
-    resave?: boolean;
-  };
+  // export type ISession = {
+  //   secret?: string;
+  //   saveUninitialized?: boolean;
+  //   /**
+  //    * max age of session
+  //    */
+  //   cookieMaxAge?: number;
+  //   secure?: boolean;
+  //   resave?: boolean;
+  // };
   //#endregion
 
   //#region models / context options
@@ -310,7 +309,7 @@ export namespace Models {
     /**
      * Config for express session
      */
-    session?: ISession;
+    session?: boolean;
     /**
      * taon is not going to write .rest files to cwd()
      */

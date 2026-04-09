@@ -39,6 +39,7 @@ export * from './base-classes/base-class';
 export * from './base-classes/base-context';
 export * from './base-classes/base-controller';
 export * from './base-classes/base-crud-controller';
+export * from './base-classes/base-kv-repository';
 export * from './base-classes/base-custom-repository';
 export * from './base-classes/base-entity';
 export * from './base-classes/base-file-upload.middleware';

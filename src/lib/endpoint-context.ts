@@ -50,7 +50,7 @@ import { _, Helpers } from 'tnp-core/src';
 
 import type { TaonBaseClass } from './base-classes/base-class';
 import type { TaonBaseController } from './base-classes/base-controller';
-import type { TaonBaseInjector } from './base-classes/base-injector';
+import { TaonBaseInjector } from './base-classes/base-injector';
 import type { TaonBaseMiddleware } from './base-classes/base-middleware';
 import type { TaonBaseMigration } from './base-classes/base-migration';
 import { TaonBaseSubscriberForEntity } from './base-classes/base-subscriber-for-entity';
@@ -200,9 +200,9 @@ export class EndpointContext {
   }
   //#endregion
 
-  //#region fields  / session
-  session?: Models.ISession;
-  //#endregion
+  // //#region fields  / session
+  // session?: boolean; //Models.ISession;
+  // //#endregion
 
   //#region fields / connection
   public connection: DataSource;
@@ -476,11 +476,11 @@ export class EndpointContext {
 
     //#region resolve session
     if (this.config.session) {
-      this.session = _.cloneDeep(this.config.session);
-      const oneHour = 1000 * 60 * 60 * 1; // 24;
-      if (!this.session.cookieMaxAge) {
-        this.session.cookieMaxAge = oneHour;
-      }
+      // this.session = _.cloneDeep(this.config.session);
+      // const oneHour = 1000 * 60 * 60 * 1; // 24;
+      // if (!this.session.cookieMaxAge) {
+      //   this.session.cookieMaxAge = oneHour;
+      // }
       // serever and browser cookie authentication
       axios.defaults.withCredentials = true;
     }
@@ -716,7 +716,7 @@ export class EndpointContext {
     `);
     //#region @websqlFunc
     let databaseConfig: Models.DatabaseConfig = Models.DatabaseConfig.from({});
-    const tcpUdpDatabaseSqliteRelativeFileLocation = `${Models.DatabasesFolder}/db-${this.contextName}.sqlite`;
+
     if (this.isRunningInsideDocker) {
       if (this.USE_MARIADB_MYSQL_IN_DOCKER) {
         // Helpers.info('Running in docker, using in mysql database');
@@ -747,8 +747,11 @@ export class EndpointContext {
         ]);
         //#endregion
 
+        if (!Helpers.exists(path.dirname(this.sqlLiteDbLocation))) {
+          Helpers.mkdirp(path.dirname(this.sqlLiteDbLocation));
+        }
         databaseConfig = databaseConfig = Models.DatabaseConfig.from({
-          location: tcpUdpDatabaseSqliteRelativeFileLocation,
+          location: this.sqlLiteDbLocation,
           type: 'sqljs',
           useLocalForage: false,
           recreateMode: 'PRESERVE_DATA+MIGRATIONS',
@@ -781,14 +784,9 @@ export class EndpointContext {
           let dbLocationInOs: string;
           //#region @backend
           if (UtilsOs.isElectron) {
-            dbLocationInOs = crossPlatformPath([
-              UtilsOs.getRealHomeDir(),
-              `.taon/databases-for-electron-apps/${
-                this.appId || _.snakeCase(process.cwd()).replace(/\_/, '.')
-              }/${this.contextName}.sqlite`,
-            ]);
-            if (!Helpers.exists(path.dirname(dbLocationInOs))) {
-              Helpers.mkdirp(path.dirname(dbLocationInOs));
+            dbLocationInOs = this.electronDbLocation;
+            if (!Helpers.exists(path.dirname(this.electronDbLocation))) {
+              Helpers.mkdirp(path.dirname(this.electronDbLocation));
             }
           }
           //#endregion
@@ -829,9 +827,12 @@ export class EndpointContext {
 
         //#region resolve database config for mode backend-frontend(tcp+udp)
         case 'backend-frontend(tcp+udp)':
+          if (!Helpers.exists(path.dirname(this.sqlLiteDbLocation))) {
+            Helpers.mkdirp(path.dirname(this.sqlLiteDbLocation));
+          }
           databaseConfig = Models.DatabaseConfig.from({
             database: `context-db-${this.contextName}`,
-            location: tcpUdpDatabaseSqliteRelativeFileLocation,
+            location: this.sqlLiteDbLocation,
             type: 'sqljs',
             recreateMode: 'DROP_DB+MIGRATIONS',
             logging: this.logDb,
@@ -845,6 +846,62 @@ export class EndpointContext {
     //#endregion
   }
   //#endregion
+
+  get sqlLiteDbLocation(): string {
+    //#region @backendFunc
+
+    if (this.frontendHostUri.origin.includes('://localhost:')) {
+      return crossPlatformPath([
+        process.cwd(),
+        `${Models.DatabasesFolder}/sqlite/sqlite-${this.contextName}.sqlite`,
+      ]);
+    }
+
+    return crossPlatformPath([
+      UtilsOs.getRealHomeDir(),
+      `.taon/databases-sqlite-for-apps/${
+        this.appId || _.snakeCase(process.cwd()).replace(/\_/, '.')
+      }/${this.contextName}.sqlite`,
+    ]);
+    //#endregion
+  }
+
+  get electronDbLocation(): string {
+    //#region @backendFunc
+    // if (this.frontendHostUri.origin.includes('://localhost:')) {
+    //   return crossPlatformPath([
+    //     process.cwd(),
+    //     `${Models.DatabasesFolder}/electron/electron-${this.contextName}.sqlite`,
+    //   ]);
+    // }
+
+    return crossPlatformPath([
+      UtilsOs.getRealHomeDir(),
+      `.taon/databases-for-electron-apps/${
+        this.appId || _.snakeCase(process.cwd()).replace(/\_/, '.')
+      }/${this.contextName}.sqlite`,
+    ]);
+    //#endregion
+  }
+
+  get kvDbJsonLocation(): string {
+    //#region @backendFunc
+
+    if (this.frontendHostUri.origin.includes('://localhost:')) {
+      return crossPlatformPath([
+        process.cwd(),
+        `${Models.DatabasesFolder}/kv/kv-${this.contextName}.json`,
+      ]);
+    }
+
+    return crossPlatformPath([
+      UtilsOs.getRealHomeDir(),
+      `.taon/databases-kv-for-apps/${
+        this.appId || _.snakeCase(process.cwd()).replace(/\_/, '.')
+      }/${this.contextName}.json`,
+    ]);
+    //#endregion
+  }
 
   //#region methods & getters / start server
   async startServer(): Promise<void> {
@@ -1166,6 +1223,13 @@ export class EndpointContext {
       entityName = (entity && ClassHelpers.getName(entity)) || '';
       // console.log(`entityName `, entityName);
       // }
+
+      //#region @backend
+      if (!options.contextClassInstance) {
+        // QUICK_FIX FOR GETTING REPOS OUTSIDE CONTEXT
+        options.contextClassInstance = new TaonBaseInjector();
+      }
+      //#endregion
 
       if (!options.contextClassInstance[this.localInstaceObjSymbol]) {
         options.contextClassInstance[this.localInstaceObjSymbol] = {};
@@ -1672,6 +1736,12 @@ export class EndpointContext {
     if (this.isRemoteHost || !this.databaseConfig) {
       return;
     }
+
+    if (!Helpers.exists(path.dirname(this.kvDbJsonLocation))) {
+      Helpers.mkdirp(path.dirname(this.kvDbJsonLocation));
+      Helpers.writeJson(this.kvDbJsonLocation, {});
+    }
+
     const entities = this.getClassFunByArr(Models.ClassType.ENTITY).map(
       entityFn => {
         return ClassHelpers.getOrginalClass(entityFn);
@@ -1691,6 +1761,16 @@ export class EndpointContext {
       }
     }
 
+    const dropSchema = this.isRunOrRevertOnlyMigrationAppStart
+      ? false
+      : this.databaseConfig.dropSchema;
+
+    this.logFramework && console.log(`DROP SCHEMA: ${dropSchema}`)
+
+    if (dropSchema) {
+      Helpers.writeJson(this.kvDbJsonLocation, {});
+    }
+
     const dataSourceDbConfig = _.isObject(this.databaseConfig)
       ? ({
           type: this.databaseConfig.type,
@@ -1707,9 +1787,7 @@ export class EndpointContext {
             ? false
             : this.databaseConfig.synchronize,
           autoSave,
-          dropSchema: this.isRunOrRevertOnlyMigrationAppStart
-            ? false
-            : this.databaseConfig.dropSchema,
+          dropSchema,
           logging: !!this.databaseConfig.logging,
           location: this.databaseConfig.location,
         } as DataSourceOptions)
@@ -2198,22 +2276,26 @@ export class EndpointContext {
     app.use(methodOverride());
     app.use(cookieParser());
 
-    if (this.session) {
+    const enableSession = _.isBoolean(this.config.session)
+      ? this.config.session
+      : true;
+
+    if (enableSession) {
       Helpers.info(
         '[taon][express-server] session enabled for this context ' +
           this.contextName,
       );
-      const { cookieMaxAge } = this.session;
+      // const { cookieMaxAge } = this.session;
       const frontendHost = this.config.frontendHost;
 
-      const sessionObj = {
-        frontendHost,
-        secret: 'mysecretsessioncookithing',
-        saveUninitialized: true,
-        cookieMaxAge,
-        secure: frontendHost.startsWith('https://'),
-        resave: false,
-      } as Models.ISession;
+      // const sessionObj = {
+      //   frontendHost,
+      //   secret: 'mysecretsessioncookithing',
+      //   saveUninitialized: true,
+      //   cookieMaxAge,
+      //   secure: frontendHost.startsWith('https://'),
+      //   resave: false,
+      // } as Models.ISession;
 
       app.use(
         cors({
@@ -2221,10 +2303,10 @@ export class EndpointContext {
           origin: frontendHost,
         }),
       );
-      app.use(expressSession(sessionObj));
+      // app.use(expressSession(sessionObj));
       console.log(`
 
-      CORS ENABLED FOR SESSION
+      CORS ENABLED FOR SESSION ${frontendHost}
 
       `);
     } else {

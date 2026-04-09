@@ -96,9 +96,13 @@ export abstract class TaonBaseAngularService {
         ? overrideCurrentContext
         : this.currentContext;
       //#endregion
-      if (!currentContext) {
+      if (!currentContext || !currentContext.__refSync.inited) {
         throw new Error(
-          'No context available. Make sure to initialize the context before injecting controllers.',
+          `
+          Context not available. Make sure to .initialize()
+          the context before injecting controllers.
+
+          `,
         );
       }
       return currentContext ? currentContext.getClass(ctor) : void 0;

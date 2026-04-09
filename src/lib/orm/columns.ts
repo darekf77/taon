@@ -85,6 +85,17 @@ export const String45Column = <T = string>(defaultValue: T = null) =>
   });
 
 /**
+ * 50 characters varchar
+ */
+export const String50Column = <T = string>(defaultValue: T = null) =>
+  Column({
+    type: 'varchar',
+    length: 50,
+    nullable: _.isNil(defaultValue),
+    default: defaultValue,
+  });
+
+/**
  * 500 characters varchar
  */
 export const String500Column = <T = string>(defaultValue: T = null) =>
