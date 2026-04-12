@@ -195,7 +195,7 @@
     "**/src/**"
   ],
 
-  "window.title": "npm/taon-dev/taon  [ ${activeEditorShort} ]",
+  "window.title": "taon-dev/taon () [ ${activeEditorShort}]",
 
   "json.schemas": [
     {
