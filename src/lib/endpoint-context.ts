@@ -1,6 +1,7 @@
 //#region imports
 import type { Server } from 'http';
 import { Http2Server } from 'http2'; // @backend
+import type { Socket } from 'net';
 import { URL } from 'url'; // @backend
 
 import axios from 'axios';
@@ -180,6 +181,34 @@ export class EndpointContext {
 
   //#region fields / server tcp udp
   public serverTcpUdp: Server;
+
+  public sockets = new Set<Socket>();
+
+  private trackServer(server: Server): void {
+    //#region @backendFunc
+    server.on('connection', socket => {
+      const key = `${socket.remoteAddress}:${socket.remotePort} -> ${socket.localAddress}:${socket.localPort}`;
+      this.logSocketConnections && console.log('NEW CONNECTION', key);
+
+      this.sockets.add(socket);
+
+      if (this.logSocketConnections) {
+        socket.on('close', () => {
+          console.log('SOCKET CLOSED', key);
+          this.sockets.delete(socket);
+        });
+
+        socket.on('end', () => {
+          console.log('SOCKET END', key);
+        });
+
+        socket.on('error', err => {
+          console.log('SOCKET ERROR', key, err?.message);
+        });
+      }
+    });
+    //#endregion
+  }
   //#endregion
 
   //#region fields / database config
@@ -251,6 +280,14 @@ export class EndpointContext {
   get logHttp(): boolean {
     if (_.isObject(this.config?.logs)) {
       return !!(this.config.logs as Models.ConnectionOptionsLogs).http;
+    }
+    return this.config?.logs === true;
+  }
+
+  get logSocketConnections(): boolean {
+    if (_.isObject(this.config?.logs)) {
+      return !!(this.config.logs as Models.ConnectionOptionsLogs)
+        .socketConnections;
     }
     return this.config?.logs === true;
   }
@@ -372,7 +409,9 @@ export class EndpointContext {
       !this.config.host.startsWith('https://')
     ) {
       Helpers.throwError(
-        `[taon-config] Your${this.host ? ' remote' : ''} 'host' must start with http:// or https://`,
+        `[taon-config] Your${
+          this.host ? ' remote' : ''
+        } 'host' must start with http:// or https://`,
       );
     }
 
@@ -634,6 +673,8 @@ export class EndpointContext {
               this.expressApp,
             )
           : new http.Server(this.expressApp);
+
+        this.trackServer(this.serverTcpUdp);
         this.publicAssets.forEach(asset => {
           this.expressApp.use(
             asset.serverPath,
@@ -1718,14 +1759,37 @@ export class EndpointContext {
     }
 
     if (this.serverTcpUdp) {
-      await new Promise(resolve => {
-        this.serverTcpUdp?.close(() => {
-          resolve(true);
+      const server = this.serverTcpUdp;
+
+      if (this.logSocketConnections) {
+        server.getConnections((err, count) => {
+          console.log('connections before close', { err, count });
         });
+      }
+
+      server.close();
+
+      server.closeIdleConnections?.();
+      server.closeAllConnections?.();
+
+      for (const socket of this.sockets) {
+        socket.destroy();
+      }
+
+      await new Promise<void>((resolve, reject) => {
+        server.once('close', () => {
+          this.logSocketConnections && console.log('server deleted');
+          resolve();
+        });
+
+        server.once('error', reject);
       });
+
+      this.sockets.clear();
       delete this.serverTcpUdp;
     }
     delete this.expressApp;
+    this.logFramework && console.log(`Done destroying ${this.contextName}`);
     //#endregion
   }
   //#endregion
@@ -1765,7 +1829,7 @@ export class EndpointContext {
       ? false
       : this.databaseConfig.dropSchema;
 
-    this.logFramework && console.log(`DROP SCHEMA: ${dropSchema}`)
+    this.logFramework && console.log(`DROP SCHEMA: ${dropSchema}`);
 
     if (dropSchema) {
       Helpers.writeJson(this.kvDbJsonLocation, {});
@@ -2304,7 +2368,8 @@ export class EndpointContext {
         }),
       );
       // app.use(expressSession(sessionObj));
-      console.log(`
+      this.logFramework &&
+        console.log(`
 
       CORS ENABLED FOR SESSION ${frontendHost}
 

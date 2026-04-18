@@ -211,6 +211,7 @@ export namespace Models {
   //#region models / context options
   export type ConnectionOptionsLogs = {
     http?: boolean;
+    socketConnections?: boolean;
     realtime?: boolean;
     framework?: boolean;
     db?: boolean;
