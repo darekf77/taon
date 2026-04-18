@@ -155,6 +155,26 @@ export namespace Models {
   //#endregion
 
   //#region models / database config
+  export class KVDatabaseConfig {
+    static from(
+      databasePartialConfig: Partial<KVDatabaseConfig>,
+    ): KVDatabaseConfig {
+      return _.merge(new KVDatabaseConfig(), databasePartialConfig);
+    }
+
+    /**
+     * json kv db location
+     */
+    declare dbLocationFn?: (options?: {
+      port?: string | number;
+      contextName?: string;
+      baseLocation?:string;
+      repositoryClassName?: string;
+      cwd?: string;
+      ctx?: EndpointContext;
+    }) => string;
+  }
+
   export class DatabaseConfig extends DatabaseConfigTypeOrm {
     /**
      * Default value 'DROP_ALL'.
@@ -328,6 +348,7 @@ export namespace Models {
     abstract?: boolean;
     logs?: boolean | ConnectionOptionsLogs;
     database?: boolean | Partial<DatabaseConfig>;
+    kv_database?: boolean | Partial<KVDatabaseConfig>;
     /**
      * disable default realtime communication through TCP upgrade sockets
      */

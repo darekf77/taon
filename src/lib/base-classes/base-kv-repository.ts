@@ -1,5 +1,6 @@
 //#region imports
-import { _, Helpers, path } from 'tnp-core/src';
+import { MemorySync } from 'tnp-core/src'; // @backend
+import { Helpers, _, path } from 'tnp-core/src';
 import { Low } from 'tnp-core/src'; // @backend
 import { JSONFilePreset } from 'tnp-core/src'; // @backend
 
@@ -18,6 +19,8 @@ type KvLowDbShape<KV extends Record<string, any>> = KV & {
   };
 };
 
+export const KVexpirationsDbMetaKey = '__kvMeta.expirations';
+
 /**
  * Please override property entityClassFn with entity class.
  */
@@ -31,39 +34,73 @@ export abstract class TaonBaseKvRepository<
 
   private defaultDb = {} as KvLowDbShape<KV>;
 
-  public async getConnection(): Promise<Low<KvLowDbShape<KV>>> {
+  protected useInMemoryDB(): boolean {
+    return false;
+  }
+
+  public get jsonDbLocation() {
     //#region @backendFunc
-    const dbLocation = this.ctx.kvDbJsonLocationForClass(
-      ClassHelpers.getName(this),
-    );
-    if (!Helpers.exists(path.dirname(dbLocation))) {
-      Helpers.mkdirp(path.dirname(dbLocation));
-    }
-    try {
-      this.lowDB = await JSONFilePreset<KvLowDbShape<KV>>(
-        dbLocation,
-        this.defaultDb,
+    return this.ctx.kvDbJsonLocationForClass(ClassHelpers.getName(this));
+    //#endregion
+  }
+
+  protected async getConnection(): Promise<Low<KvLowDbShape<KV>>> {
+    //#region @backendFunc]
+    if (!this.lowDB) {
+      //#region initialize connection
+      let dbLocation: string;
+
+      if (!this.useInMemoryDB()) {
+        dbLocation = this.jsonDbLocation;
+
+        if (!Helpers.exists(path.dirname(dbLocation))) {
+          Helpers.mkdirp(path.dirname(dbLocation));
+        }
+      }
+
+      if (this.useInMemoryDB()) {
+        this.ctx.logDb && console.log(`USING IN MEMORY DB FROM`);
+      } else {
+        this.ctx.logDb && console.log(`USING KV DB FROM ${dbLocation}`);
+      }
+
+      const startegy: typeof JSONFilePreset = this.useInMemoryDB()
+        ? (MemorySync as any)
+        : JSONFilePreset;
+
+      try {
+        this.lowDB = await startegy<KvLowDbShape<KV>>(
+          dbLocation,
+          this.defaultDb,
+        );
+      } catch (error) {
+        console.error(error);
+        Helpers.error(
+          `[taon-helpers] Cannot use db.json file for projects in location, restoring default db.`,
+          true,
+          true,
+        );
+        if (!this.useInMemoryDB()) {
+          Helpers.writeJson(dbLocation, this.defaultDb);
+        }
+
+        this.lowDB = await startegy<KvLowDbShape<KV>>(
+          dbLocation,
+          this.defaultDb,
+        );
+      }
+
+      _.set(
+        this.lowDB.data,
+        KVexpirationsDbMetaKey,
+        _.get(this.lowDB.data, KVexpirationsDbMetaKey, {}),
       );
-    } catch (error) {
-      console.error(error);
-      Helpers.error(
-        `[taon-helpers] Cannot use db.json file for projects in location, restoring default db.`,
-        true,
-        true,
-      );
-      Helpers.writeJson(dbLocation, this.defaultDb);
-      this.lowDB = await JSONFilePreset<KvLowDbShape<KV>>(
-        dbLocation,
-        this.defaultDb,
-      );
+      //#endregion
     }
 
-    _.set(
-      this.lowDB.data,
-      '__kvMeta.expirations',
-      _.get(this.lowDB.data, '__kvMeta.expirations', {}),
-    );
-
+    if (!this.useInMemoryDB()) {
+      await this.lowDB.read();
+    }
     return this.lowDB;
     //#endregion
   }
@@ -76,7 +113,7 @@ export abstract class TaonBaseKvRepository<
   }
 
   private expirationPath(key: keyof KV): string {
-    return `__kvMeta.expirations.${this.normalizeKey(key)}`;
+    return `${KVexpirationsDbMetaKey}.${this.normalizeKey(key)}`;
   }
 
   private async getExpirationTimestamp<K extends keyof KV>(
@@ -89,27 +126,15 @@ export abstract class TaonBaseKvRepository<
     //#endregion
   }
 
-  private async isExpired<K extends keyof KV>(key: K): Promise<boolean> {
-    //#region @backendFunc
-    const expiresAt = await this.getExpirationTimestamp(key);
-
-    if (!_.isNumber(expiresAt)) {
-      return false;
-    }
-
-    return Date.now() >= expiresAt;
-    //#endregion
-  }
-
   private async cleanupIfExpired<K extends keyof KV>(key: K): Promise<boolean> {
     //#region @backendFunc
-    const expired = await this.isExpired(key);
+    const connection = await this.getConnection();
+    const expiresAt = _.get(connection.data, this.expirationPath(key));
 
-    if (!expired) {
+    if (!_.isNumber(expiresAt) || Date.now() < expiresAt) {
       return false;
     }
 
-    const connection = await this.getConnection();
     _.unset(connection.data, this.normalizeKey(key));
     _.unset(connection.data, this.expirationPath(key));
     await connection.write();
@@ -117,6 +142,7 @@ export abstract class TaonBaseKvRepository<
     return true;
     //#endregion
   }
+
   //#endregion
 
   async set<K extends keyof KV>(key: K, value: KV[K]): Promise<void> {
@@ -206,6 +232,38 @@ export abstract class TaonBaseKvRepository<
     }
 
     return Math.ceil(diffMs / 1000);
+    //#endregion
+  }
+
+  async getAllData(): Promise<Partial<KV>> {
+    //#region @backendFunc
+    const connection = await this.getConnection();
+
+    const expirations = _.get(
+      connection.data,
+      KVexpirationsDbMetaKey,
+      {},
+    ) as Record<string, number>;
+
+    let changed = false;
+    const now = Date.now();
+
+    for (const [key, expiresAt] of Object.entries(expirations)) {
+      if (_.isNumber(expiresAt) && now >= expiresAt) {
+        _.unset(connection.data, key);
+        _.unset(connection.data, `${KVexpirationsDbMetaKey}.${key}`);
+        changed = true;
+      }
+    }
+
+    if (changed) {
+      await connection.write();
+    }
+
+    const data = _.cloneDeep(connection.data || {});
+    delete (data as any).__kvMeta;
+
+    return data as Partial<KV>;
     //#endregion
   }
 }
