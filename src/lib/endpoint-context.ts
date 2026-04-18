@@ -925,21 +925,24 @@ export class EndpointContext {
     //#endregion
   }
 
-  get kvDbJsonLocation(): string {
-    //#region @backendFunc
-
+  get kvDbJsonLocationBaseFolderLocation(): string {
     if (this.frontendHostUri.origin.includes('://localhost:')) {
-      return crossPlatformPath([
-        process.cwd(),
-        `${Models.DatabasesFolder}/kv/kv-${this.contextName}.json`,
-      ]);
+      return crossPlatformPath([process.cwd(), `${Models.DatabasesFolder}/kv`]);
     }
 
     return crossPlatformPath([
       UtilsOs.getRealHomeDir(),
       `.taon/databases-kv-for-apps/${
         this.appId || _.snakeCase(process.cwd()).replace(/\_/, '.')
-      }/${this.contextName}.json`,
+      }`,
+    ]);
+  }
+
+  kvDbJsonLocationForClass(className: string): string {
+    //#region @backendFunc
+    return crossPlatformPath([
+      this.kvDbJsonLocationBaseFolderLocation,
+      `kv-${this.contextName}__${className}.json`,
     ]);
     //#endregion
   }
@@ -1801,9 +1804,8 @@ export class EndpointContext {
       return;
     }
 
-    if (!Helpers.exists(path.dirname(this.kvDbJsonLocation))) {
-      Helpers.mkdirp(path.dirname(this.kvDbJsonLocation));
-      Helpers.writeJson(this.kvDbJsonLocation, {});
+    if (!Helpers.exists(this.kvDbJsonLocationBaseFolderLocation)) {
+      Helpers.mkdirp(this.kvDbJsonLocationBaseFolderLocation);
     }
 
     const entities = this.getClassFunByArr(Models.ClassType.ENTITY).map(
@@ -1832,7 +1834,12 @@ export class EndpointContext {
     this.logFramework && console.log(`DROP SCHEMA: ${dropSchema}`);
 
     if (dropSchema) {
-      Helpers.writeJson(this.kvDbJsonLocation, {});
+      const repos = this.getClassFunByArr(Models.ClassType.REPOSITORY);
+      for (const repo of repos) {
+        const repoClassName = ClassHelpers.getName(repo);
+        // console.log({ repoClassName });
+        Helpers.writeJson(this.kvDbJsonLocationForClass(repoClassName), {});
+      }
     }
 
     const dataSourceDbConfig = _.isObject(this.databaseConfig)

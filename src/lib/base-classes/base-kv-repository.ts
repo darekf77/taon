@@ -9,6 +9,7 @@ import { TaonRepository } from '../decorators/classes/repository-decorator';
 import { TaonBaseController } from './base-controller';
 import { TaonBaseCustomRepository } from './base-custom-repository';
 import { TaonBaseRepository } from './base-repository';
+import { ClassHelpers } from '../helpers/class-helpers';
 //#endregion
 
 type KvLowDbShape<KV extends Record<string, any>> = KV & {
@@ -32,7 +33,9 @@ export abstract class TaonBaseKvRepository<
 
   public async getConnection(): Promise<Low<KvLowDbShape<KV>>> {
     //#region @backendFunc
-    const dbLocation = this.ctx.kvDbJsonLocation;
+    const dbLocation = this.ctx.kvDbJsonLocationForClass(
+      ClassHelpers.getName(this),
+    );
     if (!Helpers.exists(path.dirname(dbLocation))) {
       Helpers.mkdirp(path.dirname(dbLocation));
     }
