@@ -5,12 +5,15 @@ export const cloneObj = <CloneT>(
   override: Partial<CloneT>,
   classFn: Function,
 ): CloneT => {
-  const result = _.merge(new (classFn as any)(), _.cloneDeep(this));
+  const result = new (classFn as any)();
   walk.Object(
     override || {},
     (value, lodashPath) => {
       const valueIsEmptyArray = Array.isArray(value) && value.length === 0;
-      if (!valueIsEmptyArray && (_.isNil(value) || _.isFunction(value) || _.isObject(value))) {
+      if (
+        !valueIsEmptyArray &&
+        (_.isNil(value) || _.isFunction(value) || _.isObject(value))
+      ) {
         // skipping
       } else {
         _.set(result, lodashPath, value);
