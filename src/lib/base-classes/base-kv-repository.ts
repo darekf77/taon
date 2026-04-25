@@ -11,6 +11,7 @@ import { TaonBaseController } from './base-controller';
 import { TaonBaseCustomRepository } from './base-custom-repository';
 import { TaonBaseRepository } from './base-repository';
 import { ClassHelpers } from '../helpers/class-helpers';
+import { walk } from 'lodash-walk-object/src';
 //#endregion
 
 type KvLowDbShape<KV extends Record<string, any>> = KV & {
@@ -144,6 +145,37 @@ export abstract class TaonBaseKvRepository<
   }
 
   //#endregion
+
+  /**
+   * similar to set BUT it will override
+   * only new properies
+   */
+  async merge<K extends keyof KV>(key: K, currentValue: KV[K]): Promise<void> {
+    //#region @backendFunc
+    const existedData = await this.get(key);
+
+    if (_.isObject(existedData) && _.isObject(currentValue)) {
+      walk.Object(
+        currentValue || {},
+        (value, lodashPath) => {
+          const valueIsEmptyArray = Array.isArray(value) && value.length === 0;
+          if (
+            !valueIsEmptyArray &&
+            (_.isNil(value) || _.isFunction(value) || _.isObject(value))
+          ) {
+            // skipping
+          } else {
+            _.set(existedData, lodashPath, value);
+          }
+        },
+        {
+          walkGetters: false,
+        },
+      );
+    }
+    await this.set(key, existedData);
+    //#endregion
+  }
 
   async set<K extends keyof KV>(key: K, value: KV[K]): Promise<void> {
     //#region @backendFunc
