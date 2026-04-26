@@ -91,6 +91,9 @@ expressSession = requireDefault('express-session');
 //#endregion
 
 export class EndpointContext {
+
+  static instanceID = 0;
+
   //#region fields
 
   //#region fields / use mariadb mysql in docker
@@ -1341,9 +1344,9 @@ export class EndpointContext {
     const locaInstanceConstructorArgs =
       options.locaInstanceConstructorArgs || [];
 
-    if (this.isCLassType(Models.ClassType.REPOSITORY, ctor)) {
-      options.localInstance = true;
-    }
+    // if (this.isCLassType(Models.ClassType.REPOSITORY, ctor)) {
+    //   options.localInstance = true;
+    // }
 
     if (options?.localInstance) {
       const ctxClassFn = this.getClassFunByClassName(className);
@@ -1517,6 +1520,7 @@ export class EndpointContext {
       // update config
       this.config[Models.ClassTypeKey[classType]][className] = classFn;
       this.objWithClassesInstancesArr[classType].push(instance);
+      instance[Symbols.taonInstanceId] = EndpointContext.instanceID++;
       this.allClassesInstances[className] = instance;
     }
   }

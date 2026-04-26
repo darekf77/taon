@@ -86,6 +86,8 @@ class Realtime {
 export namespace Symbols {
   export const ctxInClassOrClassObj = Symbol();
 
+  export const taonInstanceId: string = `$$taoninstanceid$$`;
+
   export const fullClassNameStaticProperty: string = `$$fullclassName$$`;
 
   export const orignalClassClonesObj: string = `$$originalClassClonesObj$$`;
