@@ -1,6 +1,8 @@
 //#region imports
-import { Helpers, _ } from 'tnp-core/src';
+import { _ } from 'tnp-core/src';
 
+import { TaonBaseRepositoryClassName } from '../constants';
+import { TaonContext } from '../create-context';
 import { EndpointContext } from '../endpoint-context';
 import { ClassHelpers } from '../helpers/class-helpers';
 import { Symbols } from '../symbols';
@@ -15,6 +17,7 @@ export class TaonBaseInjector {
    * for proxy purposes
    */
   getOriginalPrototype: () => any;
+
   /**
    * for proxy purposes
    */
@@ -30,11 +33,20 @@ export class TaonBaseInjector {
   //#endregion
 
   //#region context
+  //#region @browser
+  protected readonly currentContext: TaonContext;
+  //#endregion
+
   /**
    * @deprecated use ctx instead
    * Current endpoint context
    */
   get __endpoint_context__(): EndpointContext {
+    //#region @browser
+    if (this.currentContext?.__refSync) {
+      return this.currentContext?.__refSync;
+    }
+    //#endregion
     return this[Symbols.ctxInClassOrClassObj] as EndpointContext;
   }
 
@@ -46,52 +58,34 @@ export class TaonBaseInjector {
   }
   //#endregion
 
-  //#region inject
-
   //#region inject / repo for entity
   /**
    * inject crud repo for entity
    */
-  injectRepo<T>(
+  protected injectRepo<T>(
     entityForCrud: new (...args: any[]) => T,
   ): TaonBaseRepository<T> {
-    const repoProxy = this.__inject(void 0, {
-      localInstance: true,
-      resolveClassFromContext: 'TaonBaseRepository',
-      locaInstanceConstructorArgs: [() => entityForCrud],
+    const repoProxy = this.__createProxy(entityForCrud, {
+      resolveClassFromContext: TaonBaseRepositoryClassName,
     });
     return repoProxy as any;
   }
   //#endregion
 
   //#region inject / custom repository
-  injectCustomRepository<T extends TaonBaseCustomRepository>(
+  protected injectCustomRepository<T extends TaonBaseCustomRepository>(
     cutomRepositoryClass: new (...args: any[]) => T,
   ): T {
-    const repoProxy = this.__inject<T>(cutomRepositoryClass, {
-      localInstance: true,
-      locaInstanceConstructorArgs: [
-        () => {
-          const classToProcess =
-            this.ctx.allClassesInstances[
-              ClassHelpers.getName(cutomRepositoryClass)
-            ];
-
-          return classToProcess.entityClassResolveFn();
-        },
-      ],
-    });
+    const repoProxy = this.__createProxy<T>(cutomRepositoryClass, {});
     return repoProxy;
   }
   //#endregion
 
-  //#region inject / custom repository
-  injectKvRepository<T extends TaonBaseCustomRepository>(
+  //#region inject / kv repository
+  protected injectKvRepository<T extends TaonBaseCustomRepository>(
     cutomRepositoryClass: new (...args: any[]) => T,
   ): T {
-    const repoProxy = this.__inject<T>(cutomRepositoryClass, {
-      localInstance: false,
-    });
+    const repoProxy = this.__createProxy<T>(cutomRepositoryClass, {});
     return repoProxy;
   }
   //#endregion
@@ -100,7 +94,7 @@ export class TaonBaseInjector {
   /**
    * aliast to this.injectRepository()
    */
-  injectCustomRepo<T extends TaonBaseCustomRepository>(
+  protected injectCustomRepo<T extends TaonBaseCustomRepository>(
     cutomRepositoryClass: new (...args: any[]) => T,
   ): T {
     const repoProxy = this.injectCustomRepository<T>(cutomRepositoryClass);
@@ -115,20 +109,20 @@ export class TaonBaseInjector {
    * exampleController = this.injectController(ExampleController);
    * ...
    */
-  injectController<T>(ctor: new (...args: any[]) => T): T {
-    return this.__inject<T>(ctor, { localInstance: false });
+  protected injectController<T>(ctor: new (...args: any[]) => T): T {
+    return this.__createProxy<T>(ctor, {});
   }
   //#endregion
 
-  //#region inject / ctrl
+  //#region inject / subscriber
   /**
    * example usage:
    * ...
    * exampleSubscriber = this.injectSubscriber(ExampleSubscriber)
    * ...
    */
-  injectSubscriber<T>(ctor: new (...args: any[]) => T): T {
-    return this.__inject<T>(ctor, { localInstance: false });
+  protected injectSubscriber<T>(ctor: new (...args: any[]) => T): T {
+    return this.__createProxy<T>(ctor, {});
   }
   //#endregion
 
@@ -136,26 +130,78 @@ export class TaonBaseInjector {
   /**
    * aliast to .injectController()
    */
-  injectCtrl<T>(ctor: new (...args: any[]) => T): T {
+  protected injectCtrl<T>(ctor: new (...args: any[]) => T): T {
     return this.injectController<T>(ctor);
   }
   //#endregion
 
-  //#region inject / global provider
+  //#region inject / middleware
   /**
    * inject middleware for context
    */
-  injectMiddleware<T>(ctor: new (...args: any[]) => T): T {
-    return this.__inject<T>(ctor, { localInstance: false });
+  protected injectMiddleware<T>(ctor: new (...args: any[]) => T): T {
+    return this.__createProxy<T>(ctor, {});
   }
   //#endregion
 
-  //#region inject / context provider
+  //#region inject / provider
   /**
    * inject provider for context
    */
-  injectProvider<T>(ctor: new (...args: any[]) => T): T {
-    return this.__inject<T>(ctor, { localInstance: false });
+  protected injectProvider<T>(ctor: new (...args: any[]) => T): T {
+    return this.__createProxy<T>(ctor, {});
+  }
+  //#endregion
+
+  //#region get context for ctor
+  private __getContextFor(ctor: any): EndpointContext {
+    const contextFromClass: EndpointContext =
+      ctor && ctor[Symbols.ctxInClassOrClassObj];
+
+    const resultContext: EndpointContext = contextFromClass
+      ? contextFromClass
+      : this.__endpoint_context__;
+
+    if (!resultContext) {
+      throw new Error(
+        `
+      Context not available. Make sure to .initialize()
+      the context before injecting Taon building blocks
+      (controllers, providers, repositories etc.)
+
+      `,
+      );
+    }
+    return resultContext;
+  }
+  //#endregion
+
+  //#region not instance error
+  private __noInstanceError({
+    instance,
+    ctor,
+    propName,
+  }: {
+    instance: any;
+    ctor: any;
+    propName: string | symbol;
+  }): void {
+    if (!instance) {
+      throw new Error(
+        `Not able to inject "${
+          ClassHelpers.getName(ctor) || ctor.name
+        }" inside ` +
+          `property "${propName?.toString()}" on  class "${ClassHelpers.getName(
+            this,
+          )}".
+
+        Please add "${
+          ClassHelpers.getName(ctor) || ctor.name
+        }" to (entites or contorllers or providers or repositories or middlewares)
+
+        `,
+      );
+    }
   }
   //#endregion
 
@@ -164,128 +210,46 @@ export class TaonBaseInjector {
    * Inject: Controllers, Providers, Repositories, Services, etc.
    * TODO  addd nest js injecting
    */
-  private __inject<T>(
+  protected __createProxy<T>(
     ctor: new (...args: any[]) => T,
     options?: {
       /**
-       * (sql db repositories are ONLY/ALWAYS local instances)
-       * If true, then local instance will be created
-       * controllers, providers can be local or global
-       */
-      localInstance: boolean;
-      /**
        * Name of class that should be resolved from context
-       * (in case ctor === undefined)
+       * instead ctor
        */
       resolveClassFromContext?: string;
-      /**
-       * Args passed to constructor of TaonBaseRepository
-       * (for now just first arg is relevant)
-       */
-      locaInstanceConstructorArgs?: ConstructorParameters<typeof ctor>;
     },
   ): T {
-    if (!options) {
-      options = {} as any;
-    }
+    options = options || ({} as any);
 
-    const contextClassInstance = this;
     return new Proxy(
       {},
       {
         get: (__, propName) => {
-          const contextFromClass: EndpointContext =
-            ctor && ctor[Symbols.ctxInClassOrClassObj];
+          const ctx = this.__getContextFor(ctor);
+          const instance: T = ctx.getInstanceBy(ctor, {
+            resolveClassFromContext: options.resolveClassFromContext,
+          });
+          this.__noInstanceError({ instance, ctor, propName });
 
-          const resultContext: EndpointContext = contextFromClass
-            ? contextFromClass
-            : this.__endpoint_context__;
+          const result =
+            typeof instance[propName] === 'function'
+              ? instance[propName].bind(instance)
+              : instance[propName];
 
-          if (options.resolveClassFromContext) {
-            const resolvedClass = resultContext.getClassFunByClassName(
-              options.resolveClassFromContext,
-            );
-            ctor = resolvedClass as any;
-          }
-
-          if (resultContext) {
-            var instance: T = resultContext.inject(ctor, {
-              ...options,
-              contextClassInstance,
-              parentInstanceThatWillGetInjectedStuff: this,
-            });
-            if (!instance) {
-              throw new Error(
-                `Not able to inject "${
-                  ClassHelpers.getName(ctor) || ctor.name
-                }" inside ` +
-                  `property "${propName?.toString()}" on  class "${ClassHelpers.getName(
-                    this,
-                  )}".
-
-              Please add "${
-                ClassHelpers.getName(ctor) || ctor.name
-              }" to (entites or contorllers or providers or repositories or middlewares)
-
-              `,
-              );
-            }
-
-            const result =
-              typeof instance[propName] === 'function'
-                ? instance[propName].bind(instance)
-                : instance[propName];
-
-            // console.log(`Accessing injected "${propName?.toString()}" from "${ClassHelpers.getName(ctor) || ctor.name}"`,result)
-            return result;
-          }
-          //#region @browser
-          // return inject(ctor)[propName];
-          //#endregion
+          return result;
         },
         set: (__, propName, value) => {
-          const contextFromClass = ctor && ctor[Symbols.ctxInClassOrClassObj];
-          const resultContext: EndpointContext = contextFromClass
-            ? contextFromClass
-            : this.__endpoint_context__;
-
-          if (options.resolveClassFromContext) {
-            const resolvedClass = resultContext.getClassFunByClassName(
-              options.resolveClassFromContext,
-            );
-            ctor = resolvedClass as any;
-          }
-
-          if (resultContext) {
-            var instance: T = resultContext.inject(ctor, {
-              ...options,
-              contextClassInstance,
-              parentInstanceThatWillGetInjectedStuff: this,
-            });
-            if (!instance) {
-              const classNameNotResolved =
-                ClassHelpers.getName(ctor) || ctor.name;
-              throw new Error(
-                `Not able to inject "${classNameNotResolved}" inside ` +
-                  `property "${propName?.toString()}" on  class "${ClassHelpers.getName(
-                    this,
-                  )}".
-
-              Please add "${
-                ClassHelpers.getName(ctor) || ctor.name
-              }" to (entites or contorllers or providers or repositories or middlewares)
-
-              `,
-              );
-            }
-            instance[propName] = value;
-          }
+          const ctx = this.__getContextFor(ctor);
+          const instance: T = ctx.getInstanceBy(ctor, {
+            resolveClassFromContext: options.resolveClassFromContext,
+          });
+          this.__noInstanceError({ instance, ctor, propName });
+          instance[propName] = value;
           return true;
         },
       },
     ) as T;
   }
-  //#endregion
-
   //#endregion
 }

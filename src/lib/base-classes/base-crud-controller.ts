@@ -266,7 +266,7 @@ export abstract class TaonBaseCrudController<
   clearTable(): Models.Http.Response<void> {
     //#region @websqlFunc
     return async () => {
-      await this.db.clear()
+      await this.db.clear();
     };
     //#endregion
   }

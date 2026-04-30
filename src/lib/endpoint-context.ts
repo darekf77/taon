@@ -54,11 +54,13 @@ import type { TaonBaseController } from './base-classes/base-controller';
 import { TaonBaseInjector } from './base-classes/base-injector';
 import type { TaonBaseMiddleware } from './base-classes/base-middleware';
 import type { TaonBaseMigration } from './base-classes/base-migration';
+import type { TaonBaseRepository } from './base-classes/base-repository';
 import { TaonBaseSubscriberForEntity } from './base-classes/base-subscriber-for-entity';
 import type { ControllerConfig } from './config/controller-config';
 import { MethodConfig } from './config/method-config';
 import { ParamConfig } from './config/param-config';
 import { apiPrefix } from './constants';
+import { TaonBaseRepositoryClassName } from './constants';
 import { ContextDbMigrations } from './context-db-migrations';
 import { createContext } from './create-context';
 import { TaonEntityOptions } from './decorators/classes/entity-decorator';
@@ -91,6 +93,8 @@ expressSession = requireDefault('express-session');
 //#endregion
 
 export class EndpointContext {
+  static instanceID = 0;
+
   //#region fields
 
   //#region fields / use mariadb mysql in docker
@@ -213,6 +217,7 @@ export class EndpointContext {
 
   //#region fields / database config
   databaseConfig?: Models.DatabaseConfigTypeOrm;
+
   kvDatabaseConfig?: Models.KVDatabaseConfig;
   //#endregion
 
@@ -1327,50 +1332,69 @@ export class EndpointContext {
   //#endregion
 
   //#region methods & getters / inject
-  inject<T>(
+  getInstanceBy<T>(
     ctor: new (...args: any[]) => T,
-    options: {
-      localInstance?: boolean;
-      contextClassInstance?: TaonBaseInjector;
-      locaInstanceConstructorArgs?: ConstructorParameters<typeof ctor>;
-      parentInstanceThatWillGetInjectedStuff: object;
+    options?: {
+      resolveClassFromContext?: string;
     },
   ): T {
-    const className = ClassHelpers.getName(ctor);
+    options = options || ({} as any);
 
-    const locaInstanceConstructorArgs =
-      options.locaInstanceConstructorArgs || [];
+    // const rawConfigs = ClassHelpers.getControllerConfigs(ctor);
 
-    if (this.isCLassType(Models.ClassType.REPOSITORY, ctor)) {
-      options.localInstance = true;
+    let entityResolveFn = void 0;
+
+    if (options.resolveClassFromContext === TaonBaseRepositoryClassName) {
+      const entity = ctor;
+      entityResolveFn = () => entity;
+      ctor = this.getClassFunByClassName(TaonBaseRepositoryClassName) as any;
     }
 
-    if (options?.localInstance) {
-      const ctxClassFn = this.getClassFunByClassName(className);
+    // TODO make it faster
+    const isTypeormCustomRepository = ClassHelpers.hasParentClassWithName(
+      ctor,
+      TaonBaseRepositoryClassName,
+    );
+
+    const className = ClassHelpers.getName(ctor);
+
+    // console.log(`${className}  isRepo ${isTypeormCustomRepository}`);
+
+    ctor = this.getClassFunByClassName(className) as any;
+
+    if (!ctor) {
+      throw new Error(`Not able to inject "${className}" inside context "${this.contextName}"
+
+      Make sure they share the same context or import context where "${className}" is defined.
+
+      `);
+    }
+
+    if (isTypeormCustomRepository) {
       let entityName: string = '';
 
+      entityResolveFn = entityResolveFn
+        ? entityResolveFn
+        : () => {
+            const classToProcess =
+              this.allClassesInstances[ClassHelpers.getName(ctor)];
+
+            return classToProcess.entityClassResolveFn();
+          };
+
       // entity thing is only for repositories local repositories
-      // if (className === 'TaonBaseRepository') {
-      const entityFn = _.first(locaInstanceConstructorArgs);
-      const entity = entityFn && entityFn();
+
+      const entity = entityResolveFn && entityResolveFn();
       entityName = (entity && ClassHelpers.getName(entity)) || '';
       // console.log(`entityName `, entityName);
       // }
 
-      //#region @backend
-      if (!options.contextClassInstance) {
-        // QUICK_FIX FOR GETTING REPOS OUTSIDE CONTEXT
-        options.contextClassInstance = new TaonBaseInjector();
-      }
-      //#endregion
-
-      if (!options.contextClassInstance[this.localInstaceObjSymbol]) {
-        options.contextClassInstance[this.localInstaceObjSymbol] = {};
+      if (!this[this.localInstaceObjSymbol]) {
+        this[this.localInstaceObjSymbol] = {};
       }
       const instanceKey = className + (entityName ? `.${entityName}` : '');
 
-      const existed =
-        options.contextClassInstance[this.localInstaceObjSymbol][instanceKey];
+      const existed = this[this.localInstaceObjSymbol][instanceKey];
 
       if (existed) {
         // console.log(
@@ -1383,19 +1407,11 @@ export class EndpointContext {
       //   `NEW ${ClassHelpers.getName(options.parentInstanceThatWillGetInjectedStuff)} Inject ${className} instanceKey "${instanceKey}"`,
       // );
 
-      if (!ctxClassFn) {
-        throw new Error(`Not able to inject "${className}" inside context "${this.contextName}"
-
-        Make sure they share the same context or import context where "${className}" is defined.
-
-        `);
-      }
-
-      const injectedInstance = new (ctxClassFn as any)(
-        ...locaInstanceConstructorArgs,
+      // @ts-expect-error
+      const injectedInstance = new (ctor as any as typeof TaonBaseRepository)(
+        entityResolveFn,
       );
-      options.contextClassInstance[this.localInstaceObjSymbol][instanceKey] =
-        injectedInstance;
+      this[this.localInstaceObjSymbol][instanceKey] = injectedInstance;
       // console.log(`injectedInstance `, existed)
       return injectedInstance;
     }
@@ -1407,30 +1423,6 @@ export class EndpointContext {
     return contextScopeInstance;
   }
 
-  /**
-   * alias for inject
-   */
-  getInstanceBy<T>(ctor: new (...args: any[]) => T): T {
-    // if (!!this.__contextForControllerInstanceAccess) {
-    //   const className = ClassHelpers.getName(ctor);
-    //   const allControllers = this.getClassFunByArr(Models.ClassType.CONTROLLER);
-
-    //   // TODO QUICK_FIX cache controllers
-    //   for (const ctrl of allControllers) {
-    //     if (ClassHelpers.getName(ctrl) === className) {
-    //       // console.log('injecting from contextForControllerInstanceAcesss', className);
-    //       return this.__contextForControllerInstanceAccess.inject(ctor, {
-    //         localInstance: false,
-    //       });
-    //     }
-    //   }
-    // }
-
-    return this.inject(ctor, {
-      localInstance: false,
-      parentInstanceThatWillGetInjectedStuff: this,
-    });
-  }
   //#endregion
 
   //#region methods & getters / check if context initialized
@@ -1517,6 +1509,7 @@ export class EndpointContext {
       // update config
       this.config[Models.ClassTypeKey[classType]][className] = classFn;
       this.objWithClassesInstancesArr[classType].push(instance);
+      instance[Symbols.taonInstanceId] = EndpointContext.instanceID++;
       this.allClassesInstances[className] = instance;
     }
   }

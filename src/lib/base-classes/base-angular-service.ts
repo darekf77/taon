@@ -8,7 +8,9 @@ import {
   TAON_CONTEXT,
 } from '../constants';
 import { TaonContext } from '../create-context';
-import { inject as taonInject } from '../inject';
+import type { EndpointContext } from '../endpoint-context';
+
+import { TaonBaseInjector } from './base-injector';
 
 /**
  * TODO prevent calling methods when not initialized
@@ -17,7 +19,7 @@ import { inject as taonInject } from '../inject';
 //#region @browser
 @Injectable()
 //#endregion
-export abstract class TaonBaseAngularService {
+export abstract class TaonBaseAngularService extends TaonBaseInjector {
   //#region @browser
   protected readonly platformId = inject(PLATFORM_ID);
 
@@ -37,6 +39,7 @@ export abstract class TaonBaseAngularService {
 
   //#endregion
   constructor() {
+    super();
     //#region @browser
     this.CURRENT_HOST_BACKEND_PORT = inject(CURRENT_HOST_BACKEND_PORT, {
       optional: true,
@@ -47,6 +50,7 @@ export abstract class TaonBaseAngularService {
     // #endregion
   }
 
+  //#region is ssr platform
   /**
    * Returns true if the application is running in SSR (server-side rendering) mode only.
    */
@@ -56,7 +60,9 @@ export abstract class TaonBaseAngularService {
     //#endregion
     return false;
   }
+  //#endregion
 
+  //#region is browser platform
   /**
    * Returns true if the application is running in browser-only mode.
    */
@@ -66,7 +72,9 @@ export abstract class TaonBaseAngularService {
     //#endregion
     return false;
   }
+  //#endregion
 
+  //#region host
   /**
    * @deprecated
    * Returns the host URL for the backend service
@@ -81,31 +89,5 @@ export abstract class TaonBaseAngularService {
     //#endregion
     return void 0;
   }
-
-  injectController<T>(
-    ctor: new (...args: any[]) => T,
-    /**
-     * optional override context
-     */
-    overrideCurrentContext?: TaonContext,
-  ): T {
-    return taonInject(() => {
-      let currentContext: TaonContext;
-      //#region @browser
-      currentContext = overrideCurrentContext
-        ? overrideCurrentContext
-        : this.currentContext;
-      //#endregion
-      if (!currentContext || !currentContext.__refSync.inited) {
-        throw new Error(
-          `
-          Context not available. Make sure to .initialize()
-          the context before injecting controllers.
-
-          `,
-        );
-      }
-      return currentContext ? currentContext.getClass(ctor) : void 0;
-    }) as T;
-  }
+  //#endregion
 }

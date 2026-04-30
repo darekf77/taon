@@ -53,11 +53,11 @@ CURRENT_HOST_BACKEND_PORT = new InjectionToken<number>(
 
 let CURRENT_HOST_URL: InjectionToken<string>;
 //#region @browser
-CURRENT_HOST_URL = new InjectionToken<string>(
-  'CURRENT_HOST_URL',
-);
+CURRENT_HOST_URL = new InjectionToken<string>('CURRENT_HOST_URL');
 //#endregion
 
 export { TAON_CONTEXT, CURRENT_HOST_BACKEND_PORT, CURRENT_HOST_URL };
+
+export const TaonBaseRepositoryClassName = 'TaonBaseRepository';
 
 export const apiPrefix = 'api';

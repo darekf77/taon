@@ -15,7 +15,6 @@ import * as subscriberDecorator from './decorators/classes/subscriber-decorator'
 import * as http from './decorators/http/http-decorators';
 import * as endpointContext from './endpoint-context';
 import * as getResponse from './get-response-value';
-import * as injectFn from './inject';
 import * as models from './models';
 import * as orm from './orm';
 // import * as allSymbols from './symbols';
@@ -29,7 +28,6 @@ export * from './endpoint-context';
 export * from './entity-process';
 export * from './get-response-value';
 // export * from './index';
-export * from './inject';
 export * from './models';
 export * from './symbols';
 export * from './validators';
@@ -161,7 +159,6 @@ export namespace Taon {
   export const createContext = createContextFn.createContext;
   export const createContextTemplate = createContextFn.createContextTemplate;
 
-  export const inject = injectFn.inject;
 
   /**
    * @deprecated

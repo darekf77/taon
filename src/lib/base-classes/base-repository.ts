@@ -24,6 +24,7 @@ import type {
 import { Helpers } from 'tnp-core/src';
 import { _ } from 'tnp-core/src';
 
+import { TaonBaseRepositoryClassName } from '../constants';
 import { TaonRepository } from '../decorators/classes/repository-decorator';
 import { ClassHelpers } from '../helpers/class-helpers';
 
@@ -33,7 +34,7 @@ import { TaonBaseCustomRepository } from './base-custom-repository';
 
 const INDEX_KEYS_NO_FOR_UPDATE = ['id'];
 
-@TaonRepository({ className: 'TaonBaseRepository' })
+@TaonRepository({ className: TaonBaseRepositoryClassName })
 export abstract class TaonBaseRepository<
   Entity extends { id?: any },
 > extends TaonBaseCustomRepository {
