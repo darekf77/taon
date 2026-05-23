@@ -1,5 +1,4 @@
 //#region imports
-import { MemorySync } from 'tnp-core/src'; // @backend
 import { Helpers, _, path } from 'tnp-core/src';
 import { Low } from 'tnp-core/src'; // @backend
 import { JSONFilePreset } from 'tnp-core/src'; // @backend
@@ -65,14 +64,11 @@ export abstract class TaonBaseKvRepository<
         this.ctx.logDb && console.log(`USING KV DB FROM ${dbLocation}`);
       }
 
-      const startegy: typeof JSONFilePreset = this.useInMemoryDB()
-        ? (MemorySync as any)
-        : JSONFilePreset;
-
       try {
-        this.lowDB = await startegy<KvLowDbShape<KV>>(
+        this.lowDB = await JSONFilePreset<KvLowDbShape<KV>>(
           dbLocation,
           this.defaultDb,
+          this.useInMemoryDB(),
         );
       } catch (error) {
         console.error(error);
@@ -85,9 +81,10 @@ export abstract class TaonBaseKvRepository<
           Helpers.writeJson(dbLocation, this.defaultDb);
         }
 
-        this.lowDB = await startegy<KvLowDbShape<KV>>(
+        this.lowDB = await JSONFilePreset<KvLowDbShape<KV>>(
           dbLocation,
           this.defaultDb,
+           this.useInMemoryDB(),
         );
       }
 
