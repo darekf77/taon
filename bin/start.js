@@ -3,6 +3,8 @@ global.i0 = {
   defineInjectable: function () { }
 }
 const process= require('process');
+global.currentTaonScriptStartDateTime =  process.hrtime.bigint();
+
 process.removeAllListeners('warning');
 var argv = process.argv;
 
