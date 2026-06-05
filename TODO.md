@@ -2,11 +2,12 @@
   - 🔲 **[cloud-service]** 2FA authentication
   - 🔲 build organization projects as micro-frontends
   - 🔲 organization multi window electron app
+  - 🔲 angular 22
 
 ## Taon v21.X.X
 
-- 🔲 angular v21 support
-- 🔲 angular SSR mode for dockerized production
+- ✅ angular v21 support
+- ✅ angular SSR mode for dockerized production
 - 🔲 angular standalone project structure
 - 🔲 **[cloud-service]** basic command line authentication
 - 🔲 **[cloud-service]** backend readonly mode for deployment
