@@ -1532,9 +1532,11 @@ export class EndpointContext {
         this.repos.set(ClassHelpers.getName(classFun), repo);
       }
     } else {
-      Helpers.warn(
-        `Skipping db init for ${this.contextName}.Use database:true to enable db.`,
-      );
+      if (!this.config.kv_database) {
+        Helpers.warn(
+          `Skipping db init for ${this.contextName}.Use database:true to enable db.`,
+        );
+      }
     }
 
     //#endregion
