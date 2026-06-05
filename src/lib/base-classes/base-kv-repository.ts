@@ -84,7 +84,7 @@ export abstract class TaonBaseKvRepository<
         this.lowDB = await JSONFilePreset<KvLowDbShape<KV>>(
           dbLocation,
           this.defaultDb,
-           this.useInMemoryDB(),
+          this.useInMemoryDB(),
         );
       }
 
@@ -151,14 +151,19 @@ export abstract class TaonBaseKvRepository<
     //#region @backendFunc
     const existedData = await this.get(key);
 
+    // console.log(`set  ${key as any} `, {
+    //   existedData: existedData,
+    //   currentValue: currentValue,
+    // });
+
     if (_.isObject(existedData) && _.isObject(currentValue)) {
       walk.Object(
         currentValue || {},
         (value, lodashPath) => {
-          const valueIsEmptyArray = Array.isArray(value) && value.length === 0;
           if (
-            !valueIsEmptyArray &&
-            (_.isNil(value) || _.isFunction(value) || _.isObject(value))
+            _.isNil(value) ||
+            _.isFunction(value) ||
+            (_.isObject(value) && !Array.isArray(value)) // I can set array
           ) {
             // skipping
           } else {
@@ -170,6 +175,11 @@ export abstract class TaonBaseKvRepository<
         },
       );
     }
+
+    // console.log(`result  ${key as any} `, {
+    //   existedData: existedData,
+    // });
+
     await this.set(key, existedData);
     //#endregion
   }
