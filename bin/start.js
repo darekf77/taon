@@ -1,3 +1,4 @@
+global.frameworkName = 'taon';
 Error.stackTraceLimit = 100;
 global.i0 = {
   defineInjectable: function () { }

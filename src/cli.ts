@@ -1,6 +1,3 @@
-//#region @backend
-global.frameworkName = 'taon';
-//#endregion
 // @taon-ignore
 let tnpStart = require('tnp/cli').startCli;
 //#region @notForNpm
