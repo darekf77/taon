@@ -196,6 +196,7 @@
     "@storybook/theming": ">=9.0.0-0 <10",
     "@sweetalert2/ngx-sweetalert2": "~14.1.1",
     "@tailwindcss/postcss": "~4.3.0",
+    "@taon-dev/api-workers": "~21.0.0",
     "@taon-dev/cloud": "~21.0.0",
     "@taon-dev/session": "~21.0.0",
     "@testdeck/jest": "~0.3.3",

@@ -80,7 +80,7 @@ export class TaonAdminService {
   public readonly isIframe: boolean =
     window.location !== window.parent.location;
 
-  private breakpointsService = inject(BreakpointsService);
+  public readonly breakpointsService = inject(BreakpointsService);
 
   constructor() {
     window['Taon'] = this;
