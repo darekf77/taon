@@ -111,6 +111,11 @@ export namespace Taon {
     });
   };
 
+  export const asset = (relativePathToAssetFromProjectRoot: string): string => {
+    // Taon file parser is replacing everything
+    return relativePathToAssetFromProjectRoot;
+  };
+
   export const error = (
     opt:
       | Pick<
@@ -158,7 +163,6 @@ export namespace Taon {
   //#endregion
   export const createContext = createContextFn.createContext;
   export const createContextTemplate = createContextFn.createContextTemplate;
-
 
   /**
    * @deprecated
