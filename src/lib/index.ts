@@ -1,3 +1,4 @@
+//#region import & exports
 import 'reflect-metadata'; // TODO this is needed for my decorators to work
 
 import { RestErrorResponseWrapper } from 'ng2-rest/src';
@@ -88,10 +89,12 @@ export type {
   TaonClientMiddlewareInterceptOptions,
   TaonServerMiddlewareInterceptOptions,
 } from 'ng2-rest/src';
+//#endregion
 
 // TODO export all things
 
 export namespace Taon {
+  //#region taon loader
   /**
    * Remove global taon loader from env.ts [loading.preAngularBootstrap]
    */
@@ -110,12 +113,50 @@ export namespace Taon {
       }, afterMS);
     });
   };
+  //#endregion
 
+  //#region taon asset
   export const asset = (relativePathToAssetFromProjectRoot: string): string => {
     // Taon file parser is replacing everything
     return relativePathToAssetFromProjectRoot;
   };
+  //#endregion
 
+  //#region taon asset from
+
+  /**
+   * taon parser is going to replace this function with array with assets.
+   * Example:
+   * Taon.assetsFrom('src/asset/images')
+   * =>
+   * [ 'assets/assets-for/my-pacakge/images/pic1.png' ,'assets/assets-for/my-pacakge/images/pic2.png']
+   */
+  export const assetsFrom = (
+    relativePathToAssetFromProjectRoot: string,
+  ): string[] => {
+    // Taon file parser is replacing everything
+    return [];
+  };
+  //#endregion
+
+  //#region taon asset list from
+
+  /**
+   * taon parser is going to replace this function with array with assets.
+   * Example:
+   * Taon.assetsListFrom('src/asset/images')
+   * =>
+   * [ 'pic1.png' ,'pic2.png']
+   */
+  export const assetsListFrom = (
+    relativePathToAssetFromProjectRoot: string,
+  ): string[] => {
+    // Taon file parser is replacing everything
+    return [];
+  };
+  //#endregion
+
+  //#region taon error
   export const error = (
     opt:
       | Pick<
@@ -133,6 +174,7 @@ export namespace Taon {
       return opt;
     };
   };
+  //#endregion
 
   export type ResponseHtml = models.Models.Http.Response<string>;
   export type Response<T = string> = models.Models.Http.Response<T>;
@@ -163,31 +205,6 @@ export namespace Taon {
   //#endregion
   export const createContext = createContextFn.createContext;
   export const createContextTemplate = createContextFn.createContextTemplate;
-
-  /**
-   * @deprecated
-   * use createContext instead
-   */
-  export const init = async (options: {
-    host: string;
-    entities: Function[];
-    controllers: Function[];
-  }) => {
-    const TaonBaseContext = (await import('./base-classes/base-context'))
-      .TaonBaseContext;
-    const context = createContext(() => ({
-      appId: 'default-app-not-used-anymore',
-      contextName: 'default',
-      host: options.host,
-      contexts: { TaonBaseContext },
-      database: true,
-      entities: Array.from(options.entities) as any,
-      controllers: Array.from(options.controllers) as any,
-    }));
-
-    await context.initialize();
-    return context;
-  };
 }
 
 //#region taon flattening map
