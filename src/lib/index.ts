@@ -16,6 +16,7 @@ import * as subscriberDecorator from './decorators/classes/subscriber-decorator'
 import * as http from './decorators/http/http-decorators';
 import * as endpointContext from './endpoint-context';
 import * as getResponse from './get-response-value';
+import { TaonTranslationsMapImport } from './i18n';
 import * as models from './models';
 import * as orm from './orm';
 // import * as allSymbols from './symbols';
@@ -84,6 +85,7 @@ export * from './realtime/realtime-strategy/realtime-strategy';
 export * from './ui/taon-admin-mode-configuration/taon-admin.service'; // @browser
 export * from './formly/formly-group-wrapper.component'; // @browser
 export * from './formly/formly-repeat.component'; // @browser
+export * from './i18n';
 
 export type {
   TaonClientMiddlewareInterceptOptions,
@@ -94,6 +96,18 @@ export type {
 // TODO export all things
 
 export namespace Taon {
+  //#region i18n
+  /**
+   * In runtime this becomes relative path to current file
+   */
+  export const __FILE_RELATIVE_PATH: string = '';
+  /**
+   * In runtime this becomes taon translation impors for specyfic file
+   */
+  export const LANG_IMPORT_MAP: TaonTranslationsMapImport = {};
+
+  //#endregion
+
   //#region taon loader
   /**
    * Remove global taon loader from env.ts [loading.preAngularBootstrap]
@@ -176,6 +190,7 @@ export namespace Taon {
   };
   //#endregion
 
+  //#region reponse
   export type ResponseHtml = models.Models.Http.Response<string>;
   export type Response<T = string> = models.Models.Http.Response<T>;
   // TODO new 5.8 typescript is not allowing this
@@ -185,6 +200,7 @@ export namespace Taon {
 
   export type StartParams = models.Models.StartParams;
   export const getResponseValue = getResponse.getResponseValue;
+  //#endregion
 
   //#region class decorators
   // TODO new 5.8 typescript is not allowing this
@@ -203,8 +219,11 @@ export namespace Taon {
   export const isWebSQL = UtilsOs.isWebSQL;
   export const isElectron = UtilsOs.isElectron;
   //#endregion
+
+  //#region create context
   export const createContext = createContextFn.createContext;
   export const createContextTemplate = createContextFn.createContextTemplate;
+  //#endregion
 }
 
 //#region taon flattening map
