@@ -26,7 +26,8 @@
     },
   ],
 
-   "isomorphicDependenciesForNpmLib": ["tnp"],
+  "generateTranslationsFor": ["en-US", "pl-PL"],
+  "isomorphicDependenciesForNpmLib": ["tnp"],
 
   // TODO change it to devDependencies
   "peerDependenciesNamesForNpmLib": [
@@ -59,9 +60,10 @@
   ],
 
   "removeAfterPullingFromGit": ["projects"],
-
   "resources": ["README.md", "bin", "icon-menu-taon.svg"],
   "shouldGenerateAutogenIndexFile": false,
+  "shouldGenerateTranslationFiles": true,
+
   "singleFileBundlingPackages": [
    // electron is replaced by default
    // {
@@ -149,5 +151,5 @@
     "scripts": {
       "mkdocs": "python3 -m mkdocs",
     },
-  },
+  }
 }
