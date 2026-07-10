@@ -2992,7 +2992,7 @@ export class EndpointContext {
             TaonHelpers.ipcKeyNameResponse(target, methodConfig, expressPath),
             (event, responseData) => {
               let res: any = responseData;
-              console.log({ responseData });
+              // console.log({ responseData });
               try {
                 const body = res;
                 const responseStrinOrBlob: any =
