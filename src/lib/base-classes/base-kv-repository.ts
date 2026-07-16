@@ -1,16 +1,13 @@
 //#region imports
+import { walk } from 'lodash-walk-object/src';
 import { Helpers, _, path } from 'tnp-core/src';
 import { Low } from 'tnp-core/src'; // @backend
 import { JSONFilePreset } from 'tnp-core/src'; // @backend
 
-import { TaonController } from '../decorators/classes/controller-decorator';
 import { TaonRepository } from '../decorators/classes/repository-decorator';
-
-import { TaonBaseController } from './base-controller';
-import { TaonBaseCustomRepository } from './base-custom-repository';
-import { TaonBaseRepository } from './base-repository';
 import { ClassHelpers } from '../helpers/class-helpers';
-import { walk } from 'lodash-walk-object/src';
+
+import { TaonBaseCustomRepository } from './base-custom-repository';
 //#endregion
 
 type KvLowDbShape<KV extends Record<string, any>> = KV & {
@@ -21,9 +18,6 @@ type KvLowDbShape<KV extends Record<string, any>> = KV & {
 
 export const KVexpirationsDbMetaKey = '__kvMeta.expirations';
 
-/**
- * Please override property entityClassFn with entity class.
- */
 @TaonRepository({ className: 'TaonBaseKvRepository' })
 export abstract class TaonBaseKvRepository<
   KV extends Record<string, any> = Record<string, any>,
@@ -149,38 +143,40 @@ export abstract class TaonBaseKvRepository<
    */
   async merge<K extends keyof KV>(key: K, currentValue: KV[K]): Promise<void> {
     //#region @backendFunc
-    const existedData = await this.get(key);
 
-    // console.log(`set  ${key as any} `, {
-    //   existedData: existedData,
-    //   currentValue: currentValue,
-    // });
+    const existingValue = await this.get(key);
 
-    if (_.isObject(existedData) && _.isObject(currentValue)) {
-      walk.Object(
-        currentValue || {},
-        (value, lodashPath) => {
-          if (
-            _.isNil(value) ||
-            _.isFunction(value) ||
-            (_.isObject(value) && !Array.isArray(value)) // I can set array
-          ) {
-            // skipping
-          } else {
-            _.set(existedData, lodashPath, value);
-          }
-        },
-        {
-          walkGetters: false,
-        },
-      );
+    const canMerge =
+      _.isObject(existingValue) &&
+      !Array.isArray(existingValue) &&
+      _.isObject(currentValue) &&
+      !Array.isArray(currentValue);
+
+    if (!canMerge) {
+      await this.set(key, currentValue);
+      return;
     }
 
-    // console.log(`result  ${key as any} `, {
-    //   existedData: existedData,
-    // });
+    walk.Object(
+      currentValue,
+      (value, lodashPath) => {
+        if (
+          _.isNil(value) ||
+          _.isFunction(value) ||
+          (_.isObject(value) && !Array.isArray(value))
+        ) {
+          return;
+        }
 
-    await this.set(key, existedData);
+        _.set(existingValue, lodashPath, value);
+      },
+      {
+        walkGetters: false,
+      },
+    );
+
+    await this.set(key, existingValue as KV[K]);
+
     //#endregion
   }
 
