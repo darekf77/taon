@@ -1,6 +1,6 @@
 {
   "name": "taon",
-  "version": "21.0.105",
+  "version": "21.0.106",
   "scripts": {
     "mkdocs": "python3 -m mkdocs",
     "taon init": "taon init",
@@ -41,6 +41,10 @@
         "group": null,
         "icon": "$(new-folder)",
         "title": "Create New Folder"
+      },
+      {
+        "command": "taon.openRecentWorkspace",
+        "title": "Taon: Open Recent Workspace"
       }
     ],
     "menus": {
