@@ -138,12 +138,13 @@ export class EntityProcess {
           }
         }
       },
-      { checkCircural: true, breadthWalk: true, include },
+      { checkCircural: true, breadthWalk: true, include, walkGetters: false },
     );
 
     const { circs } = walk.Object(this.data, void 0, {
       checkCircural: true,
       breadthWalk: true,
+      walkGetters: false,
       include,
     });
     this.circural = circs;
@@ -217,7 +218,7 @@ export class EntityProcess {
             }
           }
         },
-        { checkCircural: true, breadthWalk: true, include },
+        { checkCircural: true, breadthWalk: true, include, walkGetters: false },
       );
 
       if (!_.isArray(this.data)) {
