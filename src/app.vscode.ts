@@ -1,5 +1,5 @@
 //#region @notForNpm
-import { vscodeExtMethods, activateMenuTnp, deactivateMenuTnp, vscodePatchingCodium, handleTaonRedirect } from 'tnp/src';
+import { vscodeExtMethods, activateMenuTnp, deactivateMenuTnp, vscodePatchingCodium, handleTaonRedirect, activateRecentWorkspaces } from 'tnp/src';
 import { executeCommand } from 'tnp-helpers/src'; // @backend
 import type { ExtensionContext } from 'vscode';
 const FRAMEWORK_NAME = 'taon';
@@ -11,6 +11,7 @@ export async function activate(context: ExtensionContext) {
 
   vscodePatchingCodium(context, vscode, FRAMEWORK_NAME);
   handleTaonRedirect(context, vscode);
+  await activateRecentWorkspaces(context, vscode, FRAMEWORK_NAME);
 
   activateMenuTnp(context, vscode, FRAMEWORK_NAME);
 
