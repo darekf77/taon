@@ -39,7 +39,6 @@
     "xabikos.javascriptsnippets",
     "esdete.tailwind-rainbow",
     "bradlc.vscode-tailwindcss",
-    "imgildev.vscode-tailwindcss-snippets",
-    "mrorz.language-gettext"
+    "imgildev.vscode-tailwindcss-snippets"
   ]
 }
