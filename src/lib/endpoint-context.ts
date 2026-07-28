@@ -941,6 +941,7 @@ export class EndpointContext {
   }
   //#endregion
 
+  //#region methods & getters / sql lite db location
   get sqlLiteDbLocation(): string {
     //#region @backendFunc
 
@@ -959,7 +960,9 @@ export class EndpointContext {
     ]);
     //#endregion
   }
+  //#endregion
 
+  //#region methods & getters / electron db location
   get electronDbLocation(): string {
     //#region @backendFunc
     // if (this.frontendHostUri.origin.includes('://localhost:')) {
@@ -977,7 +980,9 @@ export class EndpointContext {
     ]);
     //#endregion
   }
+  //#endregion
 
+  //#region methods & getters / kv db json location base
   private get kvDbJsonLocationBase(): string {
     //#region @backendFunc
     let baseLocation: string;
@@ -999,7 +1004,9 @@ export class EndpointContext {
     return baseLocation;
     //#endregion
   }
+  //#endregion
 
+  //#region methods & getters / kv db json location based folder location
   get kvDbJsonLocationBaseFolderLocation(): string {
     //#region @backendFunc
     if (_.isFunction(this.kvDatabaseConfig?.dbLocationFn)) {
@@ -1019,7 +1026,9 @@ export class EndpointContext {
     return this.kvDbJsonLocationBase;
     //#endregion
   }
+  //#endregion
 
+  //#region methods & getters /get kv db json location for class
   kvDbJsonLocationForClass(className: string): string {
     //#region @backendFunc
 
@@ -1040,6 +1049,7 @@ export class EndpointContext {
     ]);
     //#endregion
   }
+  //#endregion
 
   //#region methods & getters / start server
   async startServer(): Promise<void> {
