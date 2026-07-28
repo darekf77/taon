@@ -1,6 +1,6 @@
 {
   "name": "taon",
-  "version": "21.0.134",
+  "version": "21.0.102",
   "scripts": {
     "mkdocs": "python3 -m mkdocs",
     "taon init": "taon init",
@@ -41,10 +41,6 @@
         "group": null,
         "icon": "$(new-folder)",
         "title": "Create New Folder"
-      },
-      {
-        "command": "taon.openRecentWorkspace",
-        "title": "Taon: Open Recent Workspace"
       }
     ],
     "menus": {
@@ -149,7 +145,6 @@
     "@compodoc/compodoc": "~1.1.32",
     "@electron/fuses": "^1.8.0",
     "@fancyapps/ui": "~6.1.14",
-    "@huggingface/transformers": "~4.2.0",
     "@iconify/icons-fa-solid": "~1.2.4",
     "@iconify/icons-mdi": "~1.2.48",
     "@imgly/background-removal-node": "~1.4.5",

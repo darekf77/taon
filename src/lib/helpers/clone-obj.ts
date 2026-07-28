@@ -30,7 +30,7 @@ export const cloneObj = <CloneT>(
           try {
             _.set(result, lodashPath, value);
           } catch (error) {
-            console.warn(error);
+            // TODO QUICK_FIX ignore error when trying to override getters
           }
         }
       }
