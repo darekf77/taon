@@ -86,6 +86,7 @@ export * from './realtime/realtime-strategy/realtime-strategy';
 export * from './ui/taon-admin-mode-configuration/taon-admin.service'; // @browser
 export * from './formly/formly-group-wrapper.component'; // @browser
 export * from './formly/formly-repeat.component'; // @browser
+export * from './cloudflare';
 
 export type {
   TaonClientMiddlewareInterceptOptions,
@@ -356,3 +357,5 @@ export const TAON_FLATTEN_MAPPING = {
   },
 } satisfies Record<string, Record<string, string>>;
 //#endregion
+
+export default {};

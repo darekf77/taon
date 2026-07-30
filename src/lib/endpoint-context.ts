@@ -75,21 +75,11 @@ import { Models } from './models';
 import { RealtimeCore } from './realtime/realtime-core';
 import { Symbols } from './symbols';
 import { TaonAdmin } from './ui/taon-admin-mode-configuration/taon-admin.service'; // @browser
+let express: typeof import('express');
+//#region @backend
+express = requireDefault('express');
 //#endregion
 
-let bodyParser: typeof import('body-parser');
-let cookieParser: typeof import('cookie-parser');
-let cors: typeof import('cors');
-let express: typeof import('express');
-let methodOverride: typeof import('method-override');
-let expressSession: typeof import('express-session');
-//#region @backend
-bodyParser = requireDefault('body-parser');
-cookieParser = requireDefault('cookie-parser');
-cors = requireDefault('cors');
-express = requireDefault('express');
-methodOverride = requireDefault('method-override');
-expressSession = requireDefault('express-session');
 //#endregion
 
 export class EndpointContext {
@@ -2422,6 +2412,24 @@ export class EndpointContext {
 
   private async initBackendMiddlewares(): Promise<void> {
     //#region @backend
+    if (UtilsOs.isRunningInCloudflareWorker()) {
+      return;
+    }
+
+    let bodyParser: typeof import('body-parser');
+    let cookieParser: typeof import('cookie-parser');
+    let cors: typeof import('cors');
+
+    let methodOverride: typeof import('method-override');
+    // let expressSession: typeof import('express-session');
+
+    bodyParser = requireDefault('body-parser');
+    cookieParser = requireDefault('cookie-parser');
+    cors = requireDefault('cors');
+
+    methodOverride = requireDefault('method-override');
+    // expressSession = requireDefault('express-session');
+
     const app = this.expressApp;
 
     // if (this.middlewares) {

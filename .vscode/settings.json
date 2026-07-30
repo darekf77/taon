@@ -24,6 +24,8 @@
     "dist-nocutsrc": true,
     "dist-nocutsrc-prod": true,
     "package-lock.json": true,
+    "*.i18n.data.ts": true,
+    "**/*.i18n.data.ts": true,
     "chrome-profiler-events*.json": true,
     "speed-measure-plugin*.json": true,
     "tmp*": true,

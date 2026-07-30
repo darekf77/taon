@@ -24,9 +24,9 @@ export const CURRENT_PACKAGE_TAON_VERSION = 'v21';
  */
 export const CURRENT_PACKAGE_VERSION = '21.0.134';
 
-export namespace TAON_CLOUDFLARE_WORKERS_URLS {
-	export const KvWorkerTaonCustomC4327 = 'https://kv-worker-taon-custom-c4327.undefined.workers.dev';
-}
+
+
+
 
 // THIS FILE IS GENERATED - DO NOT MODIFY
       
