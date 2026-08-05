@@ -1,18 +1,19 @@
 //#region imports
-//#region @backend
-import { URL } from 'url';
-//#endregion
-import { _ } from 'tnp-core/src';
 import { Subscriber } from 'rxjs';
+import type { DefaultEventsMap } from 'socket.io';
+import type { Socket as SocketClient } from 'socket.io-client';
+import { _ } from 'tnp-core/src';
+
 import { Symbols } from '../symbols';
-import { Socket as SocketClient } from 'socket.io-client';
-import { DefaultEventsMap } from 'socket.io';
+
 import { RealtimeModels } from './realtime.models';
 //#endregion
 
 export class RealtimeSubsManager {
   private isListening = false;
+
   private observers: Subscriber<any>[] = [];
+
   constructor(private options: RealtimeModels.SubsManagerOpt) {}
 
   //#region methods & getters / start listen if not started

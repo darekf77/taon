@@ -1,10 +1,9 @@
 //#region imports
 import type { Server } from 'http';
-import { Http2Server } from 'http2'; // @backend
 import type { Socket } from 'net';
 import { URL } from 'url'; // @backend
 
-import axios from 'axios';
+import { axios } from 'tnp-core/src';
 import type { ipcMain } from 'electron'; // @backend
 import type { Application } from 'express';
 //  multer in taon middleware will do better job than express-fileupload
@@ -23,39 +22,21 @@ import {
   RestHeaders,
 } from 'ng2-rest/src';
 import { from, Subject } from 'rxjs';
-import type {
-  TransactionRollbackEvent,
-  TransactionCommitEvent,
-  TransactionStartEvent,
-  RecoverEvent,
-  SoftRemoveEvent,
-  RemoveEvent,
-  UpdateEvent,
-  InsertEvent,
-  Repository,
-} from 'taon-typeorm/src'; // @websql
+import type { Repository } from 'taon-typeorm/src'; // @websql
 import { EventSubscriber } from 'taon-typeorm/src'; // @websql
-import { Entity as TypeormEntity, Tree } from 'taon-typeorm/src'; // @websql
-import {
-  DataSource,
-  DataSourceOptions,
-  getMetadataArgsStorage,
-} from 'taon-typeorm/src';
+import { Entity as TypeormEntity } from 'taon-typeorm/src'; // @websql
+import { DataSource, DataSourceOptions } from 'taon-typeorm/src';
 import { path, requireDefault } from 'tnp-core/src';
 import { config } from 'tnp-core/src';
 import { CoreModels } from 'tnp-core/src';
-import { fse, http, https, os } from 'tnp-core/src'; // @backend
+import { fse, http, https } from 'tnp-core/src'; // @backend
 import { UtilsOs, Utils } from 'tnp-core/src';
 import { crossPlatformPath } from 'tnp-core/src';
 import { _, Helpers } from 'tnp-core/src';
 
-import type { TaonBaseClass } from './base-classes/base-class';
 import type { TaonBaseController } from './base-classes/base-controller';
-import { TaonBaseInjector } from './base-classes/base-injector';
 import type { TaonBaseMiddleware } from './base-classes/base-middleware';
-import type { TaonBaseMigration } from './base-classes/base-migration';
 import type { TaonBaseRepository } from './base-classes/base-repository';
-import { TaonBaseSubscriberForEntity } from './base-classes/base-subscriber-for-entity';
 import type { ControllerConfig } from './config/controller-config';
 import { MethodConfig } from './config/method-config';
 import { ParamConfig } from './config/param-config';
@@ -75,10 +56,6 @@ import { Models } from './models';
 import { RealtimeCore } from './realtime/realtime-core';
 import { Symbols } from './symbols';
 import { TaonAdmin } from './ui/taon-admin-mode-configuration/taon-admin.service'; // @browser
-let express: typeof import('express');
-//#region @backend
-express = requireDefault('express');
-//#endregion
 
 //#endregion
 
@@ -685,6 +662,9 @@ export class EndpointContext {
       //#region prepares server
       if (this.mode === 'backend-frontend(tcp+udp)' && !this.config.abstract) {
         //#region @backend
+        let express: typeof import('express');
+        express = requireDefault('express');
+
         this.expressApp = express();
 
         if (process.env.NODE_ENV === 'production') {
@@ -728,7 +708,9 @@ export class EndpointContext {
 
       //#region prepare realtime
       if (!this.config.abstract) {
-        this.disabledRealtime = this.config.disabledRealtime;
+        this.disabledRealtime = !!(
+          UtilsOs.isRunningInCloudflareWorker() || this.config.disabledRealtime
+        );
         if (!this.host) {
           throw `
 

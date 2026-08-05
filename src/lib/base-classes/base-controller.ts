@@ -1,11 +1,9 @@
-import * as FormData from 'form-data'; // @backend
 import {
   RestErrorResponseWrapper,
   RestResponseWrapper,
   HttpResponseError,
   Ng2RestAxiosRequestConfig,
 } from 'ng2-rest/src';
-
 import {
   CoreModels,
   crossPlatformPath,
@@ -114,12 +112,14 @@ export class TaonBaseController<
     //#region @backendFunc
     const stat = fse.statSync(absFilePath);
     const stream = fse.createReadStream(absFilePath);
-
+    //#region @esmRemove
+    const FormData: any = require('form-data');
+    //#endregion
     const form = new FormData();
-    form.append('file', stream, {
+    form.append('file', stream as any, {
       filename: path.basename(absFilePath),
       knownLength: stat.size,
-    });
+    } as any);
 
     const data = await this.uploadFormDataToServer(form, queryParams).request(
       options || {},

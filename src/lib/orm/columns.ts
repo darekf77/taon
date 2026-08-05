@@ -1,4 +1,4 @@
-import { Column, Generated } from 'taon-typeorm/src';
+import { Column } from 'taon-typeorm/src';
 import { _ } from 'tnp-core/src';
 
 export {

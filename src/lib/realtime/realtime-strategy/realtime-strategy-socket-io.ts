@@ -1,10 +1,5 @@
-
 import { EndpointContext } from '../../endpoint-context';
 import { RealtimeStrategy } from './realtime-strategy';
-//#region @backend
-import { Server, ServerOptions } from 'socket.io';
-//#endregion
-import { io, ManagerOptions, Socket, SocketOptions } from 'socket.io-client';
 
 /**
  * Purpose:
@@ -21,11 +16,13 @@ export class RealtimeStrategySocketIO extends RealtimeStrategy {
 
   ioServer(...args) {
     //#region @backendFunc
+    const { Server } = require('socket.io');
     return new Server(...args);
     //#endregion
   }
 
   get ioClient() {
+    const { io } = require('socket.io-client');
     return io;
   }
 }

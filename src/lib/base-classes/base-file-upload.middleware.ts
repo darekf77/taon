@@ -1,8 +1,6 @@
 //#region imports
-import * as crypto from 'crypto'; // @backend
-
 import type { RequestHandler } from 'express';
-import * as multer from 'multer';
+import type multerType from 'multer';
 import {
   TaonClientMiddlewareInterceptOptions,
   TaonServerMiddlewareInterceptOptions,
@@ -39,7 +37,7 @@ export class TaonBaseFileUploadMiddleware extends TaonBaseMiddleware {
   //#endregion
 
   //#region storage
-  storage(): multer.StorageEngine {
+  storage(): multerType.StorageEngine {
     //#region @backendFunc
     const uploadDir = this.uploadDir();
     if (!fse.existsSync(uploadDir)) {
@@ -47,6 +45,8 @@ export class TaonBaseFileUploadMiddleware extends TaonBaseMiddleware {
         fse.mkdirSync(uploadDir, { recursive: true });
       } catch (error) {}
     }
+    const crypto = require('crypto');
+    const multer = require('multer');
     return multer.diskStorage({
       destination: (_req, _file, cb) => cb(null, uploadDir),
       filename: (_req, file, cb) => {
@@ -64,8 +64,9 @@ export class TaonBaseFileUploadMiddleware extends TaonBaseMiddleware {
   //#endregion
 
   //#region upload
-  upload(): multer.Multer {
+  upload(): multerType.Multer {
     //#region @backendFunc
+    const multer = require('multer');
     return multer({
       storage: this.storage(),
       limits: { fileSize: 1024 * 1024 * 1024 }, // 1 GiB cap; tweak as needed

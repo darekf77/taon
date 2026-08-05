@@ -1,18 +1,14 @@
 //#region imports
 import { MySqlQuerySource } from 'taon-type-sql/src';
-import {
-  type DataSource,
-  type DeepPartial,
-  type DeleteResult,
-  type FindManyOptions,
-  type FindOneOptions,
-  type FindOptionsWhere,
-  type InsertResult,
-  // ObjectID // TODO why is this not in taon-typeorm,
-  type RemoveOptions,
-  type Repository,
-  type SaveOptions,
-  type UpdateResult,
+import type {
+  DeepPartial,
+  FindManyOptions,
+  FindOneOptions,
+  FindOptionsWhere,
+  InsertResult,
+  Repository,
+  SaveOptions,
+  UpdateResult,
 } from 'taon-typeorm/src';
 import type { QueryDeepPartialEntity } from 'taon-typeorm/src';
 import type { UpsertOptions } from 'taon-typeorm/src';

@@ -1,4 +1,4 @@
-import {
+import type {
   EntitySubscriberInterface,
   RecoverEvent,
   SoftRemoveEvent,
@@ -9,9 +9,11 @@ import {
   RemoveEvent,
   UpdateEvent,
 } from 'taon-typeorm/src';
-import { TaonBaseInjector } from './base-injector';
-import { TaonSubscriber } from '../decorators/classes/subscriber-decorator';
 import { _ } from 'tnp-core/src';
+
+import { TaonSubscriber } from '../decorators/classes/subscriber-decorator';
+
+import { TaonBaseInjector } from './base-injector';
 
 @TaonSubscriber({
   className: 'TaonBaseSubscriberForEntity',
@@ -26,8 +28,7 @@ export abstract class TaonBaseSubscriberForEntity<Entity = any>
    * Called after entity is loaded.
    */
   afterLoad(entity: any) {
-    this.ctx.logDb &&
-      console.log(`AFTER ENTITY LOADED: `, entity);
+    this.ctx.logDb && console.log(`AFTER ENTITY LOADED: `, entity);
   }
 
   /**
@@ -35,8 +36,7 @@ export abstract class TaonBaseSubscriberForEntity<Entity = any>
    */
   beforeQuery(event: any) {
     // BeforeQueryEvent<any>
-    this.ctx.logDb &&
-      console.log(`BEFORE QUERY: `, event.query);
+    this.ctx.logDb && console.log(`BEFORE QUERY: `, event.query);
   }
 
   /**
@@ -44,40 +44,35 @@ export abstract class TaonBaseSubscriberForEntity<Entity = any>
    */
   afterQuery(event: any) {
     // AfterQueryEvent<any>
-    this.ctx.logDb &&
-      console.log(`AFTER QUERY: `, event.query);
+    this.ctx.logDb && console.log(`AFTER QUERY: `, event.query);
   }
 
   /**
    * Called before entity insertion.
    */
   beforeInsert(event: InsertEvent<any>) {
-    this.ctx.logDb &&
-      console.log(`BEFORE ENTITY INSERTED: `, event.entity);
+    this.ctx.logDb && console.log(`BEFORE ENTITY INSERTED: `, event.entity);
   }
 
   /**
    * Called after entity insertion.
    */
   afterInsert(event: InsertEvent<any>) {
-    this.ctx.logDb &&
-      console.log(`AFTER ENTITY INSERTED: `, event.entity);
+    this.ctx.logDb && console.log(`AFTER ENTITY INSERTED: `, event.entity);
   }
 
   /**
    * Called before entity update.
    */
   beforeUpdate(event: UpdateEvent<any>) {
-    this.ctx.logDb &&
-      console.log(`BEFORE ENTITY UPDATED: `, event.entity);
+    this.ctx.logDb && console.log(`BEFORE ENTITY UPDATED: `, event.entity);
   }
 
   /**
    * Called after entity update.
    */
   afterUpdate(event: UpdateEvent<any>) {
-    this.ctx.logDb &&
-      console.log(`AFTER ENTITY UPDATED: `, event.entity);
+    this.ctx.logDb && console.log(`AFTER ENTITY UPDATED: `, event.entity);
   }
 
   /**
@@ -150,47 +145,41 @@ export abstract class TaonBaseSubscriberForEntity<Entity = any>
    * Called before transaction start.
    */
   beforeTransactionStart(event: TransactionStartEvent) {
-    this.ctx.logDb &&
-      console.log(`BEFORE TRANSACTION STARTED`);
+    this.ctx.logDb && console.log(`BEFORE TRANSACTION STARTED`);
   }
 
   /**
    * Called after transaction start.
    */
   afterTransactionStart(event: TransactionStartEvent) {
-    this.ctx.logDb &&
-      console.log(`AFTER TRANSACTION STARTED`);
+    this.ctx.logDb && console.log(`AFTER TRANSACTION STARTED`);
   }
 
   /**
    * Called before transaction commit.
    */
   beforeTransactionCommit(event: TransactionCommitEvent) {
-    this.ctx.logDb &&
-      console.log(`BEFORE TRANSACTION COMMITTED`);
+    this.ctx.logDb && console.log(`BEFORE TRANSACTION COMMITTED`);
   }
 
   /**
    * Called after transaction commit.
    */
   afterTransactionCommit(event: TransactionCommitEvent) {
-    this.ctx.logDb &&
-      console.log(`AFTER TRANSACTION COMMITTED`);
+    this.ctx.logDb && console.log(`AFTER TRANSACTION COMMITTED`);
   }
 
   /**
    * Called before transaction rollback.
    */
   beforeTransactionRollback(event: TransactionRollbackEvent) {
-    this.ctx.logDb &&
-      console.log(`BEFORE TRANSACTION ROLLBACK`);
+    this.ctx.logDb && console.log(`BEFORE TRANSACTION ROLLBACK`);
   }
 
   /**
    * Called after transaction rollback.
    */
   afterTransactionRollback(event: TransactionRollbackEvent) {
-    this.ctx.logDb &&
-      console.log(`AFTER TRANSACTION ROLLBACK`);
+    this.ctx.logDb && console.log(`AFTER TRANSACTION ROLLBACK`);
   }
 }

@@ -6,18 +6,17 @@ import { Models } from './models';
 export namespace Validators {
   //#region vlidate class name
   export const classNameVlidation = (className, target: Function) => {
-    setTimeout(() => {
-      // console.log(`check after timeout ${className} , production mode: ${FrameworkContext.isProductionMode}`)
-      if (_.isUndefined(className)) {
-        throw `[Taon]
+    // console.log(`check after timeout ${className} , production mode: ${FrameworkContext.isProductionMode}`)
+    if (_.isUndefined(className)) {
+      throw new Error(`[Taon]
       Please provide "className" property for each Controller and Entity:
 
-          @Taon.Controller({ className: 'MyExampleCtrl'  })
+          @TaonController({ className: 'MyExampleCtrl'  })
           class MyExampleCtrl {
             ...
           }
 
-          @Taon.Entity({ className: 'MyExampleEntity'  })
+          @TaonEntity({ className: 'MyExampleEntity'  })
           class MyExampleEntity {
             ...
           }
@@ -25,9 +24,8 @@ export namespace Validators {
     Notice that minified javascript code does not preserve
     Functions/Classes names -this is only solution to preserve classes names.
 
-        `;
-      }
-    });
+        `);
+    }
 
     return _.isUndefined(className) ? target.name : className;
   };

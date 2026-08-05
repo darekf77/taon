@@ -2,9 +2,9 @@
 import type { EndpointContext } from '../../endpoint-context';
 import { RealtimeStrategy } from './realtime-strategy';
 import { Symbols } from '../../symbols';
-import { ManagerOptions, SocketOptions } from 'socket.io-client';
+import type { ManagerOptions, SocketOptions } from 'socket.io-client';
 import { RealtimeModels } from '../realtime.models';
-import { ServerOptions } from 'socket.io';
+import type { ServerOptions } from 'socket.io';
 //#endregion
 
 //#region mock server

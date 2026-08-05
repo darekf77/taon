@@ -237,7 +237,9 @@
   "javascript.suggest.autoImports": false,
 
   "files.associations": {
-    "tsconfig.json": "json"
+    "tsconfig.json": "plaintext",
+    "**/tsconfig.json": "plaintext",
+    "**/tsconfig.*.json": "plaintext"
   },
 
   "search.followSymlinks": false

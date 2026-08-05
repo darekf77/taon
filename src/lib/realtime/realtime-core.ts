@@ -1,8 +1,8 @@
 //#region imports
-import { Server } from 'socket.io';
-import { DefaultEventsMap } from 'socket.io';
-import { Socket as SocketClient } from 'socket.io-client';
-import { Helpers, UtilsOs } from 'tnp-core/src';
+import type { Server } from 'socket.io';
+import type { DefaultEventsMap } from 'socket.io';
+import type { Socket as SocketClient } from 'socket.io-client';
+import { UtilsOs } from 'tnp-core/src';
 
 import { apiPrefix } from '../constants';
 import type { EndpointContext } from '../endpoint-context';
@@ -73,8 +73,8 @@ export class RealtimeCore {
     this.ctx = ctx;
     this.strategy = this.resolveStrategy();
 
-        this.ctx.logRealtime &&
-          console.log(`
+    this.ctx.logRealtime &&
+      console.log(`
 
     [ctx=${this.ctx.contextName}]
     mode = ${this.ctx.mode}

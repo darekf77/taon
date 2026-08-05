@@ -1,12 +1,6 @@
 import { Entity, VersionColumn } from 'taon-typeorm/src'; // @websql
 
-import {
-  Generated,
-  GeneratedColumn,
-  PrimaryColumn,
-  PrimaryGeneratedColumn,
-  VirtualColumn,
-} from '../orm';
+import { PrimaryGeneratedColumn } from '../orm';
 
 import type { TaonBaseClass } from './base-class';
 import { TaonBaseEntity } from './base-entity';

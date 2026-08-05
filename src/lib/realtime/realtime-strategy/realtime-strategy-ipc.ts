@@ -1,8 +1,7 @@
 //#region imports
 import type { ipcRenderer } from 'electron'; // @browser
 import type * as Electron from 'electron';
-import { ipcMain } from 'electron'; // @backend
-import { Server, ServerOptions } from 'socket.io';
+import type { Server, ServerOptions } from 'socket.io';
 import type { io, ManagerOptions, SocketOptions } from 'socket.io-client';
 
 import { EndpointContext } from '../../endpoint-context';
@@ -23,7 +22,7 @@ export class MockServerIpc {
         new MockServerIpc(contextName),
       );
     }
-    return MockServerIpc.serverByContextName.get(contextName);
+    return MockServerIpc.serverByContextName.get(contextName) as any;
   }
 
   namespacesByName = new Map<string, MockNamespaceIpc>();
@@ -42,7 +41,7 @@ export class MockServerIpc {
         new MockNamespaceIpc(namespace, this),
       );
     }
-    return this.namespacesByName.get(namespace);
+    return this.namespacesByName.get(namespace) as any;
   }
   //#endregion
 }
@@ -52,6 +51,7 @@ export class MockServerIpc {
 export class MockNamespaceIpc {
   //#region fields & getters
   electronClients = new Set<Electron.WebContents>();
+
   roomsByRoomName: {
     [roomName: string]: Set<Electron.WebContents>;
   } = {};
@@ -74,6 +74,7 @@ export class MockNamespaceIpc {
   //#region on
   on(eventName: string, callback: RealtimeModels.EventHandler) {
     //#region @backendFunc
+    const { ipcMain } = require('electron');
     const listenKey = `(${this.name}) "${eventName}"`;
 
     if (!this.namespaceEventHandlers[eventName]) {
@@ -109,6 +110,7 @@ export class MockNamespaceIpc {
   //#region off
   off(event: string, callback?: RealtimeModels.EventHandler) {
     //#region @backendFunc
+    const { ipcMain } = require('electron');
     if (!this.namespaceEventHandlers[event]) {
       return;
     }
@@ -203,7 +205,7 @@ class RoomEmitterIpc {
      */
     private name: string,
     private includeSender: boolean = false,
-    private sender: MockSocketIpc = null, // TODO QUICK FIX how to include sender
+    private sender: MockSocketIpc = null as any, // TODO QUICK FIX how to include sender
   ) {}
   //#endregion
 
@@ -289,7 +291,7 @@ export class MockSocketIpc {
     const removeListener = `(${this.name}) "${event}"`;
 
     this.ipcRenderer.removeListener(removeListener, data => {
-      callback(data);
+      callback && callback(data);
     });
     //#endregion
   }

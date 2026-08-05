@@ -1,7 +1,7 @@
-import * as tsorm from 'taon-typeorm/src';
+// import * as tsorm from 'taon-typeorm/src';
 import { _ } from 'tnp-core/src';
 
-import * as additionalColumns from './columns';
+// import * as additionalColumns from './columns';
 
 export * from './columns';
 

@@ -1,5 +1,4 @@
 //#region imports
-import * as FormData from 'form-data'; // @backend
 import { _, CoreModels, Utils } from 'tnp-core/src';
 import { CLASS } from 'typescript-class-helpers/src';
 
@@ -38,6 +37,11 @@ export namespace ClassHelpers {
   //#region get name
   export const getName = (classFnOrObject: any): string => {
     // exception for FormData
+    //#region @backend
+    //#region @esmRemove
+    const FormData: any = require('form-data');
+    //#endregion
+    //#endregion
     if (classFnOrObject instanceof FormData) {
       return 'FormData';
     }

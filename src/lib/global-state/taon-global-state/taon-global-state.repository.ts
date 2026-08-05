@@ -2,7 +2,6 @@
 
 import { TaonBaseRepository } from '../../base-classes/base-repository';
 import { TaonRepository } from '../../decorators/classes/repository-decorator';
-import { Raw } from 'taon-typeorm/src';
 
 import { TAON_GLOBAL_STATE } from './taon-global-state.entity';
 import { TaonGlobalStateStatus } from './taon-global-state.models';
