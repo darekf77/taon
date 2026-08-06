@@ -10,6 +10,7 @@
     "progress",
     "open",
     "cfonts",
+    "jsonc-parser",
   ],
 
   "appId": "dev.taon.app",
@@ -65,23 +66,29 @@
   "shouldGenerateTranslationFiles": true,
 
   "singleFileBundlingPackages": [
-   // electron is replaced by default
-   // {
-   //   "packageName": "electron",
-   //   "artifactName": "npm-lib-and-cli-tool",
-   //   "replaceWithNothing": true,
-   // },
-   {
-     "description": "OS notyfications",
-     "isExternalFor": "*",
-     "packageName": "node-notifier",
-   },
-   {
-     "description": "Linux notyfications without deps",
-     "isExternalFor": "*",
-     "packageName": "dbus-next",
-   },
- ],
+    // electron is replaced by default
+    // {
+    //   "packageName": "electron",
+    //   "artifactName": "npm-lib-and-cli-tool",
+    //   "replaceWithNothing": true,
+    // },
+    {
+      "description": "OS notyfications",
+      "isExternalFor": "*",
+      "packageName": "node-notifier",
+    },
+    {
+      "description": "Linux notyfications without deps",
+      "isExternalFor": "*",
+      "packageName": "dbus-next",
+    },
+    {
+      "description": "Json c parser",
+      "includeInBundleNodeModules": [],
+      "isExternalFor": "*",
+      "packageName": "jsonc-parser",
+    },
+  ],
 
   "packageJsonOverride": {
     "author": "Dariusz Filipiak",
@@ -155,5 +162,5 @@
     "scripts": {
       "mkdocs": "python3 -m mkdocs",
     },
-  }
+  },
 }
