@@ -15,6 +15,7 @@ import {
   RealtimeStrategyMock,
   RealtimeStrategySocketIO,
 } from './realtime-strategy';
+import { RealtimeStrategyCloudflareMock } from './realtime-strategy/realtime-strategy-cloudflare';
 
 //#endregion
 
@@ -97,6 +98,9 @@ export class RealtimeCore {
   //#region methods & getters / resovle staraegy
   private resolveStrategy(): RealtimeStrategy {
     // console.log(`[taon] resolveStrategy for this.ctx.mode ${this.ctx.mode}`);
+    if (this.ctx.mode === 'backend-frontend(cloudflare)') {
+      return new RealtimeStrategyCloudflareMock(this.ctx);
+    }
     if (
       this.ctx.mode === 'backend-frontend(websql)' ||
       this.ctx.mode === 'backend-frontend(websql-electron)'

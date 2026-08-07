@@ -1,5 +1,6 @@
 import { Request } from './worker-configuration';
 
+//#region cors
 /*
 
 What middleware I actuall use in taon ?
@@ -25,6 +26,7 @@ function corsHeaders() {
 }
 
  */
+//#endregion
 
 //#region parse body
 async function parseBody(request: Request) {

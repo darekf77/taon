@@ -10,6 +10,7 @@ import {
   fse,
   Helpers,
   path,
+  UtilsOs,
   UtilsTerminal,
 } from 'tnp-core/src';
 
@@ -23,14 +24,24 @@ import type { Models } from '../models';
 import { TaonBaseFileUploadMiddleware } from './base-file-upload.middleware';
 import { TaonBaseInjector } from './base-injector';
 
+export type R2Bucket = any;
+
 export interface MulterFileUploadResponse {
   ok: boolean;
   originalName: string;
+
   /**
+   * R2 object key or local generated filename.
+   *
+   * Examples:
+   * files/2026/08/07/uuid-photo.jpg
+   * uuid-photo.jpg
+   *
    * name change to this to avoid confusion with originalname
    * (similar to originalname with added uniq part)
    */
   savedAs: string;
+
   size: number;
   mimetype: string;
 }
@@ -41,15 +52,19 @@ export interface MulterFileUploadResponse {
 export class TaonBaseController<
   UPLOAD_FILE_QUERY_PARAMS = {},
 > extends TaonBaseInjector {
+  get R2(): R2Bucket {
+    return this.ctx?.R2;
+  }
+
   /**
-   * Hook that is called when taon app is inited
-   * (all contexts are created and inited)
+   * Hook that is called when taon app is initialized.
    */
   async afterAllCtxInited(options: {
     ctxStorage: ContextsEndpointStorage;
   }): Promise<void> {}
 
   //#region upload form data to server
+
   @POST({
     overrideContentType: 'multipart/form-data',
     middlewares: ({ parentMiddlewares }) => ({
@@ -62,73 +77,225 @@ export class TaonBaseController<
     @Query() queryParams?: UPLOAD_FILE_QUERY_PARAMS,
   ): Models.Http.Response<MulterFileUploadResponse[]> {
     //#region @backendFunc
+
     return async (req, res) => {
+      const resolvedQueryParams =
+        queryParams || ({} as UPLOAD_FILE_QUERY_PARAMS);
+
+      if (UtilsOs.isRunningInCloudflareWorker()) {
+        const uploadedFiles = await this.uploadFormDataFilesToR2(formData);
+
+        for (const uploadedFile of uploadedFiles) {
+          await this.afterFileUploadAction(uploadedFile, resolvedQueryParams);
+        }
+
+        return uploadedFiles;
+      }
+
       const files = req.files;
-      if (!files) {
-        throw 'No file(s) received';
+
+      if (!files || files.length === 0) {
+        throw new Error('No file(s) received');
       }
-      const responseArr = (files as any[]).map(f => {
-        const savedAbs = crossPlatformPath(path.resolve(f.path));
-        // const savedRel = crossPlatformPath(
-        //   path.relative(this.ctx.cwd, savedAbs),
-        // );
-        return {
-          ok: true,
-          originalName: f.originalname,
-          savedAs: path.basename(savedAbs),
-          // savedPath: void 0, // not needed
-          size: f.size,
-          mimetype: f.mimetype,
-        };
-      });
-      // console.log(responseArr);
-      for (const res of responseArr) {
-        await this.afterFileUploadAction(res, queryParams || ({} as any));
+
+      const responseArr: MulterFileUploadResponse[] = (files as any[]).map(
+        file => {
+          const savedAbs = crossPlatformPath(path.resolve(file.path));
+
+          return {
+            ok: true,
+            originalName: file.originalname,
+            savedAs: path.basename(savedAbs),
+            size: file.size,
+            mimetype: file.mimetype,
+          };
+        },
+      );
+
+      for (const uploadedFile of responseArr) {
+        await this.afterFileUploadAction(uploadedFile, resolvedQueryParams);
       }
+
       return responseArr;
     };
+
     //#endregion
   }
+
+  //#endregion
+
+  //#region upload files to R2
+
+  protected async uploadFormDataFilesToR2(
+    formData: FormData,
+  ): Promise<MulterFileUploadResponse[]> {
+    //#region @backendFunc
+    const files = this.extractFilesFromFormData(formData);
+
+    if (files.length === 0) {
+      throw new Error('No file(s) received');
+    }
+
+    const responseArr: MulterFileUploadResponse[] = [];
+
+    for (const file of files) {
+      const savedAs = this.createR2UploadObjectKey(file);
+
+      console.log(`[taon-r2] Uploading "${file.name}" as "${savedAs}"`, {
+        size: file.size,
+        type: file.type,
+        context: this.ctx?.contextName,
+        controller: this.constructor.name,
+      });
+
+      const result = await this.R2.put(savedAs, file.stream(), {
+        httpMetadata: {
+          contentType: file.type || 'application/octet-stream',
+        },
+
+        customMetadata: {
+          originalName: file.name,
+          controller: this.constructor.name,
+          uploadedAt: new Date().toISOString(),
+        },
+      });
+
+      if (!result) {
+        throw new Error(`R2 upload failed for file "${file.name}"`);
+      }
+
+      console.log(`[taon-r2] Uploaded "${file.name}" successfully`, {
+        key: result.key,
+        size: result.size,
+        etag: result.etag,
+      });
+
+      responseArr.push({
+        ok: true,
+        originalName: file.name,
+        savedAs: result.key,
+        size: file.size,
+        mimetype: file.type || 'application/octet-stream',
+      });
+    }
+
+    return responseArr;
+    //#endregion
+  }
+
+  protected extractFilesFromFormData(formData: FormData): File[] {
+    const files: File[] = [];
+
+    // @ts-ignore
+    for (const [, value] of formData.entries()) {
+      if (this.isUploadedFile(value)) {
+        files.push(value);
+      }
+    }
+
+    return files;
+  }
+
+  protected isUploadedFile(value: FormDataEntryValue): value is File {
+    return (
+      typeof value !== 'string' &&
+      typeof value.name === 'string' &&
+      typeof value.size === 'number' &&
+      typeof value.stream === 'function'
+    );
+  }
+
+  /**
+   * Override this when a controller needs its own R2 path.
+   *
+   * R2 does not have real directories. Slashes are simply part
+   * of the object key, but they behave like folders in tooling.
+   */
+  protected createR2UploadObjectKey(file: File): string {
+    const now = new Date();
+
+    const year = now.getUTCFullYear();
+    const month = String(now.getUTCMonth() + 1).padStart(2, '0');
+    const day = String(now.getUTCDate()).padStart(2, '0');
+
+    const safeOriginalName = this.sanitizeR2FileName(file.name);
+
+    return [
+      this.constructor.name,
+      year,
+      month,
+      day,
+      `${crypto.randomUUID()}-${safeOriginalName}`,
+    ].join('/');
+  }
+
+  protected sanitizeR2FileName(fileName: string): string {
+    const sanitized = fileName
+      .normalize('NFKD')
+      .replace(/[/\\]/g, '-')
+      .replace(/[^\w.\-]+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
+
+    return sanitized || 'file';
+  }
+
   //#endregion
 
   //#region after file upload hook
+
   /**
-   * Hook after file is uploaded
-   * through `uploadFormDataToServer` or `uploadLocalFileToServer`
+   * Hook after a file is uploaded through
+   * `uploadFormDataToServer()` or `uploadLocalFileToServer()`.
    */
   protected afterFileUploadAction(
     file?: MulterFileUploadResponse,
     queryParams?: UPLOAD_FILE_QUERY_PARAMS,
   ): void | Promise<void> {
-    // empty
+    // Empty.
   }
 
+  //#endregion
+
   //#region upload local file to server
+
   async uploadLocalFileToServer(
     absFilePath: string,
     options?: Pick<Ng2RestAxiosRequestConfig, 'onUploadProgress'>,
     queryParams?: UPLOAD_FILE_QUERY_PARAMS,
   ): Promise<MulterFileUploadResponse[]> {
     //#region @backendFunc
+
     const stat = fse.statSync(absFilePath);
     const stream = fse.createReadStream(absFilePath);
+
     //#region @esmRemove
     const FormData: any = require('form-data');
     //#endregion
+
     const form = new FormData();
-    form.append('file', stream as any, {
-      filename: path.basename(absFilePath),
-      knownLength: stat.size,
-    } as any);
+
+    form.append(
+      'file',
+      stream as any,
+      {
+        filename: path.basename(absFilePath),
+        knownLength: stat.size,
+      } as any,
+    );
 
     const data = await this.uploadFormDataToServer(form, queryParams).request(
       options || {},
     );
+
     return data.body.json;
+
     //#endregion
   }
+
   //#endregion
 
+  //#region wait for proper status change
   // async check() {
   //   await this._waitForProperStatusChange({
   //     request: () => this.uploadFormDataToServer(void 0, void 0).request(),
@@ -245,4 +412,5 @@ export class TaonBaseController<
       }
     }
   }
+  //#endregion
 }

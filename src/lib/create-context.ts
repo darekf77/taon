@@ -94,6 +94,7 @@ const createContextFn = <
     configFn,
     cloneOptions,
   );
+  ContextsEndpointStorage.Instance.set(endpointContextRef);
 
   const res = {
     //#region contexts
@@ -101,6 +102,10 @@ const createContextFn = <
       return config.contextName;
     },
     //#endregion
+
+    get expressApp() {
+      return endpointContextRef.expressApp;
+    },
 
     get appId() {
       return config.appId;
@@ -176,122 +181,131 @@ const createContextFn = <
     initialize: async (
       overrideOptions?: Models.TaonInitializeParams,
     ): Promise<EndpointContext> => {
+      overrideOptions = overrideOptions || {};
       return await new Promise(async (resolve, reject) => {
         //#region init in set timeout
-        setTimeout(async () => {
-          if (UtilsOs.isRunningInDocker()) {
-            const activeContext = config?.activeContext || null;
-            if (
-              _.isString(activeContext) &&
-              activeContext !== '' &&
-              activeContext !== config?.contextName
-            ) {
-              console.warn(
-                `[taon] Context ${endpointContextRef.contextName} is not active context, skipping initialization.`,
-              );
-              resolve(endpointContextRef);
-              return;
-            }
+        // setTimeout(async () => {
+        //#region initialization of taon
+        if (UtilsOs.isRunningInDocker()) {
+          const activeContext = config?.activeContext || null;
+          if (
+            _.isString(activeContext) &&
+            activeContext !== '' &&
+            activeContext !== config?.contextName
+          ) {
+            console.warn(
+              `[taon] Context ${endpointContextRef.contextName} is not active context, skipping initialization.`,
+            );
+            resolve(endpointContextRef);
+            return;
           }
+        }
 
-          await endpointContextRef.init({
-            ...overrideOptions,
-          });
+        await endpointContextRef.init({
+          ...overrideOptions,
+        });
 
-          if (config.abstract) {
-            throw new Error(`Abstract context can not be initialized`);
-          }
+        if (config.abstract) {
+          throw new Error(`Abstract context can not be initialized`);
+        }
 
-          await endpointContextRef.initEntities();
-          await endpointContextRef.initSubscribers();
+        await endpointContextRef.initEntities();
+        await endpointContextRef.initSubscribers();
 
-          await endpointContextRef.initDatabaseConnection();
+        await endpointContextRef.initDatabaseConnection();
 
-          await endpointContextRef.dbMigrations.ensureMigrationTableExists();
+        await endpointContextRef.dbMigrations.ensureMigrationTableExists();
 
-          // console.log(
-          //   'connection subscribers',
-          //   endpointContextRef?.connection?.subscribers,
-          // );
-          // debugger;
-          await endpointContextRef.initControllers();
-          await endpointContextRef.startServer();
-          //#region @websql
-          endpointContextRef.writeActiveRoutes();
-          //#endregion
+        // console.log(
+        //   'connection subscribers',
+        //   endpointContextRef?.connection?.subscribers,
+        // );
+        // debugger;
+        endpointContextRef.initControllers({
+          overrideExpressApp: overrideOptions.overrideExpressApp,
+        });
+        await endpointContextRef.startServer();
+        //#region @websqlb
+        endpointContextRef.writeActiveRoutes();
+        //#endregion
+        if (UtilsOs.isRunningInCloudflareWorker()) {
+          // skip init _ function when in cloudflare
+        } else {
+          await endpointContextRef.initRepositories();
+          await endpointContextRef.initClassesLowDashInitFunction();
+        }
+        if (endpointContextRef.databaseConfig) {
+          //#region handle websql reload data
+          //#region @browser
+          let keepWebsqlDbDataAfterReload = false;
 
-          await endpointContextRef.initClasses();
-          if (endpointContextRef.databaseConfig) {
-            //#region handle websql reload data
-            //#region @browser
-            let keepWebsqlDbDataAfterReload = false;
+          keepWebsqlDbDataAfterReload =
+            TaonAdmin.Instance?.keepWebsqlDbDataAfterReload();
 
-            keepWebsqlDbDataAfterReload =
-              TaonAdmin.Instance?.keepWebsqlDbDataAfterReload();
+          // console.log({ keepWebsqlDbDataAfterReload });
 
-            // console.log({ keepWebsqlDbDataAfterReload });
-
-            if (keepWebsqlDbDataAfterReload) {
-              !UtilsOs.isRunningInCliMode() &&
-                Helpers.info(
-                  `[taon] Keeping websql data after reload ` +
-                    `(context=${endpointContextRef.contextName}).`,
-                );
-            } else {
+          if (keepWebsqlDbDataAfterReload) {
+            !UtilsOs.isRunningInCliMode() &&
               Helpers.info(
-                `[taon] Dropping all tables and data ` +
+                `[taon] Keeping websql data after reload ` +
                   `(context=${endpointContextRef.contextName}).`,
               );
-            }
-            //#endregion
-            //#endregion
-
-            //#region TODO this may be usefull but for now
-            // 2 separate contexts are fine
-            // const shouldStartRemoteHost = endpointContextRef.mode !== 'remote-backend(tcp+udp)';
-            // if(shouldStartRemoteHost) {
-            //   const endpointContextRemoteHostRef = new EndpointContext(config, configFn);
-            //   await endpointContextRemoteHostRef.init({
-            //     overrideRemoteHost: endpointContextRef.host,
-            //     overrideHost: null,
-            //   });
-            //   endpointContextRemoteHostRef.initMetadata();
-
-            //   endpointContextRef.__contextForControllerInstanceAccess = endpointContextRemoteHostRef;
-            // }
-            //#endregion
-
-            //#region run migrations tasks
-            if (endpointContextRef.onlyMigrationRun) {
-              endpointContextRef.logMigrations &&
-                Helpers.log(
-                  `[taon] Running only migrations (context=${endpointContextRef.contextName}).`,
-                );
-              await endpointContextRef.dbMigrations.runAllNotCompletedMigrations();
-            } else if (endpointContextRef.onlyMigrationRevertToTimestamp) {
-              endpointContextRef.logMigrations &&
-                Helpers.log(
-                  `[taon] Reverting migrations to timestamp ${
-                    endpointContextRef.onlyMigrationRevertToTimestamp
-                  } (context=${endpointContextRef.contextName}).`,
-                );
-              await endpointContextRef.dbMigrations.revertMigrationToTimestamp(
-                endpointContextRef.onlyMigrationRevertToTimestamp,
-              );
-            } else {
-              endpointContextRef.logMigrations &&
-                Helpers.log(
-                  `[taon] Running all not applied migrations (context=${endpointContextRef.contextName}).`,
-                );
-              await endpointContextRef.dbMigrations.runAllNotCompletedMigrations();
-            }
-            //#endregion
+          } else {
+            Helpers.info(
+              `[taon] Dropping all tables and data ` +
+                `(context=${endpointContextRef.contextName}).`,
+            );
           }
+          //#endregion
+          //#endregion
 
-          ContextsEndpointStorage.Instance.set(endpointContextRef);
+          //#region TODO this may be usefull but for now
+          // 2 separate contexts are fine
+          // const shouldStartRemoteHost = endpointContextRef.mode !== 'remote-backend(tcp+udp)';
+          // if(shouldStartRemoteHost) {
+          //   const endpointContextRemoteHostRef = new EndpointContext(config, configFn);
+          //   await endpointContextRemoteHostRef.init({
+          //     overrideRemoteHost: endpointContextRef.host,
+          //     overrideHost: null,
+          //   });
+          //   endpointContextRemoteHostRef.initMetadata();
 
-          resolve(endpointContextRef);
-        });
+          //   endpointContextRef.__contextForControllerInstanceAccess = endpointContextRemoteHostRef;
+          // }
+          //#endregion
+
+          //#region run migrations tasks
+          if (endpointContextRef.onlyMigrationRun) {
+            endpointContextRef.logMigrations &&
+              Helpers.log(
+                `[taon] Running only migrations (context=${endpointContextRef.contextName}).`,
+              );
+            await endpointContextRef.dbMigrations.runAllNotCompletedMigrations();
+          } else if (endpointContextRef.onlyMigrationRevertToTimestamp) {
+            endpointContextRef.logMigrations &&
+              Helpers.log(
+                `[taon] Reverting migrations to timestamp ${
+                  endpointContextRef.onlyMigrationRevertToTimestamp
+                } (context=${endpointContextRef.contextName}).`,
+              );
+            await endpointContextRef.dbMigrations.revertMigrationToTimestamp(
+              endpointContextRef.onlyMigrationRevertToTimestamp,
+            );
+          } else {
+            endpointContextRef.logMigrations &&
+              Helpers.log(
+                `[taon] Running all not applied migrations (context=${endpointContextRef.contextName}).`,
+              );
+            await endpointContextRef.dbMigrations.runAllNotCompletedMigrations();
+          }
+          //#endregion
+        }
+
+
+
+        resolve(endpointContextRef);
+        //#endregion
+        // });
         //#endregion
       });
     },
@@ -302,14 +316,18 @@ const createContextFn = <
     get realtime() {
       return {
         get client() {
-          if(!endpointContextRef) {
-            throw new Error(`Please .initialize() context before using <context>.realtime.client.<anything> `)
+          if (!endpointContextRef) {
+            throw new Error(
+              `Please .initialize() context before using <context>.realtime.client.<anything> `,
+            );
           }
           return endpointContextRef.realtimeClient;
         },
         get server() {
-          if(!endpointContextRef) {
-            throw new Error(`Please .initialize() context  before using <context>.realtime.server.<anything> `)
+          if (!endpointContextRef) {
+            throw new Error(
+              `Please .initialize() context  before using <context>.realtime.server.<anything> `,
+            );
           }
           return endpointContextRef.realtimeServer;
         },

@@ -1,4 +1,5 @@
 import type { RequestHandler } from 'express';
+import type { Application } from 'express';
 import {
   HttpResponse,
   Ng2RestAxiosRequestConfig,
@@ -53,6 +54,7 @@ export namespace Models {
   export const DatabasesFolder = TaonTempDatabasesFolder;
   export type FrameworkMode =
     | 'backend-frontend(tcp+udp)'
+    | 'backend-frontend(cloudflare)'
     | 'remote-backend(tcp+udp)'
     | 'backend-frontend(ipc-electron)'
     | 'backend-frontend(websql-electron)'
@@ -168,7 +170,7 @@ export namespace Models {
     declare dbLocationFn?: (options?: {
       port?: string | number;
       contextName?: string;
-      baseLocation?:string;
+      baseLocation?: string;
       repositoryClassName?: string;
       cwd?: string;
       ctx?: EndpointContext;
@@ -432,16 +434,15 @@ export namespace Models {
   //#endregion
 
   //#region models / start params
-  export interface StartParams {
-    port: number;
-    args: string[];
-    onlyMigrationRun?: boolean;
-    onlyMigrationRevertToTimestamp?: number;
-  }
-
   export interface TaonInitializeParams {
     onlyMigrationRun?: boolean;
     onlyMigrationRevertToTimestamp?: number;
+    overrideExpressApp?: Application;
+  }
+
+  export interface StartParams extends TaonInitializeParams {
+    port?: number;
+    args?: string[];
   }
 
   export interface TaonCtxCloneParams {

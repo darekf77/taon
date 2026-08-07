@@ -56,6 +56,7 @@ import { Models } from './models';
 import { RealtimeCore } from './realtime/realtime-core';
 import { Symbols } from './symbols';
 import { TaonAdmin } from './ui/taon-admin-mode-configuration/taon-admin.service'; // @browser
+import { createFakeExpressApp } from './cloudflare/cloudflare-express-fake-server';
 
 //#endregion
 
@@ -333,7 +334,16 @@ export class EndpointContext {
   ) {
     this.cloneOptions = this.cloneOptions || {};
     this.isRunningInsideDocker = UtilsOs.isRunningInDocker();
+    if (UtilsOs.isRunningInCloudflareWorker()) {
+      this.expressApp = createFakeExpressApp();
+    }
   }
+  //#endregion
+
+  //#region methods & getters / cloudflare
+  public readonly R2: any;
+
+  public readonly D1: any;
   //#endregion
 
   //#region methods & getters / init
@@ -409,37 +419,43 @@ export class EndpointContext {
     //#endregion
 
     //#region resolve mode
-    if (this.config.host) {
-      this.mode = 'backend-frontend(tcp+udp)';
-      //#region @websqlOnly
-      this.mode = 'backend-frontend(websql)';
-      //#endregion
-    }
-
-    if (this.isRemoteHost) {
-      this.mode = 'remote-backend(tcp+udp)';
-    }
-
-    // console.log(`
-
-    //   useIpcWhenElectron: ${this.config.useIpcWhenElectron}
-    //   UtilsOs.isElectron: ${UtilsOs.isElectron}
-
-    //   `)
-    if (this.config.useIpcWhenElectron && UtilsOs.isElectron) {
-      if (UtilsOs.isWebSQL) {
-        this.mode = 'backend-frontend(websql-electron)';
-      } else {
-        this.mode = 'backend-frontend(ipc-electron)';
+    if (UtilsOs.isRunningInCloudflareWorker()) {
+      this.mode = 'backend-frontend(cloudflare)';
+    } else {
+      if (this.config.host) {
+        this.mode = 'backend-frontend(tcp+udp)';
+        //#region @websqlOnly
+        this.mode = 'backend-frontend(websql)';
+        //#endregion
       }
+
+      if (this.isRemoteHost) {
+        this.mode = 'remote-backend(tcp+udp)';
+      }
+
+      // console.log(`
+
+      //   useIpcWhenElectron: ${this.config.useIpcWhenElectron}
+      //   UtilsOs.isElectron: ${UtilsOs.isElectron}
+
+      //   `)
+      if (this.config.useIpcWhenElectron && UtilsOs.isElectron) {
+        if (UtilsOs.isWebSQL) {
+          this.mode = 'backend-frontend(websql-electron)';
+        } else {
+          this.mode = 'backend-frontend(ipc-electron)';
+        }
+      }
+
+      // mode === undefined for TaonBaseContext => ok behavior
+      // console.log(`Mode for BE/FE communication: ${this.mode}`);
+      // if(!this.mode) {
+      //   console.log(this.config)
+      // }
     }
+    //#endregion
 
-    // mode === undefined for TaonBaseContext => ok behavior
-    // console.log(`Mode for BE/FE communication: ${this.mode}`);
-    // if(!this.mode) {
-    //   console.log(this.config)
-    // }
-
+    //#region throw error when no mode detected and non abstract context
     if (!this.mode && !this.config.abstract) {
       const errMsg =
         `You need to provide host property or ` +
@@ -662,44 +678,50 @@ export class EndpointContext {
       //#region prepares server
       if (this.mode === 'backend-frontend(tcp+udp)' && !this.config.abstract) {
         //#region @backend
-        let express: typeof import('express');
-        express = requireDefault('express');
+        if (UtilsOs.isRunningInCloudflareWorker()) {
+          this.logFramework &&
+            Helpers.info(`Using cloudflare fake express server`);
+        } else {
+          let express: typeof import('express');
+          express = requireDefault('express');
 
-        this.expressApp = express();
+          this.expressApp = express();
 
-        if (process.env.NODE_ENV === 'production') {
-          this.expressApp.set('trust proxy', 1);
-        }
+          if (process.env.NODE_ENV === 'production') {
+            this.expressApp.set('trust proxy', 1);
+          }
 
-        await this.initBackendMiddlewares();
-        await this.initCustomBackendMiddlewares();
-        const shouldStartHttpsSecureServer =
-          this.isHttpServer && !this.isRunningInsideDocker;
-        this.logFramework &&
-          Helpers.info(`
+          await this.initBackendMiddlewares();
+          await this.initCustomBackendMiddlewares();
+          const shouldStartHttpsSecureServer =
+            this.isHttpServer && !this.isRunningInsideDocker;
+          this.logFramework &&
+            Helpers.info(`
 
           Starting server ${
             shouldStartHttpsSecureServer ? 'with' : 'without'
           } HTTPS secure server
 
           `);
-        this.serverTcpUdp = shouldStartHttpsSecureServer
-          ? new https.Server(
-              {
-                key: this.config.https?.key,
-                cert: this.config.https?.cert,
-              },
-              this.expressApp,
-            )
-          : new http.Server(this.expressApp);
+          this.serverTcpUdp = shouldStartHttpsSecureServer
+            ? new https.Server(
+                {
+                  key: this.config.https?.key,
+                  cert: this.config.https?.cert,
+                },
+                this.expressApp,
+              )
+            : new http.Server(this.expressApp);
 
-        this.trackServer(this.serverTcpUdp);
-        this.publicAssets.forEach(asset => {
-          this.expressApp.use(
-            asset.serverPath,
-            express.static(asset.locationOnDisk),
-          );
-        });
+          this.trackServer(this.serverTcpUdp);
+          this.publicAssets.forEach(asset => {
+            this.expressApp.use(
+              asset.serverPath,
+              express.static(asset.locationOnDisk),
+            );
+          });
+        }
+
         //#endregion
 
         await this.initCustomClientMiddlewares();
@@ -1026,7 +1048,11 @@ export class EndpointContext {
   //#region methods & getters / start server
   async startServer(): Promise<void> {
     //#region @backendFunc
-    if (this.isRemoteHost || this.isRunOrRevertOnlyMigrationAppStart) {
+    if (
+      this.isRemoteHost ||
+      this.isRunOrRevertOnlyMigrationAppStart ||
+      UtilsOs.isRunningInCloudflareWorker()
+    ) {
       return;
     }
     if (this.mode === 'backend-frontend(tcp+udp)') {
@@ -1497,13 +1523,13 @@ export class EndpointContext {
   }
   //#endregion
 
-  //#region methods & getters / init classes
-  async initClasses(): Promise<void> {
+  //#region methods & getters / init repositories
+  async initRepositories(): Promise<void> {
     if (this.isRemoteHost) {
       return;
     }
-
     //#region @websql
+
     if (this.connection) {
       for (const classFun of this.getClassFunByArr(
         Models.ClassType.ENTITY,
@@ -1522,6 +1548,14 @@ export class EndpointContext {
     }
 
     //#endregion
+  }
+  //#endregion
+
+  //#region methods & getters / init classes
+  async initClassesLowDashInitFunction(): Promise<void> {
+    if (this.isRemoteHost) {
+      return;
+    }
 
     for (const classTypeName of [
       Models.ClassType.MIDDLEWARE,
@@ -2081,7 +2115,7 @@ export class EndpointContext {
     }
   }
 
-  async initControllers(): Promise<void> {
+  initControllers(intOpt: { overrideExpressApp: Application }): void {
     if (this.isRunOrRevertOnlyMigrationAppStart) {
       return;
     }
@@ -2089,6 +2123,10 @@ export class EndpointContext {
     // debugger
     // console.log('allControllers', allControllers);
     for (const controllerClassFn of allControllers) {
+      // this.logFramework &&
+      //   Helpers.info(
+      //     `Initing controller ${ClassHelpers.getName(controllerClassFn)}`,
+      //   );
       // console.log(ClassHelpers.getClassConfig(controllerClassFn));
 
       // const controllerName = ClassHelpers.getName(controllerClassFn);
@@ -2146,6 +2184,7 @@ export class EndpointContext {
 
       //#region init client or server methods
       const methodNames = Object.keys(classConfig.methods);
+      // console.log({ methodNames });
       for (const methodName of methodNames) {
         const methodConfig: Partial<MethodConfig> =
           classConfig.methods[methodName];
@@ -2212,6 +2251,7 @@ export class EndpointContext {
             classConfig,
             expressPath,
             controllerClassFn,
+            intOpt.overrideExpressApp,
           );
 
           this.activeRoutes.push({
@@ -2234,7 +2274,7 @@ export class EndpointContext {
           //   methodConfig,
           //   expressPath,
           // );
-          await this.initClient(
+          this.initClient(
             controllerClassFn,
             httpMethodType,
             methodConfig as any,
@@ -2294,17 +2334,24 @@ export class EndpointContext {
       ...troutes,
     ].join('\n');
 
-    const fileName = crossPlatformPath([
-      //#region @backend
-      process.cwd(),
-      //#endregion
-      `routes/routes-${this.config.contextName}.rest`,
-    ]);
+    const routerName = `routes/routes-${this.config.contextName}.rest`;
+    const fileName = UtilsOs.isRunningInCloudflareWorker()
+      ? crossPlatformPath([routerName])
+      : crossPlatformPath([
+          //#region @backend
+          process.cwd(),
+          //#endregion
+          routerName,
+        ]);
 
     this.logFramework && console.log(`[taon] routes file: ${fileName} `);
     this.logRoutes && console.log(routes);
     //#region @backend
-    if (!UtilsOs.isElectron && !this.skipWritingServerRoutes) {
+    if (
+      !UtilsOs.isRunningInCloudflareWorker() &&
+      !UtilsOs.isElectron &&
+      !this.skipWritingServerRoutes
+    ) {
       Helpers.writeFile(fileName, routes);
     }
     //#endregion
@@ -2532,9 +2579,13 @@ export class EndpointContext {
     classConfig: ControllerConfig,
     expressPath: string,
     target: Function,
+    overrideExpressApp: Application,
     //#endregion
   ): { expressPath: string; method: CoreModels.HttpMethod } {
     //#region resolve variables
+    if (overrideExpressApp) {
+      this.expressApp = overrideExpressApp;
+    }
     // console.log(
     //   `CLIENT: expressPath: "${expressPath}" interceptor for method: ${methodConfig.calculatedMiddlewares.length}`,
     // );
@@ -2641,13 +2692,15 @@ export class EndpointContext {
       //#endregion
 
       //#region @backend
+      // console.log('this.expressApp', this.expressApp);
       // this.logHttp &&
       //   console.log(`[${httpMethodType.toUpperCase()}] ${expressPath} `);
+
       this.expressApp[httpMethodType.toLowerCase()](
         expressPath,
         ...middlewareHandlers,
         async (req: expressType.Request, res: expressType.Response) => {
-          // console.log(`[${type.toUpperCase()}] ${expressPath} `);
+          // console.log(`[${httpMethodType.toUpperCase()}] ${expressPath} `);
           //#region process params
           const args: any[] = [];
 
@@ -2927,12 +2980,12 @@ export class EndpointContext {
   /**
    * client can be browser or nodejs (when remote host)
    */
-  private async initClient(
+  private initClient(
     target: Function,
     httpRequestType: CoreModels.HttpMethod,
     methodConfig: Partial<MethodConfig>, // Models.Http.Rest.MethodConfig,
     expressPath: string,
-  ): Promise<void> {
+  ): void {
     const ctx = this;
 
     // console.log(
