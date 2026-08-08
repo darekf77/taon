@@ -344,6 +344,8 @@ export class EndpointContext {
   public readonly R2: any;
 
   public readonly D1: any;
+
+  public readonly KV: any;
   //#endregion
 
   //#region methods & getters / init
