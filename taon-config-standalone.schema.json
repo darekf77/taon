@@ -6,6 +6,9 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "overrideShortName": {
+          "type": "string"
+        },
         "type": {
           "$ref": "#/definitions/LibTypeEnum"
         },
@@ -5470,7 +5473,7 @@
               },
               "includeInBundleNodeModules": {
                 "$ref": "#/definitions/Models.TaonArtifactInclude",
-                "description": "! FOR NOW ONLY FOR: 'electron-app' and 'angular-node-app'\n\nNative stuff that can't be minified and needs to be included in bundle. Taon will perform npm install for all packages marked with this"
+                "description": "! FOR NOW ONLY FOR:  - 'electron-app'  - 'angular-node-app'  - 'vscode-plugin'\n\nNative stuff that can't be minified and needs to be included in bundle. Taon will perform npm install for all packages marked with this"
               }
             },
             "required": [
@@ -5521,19 +5524,6 @@
         }
       },
       "required": [
-        "dependenciesNamesForNpmLib",
-        "devDependenciesNamesForNpmLib",
-        "devModeDependenciesForNpmLib",
-        "isCoreProject",
-        "isomorphicDependenciesForNpmLib",
-        "optionalDependenciesNamesForNpmLib",
-        "overridePackagesOrder",
-        "packageJsonOverride",
-        "peerDependenciesNamesForNpmLib",
-        "shouldGenerateAutogenAppRoutesFile",
-        "shouldGenerateAutogenIndexFile",
-        "shouldGenerateTranslationFiles",
-        "singleFileBundlingPackages",
         "type"
       ]
     },
@@ -6455,12 +6445,13 @@
     "UtilsI18n.CommonLocaleCode": {
       "type": "string",
       "enum": [
+        "pl-PL",
         "en-US",
         "en-GB",
-        "pl-PL",
         "de-DE",
         "fr-FR",
-        "pt-BR"
+        "es-ES",
+        "zh-CN"
       ]
     },
     "Models.TaonAutoReleaseItem": {

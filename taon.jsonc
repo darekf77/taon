@@ -163,4 +163,5 @@
       "mkdocs": "python3 -m mkdocs",
     },
   },
+  "shortName": "taon",
 }

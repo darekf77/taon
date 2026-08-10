@@ -3,7 +3,7 @@ import type { Server } from 'http';
 import type { Socket } from 'net';
 import { URL } from 'url'; // @backend
 
-import { axios } from 'tnp-core/src';
+import { axios, UtilsStdinStdoutLogger } from 'tnp-core/src';
 import type { ipcMain } from 'electron'; // @backend
 import type { Application } from 'express';
 //  multer in taon middleware will do better job than express-fileupload
@@ -344,6 +344,8 @@ export class EndpointContext {
   public readonly R2: any;
 
   public readonly D1: any;
+
+  public readonly KV: any;
   //#endregion
 
   //#region methods & getters / init
@@ -2911,6 +2913,9 @@ export class EndpointContext {
               //#endregion
             }
           } catch (error) {
+            if (UtilsStdinStdoutLogger.startedRegistering()) {
+              Helpers.error(`HTTP ERROR [ctx=${this.contextName}][${expressPath}]`, error);
+            }
             if (res.headersSent) {
               // SKIP FURTHER PROCESSING IF RESPONSE ALREADY SENT
               return;
