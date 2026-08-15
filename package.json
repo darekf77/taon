@@ -1,6 +1,6 @@
 {
   "name": "taon",
-  "version": "21.0.102",
+  "version": "21.0.145",
   "scripts": {
     "mkdocs": "python3 -m mkdocs",
     "taon init": "taon init",
@@ -146,6 +146,7 @@
     "@capacitor/text-zoom": "^8.0.0",
     "@capacitor/toast": "^8.0.0",
     "@cloudflare/vitest-pool-workers": "^0.12.4",
+    "@cloudflare/workers-types": "^5.20260815.1",
     "@compodoc/compodoc": "~1.1.32",
     "@electron/fuses": "^1.8.0",
     "@fancyapps/ui": "~6.1.14",
