@@ -194,6 +194,7 @@ export class ContextDbMigrations {
     const queryRunner = this.ctx.connection.createQueryRunner();
     await queryRunner.connect();
 
+    let ok = true;
     try {
       await queryRunner.startTransaction();
 
@@ -240,12 +241,17 @@ export class ContextDbMigrations {
             `to the specified timestamp ${timestamp} .`,
         );
     } catch (error) {
+      ok = false;
       this.ctx.logMigrations &&
         console.error('Transaction failed, rolling back:', error);
       await queryRunner.rollbackTransaction();
     } finally {
       await queryRunner.release();
     }
+    if (!ok) {
+      throw `[taon][revertMigrationToTimestamp] Transaction failed`;
+    }
+
     //#endregion
   }
   //#endregion
@@ -259,16 +265,20 @@ export class ContextDbMigrations {
     const queryRunner = this.ctx.connection.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
-
+    let ok = true;
     try {
       await queryRunner.clearTable(this.DEFAULT_MIGRATION_TABLE_NAME);
       await queryRunner.commitTransaction();
     } catch (error) {
+      ok = false;
       this.ctx.logMigrations &&
         console.error('Transaction failed, rolling back:', error);
       await queryRunner.rollbackTransaction();
     } finally {
       await queryRunner.release();
+    }
+    if (!ok) {
+      throw `[taon][clearMigrationTable] Transaction failed`;
     }
     //#endregion
   }
@@ -378,7 +388,7 @@ export class ContextDbMigrations {
 
     const queryRunner = this.ctx.connection.createQueryRunner();
     await queryRunner.connect();
-
+    let ok = true;
     try {
       await queryRunner.startTransaction();
 
@@ -476,11 +486,15 @@ export class ContextDbMigrations {
 
       await queryRunner.commitTransaction();
     } catch (error) {
+      ok = false;
       this.ctx.logMigrations &&
         console.error('Transaction failed, rolling back:', error);
       await queryRunner.rollbackTransaction();
     } finally {
       await queryRunner.release();
+    }
+    if (!ok) {
+      throw `[taon][runAllNotCompletedMigrations] Transaction failed`;
     }
     //#endregion
   }
