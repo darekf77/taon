@@ -1,3 +1,4 @@
+import { R2Bucket } from '@cloudflare/workers-types';
 import {
   RestErrorResponseWrapper,
   RestResponseWrapper,
@@ -23,8 +24,6 @@ import type { Models } from '../models';
 
 import { TaonBaseFileUploadMiddleware } from './base-file-upload.middleware';
 import { TaonBaseInjector } from './base-injector';
-
-export type R2Bucket = any;
 
 export interface MulterFileUploadResponse {
   ok: boolean;
@@ -148,7 +147,7 @@ export class TaonBaseController<
         controller: this.constructor.name,
       });
 
-      const result = await this.R2.put(savedAs, file.stream(), {
+      const result = await this.R2.put(savedAs, file.stream() as any, {
         httpMetadata: {
           contentType: file.type || 'application/octet-stream',
         },

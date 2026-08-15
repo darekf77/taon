@@ -1,6 +1,6 @@
 import { CoreModels } from 'tnp-core/src';
 import { Symbols } from '../symbols';
-import { Request } from './worker-configuration';
+import { Request } from '@cloudflare/workers-types';
 
 //#region parse body
 async function parseBody(request: Request) {
