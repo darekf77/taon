@@ -62,7 +62,9 @@
 
   "removeAfterPullingFromGit": ["projects"],
   "resources": ["README.md", "bin", "icon-menu-taon.svg"],
+  "shortName": "taon",
   "shouldGenerateAutogenIndexFile": false,
+
   "shouldGenerateTranslationFiles": true,
 
   "singleFileBundlingPackages": [
@@ -89,7 +91,6 @@
       "packageName": "jsonc-parser",
     },
   ],
-
   "packageJsonOverride": {
     "author": "Dariusz Filipiak",
     "bugs": {
@@ -163,5 +164,4 @@
       "mkdocs": "python3 -m mkdocs",
     },
   },
-  "shortName": "taon",
 }

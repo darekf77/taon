@@ -6484,6 +6484,10 @@
           "type": "string",
           "description": "Short description of auto release item"
         },
+        "workerName": {
+          "type": "string",
+          "description": "Cloudflare worker name"
+        },
         "askUserBeforeFinalAction": {
           "type": "boolean",
           "description": "Ask for confirmation before deployement to taon cloud"
@@ -6507,6 +6511,8 @@
         "dev",
         "stage",
         "prod",
+        "cloudflare",
+        "cloud",
         "test",
         "qa",
         "sandbox",

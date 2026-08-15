@@ -3,7 +3,6 @@ import type { Server } from 'http';
 import type { Socket } from 'net';
 import { URL } from 'url'; // @backend
 
-import { axios, UtilsStdinStdoutLogger } from 'tnp-core/src';
 import type { ipcMain } from 'electron'; // @backend
 import type { Application } from 'express';
 //  multer in taon middleware will do better job than express-fileupload
@@ -26,6 +25,7 @@ import type { Repository } from 'taon-typeorm/src'; // @websql
 import { EventSubscriber } from 'taon-typeorm/src'; // @websql
 import { Entity as TypeormEntity } from 'taon-typeorm/src'; // @websql
 import { DataSource, DataSourceOptions } from 'taon-typeorm/src';
+import { axios, UtilsStdinStdoutLogger } from 'tnp-core/src';
 import { path, requireDefault } from 'tnp-core/src';
 import { config } from 'tnp-core/src';
 import { CoreModels } from 'tnp-core/src';
@@ -37,6 +37,7 @@ import { _, Helpers } from 'tnp-core/src';
 import type { TaonBaseController } from './base-classes/base-controller';
 import type { TaonBaseMiddleware } from './base-classes/base-middleware';
 import type { TaonBaseRepository } from './base-classes/base-repository';
+import { createFakeExpressApp } from './cloudflare/cloudflare-express-fake-server';
 import type { ControllerConfig } from './config/controller-config';
 import { MethodConfig } from './config/method-config';
 import { ParamConfig } from './config/param-config';
@@ -55,8 +56,8 @@ import { TaonHelpers } from './helpers/taon-helpers';
 import { Models } from './models';
 import { RealtimeCore } from './realtime/realtime-core';
 import { Symbols } from './symbols';
+
 import { TaonAdmin } from './ui/taon-admin-mode-configuration/taon-admin.service'; // @browser
-import { createFakeExpressApp } from './cloudflare/cloudflare-express-fake-server';
 
 //#endregion
 
@@ -349,23 +350,42 @@ export class EndpointContext {
   //#endregion
 
   //#region methods & getters / init
-  public async init(options?: {
+  public async init(initOptions?: {
     initFromRecrusiveContextResovle?: boolean;
     onlyMigrationRun?: boolean;
     onlyMigrationRevertToTimestamp?: number;
+    overrideHost?: string;
+    cloudflareEnv?: any;
   }) {
-    const {
-      initFromRecrusiveContextResovle,
-      onlyMigrationRun,
-      onlyMigrationRevertToTimestamp,
-    } = options || {}; // TODO use it ?
+    initOptions = initOptions || {};
+
+    if (initOptions.overrideHost) {
+      this.cloneOptions.overrideHost = initOptions.overrideHost;
+      delete initOptions.overrideHost;
+    }
+
+    //#region @backend
+    if (initOptions.cloudflareEnv) {
+      // @ts-expect-error
+      this.D1 = initOptions.cloudflareEnv.TAON_D1;
+      // @ts-expect-error
+      this.KV = initOptions.cloudflareEnv.TAON_KV;
+      // @ts-expect-error
+      this.R2 = initOptions.cloudflareEnv.TAON_R2;
+    }
+    //#endregion
 
     this.inited = true;
-    // @ts-ignore
-    this.onlyMigrationRun = onlyMigrationRun;
-    // @ts-ignore
-    this.onlyMigrationRevertToTimestamp = onlyMigrationRevertToTimestamp;
+
+    // @ts-expect-error
+    this.onlyMigrationRun = initOptions.onlyMigrationRun;
+
+    // @ts-expect-error
+    this.onlyMigrationRevertToTimestamp =
+      initOptions.onlyMigrationRevertToTimestamp;
+
     this.config = this.configFn({});
+
     if (_.isObject(this.config.database)) {
       this.config.database = Models.DatabaseConfig.from(
         this.config.database as Models.DatabaseConfig,
@@ -916,10 +936,22 @@ export class EndpointContext {
         //#endregion
 
         //#region resolve database config for mode backend-frontend(tcp+udp)
+        case 'backend-frontend(cloudflare)':
+          databaseConfig = Models.DatabaseConfig.from({
+            // location: this.sqlLiteDbLocation,
+            // @ts-ignore
+            type: 'd1',
+            // database: this.D1,
+            recreateMode: 'DROP_DB+MIGRATIONS',
+            logging: this.logDb,
+          });
+          break;
+
         case 'backend-frontend(tcp+udp)':
           if (!Helpers.exists(path.dirname(this.sqlLiteDbLocation))) {
             Helpers.mkdirp(path.dirname(this.sqlLiteDbLocation));
           }
+
           databaseConfig = Models.DatabaseConfig.from({
             database: `context-db-${this.contextName}`,
             location: this.sqlLiteDbLocation,
@@ -1136,6 +1168,7 @@ export class EndpointContext {
     return (
       this.mode === 'backend-frontend(tcp+udp)' ||
       this.mode === 'backend-frontend(websql)' ||
+      this.mode === 'backend-frontend(cloudflare)' ||
       this.mode === 'backend-frontend(ipc-electron)'
     );
   }
@@ -1846,7 +1879,7 @@ export class EndpointContext {
       } else {
         this.logDb &&
           console.info(
-            `[taon][typeorm] create table for entity "${nameForEntity}" ? '${createTable}'`,
+            `[taon][typeorm] don't create table for entity "${nameForEntity}" ? '${createTable}'`,
           );
       }
     }
@@ -1906,8 +1939,10 @@ export class EndpointContext {
       return;
     }
 
-    if (!Helpers.exists(this.kvDbJsonLocationBaseFolderLocation)) {
-      Helpers.mkdirp(this.kvDbJsonLocationBaseFolderLocation);
+    if (!UtilsOs.isRunningInCloudflareWorker()) {
+      if (!Helpers.exists(this.kvDbJsonLocationBaseFolderLocation)) {
+        Helpers.mkdirp(this.kvDbJsonLocationBaseFolderLocation);
+      }
     }
 
     const entities = this.getClassFunByArr(Models.ClassType.ENTITY).map(
@@ -1940,7 +1975,9 @@ export class EndpointContext {
       for (const repo of repos) {
         const repoClassName = ClassHelpers.getName(repo);
         // console.log({ repoClassName });
-        Helpers.writeJson(this.kvDbJsonLocationForClass(repoClassName), {});
+        if (!UtilsOs.isRunningInCloudflareWorker()) {
+          Helpers.writeJson(this.kvDbJsonLocationForClass(repoClassName), {});
+        }
       }
     }
 
@@ -1949,7 +1986,9 @@ export class EndpointContext {
           type: this.databaseConfig.type,
           port: this.databaseConfig.databasePort,
           host: this.databaseConfig.databaseHost,
-          database: this.databaseConfig.database as any,
+          database: UtilsOs.isRunningInCloudflareWorker()
+            ? this.D1
+            : (this.databaseConfig.database as any),
           username: this.databaseConfig.databaseUsername,
           password: this.databaseConfig.databasePassword,
           useLocalForage: this.databaseConfig.useLocalForage,
@@ -2758,7 +2797,7 @@ export class EndpointContext {
             // TODO why do i need this ????
             //#region encode entity or enties in body from header mapping
 
-            Object.keys(tBody).forEach(paramName => {
+            Object.keys(tBody || {}).forEach(paramName => {
               try {
                 const mappingForEntityBodyForParam = JSON.parse(
                   TaonHelpers.firstStringOrElemFromArray(
@@ -2795,7 +2834,7 @@ export class EndpointContext {
           } else {
             // TODO why do i need this ????
             //#region encode entity or enties in query parms from header mapping
-            Object.keys(tQuery).forEach(queryParamName => {
+            Object.keys(tQuery || {}).forEach(queryParamName => {
               try {
                 const entityForParam = JSON.parse(
                   TaonHelpers.firstStringOrElemFromArray(
@@ -2860,7 +2899,8 @@ export class EndpointContext {
             .map(v => TaonHelpers.tryTransformParam(v));
 
           try {
-            let result = await getResult(resolvedParams, req, res);
+            let resultFromCtrlExec = await getResult(resolvedParams, req, res);
+            // console.log({ resultFromCtrlExec });
             if (methodConfig.responseType)
               if (res.headersSent) {
                 // SKIP FURTHER PROCESSING IF RESPONSE ALREADY SENT
@@ -2868,16 +2908,16 @@ export class EndpointContext {
               }
             if (methodConfig.overrideExpressSendAsHtml) {
               res.setHeader('Content-Type', 'text/html');
-              res.send(result);
+              res.send(resultFromCtrlExec);
               return;
             }
             if (
-              result instanceof Blob &&
+              resultFromCtrlExec instanceof Blob &&
               (methodConfig.responseType as ResponseTypeAxios) === 'blob'
             ) {
               // console.log('INSTANCE OF BLOB')
               //#region processs blob result type
-              const blob = result as Blob;
+              const blob = resultFromCtrlExec as Blob;
               const file = Buffer.from(await blob.arrayBuffer());
               res.writeHead(200, {
                 'Content-Type': blob.type,
@@ -2886,12 +2926,12 @@ export class EndpointContext {
               res.end(file);
               //#endregion
             } else if (
-              _.isString(result) &&
+              _.isString(resultFromCtrlExec) &&
               (methodConfig.responseType as ResponseTypeAxios) === 'blob'
             ) {
               // console.log('BASE64')
               //#region process string buffer TODO refacetor
-              const img_base64 = result;
+              const img_base64 = resultFromCtrlExec;
               const m = /^data:(.+?);base64,(.+)$/.exec(img_base64);
               if (!m) {
                 throw new Error(
@@ -2909,12 +2949,15 @@ export class EndpointContext {
               //#endregion
             } else {
               //#region process json request
-              await new EntityProcess(result, res).run();
+              await new EntityProcess(resultFromCtrlExec, res).run();
               //#endregion
             }
           } catch (error) {
             if (UtilsStdinStdoutLogger.startedRegistering()) {
-              Helpers.error(`HTTP ERROR [ctx=${this.contextName}][${expressPath}]`, error);
+              Helpers.error(
+                `HTTP ERROR [ctx=${this.contextName}][${expressPath}]`,
+                error,
+              );
             }
             if (res.headersSent) {
               // SKIP FURTHER PROCESSING IF RESPONSE ALREADY SENT
@@ -2970,13 +3013,18 @@ export class EndpointContext {
       details = error;
     }
 
-    res.status(status).json({
+    const errroResult = {
       success,
       message,
       details,
       code,
       [CoreModels.TaonHttpErrorCustomProp]: true,
-    } as RestErrorResponseWrapper);
+    } as RestErrorResponseWrapper;
+
+    if (UtilsOs.isRunningInCloudflareWorker()) {
+      console.error(errroResult);
+    }
+    res.status(status).json(errroResult);
     //#endregion
   }
   //#endregion

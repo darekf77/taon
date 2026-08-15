@@ -438,6 +438,8 @@ export namespace Models {
     onlyMigrationRun?: boolean;
     onlyMigrationRevertToTimestamp?: number;
     overrideExpressApp?: Application;
+    overrideHost?: string
+    cloudflareEnv?: any;
   }
 
   export interface StartParams extends TaonInitializeParams {

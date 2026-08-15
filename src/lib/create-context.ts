@@ -201,19 +201,19 @@ const createContextFn = <
           }
         }
 
-        await endpointContextRef.init({
-          ...overrideOptions,
-        });
+        await endpointContextRef.init(overrideOptions);
 
         if (config.abstract) {
           throw new Error(`Abstract context can not be initialized`);
         }
 
         await endpointContextRef.initEntities();
+
         await endpointContextRef.initSubscribers();
 
         await endpointContextRef.initDatabaseConnection();
 
+        // console.log('DB INITED!!!!!!!!!!!!!!!!!')
         await endpointContextRef.dbMigrations.ensureMigrationTableExists();
 
         // console.log(
@@ -228,12 +228,10 @@ const createContextFn = <
         //#region @websqlb
         endpointContextRef.writeActiveRoutes();
         //#endregion
-        if (UtilsOs.isRunningInCloudflareWorker()) {
-          // skip init _ function when in cloudflare
-        } else {
-          await endpointContextRef.initRepositories();
-          await endpointContextRef.initClassesLowDashInitFunction();
-        }
+
+        await endpointContextRef.initRepositories();
+        await endpointContextRef.initClassesLowDashInitFunction();
+
         if (endpointContextRef.databaseConfig) {
           //#region handle websql reload data
           //#region @browser
@@ -300,8 +298,6 @@ const createContextFn = <
           }
           //#endregion
         }
-
-
 
         resolve(endpointContextRef);
         //#endregion
