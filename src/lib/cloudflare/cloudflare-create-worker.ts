@@ -65,11 +65,45 @@ function parseCookies(request: Request): Record<string, string> {
 //#endregion
 
 //#region cors headers
-function corsHeaders(request?: Request) {
+function corsHeaders(request: Request): Record<string, string> {
+  const origin = request.headers.get('origin');
+
+  // Same-origin requests often have no Origin header.
+  // No CORS headers needed.
+  if (!origin) {
+    return {};
+  }
+
+  const requestOrigin = new URL(request.url).origin;
+
+  // Same origin -> no CORS needed.
+  if (origin === requestOrigin) {
+    return {};
+  }
+
+  let originUrl: URL;
+
+  try {
+    originUrl = new URL(origin);
+  } catch {
+    return {};
+  }
+
+  // Allow localhost on ANY port.
+  const isLocalhost =
+    originUrl.hostname === 'localhost' ||
+    originUrl.hostname === '127.0.0.1' ||
+    originUrl.hostname === '[::1]';
+
+  if (!isLocalhost) {
+    return {};
+  }
+
   const headersAllowedString = [
     'Content-Type',
     'Authorization',
     'X-Requested-With',
+
     Symbols.old.X_TOTAL_COUNT,
 
     Symbols.old.CIRCURAL_OBJECTS_MAP_BODY,
@@ -87,22 +121,22 @@ function corsHeaders(request?: Request) {
     'OPTIONS',
   ].join(', ');
 
-  // console.log({ allowedMethodsString, headersAllowedString });
-
-  const origin = request?.headers.get('origin');
-
   return {
-    // IMPORTANT:
-    // credentials=true should not be combined with "*"
-    'Access-Control-Allow-Origin': origin || '*',
+    // Exact localhost origin, including its port:
+    // http://localhost:4200
+    // http://localhost:4209
+    // etc.
+    'Access-Control-Allow-Origin': origin,
+
     'Access-Control-Allow-Methods': allowedMethodsString,
     'Access-Control-Allow-Headers': headersAllowedString,
     'Access-Control-Expose-Headers': headersAllowedString,
+
     'Access-Control-Allow-Credentials': 'true',
+
     Vary: 'Origin',
   };
 }
-//#endregion
 
 //#region helpers
 function statusText(code: number) {
@@ -149,7 +183,7 @@ function mimeType(type: string) {
 //#endregion
 
 //#region create worker adapter
-let firstRequest = true;
+let initializationPromise: Promise<void> | undefined;
 
 export function createWorkerAdapter(
   handler: (req: any, res: any) => Promise<void> | void,
@@ -472,12 +506,20 @@ export function createWorkerAdapter(
     };
 
     try {
-      if (firstRequest) {
-        firstRequest = false;
-        await firstRequestCallback(request.url, req, res, env);
-      } else {
-        await handler(req, res);
+      if (!initializationPromise) {
+        initializationPromise = firstRequestCallback(
+          new URL(request.url).origin,
+          req,
+          res,
+          env,
+        ).catch(err => {
+          initializationPromise = undefined;
+          throw err;
+        });
       }
+
+      await initializationPromise;
+      await handler(req, res);
     } catch (err: any) {
       console.log(err);
       console.error('BACKEND ERROR', {

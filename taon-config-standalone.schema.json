@@ -6529,10 +6529,13 @@
     "ReleaseType": {
       "type": "string",
       "enum": [
-        "manual",
+        "manual-taon",
         "local",
-        "cloud",
-        "static-pages"
+        "cloud-ci-taon",
+        "manual-static-pages",
+        "cloud-ci-static-pages",
+        "manual-cloudflare",
+        "cloud-ci-cloudflare"
       ]
     }
   }
