@@ -4,7 +4,7 @@
 TAON  **T**ypescript **A**ngular **O**rm **N**ode )
 
 
-( ALPHA VERSION - For early testing and feedback only. )
+( BETA VERSION - For early testing. )
 
 **Taon** 🔥🔥🔥 is a:<br>
 1. **CLI** <br>
@@ -16,34 +16,39 @@ for building/testing/deploying modern:<br>
 <br>
 
 \+
-[TypesScript](https://www.typescriptlang.org/) isomorphic libraries/backends/frontends
+[TypesScript](https://www.typescriptlang.org/) isomorphic libraries/backends/frontends ✅
 
 \+
-[Angular](https://angular.io/) libraries and PWA apps
+[Angular](https://angular.io/) libraries and PWA apps ✅
 
-\+ Databases with Orm ([TypeORM](https://typeorm.io/)) <br>
+\+ Databases with Orm ([TypeORM](https://typeorm.io/)) <br> 
 &nbsp;- [sql.js](https://sql.js.org)<br>
-&nbsp;&nbsp;&nbsp;->  local development mode<br>
-&nbsp;&nbsp;&nbsp;->  local development with backend in browser mode (WEBSQL) <br>
-&nbsp;&nbsp;&nbsp;->  production dockerized mode <br>
-&nbsp;&nbsp;&nbsp;->  production backend in browser mode (WEBSQL) <br>
+&nbsp;&nbsp;&nbsp;->  local development mode ✅<br>
+&nbsp;&nbsp;&nbsp;->  local development with backend in browser mode (WEBSQL) ✅<br>
+&nbsp;&nbsp;&nbsp;->  production dockerized mode ✅<br>
+&nbsp;&nbsp;&nbsp;->  production backend in browser mode (WEBSQL) ✅<br>
 &nbsp;- [mysql](https://www.mysql.com/)  
 &nbsp;&nbsp;&nbsp;-> production dockerized mode (NOT READY YET) <br>
+&nbsp;- [D1](https://developers.cloudflare.com/d1/)  
+&nbsp;&nbsp;&nbsp;-> production read sql db ✅<br>
 
 \+
-[NodeJS](https://nodejs.org/en/) backends deployable on any server with on command
+[NodeJS](https://nodejs.org/en/) backends deployable on any server with on command (Taon Cloud - PROOF OF CONCEPT READY)
+
+\+
+[NodeJS](https://nodejs.org/en/) backends deployable [Cloudflare Wokers®](https://developers.cloudflare.com/workers/) on command ✅
   
 \+
-[Electron](https://www.electronjs.org/) desktop apps
+[Electron](https://www.electronjs.org/) desktop apps ✅
 
 \+
 [Capacitor](https://capacitorjs.com/) mobile apps (NOT READY YET)
 
 \+
-[Visual Studio Code](https://www.electronjs.org/)/ [VScodium](https://vscodium.com/) plugins
+[Visual Studio Code](https://www.electronjs.org/)/ [VScodium](https://vscodium.com/) plugins ✅
 
 \+ Documentation websites with:<br>
-- [MkDocs](https://www.mkdocs.org/) beautifull material wrapper for *.md docs files <br>
+- [MkDocs](https://www.mkdocs.org/) beautifull material wrapper for *.md docs files ✅<br>
 - [Storybook](https://storybook.js.org/docs/get-started/angular) ui elements documentation (NOT READY YET)<br>
 - [Compodoc](https://compodoc.app/) docs from comments (NOT READY YET) <br>
 
@@ -53,7 +58,6 @@ for building/testing/deploying modern:<br>
 
 ### Initial requirements of taon
 1. Installed git 
- (on windows only supported [gitbash](https://gitforwindows.org) or [pwsh](https://github.com/PowerShell/PowerShell))
 
 2. Increased watchers limit (only on linux):
 ```bash
@@ -157,28 +161,3 @@ Installation happens when you first time use taon
   { name: 'webpack-bundle-analyzer' }
 ]
 ```
-
-## AI SNIPPETS FOR BUILDING NEW COMPONENTS
-
-&lt; ask AI about new component in angular.. or antything &gt; <br>
-&lt; and copy text below to the chat &gt; <br>
-
-IMPORTANT:
-You are operating in AI-MD multi-file mode.
-If the structure is not preserved, the output is invalid.
-Example output response structure:
-
-=== start of AI-MD multi-file markdown structure ===<br>
-any-filename.extension<br>
-\`\`\`extension<br>
-code of any-filename.extension<br>
-\`\`\`<br>
-any-filename-next.any-other-extension<br>
-\`\`\`any-other-extension<br>
-code of any-filename-next.any-other-extension<br>
-\`\`\`<br>
-=== end of AI-MD multi-file markdown structure ===
-
-Keep structure flat: any-filename.extension is just basename.<br>
-Just like any-filename-next.any-other-extension...<br>
-Use ONE OUTPUT MARKDOWN CODE BOX FIELD for the whole response.

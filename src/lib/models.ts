@@ -3,25 +3,14 @@ import type { Application } from 'express';
 import {
   HttpResponse,
   Ng2RestAxiosRequestConfig,
-  Resource,
-  ResourceResponse,
-  RestErrorResponseWrapper,
   RestResponseWrapper,
 } from 'ng2-rest/src';
 import { Observable } from 'rxjs';
 import { _ } from 'tnp-core/src';
 import { CoreModels } from 'tnp-core/src';
 
-import { TaonBaseClass } from './base-classes/base-class';
-import type { TaonBaseMiddleware } from './base-classes/base-middleware';
-import type {
-  TaonHttpDecoratorOptions,
-  TaonMiddlewareFunction,
-  TaonMiddlewareInheritanceObj,
-} from './decorators/http/http-methods-decorators';
 import type { EndpointContext } from './endpoint-context';
 import { ExpressRequest, ExpressResponse } from './express-types';
-import { ClassHelpers } from './helpers/class-helpers';
 
 // ! TODO make it as a nice way to wrap normal request
 export class TaonRestResponseWrapper extends RestResponseWrapper {}
@@ -110,9 +99,12 @@ export namespace Models {
    * synchronize: false, dropSchema: false
    * use migrations: true
    */
-  export type DBRecreateMode =
-    | 'DROP_DB+MIGRATIONS'
-    | 'PRESERVE_DATA+MIGRATIONS';
+  export enum DBRecreateMode {
+    DROP_DB_MIGRATIONS = 'DROP_DB+MIGRATIONS',
+    PRESERVE_DATA_MIGRATIONS = 'PRESERVE_DATA+MIGRATIONS',
+  }
+
+  export type DBRecreateModeType = `${DBRecreateMode}`;
   //#endregion
 
   //#region models / database connection options
@@ -184,7 +176,7 @@ export namespace Models {
      * Tell framework what is happening with db
      * when context is starting.
      */
-    public recreateMode?: DBRecreateMode;
+    public recreateMode?: DBRecreateModeType;
 
     static from(
       databasePartialConfig: Partial<
@@ -438,7 +430,7 @@ export namespace Models {
     onlyMigrationRun?: boolean;
     onlyMigrationRevertToTimestamp?: number;
     overrideExpressApp?: Application;
-    overrideHost?: string
+    overrideHost?: string;
     cloudflareEnv?: any;
   }
 

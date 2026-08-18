@@ -349,6 +349,10 @@ export class EndpointContext {
   public readonly KV: any;
   //#endregion
 
+  //#region methods & getters / cloudflare key allowed drop db
+  private readonly clouflareAllowedDropDbKey: string;
+  //#endregion
+
   //#region methods & getters / init
   public async init(initOptions?: {
     initFromRecrusiveContextResovle?: boolean;
@@ -366,6 +370,11 @@ export class EndpointContext {
 
     //#region @backend
     if (initOptions.cloudflareEnv) {
+      const versionId = initOptions.cloudflareEnv.CF_VERSION_METADATA.id;
+      const key = `TAON_DB_INITIALIZED:${versionId}`;
+      // @ts-expect-error
+      this.clouflareAllowedDropDbKey = key;
+
       // @ts-expect-error
       this.D1 = initOptions.cloudflareEnv.TAON_D1;
       // @ts-expect-error
@@ -1964,9 +1973,21 @@ export class EndpointContext {
       }
     }
 
+    const alreadyInitializedCloudflare =
+      UtilsOs.isRunningInCloudflareWorker() &&
+      (await this.KV.get(this.clouflareAllowedDropDbKey));
+
+    if (!alreadyInitializedCloudflare) {
+      if (UtilsOs.isRunningInCloudflareWorker()) {
+        await this.KV.put(this.clouflareAllowedDropDbKey, 'true');
+      }
+    }
+
     const dropSchema = this.isRunOrRevertOnlyMigrationAppStart
       ? false
-      : this.databaseConfig.dropSchema;
+      : UtilsOs.isRunningInCloudflareWorker() && alreadyInitializedCloudflare
+        ? false
+        : this.databaseConfig.dropSchema;
 
     this.logFramework && console.log(`DROP SCHEMA: ${dropSchema}`);
 
