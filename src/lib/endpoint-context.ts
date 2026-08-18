@@ -843,7 +843,7 @@ export class EndpointContext {
         // databaseConfig = Models.DatabaseConfig.from({
         //   database: `db-${this.contextName}.sqlite`,
         //   type: 'mysql',
-        //   recreateMode: 'PRESERVE_DATA+MIGRATIONS',
+        //   recreateMode: 'PRESERVE_DATA__RUN_MIGRATIONS',
         //   logging: this.logDb,
         //   databasePort: 3306,
         //   databaseHost: 'localhost',
@@ -873,13 +873,13 @@ export class EndpointContext {
           location: this.sqlLiteDbLocation,
           type: 'sqljs',
           useLocalForage: false,
-          recreateMode: 'PRESERVE_DATA+MIGRATIONS',
+          recreateMode: 'PRESERVE_DATA__RUN_MIGRATIONS',
           logging: true,
         });
 
         //#region @backend
         if (!fse.existsSync(locationOfTheDatabase)) {
-          databaseConfig.recreateMode = 'DROP_DB+MIGRATIONS';
+          databaseConfig.recreateMode = 'DROP_DB__RUN_MIGRATIONS';
         }
         // TODO @LAST add same thing for mariadb/mysql
         this.logFramework &&
@@ -915,7 +915,7 @@ export class EndpointContext {
               ? dbLocationInOs
               : `db-${this.contextName}.sqlite`,
             type: 'sqljs',
-            recreateMode: 'DROP_DB+MIGRATIONS',
+            recreateMode: 'DROP_DB__RUN_MIGRATIONS',
             logging: this.logDb,
           });
           break;
@@ -937,8 +937,8 @@ export class EndpointContext {
             type: 'sqljs',
             useLocalForage: true, // !!window['localforage'], // TODO this need to be checked in runtime
             recreateMode: keepWebsqlDbDataAfterReload
-              ? 'PRESERVE_DATA+MIGRATIONS'
-              : 'DROP_DB+MIGRATIONS',
+              ? 'PRESERVE_DATA__RUN_MIGRATIONS'
+              : 'DROP_DB__RUN_MIGRATIONS',
             logging: this.logDb,
           });
           break;
@@ -951,7 +951,7 @@ export class EndpointContext {
             // @ts-ignore
             type: 'd1',
             // database: this.D1,
-            recreateMode: 'DROP_DB+MIGRATIONS',
+            recreateMode: 'DROP_DB__RUN_MIGRATIONS',
             logging: this.logDb,
           });
           break;
@@ -965,7 +965,7 @@ export class EndpointContext {
             database: `context-db-${this.contextName}`,
             location: this.sqlLiteDbLocation,
             type: 'sqljs',
-            recreateMode: 'DROP_DB+MIGRATIONS',
+            recreateMode: 'DROP_DB__RUN_MIGRATIONS',
             logging: this.logDb,
           });
           break;

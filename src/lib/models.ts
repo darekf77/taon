@@ -89,7 +89,7 @@ export namespace Models {
 
   //#region models / db recreate mode
   /**
-   * DROP_DB+MIGRATIONS (default for development)
+   * DROP_DB__RUN_MIGRATIONS (default for development)
    * Drop all tables + recreate them + run migrations
    * synchronize: true , dropSchema: true
    * use migrations: true
@@ -100,8 +100,8 @@ export namespace Models {
    * use migrations: true
    */
   export enum DBRecreateMode {
-    DROP_DB_MIGRATIONS = 'DROP_DB+MIGRATIONS',
-    PRESERVE_DATA_MIGRATIONS = 'PRESERVE_DATA+MIGRATIONS',
+    DROP_DB_MIGRATIONS = 'DROP_DB__RUN_MIGRATIONS',
+    PRESERVE_DATA_MIGRATIONS = 'PRESERVE_DATA__RUN_MIGRATIONS',
   }
 
   export type DBRecreateModeType = `${DBRecreateMode}`;
@@ -193,10 +193,10 @@ export namespace Models {
       //#region @websqlFunc
       const result = _.cloneDeep(this) as DatabaseConfig;
       if (result.recreateMode) {
-        if (result.recreateMode === 'DROP_DB+MIGRATIONS') {
+        if (result.recreateMode === 'DROP_DB__RUN_MIGRATIONS') {
           result.synchronize = true;
           result.dropSchema = true;
-        } else if (result.recreateMode === 'PRESERVE_DATA+MIGRATIONS') {
+        } else if (result.recreateMode === 'PRESERVE_DATA__RUN_MIGRATIONS') {
           result.synchronize = false;
           result.dropSchema = false;
         }
