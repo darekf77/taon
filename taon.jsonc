@@ -28,7 +28,7 @@
   ],
 
   "generateTranslationsFor": ["en-US", "pl-PL"],
-  "isomorphicDependenciesForNpmLib": ["tnp"],
+  "isomorphicDependenciesForNpmLib": [],
 
   // TODO change it to devDependencies
   "peerDependenciesNamesForNpmLib": [
@@ -164,4 +164,5 @@
       "mkdocs": "python3 -m mkdocs",
     },
   },
+  "shouldGenerateDocsComponents": true,
 }

@@ -77,6 +77,7 @@
 /src/assets/generated
 /src/assets/shared/shared_folder_info.txt
 /src/lib/env/**/*.*
+/src/lib/generated-docs-from-md-files/
 /src/lib/lib-info.md
 /src/lib/migrations/migrations-info.md
 /src/tests/mocha-tests-info.md
