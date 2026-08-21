@@ -11,6 +11,7 @@
     "open",
     "cfonts",
     "jsonc-parser",
+    "tnp",
   ],
 
   "appId": "dev.taon.app",
