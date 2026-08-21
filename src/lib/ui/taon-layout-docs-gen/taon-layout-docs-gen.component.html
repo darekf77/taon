@@ -1,0 +1,232 @@
+<div class="min-h-screen">
+  <!-- ========================================================= -->
+  <!-- TOP NAVIGATION -->
+  <!-- ========================================================= -->
+
+  <!-- #region header -->
+  <header class="docs-header">
+    <div
+      class="mx-auto flex h-14 max-w-[1600px] items-center gap-2 px-3 md:px-6">
+      <!-- MOBILE HAMBURGER -->
+      <button
+        mat-icon-button
+        class="docs-mobile-only"
+        aria-label="Open documentation navigation"
+        (click)="openMobileToc()">
+        <mat-icon>menu</mat-icon>
+      </button>
+
+      <!-- DESKTOP HORIZONTAL MENU -->
+      <nav
+        class="docs-desktop-menu min-w-0 flex-1 items-center gap-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        @for (item of menuItems; track item.pathToMd) {
+          <a
+            mat-button
+            class="!shrink-0"
+            [routerLink]="item.pathToMd"
+            routerLinkActive="!bg-black/10 !font-semibold"
+            (click)="menuItemClick.emit(item)">
+            {{ item.customTitle || item.pathToMd }}
+          </a>
+        }
+      </nav>
+
+      <!-- MOBILE SPACER -->
+      <div class="docs-mobile-only flex-1"></div>
+
+      <!-- SEARCH -->
+      <button
+        mat-icon-button
+        class="!shrink-0"
+        aria-label="Search docs"
+        (click)="toggleSearch()">
+        <mat-icon>search</mat-icon>
+      </button>
+    </div>
+  </header>
+  <!-- #endregion -->
+
+  <!-- ========================================================= -->
+  <!-- SEARCH -->
+  <!-- ========================================================= -->
+
+  @if (searchOpen()) {
+    <!-- #region search -->
+    <div
+      class="fixed inset-0 z-50 bg-black/30 p-4 md:p-10"
+      (click)="closeSearch()">
+      <div
+        class="mx-auto mt-[8vh] max-w-2xl overflow-hidden rounded-xl bg-white shadow-2xl dark:bg-neutral-900"
+        (click)="$event.stopPropagation()">
+        <div
+          class="flex items-center gap-2 border-b border-black/10 p-3 dark:border-white/10">
+          <mat-icon class="opacity-60"> search </mat-icon>
+
+          <input
+            autofocus
+            type="text"
+            placeholder="Search documentation..."
+            class="min-w-0 flex-1 bg-transparent px-2 py-2 text-lg outline-none"
+            [value]="searchQuery()"
+            (input)="searchQuery.set($any($event.target).value)" />
+
+          <button
+            mat-icon-button
+            aria-label="Close search"
+            (click)="closeSearch()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <div class="max-h-[60vh] overflow-y-auto p-2">
+          @for (result of searchResults; track result.title) {
+            <button
+              type="button"
+              class="block w-full rounded-lg p-4 text-left transition hover:bg-black/5 dark:hover:bg-white/5">
+              <div class="font-semibold">
+                {{ result.title }}
+              </div>
+
+              <div class="mt-1 text-sm opacity-60">
+                {{ result.description }}
+              </div>
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+    <!-- #endregion -->
+  }
+
+  <!-- ========================================================= -->
+  <!-- MOBILE NAVIGATION -->
+  <!-- menuItems + pageHeadings -->
+  <!-- ========================================================= -->
+
+  <!-- #region mobile navigation -->
+  @if (mobileTocOpen()) {
+    <div
+      class="fixed inset-0 z-50 bg-black/30 lg:hidden"
+      (click)="closeMobileToc()">
+      <aside
+        class="h-full w-[min(88vw,360px)] overflow-y-auto bg-white shadow-xl dark:bg-neutral-900"
+        (click)="$event.stopPropagation()">
+        <!-- drawer header -->
+        <div
+          class="flex h-14 items-center justify-between border-b border-black/10 px-3 dark:border-white/10">
+          <span class="px-2 font-semibold"> Documentation </span>
+
+          <button
+            mat-icon-button
+            aria-label="Close navigation"
+            (click)="closeMobileToc()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <nav class="p-3">
+          <!-- ================================================= -->
+          <!-- LEVEL 1: DOC PAGES -->
+          <!-- ================================================= -->
+
+          @for (item of menuItems; track item.pathToMd) {
+            <a
+              class="flex w-full items-center gap-2 rounded-md px-3 py-2.5 text-sm font-semibold transition hover:bg-black/5 dark:hover:bg-white/5"
+              [routerLink]="item.pathToMd"
+              routerLinkActive="!bg-black/10"
+              (click)="menuItemClick.emit(item); closeMobileToc()">
+              <mat-icon class="!text-[18px] opacity-60"> description </mat-icon>
+
+              <span>
+                {{ item.customTitle || item.pathToMd }}
+              </span>
+            </a>
+          }
+
+          <!-- ================================================= -->
+          <!-- LEVEL 2: CURRENT PAGE HEADINGS -->
+          <!-- ================================================= -->
+
+          @if (pageHeadings.length) {
+            <div
+              class="my-3 border-t border-black/10 dark:border-white/10"></div>
+
+            @for (heading of pageHeadings; track heading.id) {
+              <button
+                type="button"
+                class="block w-full rounded-md py-2 pr-3 text-left text-sm opacity-75 transition hover:bg-black/5 hover:opacity-100 dark:hover:bg-white/5"
+                [class.pl-5]="heading.level === 1"
+                [class.pl-8]="heading.level === 2"
+                [class.pl-11]="heading.level === 3"
+                [class.font-medium]="heading.level === 1"
+                (click)="scrollToHeading(heading)">
+                {{ heading.title }}
+              </button>
+            }
+          }
+        </nav>
+      </aside>
+    </div>
+  }
+  <!-- #endregion -->
+
+  <!-- ========================================================= -->
+  <!-- PAGE -->
+  <!-- ========================================================= -->
+
+  <!-- #region page -->
+  <div
+    class="mx-auto grid max-w-[1600px] grid-cols-1 gap-8 px-4 py-6 md:px-6 lg:grid-cols-[260px_minmax(0,1fr)]">
+    <!-- ======================================================= -->
+    <!-- DESKTOP LEFT PAGE NAVIGATION -->
+    <!-- ======================================================= -->
+
+    @if (pageHeadings.length) {
+      <aside class="hidden lg:block">
+        <div class="docs-page-nav">
+          <nav class="border-r border-black/10 pr-4 dark:border-white/10">
+            @for (heading of pageHeadings; track heading.id) {
+              <button
+                type="button"
+                class="block w-full rounded-md py-1.5 pr-2 text-left text-sm opacity-70 transition hover:bg-black/5 hover:opacity-100 dark:hover:bg-white/5"
+                [class.pl-2]="heading.level === 1"
+                [class.pl-5]="heading.level === 2"
+                [class.pl-8]="heading.level === 3"
+                [class.font-semibold]="heading.level === 1"
+                (click)="scrollToHeading(heading)">
+                {{ heading.title }}
+              </button>
+            }
+          </nav>
+        </div>
+      </aside>
+    }
+
+    <!-- ======================================================= -->
+    <!-- ROUTED DOCS CONTENT -->
+    <!-- ======================================================= -->
+
+    <main
+      class="min-w-0 page-main-content"
+      [class.lg:col-span-2]="!pageHeadings.length">
+      <ng-content></ng-content>
+    </main>
+  </div>
+  <!-- #endregion -->
+
+  <!-- ========================================================= -->
+  <!-- SCROLL TO TOP -->
+  <!-- ========================================================= -->
+
+  <!-- #region button scroll top -->
+  <button
+    class="scroll-to-top"
+    [class.visible]="showScrollToTop"
+    type="button"
+    mat-stroked-button
+    (click)="scrollToTop()">
+    <mat-icon>arrow_upward</mat-icon>
+    Back To Top
+  </button>
+  <!-- #endregion -->
+</div>

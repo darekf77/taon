@@ -1,0 +1,76 @@
+:host {
+  display: block;
+}
+
+.page-main-content {
+  // padding-top: 80px;
+}
+
+.docs-page-nav {
+  position: fixed;
+  width: 240px;
+  max-height: calc(100vh - 96px);
+  overflow-y: auto;
+}
+
+.docs-header {
+  position: sticky;
+  top: 0px;
+  left: 0;
+  right: 0;
+  z-index: 40;
+
+  border-bottom: 1px solid rgb(0 0 0 / 10%);
+  background: color-mix(in srgb, var(--main-bg-color) 95%, transparent);
+
+  backdrop-filter: blur(8px);
+}
+
+.docs-desktop-menu {
+  display: flex;
+}
+
+.docs-mobile-only {
+  display: none !important;
+}
+
+@media (max-width: 1023px) {
+  .docs-desktop-menu {
+    display: none !important;
+  }
+
+  .docs-mobile-only {
+    display: inline-flex !important;
+  }
+}
+
+// #region scroll to top button
+.scroll-to-top {
+  background-color: white;
+  border: 0px !important;
+  color: gray !important;
+  position: fixed !important;
+
+  left: 50% !important;
+  right: auto !important;
+  top: 70px !important;
+  bottom: auto !important;
+
+  z-index: 1000;
+
+  transform: translateX(-50%) translateY(-8px);
+
+  opacity: 0;
+  pointer-events: none;
+
+  transition:
+    opacity 150ms ease,
+    transform 150ms ease;
+
+  &.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+// #endregion

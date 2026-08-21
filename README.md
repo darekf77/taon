@@ -1,3 +1,4 @@
+# Taon Framework/CLI/Cloud
 <p style="text-align: center;"><img src="./images/logo-header-bold-taon.png" ></p>
 
 <!-- cspell: disable-next-line  -->
@@ -56,7 +57,7 @@ for building/testing/deploying modern:<br>
 
 **[READ DOCUMENTATION](https://taon.dev/#/docs)**
 
-### Initial requirements of taon
+**Initial requirements of taon**
 1. Installed git 
 
 2. Increased watchers limit (only on linux):

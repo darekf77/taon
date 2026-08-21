@@ -165,4 +165,5 @@
     },
   },
   "shouldGenerateDocsComponents": true,
+  // "shouldGenerateDocsComponents": true,
 }

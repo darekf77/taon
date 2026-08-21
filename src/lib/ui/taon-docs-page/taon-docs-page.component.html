@@ -1,30 +1,5 @@
-<div
-  class="mx-auto grid w-full max-w-[1500px] grid-cols-1 gap-8 px-4 py-8 lg:grid-cols-[260px_minmax(0,1fr)] lg:px-8">
-  <!-- LEFT MENU -->
-  <aside class="hidden lg:block">
-    <div
-      class="sticky top-[70px] max-h-[calc(100vh-100px)] overflow-y-auto border-r border-gray-200 pr-5 dark:border-gray-800">
-      <nav class="space-y-1 text-sm">
-        @for (heading of headings; track heading.id) {
-          <button
-            type="button"
-            (click)="scrollToHeading(heading.id)"
-            class="block w-full rounded-md px-2 py-1.5 text-left transition hover:bg-gray-100 hover:text-gray-950 dark:hover:bg-gray-800 dark:hover:text-white"
-            [class.font-semibold]="heading.level === 1"
-            [class.pl-4]="heading.level === 2"
-            [class.pl-8]="heading.level === 3">
-            {{ heading.title }}
-          </button>
-        }
-      </nav>
-    </div>
-  </aside>
-
-  <!-- DOCUMENT -->
-  <main class="min-w-0">
-    <article
-      #content
-      class="taon-md-doc"
-      [innerHTML]="html"></article>
-  </main>
-</div>
+<!-- THIS is not used anymore - I am only inheriting from this component -->
+<!-- <article
+  #content
+  class="taon-md-doc"
+  [innerHTML]="html"></article> -->

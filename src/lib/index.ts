@@ -20,6 +20,7 @@ import * as getResponse from './get-response-value';
 import * as models from './models';
 import * as orm from './orm';
 // import * as allSymbols from './symbols';
+// @ts-ignore
 export * from './generated-docs-from-md-files/docs.routes'; // @browser
 // export * from './build-info._auto-generated_';
 export * from './constants';
@@ -83,7 +84,7 @@ export * from './realtime/realtime-strategy/realtime-strategy-ipc';
 export * from './realtime/realtime-strategy/realtime-strategy-mock';
 export * from './realtime/realtime-strategy/realtime-strategy-socket-io';
 export * from './realtime/realtime-strategy/realtime-strategy';
-export * from './ui'; // @browser
+export * from './ui';
 export * from './formly/formly-group-wrapper.component'; // @browser
 export * from './formly/formly-repeat.component'; // @browser
 export * from './cloudflare';
