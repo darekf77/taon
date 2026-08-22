@@ -109,6 +109,22 @@ export class TaonLayoutDocsGenComponent implements OnInit {
 
   //#region methods
 
+  //#region methods / get current horizontal menu item
+
+  public get currentRoutePath(): string {
+    return this.router.url.split('?')[0].split('#')[0];
+  }
+
+  get currentMenuItemName(): string {
+    const itemPath = this.currentRoutePath.replace(this.baseHref + '/', '');
+    const item = this.menuItems.find(c => c.pathToMd === itemPath);
+    if (!item) {
+      return 'TOP OF THE PAGE';
+    }
+    return item.pathToMd;
+  }
+  //#endregion
+
   //#region methods / scroll to current fragment
   private scrollToCurrentFragment(): void {
     const fragment = this.activatedRoute.snapshot.fragment;
@@ -171,6 +187,13 @@ export class TaonLayoutDocsGenComponent implements OnInit {
     window.scrollTo({
       top: 0,
       behavior: 'smooth',
+    });
+
+    void this.router.navigate([], {
+      relativeTo: this.activatedRoute,
+      fragment: null,
+      queryParamsHandling: 'preserve',
+      replaceUrl: true,
     });
   }
   //#endregion

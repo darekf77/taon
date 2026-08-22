@@ -193,6 +193,12 @@
     @if (pageHeadings.length) {
       <aside class="hidden lg:block">
         <div class="docs-page-nav">
+          <button
+            type="button"
+            (click)="scrollToTop()"
+            class="block w-full rounded-md border-l-2 border-transparent py-1.5 pr-2 text-left text-sm opacity-70 transition hover:bg-black/5 hover:opacity-100 dark:hover:bg-white/5">
+            {{ currentMenuItemName }}
+          </button>
           <nav class="border-r border-black/10 pr-4 dark:border-white/10">
             @for (heading of pageHeadings; track heading.id) {
               <button
