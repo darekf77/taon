@@ -1,14 +1,13 @@
 //#region imports
 import { CommonModule } from '@angular/common';
 import {
-  afterNextRender,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   EventEmitter,
   HostListener,
   inject,
   Input,
+  OnInit,
   Output,
   signal,
 } from '@angular/core';
@@ -23,8 +22,14 @@ import {
   RouterLink,
   RouterLinkActive,
 } from '@angular/router';
+import Fuse from 'fuse.js';
 
-import { DocsHeading, DocsMenuItem } from './taon-layout-docs-gen.models';
+import {
+  DocsHeading,
+  DocsMenuItem,
+  IndexData,
+  ResultData,
+} from './taon-layout-docs-gen.models';
 //#endregion
 
 @Component({
@@ -48,20 +53,26 @@ import { DocsHeading, DocsMenuItem } from './taon-layout-docs-gen.models';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TaonLayoutDocsGenComponent {
+export class TaonLayoutDocsGenComponent implements OnInit {
   //#region fields & getters
-  private readonly cdr = inject(ChangeDetectorRef);
-
   private readonly router = inject(Router);
 
   private readonly activatedRoute = inject(ActivatedRoute);
 
+  @Input({
+    required: true,
+  })
+  baseHref: string;
+
   @Input() menuItems: DocsMenuItem[] = [];
+
+  @Input() indexData: IndexData[] = [];
 
   private _pageHeadings: DocsHeading[] = [];
 
-  @Input() set pageHeadings(v) {
+  @Input() set pageHeadings(v: DocsHeading[]) {
     this._pageHeadings = v;
+
     if (this._pageHeadings.length > 0) {
       setTimeout(() => {
         this.scrollToCurrentFragment();
@@ -69,16 +80,10 @@ export class TaonLayoutDocsGenComponent {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  get pageHeadings() {
+  get pageHeadings(): DocsHeading[] {
     return this._pageHeadings;
   }
 
-  /**
-   * Optional if parent wants to handle markdown path -> route translation.
-   *
-   * If unused, links below simply use pathToMd as routerLink.
-   */
   @Output() menuItemClick = new EventEmitter<DocsMenuItem>();
 
   protected readonly mobileTocOpen = signal(false);
@@ -91,45 +96,16 @@ export class TaonLayoutDocsGenComponent {
 
   public showScrollToTop = false;
 
-  protected readonly dummySearchResults = [
-    {
-      title: 'Getting started',
-      description: 'Installation, project creation and first Taon application.',
-    },
-    {
-      title: 'Cloudflare Workers',
-      description: 'Deploy backend and frontend applications to Cloudflare.',
-    },
-    {
-      title: 'Database',
-      description: 'Repositories, migrations and isomorphic database access.',
-    },
-    {
-      title: 'Internationalization',
-      description: 'Lazy translations, gettext and component PO files.',
-    },
-  ];
-
-  protected get searchResults() {
-    const query = this.searchQuery().trim().toLowerCase();
-
-    if (!query) {
-      return this.dummySearchResults;
-    }
-
-    // Dummy behaviour for now:
-    // intentionally still returns example data.
-    return this.dummySearchResults;
+  protected get searchResults(): ResultData[] {
+    return this.search(this.searchQuery());
   }
   //#endregion
 
   //#region hooks
-  constructor() {}
-
   ngOnInit(): void {}
   //#endregion
 
-  //#region methosd
+  //#region methods
 
   //#region methods / scroll to current fragment
   private scrollToCurrentFragment(): void {
@@ -139,12 +115,9 @@ export class TaonLayoutDocsGenComponent {
       return;
     }
 
-    // Optional: only allow hashes that correspond to known headings.
     const headingExists = this.pageHeadings.some(
       heading => heading.id === fragment,
     );
-
-    // console.log({ fragment, headingExists });
 
     if (!headingExists) {
       return;
@@ -157,7 +130,7 @@ export class TaonLayoutDocsGenComponent {
   }
   //#endregion
 
-  //#region methods / toogle search
+  //#region methods / toggle search
   protected toggleSearch(): void {
     this.searchOpen.update(value => !value);
   }
@@ -167,6 +140,17 @@ export class TaonLayoutDocsGenComponent {
   protected closeSearch(): void {
     this.searchOpen.set(false);
     this.searchQuery.set('');
+  }
+  //#endregion
+
+  //#region methods / open search result
+  protected openSearchResult(result: ResultData): void {
+    this.searchOpen.set(false);
+    this.searchQuery.set('');
+
+    const urlToNavigate = `${this.baseHref}/${result.filePath}#${encodeURIComponent(result.headingId)}`;
+    console.log({ urlToNavigate });
+    void this.router.navigateByUrl(urlToNavigate);
   }
   //#endregion
 
@@ -209,7 +193,7 @@ export class TaonLayoutDocsGenComponent {
   }
   //#endregion
 
-  //#region methods / toogle search
+  //#region methods / window scroll
   @HostListener('window:scroll')
   public onWindowScroll(): void {
     const currentScrollY = window.scrollY;
@@ -220,6 +204,137 @@ export class TaonLayoutDocsGenComponent {
     this.showScrollToTop = scrollingUp && farEnoughFromTop;
 
     this.lastScrollY = currentScrollY;
+  }
+  //#endregion
+
+  //#region methods / search
+  protected search(query: string): ResultData[] {
+    const normalizedQuery = query.trim();
+
+    if (!normalizedQuery || !this.indexData.length) {
+      return [];
+    }
+
+    const fuse = new Fuse(this.indexData, {
+      includeScore: true,
+
+      /**
+       * 0   = exact
+       * 1   = basically anything
+       *
+       * 0.35 gives us typo tolerance without producing
+       * too much unrelated garbage.
+       */
+      threshold: 0.35,
+
+      /**
+       * We don't care where inside the indexed text the match occurs.
+       */
+      ignoreLocation: true,
+
+      /**
+       * Heading matches are more important than body matches.
+       */
+      keys: [
+        {
+          name: 'headingTitle',
+          weight: 0.7,
+        },
+        {
+          name: 'text',
+          weight: 0.3,
+        },
+      ],
+    });
+
+    return fuse
+      .search(normalizedQuery)
+      .slice(0, 20)
+      .map(result => ({
+        filePath: result.item.filePath,
+        headingId: result.item.headingId,
+        headingTitle: result.item.headingTitle,
+
+        headingContentPart: this.createSnippet(
+          result.item.text,
+          normalizedQuery,
+        ),
+
+        score: result.score ?? 1,
+      }));
+  }
+  //#endregion
+
+  //#region methods / create snippet
+  private createSnippet(text: string, query: string, maxLength = 180): string {
+    const normalizedText = text.replace(/\s+/g, ' ').trim();
+
+    if (normalizedText.length <= maxLength) {
+      return normalizedText;
+    }
+
+    const lowerText = normalizedText.toLowerCase();
+
+    const words = query
+      .toLowerCase()
+      .split(/\s+/)
+      .map(word => word.trim())
+      .filter(Boolean);
+
+    let matchIndex = -1;
+
+    /**
+     * Fuse may match a typo, so exact word lookup here can fail.
+     * We still try exact words first because that gives the nicest
+     * snippet when possible.
+     */
+    for (const word of words) {
+      const index = lowerText.indexOf(word);
+
+      if (index !== -1 && (matchIndex === -1 || index < matchIndex)) {
+        matchIndex = index;
+      }
+    }
+
+    /**
+     * Fuzzy match but no exact substring found.
+     * Just use the beginning of the section.
+     */
+    if (matchIndex === -1) {
+      return normalizedText.slice(0, maxLength).trim() + '…';
+    }
+
+    const half = Math.floor(maxLength / 2);
+
+    let start = Math.max(0, matchIndex - half);
+    let end = Math.min(normalizedText.length, start + maxLength);
+
+    /**
+     * If we're close to the end, move the start backwards
+     * so we still use approximately maxLength characters.
+     */
+    if (end === normalizedText.length) {
+      start = Math.max(0, end - maxLength);
+    }
+
+    /**
+     * Avoid beginning the snippet in the middle of a word.
+     */
+    if (start > 0) {
+      const nextSpace = normalizedText.indexOf(' ', start);
+
+      if (nextSpace !== -1 && nextSpace < matchIndex) {
+        start = nextSpace + 1;
+      }
+    }
+
+    end = Math.min(normalizedText.length, start + maxLength);
+
+    return (
+      (start > 0 ? '…' : '') +
+      normalizedText.slice(start, end).trim() +
+      (end < normalizedText.length ? '…' : '')
+    );
   }
   //#endregion
 
