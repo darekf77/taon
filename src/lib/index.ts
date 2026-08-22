@@ -20,8 +20,6 @@ import * as getResponse from './get-response-value';
 import * as models from './models';
 import * as orm from './orm';
 // import * as allSymbols from './symbols';
-export * from './generated-docs-from-md-files/docs.routes'; // @browser
-export * from './generated-docs-from-md-files/all-docs-index-data'; // @browser
 // export * from './build-info._auto-generated_';
 export * from './constants';
 export * from './context-db-migrations';
