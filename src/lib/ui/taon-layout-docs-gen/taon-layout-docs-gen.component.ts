@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  effect,
+  ElementRef,
   EventEmitter,
   HostListener,
   inject,
@@ -10,6 +12,7 @@ import {
   OnInit,
   Output,
   signal,
+  viewChild,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -99,7 +102,25 @@ export class TaonLayoutDocsGenComponent implements OnInit {
   protected get searchResults(): ResultData[] {
     return this.search(this.searchQuery());
   }
+
+  private readonly searchInput =
+    viewChild<ElementRef<HTMLInputElement>>('searchInput');
+
   //#endregion
+
+  constructor() {
+    effect(() => {
+      if (!this.searchOpen()) {
+        return;
+      }
+
+      const input = this.searchInput();
+
+      if (input) {
+        input.nativeElement.focus();
+      }
+    });
+  }
 
   //#region hooks
   ngOnInit(): void {}
