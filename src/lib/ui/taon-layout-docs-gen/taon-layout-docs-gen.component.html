@@ -163,6 +163,12 @@
               <button
                 type="button"
                 class="block w-full rounded-md py-2 pr-3 text-left text-sm opacity-75 transition hover:bg-black/5 hover:opacity-100 dark:hover:bg-white/5"
+                [class.!opacity-100]="activeHeadingId === heading.id"
+                [class.!font-semibold]="activeHeadingId === heading.id"
+                [class.!font-semibold]="activeHeadingId === heading.id"
+                [class.underline]="activeHeadingId === heading.id"
+                [class.!bg-black]="activeHeadingId === heading.id"
+                [class.dark:!bg-white]="activeHeadingId === heading.id"
                 [class.pl-5]="heading.level === 1"
                 [class.pl-8]="heading.level === 2"
                 [class.pl-11]="heading.level === 3"
@@ -192,11 +198,15 @@
             @for (heading of pageHeadings; track heading.id) {
               <button
                 type="button"
-                class="block w-full rounded-md py-1.5 pr-2 text-left text-sm opacity-70 transition hover:bg-black/5 hover:opacity-100 dark:hover:bg-white/5"
+                class="block w-full rounded-md border-l-2 border-transparent py-1.5 pr-2 text-left text-sm opacity-70 transition hover:bg-black/5 hover:opacity-100 dark:hover:bg-white/5"
                 [class.pl-2]="heading.level === 1"
                 [class.pl-5]="heading.level === 2"
                 [class.pl-8]="heading.level === 3"
                 [class.font-semibold]="heading.level === 1"
+                [class.underline]="activeHeadingId === heading.id"
+                [class.!opacity-100]="activeHeadingId === heading.id"
+                [class.!font-semibold]="activeHeadingId === heading.id"
+                [class.!border-blue-500]="activeHeadingId === heading.id"
                 (click)="scrollToHeading(heading)">
                 {{ heading.title }}
               </button>

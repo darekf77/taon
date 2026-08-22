@@ -55,6 +55,8 @@ import {
 })
 export class TaonLayoutDocsGenComponent implements OnInit {
   //#region fields & getters
+  public activeHeadingId: string | undefined;
+
   private readonly router = inject(Router);
 
   private readonly activatedRoute = inject(ActivatedRoute);
@@ -123,6 +125,10 @@ export class TaonLayoutDocsGenComponent implements OnInit {
       return;
     }
 
+    const heading = this.pageHeadings.find(heading => heading.id === fragment);
+
+    this.activeHeadingId = heading.id;
+
     document.getElementById(fragment)?.scrollIntoView({
       behavior: 'instant',
       block: 'start',
@@ -149,7 +155,7 @@ export class TaonLayoutDocsGenComponent implements OnInit {
     this.searchQuery.set('');
 
     const urlToNavigate = `${this.baseHref}/${result.filePath}#${encodeURIComponent(result.headingId)}`;
-    console.log({ urlToNavigate });
+    // console.log({ urlToNavigate });
     void this.router.navigateByUrl(urlToNavigate);
   }
   //#endregion
@@ -179,6 +185,8 @@ export class TaonLayoutDocsGenComponent implements OnInit {
   protected scrollToHeading(heading: DocsHeading): void {
     this.closeMobileToc();
 
+    this.activeHeadingId = heading.id;
+
     document.getElementById(heading.id)?.scrollIntoView({
       behavior: 'smooth',
       block: 'start',
@@ -195,6 +203,7 @@ export class TaonLayoutDocsGenComponent implements OnInit {
 
   //#region methods / window scroll
   @HostListener('window:scroll')
+  @HostListener('window:scroll')
   public onWindowScroll(): void {
     const currentScrollY = window.scrollY;
 
@@ -204,6 +213,39 @@ export class TaonLayoutDocsGenComponent implements OnInit {
     this.showScrollToTop = scrollingUp && farEnoughFromTop;
 
     this.lastScrollY = currentScrollY;
+  }
+  //#endregion
+
+  //#region update active heading
+  private updateActiveHeading(): void {
+    // console.log('updating heading');
+    const headerOffset = 90;
+
+    let activeHeadingId: string | undefined;
+
+    for (const heading of this.pageHeadings) {
+      const element = document.getElementById(heading.id);
+
+      if (!element) {
+        continue;
+      }
+
+      const top = element.getBoundingClientRect().top;
+
+      if (top <= headerOffset) {
+        activeHeadingId = heading.id;
+      } else {
+        break;
+      }
+    }
+
+    // When we're above the first heading, optionally consider
+    // the first heading active.
+    if (!activeHeadingId && this.pageHeadings.length) {
+      activeHeadingId = this.pageHeadings[0].id;
+    }
+
+    this.activeHeadingId = activeHeadingId;
   }
   //#endregion
 
