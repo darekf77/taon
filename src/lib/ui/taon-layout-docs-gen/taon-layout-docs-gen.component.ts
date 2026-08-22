@@ -144,7 +144,7 @@ export class TaonLayoutDocsGenComponent {
       heading => heading.id === fragment,
     );
 
-    console.log({ fragment, headingExists });
+    // console.log({ fragment, headingExists });
 
     if (!headingExists) {
       return;

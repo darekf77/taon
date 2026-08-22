@@ -170,3 +170,9 @@ Installation happens when you first time use taon
 
 
 <!-- @render '@taon-baseline/layout/README.md' -->
+
+Todo  [link](./TODO.md) <br>
+
+TnpDocs  [link](tnp/README.md) <br>
+
+BUILDING-DOCS [link](./docs/BUILDING-DOCS.md) <br>

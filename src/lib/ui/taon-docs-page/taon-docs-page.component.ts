@@ -27,6 +27,8 @@ import { BehaviorSubject, Subject } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TaonDocsPageComponent {
+  public baseHref: string;
+
   public newHeading = new BehaviorSubject<DocsHeading[]>([]);
 
   headings: DocsHeading[] = [];
