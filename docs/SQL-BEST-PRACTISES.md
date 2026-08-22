@@ -18,7 +18,7 @@ await queryRunner.release();
 
 ## Use CURRENT_TIMESTAMP instead NOW()
 
-![alt text](image.png)
+![alt text](./image.png)
 
 
 ## Use integer instead int

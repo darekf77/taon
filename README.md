@@ -161,18 +161,4 @@ Installation happens when you first time use taon
   // analyze you final bundle
   { name: 'webpack-bundle-analyzer' }
 ]
-```
-
-<!-- @render 'tnp-helpers/README.md' -->
-
-
-<!-- @render 'tnp/README.md' -->
-
-
-<!-- @render '@taon-baseline/layout/README.md' -->
-
-Todo  [link](./TODO.md) <br>
-
-TnpDocs  [link](tnp/README.md) <br>
-
-BUILDING-DOCS [link](./docs/BUILDING-DOCS.md) <br>
+``` 
