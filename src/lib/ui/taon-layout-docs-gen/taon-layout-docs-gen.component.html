@@ -23,7 +23,7 @@
           <a
             mat-button
             class="!shrink-0"
-            [routerLink]="item.pathToMd"
+            [routerLink]="baseHref + '/' + item.pathToMd"
             routerLinkActive="!bg-black/10 !font-semibold"
             (click)="menuItemClick.emit(item)">
             {{ item.customTitle || item.pathToMd }}
@@ -144,7 +144,7 @@
           @for (item of menuItems; track item.pathToMd) {
             <a
               class="flex w-full items-center gap-2 rounded-md px-3 py-2.5 text-sm font-semibold transition hover:bg-black/5 dark:hover:bg-white/5"
-              [routerLink]="item.pathToMd"
+              [routerLink]="baseHref + '/' + item.pathToMd"
               routerLinkActive="!bg-black/10"
               (click)="menuItemClick.emit(item); closeMobileToc()">
               <mat-icon class="!text-[18px] opacity-60"> description </mat-icon>
