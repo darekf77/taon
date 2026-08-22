@@ -76,9 +76,7 @@ export class TaonLayoutDocsGenComponent implements OnInit {
     this._pageHeadings = v;
 
     if (this._pageHeadings.length > 0) {
-      setTimeout(() => {
-        this.scrollToCurrentFragment();
-      }, 1000);
+      this.scrollToCurrentFragment();
     }
   }
 
@@ -133,22 +131,59 @@ export class TaonLayoutDocsGenComponent implements OnInit {
       return;
     }
 
-    const headingExists = this.pageHeadings.some(
-      heading => heading.id === fragment,
-    );
+    const heading = this.pageHeadings.find(h => h.id === fragment);
 
-    if (!headingExists) {
+    if (!heading) {
       return;
     }
 
-    const heading = this.pageHeadings.find(heading => heading.id === fragment);
-
     this.activeHeadingId = heading.id;
 
-    document.getElementById(fragment)?.scrollIntoView({
-      behavior: 'instant',
-      block: 'start',
-    });
+    this.scrollToElementWhenStable(fragment);
+  }
+
+  private scrollToElementWhenStable(fragment: string): void {
+    let previousTop: number | undefined;
+    let stableFrames = 0;
+    let attempts = 0;
+
+    const maxAttempts = 60;
+    const requiredStableFrames = 3;
+
+    const check = () => {
+      const element = document.getElementById(fragment);
+
+      if (!element) {
+        if (++attempts < maxAttempts) {
+          requestAnimationFrame(check);
+        }
+        return;
+      }
+
+      const top = element.getBoundingClientRect().top + window.scrollY;
+
+      if (previousTop !== undefined && Math.abs(top - previousTop) < 1) {
+        stableFrames++;
+      } else {
+        stableFrames = 0;
+      }
+
+      previousTop = top;
+      attempts++;
+
+      if (stableFrames >= requiredStableFrames || attempts >= maxAttempts) {
+        element.scrollIntoView({
+          behavior: 'instant',
+          block: 'start',
+        });
+
+        return;
+      }
+
+      requestAnimationFrame(check);
+    };
+
+    requestAnimationFrame(check);
   }
   //#endregion
 
@@ -188,6 +223,8 @@ export class TaonLayoutDocsGenComponent implements OnInit {
       top: 0,
       behavior: 'smooth',
     });
+
+    this.activeHeadingId = void 0;
 
     void this.router.navigate([], {
       relativeTo: this.activatedRoute,
