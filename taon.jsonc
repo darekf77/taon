@@ -76,6 +76,12 @@
     //   "replaceWithNothing": true,
     // },
     {
+      "description": "AI translations",
+      "includeInBundleNodeModules": [],
+      "isExternalFor": "*",
+      "packageName": "@huggingface/transformers",
+    },
+    {
       "description": "OS notyfications",
       "isExternalFor": "*",
       "packageName": "node-notifier",
