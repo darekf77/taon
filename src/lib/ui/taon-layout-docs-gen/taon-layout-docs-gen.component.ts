@@ -87,6 +87,8 @@ export class TaonLayoutDocsGenComponent implements OnInit {
     return this._pageHeadings;
   }
 
+  protected readonly selectedSearchResultIndex = signal(0);
+
   @Output() menuItemClick = new EventEmitter<DocsMenuItem>();
 
   protected readonly mobileTocOpen = signal(false);
@@ -127,6 +129,52 @@ export class TaonLayoutDocsGenComponent implements OnInit {
   //#endregion
 
   //#region methods
+
+  protected onSearchKeydown(event: KeyboardEvent): void {
+    const results = this.searchResults;
+
+    if (!results.length) {
+      return;
+    }
+
+    switch (event.key) {
+      case 'ArrowDown': {
+        event.preventDefault();
+
+        this.selectedSearchResultIndex.update(index =>
+          Math.min(index + 1, results.length - 1),
+        );
+
+        break;
+      }
+
+      case 'ArrowUp': {
+        event.preventDefault();
+
+        this.selectedSearchResultIndex.update(index => Math.max(index - 1, 0));
+
+        break;
+      }
+
+      case 'Enter': {
+        event.preventDefault();
+
+        const result = results[this.selectedSearchResultIndex()];
+
+        if (result) {
+          this.openSearchResult(result);
+        }
+
+        break;
+      }
+
+      case 'Escape': {
+        event.preventDefault();
+        this.closeSearch();
+        break;
+      }
+    }
+  }
 
   //#region methods / get current horizontal menu item
 
@@ -214,10 +262,25 @@ export class TaonLayoutDocsGenComponent implements OnInit {
   }
   //#endregion
 
+  @HostListener('window:keydown', ['$event'])
+  protected onGlobalKeydown(event: KeyboardEvent): void {
+    const isSearchShortcut =
+      (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k';
+
+    if (!isSearchShortcut) {
+      return;
+    }
+
+    event.preventDefault();
+
+    this.searchOpen.update(open => !open);
+  }
+
   //#region methods / close search
   protected closeSearch(): void {
     this.searchOpen.set(false);
     this.searchQuery.set('');
+    this.selectedSearchResultIndex.set(0);
   }
   //#endregion
 

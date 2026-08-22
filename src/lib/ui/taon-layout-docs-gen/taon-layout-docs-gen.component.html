@@ -68,7 +68,11 @@
             placeholder="Search documentation..."
             class="min-w-0 flex-1 bg-transparent px-2 py-2 text-lg outline-none"
             [value]="searchQuery()"
-            (input)="searchQuery.set($any($event.target).value)" />
+            (input)="
+              searchQuery.set($any($event.target).value);
+              selectedSearchResultIndex.set(0)
+            "
+            (keydown)="onSearchKeydown($event)" />
 
           <button
             mat-icon-button
@@ -90,11 +94,15 @@
           } @else {
             @for (
               result of searchResults;
-              track result.filePath + '#' + result.headingId
+              track result.filePath + '#' + result.headingId;
+              let i = $index
             ) {
               <button
                 type="button"
                 class="block w-full rounded-lg p-4 text-left transition hover:bg-black/5 dark:hover:bg-white/5"
+                [class.!bg-black/10]="selectedSearchResultIndex() === i"
+                [class.dark:!bg-white/10]="selectedSearchResultIndex() === i"
+                (mouseenter)="selectedSearchResultIndex.set(i)"
                 (click)="openSearchResult(result)">
                 <div class="font-semibold">
                   {{ result.headingTitle }}
