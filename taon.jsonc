@@ -93,8 +93,8 @@
     },
     {
       "description": "Json c parser",
-      "includeInBundleNodeModules": [],
-      "isExternalFor": "*",
+      "includeInBundleNodeModules": ["vscode-plugin"],
+      "isExternalFor": ["npm-lib-and-cli-tool", "vscode-plugin"],
       "packageName": "jsonc-parser",
     },
   ],
@@ -170,5 +170,5 @@
     "scripts": {
       "mkdocs": "python3 -m mkdocs",
     },
-  }
+  },
 }
