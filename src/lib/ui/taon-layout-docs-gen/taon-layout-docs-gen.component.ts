@@ -292,6 +292,14 @@ export class TaonLayoutDocsGenComponent implements OnInit {
     const urlToNavigate = `${this.baseHref}/${result.filePath}#${encodeURIComponent(result.headingId)}`;
     // console.log({ urlToNavigate });
     void this.router.navigateByUrl(urlToNavigate);
+
+    if (this.currentRoutePath.endsWith(`${this.baseHref}/${result.filePath}`)) {
+      this.activeHeadingId = result.headingId;
+
+      document.getElementById(result.headingId)?.scrollIntoView({
+        behavior: 'instant',
+      });
+    }
   }
   //#endregion
 
