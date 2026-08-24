@@ -8,9 +8,13 @@
 
 .docs-page-nav {
   position: fixed;
+  top: 80px;
+  bottom: 20px;
+
   width: 240px;
-  max-height: calc(100vh - 96px);
+
   overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .docs-header {
