@@ -111,8 +111,26 @@ const createContextFn = <
       return config.appId;
     },
 
-    cloneAsRemote: (cloneOpt?: { overrideRemoteHost?: string }) => {
+    /**
+     * Clone context as remove and  make it nob-abstract
+     */
+    cloneAsRemote: (cloneOpt?: {
+      overrideRemoteHost?: string;
+      // overrideContextName?: string; // TODO @LAST
+    }) => {
+      // if (endpointContextRef.config.abstract) {
+      //   throw `[taon][cloneAsRemote] You can clone abstract context as remote context.
+      //   Use context composition instead:
+      //   const New${endpointContextRef.config.contextName} = Taon.createContext(()=>({
+      //     contexts: { endpointContextRef.config.contextName },
+      //     ...
+      //   }));
+
+      //   `;
+      // }
+
       cloneOpt = cloneOpt || {};
+
       const opt: Models.TaonCtxCloneParams = {
         ...cloneOpt,
         sourceContext: endpointContextRef,
@@ -121,7 +139,24 @@ const createContextFn = <
       return createContextFn(configFn, opt);
     },
 
-    cloneAsNormal: (cloneOpt?: { overrideHost?: string }) => {
+    /**
+     * Clone context as normal and  make it nob-abstract
+     */
+    cloneAsNormal: (cloneOpt?: {
+      overrideHost?: string;
+      // overrideContextName?: string; // TODO @LAST
+    }) => {
+      // if (endpointContextRef.config.abstract) {
+      //   throw `[taon][cloneAsRemote] You can clone abstract context as remote context.
+      //   Use context composition instead:
+      //   const New${endpointContextRef.config.contextName} = Taon.createContext(()=>({
+      //     contexts: { endpointContextRef.config.contextName },
+      //     ...
+      //   }));
+
+      //   `;
+      // }
+
       cloneOpt = cloneOpt || {};
       const opt: Models.TaonCtxCloneParams = {
         ...cloneOpt,
@@ -203,7 +238,7 @@ const createContextFn = <
 
         await endpointContextRef.init(overrideOptions);
 
-        if (config.abstract) {
+        if (endpointContextRef.abstract) {
           throw new Error(`Abstract context can not be initialized`);
         }
 

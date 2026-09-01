@@ -76,6 +76,8 @@ export class EndpointContext {
   //#region fields / flags
   disabledRealtime: boolean = false;
 
+  readonly abstract: boolean;
+
   /**
    * check whether context is inited
    * (with init() function )
@@ -360,7 +362,7 @@ export class EndpointContext {
     onlyMigrationRevertToTimestamp?: number;
     overrideHost?: string;
     cloudflareEnv?: any;
-  }) {
+  }): Promise<void> {
     initOptions = initOptions || {};
 
     if (initOptions.overrideHost) {
@@ -394,6 +396,8 @@ export class EndpointContext {
       initOptions.onlyMigrationRevertToTimestamp;
 
     this.config = this.configFn({});
+    // @ts-expect-error
+    this.abstract = !!this.config.abstract;
 
     if (_.isObject(this.config.database)) {
       this.config.database = Models.DatabaseConfig.from(
@@ -413,6 +417,8 @@ export class EndpointContext {
       this.cloneOptions.overrideHost &&
       !this.cloneOptions.useAsRemoteContext
     ) {
+      // @ts-expect-error
+      this.abstract = false;
       this.config.host = this.cloneOptions.overrideHost;
     }
 
@@ -420,6 +426,8 @@ export class EndpointContext {
       this.cloneOptions.overrideRemoteHost &&
       this.cloneOptions.useAsRemoteContext
     ) {
+      // @ts-expect-error
+      this.abstract = false;
       this.config.host = this.cloneOptions.overrideRemoteHost;
     }
 
@@ -487,7 +495,7 @@ export class EndpointContext {
     //#endregion
 
     //#region throw error when no mode detected and non abstract context
-    if (!this.mode && !this.config.abstract) {
+    if (!this.mode && !this.abstract) {
       const errMsg =
         `You need to provide host property or ` +
         `useIpcWhenElectron or mark it as abstract`;
@@ -707,7 +715,7 @@ export class EndpointContext {
 
     if (!this.isRunOrRevertOnlyMigrationAppStart) {
       //#region prepares server
-      if (this.mode === 'backend-frontend(tcp+udp)' && !this.config.abstract) {
+      if (this.mode === 'backend-frontend(tcp+udp)' && !this.abstract) {
         //#region @backend
         if (UtilsOs.isRunningInCloudflareWorker()) {
           this.logFramework &&
@@ -760,7 +768,7 @@ export class EndpointContext {
       //#endregion
 
       //#region prepare realtime
-      if (!this.config.abstract) {
+      if (!this.abstract) {
         this.disabledRealtime = !!(
           UtilsOs.isRunningInCloudflareWorker() || this.config.disabledRealtime
         );
@@ -795,7 +803,7 @@ export class EndpointContext {
 
     //#region show context info
     // console.log({ ref })
-    if (this.config.abstract) {
+    if (this.abstract) {
       this.logFramework &&
         Helpers.info(
           `[taon] Create abstract context: ${this.config.contextName}`,
@@ -1711,6 +1719,7 @@ export class EndpointContext {
   get uriPathnameOrNothingIfRoot(): string {
     const isNonRootProperPathName =
       this.uri?.pathname && this.uri.pathname !== '/';
+
     return isNonRootProperPathName ? this.uri.pathname.replace(/\/$/, '') : '';
   }
   //#endregion
@@ -1749,6 +1758,7 @@ export class EndpointContext {
   //#endregion
 
   //#region methods & getters / context name
+
   /**
    * ipc/udp needs this
    */
@@ -1782,7 +1792,7 @@ export class EndpointContext {
    * Check context type
    */
   public get contextType(): 'normal' | 'remote' | 'abstract' | 'invalid' {
-    if (this.config.abstract) {
+    if (this.abstract) {
       return 'abstract';
     }
     if (this.host) {
@@ -2336,6 +2346,7 @@ export class EndpointContext {
           //   methodConfig,
           //   expressPath,
           // );
+
           this.initClient(
             controllerClassFn,
             httpMethodType,
