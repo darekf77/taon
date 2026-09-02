@@ -116,7 +116,7 @@ const createContextFn = <
      */
     cloneAsRemote: (cloneOpt?: {
       overrideRemoteHost?: string;
-      // overrideContextName?: string; // TODO @LAST
+      overrideContextName?: string;
     }) => {
       // if (endpointContextRef.config.abstract) {
       //   throw `[taon][cloneAsRemote] You can clone abstract context as remote context.
@@ -144,7 +144,7 @@ const createContextFn = <
      */
     cloneAsNormal: (cloneOpt?: {
       overrideHost?: string;
-      // overrideContextName?: string; // TODO @LAST
+      overrideContextName?: string;
     }) => {
       // if (endpointContextRef.config.abstract) {
       //   throw `[taon][cloneAsRemote] You can clone abstract context as remote context.

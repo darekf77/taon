@@ -431,6 +431,7 @@ export namespace Models {
     onlyMigrationRevertToTimestamp?: number;
     overrideExpressApp?: Application;
     overrideHost?: string;
+    overrideContextName?: string;
     cloudflareEnv?: any;
   }
 
@@ -442,6 +443,7 @@ export namespace Models {
   export interface TaonCtxCloneParams {
     useAsRemoteContext?: boolean;
     overrideRemoteHost?: string;
+    overrideContextName?: string;
     overrideHost?: string;
     sourceContext?: EndpointContext;
   }

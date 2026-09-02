@@ -76,7 +76,7 @@ export class EndpointContext {
   //#region fields / flags
   disabledRealtime: boolean = false;
 
-  readonly abstract: boolean;
+  public readonly abstract: boolean;
 
   /**
    * check whether context is inited
@@ -368,6 +368,13 @@ export class EndpointContext {
     if (initOptions.overrideHost) {
       this.cloneOptions.overrideHost = initOptions.overrideHost;
       delete initOptions.overrideHost;
+    }
+    // console.log({
+    //   'this.cloneOptions': this.cloneOptions,
+    // });
+
+    if (this.cloneOptions.overrideContextName) {
+      this.overrideContextName = this.cloneOptions.overrideContextName;
     }
 
     //#region @backend
@@ -1758,11 +1765,15 @@ export class EndpointContext {
   //#endregion
 
   //#region methods & getters / context name
+  private overrideContextName: string;
 
   /**
    * ipc/udp needs this
    */
   public get contextName(): string {
+    if (this.overrideContextName) {
+      return this.overrideContextName;
+    }
     // console.log(this.originalConfig);
     return this.config?.contextName || this.originalConfig?.contextName;
   }
@@ -1775,12 +1786,16 @@ export class EndpointContext {
   public get contextNameForCommunication(): string {
     let contextName = this.contextName;
     if (this.isRemoteHost) {
-      if (this.sourceContext?.contextName) {
-        contextName = this.sourceContext?.contextName;
+      if (this.overrideContextName) {
+        contextName = this.overrideContextName;
       } else {
-        // console.log(
-        //   `CANT GET SOURCE CONTEXT NAME FOR REMOTE CONTEXT ${this.contextName}`,
-        // );
+        if (this.sourceContext?.contextName) {
+          contextName = this.sourceContext?.contextName;
+        } else {
+          // console.log(
+          //   `CANT GET SOURCE CONTEXT NAME FOR REMOTE CONTEXT ${this.contextName}`,
+          // );
+        }
       }
     }
     return contextName;
@@ -1833,6 +1848,7 @@ export class EndpointContext {
   //#endregion
 
   //#region methods & getters / host
+
   get host(): string | undefined {
     return this.config.host;
   }
@@ -2313,7 +2329,11 @@ export class EndpointContext {
         //#endregion
 
         //#region init server
-        // console.log({ expressPath });
+        // console.log({
+        //   expressPath,
+        //   globalPathPart,
+        //   'this.contextName': this.contextName,
+        // });
         if (UtilsOs.isNode || UtilsOs.isWebSQL) {
           //#region @websql
 
@@ -3072,7 +3092,7 @@ export class EndpointContext {
     expressPath: string,
   ): void {
     const ctx = this;
-
+    // console.log({ clientExpressPath: expressPath });
     // console.log(
     //   `CLIENT: expressPath: "${expressPath}" interceptor for method: ${methodConfig.calculatedMiddlewares?.length} `,
     // );
