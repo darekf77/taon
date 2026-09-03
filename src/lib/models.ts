@@ -322,9 +322,13 @@ export namespace Models {
      */
     middlewares?: MIDDLEWARES;
     /**
-     * Config for express session
+     * Should context use session:
+     * - on backend for axios
+     * - cors with credentials     *
+     *
+     * @default true
      */
-    session?: boolean;
+    useSession?: boolean;
     /**
      * taon is not going to write .rest files to cwd()
      */
@@ -444,6 +448,7 @@ export namespace Models {
     useAsRemoteContext?: boolean;
     overrideRemoteHost?: string;
     overrideContextName?: string;
+    overrideUseSession?: boolean;
     overrideHost?: string;
     sourceContext?: EndpointContext;
   }

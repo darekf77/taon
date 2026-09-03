@@ -206,10 +206,6 @@ export class EndpointContext {
   }
   //#endregion
 
-  // //#region fields  / session
-  // session?: boolean; //Models.ISession;
-  // //#endregion
-
   //#region fields / connection
   public connection: DataSource;
   //#endregion
@@ -356,6 +352,8 @@ export class EndpointContext {
   //#endregion
 
   //#region methods & getters / init
+  private readonly initFromRecrusiveContextResovle = false;
+
   public async init(initOptions?: {
     initFromRecrusiveContextResovle?: boolean;
     onlyMigrationRun?: boolean;
@@ -364,6 +362,12 @@ export class EndpointContext {
     cloudflareEnv?: any;
   }): Promise<void> {
     initOptions = initOptions || {};
+
+    // @ts-expect-error
+    this.initFromRecrusiveContextResovle =
+      !!initOptions.initFromRecrusiveContextResovle;
+
+
 
     if (initOptions.overrideHost) {
       this.cloneOptions.overrideHost = initOptions.overrideHost;
@@ -403,6 +407,19 @@ export class EndpointContext {
       initOptions.onlyMigrationRevertToTimestamp;
 
     this.config = this.configFn({});
+
+    // @ts-expect-error
+    this.useSession = _.isBoolean(this.config.useSession)
+      ? this.config.useSession
+      : true;
+
+    if (_.isBoolean(this.cloneOptions.overrideUseSession)) {
+      // @ts-expect-error
+      this.useSession = this.cloneOptions.overrideUseSession;
+    }
+    // console.log(`[${this.contextName}] use session=${this.useSession}`);
+    // console.log(`[${this.contextName}] this.initFromRecrusiveContextResovle=${this.initFromRecrusiveContextResovle}`)
+
     // @ts-expect-error
     this.abstract = !!this.config.abstract;
 
@@ -592,7 +609,8 @@ export class EndpointContext {
     //#endregion
 
     //#region resolve session
-    if (this.config.session) {
+    if (this.useSession && !this.initFromRecrusiveContextResovle) {
+      // console.log(`Apply with credetinoal for [${this.contextName}]`);
       // this.session = _.cloneDeep(this.config.session);
       // const oneHour = 1000 * 60 * 60 * 1; // 24;
       // if (!this.session.cookieMaxAge) {
@@ -1767,6 +1785,8 @@ export class EndpointContext {
   //#region methods & getters / context name
   private overrideContextName: string;
 
+  public readonly useSession: boolean = false;
+
   /**
    * ipc/udp needs this
    */
@@ -2571,11 +2591,7 @@ export class EndpointContext {
     app.use(methodOverride());
     app.use(cookieParser());
 
-    const enableSession = _.isBoolean(this.config.session)
-      ? this.config.session
-      : true;
-
-    if (enableSession) {
+    if (this.useSession) {
       Helpers.info(
         '[taon][express-server] session enabled for this context ' +
           this.contextName,

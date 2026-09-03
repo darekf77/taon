@@ -114,10 +114,12 @@ const createContextFn = <
     /**
      * Clone context as remove and  make it nob-abstract
      */
-    cloneAsRemote: (cloneOpt?: {
-      overrideRemoteHost?: string;
-      overrideContextName?: string;
-    }) => {
+    cloneAsRemote: (
+      cloneOpt?: Pick<
+        Models.TaonCtxCloneParams,
+        'overrideRemoteHost' | 'overrideContextName' | 'overrideUseSession'
+      >,
+    ) => {
       // if (endpointContextRef.config.abstract) {
       //   throw `[taon][cloneAsRemote] You can clone abstract context as remote context.
       //   Use context composition instead:
@@ -142,10 +144,14 @@ const createContextFn = <
     /**
      * Clone context as normal and  make it nob-abstract
      */
-    cloneAsNormal: (cloneOpt?: {
-      overrideHost?: string;
-      overrideContextName?: string;
-    }) => {
+    cloneAsNormal: (
+      cloneOpt?: Partial<
+        Pick<
+          Models.TaonCtxCloneParams,
+          'overrideHost' | 'overrideContextName' | 'overrideUseSession'
+        >
+      >,
+    ) => {
       // if (endpointContextRef.config.abstract) {
       //   throw `[taon][cloneAsRemote] You can clone abstract context as remote context.
       //   Use context composition instead:
