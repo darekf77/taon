@@ -21,5 +21,6 @@ export function TaonController<ControllerClass = any>(
     cfg.path = options.path || '';
     cfg.realtime = options.realtime;
     cfg.middlewares = options.middlewares;
+    cfg.allowedMethods = options.allowedMethods as any;
   };
 }

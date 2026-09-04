@@ -56,6 +56,16 @@ export class TaonBaseController<
   }
 
   /**
+   * Use this methods for find grain authentication, logs or a
+   * anything that needs to happend before each request to controller
+   */
+  async beforeEachRequest(
+    request: Models.TaonCtrlBeforeEachRequestParams,
+  ): Promise<void> {
+    // console.log('before each requrest TRIGGERED!', requstData);
+  }
+
+  /**
    * Hook that is called when taon app is initialized.
    */
   async afterAllCtxInited(options: {

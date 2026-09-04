@@ -367,8 +367,6 @@ export class EndpointContext {
     this.initFromRecrusiveContextResovle =
       !!initOptions.initFromRecrusiveContextResovle;
 
-
-
     if (initOptions.overrideHost) {
       this.cloneOptions.overrideHost = initOptions.overrideHost;
       delete initOptions.overrideHost;
@@ -2291,8 +2289,17 @@ export class EndpointContext {
       //#endregion
 
       //#region init client or server methods
-      const methodNames = Object.keys(classConfig.methods);
-      // console.log({ methodNames });
+      const methodNames = _.isArray(classConfig.allowedMethods)
+        ? Object.keys(classConfig.methods).filter(methodName =>
+            classConfig.allowedMethods.includes(methodName),
+          )
+        : Object.keys(classConfig.methods);
+
+      // console.log({
+      //   ctxname: this.contextName,
+      //   ctrl: ClassHelpers.getName(controllerClassFn),
+      //   methodNames,
+      // });
       for (const methodName of methodNames) {
         const methodConfig: Partial<MethodConfig> =
           classConfig.methods[methodName];
@@ -2692,6 +2699,7 @@ export class EndpointContext {
     //#endregion
   ): { expressPath: string; method: CoreModels.HttpMethod } {
     //#region resolve variables
+    const controllerInstance = this.getInstanceBy(target as any);
     if (overrideExpressApp) {
       this.expressApp = overrideExpressApp;
     }
@@ -2748,6 +2756,15 @@ export class EndpointContext {
            */
           resolvedParams,
         );
+
+      await (controllerInstance as TaonBaseController)?.beforeEachRequest({
+        resolvedParams,
+        req,
+        res,
+        expressPath,
+        classConfig,
+        methodConfig,
+      } as Models.TaonCtrlBeforeEachRequestParams);
       let result = await getResponseValue(response, { req, res });
       return result;
     };

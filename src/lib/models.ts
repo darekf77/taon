@@ -9,6 +9,8 @@ import { Observable } from 'rxjs';
 import { _ } from 'tnp-core/src';
 import { CoreModels } from 'tnp-core/src';
 
+import type { ControllerConfig } from './config/controller-config';
+import type { MethodConfig } from './config/method-config';
 import type { EndpointContext } from './endpoint-context';
 import { ExpressRequest, ExpressResponse } from './express-types';
 
@@ -437,6 +439,15 @@ export namespace Models {
     overrideHost?: string;
     overrideContextName?: string;
     cloudflareEnv?: any;
+  }
+
+  export interface TaonCtrlBeforeEachRequestParams {
+    resolvedParams;
+    req: ExpressRequest;
+    res: ExpressResponse;
+    expressPath: string;
+    classConfig: Partial<ControllerConfig>;
+    methodConfig: Partial<MethodConfig>;
   }
 
   export interface StartParams extends TaonInitializeParams {

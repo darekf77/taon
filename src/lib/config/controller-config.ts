@@ -8,14 +8,23 @@ import { MethodConfig } from './method-config';
 
 export class ControllerConfig extends TaonControllerOptions {
   declare methods: { [methodName: string]: Partial<MethodConfig> };
+
   /**
    * Calculated path from parents controllers
    */
   declare calculatedPath?: string;
+
+  /**
+   * allowed methods for controller
+   * (by default all allowed)
+   */
+  declare allowedMethods?: string[] | undefined;
+
   /**
    * a way to transform entity before sending to browser
    */
   declare browserTransformFn?: (entity: any) => any;
+
   /**
    * Calculated middlewares object from parents controllers
    */
