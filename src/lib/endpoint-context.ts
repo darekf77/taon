@@ -2279,7 +2279,7 @@ export class EndpointContext {
       //#region @backend
       if (!UtilsOs.isRunningInCliMode()) {
         //#endregion
-        this.logHttp &&
+        this.logRoutes &&
           console.groupCollapsed(
             `[taon][express-server] routes [${classConfig.className}]`,
           );
@@ -2409,7 +2409,7 @@ export class EndpointContext {
       //#region @backend
       if (!UtilsOs.isRunningInCliMode()) {
         //#endregion
-        this.logHttp && console.groupEnd();
+        this.logRoutes && console.groupEnd();
         //#region @backend
       }
       //#endregion
