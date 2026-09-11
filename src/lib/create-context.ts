@@ -222,6 +222,15 @@ const createContextFn = <
     initialize: async (
       overrideOptions?: Models.TaonInitializeParams,
     ): Promise<EndpointContext> => {
+      if (!overrideOptions && UtilsOs.isRunningInCloudflareWorker()) {
+        // const { Taon } = await import('./index');
+        throw new Error(`[taon-framework][ctx=${config?.contextName}] You are required to
+        pass start start params into <context>.initialize()
+        function when in cloudflare worker.
+
+        `);
+      }
+
       overrideOptions = overrideOptions || {};
       return await new Promise(async (resolve, reject) => {
         //#region init in set timeout
