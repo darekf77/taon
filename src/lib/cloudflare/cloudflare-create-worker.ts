@@ -1,192 +1,19 @@
-import { CoreModels } from 'tnp-core/src';
-import { Symbols } from '../symbols';
+//#region imports
 import { Request } from '@cloudflare/workers-types';
+import { CoreModels, UtilsHttp } from 'tnp-core/src';
 
-//#region parse body
-async function parseBody(request: Request) {
-  const method = request.method.toUpperCase();
+import { corsHeaders } from '../middlewares/cross-origin';
+import { parseBody } from '../middlewares/parse-body';
+import { parseCookies } from '../middlewares/parse-cookies';
+import { Symbols } from '../symbols';
 
-  if (['GET', 'HEAD', 'OPTIONS'].includes(method)) {
-    return undefined;
-  }
-
-  const contentType = (request.headers.get('content-type') || '').toLowerCase();
-
-  if (
-    contentType.includes('multipart/form-data') ||
-    contentType.includes('application/x-www-form-urlencoded')
-  ) {
-    const form = await request.formData();
-    return Object.fromEntries(form.entries());
-  }
-
-  if (contentType.includes('application/json')) {
-    const text = await request.text();
-
-    if (!text.trim()) {
-      return {};
-    }
-
-    try {
-      return JSON.parse(text);
-    } catch {
-      // Express/body-parser would normally reject malformed JSON.
-      throw new SyntaxError('Invalid JSON body');
-    }
-  }
-
-  const text = await request.text();
-
-  return text || undefined;
-}
+import { createFakeExpressApp } from './cloudflare-express-fake-server';
 //#endregion
 
-//#region parse cookies
-function parseCookies(request: Request): Record<string, string> {
-  const cookieHeader = request.headers.get('cookie') || '';
-
-  return Object.fromEntries(
-    cookieHeader
-      .split(';')
-      .filter(Boolean)
-      .map(c => {
-        const [k, ...v] = c.trim().split('=');
-
-        let value = v.join('=');
-
-        try {
-          value = decodeURIComponent(value);
-        } catch {}
-
-        return [k, value];
-      }),
-  );
-}
-//#endregion
-
-//#region cors headers
-function corsHeaders(request: Request): Record<string, string> {
-  const origin = request.headers.get('origin');
-
-  // Same-origin requests often have no Origin header.
-  // No CORS headers needed.
-  if (!origin) {
-    return {};
-  }
-
-  const requestOrigin = new URL(request.url).origin;
-
-  // Same origin -> no CORS needed.
-  if (origin === requestOrigin) {
-    return {};
-  }
-
-  let originUrl: URL;
-
-  try {
-    originUrl = new URL(origin);
-  } catch {
-    return {};
-  }
-
-  // Allow localhost on ANY port.
-  const isLocalhost =
-    originUrl.hostname === 'localhost' ||
-    originUrl.hostname === '127.0.0.1' ||
-    originUrl.hostname === '[::1]';
-
-  if (!isLocalhost) {
-    return {};
-  }
-
-  const headersAllowedString = [
-    'Content-Type',
-    'Authorization',
-    'X-Requested-With',
-
-    Symbols.old.X_TOTAL_COUNT,
-
-    Symbols.old.CIRCURAL_OBJECTS_MAP_BODY,
-    Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM,
-
-    Symbols.old.MAPPING_CONFIG_HEADER,
-    Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS,
-    Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS,
-  ].join(', ');
-
-  const allowedMethodsString = [
-    ...CoreModels.HttpMethodArr.filter(f => f !== 'jsonp').map(c =>
-      c.toUpperCase(),
-    ),
-    'OPTIONS',
-  ].join(', ');
-
-  return {
-    // Exact localhost origin, including its port:
-    // http://localhost:4200
-    // http://localhost:4209
-    // etc.
-    'Access-Control-Allow-Origin': origin,
-
-    'Access-Control-Allow-Methods': allowedMethodsString,
-    'Access-Control-Allow-Headers': headersAllowedString,
-    'Access-Control-Expose-Headers': headersAllowedString,
-
-    'Access-Control-Allow-Credentials': 'true',
-
-    Vary: 'Origin',
-  };
-}
-
-//#region helpers
-function statusText(code: number) {
-  const map: Record<number, string> = {
-    200: 'OK',
-    201: 'Created',
-    202: 'Accepted',
-    204: 'No Content',
-    301: 'Moved Permanently',
-    302: 'Found',
-    304: 'Not Modified',
-    400: 'Bad Request',
-    401: 'Unauthorized',
-    403: 'Forbidden',
-    404: 'Not Found',
-    409: 'Conflict',
-    422: 'Unprocessable Entity',
-    500: 'Internal Server Error',
-    502: 'Bad Gateway',
-    503: 'Service Unavailable',
-  };
-
-  return map[code] || String(code);
-}
-
-function mimeType(type: string) {
-  if (type.includes('/')) {
-    return type;
-  }
-
-  const map: Record<string, string> = {
-    json: 'application/json',
-    html: 'text/html; charset=utf-8',
-    text: 'text/plain; charset=utf-8',
-    txt: 'text/plain; charset=utf-8',
-    xml: 'application/xml',
-    js: 'application/javascript',
-    css: 'text/css',
-    pdf: 'application/pdf',
-  };
-
-  return map[type.toLowerCase()] || type;
-}
-//#endregion
-
-//#region create worker adapter
 let initializationPromise: Promise<void> | undefined;
 
 export function createWorkerAdapter(
-  handler: (req: any, res: any) => Promise<void> | void,
+  fakeExpressApp: ReturnType<typeof createFakeExpressApp>,
   firstRequestCallback: (
     overrideHost: string,
     req?: any,
@@ -194,22 +21,23 @@ export function createWorkerAdapter(
     env?: any,
   ) => Promise<void>,
 ) {
-  return async (request: Request, env: any): Promise<Response> => {
-    console.log('[WORKER] FETCH START');
-    const url = new URL(request.url);
+  return async (cloudflareRequest: Request, env: any): Promise<Response> => {
+    // console.log('[WORKER] FETCH START');
+    const url = new URL(cloudflareRequest.url);
 
     // --- CORS preflight ---
-    if (request.method === 'OPTIONS') {
+    if (cloudflareRequest.method === 'OPTIONS') {
       return new Response(null, {
         status: 204,
-        headers: corsHeaders(request),
+        headers: corsHeaders(cloudflareRequest),
       });
     }
 
+    //#region parse body
     let parsedBody: any;
 
     try {
-      parsedBody = await parseBody(request);
+      parsedBody = await parseBody(cloudflareRequest);
     } catch (err: any) {
       return new Response(
         JSON.stringify({
@@ -219,18 +47,19 @@ export function createWorkerAdapter(
         {
           status: 400,
           headers: {
-            ...corsHeaders(request),
+            ...corsHeaders(cloudflareRequest),
             'Content-Type': 'application/json',
           },
         },
       );
     }
+    //#endregion
 
-    // --- req ---
-    const headers = Object.fromEntries(request.headers.entries());
+    //#region create fake express request
+    const headers = Object.fromEntries(cloudflareRequest.headers.entries());
 
-    const req: any = {
-      method: request.method,
+    const fakeExpressRequest: any = {
+      method: cloudflareRequest.method,
       originalUrl: url.pathname + url.search,
       url: url.pathname + url.search,
       path: url.pathname,
@@ -244,40 +73,40 @@ export function createWorkerAdapter(
       headers,
       query: Object.fromEntries(url.searchParams.entries()),
       body: parsedBody,
-      cookies: parseCookies(request),
+      cookies: parseCookies(cloudflareRequest),
 
       params: {},
 
       get(name: string) {
-        return request.headers.get(name) ?? undefined;
+        return cloudflareRequest.headers.get(name) ?? undefined;
       },
 
       header(name: string) {
-        return request.headers.get(name) ?? undefined;
+        return cloudflareRequest.headers.get(name) ?? undefined;
       },
 
       accepts(type: string) {
-        const accept = request.headers.get('accept') || '';
+        const accept = cloudflareRequest.headers.get('accept') || '';
         return accept.includes(type);
       },
 
       is(type: string) {
-        const contentType = request.headers.get('content-type') || '';
+        const contentType = cloudflareRequest.headers.get('content-type') || '';
 
         return contentType.includes(type);
       },
 
       xhr:
-        request.headers.get('x-requested-with')?.toLowerCase() ===
+        cloudflareRequest.headers.get('x-requested-with')?.toLowerCase() ===
         'xmlhttprequest',
 
       ip:
-        request.headers.get('cf-connecting-ip') ||
-        request.headers.get('x-forwarded-for') ||
+        cloudflareRequest.headers.get('cf-connecting-ip') ||
+        cloudflareRequest.headers.get('x-forwarded-for') ||
         undefined,
 
       ips: (() => {
-        const value = request.headers.get('x-forwarded-for') || '';
+        const value = cloudflareRequest.headers.get('x-forwarded-for') || '';
 
         return value
           .split(',')
@@ -285,40 +114,57 @@ export function createWorkerAdapter(
           .filter(Boolean);
       })(),
 
-      raw: request,
+      raw: cloudflareRequest,
     };
 
     // method override
-    if (req.body?._method) {
-      req.method = String(req.body._method).toUpperCase();
+    if (fakeExpressRequest.body?._method) {
+      fakeExpressRequest.method = String(
+        fakeExpressRequest.body._method,
+      ).toUpperCase();
     }
+    //#endregion
 
-    // --- res ---
+    //#region create fake express response
     let status = 200;
-    let body: any = '';
+    let bodyToSend: any = '';
     let ended = false;
+    let resolveResponseFinished!: () => void;
 
-    const resHeaders = new Headers(corsHeaders(request));
+    const responseFinished = new Promise<void>(resolve => {
+      resolveResponseFinished = resolve;
+    });
 
-    const res: any = {
+    const finishResponse = () => {
+      if (ended) {
+        return;
+      }
+
+      ended = true;
+      resolveResponseFinished();
+    };
+
+    const resHeaders = new Headers(corsHeaders(cloudflareRequest));
+
+    const fakeExpressResponse: any = {
       locals: {},
 
       status(code: number) {
         status = code;
-        return res;
+        return fakeExpressResponse;
       },
 
       sendStatus(code: number) {
         status = code;
-        body = statusText(code);
+        bodyToSend = UtilsHttp.getStatusText(code);
         resHeaders.set('content-type', 'text/plain; charset=utf-8');
-        ended = true;
-        return res;
+        finishResponse();
+        return fakeExpressResponse;
       },
 
       setHeader(key: string, value: any) {
         resHeaders.set(key, String(value));
-        return res;
+        return fakeExpressResponse;
       },
 
       getHeader(key: string) {
@@ -327,7 +173,7 @@ export function createWorkerAdapter(
 
       removeHeader(key: string) {
         resHeaders.delete(key);
-        return res;
+        return fakeExpressResponse;
       },
 
       set(key: string | Record<string, any>, value?: any) {
@@ -339,11 +185,11 @@ export function createWorkerAdapter(
           resHeaders.set(key, String(value));
         }
 
-        return res;
+        return fakeExpressResponse;
       },
 
       header(key: string | Record<string, any>, value?: any) {
-        return res.set(key as any, value);
+        return fakeExpressResponse.set(key as any, value);
       },
 
       get(key: string) {
@@ -352,31 +198,34 @@ export function createWorkerAdapter(
 
       append(key: string, value: string) {
         resHeaders.append(key, value);
-        return res;
+        return fakeExpressResponse;
       },
 
       type(type: string) {
-        resHeaders.set('content-type', mimeType(type));
-        return res;
+        resHeaders.set('content-type', UtilsHttp.mimeType(type));
+        return fakeExpressResponse;
       },
 
-      json(data: any) {
-        body = JSON.stringify(data);
+      json(jsonToParse: any) {
+        // if(typeof jsonToParse === 'number' || typeof jsonToParse === )
+
+        bodyToSend = JSON.stringify(jsonToParse);
+        // console.log({ jsonToParse, body: bodyToSend });
         resHeaders.set('content-type', 'application/json; charset=utf-8');
-        ended = true;
-        return res;
+        finishResponse();
+        return fakeExpressResponse;
       },
 
       jsonp(data: any) {
         // Not real JSONP unless you intentionally support callback handling.
-        return res.json(data);
+        return fakeExpressResponse.json(data);
       },
 
       send(data: any) {
         if (data === undefined || data === null) {
-          body = '';
+          bodyToSend = '';
         } else if (typeof data === 'string') {
-          body = data;
+          bodyToSend = data;
 
           if (!resHeaders.has('content-type')) {
             resHeaders.set('content-type', 'text/html; charset=utf-8');
@@ -386,26 +235,26 @@ export function createWorkerAdapter(
           ArrayBuffer.isView(data) ||
           data instanceof Blob
         ) {
-          body = data;
+          bodyToSend = data;
         } else {
-          body = JSON.stringify(data);
+          bodyToSend = JSON.stringify(data);
 
           if (!resHeaders.has('content-type')) {
             resHeaders.set('content-type', 'application/json; charset=utf-8');
           }
         }
 
-        ended = true;
-        return res;
+        finishResponse();
+        return fakeExpressResponse;
       },
 
       end(data?: any) {
         if (data !== undefined) {
-          body = data;
+          bodyToSend = data;
         }
 
-        ended = true;
-        return res;
+        finishResponse();
+        return fakeExpressResponse;
       },
 
       redirect(statusOrUrl: number | string, maybeUrl?: string) {
@@ -417,13 +266,13 @@ export function createWorkerAdapter(
           resHeaders.set('Location', statusOrUrl);
         }
 
-        ended = true;
-        return res;
+        finishResponse();
+        return fakeExpressResponse;
       },
 
       location(location: string) {
         resHeaders.set('Location', location);
-        return res;
+        return fakeExpressResponse;
       },
 
       cookie(name: string, value: string, options: any = {}) {
@@ -470,7 +319,7 @@ export function createWorkerAdapter(
 
         resHeaders.append('Set-Cookie', cookie);
 
-        return res;
+        return fakeExpressResponse;
       },
 
       clearCookie(name: string, options: any = {}) {
@@ -496,7 +345,7 @@ export function createWorkerAdapter(
 
         resHeaders.append('Set-Cookie', cookie);
 
-        return res;
+        return fakeExpressResponse;
       },
 
       // Useful for Taon internals
@@ -504,13 +353,15 @@ export function createWorkerAdapter(
         return ended;
       },
     };
+    //#endregion
 
+    //#region execute fake req/res on taon express layer
     try {
       if (!initializationPromise) {
         initializationPromise = firstRequestCallback(
-          new URL(request.url).origin,
-          req,
-          res,
+          new URL(cloudflareRequest.url).origin,
+          fakeExpressRequest,
+          fakeExpressResponse,
           env,
         ).catch(err => {
           initializationPromise = undefined;
@@ -519,7 +370,11 @@ export function createWorkerAdapter(
       }
 
       await initializationPromise;
-      await handler(req, res);
+      await fakeExpressApp(fakeExpressRequest, fakeExpressResponse);
+
+      if (!ended) {
+        await responseFinished;
+      }
     } catch (err: any) {
       console.log(err);
       console.error('BACKEND ERROR', {
@@ -530,26 +385,30 @@ export function createWorkerAdapter(
       });
 
       status = 500;
-      body = JSON.stringify({
+      bodyToSend = JSON.stringify({
         error: 'Internal Server Error',
       });
 
       resHeaders.set('content-type', 'application/json; charset=utf-8');
     }
+    //#endregion
 
+    //#region send proper cloudflare response
     // HTTP rules
-    if (request.method === 'HEAD') {
-      body = null;
+    if (cloudflareRequest.method === 'HEAD') {
+      bodyToSend = null;
     }
 
     if (status === 204 || status === 304) {
-      body = null;
+      bodyToSend = null;
     }
 
-    return new Response(body, {
+    // console.log({ bodyToSend, resHeaders });
+
+    return new Response(bodyToSend, {
       status,
       headers: resHeaders,
     });
+    //#endregion
   };
 }
-//#endregion
