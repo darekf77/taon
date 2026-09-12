@@ -88,8 +88,15 @@ echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo s
 
 
 ## How to install taon
-```
+
+**every OS (except linux Arch)**
+```bash
 npm i -g taon
+```
+
+**linux Arch:**
+```bash
+SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm i -g taon
 ```
 
 
