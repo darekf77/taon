@@ -5,6 +5,7 @@ import { EndpointContext } from './endpoint-context';
 import { ContextsEndpointStorage } from './endpoint-context-storage';
 import { Models } from './models';
 import { TaonAdmin } from './ui/taon-admin-mode-configuration/taon-admin.service'; // @browser
+import { UtilsSQLdbGraph } from './utils-sql-db-graph';
 //#endregion
 
 /**
@@ -262,6 +263,28 @@ const createContextFn = <
         await endpointContextRef.initSubscribers();
 
         await endpointContextRef.initDatabaseConnection();
+
+        if (
+          endpointContextRef.connection &&
+          !UtilsOs.isRunningInCloudflareWorker() &&
+          !UtilsOs.isRunningInCliMode()
+        ) {
+          const task = Helpers.actionStarted(`Creating sql db graph`);
+          // await UtilsSQLdbGraph.createPng(
+          //   endpointContextRef.connection,
+          //   `${endpointContextRef.sqlLiteDbLocation}.png`,
+          // );
+          await UtilsSQLdbGraph.createDrawio(
+            endpointContextRef.connection,
+            `${endpointContextRef.sqlLiteDbLocation}.drawio`,
+          );
+
+          await UtilsSQLdbGraph.createText(endpointContextRef.connection, {
+            showRelationNames: true,
+            absPathToTextFile: `${endpointContextRef.sqlLiteDbLocation}.txt`,
+          });
+          task.done();
+        }
 
         // console.log('DB INITED!!!!!!!!!!!!!!!!!')
         await endpointContextRef.dbMigrations.ensureMigrationTableExists();
