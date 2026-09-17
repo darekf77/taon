@@ -281,7 +281,13 @@ const createContextFn = <
 
           await UtilsSQLdbGraph.createText(endpointContextRef.connection, {
             showRelationNames: true,
-            absPathToTextFile: `${endpointContextRef.sqlLiteDbLocation}.txt`,
+            absPathToTextFile: `${endpointContextRef.sqlLiteDbLocation}.schema.txt`,
+          });
+          await UtilsSQLdbGraph.createText(endpointContextRef.connection, {
+            showRelationNames: false,
+            showColumns: false,
+            showColumnTypes: false,
+            absPathToTextFile: `${endpointContextRef.sqlLiteDbLocation}.overview.txt`,
           });
           task.done();
         }
