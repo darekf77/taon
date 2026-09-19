@@ -1,5 +1,4 @@
 //#region imports
-import { walk } from 'lodash-walk-object/src';
 import { _ } from 'tnp-core/src';
 
 import { ClassHelpers } from '../helpers/class-helpers';
@@ -29,18 +28,20 @@ export class TaonBaseClass<CloneT extends TaonBaseClass = any> {
       | Partial<CloneT>
       | ((oldValues: Partial<CloneT>) => Partial<CloneT>),
   ): CloneT {
-    if(_.isString(overrideObjOrFn)) {
+    if (_.isString(overrideObjOrFn)) {
       console.log(overrideObjOrFn);
       throw new Error('String is not supported as .clone() method argument');
     }
     const classFn = ClassHelpers.getClassFnFromObject(this);
+
     if (_.isFunction(overrideObjOrFn)) {
       // console.log('clone with fn');
       const oldValues = (_.cloneDeep(this) || {}) as any as Partial<CloneT>;
       return cloneObj<CloneT>(overrideObjOrFn(oldValues), classFn);
     }
     // console.log('clone normal');
-    return cloneObj<CloneT>(overrideObjOrFn as any, classFn);
+    const oldValues = (_.cloneDeep(this) || {}) as any as Partial<CloneT>;
+    return cloneObj<CloneT>(_.merge(oldValues, overrideObjOrFn), classFn);
   }
   //#endregion
 }
