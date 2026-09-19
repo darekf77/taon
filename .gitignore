@@ -51,7 +51,9 @@
 /databases/**/*.json
 /databases/**/*.sqlite
 /databases/**/*.sqlite.drawio
+/databases/**/*.sqlite.overview.txt
 /databases/**/*.sqlite.png
+/databases/**/*.sqlite.schema.txt
 /databases/**/*.sqlite.txt
 /dist
 /dist-nocutsrc

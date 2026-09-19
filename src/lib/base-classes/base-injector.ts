@@ -227,6 +227,7 @@ export class TaonBaseInjector {
       {
         get: (__, propName) => {
           const ctx = this.__getContextFor(ctor);
+
           const instance: T = ctx.getInstanceBy(ctor, {
             resolveClassFromContext: options.resolveClassFromContext,
           });
@@ -241,6 +242,7 @@ export class TaonBaseInjector {
         },
         set: (__, propName, value) => {
           const ctx = this.__getContextFor(ctor);
+
           const instance: T = ctx.getInstanceBy(ctor, {
             resolveClassFromContext: options.resolveClassFromContext,
           });

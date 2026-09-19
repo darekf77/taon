@@ -1453,6 +1453,7 @@ export class EndpointContext {
       `);
     }
 
+    //#region handle custom repository
     if (isTypeormCustomRepository) {
       let entityName: string = '';
 
@@ -1498,8 +1499,10 @@ export class EndpointContext {
       // console.log(`injectedInstance `, existed)
       return injectedInstance;
     }
+    //#endregion
 
     const contextScopeInstance = this.allClassesInstances[className];
+
     // if (className === 'TopicController') {
     //   debugger;
     // }
