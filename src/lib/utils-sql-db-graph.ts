@@ -489,6 +489,7 @@ export namespace UtilsSQLdbGraph {
       engine: 'dot',
     });
 
+    // @ts-ignore
     await sharp(Buffer.from(svg)).png().toFile(outputAbsPathToPng);
     //#endregion
     //#endregion
