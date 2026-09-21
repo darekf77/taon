@@ -1,6 +1,14 @@
 import { walk } from 'lodash-walk-object/src';
 import { _, Helpers } from 'tnp-core/src';
 
+/**
+ * Use it to override specyfic props
+ * - with primitive values (number,string, boolean)
+ * - empty arrays
+ * DON'T USE IT:
+ * - to override arrays with values
+ * - to override whole objects
+ */
 export const cloneObj = <CloneT>(
   override: Partial<CloneT>,
   classFn: Function,
