@@ -1,6 +1,3 @@
-import * as Viz from '@viz-js/viz'; // @backend @esmRemove
-import * as sharp from 'sharp'; // @backend @esmRemove
-import * as stringWidth from 'string-width'; // @backend @esmRemove
 import type { DataSource, EntityMetadata } from 'taon-typeorm/src';
 import { fse, UtilsFilesFoldersSync } from 'tnp-core/src';
 
@@ -461,6 +458,7 @@ export namespace UtilsSQLdbGraph {
     //#region @backend
     //#region @esmRemove
     const dot = createDotFromTypeormDataSource(typeormConnectionDataSource);
+    const Viz = require('@viz-js/viz');
     const viz = await Viz.instance();
 
     const svg = viz.renderString(dot, {
@@ -481,15 +479,15 @@ export namespace UtilsSQLdbGraph {
     //#region @backend
     //#region @esmRemove
     const dot = createDotFromTypeormDataSource(typeormConnectionDataSource);
-
+    const Viz = require('@viz-js/viz');
     const viz = await Viz.instance();
 
     const svg = viz.renderString(dot, {
       format: 'svg',
       engine: 'dot',
     });
-
-    // @ts-ignore
+    const sharePackageName = 'sharp';
+    const sharp = require(sharePackageName) as typeof import('sharp');
     await sharp(Buffer.from(svg)).png().toFile(outputAbsPathToPng);
     //#endregion
     //#endregion
@@ -712,7 +710,7 @@ function renderWideGraph(
   if (metadatas.length === 0) {
     return '(empty database)';
   }
-
+  const stringWidth = require('string-width');
   const HORIZONTAL_GAP = 8;
   const VERTICAL_GAP = 6;
 
@@ -1030,6 +1028,7 @@ function drawWideRelation(
 ): void {
   //#region @backendFunc
   //#region @esmRemove
+  const stringWidth = require('string-width');
   const fromX = from.x + Math.floor(from.width / 2);
 
   const fromY = from.y + from.height;
@@ -1213,6 +1212,7 @@ function renderEntityBox(
 ): string {
   //#region @backendFunc
   //#region @esmRemove
+  const stringWidth = require('string-width');
   const rows: string[] = [];
 
   if (showColumns) {
@@ -1293,6 +1293,7 @@ function renderRelation(relationName: string, targetTable: string): string {
 function pad(value: string, width: number): string {
   //#region @backendFunc
   //#region @esmRemove
+  const stringWidth = require('string-width');
   const missing = width - stringWidth(value);
 
   return value + ' '.repeat(Math.max(0, missing));
