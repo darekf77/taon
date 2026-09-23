@@ -435,6 +435,10 @@ export class EndpointContext {
 
     this.config.host = this.host === null ? void 0 : this.host;
 
+    if (this.config.contexts && this.config.contexts[this.contextName]) {
+      throw new Error(`You are injecting ${this.contextName} into itself.`)
+    }
+
     if (
       this.cloneOptions.overrideHost &&
       !this.cloneOptions.useAsRemoteContext
