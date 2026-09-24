@@ -15,7 +15,11 @@ import { TaonTransactionRegistryRepository } from './taon-transaction-registry.r
 @TaonController({
   className: 'TaonTransactionRegistryController',
 })
-export class TaonTransactionRegistryController extends TaonBaseCrudController<TAON_TANSACTION_REGISTRY> {
+export class TaonTransactionRegistryController extends TaonBaseCrudController<
+  TAON_TANSACTION_REGISTRY,
+  {},
+  TaonTransactionRegistryController
+> {
   entityClassResolveFn: () => typeof TAON_TANSACTION_REGISTRY = () =>
     TAON_TANSACTION_REGISTRY;
 
@@ -25,9 +29,14 @@ export class TaonTransactionRegistryController extends TaonBaseCrudController<TA
 
   //#region methods & getters / hello world
   @POST()
-  startTransaction(@Query('serviceName') yourName: string): Taon.Response<TAON_TANSACTION_REGISTRY> {
+  startTransaction(
+    @Query('serviceName') yourName: string,
+  ): Taon.Response<TAON_TANSACTION_REGISTRY> {
     //#region @websqlFunc
     return async (req, res) => {
+      this.paginationQuery({
+        callQueryMethod: 'paginationQuery'
+      })
       // TODO @LAST
       //  return this.taonTransactionRegistryRepository.startTransaction(yourName);
       return void 0;

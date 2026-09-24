@@ -88,6 +88,10 @@ export abstract class TaonBaseRepository<
   }
   //#endregion
 
+  get metadata() {
+    return this.repo.metadata;
+  }
+
   //#region repository
   protected get repository(): Repository<Entity> {
     //#region @websqlFunc

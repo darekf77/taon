@@ -1,4 +1,5 @@
 //#region imports
+import { Brackets, RelationPath } from 'taon-typeorm/src';
 import { Helpers, _ } from 'tnp-core/src';
 
 import { TaonController } from '../decorators/classes/controller-decorator';
@@ -13,7 +14,7 @@ import {
 } from '../decorators/http/http-methods-decorators';
 import { Query, Path, Body } from '../decorators/http/http-params-decorators';
 import { ClassHelpers } from '../helpers/class-helpers';
-import { Models } from '../models';
+import { Models, TaonPaginationQuery } from '../models';
 import { Symbols } from '../symbols';
 import { Validators } from '../validators';
 
@@ -28,6 +29,7 @@ import { TaonBaseRepository } from './base-repository';
 export abstract class TaonBaseCrudController<
   Entity,
   UPLOAD_FILE_QUERY_PARAMS = {},
+  ControllerClass = any,
 > extends TaonBaseController<UPLOAD_FILE_QUERY_PARAMS> {
   //#region fields
   protected db: TaonBaseRepository<Entity>;
@@ -111,54 +113,222 @@ export abstract class TaonBaseCrudController<
   }
   //#endregion
 
-  //#region pagintation
+  //#region pagintation query
+
   @GET()
-  pagination(
-    @Query('pageNumber') pageNumber: number = 1,
-    @Query('pageSize') pageSize: number = 10,
-    @Query('search') search: string = '',
+  paginationQuery(
+    @Query() queryJson?: TaonPaginationQuery<ControllerClass>,
   ): Models.Http.Response<Entity[]> {
     //#region @websqlFunc
     return async (request, response) => {
-      if (this.db.repositoryExists) {
-        const query = {
-          page: pageNumber,
-          take: pageSize,
-          keyword: search,
-        };
-        // console.log({
-        //   query
-        // })
-
-        const take = query.take || 10;
-        const page = query.page || 1;
-        const skip = (page - 1) * take;
-        const keyword = query.keyword || '';
-
-        const [result, total] = await this.db.findAndCount({
-          // where: { name: Like('%' + keyword + '%') },
-          // order: { name: "DESC" },
-          take: take,
-          skip: skip,
-        });
-
-        response?.setHeader(Symbols.old.X_TOTAL_COUNT, total);
-        // const lastPage = Math.ceil(total / take);
-        // const nextPage = page + 1 > lastPage ? null : page + 1;
-        // const prevPage = page - 1 < 1 ? null : page - 1;
-
-        // console.log({
-        //   result,
-        //   total
-        // })
-
-        return result as Entity[];
-      }
-      return [];
+      return this.__executePaginationQuery(queryJson || {}, response);
     };
     //#endregion
   }
+
   //#endregion
+
+  //#region pagination safe
+
+  @POST()
+  paginationQuerySafe(
+    @Body() query: TaonPaginationQuery<ControllerClass>,
+  ): Models.Http.Response<Entity[]> {
+    //#region @websqlFunc
+    return async (request, response) => {
+      return this.__executePaginationQuery(query ?? {}, response);
+    };
+    //#endregion
+  }
+
+  //#endregion
+
+  protected paginationQueryMethods(): (keyof ControllerClass)[] {
+    return [];
+  }
+
+  protected async __callPaginationQueryMethod(
+    methodName: keyof ControllerClass,
+    query: TaonPaginationQuery<ControllerClass>,
+  ): Promise<[Entity[], number]> {
+    if (!this.paginationQueryMethods().includes(methodName)) {
+      throw new Error(
+        `Pagination query method "${methodName as any}" is not allowed.`,
+      );
+    }
+
+    const method = (this as any)[methodName];
+
+    if (typeof method !== 'function') {
+      throw new Error(
+        `Pagination query method "${methodName as any}" does not exist.`,
+      );
+    }
+
+    return method.call(this, query);
+  }
+
+  protected async __executePaginationQuery(
+    query: TaonPaginationQuery<ControllerClass>,
+    response: any,
+  ): Promise<Entity[]> {
+    //#region @websqlFunc
+    if (!this.db.repositoryExists) {
+      return [];
+    }
+
+    const pageNumber = Math.max(1, Number(query.pageNumber) || 1);
+    const pageSize = Math.max(1, Number(query.pageSize) || 10);
+
+    const normalizedQuery: TaonPaginationQuery<ControllerClass> = {
+      ...query,
+      pageNumber,
+      pageSize,
+      search: query.search?.toString()?.trim() ?? '',
+      filters: query.filters ?? {},
+    };
+
+    let result: Entity[];
+    let total: number;
+
+    if (normalizedQuery.callQueryMethod) {
+      [result, total] = await this.__callPaginationQueryMethod(
+        normalizedQuery.callQueryMethod as any,
+        normalizedQuery,
+      );
+    } else {
+      [result, total] = await this.defaultPaginationQuery(normalizedQuery);
+    }
+
+    response?.setHeader(Symbols.old.X_TOTAL_COUNT, String(total));
+
+    return result;
+    //#endregion
+  }
+
+  protected async defaultPaginationQuery(
+    query: TaonPaginationQuery<ControllerClass>,
+  ): Promise<[Entity[], number]> {
+    //#region @websqlFunc
+    const pageNumber = query.pageNumber ?? 1;
+    const pageSize = query.pageSize ?? 10;
+
+    const skip = (pageNumber - 1) * pageSize;
+
+    const qb = this.db.createQueryBuilder('entity');
+
+    //
+    // GLOBAL SEARCH
+    //
+    if (query.search) {
+      const searchableColumns = this.getPaginationSearchableColumns() || [];
+      console.log(
+        `Searching by ${query.search} in ${searchableColumns.join(',')}  columns ${this.db.metadata.columns.map(c => c.type)}`,
+      );
+
+      if (searchableColumns.length > 0) {
+        qb.andWhere(
+          new Brackets(subQb => {
+            searchableColumns.forEach((field, index) => {
+              const sql = `CAST(entity.${field} AS TEXT) LIKE :search`;
+
+              if (index === 0) {
+                subQb.where(sql, {
+                  search: `%${query.search}%`,
+                });
+              } else {
+                subQb.orWhere(sql, {
+                  search: `%${query.search}%`,
+                });
+              }
+            });
+          }),
+        );
+      }
+    }
+
+    //
+    // COLUMN FILTERS
+    //
+    for (const [field, value] of Object.entries(query.filters ?? {})) {
+      if (value === undefined || value === null || value === '') {
+        continue;
+      }
+
+      if (!this.isPaginationColumnAllowed(field)) {
+        continue;
+      }
+
+      qb.andWhere(`CAST(entity.${field} AS TEXT) LIKE :filter_${field}`, {
+        [`filter_${field}`]: `%${String(value)}%`,
+      });
+    }
+
+    //
+    // SORTING
+    //
+    if (
+      query.sort?.field &&
+      query.sort.direction &&
+      this.isPaginationColumnAllowed(query.sort.field)
+    ) {
+      qb.orderBy(
+        `entity.${query.sort.field}`,
+        query.sort.direction.toUpperCase() as 'ASC' | 'DESC',
+      );
+    }
+
+    qb.skip(skip);
+    qb.take(pageSize);
+
+    return qb.getManyAndCount();
+    //#endregion
+  }
+
+  protected isPaginationColumnAllowed(field: string): boolean {
+    return this.db.metadata.columns.some(
+      column => column.propertyName === field,
+    );
+  }
+
+  protected getPaginationSearchableColumns(): string[] {
+    //#region @websqlFunc
+
+    const searchableTypes = [
+      // strings
+      String,
+      'varchar',
+      'nvarchar',
+      'varchar2',
+      'character varying',
+      'text',
+      'tinytext',
+      'mediumtext',
+      'longtext',
+      'char',
+      'nchar',
+
+      // numbers
+      Number,
+      'int',
+      'integer',
+      'tinyint',
+      'smallint',
+      'mediumint',
+      'bigint',
+      'float',
+      'double',
+      'decimal',
+      'numeric',
+      'real',
+    ];
+
+    return this.db.metadata.columns
+      .filter(column => searchableTypes.includes(column.type as any))
+      .map(column => column.propertyName);
+
+    //#endregion
+  }
 
   //#region get all
   @GET()

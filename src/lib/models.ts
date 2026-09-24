@@ -466,3 +466,33 @@ export namespace Models {
 
   //#endregion
 }
+
+export type TaonPaginationSortDirection = 'asc' | 'desc' | '';
+
+export interface TaonPaginationSort {
+  field: string;
+  direction: TaonPaginationSortDirection;
+}
+
+export interface TaonPaginationQuery<T=string> {
+  pageNumber?: number;
+  pageSize?: number;
+
+  /**
+   * Global search.
+   */
+  search?: string;
+
+  /**
+   * Column-specific filtering.
+   */
+  filters?: Record<string, unknown>;
+
+  sort?: TaonPaginationSort;
+
+  /**
+   * Optional custom query method defined on controller.
+   */
+  callQueryMethod?: keyof T;
+}
+
