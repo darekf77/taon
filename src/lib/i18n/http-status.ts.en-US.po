@@ -1,0 +1,77 @@
+msgid ""
+msgstr ""
+"Language: en-US\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/lib/http-status.ts:154
+msgid "OK"
+msgstr ""
+
+#: src/lib/http-status.ts:155
+msgid "Created"
+msgstr ""
+
+#: src/lib/http-status.ts:156
+msgid "Accepted"
+msgstr ""
+
+#: src/lib/http-status.ts:157
+msgid "No Content"
+msgstr ""
+
+#: src/lib/http-status.ts:159
+msgid "Moved Permanently"
+msgstr ""
+
+#: src/lib/http-status.ts:160
+msgid "Found"
+msgstr ""
+
+#: src/lib/http-status.ts:161
+msgid "Not Modified"
+msgstr ""
+
+#: src/lib/http-status.ts:163
+msgid "Bad Request"
+msgstr ""
+
+#: src/lib/http-status.ts:164
+msgid "Unauthorized"
+msgstr ""
+
+#: src/lib/http-status.ts:165
+msgid "Invalid Token"
+msgstr ""
+
+#: src/lib/http-status.ts:166
+msgid "No Token"
+msgstr ""
+
+#: src/lib/http-status.ts:167
+msgid "Forbidden"
+msgstr ""
+
+#: src/lib/http-status.ts:168
+msgid "Not Found"
+msgstr ""
+
+#: src/lib/http-status.ts:169
+msgid "Conflict"
+msgstr ""
+
+#: src/lib/http-status.ts:170
+msgid "Unprocessable Entity"
+msgstr ""
+
+#: src/lib/http-status.ts:172
+msgid "Internal Server Error"
+msgstr ""
+
+#: src/lib/http-status.ts:173
+msgid "Bad Gateway"
+msgstr ""
+
+#: src/lib/http-status.ts:174
+msgid "Service Unavailable"
+msgstr ""

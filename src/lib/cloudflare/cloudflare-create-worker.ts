@@ -2,6 +2,7 @@
 import { Request } from '@cloudflare/workers-types';
 import { CoreModels, UtilsHttp } from 'tnp-core/src';
 
+import { getStatusText } from '../http-status';
 import { corsHeaders } from '../middlewares/cross-origin';
 import { parseBody } from '../middlewares/parse-body';
 import { parseCookies } from '../middlewares/parse-cookies';
@@ -156,7 +157,7 @@ export function createWorkerAdapter(
 
       sendStatus(code: number) {
         status = code;
-        bodyToSend = UtilsHttp.getStatusText(code);
+        bodyToSend = getStatusText(code);
         resHeaders.set('content-type', 'text/plain; charset=utf-8');
         finishResponse();
         return fakeExpressResponse;
