@@ -185,6 +185,8 @@
     "@ngx-formly/primeng": "~7.0.1",
     "@ngx-translate/core": "~17.0.0",
     "@ngx-translate/http-loader": "~17.0.0",
+    "@ngxpert/hot-toast": "~6.4.1",
+    "@ngxpert/input-otp": "~3.0.0",
     "@node-rs/argon2": "2.0.2",
     "@nut-tree-fork/nut-js": "4.2.6",
     "@parcel/watcher": "2.5.1",

@@ -1,5 +1,5 @@
 //#region imports
-import { _, CoreModels, Utils } from 'tnp-core/src';
+import { _, CoreModels, Utils, UtilsOs } from 'tnp-core/src';
 import { CLASS } from 'typescript-class-helpers/src';
 
 import {
@@ -13,6 +13,7 @@ import { Symbols } from '../symbols';
 import { Validators } from '../validators';
 
 import { TaonHelpers } from './taon-helpers';
+import { RestErrorResponseWrapper } from 'ng2-rest/src';
 //#endregion
 
 export namespace ClassHelpers {
@@ -182,7 +183,49 @@ export namespace ClassHelpers {
    * Express async handler for middleware functions.
    */
   export const asyncHandler = fn => (req, res, next) => {
-    Promise.resolve(fn(req, res, next)).catch(next);
+    Promise.resolve(fn(req, res, next)).catch(err => {
+      const { errroResult, status } = mapFnError(err, res);
+      if (UtilsOs.isRunningInCloudflareWorker()) {
+        console.error(errroResult);
+      }
+      res.status(status).json(errroResult);
+    });
+  };
+
+  export const mapFnError = (error: unknown, res: any) => {
+    let status = 500;
+    let message = 'Internal Server Error';
+    let details: any = undefined;
+    let success = false;
+    let code = undefined;
+    if (typeof error === 'function') {
+      const obj: RestErrorResponseWrapper = error(res) || {};
+      status = obj.status || 400;
+      message = obj.message;
+      details = obj.details;
+      code = obj.code;
+    } else if (typeof error === 'string') {
+      message = error;
+      status = 400;
+    } else if (error instanceof Error) {
+      message = error.message;
+      //#region @backend
+      details = process.env.NODE_ENV !== 'production' ? error.stack : undefined;
+      //#endregion
+    } else {
+      message = 'Unexpected error';
+      details = error;
+    }
+
+    const errroResult = {
+      success,
+      message,
+      details,
+      code,
+      [CoreModels.TaonHttpErrorCustomProp]: true,
+    } as RestErrorResponseWrapper;
+
+    return { errroResult, status };
   };
 
   export const getMethodsNames = (

@@ -436,7 +436,7 @@ export class EndpointContext {
     this.config.host = this.host === null ? void 0 : this.host;
 
     if (this.config.contexts && this.config.contexts[this.contextName]) {
-      throw new Error(`You are injecting ${this.contextName} into itself.`)
+      throw new Error(`You are injecting ${this.contextName} into itself.`);
     }
 
     if (
@@ -3083,35 +3083,7 @@ export class EndpointContext {
     expressPath: string,
   ): void {
     //#region @backendFunc
-    let status = 500;
-    let message = 'Internal Server Error';
-    let details: any = undefined;
-    let success = false;
-    let code = undefined;
-    if (typeof error === 'function') {
-      const obj: RestErrorResponseWrapper = error(res) || {};
-      status = obj.status || 400;
-      message = obj.message;
-      details = obj.details;
-      code = obj.code;
-    } else if (typeof error === 'string') {
-      message = error;
-      status = 400;
-    } else if (error instanceof Error) {
-      message = error.message;
-      details = process.env.NODE_ENV !== 'production' ? error.stack : undefined;
-    } else {
-      message = 'Unexpected error';
-      details = error;
-    }
-
-    const errroResult = {
-      success,
-      message,
-      details,
-      code,
-      [CoreModels.TaonHttpErrorCustomProp]: true,
-    } as RestErrorResponseWrapper;
+    const { errroResult, status } = ClassHelpers.mapFnError(error, res);
 
     if (UtilsOs.isRunningInCloudflareWorker()) {
       console.error(errroResult);
@@ -3302,7 +3274,7 @@ export class EndpointContext {
     };
     //#endregion
 
-    target.prototype[methodConfig.methodName  as any] = function (...args) {
+    target.prototype[methodConfig.methodName as any] = function (...args) {
       // if (!target.prototype[methodConfig.methodName][subjectHandler]) {
       //   target.prototype[methodConfig.methodName][subjectHandler] = new Subject();
       // }
