@@ -14,7 +14,7 @@ export abstract class TaonBaseAbstractEntity<
   //#region @websql
   @PrimaryGeneratedColumn()
   //#endregion
-  id: string;
+  id: number;
 
   //#region @websql
   @VersionColumn()
