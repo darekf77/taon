@@ -441,13 +441,13 @@ export namespace Models {
     cloudflareEnv?: any;
   }
 
-  export interface TaonCtrlBeforeEachRequestParams {
+  export interface TaonCtrlBeforeEachRequestParams<CONTROLLER = any> {
     resolvedParams;
     req: ExpressRequest;
     res: ExpressResponse;
     expressPath: string;
     classConfig: Partial<ControllerConfig>;
-    methodConfig: Partial<MethodConfig>;
+    methodConfig: Partial<MethodConfig<CONTROLLER>>;
   }
 
   export interface StartParams extends TaonInitializeParams {
@@ -474,7 +474,7 @@ export interface TaonPaginationSort {
   direction: TaonPaginationSortDirection;
 }
 
-export interface TaonPaginationQuery<T=string> {
+export interface TaonPaginationQuery<T = string> {
   pageNumber?: number;
   pageSize?: number;
 
@@ -495,4 +495,3 @@ export interface TaonPaginationQuery<T=string> {
    */
   callQueryMethod?: keyof T;
 }
-

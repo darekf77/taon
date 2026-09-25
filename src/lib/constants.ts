@@ -2,6 +2,8 @@ export type TaonEntityKeysToOmit =
   | 'ctrl'
   | 'clone'
   | '__endpoint_context__'
+  | 'getOriginalConstructor'
+  | 'getOriginalPrototype'
   | 'ctx'
   | 'inject'
   | '_'
@@ -20,6 +22,8 @@ export const TaonEntityKeysToOmitArr: TaonEntityKeysToOmit[] = [
   'ctrl',
   'clone',
   '__endpoint_context__',
+  'getOriginalConstructor',
+  'getOriginalPrototype',
   'ctx',
   'inject',
   '_',

@@ -2736,7 +2736,7 @@ export class EndpointContext {
                   next,
                 },
                 {
-                  methodName: methodConfig.methodName,
+                  methodName: methodConfig.methodName as any,
                   expressPath,
                   httpRequestType: methodConfig.type,
                 },
@@ -3155,7 +3155,7 @@ export class EndpointContext {
               next,
             },
             {
-              methodName: methodConfig.methodName,
+              methodName: methodConfig.methodName as any,
               expressPath,
               httpRequestType: httpRequestType,
             },
@@ -3174,13 +3174,13 @@ export class EndpointContext {
     const storage = globalThis;
     //#endregion
 
-    const orgMethods = target.prototype[methodConfig.methodName];
+    const orgMethods = target.prototype[methodConfig.methodName as any];
 
     //#region handle electron ipc request
 
     if (UtilsOs.isElectron) {
       const ipcRenderer = (window as any).require('electron').ipcRenderer;
-      target.prototype[methodConfig.methodName] = function (...args) {
+      target.prototype[methodConfig.methodName as any] = function (...args) {
         const received = new Promise(async (resolve, reject) => {
           const headers = {};
           const { request, response } = TaonHelpers.websqlMocks(headers);
@@ -3302,7 +3302,7 @@ export class EndpointContext {
     };
     //#endregion
 
-    target.prototype[methodConfig.methodName] = function (...args) {
+    target.prototype[methodConfig.methodName  as any] = function (...args) {
       // if (!target.prototype[methodConfig.methodName][subjectHandler]) {
       //   target.prototype[methodConfig.methodName][subjectHandler] = new Subject();
       // }
@@ -3394,7 +3394,7 @@ export class EndpointContext {
 
     //#region handle normal request
 
-    target.prototype[methodConfig.methodName] = function (
+    target.prototype[methodConfig.methodName as any] = function (
       this: {},
       ...args
     ): Models.Http.ClientAction<any> {
@@ -3483,7 +3483,7 @@ export class EndpointContext {
         if (!currentParam) {
           const errorMessage =
             `[${config.frameworkName}] Unable to resolve parameter` +
-            ` at index ${i} for method ${methodConfig.methodName} at path ${expressPath}.`;
+            ` at index ${i} for method ${methodConfig.methodName as any} at path ${expressPath}.`;
 
           //#region @backend
           console.error(errorMessage);

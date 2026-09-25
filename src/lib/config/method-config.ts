@@ -3,6 +3,7 @@
 import { CoreModels } from 'tnp-core/src';
 
 import type { TaonBaseMiddleware } from '../base-classes/base-middleware';
+import { TaonEntityKeysToOmit } from '../constants';
 import type {
   TaonHttpDecoratorOptions,
   TaonMiddlewareFunction,
@@ -14,33 +15,44 @@ import { ParamConfig } from './param-config';
 /**
  * @link './decorators/http/http-methods-decorators.ts' TaonHttpDecoratorOptions
  */
-export class MethodConfig
-  implements Pick<TaonHttpDecoratorOptions, 'path' | 'middlewares'>
-{
-  declare methodName: string;
+export class MethodConfig<CONTROLLER = any> implements Pick<
+  TaonHttpDecoratorOptions,
+  'path' | 'middlewares'
+> {
+  declare methodName: keyof Omit<CONTROLLER, TaonEntityKeysToOmit>;
 
   declare global?: boolean;
+
   /**
    * override default content type
    */
   declare contentType?: any;
+
   /**
    * override default axiso response type
    */
   declare responseType?: any;
+
   declare overrideExpressSendAsHtml?: boolean;
+
   declare path: string;
+
   declare descriptor: PropertyDescriptor;
+
   declare type: CoreModels.HttpMethod;
+
   declare parameters: { [paramName: string]: Partial<ParamConfig> };
+
   /**
    * Middlewares from controller method options
    */
   declare middlewares?: TaonMiddlewareFunction;
+
   /**
    * Calculated middlewares object from parents controllers
    */
   declare calculatedMiddlewaresMethodObj?: TaonMiddlewareInheritanceObj;
+
   /**
    * Middlewares array in proper order and ready to be used in
    * express or in axios interceptors.

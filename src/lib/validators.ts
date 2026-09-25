@@ -46,8 +46,8 @@ export namespace Validators {
         throw new Error(`
   [taon] you can have 2 methods with same path but differetn reponseType-s
 
-          ${m.methodName}( ... path: ${m.path} )  -> responseType: ${m.responseType || defaultResponseType}
-          ${current.methodName}( ... path: ${current.path} ) -> responseType: ${current.responseType}
+          ${m.methodName as any}( ... path: ${m.path} )  -> responseType: ${m.responseType || defaultResponseType}
+          ${current.methodName as any}( ... path: ${current.path} ) -> responseType: ${current.responseType}
 
     Please change path name on of the methods.
 

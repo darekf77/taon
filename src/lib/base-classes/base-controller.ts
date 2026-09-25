@@ -1,3 +1,4 @@
+//#region imports
 import { R2Bucket } from '@cloudflare/workers-types';
 import {
   RestErrorResponseWrapper,
@@ -24,7 +25,9 @@ import type { Models } from '../models';
 
 import { TaonBaseFileUploadMiddleware } from './base-file-upload.middleware';
 import { TaonBaseInjector } from './base-injector';
+//#endregion
 
+//#region multer file uplaod repsonse
 export interface MulterFileUploadResponse {
   ok: boolean;
   originalName: string;
@@ -44,26 +47,30 @@ export interface MulterFileUploadResponse {
   size: number;
   mimetype: string;
 }
+//#endregion
 
 @TaonController<TaonBaseController>({
   className: 'TaonBaseController',
 })
 export class TaonBaseController<
   UPLOAD_FILE_QUERY_PARAMS = {},
+  CONTOROLLER = any,
 > extends TaonBaseInjector {
   get R2(): R2Bucket {
     return this.ctx?.R2;
   }
 
+  //#region hook before each reaquest
   /**
    * Use this methods for find grain authentication, logs or a
    * anything that needs to happend before each request to controller
    */
   async beforeEachRequest(
-    request: Models.TaonCtrlBeforeEachRequestParams,
+    request: Models.TaonCtrlBeforeEachRequestParams<CONTOROLLER>,
   ): Promise<void> {
     // console.log('before each requrest TRIGGERED!', requstData);
   }
+  //#endregion
 
   /**
    * Hook that is called when taon app is initialized.
