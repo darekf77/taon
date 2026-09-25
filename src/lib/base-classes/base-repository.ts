@@ -162,6 +162,21 @@ export abstract class TaonBaseRepository<
   }
   //#endregion
 
+  //#region crud operations / typeorm / exists
+  /**
+   * Checks whether at least one entity exists
+   * matching the given find options.
+   */
+  async exists(options?: FindManyOptions<Entity>): Promise<boolean> {
+    return (
+      (await this.repo.count({
+        ...options,
+        take: 1,
+      })) > 0
+    );
+  }
+  //#endregion
+
   //#region crud operations / typeorm / get id
   /**
    * Gets entity mixed id.
