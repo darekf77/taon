@@ -77,6 +77,14 @@ export enum HttpStatusEnum {
   NO_TOKEN = 'NO_TOKEN',
 
   /**
+   * Code 401.
+   * Invalid credentials for login.
+   *
+   * Taon-specific status mapped to HTTP 401.
+   */
+  INVALID_CREDENTIALS = 'INVALID_CREDENTIALS',
+
+  /**
    * Code 403.
    * Request is understood but access is forbidden.
    */
@@ -132,6 +140,7 @@ export const HttpStatusCodeMap: Record<HttpStatusEnum, number> = {
   [HttpStatusEnum.BAD_REQUEST]: 400,
   [HttpStatusEnum.UNAUTHORIZED]: 401,
   [HttpStatusEnum.INVALID_TOKEN]: 401,
+  [HttpStatusEnum.INVALID_CREDENTIALS]: 401,
   [HttpStatusEnum.NO_TOKEN]: 401,
   [HttpStatusEnum.FORBIDDEN]: 403,
   [HttpStatusEnum.NOT_FOUND]: 404,
@@ -164,6 +173,7 @@ export const getHttpStatusCodeMessages = (): Record<
   [HttpStatusEnum.UNAUTHORIZED]: t.gettext('Unauthorized'),
   [HttpStatusEnum.INVALID_TOKEN]: t.gettext('Invalid Token'),
   [HttpStatusEnum.NO_TOKEN]: t.gettext('No Token'),
+  [HttpStatusEnum.INVALID_CREDENTIALS]: t.gettext('Invalid credentials'),
   [HttpStatusEnum.FORBIDDEN]: t.gettext('Forbidden'),
   [HttpStatusEnum.NOT_FOUND]: t.gettext('Not Found'),
   [HttpStatusEnum.CONFLICT]: t.gettext('Conflict'),
