@@ -153,7 +153,8 @@ export abstract class TaonBaseCrudController<
   ): Promise<[Entity[], number]> {
     if (!this.paginationQueryMethods().includes(methodName)) {
       throw new Error(
-        `Pagination query method "${methodName as any}" is not allowed.`,
+        `Pagination query method "${methodName as any}" is not allowed.
+         Please override paginationQueryMethods() and add your method `,
       );
     }
 
@@ -161,7 +162,8 @@ export abstract class TaonBaseCrudController<
 
     if (typeof method !== 'function') {
       throw new Error(
-        `Pagination query method "${methodName as any}" does not exist.`,
+        `Pagination query method "${methodName as any}" does not exist.
+         Please override paginationQueryMethods() and add your method `,
       );
     }
 

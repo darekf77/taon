@@ -4,74 +4,78 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/lib/http-status.ts:154
+#: src/lib/http-status.ts:163
 msgid "OK"
 msgstr ""
 
-#: src/lib/http-status.ts:155
+#: src/lib/http-status.ts:164
 msgid "Created"
 msgstr ""
 
-#: src/lib/http-status.ts:156
+#: src/lib/http-status.ts:165
 msgid "Accepted"
 msgstr ""
 
-#: src/lib/http-status.ts:157
+#: src/lib/http-status.ts:166
 msgid "No Content"
 msgstr ""
 
-#: src/lib/http-status.ts:159
+#: src/lib/http-status.ts:168
 msgid "Moved Permanently"
 msgstr ""
 
-#: src/lib/http-status.ts:160
+#: src/lib/http-status.ts:169
 msgid "Found"
 msgstr ""
 
-#: src/lib/http-status.ts:161
+#: src/lib/http-status.ts:170
 msgid "Not Modified"
 msgstr ""
 
-#: src/lib/http-status.ts:163
+#: src/lib/http-status.ts:172
 msgid "Bad Request"
 msgstr ""
 
-#: src/lib/http-status.ts:164
+#: src/lib/http-status.ts:173
 msgid "Unauthorized"
 msgstr ""
 
-#: src/lib/http-status.ts:165
+#: src/lib/http-status.ts:174
 msgid "Invalid Token"
 msgstr ""
 
-#: src/lib/http-status.ts:166
+#: src/lib/http-status.ts:175
 msgid "No Token"
 msgstr ""
 
-#: src/lib/http-status.ts:167
+#: src/lib/http-status.ts:176
+msgid "Invalid credentials"
+msgstr ""
+
+#: src/lib/http-status.ts:177
 msgid "Forbidden"
 msgstr ""
 
-#: src/lib/http-status.ts:168
+#: src/lib/http-status.ts:178
 msgid "Not Found"
 msgstr ""
 
-#: src/lib/http-status.ts:169
+#: src/lib/http-status.ts:179
 msgid "Conflict"
 msgstr ""
 
-#: src/lib/http-status.ts:170
+#: src/lib/http-status.ts:180
 msgid "Unprocessable Entity"
 msgstr ""
 
-#: src/lib/http-status.ts:172
+#: src/lib/http-status.ts:182
 msgid "Internal Server Error"
 msgstr ""
 
-#: src/lib/http-status.ts:173
+#: src/lib/http-status.ts:183
 msgid "Bad Gateway"
 msgstr ""
 
-#: src/lib/http-status.ts:174
+#: src/lib/http-status.ts:184
 msgid "Service Unavailable"
 msgstr ""
