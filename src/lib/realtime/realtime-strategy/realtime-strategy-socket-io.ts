@@ -1,4 +1,8 @@
+import { Server } from 'socket.io'; // @esmRemvoe
+import { io } from 'socket.io-client'; // @esmRemvoe
+
 import { EndpointContext } from '../../endpoint-context';
+
 import { RealtimeStrategy } from './realtime-strategy';
 
 /**
@@ -10,19 +14,24 @@ export class RealtimeStrategySocketIO extends RealtimeStrategy {
   toString(): string {
     return 'socket-io';
   }
+
   constructor(protected ctx: EndpointContext) {
     super(ctx);
   }
 
   ioServer(...args) {
     //#region @backendFunc
-    const { Server } = require('socket.io');
+    //#region @esmRemove
     return new Server(...args);
+    //#endregion
+    return void 0 as any;
     //#endregion
   }
 
   get ioClient() {
-    const { io } = require('socket.io-client');
+    //#region @esmRemove
     return io;
+    //#endregion
+    return void 0 as any;
   }
 }

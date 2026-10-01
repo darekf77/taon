@@ -64,4 +64,6 @@ export { TAON_CONTEXT, CURRENT_HOST_BACKEND_PORT, CURRENT_HOST_URL };
 
 export const TaonBaseRepositoryClassName = 'TaonBaseRepository';
 
+export const TaonBaseStorageRepositoryClassName = 'TaonBaseStorageRepository';
+
 export const apiPrefix = 'api';

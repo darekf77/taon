@@ -37,6 +37,8 @@ export * from './base-classes/base-angular-service';
 export * from './base-classes/base-class';
 export * from './base-classes/base-context';
 export * from './base-classes/base-controller';
+export * from './base-classes/base-simple-storage-controller';
+export * from './base-classes/base-storage-controller';
 export * from './base-classes/base-crud-controller';
 export * from './base-classes/base-kv-repository';
 export * from './base-classes/base-kv-sync-repository';

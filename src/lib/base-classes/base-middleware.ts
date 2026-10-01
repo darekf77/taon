@@ -1,7 +1,6 @@
 //#region imports
-import type { AxiosRequestConfig, AxiosResponse } from 'axios';
 import {
-  AxiosTaonHttpHandler,
+  FetchResponse,
   TaonClientMiddlewareInterceptOptions,
   TaonServerMiddlewareInterceptOptions,
 } from 'ng2-rest/src';
@@ -42,7 +41,7 @@ export interface TaonBaseMiddleware {
   interceptClient({
     req,
     next,
-  }: TaonClientMiddlewareInterceptOptions): Observable<AxiosResponse<any>>;
+  }: TaonClientMiddlewareInterceptOptions): Observable<FetchResponse>;
 
   /**
    * Specyfic controller method interceptor
@@ -67,5 +66,5 @@ export interface TaonBaseMiddleware {
       expressPath,
       httpRequestType,
     }: TaonAdditionalMiddlewareMethodInfo,
-  ): Observable<AxiosResponse<any>>;
+  ): Observable<FetchResponse>;
 }

@@ -1,4 +1,4 @@
-import { ResponseTypeAxios } from 'ng2-rest/src';
+import { FetchResponseType } from 'ng2-rest/src';
 import { CoreModels, _ } from 'tnp-core/src';
 
 import { TaonBaseMiddleware } from '../../base-classes/base-middleware';
@@ -94,7 +94,7 @@ export interface TaonHttpDecoratorOptions {
    */
   pathIsGlobal?: boolean;
   overrideContentType?: CoreModels.ContentType;
-  overrideResponseType?: ResponseTypeAxios;
+  overrideResponseType?: FetchResponseType;
   /**
    * Express will send response as HTML string with proper headers
    */

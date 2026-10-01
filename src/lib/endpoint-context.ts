@@ -14,18 +14,19 @@ import {
   decodeMappingForHeaderJson,
   encodeMapping,
   HttpResponse,
-  Ng2RestAxiosRequestConfig,
+  Ng2RestFetchRequestConfig,
   Resource,
-  ResponseTypeAxios,
-  RestErrorResponseWrapper,
+  FetchResponseType,
   RestHeaders,
+  ResponseTypeFetchHeaderKey,
+  FetchResponse,
 } from 'ng2-rest/src';
 import { from, Subject } from 'rxjs';
 import type { Repository } from 'taon-typeorm/src'; // @websql
 import { EventSubscriber } from 'taon-typeorm/src'; // @websql
 import { Entity as TypeormEntity } from 'taon-typeorm/src'; // @websql
 import { DataSource, DataSourceOptions } from 'taon-typeorm/src';
-import { axios, UtilsStdinStdoutLogger } from 'tnp-core/src';
+import { UtilsStdinStdoutLogger } from 'tnp-core/src';
 import { path, requireDefault } from 'tnp-core/src';
 import { config } from 'tnp-core/src';
 import { CoreModels } from 'tnp-core/src';
@@ -619,7 +620,7 @@ export class EndpointContext {
       //   this.session.cookieMaxAge = oneHour;
       // }
       // serever and browser cookie authentication
-      axios.defaults.withCredentials = true;
+      // axios.defaults.withCredentials = true;
     }
     //#endregion
 
@@ -1068,6 +1069,30 @@ export class EndpointContext {
       baseLocation = crossPlatformPath([
         UtilsOs.getRealHomeDir(),
         `.taon/databases-kv-for-apps/${
+          this.appId || _.snakeCase(process.cwd()).replace(/\_/, '.')
+        }`,
+      ]);
+    }
+
+    return baseLocation;
+    //#endregion
+  }
+  //#endregion
+
+  //#region methods & getters / kv db json location base
+  public get bucketFileDbLocationBase(): string {
+    //#region @backendFunc
+    let baseLocation: string;
+
+    if (this.frontendHostUri.origin.includes('://localhost:')) {
+      baseLocation = crossPlatformPath([
+        process.cwd(),
+        `${Models.DatabasesFolder}/bucket`,
+      ]);
+    } else {
+      baseLocation = crossPlatformPath([
+        UtilsOs.getRealHomeDir(),
+        `.taon/databases-bucket-for-apps/${
           this.appId || _.snakeCase(process.cwd()).replace(/\_/, '.')
         }`,
       ]);
@@ -2764,14 +2789,16 @@ export class EndpointContext {
           resolvedParams,
         );
 
-      await (controllerInstance as TaonBaseController)?.beforeEachRequest({
-        resolvedParams,
-        req,
-        res,
-        expressPath,
-        classConfig,
-        methodConfig,
-      } as Models.TaonCtrlBeforeEachRequestParams);
+      if ((controllerInstance as TaonBaseController)?.beforeEachRequest) {
+        await (controllerInstance as TaonBaseController)?.beforeEachRequest({
+          resolvedParams,
+          req,
+          res,
+          expressPath,
+          classConfig,
+          methodConfig,
+        } as Models.TaonCtrlBeforeEachRequestParams);
+      }
       let result = await getResponseValue(response, { req, res });
       return result;
     };
@@ -2894,7 +2921,7 @@ export class EndpointContext {
                 const mappingForEntityBodyForParam = JSON.parse(
                   TaonHelpers.firstStringOrElemFromArray(
                     req.headers[
-                      `${Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS}${paramName} `
+                      `${Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS}${paramName}`
                     ],
                   ),
                 );
@@ -2931,7 +2958,7 @@ export class EndpointContext {
                 const entityForParam = JSON.parse(
                   TaonHelpers.firstStringOrElemFromArray(
                     req.headers[
-                      `${Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${queryParamName} `
+                      `${Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${queryParamName}`
                     ],
                   ),
                 );
@@ -3005,7 +3032,7 @@ export class EndpointContext {
             }
             if (
               resultFromCtrlExec instanceof Blob &&
-              (methodConfig.responseType as ResponseTypeAxios) === 'blob'
+              (methodConfig.responseType as FetchResponseType) === 'blob'
             ) {
               // console.log('INSTANCE OF BLOB')
               //#region processs blob result type
@@ -3019,7 +3046,7 @@ export class EndpointContext {
               //#endregion
             } else if (
               _.isString(resultFromCtrlExec) &&
-              (methodConfig.responseType as ResponseTypeAxios) === 'blob'
+              (methodConfig.responseType as FetchResponseType) === 'blob'
             ) {
               // console.log('BASE64')
               //#region process string buffer TODO refacetor
@@ -3174,6 +3201,7 @@ export class EndpointContext {
                     '' // TODO express path
                   }${methodConfig.path} `,
                   methodConfig.type,
+                  {} as FetchResponse,
                   responseStrinOrBlob,
                   RestHeaders.from(headers),
                   200,
@@ -3201,7 +3229,7 @@ export class EndpointContext {
         received['observable'] = from(received);
         return {
           received,
-          request(axiosConfig: Ng2RestAxiosRequestConfig) {
+          request(axiosConfig: Ng2RestFetchRequestConfig) {
             return received;
           },
         } as Models.Http.ClientAction<any>;
@@ -3323,6 +3351,7 @@ export class EndpointContext {
               '' // TODO express path
             }${methodConfig.path} `,
             methodConfig.type,
+            {} as FetchResponse,
             stringOrBlobData,
             RestHeaders.from(headers),
             200,
@@ -3350,7 +3379,7 @@ export class EndpointContext {
       if (UtilsOs.isWebSQL) {
         return {
           received,
-          request(axiosConfig: Ng2RestAxiosRequestConfig) {
+          request(axiosConfig: Ng2RestFetchRequestConfig) {
             // console.log('request', axiosConfgi);
             return received;
           },
@@ -3404,7 +3433,7 @@ export class EndpointContext {
           requestHeaders.apply({
             'Content-Type': methodConfig.contentType,
             Accept: methodConfig.contentType,
-            responsetypeaxios: methodConfig.responseType,
+            [ResponseTypeFetchHeaderKey]: methodConfig.responseType,
           });
         } else if (!methodConfig.contentType && methodConfig.responseType) {
           rest = Resource.create(ctx.uriOrigin, expressPath, {
@@ -3414,7 +3443,7 @@ export class EndpointContext {
             },
           });
           requestHeaders.apply({
-            responsetypeaxios: methodConfig.responseType,
+            [ResponseTypeFetchHeaderKey]: methodConfig.responseType,
           });
         } else {
           rest = Resource.create(
@@ -3482,7 +3511,7 @@ export class EndpointContext {
             );
             if (mapping) {
               requestHeaders.set(
-                `${Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${currentParam.paramName} `,
+                `${Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${currentParam.paramName}`,
                 JSON.stringify(mapping),
               );
             }
@@ -3555,7 +3584,7 @@ instead
             );
             if (mapping) {
               requestHeaders.set(
-                `${Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS}${currentParam.paramName} `,
+                `${Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS}${currentParam.paramName}`,
                 JSON.stringify(mapping),
               );
             }
@@ -3618,10 +3647,10 @@ instead
             .model(pathPrams, { headers: requestHeaders })
             [method](bodyObject, [queryParams]);
         },
-        request(axiosConfig?: Ng2RestAxiosRequestConfig) {
+        request(fetchConfig?: Ng2RestFetchRequestConfig) {
           return rest
             .model(pathPrams, { headers: requestHeaders })
-            [method](bodyObject, [queryParams], axiosConfig);
+            [method](bodyObject, [queryParams], fetchConfig);
         },
       };
       return httpResultObj as Models.Http.ClientAction<any>;

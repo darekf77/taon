@@ -1,6 +1,5 @@
 //#region imports
 import type { Response } from 'express';
-import { JSON10 } from 'json10/src';
 import { walk } from 'lodash-walk-object/src';
 import { decodeMappingForHeaderJson } from 'ng2-rest/src';
 import { _ } from 'tnp-core/src';

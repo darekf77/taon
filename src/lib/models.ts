@@ -2,7 +2,7 @@ import type { RequestHandler } from 'express';
 import type { Application } from 'express';
 import {
   HttpResponse,
-  Ng2RestAxiosRequestConfig,
+  Ng2RestFetchRequestConfig,
   RestResponseWrapper,
 } from 'ng2-rest/src';
 import { Observable } from 'rxjs';
@@ -265,7 +265,7 @@ export namespace Models {
     /**
      * IMPORTANT! provide full url that starts with http:// or https://
      * frontend host only needed when we are
-     * using withCredentials for axios
+     * using withCredentials for fetch
      * and session cookie
      * or realtime communication
      */
@@ -325,7 +325,7 @@ export namespace Models {
     middlewares?: MIDDLEWARES;
     /**
      * Should context use session:
-     * - on backend for axios
+     * - on backend for fetch
      * - cors with credentials     *
      *
      * @default true
@@ -409,7 +409,7 @@ export namespace Models {
        */
       readonly received?: PromiseObservableMix<HttpResponse<T>>;
       request?(
-        axiosConfig?: Ng2RestAxiosRequestConfig,
+        fetchConfig?: Ng2RestFetchRequestConfig,
       ): PromiseObservableMix<HttpResponse<T>>;
     }
 
@@ -495,3 +495,26 @@ export interface TaonPaginationQuery<T = string> {
    */
   callQueryMethod?: keyof T;
 }
+
+
+//#region multer file uplaod repsonse
+export interface MulterFileUploadResponse {
+  ok: boolean;
+  originalName: string;
+
+  /**
+   * R2 object key or local generated filename.
+   *
+   * Examples:
+   * files/2026/08/07/uuid-photo.jpg
+   * uuid-photo.jpg
+   *
+   * name change to this to avoid confusion with originalname
+   * (similar to originalname with added uniq part)
+   */
+  savedAs: string;
+
+  size: number;
+  mimetype: string;
+}
+//#endregion

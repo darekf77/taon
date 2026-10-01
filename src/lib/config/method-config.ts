@@ -55,7 +55,7 @@ export class MethodConfig<CONTROLLER = any> implements Pick<
 
   /**
    * Middlewares array in proper order and ready to be used in
-   * express or in axios interceptors.
+   * express or in fetch interceptors.
    */
   declare calculatedMiddlewares: (typeof TaonBaseMiddleware)[];
 
