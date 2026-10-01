@@ -180,7 +180,7 @@ export class EntityProcess {
       );
       if (this.advancedManipulation) {
         this.response.set(
-          Symbols.old.CIRCURAL_OBJECTS_MAP_BODY,
+          Symbols.old.CIRCURAL_OBJECTS_MAP_BODY_PARAM,
           JSON.stringify(this.circural),
         );
       }

@@ -4,10 +4,16 @@ import { CoreModels } from 'tnp-core/src';
 
 export class ParamConfig {
   declare paramName: string;
+
   declare paramType: CoreModels.ParamType;
+
   declare index: number;
+
   declare defaultType: any;
+
   declare expireInSeconds?: number;
+
+  declare sendCircuralObject?: boolean;
 
   // ! CLONING WILL CONE DESCRIPTOR OF METHOD AND I NEED IT!
   // public clone(override?: Partial<ParamConfig>): ParamConfig {

@@ -57,7 +57,6 @@ import { TaonHelpers } from './helpers/taon-helpers';
 import { Models } from './models';
 import { RealtimeCore } from './realtime/realtime-core';
 import { Symbols } from './symbols';
-
 import { TaonAdmin } from './ui/taon-admin-mode-configuration/taon-admin.service'; // @browser
 
 //#endregion
@@ -2707,7 +2706,7 @@ export class EndpointContext {
             'X-Requested-With',
             Symbols.old.X_TOTAL_COUNT,
             Symbols.old.MAPPING_CONFIG_HEADER,
-            Symbols.old.CIRCURAL_OBJECTS_MAP_BODY,
+            Symbols.old.CIRCURAL_OBJECTS_MAP_BODY_PARAM,
             Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM,
           ].join(', '),
         );
@@ -2868,118 +2867,150 @@ export class EndpointContext {
           let tParams = req.params;
           let tQuery: Object = req.query;
 
-          if (req.headers[Symbols.old.CIRCURAL_OBJECTS_MAP_BODY]) {
-            //#region handle circural item in body params
-            try {
-              tBody = JSON.parse(
-                JSON.stringify(tBody),
-                JSON.parse(
-                  TaonHelpers.firstStringOrElemFromArray(
-                    req.headers[Symbols.old.CIRCURAL_OBJECTS_MAP_BODY],
-                  ),
-                ),
+          // console.log({ tBody, tParams, tQuery, methodConfig });
+
+          //#region process body params
+          const bodyParamsToProcess = Object.values(
+            methodConfig.parameters,
+          ).filter(f => f.paramType === 'Body');
+
+          if (bodyParamsToProcess.length > 0) {
+            const isUsingWholeBody = !_.isUndefined(
+              bodyParamsToProcess.find(c => !c.paramName),
+            );
+
+            if (isUsingWholeBody && bodyParamsToProcess.length > 1) {
+              throw new Error(
+                `You can use only ONE body param @Body() without name.`,
               );
-            } catch (e) {}
-            //#endregion
-          }
+            }
 
-          if (req.headers[Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM]) {
-            //#region handle circular items in query params
-            try {
-              tQuery = JSON.parse(
-                JSON.stringify(tQuery),
-                JSON.parse(
-                  TaonHelpers.firstStringOrElemFromArray(
-                    req.headers[Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM],
-                  ),
-                ),
-              );
-            } catch (e) {}
-            //#endregion
-          }
-
-          // make class instance from body
-          // console.log('req.headers', req.headers)
-
-          if (req.headers[Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS]) {
-            //#region encode entity or enties in body from header mapping
-            try {
-              const mappinForEntityBody = JSON.parse(
-                TaonHelpers.firstStringOrElemFromArray(
-                  req.headers[Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS],
-                ),
-              );
-              tBody = encodeMapping(tBody, mappinForEntityBody);
-            } catch (e) {}
-            //#endregion
-          } else {
-            // TODO why do i need this ????
-            //#region encode entity or enties in body from header mapping
-
-            Object.keys(tBody || {}).forEach(paramName => {
+            if (isUsingWholeBody) {
               try {
-                const mappingForEntityBodyForParam = JSON.parse(
+                const mappinForEntityBody = JSON.parse(
                   TaonHelpers.firstStringOrElemFromArray(
-                    req.headers[
-                      `${Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS}${paramName}`
-                    ],
+                    req.headers[Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS],
                   ),
                 );
-                tBody[paramName] = encodeMapping(
-                  tBody[paramName],
-                  mappingForEntityBodyForParam,
-                );
-              } catch (e) {}
-            });
-            //#endregion
-          }
+                tBody = encodeMapping(tBody, mappinForEntityBody);
 
-          // make class instance from query params
-          // console.log('req.headers', tQuery)
-
-          if (req.headers[Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS]) {
-            //#region encode entity or enties in query parms from header mapping
-            try {
-              const entity = JSON.parse(
-                TaonHelpers.firstStringOrElemFromArray(
-                  req.headers[Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS],
-                ),
-              );
-              tQuery = TaonHelpers.parseJSONwithStringJSONs(
-                encodeMapping(tQuery, entity),
-              );
-            } catch (e) {}
-            //#endregion
-          } else {
-            // TODO why do i need this ????
-            //#region encode entity or enties in query parms from header mapping
-            Object.keys(tQuery || {}).forEach(queryParamName => {
-              try {
-                const entityForParam = JSON.parse(
-                  TaonHelpers.firstStringOrElemFromArray(
-                    req.headers[
-                      `${Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${queryParamName}`
-                    ],
-                  ),
-                );
-                let beforeTransofrm = tQuery[queryParamName];
-                if (_.isString(beforeTransofrm)) {
+                //#region handle circural item in body params
+                if (req.headers[Symbols.old.CIRCURAL_OBJECTS_MAP_BODY_PARAM]) {
                   try {
-                    const paresed =
-                      TaonHelpers.tryTransformParam(beforeTransofrm);
-                    beforeTransofrm = paresed;
-                  } catch (e) {}
+                    const circs = JSON.parse(
+                      TaonHelpers.firstStringOrElemFromArray(
+                        req.headers[Symbols.old.CIRCURAL_OBJECTS_MAP_BODY_PARAM],
+                      ),
+                    );
+                    tBody = JSON10.applyCircularMapping(tBody, circs);
+                  } catch (e) {
+                    console.error(e);
+                  }
                 }
-                const afterEncoding = encodeMapping(
-                  beforeTransofrm,
-                  entityForParam,
-                );
-                tQuery[queryParamName] =
-                  TaonHelpers.parseJSONwithStringJSONs(afterEncoding);
-              } catch (e) {}
-            });
-            //#endregion
+                //#endregion
+              } catch (e) {
+                console.error(e);
+              }
+            } else {
+              for (const bodyParamToProcess of bodyParamsToProcess) {
+                try {
+                  const paramName = bodyParamToProcess.paramName;
+                  const mappingForEntityBodyForParam = JSON.parse(
+                    TaonHelpers.firstStringOrElemFromArray(
+                      req.headers[
+                        `${Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS}${paramName.toLowerCase()}`
+                      ],
+                    ),
+                  );
+                  tBody[paramName] = encodeMapping(
+                    tBody[paramName],
+                    mappingForEntityBodyForParam,
+                  );
+                } catch (e) {
+                  console.error(e);
+                }
+              }
+            }
           }
+          //#endregion
+
+          //#region handle query params
+          const queryParamsToProcess = Object.values(
+            methodConfig.parameters,
+          ).filter(f => f.paramType === 'Query');
+
+          if (queryParamsToProcess.length > 0) {
+            const isUsingWholeQueryParamBody = !_.isUndefined(
+              queryParamsToProcess.find(c => !c.paramName),
+            );
+
+            if (isUsingWholeQueryParamBody && queryParamsToProcess.length > 1) {
+              throw new Error(
+                `You can use only ONE query param @Query() without name.`,
+              );
+            }
+
+            if (isUsingWholeQueryParamBody) {
+              try {
+                const entity = JSON.parse(
+                  TaonHelpers.firstStringOrElemFromArray(
+                    req.headers[Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS],
+                  ),
+                );
+                tQuery = TaonHelpers.parseJSONwithStringJSONs(
+                  encodeMapping(tQuery, entity),
+                );
+                if (req.headers[Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM]) {
+                  //#region handle circular items in query params
+                  try {
+                    const circs = JSON.parse(
+                      TaonHelpers.firstStringOrElemFromArray(
+                        req.headers[
+                          Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM
+                        ],
+                      ),
+                    );
+                    tQuery = JSON10.applyCircularMapping(tQuery, circs);
+                  } catch (e) {
+                    console.error(e);
+                  }
+                  //#endregion
+                }
+              } catch (e) {
+                console.error(e);
+              }
+            } else {
+              for (const queryParm of queryParamsToProcess) {
+                try {
+                  const queryParamName = queryParm.paramName;
+                  const entityForParam = JSON.parse(
+                    TaonHelpers.firstStringOrElemFromArray(
+                      req.headers[
+                        `${Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${queryParamName.toLowerCase()}`
+                      ],
+                    ),
+                  );
+                  let beforeTransofrm = tQuery[queryParamName];
+                  if (_.isString(beforeTransofrm)) {
+                    try {
+                      const paresed =
+                        TaonHelpers.tryTransformParam(beforeTransofrm);
+                      beforeTransofrm = paresed;
+                    } catch (e) {}
+                  }
+                  const afterEncoding = encodeMapping(
+                    beforeTransofrm,
+                    entityForParam,
+                  );
+                  tQuery[queryParamName] =
+                    TaonHelpers.parseJSONwithStringJSONs(afterEncoding);
+                } catch (e) {
+                  console.error(e);
+                }
+              }
+            }
+          }
+          //#endregion
 
           //#region set proper arguments for backend function
           Object.keys(methodConfig.parameters).forEach(paramName => {
@@ -3017,6 +3048,7 @@ export class EndpointContext {
             .reverse()
             .map(v => TaonHelpers.tryTransformParam(v));
 
+          //#region process request
           try {
             let resultFromCtrlExec = await getResult(resolvedParams, req, res);
             // console.log({ resultFromCtrlExec });
@@ -3090,6 +3122,7 @@ export class EndpointContext {
 
             this.sendError(res, error, req, expressPath);
           }
+          //#endregion
         },
       );
       //#endregion
@@ -3409,6 +3442,7 @@ export class EndpointContext {
       if (!storage[Symbols.old.ENDPOINT_META_CONFIG][ctx.uriOrigin])
         storage[Symbols.old.ENDPOINT_META_CONFIG][ctx.uriOrigin] = {};
       const endpoints = storage[Symbols.old.ENDPOINT_META_CONFIG];
+
       let rest: ReturnType<typeof Resource.create>;
       const requestHeaders = RestHeaders.from({});
       if (!endpoints[ctx.uriOrigin][expressPath]) {
@@ -3416,7 +3450,7 @@ export class EndpointContext {
           rest = Resource.create(ctx.uriOrigin, expressPath, {
             responseMapping: {
               entity: Symbols.old.MAPPING_CONFIG_HEADER,
-              circular: Symbols.old.CIRCURAL_OBJECTS_MAP_BODY,
+              circular: Symbols.old.CIRCURAL_OBJECTS_MAP_BODY_PARAM,
             },
           });
           requestHeaders.apply({
@@ -3427,7 +3461,7 @@ export class EndpointContext {
           rest = Resource.create(ctx.uriOrigin, expressPath, {
             responseMapping: {
               entity: Symbols.old.MAPPING_CONFIG_HEADER,
-              circular: Symbols.old.CIRCURAL_OBJECTS_MAP_BODY,
+              circular: Symbols.old.CIRCURAL_OBJECTS_MAP_BODY_PARAM,
             },
           });
           requestHeaders.apply({
@@ -3439,7 +3473,7 @@ export class EndpointContext {
           rest = Resource.create(ctx.uriOrigin, expressPath, {
             responseMapping: {
               entity: Symbols.old.MAPPING_CONFIG_HEADER,
-              circular: Symbols.old.CIRCURAL_OBJECTS_MAP_BODY,
+              circular: Symbols.old.CIRCURAL_OBJECTS_MAP_BODY_PARAM,
             },
           });
           requestHeaders.apply({
@@ -3452,7 +3486,7 @@ export class EndpointContext {
             {
               responseMapping: {
                 entity: Symbols.old.MAPPING_CONFIG_HEADER,
-                circular: Symbols.old.CIRCURAL_OBJECTS_MAP_BODY,
+                circular: Symbols.old.CIRCURAL_OBJECTS_MAP_BODY_PARAM,
               },
             },
             // Symbols.old.MAPPING_CONFIG_HEADER as any,
@@ -3469,7 +3503,8 @@ export class EndpointContext {
 
       const pathPrams = {};
       let queryParams = {};
-      let bodyObject = {};
+      let bodyObjectOnFE = {};
+
       args.forEach((param, i) => {
         let currentParam: Partial<ParamConfig> = void 0 as any;
 
@@ -3511,7 +3546,7 @@ export class EndpointContext {
             );
             if (mapping) {
               requestHeaders.set(
-                `${Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${currentParam.paramName}`,
+                `${Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${currentParam.paramName.toLowerCase()}`,
                 JSON.stringify(mapping),
               );
             }
@@ -3528,6 +3563,21 @@ export class EndpointContext {
               );
             }
             queryParams = _.cloneDeep(param);
+
+            if (currentParam.sendCircuralObject) {
+              //#region process circural object form fe
+              let circuralFromItem = [];
+              queryParams = JSON10.parse(
+                JSON10.stringify(queryParams, void 0, void 0, circs => {
+                  circuralFromItem = circs;
+                }),
+              );
+              requestHeaders.set(
+                Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM,
+                JSON10.stringify(circuralFromItem),
+              );
+              //#endregion
+            }
           }
           //#endregion
         }
@@ -3562,7 +3612,7 @@ export class EndpointContext {
         if (currentParam.paramType === 'Body') {
           //#region handle body params
           if (currentParam.paramName) {
-            if (ClassHelpers.getName(bodyObject) === 'FormData') {
+            if (ClassHelpers.getName(bodyObjectOnFE) === 'FormData') {
               //#region prevent posting/putting not full body as FormData
               throw new Error(`[taon - framework] Don use param names when posting / putting FormData.
               Use this:
@@ -3577,18 +3627,17 @@ instead
 `);
               //#endregion
             }
-
             const mapping = decodeMappingForHeaderJson(
               param,
               optionsDecodeHeader,
             );
             if (mapping) {
               requestHeaders.set(
-                `${Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS}${currentParam.paramName}`,
+                `${Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS}${currentParam.paramName.toLowerCase()}`,
                 JSON.stringify(mapping),
               );
             }
-            bodyObject[currentParam.paramName] = param;
+            bodyObjectOnFE[currentParam.paramName] = param;
           } else {
             const mapping = decodeMappingForHeaderJson(
               param,
@@ -3600,57 +3649,39 @@ instead
                 JSON.stringify(mapping),
               );
             }
-            bodyObject = param;
+            bodyObjectOnFE = param;
+
+            if (currentParam.sendCircuralObject) {
+              //#region process circural object form fe
+              let circuralFromItem = [];
+              bodyObjectOnFE = JSON10.parse(
+                JSON10.stringify(bodyObjectOnFE, void 0, void 0, circs => {
+                  circuralFromItem = circs;
+                }),
+              );
+              requestHeaders.set(
+                Symbols.old.CIRCURAL_OBJECTS_MAP_BODY_PARAM,
+                JSON10.stringify(circuralFromItem),
+              );
+              //#endregion
+            }
           }
           //#endregion
         }
       });
 
-      if (
-        typeof bodyObject === 'object' &&
-        ClassHelpers.getName(bodyObject) !== 'FormData'
-      ) {
-        //#region handle circular objects in body params
-        let circuralFromItem = [];
-        bodyObject = JSON10.parse(
-          JSON10.stringify(bodyObject, void 0, void 0, circs => {
-            circuralFromItem = circs;
-          }),
-        );
-        requestHeaders.set(
-          Symbols.old.CIRCURAL_OBJECTS_MAP_BODY,
-          JSON10.stringify(circuralFromItem),
-        );
-        //#endregion
-      }
-
-      if (typeof queryParams === 'object') {
-        //#region handle circular objects in query params
-        let circuralFromQueryParams = [];
-        queryParams = JSON10.parse(
-          JSON10.stringify(queryParams, void 0, void 0, circs => {
-            circuralFromQueryParams = circs;
-          }),
-        );
-
-        requestHeaders.set(
-          Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM,
-          JSON10.stringify(circuralFromQueryParams),
-        );
-        //#endregion
-      }
       //#endregion
 
       const httpResultObj: Models.Http.ClientAction<any> = {
         get received() {
           return rest
             .model(pathPrams, { headers: requestHeaders })
-            [method](bodyObject, [queryParams]);
+            [method](bodyObjectOnFE, [queryParams]);
         },
         request(fetchConfig?: Ng2RestFetchRequestConfig) {
           return rest
             .model(pathPrams, { headers: requestHeaders })
-            [method](bodyObject, [queryParams], fetchConfig);
+            [method](bodyObjectOnFE, [queryParams], fetchConfig);
         },
       };
       return httpResultObj as Models.Http.ClientAction<any>;

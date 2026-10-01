@@ -95,40 +95,36 @@ export namespace Symbols {
 
   export const REALTIME = new Realtime();
 
-  export const metadata = {
-    className: `class:realname`,
-    options: {
-      controller: `controller:options`,
-      entity: `entity:options`,
-      repository: `repository:options`,
-      provider: `provider:options`,
-      subscriber: `subscriber:options`,
-      migration: `migration:options`,
-    },
-  };
+  export namespace metadata {
+    export const className = `class:realname`;
 
-  export const old = {
-    HAS_TABLE_IN_DB: Symbol(),
-    MDC_KEY: `modeldataconfig`,
-    WEBSQL_REST_PROGRESS_FUN: Symbol(),
-    WEBSQL_REST_PROGRESS_FUN_START: Symbol(),
-    WEBSQL_REST_PROGRESS_FUN_DONE: Symbol(),
-    WEBSQL_REST_PROGRESS_TIMEOUT: Symbol(),
+    export namespace options {
+      export const controller = `controller:options`;
+      export const entity = `entity:options`;
+      export const repository = `repository:options`;
+      export const provider = `provider:options`;
+      export const subscriber = `subscriber:options`;
+      export const migration = `migration:options`;
+    }
+  }
 
-    X_TOTAL_COUNT: `x-total-count`,
-    CIRCURAL_OBJECTS_MAP_BODY: `circuralmapbody`,
-    CIRCURAL_OBJECTS_MAP_QUERY_PARAM: `circuralmapbody`,
-    MAPPING_CONFIG_HEADER: `mappingheader`,
-    MAPPING_CONFIG_HEADER_BODY_PARAMS: `mhbodyparams`,
-    MAPPING_CONFIG_HEADER_QUERY_PARAMS: `mhqueryparams`,
-    ENDPOINT_META_CONFIG: `ng2_rest_endpoint_config`,
-    CLASS_DECORATOR_CONTEXT: `$$ng2_rest_class_context`,
-    SOCKET_MSG: `socketmessageng2rest`,
-    ANGULAR: {
-      INPUT_NAMES: Symbol(),
-    },
-    ERROR_MESSAGES: {
-      CLASS_NAME_MATCH: `Please check if your "class name" matches  @Controller( className ) or @Entity( className )`,
-    },
-  };
+  export namespace old {
+    export const HAS_TABLE_IN_DB = Symbol();
+    export const MDC_KEY = `modeldataconfig`;
+    export const WEBSQL_REST_PROGRESS_FUN = Symbol();
+    export const WEBSQL_REST_PROGRESS_FUN_START = Symbol();
+    export const WEBSQL_REST_PROGRESS_FUN_DONE = Symbol();
+    export const WEBSQL_REST_PROGRESS_TIMEOUT = Symbol();
+
+    export const X_TOTAL_COUNT = `x-total-count`;
+    export const CIRCURAL_OBJECTS_MAP_BODY_PARAM = `circuralmapbody`;
+    export const CIRCURAL_OBJECTS_MAP_QUERY_PARAM = `circuralmapquery`;
+    export const MAPPING_CONFIG_HEADER = `mappingheader`;
+    export const MAPPING_CONFIG_HEADER_BODY_PARAMS = `mhbodyparams`;
+    export const MAPPING_CONFIG_HEADER_QUERY_PARAMS = `mhqueryparams`;
+    export const ENDPOINT_META_CONFIG = `ng2_rest_endpoint_config`;
+    export const CLASS_DECORATOR_CONTEXT = `$$ng2_rest_class_context`;
+    export const SOCKET_MSG = `socketmessageng2rest`;
+    export const ERROR_MESSAGES_CLASS_NAME_MATCH = `Please check if your "class name" matches  @Controller( className ) or @Entity( className )`;
+  }
 }

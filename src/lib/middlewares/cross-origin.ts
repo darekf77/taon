@@ -63,7 +63,7 @@ export function corsHeaders(
     Symbols.old.X_TOTAL_COUNT,
 
     Symbols.old.MAPPING_CONFIG_HEADER,
-    Symbols.old.CIRCURAL_OBJECTS_MAP_BODY,
+    Symbols.old.CIRCURAL_OBJECTS_MAP_BODY_PARAM,
     Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM,
   ].join(', ');
 
