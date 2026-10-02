@@ -1,4 +1,6 @@
 //#region imports
+import 'reflect-metadata'; // TODO this is needed for my decorators to work
+import { RestErrorResponseWrapper } from 'ng2-rest/src';
 import { _, CoreModels, Utils, UtilsOs } from 'tnp-core/src';
 import { CLASS } from 'typescript-class-helpers/src';
 
@@ -13,7 +15,6 @@ import { Symbols } from '../symbols';
 import { Validators } from '../validators';
 
 import { TaonHelpers } from './taon-helpers';
-import { RestErrorResponseWrapper } from 'ng2-rest/src';
 //#endregion
 
 export namespace ClassHelpers {
@@ -224,6 +225,9 @@ export namespace ClassHelpers {
       code,
       [CoreModels.TaonHttpErrorCustomProp]: true,
     } as RestErrorResponseWrapper;
+
+    console.error(errroResult);
+    // console.error(errroResult.1);
 
     return { errroResult, status };
   };

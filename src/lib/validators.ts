@@ -37,17 +37,17 @@ export namespace Validators {
     current: MethodConfig,
   ) => {
     const defaultResponseType = 'text or JSON';
-    if (!current.responseType) {
+    if (!current.overrideResponseType) {
       return;
     }
     for (let index = 0; index < methods.length; index++) {
       const m = methods[index];
-      if (m.path === current.path && m.responseType !== current.responseType) {
+      if (m.path === current.path && m.overrideResponseType !== current.overrideResponseType) {
         throw new Error(`
   [taon] you can have 2 methods with same path but differetn reponseType-s
 
-          ${m.methodName as any}( ... path: ${m.path} )  -> responseType: ${m.responseType || defaultResponseType}
-          ${current.methodName as any}( ... path: ${current.path} ) -> responseType: ${current.responseType}
+          ${m.methodName as any}( ... path: ${m.path} )  -> responseType: ${m.overrideResponseType || defaultResponseType}
+          ${current.methodName as any}( ... path: ${current.path} ) -> responseType: ${current.overrideResponseType}
 
     Please change path name on of the methods.
 

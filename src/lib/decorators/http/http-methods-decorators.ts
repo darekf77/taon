@@ -58,8 +58,8 @@ const metaReq = (
 
   methodConfig.descriptor = descriptor;
   methodConfig.global = pathIsGlobal;
-  methodConfig.contentType = overrideContentType;
-  methodConfig.responseType = overrideResponseType;
+  methodConfig.overrideContentType = overrideContentType;
+  methodConfig.overrideResponseType = overrideResponseType;
   methodConfig.overrideExpressSendAsHtml = overrideExpressSendAsHtml;
 };
 

@@ -53,6 +53,7 @@ import type { ContextsEndpointStorage } from './endpoint-context-storage';
 import { EntityProcess } from './entity-process';
 import { getResponseValue } from './get-response-value';
 import { ClassHelpers } from './helpers/class-helpers';
+import { expressRequestToFormData } from './helpers/express-request-to-form-data';
 import { TaonHelpers } from './helpers/taon-helpers';
 import { Models } from './models';
 import { RealtimeCore } from './realtime/realtime-core';
@@ -2864,153 +2865,179 @@ export class EndpointContext {
           const args: any[] = [];
 
           let tBody = req.body;
+          const requestContentType = req.headers['content-type'] || '';
+          const isRequestFormData = requestContentType.startsWith(
+            'multipart/form-data',
+          );
+
+          if (isRequestFormData) {
+            tBody = await expressRequestToFormData(req);
+          } else {
+            tBody = req.body;
+          }
+
           let tParams = req.params;
           let tQuery: Object = req.query;
 
           // console.log({ tBody, tParams, tQuery, methodConfig });
 
-          //#region process body params
-          const bodyParamsToProcess = Object.values(
-            methodConfig.parameters,
-          ).filter(f => f.paramType === 'Body');
+          if (!isRequestFormData) {
+            //#region process body params
+            const bodyParamsToProcess = Object.values(
+              methodConfig.parameters,
+            ).filter(f => f.paramType === 'Body');
 
-          if (bodyParamsToProcess.length > 0) {
-            const isUsingWholeBody = !_.isUndefined(
-              bodyParamsToProcess.find(c => !c.paramName),
-            );
-
-            if (isUsingWholeBody && bodyParamsToProcess.length > 1) {
-              throw new Error(
-                `You can use only ONE body param @Body() without name.`,
+            if (bodyParamsToProcess.length > 0) {
+              const isUsingWholeBody = !_.isUndefined(
+                bodyParamsToProcess.find(c => !c.paramName),
               );
-            }
 
-            if (isUsingWholeBody) {
-              try {
-                const mappinForEntityBody = JSON.parse(
-                  TaonHelpers.firstStringOrElemFromArray(
-                    req.headers[Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS],
-                  ),
+              if (isUsingWholeBody && bodyParamsToProcess.length > 1) {
+                throw new Error(
+                  `You can use only ONE body param @Body() without name.`,
                 );
-                tBody = encodeMapping(tBody, mappinForEntityBody);
-
-                //#region handle circural item in body params
-                if (req.headers[Symbols.old.CIRCURAL_OBJECTS_MAP_BODY_PARAM]) {
-                  try {
-                    const circs = JSON.parse(
-                      TaonHelpers.firstStringOrElemFromArray(
-                        req.headers[Symbols.old.CIRCURAL_OBJECTS_MAP_BODY_PARAM],
-                      ),
-                    );
-                    tBody = JSON10.applyCircularMapping(tBody, circs);
-                  } catch (e) {
-                    console.error(e);
-                  }
-                }
-                //#endregion
-              } catch (e) {
-                console.error(e);
               }
-            } else {
-              for (const bodyParamToProcess of bodyParamsToProcess) {
+
+              if (isUsingWholeBody) {
                 try {
-                  const paramName = bodyParamToProcess.paramName;
-                  const mappingForEntityBodyForParam = JSON.parse(
+                  const mappinForEntityBody = JSON.parse(
                     TaonHelpers.firstStringOrElemFromArray(
                       req.headers[
-                        `${Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS}${paramName.toLowerCase()}`
+                        Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS
                       ],
                     ),
                   );
-                  tBody[paramName] = encodeMapping(
-                    tBody[paramName],
-                    mappingForEntityBodyForParam,
-                  );
+                  tBody = encodeMapping(tBody, mappinForEntityBody);
+
+                  //#region handle circural item in body params
+                  if (
+                    req.headers[Symbols.old.CIRCURAL_OBJECTS_MAP_BODY_PARAM]
+                  ) {
+                    try {
+                      const circs = JSON.parse(
+                        TaonHelpers.firstStringOrElemFromArray(
+                          req.headers[
+                            Symbols.old.CIRCURAL_OBJECTS_MAP_BODY_PARAM
+                          ],
+                        ),
+                      );
+                      tBody = JSON10.applyCircularMapping(tBody, circs);
+                    } catch (e) {
+                      console.error(e);
+                    }
+                  }
+                  //#endregion
                 } catch (e) {
                   console.error(e);
                 }
-              }
-            }
-          }
-          //#endregion
-
-          //#region handle query params
-          const queryParamsToProcess = Object.values(
-            methodConfig.parameters,
-          ).filter(f => f.paramType === 'Query');
-
-          if (queryParamsToProcess.length > 0) {
-            const isUsingWholeQueryParamBody = !_.isUndefined(
-              queryParamsToProcess.find(c => !c.paramName),
-            );
-
-            if (isUsingWholeQueryParamBody && queryParamsToProcess.length > 1) {
-              throw new Error(
-                `You can use only ONE query param @Query() without name.`,
-              );
-            }
-
-            if (isUsingWholeQueryParamBody) {
-              try {
-                const entity = JSON.parse(
-                  TaonHelpers.firstStringOrElemFromArray(
-                    req.headers[Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS],
-                  ),
-                );
-                tQuery = TaonHelpers.parseJSONwithStringJSONs(
-                  encodeMapping(tQuery, entity),
-                );
-                if (req.headers[Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM]) {
-                  //#region handle circular items in query params
+              } else {
+                for (const bodyParamToProcess of bodyParamsToProcess) {
                   try {
-                    const circs = JSON.parse(
+                    const paramName = bodyParamToProcess.paramName;
+                    const mappingForEntityBodyForParam = JSON.parse(
                       TaonHelpers.firstStringOrElemFromArray(
                         req.headers[
-                          Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM
+                          `${Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS}${paramName.toLowerCase()}`
                         ],
                       ),
                     );
-                    tQuery = JSON10.applyCircularMapping(tQuery, circs);
+                    tBody[paramName] = encodeMapping(
+                      tBody[paramName],
+                      mappingForEntityBodyForParam,
+                    );
                   } catch (e) {
                     console.error(e);
                   }
-                  //#endregion
-                }
-              } catch (e) {
-                console.error(e);
-              }
-            } else {
-              for (const queryParm of queryParamsToProcess) {
-                try {
-                  const queryParamName = queryParm.paramName;
-                  const entityForParam = JSON.parse(
-                    TaonHelpers.firstStringOrElemFromArray(
-                      req.headers[
-                        `${Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${queryParamName.toLowerCase()}`
-                      ],
-                    ),
-                  );
-                  let beforeTransofrm = tQuery[queryParamName];
-                  if (_.isString(beforeTransofrm)) {
-                    try {
-                      const paresed =
-                        TaonHelpers.tryTransformParam(beforeTransofrm);
-                      beforeTransofrm = paresed;
-                    } catch (e) {}
-                  }
-                  const afterEncoding = encodeMapping(
-                    beforeTransofrm,
-                    entityForParam,
-                  );
-                  tQuery[queryParamName] =
-                    TaonHelpers.parseJSONwithStringJSONs(afterEncoding);
-                } catch (e) {
-                  console.error(e);
                 }
               }
             }
+            //#endregion
+
+            //#region handle query params
+            const queryParamsToProcess = Object.values(
+              methodConfig.parameters,
+            ).filter(f => f.paramType === 'Query');
+
+            if (queryParamsToProcess.length > 0) {
+              const isUsingWholeQueryParamBody = !_.isUndefined(
+                queryParamsToProcess.find(c => !c.paramName),
+              );
+
+              if (
+                isUsingWholeQueryParamBody &&
+                queryParamsToProcess.length > 1
+              ) {
+                throw new Error(
+                  `You can use only ONE query param @Query() without name.`,
+                );
+              }
+
+              if (isUsingWholeQueryParamBody) {
+                try {
+                  const entity = JSON.parse(
+                    TaonHelpers.firstStringOrElemFromArray(
+                      req.headers[
+                        Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS
+                      ],
+                    ),
+                  );
+                  tQuery = TaonHelpers.parseJSONwithStringJSONs(
+                    encodeMapping(tQuery, entity),
+                  );
+                  if (
+                    req.headers[Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM]
+                  ) {
+                    //#region handle circular items in query params
+                    try {
+                      const circs = JSON.parse(
+                        TaonHelpers.firstStringOrElemFromArray(
+                          req.headers[
+                            Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM
+                          ],
+                        ),
+                      );
+                      tQuery = JSON10.applyCircularMapping(tQuery, circs);
+                    } catch (e) {
+                      console.error(e);
+                    }
+                    //#endregion
+                  }
+                } catch (e) {
+                  console.error(e);
+                }
+              } else {
+                for (const queryParm of queryParamsToProcess) {
+                  try {
+                    const queryParamName = queryParm.paramName;
+                    const entityForParam = JSON.parse(
+                      TaonHelpers.firstStringOrElemFromArray(
+                        req.headers[
+                          `${Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${queryParamName.toLowerCase()}`
+                        ],
+                      ),
+                    );
+                    let beforeTransofrm = tQuery[queryParamName];
+                    if (_.isString(beforeTransofrm)) {
+                      try {
+                        const paresed =
+                          TaonHelpers.tryTransformParam(beforeTransofrm);
+                        beforeTransofrm = paresed;
+                      } catch (e) {}
+                    }
+                    const afterEncoding = encodeMapping(
+                      beforeTransofrm,
+                      entityForParam,
+                    );
+                    tQuery[queryParamName] =
+                      TaonHelpers.parseJSONwithStringJSONs(afterEncoding);
+                  } catch (e) {
+                    console.error(e);
+                  }
+                }
+              }
+            }
+            //#endregion
           }
-          //#endregion
 
           //#region set proper arguments for backend function
           Object.keys(methodConfig.parameters).forEach(paramName => {
@@ -3050,58 +3077,213 @@ export class EndpointContext {
 
           //#region process request
           try {
-            let resultFromCtrlExec = await getResult(resolvedParams, req, res);
-            // console.log({ resultFromCtrlExec });
-            if (methodConfig.responseType)
-              if (res.headersSent) {
-                // SKIP FURTHER PROCESSING IF RESPONSE ALREADY SENT
-                return;
-              }
+            const resultFromCtrlExec = await getResult(
+              resolvedParams,
+              req,
+              res,
+            );
+
+            if (res.headersSent) {
+              return;
+            }
+
+            const responseType = methodConfig.overrideResponseType as
+              | FetchResponseType
+              | undefined;
+
             if (methodConfig.overrideExpressSendAsHtml) {
               res.setHeader('Content-Type', 'text/html');
               res.send(resultFromCtrlExec);
               return;
             }
-            if (
-              resultFromCtrlExec instanceof Blob &&
-              (methodConfig.responseType as FetchResponseType) === 'blob'
-            ) {
-              // console.log('INSTANCE OF BLOB')
-              //#region processs blob result type
-              const blob = resultFromCtrlExec as Blob;
-              const file = Buffer.from(await blob.arrayBuffer());
-              res.writeHead(200, {
-                'Content-Type': blob.type,
-                'Content-Length': file.length,
-              });
-              res.end(file);
+
+            switch (responseType) {
+              //#region stream
+
+              case FetchResponseType.Stream: {
+                if (!(resultFromCtrlExec instanceof ReadableStream)) {
+                  throw new Error(
+                    `[taon] Expected ReadableStream for response type "${FetchResponseType.Stream}".`,
+                  );
+                }
+
+                res.setHeader(
+                  'Content-Type',
+                  res.getHeader('Content-Type') || 'application/octet-stream',
+                );
+
+                const reader = resultFromCtrlExec.getReader();
+
+                try {
+                  while (true) {
+                    const { done, value } = await reader.read();
+
+                    if (done) {
+                      break;
+                    }
+
+                    if (!res.write(Buffer.from(value))) {
+                      await new Promise<void>(resolve => {
+                        res.once('drain', resolve);
+                      });
+                    }
+                  }
+
+                  res.end();
+                } finally {
+                  reader.releaseLock();
+                }
+
+                return;
+              }
+
               //#endregion
-            } else if (
-              _.isString(resultFromCtrlExec) &&
-              (methodConfig.responseType as FetchResponseType) === 'blob'
-            ) {
-              // console.log('BASE64')
-              //#region process string buffer TODO refacetor
-              const img_base64 = resultFromCtrlExec;
-              const m = /^data:(.+?);base64,(.+)$/.exec(img_base64);
-              if (!m) {
+
+              //#region blob
+
+              case FetchResponseType.Blob: {
+                if (resultFromCtrlExec instanceof Blob) {
+                  const blob = resultFromCtrlExec;
+
+                  res.setHeader(
+                    'Content-Type',
+                    blob.type || 'application/octet-stream',
+                  );
+
+                  res.setHeader('Content-Length', blob.size.toString());
+
+                  const buffer = Buffer.from(await blob.arrayBuffer());
+
+                  res.end(buffer);
+
+                  return;
+                }
+
+                // Keep your old base64 support if you need backward compatibility.
+                if (_.isString(resultFromCtrlExec)) {
+                  const match = /^data:(.+?);base64,(.+)$/.exec(
+                    resultFromCtrlExec,
+                  );
+
+                  if (!match) {
+                    throw new Error(
+                      `[taon] Expected Blob or base64 data URL for response type "${FetchResponseType.Blob}".`,
+                    );
+                  }
+
+                  const [, contentType, fileBase64] = match;
+
+                  const buffer = Buffer.from(fileBase64, 'base64');
+
+                  res.setHeader('Content-Type', contentType);
+
+                  res.setHeader('Content-Length', buffer.length.toString());
+
+                  res.end(buffer);
+
+                  return;
+                }
+
                 throw new Error(
-                  `[taon - framework] Not a base64 image[${img_base64}]`,
+                  `[taon] Expected Blob for response type "${FetchResponseType.Blob}".`,
                 );
               }
-              const [_, content_type, file_base64] = m;
-              const file = Buffer.from(file_base64, 'base64');
 
-              res.writeHead(200, {
-                'Content-Type': content_type,
-                'Content-Length': file.length,
-              });
-              res.end(file);
               //#endregion
-            } else {
-              //#region process json request
-              await new EntityProcess(resultFromCtrlExec, res).run();
+
+              //#region array buffer
+
+              case FetchResponseType.ArrayBuffer: {
+                if (!(resultFromCtrlExec instanceof ArrayBuffer)) {
+                  throw new Error(
+                    `[taon] Expected ArrayBuffer for response type "${FetchResponseType.ArrayBuffer}".`,
+                  );
+                }
+
+                const buffer = Buffer.from(resultFromCtrlExec);
+
+                res.setHeader(
+                  'Content-Type',
+                  res.getHeader('Content-Type') || 'application/octet-stream',
+                );
+
+                res.setHeader('Content-Length', buffer.length.toString());
+
+                res.end(buffer);
+
+                return;
+              }
+
               //#endregion
+
+              //#region text
+
+              case FetchResponseType.Text: {
+                if (!_.isString(resultFromCtrlExec)) {
+                  throw new Error(
+                    `[taon] Expected string for response type "${FetchResponseType.Text}".`,
+                  );
+                }
+
+                res.type('text/plain');
+
+                res.send(resultFromCtrlExec);
+
+                return;
+              }
+
+              //#endregion
+
+              //#region document
+
+              case FetchResponseType.Document: {
+                if (!_.isString(resultFromCtrlExec)) {
+                  throw new Error(
+                    `[taon] Expected HTML string for response type "${FetchResponseType.Document}".`,
+                  );
+                }
+
+                res.type('text/html');
+
+                res.send(resultFromCtrlExec);
+
+                return;
+              }
+
+              //#endregion
+
+              //#region form data
+
+              case FetchResponseType.FormData: {
+                if (!(resultFromCtrlExec instanceof FormData)) {
+                  throw new Error(
+                    `[taon] Expected FormData for response type "${FetchResponseType.FormData}".`,
+                  );
+                }
+
+                throw new Error(
+                  `[taon] FormData response serialization is not implemented yet.`,
+                );
+              }
+
+              //#endregion
+
+              //#region json
+
+              case FetchResponseType.Json:
+              case undefined: {
+                await new EntityProcess(resultFromCtrlExec, res).run();
+
+                return;
+              }
+
+              //#endregion
+
+              default: {
+                throw new Error(
+                  `[taon] Unsupported response type: ${responseType}`,
+                );
+              }
             }
           } catch (error) {
             if (UtilsStdinStdoutLogger.startedRegistering()) {
@@ -3145,9 +3327,6 @@ export class EndpointContext {
     //#region @backendFunc
     const { errroResult, status } = ClassHelpers.mapFnError(error, res);
 
-    if (UtilsOs.isRunningInCloudflareWorker()) {
-      console.error(errroResult);
-    }
     res.status(status).json(errroResult);
     //#endregion
   }
@@ -3437,6 +3616,7 @@ export class EndpointContext {
 
       //#region resolve frontend parameters
 
+      //#region set initial header
       if (!storage[Symbols.old.ENDPOINT_META_CONFIG])
         storage[Symbols.old.ENDPOINT_META_CONFIG] = {};
       if (!storage[Symbols.old.ENDPOINT_META_CONFIG][ctx.uriOrigin])
@@ -3445,8 +3625,12 @@ export class EndpointContext {
 
       let rest: ReturnType<typeof Resource.create>;
       const requestHeaders = RestHeaders.from({});
+
       if (!endpoints[ctx.uriOrigin][expressPath]) {
-        if (methodConfig.contentType && !methodConfig.responseType) {
+        if (
+          methodConfig.overrideContentType &&
+          !methodConfig.overrideResponseType
+        ) {
           rest = Resource.create(ctx.uriOrigin, expressPath, {
             responseMapping: {
               entity: Symbols.old.MAPPING_CONFIG_HEADER,
@@ -3454,10 +3638,13 @@ export class EndpointContext {
             },
           });
           requestHeaders.apply({
-            'Content-Type': methodConfig.contentType,
-            Accept: methodConfig.contentType,
+            'Content-Type': methodConfig.overrideContentType,
+            Accept: methodConfig.overrideContentType,
           });
-        } else if (methodConfig.contentType && methodConfig.responseType) {
+        } else if (
+          methodConfig.overrideContentType &&
+          methodConfig.overrideResponseType
+        ) {
           rest = Resource.create(ctx.uriOrigin, expressPath, {
             responseMapping: {
               entity: Symbols.old.MAPPING_CONFIG_HEADER,
@@ -3465,11 +3652,14 @@ export class EndpointContext {
             },
           });
           requestHeaders.apply({
-            'Content-Type': methodConfig.contentType,
-            Accept: methodConfig.contentType,
-            [ResponseTypeFetchHeaderKey]: methodConfig.responseType,
+            'Content-Type': methodConfig.overrideContentType,
+            Accept: methodConfig.overrideContentType,
+            [ResponseTypeFetchHeaderKey]: methodConfig.overrideResponseType,
           });
-        } else if (!methodConfig.contentType && methodConfig.responseType) {
+        } else if (
+          !methodConfig.overrideContentType &&
+          methodConfig.overrideResponseType
+        ) {
           rest = Resource.create(ctx.uriOrigin, expressPath, {
             responseMapping: {
               entity: Symbols.old.MAPPING_CONFIG_HEADER,
@@ -3477,7 +3667,7 @@ export class EndpointContext {
             },
           });
           requestHeaders.apply({
-            [ResponseTypeFetchHeaderKey]: methodConfig.responseType,
+            [ResponseTypeFetchHeaderKey]: methodConfig.overrideResponseType,
           });
         } else {
           rest = Resource.create(
@@ -3498,6 +3688,7 @@ export class EndpointContext {
       } else {
         rest = endpoints[ctx.uriOrigin][expressPath] as any;
       }
+      //#endregion
 
       const method = httpRequestType.toLowerCase();
 
@@ -3519,12 +3710,14 @@ export class EndpointContext {
         if (!currentParam) {
           const errorMessage =
             `[${config.frameworkName}] Unable to resolve parameter` +
-            ` at index ${i} for method ${methodConfig.methodName as any} at path ${expressPath}.`;
+            ` at index ${i} for method ${methodConfig.methodName as any}
+            at path ${expressPath}.
 
-          //#region @backend
-          console.error(errorMessage);
-          process.exit(0);
-          //#endregion
+
+            Did you forget @GET('param'), @POST etc. for you parmas?
+
+            `;
+
           throw new Error(errorMessage);
         }
 
@@ -3611,8 +3804,13 @@ export class EndpointContext {
         }
         if (currentParam.paramType === 'Body') {
           //#region handle body params
+          const isFormDataOrBinary = ClassHelpers.getName(param) === 'FormData';
+
+          // console.log({ param, isFormDataOrBinary });
+
           if (currentParam.paramName) {
-            if (ClassHelpers.getName(bodyObjectOnFE) === 'FormData') {
+            //#region handle in param
+            if (isFormDataOrBinary) {
               //#region prevent posting/putting not full body as FormData
               throw new Error(`[taon - framework] Don use param names when posting / putting FormData.
               Use this:
@@ -3638,20 +3836,25 @@ instead
               );
             }
             bodyObjectOnFE[currentParam.paramName] = param;
+            //#endregion
           } else {
-            const mapping = decodeMappingForHeaderJson(
-              param,
-              optionsDecodeHeader,
-            );
-            if (mapping) {
-              requestHeaders.set(
-                Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS,
-                JSON.stringify(mapping),
+            //#region handle whoel body
+            if (!isFormDataOrBinary) {
+              const mapping = decodeMappingForHeaderJson(
+                param,
+                optionsDecodeHeader,
               );
+              if (mapping) {
+                requestHeaders.set(
+                  Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS,
+                  JSON.stringify(mapping),
+                );
+              }
             }
+
             bodyObjectOnFE = param;
 
-            if (currentParam.sendCircuralObject) {
+            if (currentParam.sendCircuralObject && !isFormDataOrBinary) {
               //#region process circural object form fe
               let circuralFromItem = [];
               bodyObjectOnFE = JSON10.parse(
@@ -3665,6 +3868,7 @@ instead
               );
               //#endregion
             }
+            //#endregion
           }
           //#endregion
         }

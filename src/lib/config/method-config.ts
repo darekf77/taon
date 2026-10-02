@@ -1,6 +1,7 @@
 //#region models / method config
 
-import { CoreModels } from 'tnp-core/src';
+import { FetchResponseType } from 'ng2-rest/src';
+import { CoreModels, UtilsHttp } from 'tnp-core/src';
 
 import type { TaonBaseMiddleware } from '../base-classes/base-middleware';
 import { TaonEntityKeysToOmit } from '../constants';
@@ -26,12 +27,12 @@ export class MethodConfig<CONTROLLER = any> implements Pick<
   /**
    * override default content type
    */
-  declare contentType?: any;
+  declare overrideContentType?: UtilsHttp.ContentType;
 
   /**
    * override default axiso response type
    */
-  declare responseType?: any;
+  declare overrideResponseType?: FetchResponseType;
 
   declare overrideExpressSendAsHtml?: boolean;
 

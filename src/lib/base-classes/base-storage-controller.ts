@@ -1,6 +1,7 @@
 //#region imports
 import { R2Bucket } from '@cloudflare/workers-types';
 import type { Dirent } from 'fs-extra';
+import { FetchResponseType } from 'ng2-rest/src';
 import { fse, path } from 'tnp-core/src';
 import { crossPlatformPath, UtilsOs } from 'tnp-core/src';
 
@@ -42,11 +43,11 @@ export abstract class TaonBaseStorageController<
    */
   @GET({
     //#region @backend
-    overrideResponseType: 'stream',
+    overrideResponseType: FetchResponseType.Stream,
     //#endregion
   })
   public download(
-    key: string,
+    @Query('key') key: string,
   ): Models.Http.Response<ReadableStream<Uint8Array>> {
     //#region @backendFunc
     return async (reqr, res) => {
@@ -103,7 +104,7 @@ export abstract class TaonBaseStorageController<
   //#region API / delete
 
   @DELETE()
-  public delete(key: string): Models.Http.Response<boolean> {
+  public delete(@Query('key') key: string): Models.Http.Response<boolean> {
     //#region @backendFunc
     return async (req, res) => {
       return await this.storage.storageDelete(key);
@@ -116,7 +117,7 @@ export abstract class TaonBaseStorageController<
   //#region API / exists
 
   @GET()
-  public exists(key: string): Models.Http.Response<boolean> {
+  public exists(@Query('key') key: string): Models.Http.Response<boolean> {
     //#region @backendFunc
     return async (req, res) => {
       return await this.storage.storageExists(key);
@@ -129,7 +130,7 @@ export abstract class TaonBaseStorageController<
   //#region API / get metadata
   @GET()
   public getMetadata(
-    key: string,
+    @Query('key') key: string,
   ): Models.Http.Response<TaonStorageObject | undefined> {
     //#region @backendFunc
     return async (req, res) => {
@@ -142,11 +143,11 @@ export abstract class TaonBaseStorageController<
   //#region API / list
   @GET()
   public list(
-    options: TaonStorageListOptions = {},
+    @Query('options') options: TaonStorageListOptions,
   ): Models.Http.Response<TaonStorageObject[]> {
     //#region @backendFunc
     return async () => {
-      return await this.storage.storageList(options);
+      return await this.storage.storageList(options || {});
     };
     //#endregion
   }
@@ -197,13 +198,17 @@ export abstract class TaonBaseStorageController<
 
   @POST()
   public copy(
-    sourceKey: string,
-    destinationKey: string,
-    options: TaonStorageCopyOptions = {},
+    @Query('sourceKey') sourceKey: string,
+    @Query('destinationKey') destinationKey: string,
+    @Body('options') options: TaonStorageCopyOptions,
   ): Models.Http.Response<TaonStorageObject> {
     //#region @backendFunc
     return async (req, res) => {
-      return await this.storage.storageCopy(sourceKey, destinationKey, options);
+      return await this.storage.storageCopy(
+        sourceKey,
+        destinationKey,
+        options || {},
+      );
     };
     //#endregion
   }
@@ -214,13 +219,17 @@ export abstract class TaonBaseStorageController<
 
   @POST()
   public move(
-    sourceKey: string,
-    destinationKey: string,
-    options: TaonStorageMoveOptions = {},
+    @Query('sourceKey') sourceKey: string,
+    @Query('destinationKey') destinationKey: string,
+    @Body('options') options: TaonStorageMoveOptions,
   ): Models.Http.Response<TaonStorageObject> {
     //#region @backendFunc
     return async (req, res) => {
-      return await this.storage.storageMove(sourceKey, destinationKey, options);
+      return await this.storage.storageMove(
+        sourceKey,
+        destinationKey,
+        options || {},
+      );
     };
     //#endregion
   }
@@ -231,7 +240,7 @@ export abstract class TaonBaseStorageController<
 
   @DELETE()
   public deleteMany(
-    keys: string[],
+    @Query('keys') keys: string[],
   ): Models.Http.Response<TaonStorageDeleteManyResult> {
     //#region @backendFunc
     return async (req, res) => {
@@ -292,7 +301,7 @@ export abstract class TaonBaseStorageController<
 
   //#region API / get public url
   @GET()
-  public getPublicUrl(key: string): Models.Http.Response<string> {
+  public getPublicUrl(@Query('key') key: string): Models.Http.Response<string> {
     //#region @backendFunc
     return async (req, res) => {
       key = this.storage.normalizeKey(key);
@@ -317,8 +326,8 @@ export abstract class TaonBaseStorageController<
   //#region API / get private url
   @GET()
   public getPrivateUrl(
-    key: string,
-    options: TaonStoragePrivateUrlOptions = {},
+    @Query('key') key: string,
+    @Body('options') options: TaonStoragePrivateUrlOptions = {},
   ): Models.Http.Response<string> {
     //#region @backendFunc
     return async (req, res) => {
