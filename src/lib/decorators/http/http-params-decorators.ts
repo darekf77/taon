@@ -29,9 +29,6 @@ function metaParam(
   // console.log('params updated', methodConfig);
 }
 
-type OptionParams = { name?: string; circ?: boolean };
-type StringOrOpt = string | OptionParams;
-
 /**
  * @deprecated use Taon.Http.Param.Path (is more safe and cleaner)
  */
@@ -54,7 +51,10 @@ export function Path(name: string) {
   };
 }
 
-export function Query(name?: StringOrOpt) {
+/**
+ * Normal query param
+ */
+export function Query(name?: string) {
   return function (
     target: any,
     propertyKey: string | symbol,
@@ -62,13 +62,36 @@ export function Query(name?: StringOrOpt) {
   ) {
     metaParam(
       'Query',
-      _.isString(name) ? name : _.isObject(name) ? name.name : void 0,
+      name,
       undefined,
       {},
       target,
       propertyKey,
       parameterIndex,
-      _.isObject(name) ? !!(name as OptionParams).circ : false,
+      false,
+    );
+  };
+}
+
+/**
+ * Query param that container json
+ * data with circural object refrences
+ */
+export function QueryCirc(name?: string) {
+  return function (
+    target: any,
+    propertyKey: string | symbol,
+    parameterIndex: number,
+  ) {
+    metaParam(
+      'Query',
+      name,
+      undefined,
+      {},
+      target,
+      propertyKey,
+      parameterIndex,
+      true,
     );
   };
 }
@@ -111,7 +134,10 @@ export function Header(name?: string) {
   };
 }
 
-export function Body(name?: StringOrOpt) {
+/**
+ * Normal body param
+ */
+export function Body(name?: string) {
   return function (
     target: any,
     propertyKey: string | symbol,
@@ -119,13 +145,36 @@ export function Body(name?: StringOrOpt) {
   ) {
     metaParam(
       'Body',
-      _.isString(name) ? name : _.isObject(name) ? name.name : void 0,
+      name,
       undefined,
       {},
       target,
       propertyKey,
       parameterIndex,
-      _.isObject(name) ? !!(name as OptionParams).circ : false,
+      false,
+    );
+  };
+}
+
+/**
+ * Body param that container json
+ * data with circural object refrences
+ */
+export function BodyCirc(name?: string) {
+  return function (
+    target: any,
+    propertyKey: string | symbol,
+    parameterIndex: number,
+  ) {
+    metaParam(
+      'Body',
+      name,
+      undefined,
+      {},
+      target,
+      propertyKey,
+      parameterIndex,
+      true,
     );
   };
 }
