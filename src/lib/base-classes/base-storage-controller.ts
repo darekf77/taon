@@ -8,7 +8,9 @@ import { crossPlatformPath, UtilsOs } from 'tnp-core/src';
 import { TaonController } from '../decorators/classes/controller-decorator';
 import { DELETE, GET, POST } from '../decorators/http/http-methods-decorators';
 import { Body, Query } from '../decorators/http/http-params-decorators';
+import { ExpressRequest, ExpressResponse } from '../express-types';
 import { ClassHelpers } from '../helpers/class-helpers';
+import { TaonUploadedFile } from '../helpers/express-request-to-form-data';
 import { Taon } from '../index';
 import { Models } from '../models';
 
@@ -24,6 +26,7 @@ import {
   TaonStorageUploadData,
   TaonStorageUploadOptions,
 } from './base-storage-models';
+
 //#endregion
 
 @TaonController<TaonBaseStorageController>({
@@ -163,32 +166,46 @@ export abstract class TaonBaseStorageController<
   ): Models.Http.Response<TaonStorageObject[]> {
     return async (req, res, { bodyFormDataFiles }) => {
       //#region @backendFunc
-
-      const result: TaonStorageObject[] = [];
-
-      for (const file of bodyFormDataFiles) {
-        const key = this.storage.normalizeKey(file.fileName);
-
-        await this.storage.storageUploadFromTempFile(key, file, {
-          fileName: file.fileName,
-          contentType: file.mimeType,
-        });
-
-        const object = await this.storage.storageGetMetadata(key);
-
-        if (object) {
-          await this.afterFileUploadHook(object, queryParams);
-
-          result.push(object);
-        }
-      }
-
-      return result;
-
+      return await this.handleUploadFiles(
+        bodyFormDataFiles,
+        queryParams,
+        req,
+        res,
+      );
       //#endregion
     };
   }
   //#endregion
+
+  protected async handleUploadFiles(
+    bodyFormDataFiles: TaonUploadedFile[],
+    queryParams?: UPLOAD_FILE_QUERY_PARAMS,
+    req?: ExpressRequest<any>,
+    res?: ExpressResponse<any>,
+  ): Promise<TaonStorageObject[]> {
+    //#region @backendFunc
+    const result: TaonStorageObject[] = [];
+
+    for (const file of bodyFormDataFiles) {
+      const key = this.storage.normalizeKey(file.fileName);
+
+      await this.storage.storageUploadFromTempFile(key, file, {
+        fileName: file.fileName,
+        contentType: file.mimeType,
+      });
+
+      const object = await this.storage.storageGetMetadata(key);
+
+      if (object) {
+        await this.afterFileUploadHook(object, queryParams);
+
+        result.push(object);
+      }
+    }
+
+    return result;
+    //#endregion
+  }
 
   //#region API / copy
 

@@ -2862,15 +2862,27 @@ export class EndpointContext {
           // console.log(`[${httpMethodType.toUpperCase()}] ${expressPath} `);
 
           if ((controllerInstance as TaonBaseController)?.beforeEachRequest) {
-            await (controllerInstance as TaonBaseController)?.beforeEachRequest(
-              {
+            try {
+              await (
+                controllerInstance as TaonBaseController
+              )?.beforeEachRequest({
                 req,
                 res,
                 expressPath,
                 classConfig,
                 methodConfig,
-              } as Models.TaonCtrlBeforeEachRequestParams,
-            );
+              } as Models.TaonCtrlBeforeEachRequestParams);
+            } catch (error) {
+              const { errroResult, status } = ClassHelpers.mapFnError(
+                error,
+                res,
+              );
+              if (UtilsOs.isRunningInCloudflareWorker()) {
+                console.error(errroResult);
+              }
+              res.status(status).json(errroResult);
+              return;
+            }
           }
 
           //#region process params
