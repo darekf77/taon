@@ -1,5 +1,6 @@
 //#region imports
 import { R2Bucket } from '@cloudflare/workers-types';
+import { Translation } from '@taon-dev/i18n/src';
 import type { Dirent } from 'fs-extra';
 import { FetchResponseType } from 'ng2-rest/src';
 import { fse, path } from 'tnp-core/src';
@@ -11,6 +12,7 @@ import { Body, Query } from '../decorators/http/http-params-decorators';
 import { ExpressRequest, ExpressResponse } from '../express-types';
 import { ClassHelpers } from '../helpers/class-helpers';
 import { TaonUploadedFile } from '../helpers/express-request-to-form-data';
+import { getStatusCode, HttpStatusEnum } from '../http-status';
 import { Taon } from '../index';
 import { Models } from '../models';
 
@@ -28,6 +30,8 @@ import {
 } from './base-storage-models';
 
 //#endregion
+
+const t = Translation.for(Taon.__FILE_RELATIVE_PATH, Taon.LANG_IMPORT_MAP);
 
 @TaonController<TaonBaseStorageController>({
   className: 'TaonBaseStorageController',
@@ -54,6 +58,13 @@ export abstract class TaonBaseStorageController<
   ): Models.Http.Response<ReadableStream<Uint8Array>> {
     //#region @backendFunc
     return async (reqr, res) => {
+      if (!key) {
+        Taon.error({
+          status: getStatusCode(HttpStatusEnum.FORBIDDEN),
+          message: t.gettext('Invalid or not provided "key" parameter'),
+        });
+      }
+
       key = this.storage.normalizeKey(key);
 
       if (UtilsOs.isRunningInCloudflareWorker()) {
@@ -110,6 +121,13 @@ export abstract class TaonBaseStorageController<
   public delete(@Query('key') key: string): Models.Http.Response<boolean> {
     //#region @backendFunc
     return async (req, res) => {
+      if (!key) {
+        Taon.error({
+          status: getStatusCode(HttpStatusEnum.FORBIDDEN),
+          message: t.gettext('Invalid or not provided "key" parameter'),
+        });
+      }
+
       return await this.storage.storageDelete(key);
     };
     //#endregion
@@ -123,6 +141,13 @@ export abstract class TaonBaseStorageController<
   public exists(@Query('key') key: string): Models.Http.Response<boolean> {
     //#region @backendFunc
     return async (req, res) => {
+      if (!key) {
+        Taon.error({
+          status: getStatusCode(HttpStatusEnum.FORBIDDEN),
+          message: t.gettext('Invalid or not provided "key" parameter'),
+        });
+      }
+
       return await this.storage.storageExists(key);
     };
     //#endregion
@@ -137,6 +162,13 @@ export abstract class TaonBaseStorageController<
   ): Models.Http.Response<TaonStorageObject | undefined> {
     //#region @backendFunc
     return async (req, res) => {
+      if (!key) {
+        Taon.error({
+          status: getStatusCode(HttpStatusEnum.FORBIDDEN),
+          message: t.gettext('Invalid or not provided "key" parameter'),
+        });
+      }
+
       return await this.storage.storageGetMetadata(key);
     };
     //#endregion
@@ -317,6 +349,13 @@ export abstract class TaonBaseStorageController<
   public getPublicUrl(@Query('key') key: string): Models.Http.Response<string> {
     //#region @backendFunc
     return async (req, res) => {
+      if (!key) {
+        Taon.error({
+          status: getStatusCode(HttpStatusEnum.FORBIDDEN),
+          message: t.gettext('Invalid or not provided "key" parameter'),
+        });
+      }
+
       key = this.storage.normalizeKey(key);
 
       if (!(await this.storage.storageExists(key))) {
@@ -344,6 +383,13 @@ export abstract class TaonBaseStorageController<
   ): Models.Http.Response<string> {
     //#region @backendFunc
     return async (req, res) => {
+      if (!key) {
+        Taon.error({
+          status: getStatusCode(HttpStatusEnum.FORBIDDEN),
+          message: t.gettext('Invalid or not provided "key" parameter'),
+        });
+      }
+
       key = this.storage.normalizeKey(key);
 
       if (!(await this.storage.storageExists(key))) {
