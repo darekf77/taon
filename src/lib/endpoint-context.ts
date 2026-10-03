@@ -2797,16 +2797,6 @@ export class EndpointContext {
           resolvedParams,
         );
 
-      if ((controllerInstance as TaonBaseController)?.beforeEachRequest) {
-        await (controllerInstance as TaonBaseController)?.beforeEachRequest({
-          resolvedParams,
-          req,
-          res,
-          expressPath,
-          classConfig,
-          methodConfig,
-        } as Models.TaonCtrlBeforeEachRequestParams);
-      }
       let result = await getResponseValue(response, { req, res, results });
       return result;
     };
@@ -2870,6 +2860,19 @@ export class EndpointContext {
         ...middlewareHandlers,
         async (req: expressType.Request, res: expressType.Response) => {
           // console.log(`[${httpMethodType.toUpperCase()}] ${expressPath} `);
+
+          if ((controllerInstance as TaonBaseController)?.beforeEachRequest) {
+            await (controllerInstance as TaonBaseController)?.beforeEachRequest(
+              {
+                req,
+                res,
+                expressPath,
+                classConfig,
+                methodConfig,
+              } as Models.TaonCtrlBeforeEachRequestParams,
+            );
+          }
+
           //#region process params
           const args: any[] = [];
           let bodyFormDataFiles: TaonUploadedFile[] = [];

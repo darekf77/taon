@@ -448,7 +448,6 @@ export namespace Models {
   }
 
   export interface TaonCtrlBeforeEachRequestParams<CONTROLLER = any> {
-    resolvedParams;
     req: ExpressRequest;
     res: ExpressResponse;
     expressPath: string;
