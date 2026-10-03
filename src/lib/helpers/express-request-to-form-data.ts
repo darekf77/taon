@@ -1,16 +1,78 @@
-import type express from 'express';
+import { Readable } from 'node:stream';
+import { pipeline } from 'node:stream/promises'; // @esmRemove
 
+import { R2Bucket } from '@cloudflare/workers-types';
+import type express from 'express';
+import { path, fse } from 'tnp-core/src';
+import { GlobalStorage, UtilsOs, UtilsTempFolder } from 'tnp-core/src';
+
+//#region models / taon uplaoded file
+export interface TaonUploadedFile {
+  /**
+   * multipart/form-data field name.
+   */
+  fieldName: string;
+
+  /**
+   * Original filename sent by the browser.
+   */
+  fileName: string;
+
+  /**
+   * MIME type reported by multipart/form-data.
+   */
+  mimeType: string;
+
+  /**
+   * Local filesystem path on Node.js.
+   * R2 object key on Cloudflare.
+   */
+  tempKeyOrPath: string;
+}
+//#endregion
+
+//#region models / taon parsed form data
+export interface TaonParsedFormData {
+  /**
+   * Normal non-file multipart fields.
+   */
+  formData: FormData;
+
+  /**
+   * Files stored temporarily outside memory.
+   */
+  files: TaonUploadedFile[];
+}
+//#endregion
+
+//#region request express request to form data
 export async function expressRequestToFormData(
   req: express.Request,
-): Promise<FormData> {
+): Promise<TaonParsedFormData> {
   //#region @backendFunc
-  const BusboyData = (await import('busboy'));
 
-  return await new Promise<FormData>((resolve, reject) => {
+  const Busboy = await import('busboy');
+
+  const tempFolder = await UtilsTempFolder.getPath({
+    prefix: 'taon-form-data',
+    everytimeNew: true,
+    deleteAfterDays: 1,
+  });
+
+  if (!UtilsOs.isRunningInCloudflareWorker()) {
+    //#region @esmRemove
+    await fse.ensureDir(tempFolder);
+    //#endregion
+  }
+
+  return await new Promise<TaonParsedFormData>((resolve, reject) => {
     const formData = new FormData();
+    const files: TaonUploadedFile[] = [];
+
+    const pendingFiles: Promise<void>[] = [];
 
     // @ts-ignore
-    const busboy = BusboyData({
+    const busboy = Busboy({
       headers: req.headers,
     });
 
@@ -18,35 +80,87 @@ export async function expressRequestToFormData(
       formData.append(name, value);
     });
 
-    busboy.on('file', (name, stream, info) => {
-      const chunks: Uint8Array[] = [];
+    // @ts-ignore
+    busboy.on('file', (fieldName, stream, info) => {
+      const tempFileName = `${Date.now()}-${crypto.randomUUID()}-${info.filename}`;
 
-      stream.on('data', chunk => {
-        chunks.push(chunk);
-      });
+      const tempPath = UtilsOs.isRunningInCloudflareWorker()
+        ? `${tempFolder}/${tempFileName}`
+        : path.join(tempFolder, tempFileName);
 
-      stream.on('error', reject);
+      const uploadedFile: TaonUploadedFile = {
+        fieldName,
+        fileName: info.filename,
+        mimeType: info.mimeType || 'application/octet-stream',
+        tempKeyOrPath: tempPath,
+      };
 
-      stream.on('end', () => {
-        const blob = new Blob(chunks as any, {
-          type: info.mimeType || 'application/octet-stream',
-        });
+      let promise: Promise<void>;
 
-        const file = new File([blob], info.filename, {
-          type: info.mimeType || 'application/octet-stream',
-        });
+      if (UtilsOs.isRunningInCloudflareWorker()) {
+        promise = saveStreamToCloudflareTempStorage(
+          tempPath,
+          stream,
+          uploadedFile.mimeType,
+        );
+      } else {
+        //#region @esmRemove
+        promise = pipeline(stream, fse.createWriteStream(tempPath));
+        //#endregion
+      }
 
-        formData.append(name, file);
-      });
+      pendingFiles.push(
+        promise.then(() => {
+          files.push(uploadedFile);
+        }),
+      );
     });
 
     busboy.on('error', reject);
 
-    busboy.on('finish', () => {
-      resolve(formData);
+    busboy.on('finish', async () => {
+      try {
+        await Promise.all(pendingFiles);
+
+        resolve({
+          formData,
+          files,
+        });
+      } catch (error) {
+        reject(error);
+      }
     });
 
     req.pipe(busboy);
   });
+
   //#endregion
 }
+//#endregion
+
+//#region save stream to cloud flare temp storage
+async function saveStreamToCloudflareTempStorage(
+  key: string,
+  stream: NodeJS.ReadableStream,
+  mimeType: string,
+): Promise<void> {
+  //#region @backendFunc
+
+  const bucket = GlobalStorage.get('TAON_TEMP_STORAGE') as R2Bucket;
+
+  if (!bucket) {
+    throw new Error(`Missing TAON_TEMP_STORAGE.`);
+  }
+
+  const webStream = Readable.toWeb(stream as Readable) as ReadableStream;
+
+  await bucket.put(key, webStream as any, {
+    httpMetadata: {
+      contentType: mimeType,
+    },
+  });
+
+  //#endregion
+}
+
+//#endregion

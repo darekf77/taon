@@ -161,28 +161,24 @@ export abstract class TaonBaseStorageController<
     @Body() formData: FormData,
     @Query() queryParams?: UPLOAD_FILE_QUERY_PARAMS,
   ): Models.Http.Response<TaonStorageObject[]> {
-    return async (req, res) => {
+    return async (req, res, { bodyFormDataFiles }) => {
       //#region @backendFunc
 
       const result: TaonStorageObject[] = [];
 
-      // @ts-ignore
-      for (const [fieldName, value] of formData.entries()) {
-        if (!(value instanceof File)) {
-          continue;
-        }
+      for (const file of bodyFormDataFiles) {
+        const key = this.storage.normalizeKey(file.fileName);
 
-        const key = this.storage.normalizeKey(value.name);
-
-        await this.storage.storageUpload(key, value, {
-          fileName: value.name,
-          contentType: value.type,
+        await this.storage.storageUploadFromTempFile(key, file, {
+          fileName: file.fileName,
+          contentType: file.mimeType,
         });
 
         const object = await this.storage.storageGetMetadata(key);
 
         if (object) {
           await this.afterFileUploadHook(object, queryParams);
+
           result.push(object);
         }
       }

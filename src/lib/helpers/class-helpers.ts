@@ -226,7 +226,20 @@ export namespace ClassHelpers {
       [CoreModels.TaonHttpErrorCustomProp]: true,
     } as RestErrorResponseWrapper;
 
-    console.error(errroResult);
+    // console.error(errroResult);
+    if (errroResult.code) {
+      console.error(`Error code key: ${errroResult.code}`);
+    }
+    if (!_.isUndefined(errroResult.status)) {
+      console.error(`Error status code: ${errroResult.status}`);
+    }
+    if (errroResult.message) {
+      console.error(errroResult.message);
+    }
+    if (errroResult.details) {
+      console.error(errroResult.details);
+    }
+
     // console.error(errroResult.1);
 
     return { errroResult, status };

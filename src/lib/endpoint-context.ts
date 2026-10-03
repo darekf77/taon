@@ -53,7 +53,10 @@ import type { ContextsEndpointStorage } from './endpoint-context-storage';
 import { EntityProcess } from './entity-process';
 import { getResponseValue } from './get-response-value';
 import { ClassHelpers } from './helpers/class-helpers';
-import { expressRequestToFormData } from './helpers/express-request-to-form-data';
+import {
+  expressRequestToFormData,
+  TaonUploadedFile,
+} from './helpers/express-request-to-form-data';
 import { TaonHelpers } from './helpers/taon-helpers';
 import { Models } from './models';
 import { RealtimeCore } from './realtime/realtime-core';
@@ -2776,7 +2779,12 @@ export class EndpointContext {
     // const url = this.uri;
 
     //#region get result
-    const getResult = async (resolvedParams, req, res) => {
+    const getResult = async (
+      resolvedParams,
+      req,
+      res,
+      results: Models.Http.RequestResults,
+    ) => {
       const response: Models.Http.Response<any> =
         methodConfig.descriptor.value.apply(
           /**
@@ -2799,7 +2807,7 @@ export class EndpointContext {
           methodConfig,
         } as Models.TaonCtrlBeforeEachRequestParams);
       }
-      let result = await getResponseValue(response, { req, res });
+      let result = await getResponseValue(response, { req, res, results });
       return result;
     };
     //#endregion
@@ -2822,6 +2830,7 @@ export class EndpointContext {
             paramsFromBrowser,
             void 0,
             void 0,
+            {},
           );
           const sendToIpsMainOn = TaonHelpers.ipcKeyNameResponse(
             target,
@@ -2863,6 +2872,7 @@ export class EndpointContext {
           // console.log(`[${httpMethodType.toUpperCase()}] ${expressPath} `);
           //#region process params
           const args: any[] = [];
+          let bodyFormDataFiles: TaonUploadedFile[] = [];
 
           let tBody = req.body;
           const requestContentType = req.headers['content-type'] || '';
@@ -2871,7 +2881,10 @@ export class EndpointContext {
           );
 
           if (isRequestFormData) {
-            tBody = await expressRequestToFormData(req);
+            const { files, formData } = await expressRequestToFormData(req);
+            bodyFormDataFiles = files;
+            // TODO handle somehow file
+            tBody = formData;
           } else {
             tBody = req.body;
           }
@@ -3081,6 +3094,7 @@ export class EndpointContext {
               resolvedParams,
               req,
               res,
+              { bodyFormDataFiles },
             );
 
             if (res.headersSent) {

@@ -1,11 +1,15 @@
 //#region imports
+import { Readable } from 'node:stream';
+import { pipeline } from 'node:stream/promises'; // @esmRemove
+
 import { R2Bucket } from '@cloudflare/workers-types';
 import type { Dirent } from 'fs-extra';
-import { fse, path } from 'tnp-core/src';
+import { fse, GlobalStorage, path } from 'tnp-core/src';
 import { crossPlatformPath, UtilsOs } from 'tnp-core/src';
 
 import { TaonController } from '../decorators/classes/controller-decorator';
 import { ClassHelpers } from '../helpers/class-helpers';
+import { TaonUploadedFile } from '../helpers/express-request-to-form-data';
 import { Body, DELETE, GET, POST, Query, Taon } from '../index';
 
 import { TaonBaseController } from './base-controller';
@@ -155,36 +159,29 @@ export class TaonBaseStorageBackend {
   //#endregion
 
   //#region methods / upload node
+
   async uploadNode(key: string, data: TaonStorageUploadData): Promise<void> {
     //#region @backendFunc
+    //#region @esmRemove
     const absPath = this.getFileAbsPathInBucket(key);
 
     await fse.promises.mkdir(path.dirname(absPath), {
       recursive: true,
     });
 
+    // Node.js Readable
+    if (data instanceof Readable) {
+      await pipeline(data, fse.createWriteStream(absPath));
+
+      return;
+    }
+
+    // Web ReadableStream
     if (data instanceof ReadableStream) {
-      const reader = data.getReader();
-
-      const file = fse.createWriteStream(absPath);
-
-      try {
-        while (true) {
-          const { done, value } = await reader.read();
-
-          if (done) {
-            break;
-          }
-
-          if (value) {
-            if (!file.write(Buffer.from(value))) {
-              await new Promise<void>(resolve => file.once('drain', resolve));
-            }
-          }
-        }
-      } finally {
-        file.end();
-      }
+      await pipeline(
+        Readable.fromWeb(data as any),
+        fse.createWriteStream(absPath),
+      );
 
       return;
     }
@@ -208,6 +205,7 @@ export class TaonBaseStorageBackend {
       absPath,
       typeof data === 'string' ? data : Buffer.from(data),
     );
+    //#endregion
     //#endregion
   }
 
@@ -259,6 +257,79 @@ export class TaonBaseStorageBackend {
     //#endregion
   }
   //#endregion
+
+  //#region mehods / store
+  async storageUploadFromTempFile(
+    key: string,
+    file: TaonUploadedFile,
+    options?: {
+      fileName?: string;
+      contentType?: string;
+    },
+  ): Promise<void> {
+    //#region @backendFunc
+
+    if (UtilsOs.isRunningInCloudflareWorker()) {
+      await this.storageUploadFromCloudflareTempFile(key, file, options);
+
+      return;
+    }
+
+    await this.storageUploadFromNodeTempFile(key, file, options);
+
+    //#endregion
+  }
+  //#endregion
+
+  private async storageUploadFromNodeTempFile(
+    key: string,
+    file: TaonUploadedFile,
+    options?: {
+      fileName?: string;
+      contentType?: string;
+    },
+  ): Promise<void> {
+    //#region @backendFunc
+
+    const stream = fse.createReadStream(file.tempKeyOrPath);
+
+    try {
+      await this.storageUpload(key, stream as any, options);
+    } finally {
+      await fse.remove(file.tempKeyOrPath);
+    }
+
+    //#endregion
+  }
+
+  private async storageUploadFromCloudflareTempFile(
+    key: string,
+    file: TaonUploadedFile,
+    options?: {
+      fileName?: string;
+      contentType?: string;
+    },
+  ): Promise<void> {
+    //#region @backendFunc
+
+    const tempStorage = GlobalStorage.get('TAON_TEMP_STORAGE') as R2Bucket;
+
+    const object = await tempStorage.get(file.tempKeyOrPath);
+
+    if (!object) {
+      throw new Error(
+        `Temporary uploaded file does not exist: ${file.tempKeyOrPath}`,
+      );
+    }
+
+    try {
+      await this.storageUpload(key, object.body as any, options);
+    } finally {
+      await tempStorage.delete(file.tempKeyOrPath);
+    }
+
+    //#endregion
+  }
 
   //#region methods / storage metadata
   async storageGetMetadata(

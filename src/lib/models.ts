@@ -13,6 +13,7 @@ import type { ControllerConfig } from './config/controller-config';
 import type { MethodConfig } from './config/method-config';
 import type { EndpointContext } from './endpoint-context';
 import { ExpressRequest, ExpressResponse } from './express-types';
+import { TaonUploadedFile } from './helpers/express-request-to-form-data';
 
 // ! TODO make it as a nice way to wrap normal request
 export class TaonRestResponseWrapper extends RestResponseWrapper {}
@@ -413,10 +414,15 @@ export namespace Models {
       ): PromiseObservableMix<HttpResponse<T>>;
     }
 
+    export interface RequestResults {
+      bodyFormDataFiles?: TaonUploadedFile[];
+    }
+
     export interface AsyncResponse<T> {
       (
         req?: ExpressRequest<any>,
         res?: ExpressResponse<any>,
+        results?: RequestResults,
       ): Promise<SyncResponse<T> | SyncResponseFunc<T>>;
     }
 
@@ -495,7 +501,6 @@ export interface TaonPaginationQuery<T = string> {
    */
   callQueryMethod?: keyof T;
 }
-
 
 //#region multer file uplaod repsonse
 export interface MulterFileUploadResponse {
