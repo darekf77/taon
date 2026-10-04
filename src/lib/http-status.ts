@@ -138,10 +138,10 @@ export const HttpStatusCodeMap: Record<HttpStatusEnum, number> = {
   [HttpStatusEnum.NOT_MODIFIED]: 304,
 
   [HttpStatusEnum.BAD_REQUEST]: 400,
-  [HttpStatusEnum.UNAUTHORIZED]: 401,
+  [HttpStatusEnum.NO_TOKEN]: 401,
   [HttpStatusEnum.INVALID_TOKEN]: 401,
   [HttpStatusEnum.INVALID_CREDENTIALS]: 401,
-  [HttpStatusEnum.NO_TOKEN]: 401,
+  [HttpStatusEnum.UNAUTHORIZED]: 401,
   [HttpStatusEnum.FORBIDDEN]: 403,
   [HttpStatusEnum.NOT_FOUND]: 404,
   [HttpStatusEnum.CONFLICT]: 409,
@@ -190,6 +190,44 @@ export const HttpStatusCodeEnumMap: Record<number, HttpStatusEnum> =
     Object.entries(HttpStatusCodeMap).map(([status, code]) => [code, status]),
   ) as Record<number, HttpStatusEnum>;
 //#endregion
+
+export function getHttpStatus(
+  /**
+   * 401, 500 etc.
+   */
+  statusCode: string | number,
+  message: string,
+): HttpStatusEnum | undefined {
+  const numericCode = Number(statusCode);
+
+  const statuses = Object.values(HttpStatusEnum).filter(
+    status => HttpStatusCodeMap[status] === numericCode,
+  );
+
+  if (statuses.length === 0) {
+    return undefined;
+  }
+
+  // Only one possible status for this HTTP code
+  if (statuses.length === 1) {
+    return statuses[0];
+  }
+
+  // Multiple statuses share the same code, e.g. 401
+  const normalizedMessage = message?.trim().toLowerCase();
+
+  const matchedStatus = statuses.find(status => {
+    const enumValue = status.toLowerCase();
+    const statusText = getHttpStatusCodeMessages()[status].toLowerCase();
+
+    return normalizedMessage === enumValue || normalizedMessage === statusText;
+  });
+
+  const map = HttpStatusCodeEnumMap;
+
+  // Fall back to generic HTTP status
+  return matchedStatus ?? map[numericCode];
+}
 
 //#region get status text
 export function getStatusText(codeOrStatus: number | HttpStatusEnum): string {
