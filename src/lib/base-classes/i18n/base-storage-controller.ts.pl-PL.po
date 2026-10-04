@@ -1,0 +1,14 @@
+msgid ""
+msgstr ""
+"Language: pl-PL\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/lib/base-classes/base-storage-controller.ts:64
+#: src/lib/base-classes/base-storage-controller.ts:127
+#: src/lib/base-classes/base-storage-controller.ts:147
+#: src/lib/base-classes/base-storage-controller.ts:168
+#: src/lib/base-classes/base-storage-controller.ts:355
+#: src/lib/base-classes/base-storage-controller.ts:389
+msgid "Invalid or not provided \"key\" parameter"
+msgstr ""

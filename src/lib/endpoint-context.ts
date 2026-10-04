@@ -2033,11 +2033,21 @@ export class EndpointContext {
       }
     }
 
-    const entities = this.getClassFunByArr(Models.ClassType.ENTITY).map(
-      entityFn => {
+    const entities = this.getClassFunByArr(Models.ClassType.ENTITY)
+      .map(entityFn => {
         return ClassHelpers.getOrginalClass(entityFn);
-      },
-    );
+      })
+      .filter(entityClassFn => {
+        const options = Reflect.getMetadata(
+          Symbols.metadata.options.entity,
+          entityClassFn,
+        ) as TaonEntityOptions;
+        const createTable = _.isUndefined(options.createTable)
+          ? true
+          : options.createTable;
+
+        return createTable;
+      });
 
     const subscribers = this.getClassFunByArr(Models.ClassType.SUBSCRIBER);
 
