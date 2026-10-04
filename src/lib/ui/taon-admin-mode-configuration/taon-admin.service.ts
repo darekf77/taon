@@ -7,6 +7,7 @@ import {
   TemplateRef,
   WritableSignal,
 } from '@angular/core'; // @browser
+import { HttpStatusEnum } from 'taon/src';
 import { StorSignal, TaonStor } from 'taon-storage/src';
 import { Helpers, _ } from 'tnp-core/src';
 
@@ -52,6 +53,14 @@ export class TaonAdmin {
     {
       defaultValue: TaonAdminPanelMode.NONE,
       keyOrPath: 'adminPanelMode',
+    },
+    TaonAdminService,
+  );
+
+  public skipShowingErrors = TaonStor.inLocalstorage(
+    {
+      defaultValue: [HttpStatusEnum.NO_TOKEN] as HttpStatusEnum[],
+      keyOrPath: 'skipShowingErrors',
     },
     TaonAdminService,
   );
@@ -111,6 +120,24 @@ export class TaonAdminService {
 
   public get additionalTabs(): WritableSignal<TaonAdminTab[]> {
     return TaonAdmin.Instance.additionalTabs;
+  }
+
+  public get skipShowingErrors(): StorSignal<HttpStatusEnum[]> {
+    return TaonAdmin.Instance.skipShowingErrors;
+  }
+
+  shouldSkipShowingError(status: HttpStatusEnum): boolean {
+    return this.skipShowingErrors().includes(status);
+  }
+
+  setSkipShowingError(status: HttpStatusEnum, skip: boolean): void {
+    this.skipShowingErrors.update(current => {
+      if (skip) {
+        return current.includes(status) ? current : [...current, status];
+      }
+
+      return current.filter(x => x !== status);
+    });
   }
 
   admin(): void {
