@@ -183,7 +183,7 @@ export namespace Taon {
     opt:
       | Pick<
           RestErrorResponseWrapper,
-          'message' | 'status' | 'details' | 'code'
+          'message' | 'status' | 'details' | 'code' | 'context'
         >
       | string,
   ): void => {

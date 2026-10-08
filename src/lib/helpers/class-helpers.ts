@@ -199,12 +199,14 @@ export namespace ClassHelpers {
     let details: any = undefined;
     let success = false;
     let code = undefined;
+    let context = undefined;
     if (typeof error === 'function') {
       const obj: RestErrorResponseWrapper = error(res) || {};
       status = obj.status || 400;
       message = obj.message;
       details = obj.details;
       code = obj.code;
+      context = obj.context;
     } else if (typeof error === 'string') {
       message = error;
       status = 400;
@@ -223,6 +225,7 @@ export namespace ClassHelpers {
       message,
       details,
       code,
+      context,
       [CoreModels.TaonHttpErrorCustomProp]: true,
     } as RestErrorResponseWrapper;
 
