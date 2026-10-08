@@ -25,7 +25,9 @@ export const cloneObj = <CloneT>(
       const valueIsEmptyArray = Array.isArray(value) && value.length === 0;
       if (
         !valueIsEmptyArray &&
-        (_.isNil(value) || _.isFunction(value) || _.isObject(value))
+        (_.isNil(value) ||
+          _.isFunction(value) ||
+          (_.isObject(value) && !_.isLeafObject(value)))
       ) {
         // skipping
         // console.log('skipping', lodashPath);
