@@ -2080,13 +2080,21 @@ export class EndpointContext {
 
     this.logFramework && console.log(`DROP SCHEMA: ${dropSchema}`);
 
+    const kvClass = await import('./base-classes/base-kv-repository');
+    const kvSyncClass = await import('./base-classes/base-kv-sync-repository');
+
     if (dropSchema) {
-      const repos = this.getClassFunByArr(Models.ClassType.REPOSITORY);
+      const repos = this.getClassesInstancesArrBy(Models.ClassType.REPOSITORY);
       for (const repo of repos) {
         const repoClassName = ClassHelpers.getName(repo);
         // console.log({ repoClassName });
         if (!UtilsOs.isRunningInCloudflareWorker()) {
-          Helpers.writeJson(this.kvDbJsonLocationForClass(repoClassName), {});
+          if (
+            repo instanceof kvClass.TaonBaseKvRepository ||
+            repo instanceof kvSyncClass.TaonBaseKvSyncRepository
+          ) {
+            Helpers.writeJson(this.kvDbJsonLocationForClass(repoClassName), {});
+          }
         }
       }
     }
