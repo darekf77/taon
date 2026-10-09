@@ -2268,7 +2268,9 @@ export class EndpointContext {
       const instance = this.getInstanceBy(
         controllerClassFn as any,
       ) as TaonBaseController;
+      // @ts-expect-error
       if (_.isFunction(instance.afterAllCtxInited)) {
+        // @ts-expect-error
         await instance.afterAllCtxInited({ ctxStorage });
       }
     }
@@ -2878,18 +2880,17 @@ export class EndpointContext {
         ...middlewareHandlers,
         async (req: expressType.Request, res: expressType.Response) => {
           // console.log(`[${httpMethodType.toUpperCase()}] ${expressPath} `);
-
+          // @ts-expect-error
           if ((controllerInstance as TaonBaseController)?.beforeEachRequest) {
             try {
-              await (
-                controllerInstance as TaonBaseController
-              )?.beforeEachRequest({
-                req,
-                res,
-                expressPath,
-                classConfig,
-                methodConfig,
-              } as Models.TaonCtrlBeforeEachRequestParams);
+              await (controllerInstance as TaonBaseController) // @ts-expect-error
+                ?.beforeEachRequest({
+                  req,
+                  res,
+                  expressPath,
+                  classConfig,
+                  methodConfig,
+                } as Models.TaonCtrlBeforeEachRequestParams);
             } catch (error) {
               const { errroResult, status } = ClassHelpers.mapFnError(
                 error,
