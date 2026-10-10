@@ -95,7 +95,6 @@ const createContextFn = <
     configFn,
     cloneOptions,
   );
-  ContextsEndpointStorage.Instance.set(endpointContextRef);
 
   const res = {
     //#region contexts
@@ -235,6 +234,8 @@ const createContextFn = <
       overrideOptions = overrideOptions || {};
       return await new Promise(async (resolve, reject) => {
         //#region init in set timeout
+
+        ContextsEndpointStorage.Instance.set(endpointContextRef);
         // setTimeout(async () => {
         //#region initialization of taon
         if (UtilsOs.isRunningInDocker()) {

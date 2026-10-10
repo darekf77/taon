@@ -23,14 +23,16 @@ export class ContextsEndpointStorage {
 
   set(context: EndpointContext): void {
     if (!this.taonEndpointContexts.has(context.contextName)) {
+      // console.log(`registering "${context.contextName}"`)
       this.taonEndpointContexts.set(context.contextName, context);
     }
   }
 
   get arr(): EndpointContext[] {
-    return Array.from(this.taonEndpointContexts.values()).filter(
+    const arr = Array.from(this.taonEndpointContexts.values()).filter(
       f => f.contextType === 'normal',
     );
+    return arr;
   }
 
   getBy(
