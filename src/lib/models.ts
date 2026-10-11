@@ -387,12 +387,19 @@ export namespace Models {
 
     export type SyncResponse<T> = string | T;
 
+    export type TaonResponseStream =
+      | NodeJS.ReadableStream
+      | ReadableStream<Uint8Array>;
+
     export type ResponseFuncOpt<T> = {
-      limitSize?: (
-        enties: Function | Function[],
-        include: string[],
-        exclude: string[],
-      ) => void;
+      /**
+       * send to user response with circural dependencies
+       */
+      circResponse?: (anyResponse: any) => SyncResponse<T>;
+      /**
+       * send stream to user - it does not end conneciton
+       */
+      streamResponse?: (anyStream: TaonResponseStream) => SyncResponse<T>;
     };
 
     export type SyncResponseFunc<T> = (

@@ -1,70 +1,19 @@
 //#region imports
+import type { Readable } from 'node:stream';
+
 import type { Response } from 'express';
 import { walk } from 'lodash-walk-object/src';
 import { decodeMappingForHeaderJson } from 'ng2-rest/src';
 import { _ } from 'tnp-core/src';
 import { config } from 'tnp-core/src';
 
+import {
+  applayTransformFn,
+  getTransformFunction,
+} from './entity-process-helpers';
 import { ClassHelpers } from './helpers/class-helpers';
+import { Models } from './models';
 import { Symbols } from './symbols';
-//#endregion
-
-//#region get transform function
-/**
- * @deprecated
- */
-export const getTransformFunction = (target: Function) => {
-  if (!target) {
-    return;
-  }
-
-  // const className = ClassHelpers.getName(target)
-  // target = ClassHelpers.getBy(className);
-
-  if (!target) {
-    return void 0;
-  }
-  const configs = ClassHelpers.getControllerConfigs(target);
-  // console.log(`CONFIGS TO CHECK`, configs)
-  const functions = configs
-    .map(c => {
-      if (_.isFunction(c.browserTransformFn)) {
-        return c.browserTransformFn;
-      }
-    })
-    .filter(f => _.isFunction(f));
-  return functions.length === 0
-    ? void 0
-    : function (entity) {
-        for (let index = functions.length - 1; index >= 0; index--) {
-          const transformFun = functions[index];
-          transformFun(entity);
-        }
-        return entity;
-      };
-};
-//#endregion
-
-//#region single transform
-/**
- * @deprecated
- */
-export const singleTransform = (json: any) => {
-  let ptarget = ClassHelpers.getClassFnFromObject(json);
-  let pbrowserTransformFn = getTransformFunction(ptarget);
-  if (pbrowserTransformFn) {
-    const newValue = pbrowserTransformFn(json);
-    if (!_.isObject(newValue)) {
-      console.error(
-        `Please return object in transform function for class: ` +
-          `${ClassHelpers.getName(json)}`,
-      );
-    } else {
-      json = newValue;
-    }
-  }
-  return json;
-};
 //#endregion
 
 export class EntityProcess {
@@ -72,18 +21,14 @@ export class EntityProcess {
   /**
    * Data to send
    */
-  data: any;
+  private data: any;
 
   /**
-   * Say yes to:
-   * - circural object
-   * - transform browser fn in decorator
+   * True when response lifecycle was taken over by
+   * circResponse / streamResponse / etc.
    */
-  private advancedManipulation: boolean = false;
+  private responseHandled = false;
 
-  private entityMapping: any;
-
-  private circural = [];
   //#endregion
 
   //#region constructor
@@ -91,97 +36,89 @@ export class EntityProcess {
     /**
      * Data from backend
      */
-    private result: any,
     private response: Response,
   ) {}
   //#endregion
 
-  //#region check advanced manipulation
-  private checkAdvancedManiupulation() {
-    if (_.isFunction(this.result)) {
-      this.advancedManipulation = true;
-      this.result = this.result();
+  //#region run
+  public async run(resultFromControllerMethod: any) {
+    let advancedManipulation = false;
+
+    if (_.isFunction(resultFromControllerMethod)) {
+      advancedManipulation = true;
+
+      const resultFn: Models.Http.SyncResponseFunc<any> =
+        resultFromControllerMethod as any;
+
+      await resultFn({
+        circResponse: (circData: any) => {
+          this.responseHandled = true;
+
+          const { circs, data } = applayTransformFn(circData);
+
+          this.data = data;
+
+          if (_.isObject(this.data)) {
+            this.setHeaders(advancedManipulation, circs);
+          }
+
+          this.send(advancedManipulation);
+        },
+
+        streamResponse: (stream: Readable) => {
+          this.responseHandled = true;
+          this.streamResponse(stream);
+        },
+      });
+
+      return;
     }
+
+    this.data = resultFromControllerMethod;
+
+    if (_.isObject(this.data)) {
+      this.setHeaders(advancedManipulation, []);
+    }
+
+    this.send(advancedManipulation);
   }
   //#endregion
 
-  //#region run
-  public async run() {
-    this.checkAdvancedManiupulation();
-    this.data = this.result;
-
-    if (_.isObject(this.result)) {
-      if (this.advancedManipulation) {
-        this.applayTransformFn();
+  //#region stream response
+  private streamResponse(stream: Readable): void {
+    stream.on('error', error => {
+      if (!this.response.headersSent) {
+        this.response.status(500).end();
+        return;
       }
 
-      this.setHeaders();
-    }
-    this.send();
-  }
-  //#endregion
-
-  //#region apply transform function
-  applayTransformFn() {
-    if (_.isObject(this.data) && !_.isArray(this.data)) {
-      this.data = singleTransform(this.data);
-    }
-    const { include } = { include: [] };
-    walk.Object(
-      this.data,
-      (value, lodashPath, changeValue, { skipObject, isCircural }) => {
-        // console.log(`${isCircural ? 'CIR' : 'NOT'} : ${lodashPath}`)
-        if (!isCircural) {
-          if (!_.isArray(value) && _.isObject(value)) {
-            changeValue(singleTransform(value));
-          }
-        }
-      },
-      { checkCircural: true, breadthWalk: true, include, walkGetters: false },
-    );
-
-    const { circs } = walk.Object(this.data, void 0, {
-      checkCircural: true,
-      breadthWalk: true,
-      walkGetters: false,
-      include,
+      this.response.destroy(error);
     });
-    this.circural = circs;
+
+    stream.pipe(this.response);
   }
   //#endregion
 
   //#region set headers
-  setHeaders(): void {
-    const { include } = { include: [] };
-
+  setHeaders(advancedManipulation: boolean, circs: any[]): void {
     const className = ClassHelpers.getName(this.data);
-    const doNothing =
-      _.isNil(this.data) ||
-      [
-        'Object',
-        '',
-        //  void 0, null // TODO  not sure about commenting this
-      ].includes(className);
-    // console.log('doNothing', doNothing)
+
+    const doNothing = _.isNil(this.data) || ['Object', ''].includes(className);
+
     if (!doNothing) {
-      // TODO not needed ?
-      // const cleaned = JSON10.cleaned(this.data, void 0, {
-      //   breadthWalk: true,
-      //   include,
-      // });
-      // decodeMappingForHeaderJson is handling nested objects ok
-      this.entityMapping = decodeMappingForHeaderJson(this.data, {
-        useFirstArrayItemClassNameForAllElements: !this.advancedManipulation,
+      const entityMapping = decodeMappingForHeaderJson(this.data, {
+        useFirstArrayItemClassNameForAllElements: !advancedManipulation,
       });
 
       this.response.set(
         Symbols.old.MAPPING_CONFIG_HEADER,
-        JSON.stringify(this.entityMapping),
+        JSON.stringify(entityMapping),
       );
-      if (this.advancedManipulation) {
+
+      if (advancedManipulation) {
         this.response.set(
           Symbols.old.CIRCURAL_OBJECTS_MAP_BODY_PARAM,
-          JSON.stringify(this.circural),
+          JSON.stringify(circs),
         );
       }
     }
@@ -189,17 +126,19 @@ export class EntityProcess {
   //#endregion
 
   //#region send
-  send() {
-    if (this.advancedManipulation) {
+  send(advancedManipulation: boolean) {
+    if (advancedManipulation) {
       const browserKey = config.folder.browser;
       let toSend = _.isArray(this.data) ? [] : {};
 
-      const { include = [], exclude = [] } = { include: [], exclude: [] };
+      const { include = [], exclude = [] } = {
+        include: [],
+        exclude: [],
+      };
 
       walk.Object(
         this.data,
         (value, lodashPath, changeVAlue, { isCircural, skipObject }) => {
-          // console.log(`${isCircural ? 'CIR' : 'NOT'} ${lodashPath}`)
           if (isCircural) {
             _.set(toSend, lodashPath, null);
           } else {
@@ -209,32 +148,38 @@ export class EntityProcess {
 
             if (_.isFunction(fun)) {
               _.set(toSend, `${lodashPath}.${browserKey}`, value[browserKey]);
+
               const indexProp = ClassHelpers.getUniqueKey(value);
+
               _.set(toSend, `${lodashPath}.${indexProp}`, value[indexProp]);
-              // skipObject()
             } else {
               _.set(toSend, lodashPath, value);
             }
           }
         },
-        { checkCircural: true, breadthWalk: true, include, walkGetters: false },
+        {
+          checkCircural: true,
+          breadthWalk: true,
+          include,
+          walkGetters: false,
+        },
       );
 
       if (!_.isArray(this.data)) {
-        let funParent = getTransformFunction(
+        const funParent = getTransformFunction(
           ClassHelpers.getClassFnFromObject(this.data),
         );
-        // if (this.mdc && this.mdc.exclude && this.mdc.exclude.length > 0) {
-        //   console.log(`funParent !!! have fun? ${!!funParent} `)
-        // }
+
         if (_.isFunction(funParent)) {
           toSend = {
             [browserKey]: toSend[browserKey],
           };
         }
+
         Object.keys(this.data).forEach(prop => {
           if (prop !== browserKey) {
             const v = this.data[prop];
+
             if (
               !(
                 (include.length > 0 && !include.includes(prop)) ||
@@ -250,8 +195,11 @@ export class EntityProcess {
                 toSend[prop] = {
                   [browserKey]: v[browserKey],
                 };
+
                 const indexProp = ClassHelpers.getUniqueKey(v);
+
                 toSend[prop][indexProp] = this.data[prop][indexProp];
+
                 for (const key in v) {
                   if (
                     _.isObject(v) &&
@@ -274,7 +222,6 @@ export class EntityProcess {
         });
       }
 
-      // toSend = Helpers.JSON.cleaned(toSend, void 0, { breadthWalk: true })
       this.response.json(toSend);
     } else {
       this.response.json(this.data);

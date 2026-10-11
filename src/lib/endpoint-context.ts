@@ -3320,7 +3320,7 @@ export class EndpointContext {
 
               case FetchResponseType.Json:
               case undefined: {
-                await new EntityProcess(resultFromCtrlExec, res).run();
+                await new EntityProcess(res).run(resultFromCtrlExec);
 
                 return;
               }
