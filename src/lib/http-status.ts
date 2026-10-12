@@ -1,9 +1,12 @@
 import { Translation } from '@taon-dev/i18n/src';
 import { _ } from 'tnp-core/src';
 
-import { Taon } from './index';
+import { Replecables } from './constants';
 
-const t = Translation.for(Taon.__FILE_RELATIVE_PATH, Taon.LANG_IMPORT_MAP);
+const t = Translation.for(
+  Replecables.__FILE_RELATIVE_PATH__,
+  Replecables.__LANG_IMPORT_MAP__,
+);
 
 export enum HttpStatusEnum {
   /**

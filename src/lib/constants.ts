@@ -42,6 +42,7 @@ export const TaonEntityKeysToOmitArr: TaonEntityKeysToOmit[] = [
 import { InjectionToken } from '@angular/core';
 
 import type { TaonContext } from './create-context';
+import { TaonTranslationsMapImport } from '@taon-dev/i18n/src';
 
 let TAON_CONTEXT: InjectionToken<TaonContext>;
 //#region @browser
@@ -67,3 +68,14 @@ export const TaonBaseRepositoryClassName = 'TaonBaseRepository';
 export const TaonBaseStorageRepositoryClassName = 'TaonBaseStorageRepository';
 
 export const apiPrefix = 'api';
+
+export const Replecables = {
+  /**
+   * In runtime this becomes relative path to current file
+   */
+  __FILE_RELATIVE_PATH__: '',
+  /**
+   * In runtime this becomes taon translation impors for specyfic file
+   */
+  __LANG_IMPORT_MAP__: {} as TaonTranslationsMapImport,
+};

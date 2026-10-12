@@ -6,6 +6,7 @@ import { FetchResponseType } from 'ng2-rest/src';
 import { fse, path } from 'tnp-core/src';
 import { crossPlatformPath, UtilsOs } from 'tnp-core/src';
 
+import { Replecables } from '../constants';
 import { TaonController } from '../decorators/classes/controller-decorator';
 import { DELETE, GET, POST } from '../decorators/http/http-methods-decorators';
 import { Body, Query } from '../decorators/http/http-params-decorators';
@@ -28,10 +29,12 @@ import {
   TaonStorageUploadData,
   TaonStorageUploadOptions,
 } from './base-storage-models';
-
 //#endregion
 
-const t = Translation.for(Taon.__FILE_RELATIVE_PATH, Taon.LANG_IMPORT_MAP);
+const t = Translation.for(
+  Replecables.__FILE_RELATIVE_PATH__,
+  Replecables.__LANG_IMPORT_MAP__,
+);
 
 @TaonController<TaonBaseStorageController>({
   className: 'TaonBaseStorageController',

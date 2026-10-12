@@ -6,6 +6,7 @@ import { RestErrorResponseWrapper } from 'ng2-rest/src';
 import { Helpers, Utils, UtilsOs } from 'tnp-core/src';
 
 import * as base from './base-classes/base';
+import { Replecables } from './constants';
 import * as createContextFn from './create-context';
 import * as controllerDecorator from './decorators/classes/controller-decorator';
 import * as entityDecorator from './decorators/classes/entity-decorator';
@@ -108,11 +109,15 @@ export namespace Taon {
   /**
    * In runtime this becomes relative path to current file
    */
-  export const __FILE_RELATIVE_PATH: string = '';
+  export const __FILE_RELATIVE_PATH: string = Replecables[
+    '__FILE_RELA' + 'TIVE_PATH__'
+  ] as any;
   /**
    * In runtime this becomes taon translation impors for specyfic file
    */
-  export const LANG_IMPORT_MAP: TaonTranslationsMapImport = {};
+  export const LANG_IMPORT_MAP: TaonTranslationsMapImport = Replecables[
+    '__LANG_IMP' + 'ORT_MAP__'
+  ] as any;
 
   //#endregion
 
