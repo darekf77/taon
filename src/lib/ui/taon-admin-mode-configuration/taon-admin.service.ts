@@ -14,6 +14,7 @@ import { Helpers, _ } from 'tnp-core/src';
 import { BreakpointsService } from './breakpoints.service';
 //#endregion
 
+//#region models / taon admin panel mode
 export enum TaonAdminPanelMode {
   NONE = 'NONE',
   ICON = 'ICON',
@@ -21,18 +22,24 @@ export enum TaonAdminPanelMode {
   SIDE = 'SIDE',
   FULL_SCREEN = 'FULL_SCREEN',
 }
+//#endregion
 
+//#region models / taon admin tab
 export interface TaonAdminTab {
   name: string;
   templateOrIframeLink?: string | TemplateRef<any>;
 }
+//#endregion
 
+//#region models / taon admin class singleton
 export class TaonAdmin {
   private static _instance: TaonAdmin;
 
+  //#region methods / init
   static init(): void {
     TaonAdmin.Instance;
   }
+  //#endregion
 
   static get Instance(): TaonAdmin {
     if (!this._instance) {
@@ -79,36 +86,23 @@ export class TaonAdmin {
   );
   //#endregion
 }
+//#endregion
 
 //#region @browser
 @Injectable({ providedIn: 'root' })
 //#endregion
 export class TaonAdminService {
-  //#region singleton + constructor
-
+  //#region fields & getters
   public readonly isIframe: boolean =
     window.location !== window.parent.location;
 
   public readonly breakpointsService = inject(BreakpointsService);
 
-  constructor() {
-    window['Taon'] = this;
-    window['taon'] = this;
-
-    this.breakpointsService.listenTo().subscribe(breakpoint => {
-      // console.log({ breakpoint });
-      this.isDesktop.set(breakpoint === 'desktop');
-      if (this.isDesktop()) {
-        //
-      } else {
-        this.adminPanelMode.set(TaonAdminPanelMode.NONE);
-      }
-    });
-  }
-
-  //#endregion
-
   public isDesktop = signal(true);
+
+  private devTapCount = 0;
+
+  private devTapTimeout: any;
 
   public get adminPanelMode(): StorSignal<TaonAdminPanelMode> {
     return TaonAdmin.Instance.adminPanelMode;
@@ -125,11 +119,35 @@ export class TaonAdminService {
   public get skipShowingErrors(): StorSignal<HttpStatusEnum[]> {
     return TaonAdmin.Instance.skipShowingErrors;
   }
+  //#endregion
 
-  shouldSkipShowingError(status: HttpStatusEnum): boolean {
-    return this.skipShowingErrors().includes(status);
+  //#region constructor
+  constructor() {
+    // @ts-ignore
+    window['Taon'] = this;
+    // @ts-ignore
+    window['taon'] = this;
+
+    this.breakpointsService.listenTo().subscribe(breakpoint => {
+      // console.log({ breakpoint });
+      this.isDesktop.set(breakpoint === 'desktop');
+      if (this.isDesktop()) {
+        //
+      } else {
+        this.adminPanelMode.set(TaonAdminPanelMode.NONE);
+      }
+    });
   }
+  //#endregion
 
+  //#region methods / should skip showing error
+  shouldSkipShowingError(status: HttpStatusEnum): boolean {
+    const toSkip = this.skipShowingErrors();
+    return toSkip.includes(status);
+  }
+  //#endregion
+
+  //#region methods / set skip showing error
   setSkipShowingError(status: HttpStatusEnum, skip: boolean): void {
     this.skipShowingErrors.update(current => {
       if (skip) {
@@ -139,23 +157,27 @@ export class TaonAdminService {
       return current.filter(x => x !== status);
     });
   }
+  //#endregion
 
+  //#region methods / admin
   admin(): void {
     this.adminPanelMode.set(TaonAdminPanelMode.FULL_SCREEN);
   }
+  //#endregion
 
+  //#region methods / show
   show(): void {
     this.adminPanelMode.set(TaonAdminPanelMode.POPUP);
   }
+  //#endregion
 
+  //#region methods / hide
   hide(): void {
     this.adminPanelMode.set(TaonAdminPanelMode.NONE);
   }
+  //#endregion
 
-  private devTapCount = 0;
-
-  private devTapTimeout: any;
-
+  //#region methods / enable developer if5 timetap
   enableDeveloperIf5Timetap(): void {
     this.devTapCount++;
 
@@ -172,4 +194,5 @@ export class TaonAdminService {
       this.show();
     }
   }
+  //#endregion
 }

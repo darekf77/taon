@@ -4,78 +4,87 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/lib/http-status.ts:166
+#: src/lib/http-status.ts:193
 msgid "OK"
 msgstr ""
 
-#: src/lib/http-status.ts:167
+#: src/lib/http-status.ts:194
 msgid "Created"
 msgstr ""
 
-#: src/lib/http-status.ts:168
+#: src/lib/http-status.ts:195
 msgid "Accepted"
 msgstr ""
 
-#: src/lib/http-status.ts:169
+#: src/lib/http-status.ts:196
 msgid "No Content"
 msgstr ""
 
-#: src/lib/http-status.ts:171
+#: src/lib/http-status.ts:198
 msgid "Moved Permanently"
 msgstr ""
 
-#: src/lib/http-status.ts:172
+#: src/lib/http-status.ts:199
 msgid "Found"
 msgstr ""
 
-#: src/lib/http-status.ts:173
+#: src/lib/http-status.ts:200
 msgid "Not Modified"
 msgstr ""
 
-#: src/lib/http-status.ts:175
+#: src/lib/http-status.ts:202
 msgid "Bad Request"
 msgstr ""
 
-#: src/lib/http-status.ts:176
+#: src/lib/http-status.ts:203
 msgid "Unauthorized"
 msgstr ""
 
-#: src/lib/http-status.ts:177
+#: src/lib/http-status.ts:204
 msgid "Invalid Token"
 msgstr ""
 
-#: src/lib/http-status.ts:178
+#: src/lib/http-status.ts:205
+msgid "Invalid Refresh Token"
+msgstr ""
+
+#: src/lib/http-status.ts:206
+msgid "Expired Refresh Token"
+msgstr ""
+
+#: src/lib/http-status.ts:207
+#: src/lib/http-status.ts:208
 msgid "No Token"
 msgstr ""
 
-#: src/lib/http-status.ts:179
+#: src/lib/http-status.ts:209
 msgid "Invalid credentials"
 msgstr ""
 
-#: src/lib/http-status.ts:180
+#: src/lib/http-status.ts:210
 msgid "Forbidden"
 msgstr ""
 
-#: src/lib/http-status.ts:181
+#: src/lib/http-status.ts:211
 msgid "Not Found"
 msgstr ""
 
-#: src/lib/http-status.ts:182
+#: src/lib/http-status.ts:212
 msgid "Conflict"
 msgstr ""
 
-#: src/lib/http-status.ts:183
+#: src/lib/http-status.ts:213
 msgid "Unprocessable Entity"
 msgstr ""
 
-#: src/lib/http-status.ts:185
+#: src/lib/http-status.ts:215
 msgid "Internal Server Error"
 msgstr ""
 
-#: src/lib/http-status.ts:186
+#: src/lib/http-status.ts:216
 msgid "Bad Gateway"
 msgstr ""
 
-#: src/lib/http-status.ts:187
+#: src/lib/http-status.ts:217
 msgid "Service Unavailable"
 msgstr ""

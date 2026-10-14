@@ -1,4 +1,5 @@
-export type {
-  Response as ExpressResponse,
-  Request as ExpressRequest,
-} from 'express';
+import type { Request, Response } from 'express';
+
+export type ExpressResponse<T = any> = Response<T>;
+
+export type ExpressRequest<T = any> = Request<T> & { userId: number | string };

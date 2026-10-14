@@ -148,17 +148,15 @@ describe('getHttpStatus', () => {
   //#region unique HTTP codes
 
   it('should return NOT_FOUND for 404', () => {
-    expect(getHttpStatus('404', 'Not Found')).toBe(HttpStatusEnum.NOT_FOUND);
+    expect(getHttpStatus('404')).toBe(HttpStatusEnum.NOT_FOUND);
   });
 
   it('should return INTERNAL_SERVER_ERROR for 500', () => {
-    expect(getHttpStatus('500', 'Internal Server Error')).toBe(
-      HttpStatusEnum.INTERNAL_SERVER_ERROR,
-    );
+    expect(getHttpStatus('500')).toBe(HttpStatusEnum.INTERNAL_SERVER_ERROR);
   });
 
   it('should accept numeric status code', () => {
-    expect(getHttpStatus(403, 'Forbidden')).toBe(HttpStatusEnum.FORBIDDEN);
+    expect(getHttpStatus(403)).toBe(HttpStatusEnum.FORBIDDEN);
   });
 
   //#endregion
@@ -166,45 +164,7 @@ describe('getHttpStatus', () => {
   //#region 401 disambiguation
 
   it('should return UNAUTHORIZED for generic 401', () => {
-    expect(getHttpStatus('401', 'Unauthorized')).toBe(
-      HttpStatusEnum.UNAUTHORIZED,
-    );
-  });
-
-  it('should return NO_TOKEN from enum-style message', () => {
-    expect(getHttpStatus('401', 'NO_TOKEN')).toBe(HttpStatusEnum.NO_TOKEN);
-  });
-
-  it('should return NO_TOKEN from human-readable message', () => {
-    expect(getHttpStatus('401', 'No Token')).toBe(HttpStatusEnum.NO_TOKEN);
-  });
-
-  it('should return INVALID_TOKEN', () => {
-    expect(getHttpStatus('401', 'Invalid Token')).toBe(
-      HttpStatusEnum.INVALID_TOKEN,
-    );
-  });
-
-  it('should return INVALID_CREDENTIALS', () => {
-    expect(getHttpStatus('401', 'Invalid credentials')).toBe(
-      HttpStatusEnum.INVALID_CREDENTIALS,
-    );
-  });
-
-  //#endregion
-
-  //#region normalization
-
-  it('should ignore message casing', () => {
-    expect(getHttpStatus('401', 'no token')).toBe(HttpStatusEnum.NO_TOKEN);
-
-    expect(getHttpStatus('401', 'NO TOKEN')).toBe(HttpStatusEnum.NO_TOKEN);
-  });
-
-  it('should trim message whitespace', () => {
-    expect(getHttpStatus('401', '   No Token   ')).toBe(
-      HttpStatusEnum.NO_TOKEN,
-    );
+    expect(getHttpStatus('401')).toBe(HttpStatusEnum.UNAUTHORIZED);
   });
 
   //#endregion
@@ -212,21 +172,19 @@ describe('getHttpStatus', () => {
   //#region fallback
 
   it('should fall back to generic status when message is unknown', () => {
-    expect(getHttpStatus('401', 'Some weird authentication error')).toBe(
-      HttpStatusEnum.UNAUTHORIZED,
-    );
+    expect(getHttpStatus('401')).toBe(HttpStatusEnum.UNAUTHORIZED);
   });
 
   it('should return unique status even when message is empty', () => {
-    expect(getHttpStatus('404', '')).toBe(HttpStatusEnum.NOT_FOUND);
+    expect(getHttpStatus('404')).toBe(HttpStatusEnum.NOT_FOUND);
   });
 
   it('should return undefined for unknown HTTP code', () => {
-    expect(getHttpStatus('999', 'Something')).toBeUndefined();
+    expect(getHttpStatus('999')).toBeUndefined();
   });
 
   it('should return undefined for invalid HTTP code', () => {
-    expect(getHttpStatus('abc', 'Something')).toBeUndefined();
+    expect(getHttpStatus('abc')).toBeUndefined();
   });
 
   //#endregion

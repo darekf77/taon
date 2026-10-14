@@ -73,11 +73,35 @@ export enum HttpStatusEnum {
 
   /**
    * Code 401.
+   * Authentication refresh token is invalid or expired.
+   *
+   * Taon-specific status mapped to HTTP 401.
+   */
+  INVALID_REFRESH_TOKEN = 'INVALID_REFRESH_TOKEN',
+
+  /**
+   * Code 401.
+   * Authentication refresh token is invalid or expired.
+   *
+   * Taon-specific status mapped to HTTP 401.
+   */
+  EXPIRED_REFRESH_TOKEN = 'EXPIRED_REFRESH_TOKEN',
+
+  /**
+   * Code 401.
    * Authentication token was not provided.
    *
    * Taon-specific status mapped to HTTP 401.
    */
   NO_TOKEN = 'NO_TOKEN',
+
+  /**
+   * Code 401.
+   * Authentication refresg token was not provided.
+   *
+   * Taon-specific status mapped to HTTP 401.
+   */
+  NO_REFRESH_TOKEN = 'NO_REFRESH_TOKEN',
 
   /**
    * Code 401.
@@ -142,8 +166,11 @@ export const HttpStatusCodeMap: Record<HttpStatusEnum, number> = {
 
   [HttpStatusEnum.BAD_REQUEST]: 400,
   [HttpStatusEnum.NO_TOKEN]: 401,
+  [HttpStatusEnum.NO_REFRESH_TOKEN]: 401,
   [HttpStatusEnum.INVALID_TOKEN]: 401,
+  [HttpStatusEnum.INVALID_REFRESH_TOKEN]: 401,
   [HttpStatusEnum.INVALID_CREDENTIALS]: 401,
+  [HttpStatusEnum.EXPIRED_REFRESH_TOKEN]: 401,
   [HttpStatusEnum.UNAUTHORIZED]: 401,
   [HttpStatusEnum.FORBIDDEN]: 403,
   [HttpStatusEnum.NOT_FOUND]: 404,
@@ -175,7 +202,10 @@ export const getHttpStatusCodeMessages = (): Record<
   [HttpStatusEnum.BAD_REQUEST]: t.gettext('Bad Request'),
   [HttpStatusEnum.UNAUTHORIZED]: t.gettext('Unauthorized'),
   [HttpStatusEnum.INVALID_TOKEN]: t.gettext('Invalid Token'),
+  [HttpStatusEnum.INVALID_REFRESH_TOKEN]: t.gettext('Invalid Refresh Token'),
+  [HttpStatusEnum.EXPIRED_REFRESH_TOKEN]: t.gettext('Expired Refresh Token'),
   [HttpStatusEnum.NO_TOKEN]: t.gettext('No Token'),
+  [HttpStatusEnum.NO_REFRESH_TOKEN]: t.gettext('No Token'),
   [HttpStatusEnum.INVALID_CREDENTIALS]: t.gettext('Invalid credentials'),
   [HttpStatusEnum.FORBIDDEN]: t.gettext('Forbidden'),
   [HttpStatusEnum.NOT_FOUND]: t.gettext('Not Found'),
@@ -199,7 +229,6 @@ export function getHttpStatus(
    * 401, 500 etc.
    */
   statusCode: string | number,
-  message: string,
 ): HttpStatusEnum | undefined {
   const numericCode = Number(statusCode);
 
@@ -216,20 +245,10 @@ export function getHttpStatus(
     return statuses[0];
   }
 
-  // Multiple statuses share the same code, e.g. 401
-  const normalizedMessage = message?.trim().toLowerCase();
-
-  const matchedStatus = statuses.find(status => {
-    const enumValue = status.toLowerCase();
-    const statusText = getHttpStatusCodeMessages()[status].toLowerCase();
-
-    return normalizedMessage === enumValue || normalizedMessage === statusText;
-  });
-
   const map = HttpStatusCodeEnumMap;
 
   // Fall back to generic HTTP status
-  return matchedStatus ?? map[numericCode];
+  return map[numericCode];
 }
 
 //#region get status text
