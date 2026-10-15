@@ -7,6 +7,10 @@ import { forgiveMerge } from '../helpers/forgive-merge';
 
 //#endregion
 
+const INJECTED_CLASSES = Symbol('taonInjectedClasses');
+
+type TaonClassConstructor<T, ARGS extends unknown[]> = new (...args: ARGS) => T;
+
 export class TaonBaseClass<CloneT extends TaonBaseClass = any> {
   //#region class initialization hook
   /**
@@ -53,4 +57,34 @@ export class TaonBaseClass<CloneT extends TaonBaseClass = any> {
     return cloneObj<CloneT>(forgiveMerge(oldValues, overrides), classFn);
   }
   //#endregion
+
+  private [INJECTED_CLASSES]?: Map<Function, unknown>;
+
+  /**
+   *  use this for reusing class instance inside getter
+   *
+   * example:
+
+  get hasAccess() {
+    return this.injectClass<TaonAuthContextHasAccess>(
+      TaonAuthContextHasAccess
+    );
+  }
+
+   */
+  protected injectClass<T, ARGS extends unknown[]>(
+    ClassFn: TaonClassConstructor<T, [this, ...ARGS]>,
+    ...args: ARGS
+  ): T {
+    const cache = (this[INJECTED_CLASSES] ??= new Map());
+
+    let instance = cache.get(ClassFn) as T | undefined;
+
+    if (!instance) {
+      instance = new ClassFn(this, ...args);
+      cache.set(ClassFn, instance);
+    }
+
+    return instance;
+  }
 }
