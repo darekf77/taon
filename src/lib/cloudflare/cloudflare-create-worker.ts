@@ -13,6 +13,14 @@ import { createFakeExpressApp } from './cloudflare-express-fake-server';
 
 let initializationPromise: Promise<void> | undefined;
 
+function isReadableStream(value: any): value is ReadableStream<Uint8Array> {
+  return (
+    value !== null &&
+    typeof value === 'object' &&
+    typeof value.getReader === 'function'
+  );
+}
+
 export function createWorkerAdapter(
   fakeExpressApp: ReturnType<typeof createFakeExpressApp>,
   firstRequestCallback: (
@@ -35,10 +43,12 @@ export function createWorkerAdapter(
     }
 
     //#region parse body
+    const rawRequest = cloudflareRequest.clone();
+
     let parsedBody: any;
 
     try {
-      parsedBody = await parseBody(cloudflareRequest);
+      parsedBody = await parseBody(rawRequest);
     } catch (err: any) {
       return new Response(
         JSON.stringify({
@@ -225,6 +235,12 @@ export function createWorkerAdapter(
       send(data: any) {
         if (data === undefined || data === null) {
           bodyToSend = '';
+        } else if (isReadableStream(data)) {
+          bodyToSend = data;
+
+          if (!resHeaders.has('content-type')) {
+            resHeaders.set('content-type', 'application/octet-stream');
+          }
         } else if (typeof data === 'string') {
           bodyToSend = data;
 
@@ -246,6 +262,7 @@ export function createWorkerAdapter(
         }
 
         finishResponse();
+
         return fakeExpressResponse;
       },
 

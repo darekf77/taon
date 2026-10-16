@@ -60,7 +60,7 @@ import {
 import { getResponseValue } from './get-response-value';
 import { ClassHelpers } from './helpers/class-helpers';
 import {
-  expressRequestToFormData,
+  requestToFormData,
   TaonUploadedFile,
 } from './helpers/express-request-to-form-data';
 import { TaonHelpers } from './helpers/taon-helpers';
@@ -2930,7 +2930,7 @@ export class EndpointContext {
           );
 
           if (isRequestFormData) {
-            const { files, formData } = await expressRequestToFormData(req);
+            const { files, formData } = await requestToFormData(req);
             bodyFormDataFiles = files;
             // TODO handle somehow file
             tBody = formData;
@@ -3175,6 +3175,11 @@ export class EndpointContext {
                   res.getHeader('Content-Type') || 'application/octet-stream',
                 );
 
+                if (UtilsOs.isRunningInCloudflareWorker()) {
+                  res.send(resultFromCtrlExec);
+                  return;
+                }
+                //#region @esmRemove
                 const reader = resultFromCtrlExec.getReader();
 
                 try {
@@ -3196,7 +3201,7 @@ export class EndpointContext {
                 } finally {
                   reader.releaseLock();
                 }
-
+                //#endregion
                 return;
               }
 

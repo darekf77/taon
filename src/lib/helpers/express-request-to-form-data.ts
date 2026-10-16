@@ -46,12 +46,31 @@ export interface TaonParsedFormData {
 //#endregion
 
 //#region request express request to form data
-export async function expressRequestToFormData(
+export async function requestToFormData(
   req: express.Request,
 ): Promise<TaonParsedFormData> {
   //#region @backendFunc
 
-  const Busboy = await import('busboy');
+  if (UtilsOs.isRunningInCloudflareWorker()) {
+    return await cloudflareRequestToFormData(req);
+  }
+
+  //#region @esmRemove
+  return await nodeExpressRequestToFormData(req);
+  //#endregion
+
+  //#endregion
+}
+//#endregion
+
+//#region node express request to form data
+async function nodeExpressRequestToFormData(
+  req: express.Request,
+): Promise<TaonParsedFormData> {
+  //#region @backendFunc
+  //#region @esmRemove
+
+  const Busboy = (await import('busboy')).default;
 
   const tempFolder = await UtilsTempFolder.getPath({
     prefix: 'taon-form-data',
@@ -59,19 +78,13 @@ export async function expressRequestToFormData(
     deleteAfterDays: 1,
   });
 
-  if (!UtilsOs.isRunningInCloudflareWorker()) {
-    //#region @esmRemove
-    await fse.ensureDir(tempFolder);
-    //#endregion
-  }
+  await fse.ensureDir(tempFolder);
 
   return await new Promise<TaonParsedFormData>((resolve, reject) => {
     const formData = new FormData();
     const files: TaonUploadedFile[] = [];
-
     const pendingFiles: Promise<void>[] = [];
 
-    // @ts-ignore
     const busboy = Busboy({
       headers: req.headers,
     });
@@ -80,13 +93,10 @@ export async function expressRequestToFormData(
       formData.append(name, value);
     });
 
-    // @ts-ignore
     busboy.on('file', (fieldName, stream, info) => {
       const tempFileName = `${Date.now()}-${crypto.randomUUID()}-${info.filename}`;
 
-      const tempPath = UtilsOs.isRunningInCloudflareWorker()
-        ? `${tempFolder}/${tempFileName}`
-        : path.join(tempFolder, tempFileName);
+      const tempPath = path.join(tempFolder, tempFileName);
 
       const uploadedFile: TaonUploadedFile = {
         fieldName,
@@ -95,19 +105,7 @@ export async function expressRequestToFormData(
         tempKeyOrPath: tempPath,
       };
 
-      let promise: Promise<void>;
-
-      if (UtilsOs.isRunningInCloudflareWorker()) {
-        promise = saveStreamToCloudflareTempStorage(
-          tempPath,
-          stream,
-          uploadedFile.mimeType,
-        );
-      } else {
-        //#region @esmRemove
-        promise = pipeline(stream, fse.createWriteStream(tempPath));
-        //#endregion
-      }
+      const promise = pipeline(stream, fse.createWriteStream(tempPath));
 
       pendingFiles.push(
         promise.then(() => {
@@ -135,10 +133,80 @@ export async function expressRequestToFormData(
   });
 
   //#endregion
+  return void 0 as any;
+  //#endregion
+}
+//#endregion
+
+//#region cloudflare request to form data
+async function cloudflareRequestToFormData(
+  req: express.Request,
+): Promise<TaonParsedFormData> {
+  //#region @backendFunc
+
+  /**
+   * IMPORTANT:
+   * The Cloudflare -> Express adapter needs to preserve
+   * the original native Fetch Request here.
+   */
+  const request = (req as any).raw as Request;
+
+  if (!request) {
+    throw new Error(
+      'Original Cloudflare Request is missing on Express request.',
+    );
+  }
+
+  const nativeFormData = await request.formData();
+
+  const formData = new FormData();
+  const files: TaonUploadedFile[] = [];
+
+  const tempFolder = await UtilsTempFolder.getPath({
+    prefix: 'taon-form-data',
+    everytimeNew: true,
+    deleteAfterDays: 1,
+  });
+
+  // @ts-ignore
+  for (const [fieldName, value] of nativeFormData.entries()) {
+    // Normal form field
+    if (typeof value === 'string') {
+      formData.append(fieldName, value);
+      continue;
+    }
+
+    // File
+    const file = value as File;
+
+    const tempFileName = `${Date.now()}-${crypto.randomUUID()}-${file.name}`;
+
+    const tempKey = `${tempFolder}/${tempFileName}`;
+
+    const mimeType = file.type || 'application/octet-stream';
+
+    // @ts-ignore
+    await saveStreamToCloudflareTempStorage(tempKey, file.stream(), mimeType);
+
+    files.push({
+      fieldName,
+      fileName: file.name,
+      mimeType,
+      tempKeyOrPath: tempKey,
+    });
+  }
+
+  return {
+    formData,
+    files,
+  };
+
+  //#endregion
 }
 //#endregion
 
 //#region save stream to cloud flare temp storage
+
 async function saveStreamToCloudflareTempStorage(
   key: string,
   stream: NodeJS.ReadableStream,
@@ -152,9 +220,14 @@ async function saveStreamToCloudflareTempStorage(
     throw new Error(`Missing TAON_TEMP_STORAGE.`);
   }
 
-  const webStream = Readable.toWeb(stream as Readable) as ReadableStream;
+  // const webStream = Readable.toWeb(stream as Readable) as ReadableStream;
+  // await bucket.put(key, webStream as any, {
+  //   httpMetadata: {
+  //     contentType: mimeType,
+  //   },
+  // });
 
-  await bucket.put(key, webStream as any, {
+  await bucket.put(key, stream as any, {
     httpMetadata: {
       contentType: mimeType,
     },
