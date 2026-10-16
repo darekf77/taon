@@ -1,5 +1,5 @@
 import { Translation } from '@taon-dev/i18n/src';
-import { _ } from 'tnp-core/src';
+import { _, CoreModels } from 'tnp-core/src';
 
 import { Replecables } from './constants';
 
@@ -165,13 +165,13 @@ export const HttpStatusCodeMap: Record<HttpStatusEnum, number> = {
   [HttpStatusEnum.NOT_MODIFIED]: 304,
 
   [HttpStatusEnum.BAD_REQUEST]: 400,
-  [HttpStatusEnum.NO_TOKEN]: 401,
-  [HttpStatusEnum.NO_REFRESH_TOKEN]: 401,
-  [HttpStatusEnum.INVALID_TOKEN]: 401,
-  [HttpStatusEnum.INVALID_REFRESH_TOKEN]: 401,
-  [HttpStatusEnum.INVALID_CREDENTIALS]: 401,
-  [HttpStatusEnum.EXPIRED_REFRESH_TOKEN]: 401,
-  [HttpStatusEnum.UNAUTHORIZED]: 401,
+  [HttpStatusEnum.NO_TOKEN]: CoreModels.StatusCode401,
+  [HttpStatusEnum.NO_REFRESH_TOKEN]: CoreModels.StatusCode401,
+  [HttpStatusEnum.INVALID_TOKEN]: CoreModels.StatusCode401,
+  [HttpStatusEnum.INVALID_REFRESH_TOKEN]: CoreModels.StatusCode401,
+  [HttpStatusEnum.INVALID_CREDENTIALS]: CoreModels.StatusCode401,
+  [HttpStatusEnum.EXPIRED_REFRESH_TOKEN]: CoreModels.StatusCode401,
+  [HttpStatusEnum.UNAUTHORIZED]: CoreModels.StatusCode401,
   [HttpStatusEnum.FORBIDDEN]: 403,
   [HttpStatusEnum.NOT_FOUND]: 404,
   [HttpStatusEnum.CONFLICT]: 409,

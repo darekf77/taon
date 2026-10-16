@@ -52,6 +52,17 @@ export class TaonBaseController<
   }
   //#endregion
 
+  /**
+   * Called when access-token authentication cannot be completed
+   * and refreshing the session may recover the request.
+   */
+  // protected async tryRefreshAccessToken(): Promise<boolean> {
+  //   if (this.ctx.tryRefreshAccessTokenGlobalCallback) {
+  //     return await this.ctx.tryRefreshAccessTokenGlobalCallback();
+  //   }
+  //   return false;
+  // }
+
   //#region after all context inited hook
   /**
    * Hook that is called when taon app is initialized.

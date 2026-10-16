@@ -111,6 +111,9 @@ rm -rf ~/.taon  # taon local repositories, databases, settings, caches.
 
 
 ## Projects that are part of taon.dev:
+
+( I am slowly moving taon projects to https://github.com/orgs/taon-dev)
+
 - taon https://github.com/darekf77/taon
     + framework library
 - tnp https://github.com/darekf77/tnp

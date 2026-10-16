@@ -4,87 +4,87 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/lib/http-status.ts:193
+#: src/lib/http-status.ts:198
 msgid "OK"
 msgstr ""
 
-#: src/lib/http-status.ts:194
+#: src/lib/http-status.ts:199
 msgid "Created"
 msgstr ""
 
-#: src/lib/http-status.ts:195
+#: src/lib/http-status.ts:200
 msgid "Accepted"
 msgstr ""
 
-#: src/lib/http-status.ts:196
+#: src/lib/http-status.ts:201
 msgid "No Content"
 msgstr ""
 
-#: src/lib/http-status.ts:198
+#: src/lib/http-status.ts:203
 msgid "Moved Permanently"
 msgstr ""
 
-#: src/lib/http-status.ts:199
+#: src/lib/http-status.ts:204
 msgid "Found"
 msgstr ""
 
-#: src/lib/http-status.ts:200
+#: src/lib/http-status.ts:205
 msgid "Not Modified"
 msgstr ""
 
-#: src/lib/http-status.ts:202
+#: src/lib/http-status.ts:207
 msgid "Bad Request"
 msgstr ""
 
-#: src/lib/http-status.ts:203
+#: src/lib/http-status.ts:208
 msgid "Unauthorized"
 msgstr ""
 
-#: src/lib/http-status.ts:204
+#: src/lib/http-status.ts:209
 msgid "Invalid Token"
 msgstr ""
 
-#: src/lib/http-status.ts:205
+#: src/lib/http-status.ts:210
 msgid "Invalid Refresh Token"
 msgstr ""
 
-#: src/lib/http-status.ts:206
+#: src/lib/http-status.ts:211
 msgid "Expired Refresh Token"
 msgstr ""
 
-#: src/lib/http-status.ts:207
-#: src/lib/http-status.ts:208
+#: src/lib/http-status.ts:212
+#: src/lib/http-status.ts:213
 msgid "No Token"
 msgstr ""
 
-#: src/lib/http-status.ts:209
+#: src/lib/http-status.ts:214
 msgid "Invalid credentials"
 msgstr ""
 
-#: src/lib/http-status.ts:210
+#: src/lib/http-status.ts:215
 msgid "Forbidden"
 msgstr ""
 
-#: src/lib/http-status.ts:211
+#: src/lib/http-status.ts:216
 msgid "Not Found"
 msgstr ""
 
-#: src/lib/http-status.ts:212
+#: src/lib/http-status.ts:217
 msgid "Conflict"
 msgstr ""
 
-#: src/lib/http-status.ts:213
+#: src/lib/http-status.ts:218
 msgid "Unprocessable Entity"
 msgstr ""
 
-#: src/lib/http-status.ts:215
+#: src/lib/http-status.ts:220
 msgid "Internal Server Error"
 msgstr ""
 
-#: src/lib/http-status.ts:216
+#: src/lib/http-status.ts:221
 msgid "Bad Gateway"
 msgstr ""
 
-#: src/lib/http-status.ts:217
+#: src/lib/http-status.ts:222
 msgid "Service Unavailable"
 msgstr ""

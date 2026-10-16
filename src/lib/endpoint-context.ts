@@ -7,7 +7,7 @@ import type { ipcMain } from 'electron'; // @backend
 import type { Application } from 'express';
 //  multer in taon middleware will do better job than express-fileupload
 // import * as fileUpload from 'express-fileupload'; // @backend
-import type * as expressType from 'express';
+
 import { JSON10 } from 'json10/src';
 import { walk } from 'lodash-walk-object/src';
 import {
@@ -51,6 +51,12 @@ import { TaonSubscriberOptions } from './decorators/classes/subscriber-decorator
 import { DITaonContainer } from './dependency-injection/di-container';
 import type { ContextsEndpointStorage } from './endpoint-context-storage';
 import { EntityProcess } from './entity-process';
+import {
+  ExpressNextFunction,
+  ExpressRequest,
+  ExpressRequestHandler,
+  ExpressResponse,
+} from './express-types';
 import { getResponseValue } from './get-response-value';
 import { ClassHelpers } from './helpers/class-helpers';
 import {
@@ -76,6 +82,12 @@ export class EndpointContext {
    */
   public readonly USE_MARIADB_MYSQL_IN_DOCKER: boolean = false;
   //#endregion
+
+  /**
+   * This will override all controllers inside this context
+   * tryRefreshAccessToken() protected methods
+   */
+  // public tryRefreshAccessTokenGlobalCallback: () => Promise<boolean>;
 
   //#region fields / flags
   disabledRealtime: boolean = false;
@@ -2588,9 +2600,9 @@ export class EndpointContext {
       if (_.isFunction(middlewareInstance.interceptServer)) {
         const middlewareFn = ClassHelpers.asyncHandler(
           async (
-            req: expressType.Request,
-            res: expressType.Response,
-            next: expressType.NextFunction,
+            req: ExpressRequest,
+            res: ExpressResponse,
+            next: ExpressNextFunction,
           ) => {
             if (
               req.originalUrl.startsWith(
@@ -2754,7 +2766,9 @@ export class EndpointContext {
     //#endregion
   ): { expressPath: string; method: CoreModels.HttpMethod } {
     //#region resolve variables
-    const controllerInstance = this.getInstanceBy(target as any);
+    const controllerInstance = this.getInstanceBy(
+      target as any,
+    ) as TaonBaseController;
     if (overrideExpressApp) {
       this.expressApp = overrideExpressApp;
     }
@@ -2773,9 +2787,9 @@ export class EndpointContext {
         ) {
           const middlewareFn = ClassHelpers.asyncHandler(
             async (
-              req: expressType.Request,
-              res: expressType.Response,
-              next: expressType.NextFunction,
+              req: ExpressRequest,
+              res: ExpressResponse,
+              next: ExpressNextFunction,
             ) => {
               await middlewareInstance.interceptServerMethod(
                 {
@@ -2794,15 +2808,15 @@ export class EndpointContext {
           return middlewareFn;
         }
       })
-      .filter(f => !!f) as expressType.RequestHandler[];
+      .filter(f => !!f) as ExpressRequestHandler[];
 
     // const url = this.uri;
 
     //#region get result
     const getResult = async (
-      resolvedParams,
-      req,
-      res,
+      resolvedParams: any[],
+      req: ExpressRequest,
+      res: ExpressResponse,
       results: Models.Http.RequestResults,
     ) => {
       const response: Models.Http.Response<any> =
@@ -2878,10 +2892,11 @@ export class EndpointContext {
       this.expressApp[httpMethodType.toLowerCase()](
         expressPath,
         ...middlewareHandlers,
-        async (req: expressType.Request, res: expressType.Response) => {
+        async (req: ExpressRequest, res: ExpressResponse) => {
           // console.log(`[${httpMethodType.toUpperCase()}] ${expressPath} `);
+
           // @ts-expect-error
-          if ((controllerInstance as TaonBaseController)?.beforeEachRequest) {
+          if (controllerInstance?.beforeEachRequest) {
             try {
               await (controllerInstance as TaonBaseController) // @ts-expect-error
                 ?.beforeEachRequest({
@@ -3335,11 +3350,12 @@ export class EndpointContext {
             }
           } catch (error) {
             if (UtilsStdinStdoutLogger.startedRegistering()) {
-              Helpers.error(
+              console.error(
                 `HTTP ERROR [ctx=${this.contextName}][${expressPath}]`,
                 error,
               );
             }
+
             if (res.headersSent) {
               // SKIP FURTHER PROCESSING IF RESPONSE ALREADY SENT
               return;
@@ -3350,7 +3366,10 @@ export class EndpointContext {
               return;
             }
 
-            this.sendError(res, error, req, expressPath);
+            const { errroResult, status } = ClassHelpers.mapFnError(error, res);
+
+            res.status(status).json(errroResult);
+            return;
           }
           //#endregion
         },
@@ -3365,21 +3384,6 @@ export class EndpointContext {
   }
   //#endregion
 
-  //#region methods & getters / send error
-  protected sendError(
-    res: expressType.Response,
-    error: unknown,
-    req: expressType.Request,
-    expressPath: string,
-  ): void {
-    //#region @backendFunc
-    const { errroResult, status } = ClassHelpers.mapFnError(error, res);
-
-    res.status(status).json(errroResult);
-    //#endregion
-  }
-  //#endregion
-
   //#region methods & getters / init client
   /**
    * client can be browser or nodejs (when remote host)
@@ -3391,6 +3395,10 @@ export class EndpointContext {
     expressPath: string,
   ): void {
     const ctx = this;
+    // const controllerInstance = this.getInstanceBy(
+    //   target as any,
+    // ) as TaonBaseController;
+
     // console.log({ clientExpressPath: expressPath });
     // console.log(
     //   `CLIENT: expressPath: "${expressPath}" interceptor for method: ${methodConfig.calculatedMiddlewares?.length} `,
@@ -3931,6 +3939,24 @@ instead
             [method](bodyObjectOnFE, [queryParams]);
         },
         request(fetchConfig?: Ng2RestFetchRequestConfig) {
+          // fetchConfig = fetchConfig || {};
+          // if (fetchConfig.reauthenticateOn401 === null) {
+          //   fetchConfig.reauthenticateOn401 = undefined;
+          // } else {
+          //   fetchConfig.reauthenticateOn401 = async () => {
+          //     try {
+          //       console.log('trying request to refresh()');
+
+          //       const response = // @ts-expect-error
+          //         await controllerInstance.tryRefreshAccessToken();
+          //       console.log('done trying request to refresh()');
+          //       return response;
+          //     } catch {
+          //       return false;
+          //     }
+          //   };
+          // }
+
           return rest
             .model(pathPrams, { headers: requestHeaders })
             [method](bodyObjectOnFE, [queryParams], fetchConfig);

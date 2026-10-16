@@ -10,6 +10,7 @@ import {
 } from '../config/controller-config';
 import { MethodConfig } from '../config/method-config';
 import { TaonEntityOptions } from '../decorators/classes/entity-decorator';
+import { ExpressResponse } from '../express-types';
 import { Models } from '../models';
 import { Symbols } from '../symbols';
 import { Validators } from '../validators';
@@ -193,7 +194,7 @@ export namespace ClassHelpers {
     });
   };
 
-  export const mapFnError = (error: unknown, res: any) => {
+  export const mapFnError = (error: unknown, res: ExpressResponse) => {
     let status = 500;
     let message = 'Internal Server Error';
     let details: any = undefined;
