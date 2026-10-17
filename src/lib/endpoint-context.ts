@@ -2769,6 +2769,20 @@ export class EndpointContext {
     const controllerInstance = this.getInstanceBy(
       target as any,
     ) as TaonBaseController;
+    const t = {
+      changeFileLang: () => {
+        // TODO implement translating for request
+        return;
+      },
+      gettext: text => {
+        // TODO implement translating for request
+        return text;
+      },
+      translate: text => {
+        // TODO implement translating for request
+        return text;
+      },
+    } as any;
     if (overrideExpressApp) {
       this.expressApp = overrideExpressApp;
     }
@@ -2847,6 +2861,7 @@ export class EndpointContext {
         expressPath,
       );
       const electron = require('electron');
+
       (electron.ipcMain as typeof ipcMain).on(
         ipcKeyName,
         async (event, paramsFromBrowser) => {
@@ -2854,7 +2869,7 @@ export class EndpointContext {
             paramsFromBrowser,
             void 0,
             void 0,
-            {},
+            { t },
           );
           const sendToIpsMainOn = TaonHelpers.ipcKeyNameResponse(
             target,
@@ -3143,7 +3158,7 @@ export class EndpointContext {
               resolvedParams,
               req,
               res,
-              { bodyFormDataFiles },
+              { bodyFormDataFiles, t },
             );
 
             if (res.headersSent) {

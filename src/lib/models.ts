@@ -14,6 +14,7 @@ import type { MethodConfig } from './config/method-config';
 import type { EndpointContext } from './endpoint-context';
 import { ExpressRequest, ExpressResponse } from './express-types';
 import { TaonUploadedFile } from './helpers/express-request-to-form-data';
+import { Translation } from '@taon-dev/i18n/src';
 
 // ! TODO make it as a nice way to wrap normal request
 export class TaonRestResponseWrapper extends RestResponseWrapper {}
@@ -423,6 +424,8 @@ export namespace Models {
 
     export interface RequestResults {
       bodyFormDataFiles?: TaonUploadedFile[];
+
+      t?: Translation;
     }
 
     export interface AsyncResponse<T> {
