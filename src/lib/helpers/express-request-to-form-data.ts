@@ -70,7 +70,7 @@ async function nodeExpressRequestToFormData(
   //#region @backendFunc
   //#region @esmRemove
 
-  const Busboy = (await import('busboy')).default;
+  const Busboy = (await import('busboy')) as any as typeof import('busboy');
 
   const tempFolder = await UtilsTempFolder.getPath({
     prefix: 'taon-form-data',
