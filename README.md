@@ -69,7 +69,7 @@ echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo s
 ## Supported OS-es:
 - Win10, Win11 (gitbash, pwsh)
 - MacOS 
-- Linux
+- Linux {fedora, arch, ubuntu} {KDE, Gnome, DDE (Deepin)}
 
 ## Supported editors
 - [Visual Studio Code](https://www.electronjs.org/)
