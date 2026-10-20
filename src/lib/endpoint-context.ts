@@ -740,6 +740,13 @@ export class EndpointContext {
       ctx: this,
       classType: Models.ClassType.MIGRATION,
     });
+
+    this.config.entities = this.cloneClassesObjWithNewMetadata({
+      classesInput: this.config.entities,
+      config: this.config,
+      ctx: this,
+      classType: Models.ClassType.ENTITY,
+    });
     //#endregion
 
     //#region prepare instances
@@ -1684,6 +1691,7 @@ export class EndpointContext {
       Models.ClassType.PROVIDER,
       Models.ClassType.REPOSITORY,
       Models.ClassType.CONTROLLER,
+      Models.ClassType.SUBSCRIBER,
       Models.ClassType.ENTITY,
       Models.ClassType.MIGRATION,
     ]) {
