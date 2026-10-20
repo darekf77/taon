@@ -425,7 +425,8 @@ export namespace Models {
     export interface RequestResults {
       bodyFormDataFiles?: TaonUploadedFile[];
 
-      t?: Translation;
+      t: Translation;
+      expressPath: string;
     }
 
     export interface AsyncResponse<T> {
@@ -463,7 +464,7 @@ export namespace Models {
     expressPath: string;
     classConfig: Partial<ControllerConfig>;
     methodConfig: Partial<MethodConfig<CONTROLLER>>;
-    t?: Translation;
+    t: Translation;
   }
 
   export interface StartParams extends TaonInitializeParams {

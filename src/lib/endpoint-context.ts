@@ -2413,20 +2413,7 @@ export class EndpointContext {
         const httpMethodType: CoreModels.HttpMethod = methodConfig.type;
 
         // this is quick fix - in docker global path should not be used
-        const globalPathPart =
-          this.isRunningInsideDocker ||
-          !this.frontendHostUri?.origin?.includes('localhost') // fe with domain -> is in docker
-            ? `${this.uriPathnameOrNothingIfRoot.replace(
-                /\/$/,
-                '',
-              )}/${apiPrefix}/${this.contextName}`.replace(/\/\//, '/')
-            : '';
-        const expressPath = methodConfig.global
-          ? `${globalPathPart}/${methodConfig.path?.replace(
-              /\/$/,
-              '',
-            )}`.replace(/\/\//, '/')
-          : TaonHelpers.getExpressPath(classConfig, methodConfig);
+        const expressPath = this.getExpressPath(classConfig, methodConfig);
 
         //#endregion
 
@@ -2438,6 +2425,13 @@ export class EndpointContext {
         // });
         if (UtilsOs.isNode || UtilsOs.isWebSQL) {
           //#region @websql
+
+          const controllerInstance = this.getInstanceBy(
+            controllerClassFn as any,
+          ) as TaonBaseController;
+
+          // @ts-ignore
+          controllerInstance.__config__ = classConfig;
 
           const route = this.initServer(
             httpMethodType,
@@ -2490,6 +2484,31 @@ export class EndpointContext {
       //#endregion
       //#endregion
     }
+  }
+
+  //#endregion
+
+  //#region methods & getters / get express path
+  getExpressPath(
+    classConfig: ControllerConfig,
+    methodConfig: Partial<MethodConfig>,
+  ): string {
+    const globalPathPart =
+      this.isRunningInsideDocker ||
+      !this.frontendHostUri?.origin?.includes('localhost') // fe with domain -> is in docker
+        ? `${this.uriPathnameOrNothingIfRoot.replace(
+            /\/$/,
+            '',
+          )}/${apiPrefix}/${this.contextName}`.replace(/\/\//, '/')
+        : '';
+    const expressPath = methodConfig.global
+      ? `${globalPathPart}/${methodConfig.path?.replace(/\/$/, '')}`.replace(
+          /\/\//,
+          '/',
+        )
+      : TaonHelpers.getExpressPath(classConfig, methodConfig);
+
+    return expressPath;
   }
   //#endregion
 
@@ -2877,7 +2896,7 @@ export class EndpointContext {
             paramsFromBrowser,
             void 0,
             void 0,
-            { t },
+            { t, expressPath },
           );
           const sendToIpsMainOn = TaonHelpers.ipcKeyNameResponse(
             target,
@@ -3100,7 +3119,7 @@ export class EndpointContext {
                         req.headers[
                           `${Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${queryParamName.toLowerCase()}`
                         ],
-                      ),
+                      ) ?? '{}',
                     );
                     let beforeTransofrm = tQuery[queryParamName];
                     if (_.isString(beforeTransofrm)) {
@@ -3167,7 +3186,7 @@ export class EndpointContext {
               resolvedParams,
               req,
               res,
-              { bodyFormDataFiles, t },
+              { bodyFormDataFiles, t, expressPath },
             );
 
             if (res.headersSent) {
