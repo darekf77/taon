@@ -463,6 +463,7 @@ export namespace Models {
     expressPath: string;
     classConfig: Partial<ControllerConfig>;
     methodConfig: Partial<MethodConfig<CONTROLLER>>;
+    t?: Translation;
   }
 
   export interface StartParams extends TaonInitializeParams {

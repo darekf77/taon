@@ -2928,6 +2928,7 @@ export class EndpointContext {
                   expressPath,
                   classConfig,
                   methodConfig,
+                  t,
                 } as Models.TaonCtrlBeforeEachRequestParams);
             } catch (error) {
               const { errroResult, status } = ClassHelpers.mapFnError(
