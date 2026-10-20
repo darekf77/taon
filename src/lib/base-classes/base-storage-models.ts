@@ -60,6 +60,11 @@ export interface TaonStorageObject {
    * Optional custom metadata.
    */
   metadata?: Record<string, string>;
+
+  /**
+   * Optional short-lived download URL returned by upload controllers.
+   */
+  downloadUrl?: string;
 }
 
 export interface TaonStorageUploadOptions {

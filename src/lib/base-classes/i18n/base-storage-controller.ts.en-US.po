@@ -4,11 +4,19 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/lib/base-classes/base-storage-controller.ts:67
-#: src/lib/base-classes/base-storage-controller.ts:130
-#: src/lib/base-classes/base-storage-controller.ts:150
-#: src/lib/base-classes/base-storage-controller.ts:171
-#: src/lib/base-classes/base-storage-controller.ts:358
-#: src/lib/base-classes/base-storage-controller.ts:392
+#: src/lib/base-classes/base-storage-controller.ts:73
+#: src/lib/base-classes/base-storage-controller.ts:166
+#: src/lib/base-classes/base-storage-controller.ts:186
+#: src/lib/base-classes/base-storage-controller.ts:207
+#: src/lib/base-classes/base-storage-controller.ts:394
+#: src/lib/base-classes/base-storage-controller.ts:428
 msgid "Invalid or not provided \"key\" parameter"
 msgstr ""
+
+#: src/lib/base-classes/base-storage-controller.ts:83
+msgid "Invalid or expired storage download token."
+msgstr "Invalid or expired storage download token."
+
+#: src/lib/base-classes/base-storage-controller.ts:89
+msgid "A valid storage download token is required."
+msgstr "A valid storage download token is required."

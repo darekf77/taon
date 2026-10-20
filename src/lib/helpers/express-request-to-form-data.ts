@@ -19,6 +19,11 @@ export interface TaonUploadedFile {
   fileName: string;
 
   /**
+   * Original filename preserved when the storage key is renamed.
+   */
+  originalFileName?: string;
+
+  /**
    * MIME type reported by multipart/form-data.
    */
   mimeType: string;

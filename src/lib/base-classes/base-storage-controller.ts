@@ -47,6 +47,10 @@ export abstract class TaonBaseStorageController<
 
   private readonly storage = new TaonBaseStorageBackend(this);
 
+  protected storageObjectExists(key: string): Promise<boolean> {
+    return this.storage.storageExists(key);
+  }
+
   //#region API / download
   /**
    * This method is only for nodejs???
@@ -58,9 +62,11 @@ export abstract class TaonBaseStorageController<
   })
   public download(
     @Query('key') key: string,
+    @Query('token') token?: string,
+    @Query('download') download = false,
   ): Models.Http.Response<ReadableStream<Uint8Array>> {
     //#region @backendFunc
-    return async (reqr, res) => {
+    return async (req, res) => {
       if (!key) {
         Taon.error({
           status: getStatusCode(HttpStatusEnum.FORBIDDEN),
@@ -70,49 +76,79 @@ export abstract class TaonBaseStorageController<
 
       key = this.storage.normalizeKey(key);
 
-      if (UtilsOs.isRunningInCloudflareWorker()) {
-        const storageKey = this.storage.getFileRelativePathInBucket(key);
-
-        const object = await this.storage.cloudflareBucket.get(storageKey);
-
-        if (!object) {
-          throw new Error(`Storage object not found: ${key}`);
+      if (token) {
+        if (!(await this.verifyStorageDownloadToken({ key, token }))) {
+          Taon.error({
+            status: getStatusCode(HttpStatusEnum.FORBIDDEN),
+            message: t.gettext('Invalid or expired storage download token.'),
+          });
         }
-
-        return object.body as any;
+      } else if (!(await this.isPublicStorageKey(key))) {
+        Taon.error({
+          status: getStatusCode(HttpStatusEnum.FORBIDDEN),
+          message: t.gettext('A valid storage download token is required.'),
+        });
       }
 
-      const absPath = this.storage.getFileAbsPathInBucket(key);
-
-      if (!fse.existsSync(absPath)) {
-        throw new Error(`Storage object not found: ${key}`);
+      const storedMetadata = await this.storage.storageGetMetadata(key);
+      if (!storedMetadata) {
+        Taon.error({
+          message: `Storage object not found: ${key}`,
+          status: 404,
+        });
       }
-
-      const nodeStream = fse.createReadStream(absPath);
-
-      return new ReadableStream<Uint8Array>({
-        start(controller) {
-          nodeStream.on('data', chunk => {
-            controller.enqueue(
-              typeof chunk === 'string'
-                ? Buffer.from(chunk)
-                : new Uint8Array(chunk),
-            );
-          });
-
-          nodeStream.on('end', () => {
+      const rangeHeader = req.headers.range;
+      const range = rangeHeader
+        ? parseStorageRange(rangeHeader, storedMetadata!.size)
+        : undefined;
+      if (rangeHeader && !range) {
+        res.status(416);
+        res.setHeader('Accept-Ranges', 'bytes');
+        res.setHeader('Content-Range', `bytes */${storedMetadata!.size}`);
+        return new ReadableStream<Uint8Array>({
+          start(controller) {
             controller.close();
-          });
+          },
+        });
+      }
+      const metadata = await this.storage.storageOpenDownload(key, range);
+      if (!metadata) {
+        Taon.error({
+          message: `Storage object not found: ${key}`,
+          status: 404,
+        });
+      }
 
-          nodeStream.on('error', error => {
-            controller.error(error);
-          });
-        },
+      res.setHeader('Accept-Ranges', 'bytes');
+      res.setHeader('Content-Length', String(metadata.contentLength));
+      res.setHeader(
+        'Content-Type',
+        metadata.contentType || 'application/octet-stream',
+      );
+      res.setHeader('X-Content-Type-Options', 'nosniff');
+      res.setHeader(
+        'Cache-Control',
+        token ? 'private, no-store' : 'public, max-age=300',
+      );
+      if (download) {
+        const fileName = (metadata.fileName || 'download').replace(
+          /[\r\n"]/g,
+          '_',
+        );
+        res.setHeader(
+          'Content-Disposition',
+          `attachment; filename="${fileName}"`,
+        );
+      }
 
-        cancel() {
-          nodeStream.destroy();
-        },
-      });
+      if (rangeHeader) {
+        res.status(206);
+        res.setHeader(
+          'Content-Range',
+          `bytes ${range!.start}-${range!.end}/${metadata.size}`,
+        );
+      }
+      return metadata.body;
     };
     //#endregion
   }
@@ -225,7 +261,7 @@ export abstract class TaonBaseStorageController<
       const key = this.storage.normalizeKey(file.fileName);
 
       await this.storage.storageUploadFromTempFile(key, file, {
-        fileName: file.fileName,
+        fileName: file.originalFileName || file.fileName,
         contentType: file.mimeType,
       });
 
@@ -453,6 +489,7 @@ export abstract class TaonBaseStorageController<
     key: string;
     private: boolean;
     token?: string;
+    download?: boolean;
   }): string;
   //#endregion
 
@@ -473,7 +510,58 @@ export abstract class TaonBaseStorageController<
     key: string;
     expiresAt: number;
   }): Promise<string>;
+
+  /**
+   * Validate a private download token for this controller and exact key.
+   */
+  protected async verifyStorageDownloadToken(options: {
+    key: string;
+    token: string;
+  }): Promise<boolean> {
+    return false;
+  }
+
+  /**
+   * Public storage access must be explicitly opted into by the controller.
+   */
+  protected async isPublicStorageKey(key: string): Promise<boolean> {
+    return false;
+  }
   //#endregion
 
   //#endregion
+}
+
+function parseStorageRange(
+  header: string,
+  size: number,
+): { start: number; end: number } | undefined {
+  const match = /^bytes=(\d*)-(\d*)$/.exec(header.trim());
+  if (!match || size <= 0) {
+    return undefined;
+  }
+  const [, startText, endText] = match;
+  let start: number;
+  let end: number;
+  if (!startText) {
+    const suffixLength = Number(endText);
+    if (!Number.isSafeInteger(suffixLength) || suffixLength <= 0) {
+      return undefined;
+    }
+    start = Math.max(0, size - suffixLength);
+    end = size - 1;
+  } else {
+    start = Number(startText);
+    end = endText ? Number(endText) : size - 1;
+  }
+  if (
+    !Number.isSafeInteger(start) ||
+    !Number.isSafeInteger(end) ||
+    start < 0 ||
+    end < start ||
+    start >= size
+  ) {
+    return undefined;
+  }
+  return { start, end: Math.min(end, size - 1) };
 }

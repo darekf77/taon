@@ -16,6 +16,7 @@ import {
   UtilsTerminal,
 } from 'tnp-core/src';
 
+import type { ControllerConfig } from '../config/controller-config';
 import { TaonController } from '../decorators/classes/controller-decorator';
 import { POST } from '../decorators/http/http-methods-decorators';
 import { Body, Path, Query } from '../decorators/http/http-params-decorators';
@@ -39,6 +40,8 @@ export class TaonBaseController<
     return this.ctx?.R2;
   }
   //#endregion
+
+  declare readonly __config__: ControllerConfig;
 
   //#region hook before each reaquest
   /**
@@ -71,6 +74,20 @@ export class TaonBaseController<
     ctxStorage: ContextsEndpointStorage;
   }): Promise<void> {}
   //#endregion
+
+  public getThisControllerMethodFullUrl(methodName: keyof CONTOROLLER): string {
+    const isLocalhost =
+      this.ctx.frontendHostUri.origin.includes('://localhost:');
+    const origin = isLocalhost
+      ? this.ctx.uri.origin
+      : this.ctx.frontendHostUri.origin;
+
+    const classConfig = this.__config__;
+    const methodConfig = classConfig.methods[methodName as any];
+    const expressPath = this.ctx.getExpressPath(classConfig, methodConfig);
+
+    return `${origin}${expressPath}`;
+  }
 
   //#region wait for proper status change
   // async check() {
