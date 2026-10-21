@@ -2423,12 +2423,15 @@ export class EndpointContext {
         //   globalPathPart,
         //   'this.contextName': this.contextName,
         // });
+
+        const controllerInstance = this.getInstanceBy(
+            controllerClassFn as any,
+          ) as TaonBaseController;
+
         if (UtilsOs.isNode || UtilsOs.isWebSQL) {
           //#region @websql
 
-          const controllerInstance = this.getInstanceBy(
-            controllerClassFn as any,
-          ) as TaonBaseController;
+
 
           // @ts-ignore
           controllerInstance.__config__ = classConfig;
@@ -2462,6 +2465,9 @@ export class EndpointContext {
           //   methodConfig,
           //   expressPath,
           // );
+
+          // @ts-ignore
+          controllerInstance.__config__ = classConfig;
 
           this.initClient(
             controllerClassFn,
