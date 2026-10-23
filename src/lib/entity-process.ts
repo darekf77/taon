@@ -1,6 +1,4 @@
 //#region imports
-import type { Readable } from 'node:stream';
-
 import type { Response } from 'express';
 import { walk } from 'lodash-walk-object/src';
 import { decodeMappingForHeaderJson } from 'ng2-rest/src';
@@ -18,8 +16,9 @@ import { Symbols } from './symbols';
 
 export class EntityProcess {
   //#region fields
+
   /**
-   * Data to send
+   * Data to send.
    */
   private data: any;
 
@@ -32,26 +31,28 @@ export class EntityProcess {
   //#endregion
 
   //#region constructor
+
   constructor(
     /**
-     * Data from backend
+     * Express response.
      */
     private response: Response,
   ) {}
+
   //#endregion
 
   //#region run
-  public async run(resultFromControllerMethod: any) {
+
+  public async run(resultFromControllerMethod: any): Promise<void> {
     let advancedManipulation = false;
 
     if (_.isFunction(resultFromControllerMethod)) {
-      advancedManipulation = true;
-
       const resultFn: Models.Http.SyncResponseFunc<any> =
         resultFromControllerMethod as any;
 
       await resultFn({
         circResponse: (circData: any) => {
+          advancedManipulation = true;
           this.responseHandled = true;
 
           const { circs, data } = applayTransformFn(circData);
@@ -65,12 +66,21 @@ export class EntityProcess {
           this.send(advancedManipulation);
         },
 
-        streamResponse: (stream: Readable) => {
+        streamResponse: async (
+          options: Models.Http.TaonStreamResponseOptions,
+        ) => {
           this.responseHandled = true;
-          this.streamResponse(stream);
+
+          await this.streamResponse(options);
         },
       });
 
+      /**
+       * Advanced response function may theoretically decide not to call
+       * circResponse/streamResponse. Do not automatically send anything here.
+       *
+       * The response lifecycle belongs to the advanced response callback.
+       */
       return;
     }
 
@@ -82,24 +92,182 @@ export class EntityProcess {
 
     this.send(advancedManipulation);
   }
+
   //#endregion
 
   //#region stream response
-  private streamResponse(stream: Readable): void {
-    stream.on('error', error => {
+
+  private async streamResponse(
+    options: Models.Http.TaonStreamResponseOptions,
+  ): Promise<void> {
+    const {
+      stream,
+      statusCode = 200,
+      contentType = 'application/octet-stream',
+      filename,
+      disposition = filename ? 'attachment' : undefined,
+      contentLength,
+      headers = {},
+    } = options;
+
+    if (this.response.headersSent) {
+      throw new Error(
+        '[taon] Cannot start stream response - response headers were already sent.',
+      );
+    }
+
+    //#region headers
+
+    this.response.status(statusCode);
+
+    this.response.setHeader('Content-Type', contentType);
+
+    if (!_.isNil(contentLength)) {
+      this.response.setHeader('Content-Length', String(contentLength));
+    }
+
+    if (disposition) {
+      const value = filename
+        ? `${disposition}; filename="${this.escapeHeaderFilename(filename)}"`
+        : disposition;
+
+      this.response.setHeader('Content-Disposition', value);
+    }
+
+    for (const [headerName, headerValue] of Object.entries(headers)) {
+      this.response.setHeader(headerName, headerValue);
+    }
+
+    //#endregion
+
+    const reader = stream.getReader();
+
+    let clientDisconnected = false;
+    let streamCompleted = false;
+
+    const onResponseClose = () => {
+      /**
+       * "close" can also happen after a normal response finish.
+       * Only treat it as cancellation when streaming has not completed.
+       */
+      if (!streamCompleted) {
+        clientDisconnected = true;
+
+        /**
+         * Do not await inside the event callback.
+         * reader.cancel() propagates cancellation upstream through
+         * the Web Streams pipeline.
+         */
+        void reader.cancel(
+          new Error('[taon] HTTP client disconnected during stream response.'),
+        );
+      }
+    };
+
+    this.response.once('close', onResponseClose);
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+
+        if (done) {
+          streamCompleted = true;
+          break;
+        }
+
+        if (clientDisconnected || this.response.destroyed) {
+          break;
+        }
+
+        if (!value || value.byteLength === 0) {
+          continue;
+        }
+
+        const canContinue = this.response.write(Buffer.from(value));
+
+        if (!canContinue) {
+          await this.waitForDrainOrClose();
+        }
+      }
+
+      if (
+        streamCompleted &&
+        !clientDisconnected &&
+        !this.response.destroyed &&
+        !this.response.writableEnded
+      ) {
+        this.response.end();
+      }
+    } catch (error) {
+      /**
+       * If the browser/client intentionally disconnected, there is no HTTP
+       * response left to report the error through.
+       */
+      if (clientDisconnected || this.response.destroyed) {
+        return;
+      }
+
       if (!this.response.headersSent) {
         this.response.status(500).end();
         return;
       }
 
-      this.response.destroy(error);
-    });
+      this.response.destroy(
+        error instanceof Error
+          ? error
+          : new Error(`[taon] Stream response failed: ${String(error)}`),
+      );
+    } finally {
+      this.response.off('close', onResponseClose);
 
-    stream.pipe(this.response);
+      try {
+        reader.releaseLock();
+      } catch {
+        // Reader may already have been released/cancelled.
+      }
+    }
   }
+
+  private waitForDrainOrClose(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      const onDrain = () => {
+        cleanup();
+        resolve();
+      };
+
+      const onClose = () => {
+        cleanup();
+        resolve();
+      };
+
+      const onError = (error: Error) => {
+        cleanup();
+        reject(error);
+      };
+
+      const cleanup = () => {
+        this.response.off('drain', onDrain);
+        this.response.off('close', onClose);
+        this.response.off('error', onError);
+      };
+
+      this.response.once('drain', onDrain);
+      this.response.once('close', onClose);
+      this.response.once('error', onError);
+    });
+  }
+
+  private escapeHeaderFilename(filename: string): string {
+    return filename
+      .replace(/[\r\n]/g, '')
+      .replace(/\\/g, '_')
+      .replace(/"/g, "'");
+  }
+
   //#endregion
 
   //#region set headers
+
   setHeaders(advancedManipulation: boolean, circs: any[]): void {
     const className = ClassHelpers.getName(this.data);
 
@@ -123,10 +291,12 @@ export class EntityProcess {
       }
     }
   }
+
   //#endregion
 
   //#region send
-  send(advancedManipulation: boolean) {
+
+  send(advancedManipulation: boolean): void {
     if (advancedManipulation) {
       const browserKey = config.folder.browser;
       let toSend = _.isArray(this.data) ? [] : {};
@@ -227,5 +397,6 @@ export class EntityProcess {
       this.response.json(this.data);
     }
   }
+
   //#endregion
 }

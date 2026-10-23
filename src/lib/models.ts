@@ -388,9 +388,32 @@ export namespace Models {
 
     export type SyncResponse<T> = string | T;
 
-    export type TaonResponseStream =
-      | NodeJS.ReadableStream
-      | ReadableStream<Uint8Array>;
+    export interface TaonStreamResponseOptions {
+      stream: ReadableStream<Uint8Array>;
+
+      statusCode?: number;
+
+      contentType?: string;
+
+      /**
+       * Causes Content-Disposition: attachment
+       */
+      filename?: string;
+
+      /**
+       * inline | attachment
+       * default attachment when filename is provided
+       */
+      disposition?: 'inline' | 'attachment';
+
+      /**
+       * Only when actually known.
+       * Streaming ZIP usually won't know this.
+       */
+      contentLength?: number;
+
+      headers?: Record<string, string>;
+    }
 
     export type ResponseFuncOpt<T> = {
       /**
@@ -400,7 +423,9 @@ export namespace Models {
       /**
        * send stream to user - it does not end conneciton
        */
-      streamResponse?: (anyStream: TaonResponseStream) => SyncResponse<T>;
+      streamResponse?: (
+        streamOptions: TaonStreamResponseOptions,
+      ) => SyncResponse<T>;
     };
 
     export type SyncResponseFunc<T> = (
