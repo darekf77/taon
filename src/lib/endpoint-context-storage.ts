@@ -4,6 +4,7 @@ import type { EndpointContext } from './endpoint-context';
 
 export class ContextsEndpointStorage {
   SPECIAL_APP_READY_MESSAGE = CoreModels.SPECIAL_APP_READY_MESSAGE;
+
   private taonEndpointContexts = new Map<string, EndpointContext>();
 
   //#region singleton

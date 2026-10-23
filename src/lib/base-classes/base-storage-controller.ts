@@ -532,6 +532,7 @@ export abstract class TaonBaseStorageController<
   //#endregion
 }
 
+//#region parse storage range
 function parseStorageRange(
   header: string,
   size: number,
@@ -565,3 +566,5 @@ function parseStorageRange(
   }
   return { start, end: Math.min(end, size - 1) };
 }
+
+//#endregion

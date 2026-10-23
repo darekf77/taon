@@ -457,6 +457,7 @@ export class TaonBaseStorageBackend {
   }
   //#endregion
 
+   //#region mehods / storage upload from node temp file
   private async storageUploadFromNodeTempFile(
     key: string,
     file: TaonUploadedFile,
@@ -477,7 +478,9 @@ export class TaonBaseStorageBackend {
 
     //#endregion
   }
+  //#endregion
 
+   //#region mehods / storage uplaod from cloudflare temp file
   private async storageUploadFromCloudflareTempFile(
     key: string,
     file: TaonUploadedFile,
@@ -506,6 +509,7 @@ export class TaonBaseStorageBackend {
 
     //#endregion
   }
+  //#endregion
 
   //#region methods / storage metadata
   async storageGetMetadata(
