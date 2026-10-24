@@ -1,3 +1,5 @@
+export const  TAON_MIGRATION_META_TABLE_NAME = 'TAON_MIGRATION_META';
+
 export type TaonEntityKeysToOmit =
   | 'ctrl'
   | 'clone'

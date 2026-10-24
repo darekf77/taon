@@ -1,9 +1,4 @@
 //#region imports
-import { Helpers, UtilsMigrations, _ } from 'tnp-core/src';
-import { TaonBaseMigration } from './base-classes/base-migration';
-import type { EndpointContext } from './endpoint-context';
-import { Models } from './models';
-import { ClassHelpers } from './helpers/class-helpers';
 import {
   Column,
   DataSource,
@@ -16,6 +11,13 @@ import {
   TableColumn,
   TableIndex,
 } from 'taon-typeorm/src';
+import { Helpers, UtilsMigrations, _ } from 'tnp-core/src';
+
+import { TaonBaseMigration } from './base-classes/base-migration';
+import { TAON_MIGRATION_META_TABLE_NAME } from './constants';
+import type { EndpointContext } from './endpoint-context';
+import { ClassHelpers } from './helpers/class-helpers';
+import { Models } from './models';
 //#endregion
 
 //#region models
@@ -25,11 +27,12 @@ export class ContextDbMigrations {
   //#region fields
 
   //#region fields / migration table name
-  readonly DEFAULT_MIGRATION_TABLE_NAME = 'TAON_MIGRATION_META';
+  readonly DEFAULT_MIGRATION_TABLE_NAME = TAON_MIGRATION_META_TABLE_NAME;
   //#endregion
 
   //#region fields / migration statuses
   readonly MIGRATION_STATUS_COMPLETED: MigrationStatus = 'completed';
+
   readonly MIGRATION_STATUS_PENDING: MigrationStatus = 'pending';
   //#endregion
 
