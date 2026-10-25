@@ -422,6 +422,22 @@ export class EndpointContext {
 
     this.config = this.configFn({});
 
+    if (
+      UtilsOs.isRunningInCloudflareWorker() &&
+      !initOptions.initFromRecrusiveContextResovle
+    ) {
+      const TAON_WORKER_INSTANCE_ID = crypto.randomUUID();
+      console.log(`
+
+        [WORKER START] instance=${TAON_WORKER_INSTANCE_ID}
+        frontendHost: ${this.config.frontendHost}
+        frontendHostPortNumber: ${this.config.frontendHostPortNumber}
+        host: ${this.config.host}
+        hostPortNumber: ${this.config.hostPortNumber}
+
+        `);
+    }
+
     // @ts-expect-error
     this.useSession = _.isBoolean(this.config.useSession)
       ? this.config.useSession
