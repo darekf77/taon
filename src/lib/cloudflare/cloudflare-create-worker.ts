@@ -43,12 +43,16 @@ export function createWorkerAdapter(
     }
 
     //#region parse body
-    const rawRequest = cloudflareRequest.clone();
+    const requestForParsing = cloudflareRequest.clone();
+    const requestForRawBody = cloudflareRequest.clone();
 
     let parsedBody: any;
+    let rawBody: Uint8Array | undefined;
 
     try {
-      parsedBody = await parseBody(rawRequest);
+      parsedBody = await parseBody(requestForParsing);
+
+      rawBody = new Uint8Array(await requestForRawBody.arrayBuffer());
     } catch (err: any) {
       return new Response(
         JSON.stringify({
@@ -125,6 +129,7 @@ export function createWorkerAdapter(
           .filter(Boolean);
       })(),
 
+      rawBody,
       raw: cloudflareRequest,
     };
 

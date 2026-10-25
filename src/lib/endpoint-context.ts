@@ -2425,13 +2425,11 @@ export class EndpointContext {
         // });
 
         const controllerInstance = this.getInstanceBy(
-            controllerClassFn as any,
-          ) as TaonBaseController;
+          controllerClassFn as any,
+        ) as TaonBaseController;
 
         if (UtilsOs.isNode || UtilsOs.isWebSQL) {
           //#region @websql
-
-
 
           // @ts-ignore
           controllerInstance.__config__ = classConfig;
@@ -2694,7 +2692,16 @@ export class EndpointContext {
 
     // app.use(fileUpload());
     app.use(bodyParser.urlencoded({ extended: true }));
-    app.use(bodyParser.json());
+    app.use(
+      bodyParser.json({
+        verify: (req: ExpressRequest, _res, body) => {
+          req.rawBody = body;
+          // if (/stripe[-_/]?webhook/i.test(req.url ?? '')) {
+          //   (req as ExpressRequest).rawBody = body;
+          // }
+        },
+      }),
+    );
     app.use(methodOverride());
     app.use(cookieParser());
 
