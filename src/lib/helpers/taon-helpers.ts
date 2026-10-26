@@ -1,4 +1,3 @@
-import * as JSON5 from 'json5';
 import { _ } from 'tnp-core/src';
 
 import type { ControllerConfig } from '../config/controller-config';
@@ -47,7 +46,7 @@ export namespace TaonHelpers {
         return false;
       }
       try {
-        const t = JSON5.parse(param);
+        const t = JSON.parse(param);
         return t;
       } catch (e) {
         return param;
