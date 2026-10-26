@@ -6,6 +6,7 @@ import type {
   FindOneOptions,
   FindOptionsWhere,
   InsertResult,
+  RelationPath,
   Repository,
   SaveOptions,
   UpdateResult,
@@ -29,6 +30,10 @@ import { TaonBaseCustomRepository } from './base-custom-repository';
 //#endregion
 
 const INDEX_KEYS_NO_FOR_UPDATE = ['id'];
+
+export interface TaonUpdateOptions<Entity> {
+  relations?: RelationPath<Entity>[];
+}
 
 @TaonRepository({ className: TaonBaseRepositoryClassName })
 export abstract class TaonBaseRepository<
@@ -543,105 +548,182 @@ export abstract class TaonBaseRepository<
   }
   //#endregion
 
-  //#region crud operations / typeorm / update & build update
-  async update(item: Entity) {
+  //#region crud operations / typeorm / update
+  /**
+   * Updates entity/entities partially.
+   *
+   * This follows native TypeORM update semantics:
+   * - executes a direct UPDATE query
+   * - does not handle cascades or relations
+   * - does not reload or return the updated entity
+   */
+  update(
+    criteria:
+      | string
+      | string[]
+      | number
+      | number[]
+      | Date
+      | Date[]
+      | FindOptionsWhere<Entity>,
+    partialEntity: QueryDeepPartialEntity<Entity>,
+  ): Promise<UpdateResult> {
+    return this.repo.update(criteria, partialEntity);
+  }
+  //#endregion
+
+  //#region crud operations / typeorm / update
+
+  /**
+   * Updates entity partially by id.
+   *
+   * Convenience wrapper around update().
+   * Uses native TypeORM update semantics.
+   */
+
+  /**
+   * Updates an entity by id and returns the updated entity.
+   */
+
+  async updateById(
+    id: number | string,
+    partialEntity: DeepPartial<Entity>,
+    options?: TaonUpdateOptions<Entity>,
+  ): Promise<Entity> {
+    const entity = await this.repo.preload({
+      id,
+      ...partialEntity,
+    } as DeepPartial<Entity>);
+
+    if (!entity) {
+      throw new Error(`Entity with id "${id}" not found.`);
+    }
+
+    await this.repo.save(entity);
+
+    return this.repo.findOne({
+      where: { id } as FindOptionsWhere<Entity>,
+      relations: options?.relations,
+    });
+  }
+  //#endregion
+
+  //#region crud operations / shallow update
+  private readonly shallowUpdateAllowedColumnTypes = [
+    'simple-json',
+    'simple-array',
+    'json',
+  ];
+
+  /**
+   * Taon helper for updating simple entity columns without relations.
+   *
+   * Object values are ignored unless the corresponding database column
+   * explicitly supports them (for example JSON/simple-json/simple-array).
+   *
+   * The entity is reloaded and returned after the update.
+   */
+  async shallowUpdate(item: Entity): Promise<Entity> {
     //#region @websqlFunc
-    const { id } = item as any;
-    return await this.updateById<Entity>(id, item);
+    const { id } = item;
+
+    return this.shallowUpdateById(id, item);
     //#endregion
   }
 
-  private allowedTypesToUpdate = ['simple-json', 'simple-array', 'json'];
-
-  async updateById<ENTITY = Entity>(
+  /**
+   * Taon helper for updating simple entity columns without relations.
+   *
+   * Only properties mapped to own database columns are considered.
+   * Primary/index keys listed in INDEX_KEYS_NO_FOR_UPDATE are ignored.
+   *
+   * The entity is reloaded and returned after the update.
+   */
+  async shallowUpdateById<ENTITY = Entity>(
     id: number | string,
-    item: Entity,
+    item: Partial<Entity>,
   ): Promise<ENTITY> {
     //#region @websqlFunc
-    const allowedPropsToUpdate = [];
+    const partialEntity: Record<string, any> = {};
+
     for (const key in item) {
+      if (!Object.prototype.hasOwnProperty.call(item, key)) {
+        continue;
+      }
+
+      if (INDEX_KEYS_NO_FOR_UPDATE.includes(key.toLowerCase())) {
+        continue;
+      }
+
       const metadataColumn = this.repo.metadata.ownColumns.find(
-        c => c.propertyName === key,
+        column => column.propertyName === key,
       );
+
+      // Not a regular database column (for example relation/transient field).
+      if (!metadataColumn) {
+        continue;
+      }
+
+      const value = item[key];
+
+      // Object values are skipped unless the column explicitly stores them.
+      // null is intentionally allowed because it is a valid SQL column value.
       if (
-        _.isObject(item) &&
-        item.hasOwnProperty(key) &&
-        (typeof item[key] !== 'object' ||
-          this.allowedTypesToUpdate.includes(metadataColumn?.type as any)) &&
-        !_.isUndefined(metadataColumn)
+        value !== null &&
+        typeof value === 'object' &&
+        !this.shallowUpdateAllowedColumnTypes.includes(
+          metadataColumn.type as string,
+        )
       ) {
-        allowedPropsToUpdate.push(key);
+        continue;
       }
+
+      partialEntity[key] = value;
     }
 
-    for (let i = 0; i < allowedPropsToUpdate.length; i++) {
-      const key: string = allowedPropsToUpdate[i];
-      if (!INDEX_KEYS_NO_FOR_UPDATE.includes(key.toLowerCase())) {
-        // const raw = _.isBoolean(item[key]) || _.isNumber(item[key]) || _.isNull(item[key]); // TODO does this make any sense ?
-        const toSet = item[key];
-        // const tableName = tableNameFrom(this.entity as any);
-
-        await this.repo.update(
-          {
-            id,
-          } as any,
-          {
-            [key]: toSet,
-          } as any,
-        );
-        //         await this.repo.query(
-        //           `UPDATE '${tableName}' as ${table}
-        // SET ${key}=${toSet}
-        // WHERE ${table}.id='${id}'
-        // `);
-      }
+    if (Object.keys(partialEntity).length > 0) {
+      await this.repo.update(
+        { id } as FindOptionsWhere<Entity>,
+        partialEntity as QueryDeepPartialEntity<Entity>,
+      );
     }
-    let model = await this.repo.findOne({
-      where: { id } as any,
+
+    const model = await this.repo.findOne({
+      where: { id } as FindOptionsWhere<Entity>,
     });
 
     return model as any as ENTITY;
     //#endregion
   }
 
-  async bulkUpdate(items: Entity[]) {
+  /**
+   * Buld update the same items
+   */
+  async bulkUpdate(items: Entity[], options?: TaonUpdateOptions<Entity>) {
     //#region @websqlFunc
     const models = [];
     for (let index = 0; index < items.length; index++) {
       const item = items[index];
       const { id } = item as any; // TOOD
-      const model = await this.updateById(id, item);
+      const model = await this.updateById(id, item, options);
       models.push(model);
     }
     return { models };
     //#endregion
   }
 
-  //#region tpeorm update version
-  // this version suck and will not return update entity
-  // /**
-  //  * Updates entity partially. Entity can be found by a given conditions.
-  //  * Unlike save method executes a primitive operation without cascades, relations and other operations included.
-  //  * Executes fast and efficient UPDATE query.
-  //  * Does not check if entity exist in the database.
-  //  */
-  // update(
-  //   criteria:
-  //     | string
-  //     | string[]
-  //     | number
-  //     | number[]
-  //     | Date
-  //     | Date[]
-  //     | ObjectID
-  //     | ObjectID[]
-  //     | FindOptionsWhere<Entity>,
-  //   partialEntity: QueryDeepPartialEntity<Entity>,
-  // ): Promise<UpdateResult> {
-  //   return this.repo.update(criteria, partialEntity);
-  // }
-  //#endregion
+  async bulkShallowUpdate(items: Entity[]): Promise<Entity[]> {
+    //#region @websqlFunc
+    const models: Entity[] = [];
 
+    for (const item of items) {
+      const model = await this.shallowUpdate(item);
+      models.push(model);
+    }
+
+    return models;
+    //#endregion
+  }
   //#endregion
 
   //#region crud operations / typeorm / upsert

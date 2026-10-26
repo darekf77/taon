@@ -3027,8 +3027,38 @@ export class EndpointContext {
               );
 
               if (isUsingWholeBody && bodyParamsToProcess.length > 1) {
+                const notEmpty = bodyParamsToProcess
+                  .filter(f => !!f.paramName)
+                  .map(c => `@Body('${c.paramName}') ${c.paramName}`)
+                  .join(', ');
+
                 throw new Error(
-                  `You can use only ONE body param @Body() without name.`,
+                  `
+
+                  You are using more than ONE body param @Body() without name.
+
+                  Or
+
+                  your are overriding method with wrong params (like below)
+
+                  class ParentClass {
+                    ...
+                    @${methodConfig.type?.toUpperCase()}()
+                    ${methodConfig.methodName as any}(@Body()) {
+                      // parent method
+                    }
+                     ...
+                  }
+
+                  class ${classConfig.className} extends AnyParentClass {
+                    ...
+                    @${methodConfig.type?.toUpperCase()}()
+                    ${methodConfig.methodName as any}(${notEmpty}) { // ERROR
+                      // your overrided method
+                    }
+                    ...
+                  }
+                  `,
                 );
               }
 
@@ -3039,7 +3069,7 @@ export class EndpointContext {
                       req.headers[
                         Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS
                       ],
-                    ),
+                    ) ?? '{}',
                   );
                   tBody = encodeMapping(tBody, mappinForEntityBody);
 
@@ -3053,7 +3083,7 @@ export class EndpointContext {
                           req.headers[
                             Symbols.old.CIRCURAL_OBJECTS_MAP_BODY_PARAM
                           ],
-                        ),
+                        ) ?? '{}',
                       );
                       tBody = JSON10.applyCircularMapping(tBody, circs);
                     } catch (e) {
@@ -3073,7 +3103,7 @@ export class EndpointContext {
                         req.headers[
                           `${Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS}${paramName.toLowerCase()}`
                         ],
-                      ),
+                      ) ?? '{}',
                     );
                     tBody[paramName] = encodeMapping(
                       tBody[paramName],
@@ -3113,7 +3143,7 @@ export class EndpointContext {
                       req.headers[
                         Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS
                       ],
-                    ),
+                    ) ?? '{}',
                   );
                   tQuery = TaonHelpers.parseJSONwithStringJSONs(
                     encodeMapping(tQuery, entity),
@@ -3128,7 +3158,7 @@ export class EndpointContext {
                           req.headers[
                             Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM
                           ],
-                        ),
+                        ) ?? '{}',
                       );
                       tQuery = JSON10.applyCircularMapping(tQuery, circs);
                     } catch (e) {

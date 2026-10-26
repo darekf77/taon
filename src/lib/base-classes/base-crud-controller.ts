@@ -19,7 +19,7 @@ import { Symbols } from '../symbols';
 import { Validators } from '../validators';
 
 import { TaonBaseController } from './base-controller';
-import { TaonBaseRepository } from './base-repository';
+import { TaonBaseRepository, TaonUpdateOptions } from './base-repository';
 //#endregion
 
 /**
@@ -90,7 +90,7 @@ export abstract class TaonBaseCrudController<
   //#region bufferd changes
   @GET()
   bufforedChanges(
-    @Query(`id`) id: number | string,
+    @Query('id') id: number | string,
     @Query(`property`) property: string,
     @Query('alreadyLength') alreadyLength?: number,
   ): Models.Http.Response<string | any[]> {
@@ -117,7 +117,7 @@ export abstract class TaonBaseCrudController<
 
   @GET()
   paginationQuery(
-    @Query() queryJson?: TaonPaginationQuery<ControllerClass>,
+    @Query('queryJson') queryJson?: TaonPaginationQuery<ControllerClass>,
   ): Models.Http.Response<Entity[]> {
     //#region @websqlFunc
     return async (request, response) => {
@@ -132,7 +132,7 @@ export abstract class TaonBaseCrudController<
 
   @POST()
   paginationQuerySafe(
-    @Body() query: TaonPaginationQuery<ControllerClass>,
+    @Body('query') query: TaonPaginationQuery<ControllerClass>,
   ): Models.Http.Response<Entity[]> {
     //#region @websqlFunc
     return async (request, response) => {
@@ -350,7 +350,7 @@ export abstract class TaonBaseCrudController<
 
   //#region get by id
   @GET()
-  getBy(@Query(`id`) id: number | string): Models.Http.Response<Entity> {
+  getBy(@Query('id') id: number | string): Models.Http.Response<Entity> {
     //#region @websqlFunc
     return async () => {
       const model = await this.db.getBy(id);
@@ -363,13 +363,14 @@ export abstract class TaonBaseCrudController<
   //#region update by id
   @PUT()
   updateById(
-    @Query(`id`) id: number | string,
-    @Body() item: Entity,
+    @Query('id') id: number | string,
+    @Body('item') item: Entity,
+    @Body('options') options?: TaonUpdateOptions<Entity>,
   ): Models.Http.Response<Entity> {
     //#region @websqlFunc
 
     return async () => {
-      const model = await this.db.updateById<Entity>(id, item as any);
+      const model = await this.db.updateById(id, item as any, options);
       return model;
     };
     //#endregion
@@ -379,13 +380,46 @@ export abstract class TaonBaseCrudController<
   //#region patch by id
   @PATCH()
   patchById(
-    @Query(`id`) id: number | string,
-    @Body() item: Entity,
+    @Query('id') id: number | string,
+    @Body('item') item: Entity,
+    @Body('options') options?: TaonUpdateOptions<Entity>,
   ): Models.Http.Response<Entity> {
     //#region @websqlFunc
 
     return async () => {
-      const model = await this.db.updateById<Entity>(id, item as any);
+      const model = await this.db.updateById(id, item as any, options);
+      return model;
+    };
+    //#endregion
+  }
+  //#endregion
+
+  //#region update by id
+  @PUT()
+  shallowUpdateById(
+    @Query('id') id: number | string,
+    @Body('item') item: Entity,
+  ): Models.Http.Response<Entity> {
+    //#region @websqlFunc
+
+    return async () => {
+      const model = await this.db.shallowUpdateById<Entity>(id, item);
+      return model;
+    };
+    //#endregion
+  }
+  //#endregion
+
+  //#region update by id
+  @PUT()
+  shallowPatchById(
+    @Query('id') id: number | string,
+    @Body('item') item: Entity,
+  ): Models.Http.Response<Entity> {
+    //#region @websqlFunc
+
+    return async () => {
+      const model = await this.db.shallowUpdateById<Entity>(id, item);
       return model;
     };
     //#endregion
@@ -394,13 +428,15 @@ export abstract class TaonBaseCrudController<
 
   //#region bulk update
   @PUT()
-  bulkUpdate(@Body() items: Entity[]): Models.Http.Response<Entity[]> {
+  bulkShallowUpdate(
+    @Body('items') items: Entity[],
+  ): Models.Http.Response<Entity[]> {
     //#region @websqlFunc
     return async () => {
       if (!Array.isArray(items) || items?.length === 0) {
         return [];
       }
-      const { models } = await this.db.bulkUpdate(items);
+      const models = await this.db.bulkShallowUpdate(items);
       return models;
     };
     //#endregion
@@ -409,7 +445,7 @@ export abstract class TaonBaseCrudController<
 
   //#region delete by id
   @DELETE()
-  deleteById(@Query(`id`) id: number | string): Models.Http.Response<Entity> {
+  deleteById(@Query('id') id: number | string): Models.Http.Response<Entity> {
     //#region @websqlFunc
     return async () => {
       const model = await this.db.deleteById(id as any);
@@ -422,7 +458,7 @@ export abstract class TaonBaseCrudController<
   //#region bulk delete
   @DELETE()
   bulkDelete(
-    @Query(`ids`) ids: (number | string)[],
+    @Query('ids') ids: (number | string)[],
   ): Models.Http.Response<(number | string | Entity)[]> {
     //#region @websqlFunc
     return async () => {
@@ -446,7 +482,7 @@ export abstract class TaonBaseCrudController<
 
   //#region create
   @POST()
-  save(@Body() item: Entity): Models.Http.Response<Entity> {
+  save(@Body('item') item: Entity): Models.Http.Response<Entity> {
     //#region @websqlFunc
     return async () => {
       const model = await this.db.save(item);
@@ -458,10 +494,10 @@ export abstract class TaonBaseCrudController<
 
   //#region bulk create
   @POST()
-  bulkCreate(@Body() items: Entity): Models.Http.Response<Entity[]> {
+  bulkCreate(@Body('items') items: Entity[]): Models.Http.Response<Entity[]> {
     //#region @websqlFunc
     return async () => {
-      const models = await this.db.bulkCreate(items as any);
+      const models = await this.db.bulkCreate(items);
       return models as Entity[];
     };
     //#endregion
