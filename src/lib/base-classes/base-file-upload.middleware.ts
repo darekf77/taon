@@ -17,6 +17,9 @@ import {
 //#endregion
 
 /**
+ * @deprecated
+ * DON'T USE WITH TaonBaseStorageController!
+ *
  * Configurable file upload middleware (multer based)
  */
 @TaonMiddleware({
