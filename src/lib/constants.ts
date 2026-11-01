@@ -1,4 +1,6 @@
-export const  TAON_MIGRATION_META_TABLE_NAME = 'TAON_MIGRATION_META';
+export const TAON_MIGRATION_META_TABLE_NAME = 'TAON_MIGRATION_META';
+
+export const localFileLangHeader = 'taon-t-lang';
 
 export type TaonEntityKeysToOmit =
   | 'ctrl'

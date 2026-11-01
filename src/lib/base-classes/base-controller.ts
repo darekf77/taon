@@ -1,5 +1,6 @@
 //#region imports
 import { R2Bucket } from '@cloudflare/workers-types';
+import { Translation } from '@taon-dev/i18n/src';
 import {
   RestErrorResponseWrapper,
   RestResponseWrapper,
@@ -35,6 +36,12 @@ export class TaonBaseController<
   UPLOAD_FILE_QUERY_PARAMS = {},
   CONTOROLLER = any,
 > extends TaonBaseInjector {
+
+  /**
+   * This should be overrided in controller
+   */
+  declare t: Translation;
+
   //#region r2 bucket
   get R2(): R2Bucket {
     return this.ctx?.R2;

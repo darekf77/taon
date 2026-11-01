@@ -3,6 +3,7 @@ import type { Server } from 'http';
 import type { Socket } from 'net';
 import { URL } from 'url'; // @backend
 
+import { Translation } from '@taon-dev/i18n/src';
 import type { ipcMain } from 'electron'; // @backend
 import type { Application } from 'express';
 //  multer in taon middleware will do better job than express-fileupload
@@ -42,7 +43,7 @@ import { createFakeExpressApp } from './cloudflare/cloudflare-express-fake-serve
 import type { ControllerConfig } from './config/controller-config';
 import { MethodConfig } from './config/method-config';
 import { ParamConfig } from './config/param-config';
-import { apiPrefix } from './constants';
+import { apiPrefix, localFileLangHeader } from './constants';
 import { TaonBaseRepositoryClassName } from './constants';
 import { ContextDbMigrations } from './context-db-migrations';
 import { createContext } from './create-context';
@@ -2825,20 +2826,22 @@ export class EndpointContext {
     const controllerInstance = this.getInstanceBy(
       target as any,
     ) as TaonBaseController;
-    const t = {
-      changeFileLang: () => {
-        // TODO implement translating for request
-        return;
-      },
-      gettext: text => {
-        // TODO implement translating for request
-        return text;
-      },
-      translate: text => {
-        // TODO implement translating for request
-        return text;
-      },
-    } as any;
+    const t: Translation = controllerInstance.t
+      ? controllerInstance.t
+      : ({
+          changeFileLang: () => {
+            // TODO implement translating for request
+            return;
+          },
+          gettext: text => {
+            // TODO implement translating for request
+            return text;
+          },
+          translate: text => {
+            // TODO implement translating for request
+            return text;
+          },
+        } as any);
     if (overrideExpressApp) {
       this.expressApp = overrideExpressApp;
     }
@@ -2993,6 +2996,12 @@ export class EndpointContext {
 
           //#region process params
           const args: any[] = [];
+          const tLang = req.headers[localFileLangHeader];
+          // console.log({ tLang });
+          if (tLang) {
+            await t.changeFileLang(tLang as any);
+          }
+
           let bodyFormDataFiles: TaonUploadedFile[] = [];
 
           let tBody = req.body;
@@ -3771,10 +3780,11 @@ export class EndpointContext {
     //#region handle normal request
 
     target.prototype[methodConfig.methodName as any] = function (
-      this: {},
+      this: { t: Translation },
       ...args
     ): Models.Http.ClientAction<any> {
-      // console.log('[init method browser] FRONTEND expressPath', expressPath)
+      // console.log('this t', { t: this.t });
+      // console.log('[init method browser] FRONTEND expressPath', expressPa/h)
       // const productionMode = FrameworkContext.isProductionMode;
 
       //#region resolve frontend parameters
@@ -3788,6 +3798,10 @@ export class EndpointContext {
 
       let rest: ReturnType<typeof Resource.create>;
       const requestHeaders = RestHeaders.from({});
+
+      if (this.t) {
+        requestHeaders.set(localFileLangHeader, this.t.localFileLang);
+      }
 
       if (!endpoints[ctx.uriOrigin][expressPath]) {
         if (
