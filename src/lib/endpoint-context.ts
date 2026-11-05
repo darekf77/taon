@@ -3981,7 +3981,10 @@ export class EndpointContext {
         }
         if (currentParam.paramType === 'Body') {
           //#region handle body params
-          const isFormDataOrBinary = ClassHelpers.getName(param) === 'FormData';
+          const isFormDataOrBinary =
+            !_.isBoolean(param) &&
+            !_.isNumber(param) &&
+            ClassHelpers.getName(param) === 'FormData';
 
           // console.log({ param, isFormDataOrBinary });
 
