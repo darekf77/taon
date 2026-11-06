@@ -3,6 +3,11 @@ import type { Server } from 'http';
 import type { Socket } from 'net';
 import { URL } from 'url'; // @backend
 
+import type {
+  D1Database,
+  KVNamespace,
+  R2Bucket,
+} from '@cloudflare/workers-types';
 import { Translation } from '@taon-dev/i18n/src';
 import type { ipcMain } from 'electron'; // @backend
 import type { Application } from 'express';
@@ -357,11 +362,11 @@ export class EndpointContext {
   //#endregion
 
   //#region methods & getters / cloudflare
-  public readonly R2: any;
+  public readonly R2: R2Bucket;
 
-  public readonly D1: any;
+  public readonly D1: D1Database;
 
-  public readonly KV: any;
+  public readonly KV: KVNamespace;
   //#endregion
 
   //#region methods & getters / cloudflare key allowed drop db
