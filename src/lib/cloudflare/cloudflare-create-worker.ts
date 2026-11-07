@@ -2,6 +2,12 @@
 import { Request } from '@cloudflare/workers-types';
 import { CoreModels, UtilsHttp } from 'tnp-core/src';
 
+import {
+  INIT_TIMEOUT_MS,
+  TaonInitializationDbNotInitedRetryError,
+  TaonInitializationFailedError,
+  TaonInitializationTimeoutError,
+} from '../helpers/taon-intialize-errors';
 import { getStatusText } from '../http-status';
 import { corsHeaders } from '../middlewares/cross-origin';
 import { parseBody } from '../middlewares/parse-body';
@@ -12,6 +18,27 @@ import { createFakeExpressApp } from './cloudflare-express-fake-server';
 //#endregion
 
 let initializationPromise: Promise<void> | undefined;
+let initializationCompleted = false;
+let initializationFailed = false;
+
+async function waitForInitialization(promise: Promise<void>): Promise<void> {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+  try {
+    await Promise.race([
+      promise,
+      new Promise<never>((_, reject) => {
+        timeoutId = setTimeout(() => {
+          reject(new TaonInitializationTimeoutError());
+        }, INIT_TIMEOUT_MS);
+      }),
+    ]);
+  } finally {
+    if (timeoutId !== undefined) {
+      clearTimeout(timeoutId);
+    }
+  }
+}
 
 function isReadableStream(value: any): value is ReadableStream<Uint8Array> {
   return (
@@ -380,19 +407,47 @@ export function createWorkerAdapter(
 
     //#region execute fake req/res on taon express layer
     try {
-      if (!initializationPromise) {
-        initializationPromise = firstRequestCallback(
-          new URL(cloudflareRequest.url).origin,
-          fakeExpressRequest,
-          fakeExpressResponse,
-          env,
-        ).catch(err => {
-          initializationPromise = undefined;
-          throw err;
-        });
+      if (!initializationCompleted) {
+        if (initializationFailed) {
+          throw new TaonInitializationFailedError();
+        }
+
+        if (!initializationPromise) {
+          initializationPromise = Promise.resolve()
+            .then(() =>
+              firstRequestCallback(
+                url.origin,
+                fakeExpressRequest,
+                fakeExpressResponse,
+                env,
+              ),
+            )
+            .then(() => {
+              initializationCompleted = true;
+              console.log('[TAON] Initialization completed');
+            })
+            .catch(error => {
+              if (error instanceof TaonInitializationDbNotInitedRetryError) {
+                initializationPromise = undefined;
+                initializationFailed = false;
+
+                console.log(
+                  '[TAON] Database not ready. Waiting for deployment.',
+                );
+              } else {
+                initializationFailed = true;
+                console.error('[TAON] Initialization failed:', error);
+              }
+
+              throw error;
+            });
+        }
+
+        await waitForInitialization(initializationPromise);
       }
 
-      await initializationPromise;
+      // Initialization is complete.
+      // No initialization timeout applies to normal requests.
       await fakeExpressApp(fakeExpressRequest, fakeExpressResponse);
 
       if (!ended) {
@@ -407,10 +462,29 @@ export function createWorkerAdapter(
         cause: err?.cause,
       });
 
-      status = 500;
-      bodyToSend = JSON.stringify({
-        error: 'Internal Server Error',
-      });
+      if (
+        err instanceof TaonInitializationTimeoutError ||
+        err instanceof TaonInitializationFailedError ||
+        err instanceof TaonInitializationDbNotInitedRetryError ||
+        (!initializationCompleted && initializationFailed)
+      ) {
+        status = CoreModels.TaonRetryHttpErrorStatus;
+
+        resHeaders.set(CoreModels.TaonRetryLogicHeader, '2');
+        resHeaders.set(CoreModels.TaonXStatusHeader, 'initializing');
+
+        bodyToSend = JSON.stringify({
+          error: 'Service Unavailable',
+          code: 'TAON_INITIALIZING',
+          message: 'Taon application is initializing. Please retry.',
+        });
+      } else {
+        status = 500;
+
+        bodyToSend = JSON.stringify({
+          error: 'Internal Server Error',
+        });
+      }
 
       resHeaders.set('content-type', 'application/json; charset=utf-8');
     }

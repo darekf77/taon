@@ -253,6 +253,11 @@ const createContextFn = <
           }
         }
 
+        endpointContextRef.isOnlyGatheringSQLFromMigraitons &&
+          console.log(
+            `${CoreModels.queryExtract} -- #${'reg' + 'ion'} ${endpointContextRef.contextName}`,
+          );
+
         await endpointContextRef.init(overrideOptions);
 
         if (endpointContextRef.abstract) {
@@ -378,6 +383,11 @@ const createContextFn = <
           }
           //#endregion
         }
+
+        endpointContextRef.isOnlyGatheringSQLFromMigraitons &&
+          console.log(
+            `${CoreModels.queryExtract} -- #${'end' + 'reg' + 'ion'} ${endpointContextRef.contextName}`,
+          );
 
         resolve(endpointContextRef);
         //#endregion
