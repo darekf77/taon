@@ -425,10 +425,14 @@ export class ContextDbMigrations {
           continue;
         }
 
+        const migrationName = ClassHelpers.getName(migrationInstance);
+
         this.ctx.logMigrations &&
           console.log(
             `Completing pending migration: ${pendingContextMigration.name}`,
           );
+        this.ctx.isOnlyGatheringSQLFromMigraitons &&
+          console.log(`query: -- #${'reg' + 'ion'} ${migrationName}`);
         await migrationInstance.up(queryRunner);
 
         // Update migration status to 'complete'
@@ -438,6 +442,9 @@ export class ContextDbMigrations {
            WHERE name = $2`,
           [this.MIGRATION_STATUS_COMPLETED, pendingContextMigration.name],
         );
+
+        this.ctx.isOnlyGatheringSQLFromMigraitons &&
+          console.log(`query: -- #${'end' + 'reg' + 'ion'} ${migrationName}`);
       }
       //#endregion
 
@@ -453,6 +460,10 @@ export class ContextDbMigrations {
 
         this.ctx.logMigrations &&
           console.log(`Applying new migration: ${migrationName}`);
+
+        this.ctx.isOnlyGatheringSQLFromMigraitons &&
+          console.log(`query: -- #${'reg' + 'ion'} ${migrationName}`);
+
         // Insert migration as 'pending' before execution
         await queryRunner.query(
           `INSERT INTO ${this.DEFAULT_MIGRATION_TABLE_NAME} (name, status, context, applied_at) ` +
@@ -462,6 +473,7 @@ export class ContextDbMigrations {
 
         try {
           // Apply migration
+
           await instance.up(queryRunner);
 
           // Update migration to 'complete' after successful execution
@@ -471,6 +483,8 @@ export class ContextDbMigrations {
               `WHERE name = $1`,
             [migrationName],
           );
+          this.ctx.isOnlyGatheringSQLFromMigraitons &&
+            console.log(`query: -- #${'end' + 'reg' + 'ion'} ${migrationName}`);
         } catch (error) {
           this.ctx.logMigrations &&
             console.error(`Failed to apply migration: ${migrationName}`, error);

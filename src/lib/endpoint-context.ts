@@ -32,7 +32,7 @@ import type { Repository } from 'taon-typeorm/src'; // @websql
 import { EventSubscriber } from 'taon-typeorm/src'; // @websql
 import { Entity as TypeormEntity } from 'taon-typeorm/src'; // @websql
 import { DataSource, DataSourceOptions } from 'taon-typeorm/src';
-import { UtilsStdinStdoutLogger } from 'tnp-core/src';
+import { GlobalStorage, UtilsStdinStdoutLogger } from 'tnp-core/src';
 import { path, requireDefault } from 'tnp-core/src';
 import { config } from 'tnp-core/src';
 import { CoreModels } from 'tnp-core/src';
@@ -74,6 +74,7 @@ import { Models } from './models';
 import { RealtimeCore } from './realtime/realtime-core';
 import { Symbols } from './symbols';
 import { TaonAdmin } from './ui/taon-admin-mode-configuration/taon-admin.service'; // @browser
+import { TaonInitializationDbNotInitedRetryError } from './helpers/taon-intialize-errors';
 
 //#endregion
 
@@ -271,6 +272,10 @@ export class EndpointContext {
   public config: Models.ContextOptions<any, any, any, any, any, any, any, any>;
   //#endregion
 
+  get isOnlyGatheringSQLFromMigraitons(): boolean {
+    return GlobalStorage.get('DISPLAY_RAW_SQL_COMMANDS') === 'true';
+  }
+
   //#region fields / logs
   get logHttp(): boolean {
     if (_.isObject(this.config?.logs)) {
@@ -323,6 +328,14 @@ export class EndpointContext {
   }
   //#endregion
 
+  get isProductionCloudflare(): boolean {
+    const isProductionCloudfalre =
+      UtilsOs.isRunningInCloudflareWorker() &&
+      !GlobalStorage.get('TAON_LOCAL_DEV');
+
+    return isProductionCloudfalre;
+  }
+
   //#endregion
 
   //#region constructor
@@ -369,8 +382,28 @@ export class EndpointContext {
   public readonly KV: KVNamespace;
   //#endregion
 
-  //#region methods & getters / cloudflare key allowed drop db
-  private readonly clouflareAllowedDropDbKey: string;
+  //#region is deployed version
+  async isDeployedVersion(deploymentVerison: string): Promise<boolean> {
+    //#region @backendFunc
+    if (!deploymentVerison) {
+      console.error(`[taon][isDeployedVersion] deploymentVersion is empty`);
+      return false;
+    }
+    try {
+      const result = await this.D1.prepare(
+        `SELECT 1 FROM TaonCloudfalreDeployment WHERE deploymentVersion = ? LIMIT 1`,
+      )
+        .bind(deploymentVerison)
+        .first();
+
+      return result !== null;
+    } catch (error) {
+      return false;
+    }
+
+    //#endregion
+    return true;
+  }
   //#endregion
 
   //#region methods & getters / init
@@ -403,17 +436,25 @@ export class EndpointContext {
 
     //#region @backend
     if (initOptions.cloudflareEnv) {
-      const versionId = initOptions.cloudflareEnv.CF_VERSION_METADATA.id;
-      const key = `TAON_DB_INITIALIZED:${versionId}`;
-      // @ts-expect-error
-      this.clouflareAllowedDropDbKey = key;
-
       // @ts-expect-error
       this.D1 = initOptions.cloudflareEnv.TAON_D1;
       // @ts-expect-error
       this.KV = initOptions.cloudflareEnv.TAON_KV;
       // @ts-expect-error
       this.R2 = initOptions.cloudflareEnv.TAON_R2;
+
+      if (
+        !initOptions.initFromRecrusiveContextResovle &&
+        this.isProductionCloudflare
+      ) {
+        const versionId = initOptions.cloudflareEnv
+          .TAON_DEPLOYMENT_ID as string;
+
+        const deploymentInitialized = await this.isDeployedVersion(versionId);
+        if (!deploymentInitialized) {
+          throw new TaonInitializationDbNotInitedRetryError();
+        }
+      }
     }
     //#endregion
 
@@ -2104,42 +2145,33 @@ export class EndpointContext {
       }
     }
 
-    const alreadyInitializedCloudflare =
-      UtilsOs.isRunningInCloudflareWorker() &&
-      (await this.KV.get(this.clouflareAllowedDropDbKey));
-
-    if (!alreadyInitializedCloudflare) {
-      if (UtilsOs.isRunningInCloudflareWorker()) {
-        await this.KV.put(this.clouflareAllowedDropDbKey, 'true');
-      }
-    }
-
-    const dropSchema = this.isRunOrRevertOnlyMigrationAppStart
-      ? false
-      : UtilsOs.isRunningInCloudflareWorker() && alreadyInitializedCloudflare
+    const dropSchema =
+      this.isProductionCloudflare || this.isRunOrRevertOnlyMigrationAppStart
         ? false
         : this.databaseConfig.dropSchema;
 
     this.logFramework && console.log(`DROP SCHEMA: ${dropSchema}`);
 
-    const kvClass = await import('./base-classes/base-kv-repository');
-    const kvSyncClass = await import('./base-classes/base-kv-sync-repository');
+    //#region recreate kv repos json files
+    if (dropSchema && !UtilsOs.isRunningInCloudflareWorker()) {
+      const kvClass = await import('./base-classes/base-kv-repository');
+      const kvSyncClass =
+        await import('./base-classes/base-kv-sync-repository');
 
-    if (dropSchema) {
       const repos = this.getClassesInstancesArrBy(Models.ClassType.REPOSITORY);
       for (const repo of repos) {
         const repoClassName = ClassHelpers.getName(repo);
         // console.log({ repoClassName });
-        if (!UtilsOs.isRunningInCloudflareWorker()) {
-          if (
-            repo instanceof kvClass.TaonBaseKvRepository ||
-            repo instanceof kvSyncClass.TaonBaseKvSyncRepository
-          ) {
-            Helpers.writeJson(this.kvDbJsonLocationForClass(repoClassName), {});
-          }
+
+        if (
+          repo instanceof kvClass.TaonBaseKvRepository ||
+          repo instanceof kvSyncClass.TaonBaseKvSyncRepository
+        ) {
+          Helpers.writeJson(this.kvDbJsonLocationForClass(repoClassName), {});
         }
       }
     }
+    //#endregion
 
     const dataSourceDbConfig = _.isObject(this.databaseConfig)
       ? ({
@@ -2155,12 +2187,16 @@ export class EndpointContext {
           // I am not using typeorm migration system
           entities,
           subscribers,
-          synchronize: this.isRunOrRevertOnlyMigrationAppStart
-            ? false
-            : this.databaseConfig.synchronize,
+          synchronize:
+            this.isProductionCloudflare ||
+            this.isRunOrRevertOnlyMigrationAppStart
+              ? false
+              : this.databaseConfig.synchronize,
           autoSave,
           dropSchema,
-          logging: !!this.databaseConfig.logging,
+          logging:
+            this.isOnlyGatheringSQLFromMigraitons ||
+            !!this.databaseConfig.logging,
           location: this.databaseConfig.location,
         } as DataSourceOptions)
       : ({} as DataSourceOptions);
