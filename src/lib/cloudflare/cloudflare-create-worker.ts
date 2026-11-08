@@ -469,9 +469,15 @@ export function createWorkerAdapter(
         (!initializationCompleted && initializationFailed)
       ) {
         status = CoreModels.TaonRetryHttpErrorStatus;
+        const errorName = err?.name || '-unknow-err-';
 
-        resHeaders.set(CoreModels.TaonRetryLogicHeader, '2');
-        resHeaders.set(CoreModels.TaonXStatusHeader, 'initializing');
+        resHeaders.set(CoreModels.TaonRetryLogicHeader, '1');
+        resHeaders.set(CoreModels.TaonMaxRetriesLogicHeader, '10');
+        resHeaders.set(CoreModels.TaonXRetryCauseHeader, errorName);
+        resHeaders.set(
+          CoreModels.TaonXStatusHeader,
+          CoreModels.TaonXStatusInitializing,
+        );
 
         bodyToSend = JSON.stringify({
           error: 'Service Unavailable',
