@@ -52,7 +52,7 @@ export abstract class TaonBaseStorageController<
 > extends TaonBaseController<UPLOAD_FILE_QUERY_PARAMS, CONTOROLLER> {
   // taonStorageRepository = this.injectCustomRepo(TaonBaseStorageRepository);
 
-  private readonly storage = new TaonBaseStorageBackend(this);
+  public readonly storage = new TaonBaseStorageBackend(this);
 
   //#region methods / storage object exists
   protected storageObjectExists(key: string): Promise<boolean> {
