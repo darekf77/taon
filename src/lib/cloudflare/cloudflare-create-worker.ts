@@ -70,16 +70,18 @@ export function createWorkerAdapter(
     }
 
     //#region parse body
-    const requestForParsing = cloudflareRequest.clone();
-    const requestForRawBody = cloudflareRequest.clone();
-
     let parsedBody: any;
     let rawBody: Uint8Array | undefined;
 
     try {
-      parsedBody = await parseBody(requestForParsing);
-
-      rawBody = new Uint8Array(await requestForRawBody.arrayBuffer());
+      const isBinary = (cloudflareRequest.headers.get('content-type') || '')
+        .split(';')[0].trim().toLowerCase() === 'application/octet-stream';
+      if (!isBinary) {
+        const requestForParsing = cloudflareRequest.clone();
+        const requestForRawBody = cloudflareRequest.clone();
+        parsedBody = await parseBody(requestForParsing);
+        rawBody = new Uint8Array(await requestForRawBody.arrayBuffer());
+      }
     } catch (err: any) {
       return new Response(
         JSON.stringify({

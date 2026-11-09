@@ -1,6 +1,8 @@
 import { Request } from '@cloudflare/workers-types';
 
-export async function parseBody(request: Request) {
+export async function parseBody(
+  request: Pick<Request, 'method' | 'headers' | 'formData' | 'text'>,
+) {
   const method = request.method.toUpperCase();
 
   if (['GET', 'HEAD', 'OPTIONS'].includes(method)) {
@@ -8,6 +10,10 @@ export async function parseBody(request: Request) {
   }
 
   const contentType = (request.headers.get('content-type') || '').toLowerCase();
+
+  if (contentType.split(';')[0].trim() === 'application/octet-stream') {
+    return undefined;
+  }
 
   if (
     contentType.includes('multipart/form-data') ||

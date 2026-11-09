@@ -40,6 +40,9 @@ export class TaonBaseSimpleStorageController<
 > extends TaonBaseController<UPLOAD_FILE_QUERY_PARAMS, CONTOROLLER> {
   //#region upload form data to server
 
+  /**
+   * @deprecated use TaonBaseStorageController with buckets db
+   */
   @POST({
     overrideContentType: 'multipart/form-data',
     middlewares: ({ parentMiddlewares }) => ({
@@ -100,7 +103,9 @@ export class TaonBaseSimpleStorageController<
   //#endregion
 
   //#region upload files to R2
-
+  /**
+   * @deprecated use TaonBaseStorageController with buckets db
+   */
   protected async uploadFormDataFilesToR2(
     formData: FormData,
   ): Promise<MulterFileUploadResponse[]> {
@@ -158,6 +163,9 @@ export class TaonBaseSimpleStorageController<
     //#endregion
   }
 
+  /**
+   * @deprecated use TaonBaseStorageController with buckets db
+   */
   protected extractFilesFromFormData(formData: FormData): File[] {
     const files: File[] = [];
 
@@ -171,6 +179,9 @@ export class TaonBaseSimpleStorageController<
     return files;
   }
 
+  /**
+   * @deprecated use TaonBaseStorageController with buckets db
+   */
   protected isUploadedFile(value: FormDataEntryValue): value is File {
     return (
       typeof value !== 'string' &&
@@ -181,6 +192,7 @@ export class TaonBaseSimpleStorageController<
   }
 
   /**
+   * @deprecated use TaonBaseStorageController with buckets db
    * Override this when a controller needs its own R2 path.
    *
    * R2 does not have real directories. Slashes are simply part
@@ -204,6 +216,9 @@ export class TaonBaseSimpleStorageController<
     ].join('/');
   }
 
+  /**
+   * @deprecated use TaonBaseStorageController with buckets db
+   */
   protected sanitizeR2FileName(fileName: string): string {
     const sanitized = fileName
       .normalize('NFKD')
@@ -220,6 +235,8 @@ export class TaonBaseSimpleStorageController<
   //#region after file upload hook
 
   /**
+   * @deprecated use TaonBaseStorageController with buckets db
+   *
    * Hook after a file is uploaded through
    * `uploadFormDataToServer()` or `uploadLocalFileToServer()`.
    */
@@ -267,6 +284,9 @@ export class TaonBaseSimpleStorageController<
 
   //#region upload local file to server
 
+  /**
+   * @deprecated use TaonBaseStorageController with buckets db
+   */
   async uploadLocalFileToServer(
     absFilePath: string,
     // options?: Pick<Ng2RestFetchRequestConfig, 'onUploadProgress'>,

@@ -22,9 +22,15 @@ import {
   TaonStorageUploadData,
   TaonStorageUploadOptions,
 } from './base-storage-models';
+import { TaonStorageMultipartBackend } from './base-storage-multipart-backend';
 //#endregion
 
 export class TaonBaseStorageBackend {
+  readonly multipart = new TaonStorageMultipartBackend(
+    this,
+    () => this.ctx.bucketFileDbLocationBase,
+  );
+
   // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
   private get ctx() {
     return this.ctrl.ctx;
@@ -457,7 +463,7 @@ export class TaonBaseStorageBackend {
   }
   //#endregion
 
-   //#region mehods / storage upload from node temp file
+  //#region mehods / storage upload from node temp file
   private async storageUploadFromNodeTempFile(
     key: string,
     file: TaonUploadedFile,
@@ -480,7 +486,7 @@ export class TaonBaseStorageBackend {
   }
   //#endregion
 
-   //#region mehods / storage uplaod from cloudflare temp file
+  //#region mehods / storage uplaod from cloudflare temp file
   private async storageUploadFromCloudflareTempFile(
     key: string,
     file: TaonUploadedFile,

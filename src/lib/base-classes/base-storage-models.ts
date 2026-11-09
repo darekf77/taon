@@ -73,6 +73,37 @@ export interface TaonStorageUploadOptions {
   metadata?: Record<string, string>;
 }
 
+export const TAON_MULTIPART_CHUNK_SIZE = 20 * 1024 * 1024;
+
+export interface TaonMultipartUploadOptions extends TaonStorageUploadOptions {
+  size: number;
+  chunkSize?: number;
+}
+
+export interface TaonMultipartUploadSession {
+  uploadId: string;
+  key: string;
+  size: number;
+  chunkSize: number;
+  expiresAt: number;
+}
+
+export interface TaonMultipartUploadPart {
+  partNumber: number;
+  size: number;
+  sha256: string;
+  etag: string;
+}
+
+export interface TaonChunkedUploadOptions extends TaonStorageUploadOptions {
+  chunkSize?: number;
+  concurrency?: number;
+  maxRetries?: number;
+  retryDelayMs?: number;
+  signal?: AbortSignal;
+  onProgress?: (percentage: number) => void;
+}
+
 export interface TaonStorageListOptions {
   prefix?: string;
   limit?: number;

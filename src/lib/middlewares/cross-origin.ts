@@ -1,7 +1,6 @@
-import { Symbols } from '../symbols';
+import { expostHeadersCross, Symbols } from '../symbols';
 import { Request } from '@cloudflare/workers-types';
 import { CoreModels } from 'tnp-core/src';
-
 
 export function corsHeaders(
   cloudflareRequest: Request,
@@ -59,13 +58,7 @@ export function corsHeaders(
     'X-Requested-With',
   ].join(', ');
 
-  const exposedHeaders = [
-    Symbols.old.X_TOTAL_COUNT,
-
-    Symbols.old.MAPPING_CONFIG_HEADER,
-    Symbols.old.CIRCURAL_OBJECTS_MAP_BODY_PARAM,
-    Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM,
-  ].join(', ');
+  const exposedHeaders = expostHeadersCross.join(', ');
 
   const allowedMethodsString = [
     ...CoreModels.HttpMethodArr.filter(f => f !== 'jsonp').map(c =>
@@ -84,8 +77,7 @@ export function corsHeaders(
     'Access-Control-Allow-Methods': allowedMethodsString,
 
     // Reflect headers requested by the browser.
-    'Access-Control-Allow-Headers':
-      requestedHeaders || defaultAllowedHeaders,
+    'Access-Control-Allow-Headers': requestedHeaders || defaultAllowedHeaders,
 
     // These are RESPONSE headers that frontend JS is allowed to read.
     'Access-Control-Expose-Headers': exposedHeaders,

@@ -41,6 +41,7 @@ export * from './base-classes/base-controller';
 export * from './base-classes/base-simple-storage-controller';
 export * from './base-classes/base-storage-controller';
 export * from './base-classes/base-storage-models';
+export * from './helpers/upload-file-in-chunks';
 export * from './base-classes/base-crud-controller';
 export * from './base-classes/base-kv-repository';
 export * from './base-classes/base-kv-sync-repository';

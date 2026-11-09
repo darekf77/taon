@@ -8,35 +8,16 @@ import type {
   KVNamespace,
   R2Bucket,
 } from '@cloudflare/workers-types';
-import { Translation } from '@taon-dev/i18n/src';
-import type { ipcMain } from 'electron'; // @backend
 import type { Application } from 'express';
-//  multer in taon middleware will do better job than express-fileupload
-// import * as fileUpload from 'express-fileupload'; // @backend
-
-import { JSON10 } from 'json10/src';
-import { walk } from 'lodash-walk-object/src';
-import {
-  decodeMappingForHeaderJson,
-  encodeMapping,
-  HttpResponse,
-  Ng2RestFetchRequestConfig,
-  Resource,
-  FetchResponseType,
-  RestHeaders,
-  ResponseTypeFetchHeaderKey,
-  FetchResponse,
-} from 'ng2-rest/src';
-import { from, Subject } from 'rxjs';
+import { Resource } from 'ng2-rest/src';
 import type { Repository } from 'taon-typeorm/src'; // @websql
 import { EventSubscriber } from 'taon-typeorm/src'; // @websql
 import { Entity as TypeormEntity } from 'taon-typeorm/src'; // @websql
 import { DataSource, DataSourceOptions } from 'taon-typeorm/src';
-import { GlobalStorage, UtilsStdinStdoutLogger } from 'tnp-core/src';
+import { GlobalStorage } from 'tnp-core/src';
 import { path, requireDefault } from 'tnp-core/src';
-import { config } from 'tnp-core/src';
 import { CoreModels } from 'tnp-core/src';
-import { fse, http, https } from 'tnp-core/src'; // @backend
+import { fse } from 'tnp-core/src'; // @backend
 import { UtilsOs, Utils } from 'tnp-core/src';
 import { crossPlatformPath } from 'tnp-core/src';
 import { _, Helpers } from 'tnp-core/src';
@@ -47,54 +28,51 @@ import type { TaonBaseRepository } from './base-classes/base-repository';
 import { createFakeExpressApp } from './cloudflare/cloudflare-express-fake-server';
 import type { ControllerConfig } from './config/controller-config';
 import { MethodConfig } from './config/method-config';
-import { ParamConfig } from './config/param-config';
-import { apiPrefix, localFileLangHeader } from './constants';
+import { apiPrefix } from './constants';
 import { TaonBaseRepositoryClassName } from './constants';
 import { ContextDbMigrations } from './context-db-migrations';
-import { createContext } from './create-context';
 import { TaonEntityOptions } from './decorators/classes/entity-decorator';
 import { TaonSubscriberOptions } from './decorators/classes/subscriber-decorator';
-import { DITaonContainer } from './dependency-injection/di-container';
+import { EndpointClient } from './endpoint-client';
+import { EndpointContextCore } from './endpoint-context-core';
 import type { ContextsEndpointStorage } from './endpoint-context-storage';
-import { EntityProcess } from './entity-process';
+import { EndpointServer } from './endpoint-server';
 import {
   ExpressNextFunction,
   ExpressRequest,
-  ExpressRequestHandler,
   ExpressResponse,
 } from './express-types';
-import { getResponseValue } from './get-response-value';
 import { ClassHelpers } from './helpers/class-helpers';
-import {
-  requestToFormData,
-  TaonUploadedFile,
-} from './helpers/express-request-to-form-data';
 import { TaonHelpers } from './helpers/taon-helpers';
 import { Models } from './models';
 import { RealtimeCore } from './realtime/realtime-core';
-import { Symbols } from './symbols';
+import { expostHeadersCross, Symbols } from './symbols';
 import { TaonAdmin } from './ui/taon-admin-mode-configuration/taon-admin.service'; // @browser
-import { TaonInitializationDbNotInitedRetryError } from './helpers/taon-intialize-errors';
 
 //#endregion
 
 export class EndpointContext {
+  //#region fields
   static instanceID = 0;
 
-  //#region fields
+  public readonly endpointServer = new EndpointServer(this);
 
-  //#region fields / use mariadb mysql in docker
+  public readonly endpointClient = new EndpointClient(this);
+
+  public readonly endpointCore = new EndpointContextCore(this);
+
   /**
    * JUST FOR TESTING PURPOSES
    */
   public readonly USE_MARIADB_MYSQL_IN_DOCKER: boolean = false;
-  //#endregion
 
-  /**
-   * This will override all controllers inside this context
-   * tryRefreshAccessToken() protected methods
-   */
-  // public tryRefreshAccessTokenGlobalCallback: () => Promise<boolean>;
+  //#region fields / cloudflare
+  public readonly R2: R2Bucket;
+
+  public readonly D1: D1Database;
+
+  public readonly KV: KVNamespace;
+  //#endregion
 
   //#region fields / flags
   disabledRealtime: boolean = false;
@@ -124,14 +102,6 @@ export class EndpointContext {
   public readonly allClassesInstances = {};
   //#endregion
 
-  //#region fields / class instances by name
-  private readonly classInstancesByNameObj = {};
-  //#endregion
-
-  //#region fields / obj with classes instances arr
-  private readonly objWithClassesInstancesArr = {};
-  //#endregion
-
   //#region fields / active routes
   public readonly activeRoutes: {
     expressPath: string;
@@ -155,24 +125,6 @@ export class EndpointContext {
   public readonly skipWritingServerRoutes: boolean = false;
   //#endregion
 
-  //#region fields / types from contexts
-  private injectableTypesfromContexts = [
-    Models.ClassType.CONTROLLER,
-    Models.ClassType.PROVIDER,
-    Models.ClassType.MIDDLEWARE,
-    Models.ClassType.REPOSITORY,
-    Models.ClassType.SUBSCRIBER,
-    Models.ClassType.MIGRATION,
-  ];
-  //#endregion
-
-  //#region fields / all types from contexts
-  private allTypesfromContexts = [
-    ...this.injectableTypesfromContexts,
-    Models.ClassType.ENTITY,
-  ];
-  //#endregion
-
   //#region fields / express app
   public expressApp: Application = {} as any;
   //#endregion
@@ -182,7 +134,7 @@ export class EndpointContext {
 
   public sockets = new Set<Socket>();
 
-  private trackServer(server: Server): void {
+  public trackServer(server: Server): void {
     //#region @backendFunc
     server.on('connection', socket => {
       const key = `${socket.remoteAddress}:${socket.remotePort} -> ${socket.localAddress}:${socket.localPort}`;
@@ -272,11 +224,51 @@ export class EndpointContext {
   public config: Models.ContextOptions<any, any, any, any, any, any, any, any>;
   //#endregion
 
+  //#endregion
+
+  //#region constructor
+  /**
+   * Inside docker there is not need for https secure server
+   */
+  public readonly isRunningInsideDocker: boolean = false;
+
+  constructor(
+    public originalConfig: Models.ContextOptions<
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any
+    >,
+    public configFn: (
+      env: any,
+    ) => Models.ContextOptions<any, any, any, any, any, any, any, any>,
+    /**
+     * (@default: false)
+     * If TRUE context is NOT going to create db/express server/http endpoints
+     * PURPOSE OF THIS PROPERTY
+     * -> ONLY remote access from backend or frontend to specific backend
+     */
+    public readonly cloneOptions: Models.TaonCtxCloneParams,
+  ) {
+    this.cloneOptions = this.cloneOptions || {};
+    this.isRunningInsideDocker = UtilsOs.isRunningInDocker();
+    if (UtilsOs.isRunningInCloudflareWorker()) {
+      this.expressApp = createFakeExpressApp();
+    }
+  }
+  //#endregion
+
+  //#region methods & getters / is only gathering sql from migrations
   get isOnlyGatheringSQLFromMigraitons(): boolean {
     return GlobalStorage.get('DISPLAY_RAW_SQL_COMMANDS') === 'true';
   }
+  //#endregion
 
-  //#region fields / logs
+  //#region methods & getters / logs
   get logHttp(): boolean {
     if (_.isObject(this.config?.logs)) {
       return !!(this.config.logs as Models.ConnectionOptionsLogs).http;
@@ -328,6 +320,7 @@ export class EndpointContext {
   }
   //#endregion
 
+  //#region methods & getters / is production cloudflre
   get isProductionCloudflare(): boolean {
     const isProductionCloudfalre =
       UtilsOs.isRunningInCloudflareWorker() &&
@@ -335,54 +328,9 @@ export class EndpointContext {
 
     return isProductionCloudfalre;
   }
-
   //#endregion
 
-  //#region constructor
-  /**
-   * Inside docker there is not need for https secure server
-   */
-  public readonly isRunningInsideDocker: boolean = false;
-
-  constructor(
-    private originalConfig: Models.ContextOptions<
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any,
-      any
-    >,
-    private configFn: (
-      env: any,
-    ) => Models.ContextOptions<any, any, any, any, any, any, any, any>,
-    /**
-     * (@default: false)
-     * If TRUE context is NOT going to create db/express server/http endpoints
-     * PURPOSE OF THIS PROPERTY
-     * -> ONLY remote access from backend or frontend to specific backend
-     */
-    private readonly cloneOptions: Models.TaonCtxCloneParams,
-  ) {
-    this.cloneOptions = this.cloneOptions || {};
-    this.isRunningInsideDocker = UtilsOs.isRunningInDocker();
-    if (UtilsOs.isRunningInCloudflareWorker()) {
-      this.expressApp = createFakeExpressApp();
-    }
-  }
-  //#endregion
-
-  //#region methods & getters / cloudflare
-  public readonly R2: R2Bucket;
-
-  public readonly D1: D1Database;
-
-  public readonly KV: KVNamespace;
-  //#endregion
-
-  //#region is deployed version
+  //#region methods & getters / is deployed version
   async isDeployedVersion(deploymentVerison: string): Promise<boolean> {
     //#region @backendFunc
     if (!deploymentVerison) {
@@ -406,548 +354,12 @@ export class EndpointContext {
   }
   //#endregion
 
-  //#region methods & getters / init
-  private readonly initFromRecrusiveContextResovle = false;
-
-  public async init(initOptions?: {
-    initFromRecrusiveContextResovle?: boolean;
-    onlyMigrationRun?: boolean;
-    onlyMigrationRevertToTimestamp?: number;
-    overrideHost?: string;
-    cloudflareEnv?: any;
-  }): Promise<void> {
-
-    initOptions = initOptions || {};
-
-    // @ts-expect-error
-    this.initFromRecrusiveContextResovle =
-      !!initOptions.initFromRecrusiveContextResovle;
-
-    if (initOptions.overrideHost) {
-      this.cloneOptions.overrideHost = initOptions.overrideHost;
-      delete initOptions.overrideHost;
-    }
-    // console.log({
-    //   'this.cloneOptions': this.cloneOptions,
-    // });
-
-    if (this.cloneOptions.overrideContextName) {
-      this.overrideContextName = this.cloneOptions.overrideContextName;
-    }
-
-    //#region @backend
-    if (initOptions.cloudflareEnv) {
-      // @ts-expect-error
-      this.D1 = initOptions.cloudflareEnv.TAON_D1;
-      // @ts-expect-error
-      this.KV = initOptions.cloudflareEnv.TAON_KV;
-      // @ts-expect-error
-      this.R2 = initOptions.cloudflareEnv.TAON_R2;
-
-      if (
-        !initOptions.initFromRecrusiveContextResovle &&
-        this.isProductionCloudflare
-      ) {
-        const versionId = initOptions.cloudflareEnv
-          .TAON_DEPLOYMENT_ID as string;
-
-        const deploymentInitialized = await this.isDeployedVersion(versionId);
-        if (!deploymentInitialized) {
-          throw new TaonInitializationDbNotInitedRetryError();
-        }
-      }
-    }
-    //#endregion
-
-    this.inited = true;
-
-    // @ts-expect-error
-    this.onlyMigrationRun = initOptions.onlyMigrationRun;
-
-    // @ts-expect-error
-    this.onlyMigrationRevertToTimestamp =
-      initOptions.onlyMigrationRevertToTimestamp;
-
-    this.config = this.configFn({});
-
-    if (
-      UtilsOs.isRunningInCloudflareWorker() &&
-      !initOptions.initFromRecrusiveContextResovle
-    ) {
-      const TAON_WORKER_INSTANCE_ID = crypto.randomUUID();
-      console.log(`
-
-        [WORKER START] instance=${TAON_WORKER_INSTANCE_ID}
-        frontendHost: ${this.config.frontendHost}
-        frontendHostPortNumber: ${this.config.frontendHostPortNumber}
-        host: ${this.config.host}
-        hostPortNumber: ${this.config.hostPortNumber}
-
-        `);
-    }
-
-    // @ts-expect-error
-    this.useSession = _.isBoolean(this.config.useSession)
-      ? this.config.useSession
-      : true;
-
-    if (_.isBoolean(this.cloneOptions.overrideUseSession)) {
-      // @ts-expect-error
-      this.useSession = this.cloneOptions.overrideUseSession;
-    }
-    // console.log(`[${this.contextName}] use session=${this.useSession}`);
-    // console.log(`[${this.contextName}] this.initFromRecrusiveContextResovle=${this.initFromRecrusiveContextResovle}`)
-
-    // @ts-expect-error
-    this.abstract = !!this.config.abstract;
-
-    if (_.isObject(this.config.database)) {
-      this.config.database = Models.DatabaseConfig.from(
-        this.config.database as Models.DatabaseConfig,
-      ).databaseConfigTypeORM;
-    }
-
-    if (_.isObject(this.config.kv_database)) {
-      this.config.kv_database = Models.KVDatabaseConfig.from(
-        this.config.kv_database as Models.KVDatabaseConfig,
-      ) as Models.KVDatabaseConfig;
-    }
-
-    this.config.host = this.host === null ? void 0 : this.host;
-
-    if (this.config.contexts && this.config.contexts[this.contextName]) {
-      throw new Error(`You are injecting ${this.contextName} into itself.`);
-    }
-
-    if (
-      this.cloneOptions.overrideHost &&
-      !this.cloneOptions.useAsRemoteContext
-    ) {
-      // @ts-expect-error
-      this.abstract = false;
-      this.config.host = this.cloneOptions.overrideHost;
-    }
-
-    if (
-      this.cloneOptions.overrideRemoteHost &&
-      this.cloneOptions.useAsRemoteContext
-    ) {
-      // @ts-expect-error
-      this.abstract = false;
-      this.config.host = this.cloneOptions.overrideRemoteHost;
-    }
-
-    if (
-      this.config.host &&
-      !this.config.host.startsWith('http://') &&
-      !this.config.host.startsWith('https://')
-    ) {
-      Helpers.throwError(
-        `[taon-config] Your${
-          this.host ? ' remote' : ''
-        } 'host' must start with http:// or https://`,
-      );
-    }
-
-    if (_.isUndefined(this.config.useIpcWhenElectron)) {
-      this.config.useIpcWhenElectron = true;
-    }
-    // console.log(`config for ${this.contextName}`, this.config);
-
-    //#region resolve if skipping writing server routes
-    //@ts-expect-error overriding readonly
-    this.skipWritingServerRoutes = _.isBoolean(
-      this.config.skipWritingServerRoutes,
-    )
-      ? this.config.skipWritingServerRoutes
-      : false;
-    //#endregion
-
-    //#region resolve mode
-    if (UtilsOs.isRunningInCloudflareWorker()) {
-      this.mode = 'backend-frontend(cloudflare)';
-    } else {
-      if (this.config.host) {
-        this.mode = 'backend-frontend(tcp+udp)';
-        //#region @websqlOnly
-        this.mode = 'backend-frontend(websql)';
-        //#endregion
-      }
-
-      if (this.isRemoteHost) {
-        this.mode = 'remote-backend(tcp+udp)';
-      }
-
-      // console.log(`
-
-      //   useIpcWhenElectron: ${this.config.useIpcWhenElectron}
-      //   UtilsOs.isElectron: ${UtilsOs.isElectron}
-
-      //   `)
-      if (this.config.useIpcWhenElectron && UtilsOs.isElectron) {
-        if (UtilsOs.isWebSQL) {
-          this.mode = 'backend-frontend(websql-electron)';
-        } else {
-          this.mode = 'backend-frontend(ipc-electron)';
-        }
-      }
-
-      // mode === undefined for TaonBaseContext => ok behavior
-      // console.log(`Mode for BE/FE communication: ${this.mode}`);
-      // if(!this.mode) {
-      //   console.log(this.config)
-      // }
-    }
-    //#endregion
-
-    //#region throw error when no mode detected and non abstract context
-    if (!this.mode && !this.abstract) {
-      const errMsg =
-        `You need to provide host property or ` +
-        `useIpcWhenElectron or mark it as abstract`;
-      Helpers.error(
-        `[taon][Context=${this.contextName}]: ${errMsg}`,
-        false,
-        true,
-      );
-      //#region @backend
-      process.exit(1);
-      //#endregion
-    }
-    //#endregion
-
-    //#region resolve kv database config
-    if (this.config.kv_database === true) {
-      this.logFramework &&
-        console.log(`
-
-        ASSIGNING AUTO GENERATED KV DATABASE CONFIG
-
-        `);
-      this.kvDatabaseConfig = this.getAutoGeneratedKvDbConfig();
-    } else if (_.isObject(this.config.database)) {
-      this.logFramework &&
-        console.log(`
-
-        OVERRIDE KV DATABASE CONFIG FROM CONFIGURATION
-
-        `);
-      this.kvDatabaseConfig = this.getAutoGeneratedKvDbConfig();
-      walk.Object(
-        this.config.database as any,
-        (value, lodashPath) => {
-          if (_.isNil(value) || _.isFunction(value) || _.isObject(value)) {
-            // skipping
-          } else {
-            this.logFramework &&
-              console.info(
-                `Overriding kv database config: ${lodashPath}=${value}`,
-              );
-            _.set(this.databaseConfig, lodashPath, value);
-          }
-        },
-        {
-          walkGetters: false,
-        },
-      );
-    }
-    //#endregion
-
-    //#region resolve database config
-    if (this.config.database === true) {
-      this.logFramework &&
-        console.log(`
-
-        ASSIGNING AUTO GENERATED DATABASE CONFIG
-
-        `);
-      this.databaseConfig = this.getAutoGeneratedSqlDbConfig();
-    } else if (_.isObject(this.config.database)) {
-      this.logFramework &&
-        console.log(`
-
-        OVERRIDE DATABASE CONFIG FROM CONFIGURATION
-
-        `);
-      this.databaseConfig = this.getAutoGeneratedSqlDbConfig();
-      walk.Object(
-        this.config.database as any,
-        (value, lodashPath) => {
-          if (_.isNil(value) || _.isFunction(value) || _.isObject(value)) {
-            // skipping
-          } else {
-            this.logFramework &&
-              console.info(
-                `Overriding database config: ${lodashPath}=${value}`,
-              );
-            _.set(this.databaseConfig, lodashPath, value);
-          }
-        },
-        {
-          walkGetters: false,
-        },
-      );
-    }
-    //#endregion
-
-    //#region resolve session
-    if (this.useSession && !this.initFromRecrusiveContextResovle) {
-      // console.log(`Apply with credetinoal for [${this.contextName}]`);
-      // this.session = _.cloneDeep(this.config.session);
-      // const oneHour = 1000 * 60 * 60 * 1; // 24;
-      // if (!this.session.cookieMaxAge) {
-      //   this.session.cookieMaxAge = oneHour;
-      // }
-      // serever and browser cookie authentication
-      // axios.defaults.withCredentials = true;
-    }
-    //#endregion
-
-    //#region prepare & gather all classes recursively
-    this.config.contexts = this.config.contexts || {};
-    this.config.entities = this.config.entities || {};
-    this.config.controllers = this.config.controllers || {};
-    this.config.repositories = this.config.repositories || {};
-    this.config.providers = this.config.providers || {};
-    this.config.subscribers = this.config.subscribers || {};
-    this.config.migrations = this.config.migrations || {};
-
-    this.config.entities = {
-      ...(await this.getRecrusiveClassesfromContextsObj(
-        Models.ClassType.ENTITY,
-      )),
-      ...this.config.entities,
-    };
-
-    this.config.controllers = {
-      ...(await this.getRecrusiveClassesfromContextsObj(
-        Models.ClassType.CONTROLLER,
-      )),
-      ...this.config.controllers,
-    };
-
-    this.config.providers = {
-      ...(await this.getRecrusiveClassesfromContextsObj(
-        Models.ClassType.PROVIDER,
-      )),
-      ...this.config.providers,
-    };
-
-    this.config.middlewares = {
-      ...(await this.getRecrusiveClassesfromContextsObj(
-        Models.ClassType.MIDDLEWARE,
-      )),
-      ...this.config.middlewares,
-    };
-
-    this.config.subscribers = {
-      ...(await this.getRecrusiveClassesfromContextsObj(
-        Models.ClassType.SUBSCRIBER,
-      )),
-      ...this.config.subscribers,
-    };
-
-    this.config.repositories = {
-      ...(await this.getRecrusiveClassesfromContextsObj(
-        Models.ClassType.REPOSITORY,
-      )),
-      ...this.config.repositories,
-    };
-
-    this.config.migrations = {
-      ...(await this.getRecrusiveClassesfromContextsObj(
-        Models.ClassType.MIGRATION,
-      )),
-      ...this.config.migrations,
-    };
-
-    // console.log(this.config);
-    // debugger;
-    //#endregion
-
-    //#region prepare classes instances/functions clones
-    this.config.controllers = this.cloneClassesObjWithNewMetadata({
-      classesInput: this.config.controllers,
-      config: this.config,
-      ctx: this,
-      classType: Models.ClassType.CONTROLLER,
-    });
-    this.config.repositories = this.cloneClassesObjWithNewMetadata({
-      classesInput: this.config.repositories,
-      config: this.config,
-      ctx: this,
-      classType: Models.ClassType.REPOSITORY,
-    });
-    this.config.providers = this.cloneClassesObjWithNewMetadata({
-      classesInput: this.config.providers,
-      config: this.config,
-      ctx: this,
-      classType: Models.ClassType.PROVIDER,
-    });
-    this.config.middlewares = this.cloneClassesObjWithNewMetadata({
-      classesInput: this.config.middlewares,
-      config: this.config,
-      ctx: this,
-      classType: Models.ClassType.MIDDLEWARE,
-    });
-
-    this.config.subscribers = this.cloneClassesObjWithNewMetadata({
-      classesInput: this.config.subscribers,
-      config: this.config,
-      ctx: this,
-      classType: Models.ClassType.SUBSCRIBER,
-    });
-
-    this.config.migrations = this.cloneClassesObjWithNewMetadata({
-      classesInput: this.config.migrations,
-      config: this.config,
-      ctx: this,
-      classType: Models.ClassType.MIGRATION,
-    });
-
-    this.config.entities = this.cloneClassesObjWithNewMetadata({
-      classesInput: this.config.entities,
-      config: this.config,
-      ctx: this,
-      classType: Models.ClassType.ENTITY,
-    });
-    //#endregion
-
-    //#region prepare instances
-    for (const classTypeName of this.injectableTypesfromContexts) {
-      this.classInstancesByNameObj[classTypeName] = {};
-      this.objWithClassesInstancesArr[classTypeName] = [];
-    }
-
-    for (const classTypeName of this.injectableTypesfromContexts) {
-      await this.createInstances(
-        this.config[Models.ClassTypeKey[classTypeName]],
-        classTypeName,
-      );
-    }
-    //#endregion
-
-    if (!this.isRunOrRevertOnlyMigrationAppStart) {
-      //#region prepares server
-      if (this.mode === 'backend-frontend(tcp+udp)' && !this.abstract) {
-        //#region @backend
-        if (UtilsOs.isRunningInCloudflareWorker()) {
-          this.logFramework &&
-            Helpers.info(`Using cloudflare fake express server`);
-        } else {
-          let express: typeof import('express');
-          express = requireDefault('express');
-
-          this.expressApp = express();
-
-          if (process.env.NODE_ENV === 'production') {
-            this.expressApp.set('trust proxy', 1);
-          }
-
-          await this.initBackendMiddlewares();
-          await this.initCustomBackendMiddlewares();
-          const shouldStartHttpsSecureServer =
-            this.isHttpServer && !this.isRunningInsideDocker;
-          this.logFramework &&
-            Helpers.info(`
-
-          Starting server ${
-            shouldStartHttpsSecureServer ? 'with' : 'without'
-          } HTTPS secure server
-
-          `);
-          this.serverTcpUdp = shouldStartHttpsSecureServer
-            ? new https.Server(
-                {
-                  key: this.config.https?.key,
-                  cert: this.config.https?.cert,
-                },
-                this.expressApp,
-              )
-            : new http.Server(this.expressApp);
-
-          this.trackServer(this.serverTcpUdp);
-          this.publicAssets.forEach(asset => {
-            this.expressApp.use(
-              asset.serverPath,
-              express.static(asset.locationOnDisk),
-            );
-          });
-        }
-
-        //#endregion
-
-        await this.initCustomClientMiddlewares();
-      }
-      //#endregion
-
-      //#region prepare realtime
-      if (!this.abstract) {
-        this.disabledRealtime = !!(
-          UtilsOs.isRunningInCloudflareWorker() || this.config.disabledRealtime
-        );
-        if (!this.host) {
-          throw `
-
-            host is required for context initialization..
-            (Or maybe you forgot mark ${this.config.contextName} context as abstract?)
-
-          `;
-        }
-
-        //#region @backend
-        // if (UtilsOs.isRunningInCliMode() && !_.isNil(this.config.disabledRealtime)) {
-        //   // TODO for now...
-        //   Helpers.logInfo(`Realtime disable on backend for cli mode`);
-        //   this.disabledRealtime = true;
-        // } else {
-        //   Helpers.logInfo(`Realtime enabled on backend`);
-        // }
-        //#endregion
-
-        this.logRealtime &&
-          Helpers.info(
-            `[ctx=${this.contextName}] Init Realtime for ${this.mode}`,
-          );
-
-        this.realtime = new RealtimeCore(this);
-      }
-      //#endregion
-    }
-
-    //#region show context info
-    // console.log({ ref })
-    if (this.abstract) {
-      this.logFramework &&
-        Helpers.info(
-          `[taon] Create abstract context: ${this.config.contextName}`,
-        );
-    } else {
-      if (this.isRemoteHost) {
-        this.logFramework &&
-          Helpers.info(
-            `[taon] Create context for remote host: ${this.config.host}`,
-          );
-      } else {
-        this.logFramework &&
-          Helpers.info(`[taon] Create context for host: ${this.config.host}`);
-      }
-    }
-    //#endregion
-
-    // update first exposed config
-    Object.keys(this.config).forEach(key => {
-      this.originalConfig[key] = this.config[key];
-    });
-  }
-  //#endregion
-
   //#region methods & getters / get auto generated config
-  private getAutoGeneratedKvDbConfig(): Models.KVDatabaseConfig {
+  public getAutoGeneratedKvDbConfig(): Models.KVDatabaseConfig {
     return Models.KVDatabaseConfig.from({});
   }
 
-  private getAutoGeneratedSqlDbConfig(): Models.DatabaseConfigTypeOrm {
+  public getAutoGeneratedSqlDbConfig(): Models.DatabaseConfigTypeOrm {
     this.logFramework &&
       console.log(`
 
@@ -1211,7 +623,7 @@ export class EndpointContext {
   }
   //#endregion
 
-  //#region methods & getters /get kv db json location for class
+  //#region methods & getters / get kv db json location for class
   kvDbJsonLocationForClass(className: string): string {
     //#region @backendFunc
 
@@ -1230,56 +642,6 @@ export class EndpointContext {
       this.kvDbJsonLocationBaseFolderLocation,
       `kv-${this.contextName}__${className}.json`,
     ]);
-    //#endregion
-  }
-  //#endregion
-
-  //#region methods & getters / start server
-  async startServer(): Promise<void> {
-    //#region @backendFunc
-    if (
-      this.isRemoteHost ||
-      this.isRunOrRevertOnlyMigrationAppStart ||
-      UtilsOs.isRunningInCloudflareWorker()
-    ) {
-      return;
-    }
-    if (this.mode === 'backend-frontend(tcp+udp)') {
-      return await new Promise(resolve => {
-        if (this.isRunningInsideDocker) {
-          // this.displayRoutes(this.expressApp);
-          this.serverTcpUdp.listen(Number(this.uriPort), '0.0.0.0', () => {
-            this.logFramework &&
-              Helpers.log(
-                `[ctx=${this.contextName}] Express server (inside docker) started 0.0.0.0:${this.uriPort}`,
-              );
-            this.logFramework &&
-              Helpers.log(`[taon][express-server]listening on port: ${this.uriPort}, hostname: ${this.uriPathname},
-    address: ${this.uriProtocol}//localhost:${this.uriPort}${this.uriPathname}
-    ExpressJS mode: ${this.expressApp.settings.env}
-    `);
-            resolve(void 0);
-          });
-        } else {
-          // this.displayRoutes(this.expressApp);
-          this.serverTcpUdp.listen(Number(this.uriPort), () => {
-            this.logFramework &&
-              Helpers.log(
-                `[ctx=${this.contextName}] Express server (inside nodejs app) started on localhost:${this.uriPort}`,
-              );
-            this.logFramework &&
-              Helpers.log(`[taon][express-server]listening on port: ${this.uriPort}, hostname: ${this.uriPathname},
-    address: ${this.uriProtocol}//localhost:${this.uriPort}${this.uriPathname}
-    expressJS mode: ${this.expressApp.settings.env}
-            `);
-            resolve(void 0);
-          });
-        }
-      });
-    } else {
-      this.logFramework &&
-        Helpers.info('Ipc communication enable instead tcp/upd');
-    }
     //#endregion
   }
   //#endregion
@@ -1329,203 +691,15 @@ export class EndpointContext {
   }
   //#endregion
 
-  //#region methods & getters / clone class
-  private cloneClassWithNewMetadata = <
-    T extends { new (...args: any[]): any },
-  >({
-    TaonBaseClass,
-    className,
-    config,
-    ctx,
-    classType,
-  }: {
-    TaonBaseClass: T;
-    className: string;
-    config: Models.ContextOptions<any, any, any, any, any, any, any, any>;
-    ctx: EndpointContext;
-    classType: Models.ClassType;
-  }): T => {
-    // Return a new class that extends the base class
-    const cloneClass = () => {
-      if (
-        TaonBaseClass[Symbols.fullClassNameStaticProperty] ===
-        `${ctx.contextName}.${className}`
-      ) {
-        return TaonBaseClass;
-      }
-      return class extends TaonBaseClass {
-        // static ['_'] = TaonBaseClass['_'];
-
-        static [CoreModels.OrignalClassKey] = TaonBaseClass;
-
-        static [Symbols.fullClassNameStaticProperty] = `${ctx.contextName}.${className}`;
-
-        static [CoreModels.ClassNameStaticProperty] = className;
-
-        static [Symbols.ctxInClassOrClassObj] = ctx;
-
-        // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-        static __getFullPathForClass__(arr = []) {
-          const name = this[Symbols.fullClassNameStaticProperty];
-          arr.push(name);
-
-          if (
-            this[CoreModels.OrignalClassKey] &&
-            (
-              this[CoreModels.OrignalClassKey] as any as {
-                __getFullPathForClass__: any;
-              }
-            ).__getFullPathForClass__
-          ) {
-            (
-              this[CoreModels.OrignalClassKey] as any as {
-                __getFullPathForClass__: any;
-              }
-            ).__getFullPathForClass__(arr);
-          }
-          return arr.join('/');
-        }
-
-        static get fullPathForClass(): string {
-          return this.__getFullPathForClass__();
-        }
-
-        [Symbols.ctxInClassOrClassObj] = ctx;
-        // You can override prototype properties or methods here if needed
-        // static properties override allowed
-      };
-    };
-
-    const cloneClassFunction = cloneClass();
-
-    //#region gather all instances for all contexts
-    // TODO this is not needed anymore - for typeorm I use normal entities
-    // this thinng belowe is nice for debugging purpose
-    // if (_.isUndefined(cloneClassFunction[Symbols.orignalClassClonesObj])) {
-    //   cloneClassFunction[Symbols.orignalClassClonesObj] = {};
-    // }
-    // if (_.isUndefined(TaonBaseClass[Symbols.orignalClassClonesObj])) {
-    //   TaonBaseClass[Symbols.orignalClassClonesObj] = {};
-    // }
-    // const all = {
-    //   ...TaonBaseClass[Symbols.orignalClassClonesObj],
-    //   ...cloneClassFunction[Symbols.orignalClassClonesObj],
-    // };
-    // all[ctx.contextName] = cloneClassFunction;
-    // cloneClassFunction[Symbols.orignalClassClonesObj] = all;
-    // TaonBaseClass[Symbols.orignalClassClonesObj] = all;
-    //#endregion
-
-    return cloneClassFunction;
-  };
-
-  //#endregion
-
-  //#region methods & getters / clone classes obj with new metadata
-  // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-  private cloneClassesObjWithNewMetadata = ({
-    classesInput,
-    config,
-    ctx,
-    classType,
-  }: {
-    classesInput: any;
-    config: Models.ContextOptions<any, any, any, any, any, any, any, any>;
-    ctx: EndpointContext;
-    classType: Models.ClassType;
-  }) => {
-    const classes = {};
-    // console.log(Object.keys(classesInput))
-    for (const key of Object.keys(classesInput || {})) {
-      const TaonBaseClass = classesInput[key];
-
-      if (!TaonBaseClass) {
-        Helpers.error(`Class ${key} is not defined in context ${ctx.contextName}
-
-        Please check if you have correct import in context file
-
-        `);
-      }
-
-      var className = Reflect.getMetadata(
-        Symbols.metadata.className,
-        TaonBaseClass,
-      );
-
-      // console.log('Metadata className', className, TaonBaseClass);
-      // if (!className) {
-      //   console.warn(`Please provide className for ${TaonBaseClass.name} class`);
-      // }
-      className = className || key;
-      TaonBaseClass[CoreModels.ClassNameStaticProperty] = className;
-
-      const clonedClass = this.cloneClassWithNewMetadata({
-        TaonBaseClass,
-        className,
-        config,
-        ctx,
-        classType,
-      });
-      classes[className] = clonedClass;
-    }
-    return classes;
-  };
-  //#endregion
-
-  //#region methods & getters / get recursive classes from contexts
-  private async getRecrusiveClassesfromContextsObj(
-    classType: Models.ClassType,
-  ) {
-    const arr = await this.getRecrusiveClassesfromContexts(classType);
-    return arr.reduce((acc, c) => {
-      acc[ClassHelpers.getName(c)] = c;
-      return acc;
-    }, {});
-  }
-
-  private async getRecrusiveClassesfromContexts(
-    classType: Models.ClassType,
-    arr = [],
-  ) {
-    const contexts = Object.values(this.config.contexts || {}) as ReturnType<
-      typeof createContext
-    >[];
-    // console.log({
-    //   contexts,
-    // });
-    for (const ctx of contexts) {
-      // console.log(`STARTING ${ctx.contextName}`);
-      const ref = await ctx.__ref();
-      // console.log(`CTX FROM ${ctx.contextName}`, ref.contextName);
-      const classesInput = ref.getClassFunBy(classType);
-      // console.log(`${ref.contextName} - ${classType}`, { classesInput });
-
-      const clonedClasses = Object.values(
-        this.cloneClassesObjWithNewMetadata({
-          classesInput,
-          config: this.config,
-          ctx: this,
-          classType,
-        }),
-      );
-      // console.log(`${classType} clonedClasses`, clonedClasses);
-      clonedClasses.forEach(c => arr.push(c));
-
-      await ref.getRecrusiveClassesfromContexts(classType, arr);
-    }
-    return arr as Function[];
-  }
-  //#endregion
-
   //#region methods & getters / get class instances by class type
   getClassInstanceObjBy(classType: Models.ClassType): any {
-    return this.classInstancesByNameObj[classType];
+    return this.endpointCore.classInstancesByNameObj[classType];
   }
   //#endregion
 
   //#region methods & getters / get class instances arr
   private getClassesInstancesArrBy(classType: Models.ClassType): any[] {
-    return this.objWithClassesInstancesArr[classType];
+    return this.endpointCore.objWithClassesInstancesArr[classType];
   }
   //#endregion
 
@@ -1671,7 +845,7 @@ export class EndpointContext {
    * Only for classType: CONTROLLER, REPOSITORY, PROVIDER, MIDDLEWARES
    */
   getClassFunByClassName(className: string): Function {
-    for (const classTypeName of this.allTypesfromContexts) {
+    for (const classTypeName of this.endpointCore.allTypesfromContexts) {
       const classesForInjectableType =
         this.config[Models.ClassTypeKey[classTypeName]];
 
@@ -1688,31 +862,6 @@ export class EndpointContext {
 
   getClassFunByArr(classType: Models.ClassType) {
     return Object.values(this.getClassFunBy(classType) || {}) as Function[];
-  }
-  //#endregion
-
-  //#region methods & getters / create class instances
-  private async createInstances(classes: any, classType: Models.ClassType) {
-    // const recrusiveValuesFromContext =
-    //   await this.getRecrusiveClassesfromContexts(classType);
-    // console.log(this.config.contexts);
-    // console.log('recrusiveValuesFromContext', recrusiveValuesFromContext);
-
-    for (const classFn of [
-      // ...recrusiveValuesFromContext,
-      ...Object.values(classes),
-    ]) {
-      const instance = DITaonContainer.resolve(classFn as any) as any;
-      const classInstancesByNameObj = this.classInstancesByNameObj[classType];
-      const className = ClassHelpers.getName(classFn);
-      // console.log({ classFn, classType, instance, place, className, 'classInstancesByNameObj': this.classInstancesByNameObj });
-      classInstancesByNameObj[className] = instance;
-      // update config
-      this.config[Models.ClassTypeKey[classType]][className] = classFn;
-      this.objWithClassesInstancesArr[classType].push(instance);
-      instance[Symbols.taonInstanceId] = EndpointContext.instanceID++;
-      this.allClassesInstances[className] = instance;
-    }
   }
   //#endregion
 
@@ -1900,7 +1049,7 @@ export class EndpointContext {
   //#endregion
 
   //#region methods & getters / context name
-  private overrideContextName: string;
+  public overrideContextName: string;
 
   public readonly useSession: boolean = false;
 
@@ -2271,8 +1420,6 @@ export class EndpointContext {
 
   //#endregion
 
-  //#region methods & getters / initialize metadata
-
   //#region methods & getters / update class calculate path
   private updateCalculatedPathsForControllers(
     rawConfigs: ControllerConfig[],
@@ -2336,6 +1483,8 @@ export class EndpointContext {
   }
 
   //#endregion
+
+  //#region methods & getters / init controllers hook
   async initControllersHook(
     ctxStorage: ContextsEndpointStorage,
   ): Promise<void> {
@@ -2354,7 +1503,9 @@ export class EndpointContext {
       }
     }
   }
+  //#endregion
 
+  //#region methods & getters / init controllers
   initControllers(intOpt: { overrideExpressApp: Application }): void {
     if (this.isRunOrRevertOnlyMigrationAppStart) {
       return;
@@ -2493,7 +1644,7 @@ export class EndpointContext {
           // @ts-ignore
           controllerInstance.__config__ = classConfig;
 
-          const route = this.initServer(
+          const route = this.endpointServer.initServer(
             httpMethodType,
             methodConfig,
             classConfig,
@@ -2526,7 +1677,7 @@ export class EndpointContext {
           // @ts-ignore
           controllerInstance.__config__ = classConfig;
 
-          this.initClient(
+          this.endpointClient.initClient(
             controllerClassFn,
             httpMethodType,
             methodConfig as any,
@@ -2646,7 +1797,7 @@ export class EndpointContext {
 
   //#region methods & getters / init middlewares
 
-  private async initCustomClientMiddlewares(): Promise<void> {
+  public async initCustomClientMiddlewares(): Promise<void> {
     const middlewares = this.getClassesInstancesArrBy(
       Models.ClassType.MIDDLEWARE,
     )
@@ -2678,7 +1829,7 @@ export class EndpointContext {
     });
   }
 
-  private async initCustomBackendMiddlewares(): Promise<void> {
+  public async initCustomBackendMiddlewares(): Promise<void> {
     //#region @backend
     const app = this.expressApp;
     const middlewares = this.getClassesInstancesArrBy(
@@ -2716,7 +1867,7 @@ export class EndpointContext {
     //#endregion
   }
 
-  private async initBackendMiddlewares(): Promise<void> {
+  public async initBackendMiddlewares(): Promise<void> {
     //#region @backend
     if (UtilsOs.isRunningInCloudflareWorker()) {
       return;
@@ -2833,1303 +1984,11 @@ export class EndpointContext {
         // }
         //#endregion
 
-        res.set(
-          'Access-Control-Expose-Headers',
-          [
-            'Content-Type',
-            'Authorization',
-            'X-Requested-With',
-            Symbols.old.X_TOTAL_COUNT,
-            Symbols.old.MAPPING_CONFIG_HEADER,
-            Symbols.old.CIRCURAL_OBJECTS_MAP_BODY_PARAM,
-            Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM,
-          ].join(', '),
-        );
+        res.set('Access-Control-Expose-Headers', expostHeadersCross.join(', '));
         next();
       });
     })();
 
-    //#endregion
-  }
-  //#endregion
-
-  //#region methods & getters / init methods node
-  private initServer(
-    //#region parameters
-    httpMethodType: CoreModels.HttpMethod,
-    methodConfig: Partial<MethodConfig>,
-    classConfig: ControllerConfig,
-    expressPath: string,
-    target: Function,
-    overrideExpressApp: Application,
-    //#endregion
-  ): { expressPath: string; method: CoreModels.HttpMethod } {
-    //#region resolve variables
-    const controllerInstance = this.getInstanceBy(
-      target as any,
-    ) as TaonBaseController;
-    const t: Translation = controllerInstance.t
-      ? controllerInstance.t
-      : ({
-          changeFileLang: () => {
-            // TODO implement translating for request
-            return;
-          },
-          gettext: text => {
-            // TODO implement translating for request
-            return text;
-          },
-          translate: text => {
-            // TODO implement translating for request
-            return text;
-          },
-        } as any);
-    if (overrideExpressApp) {
-      this.expressApp = overrideExpressApp;
-    }
-    // console.log(
-    //   `CLIENT: expressPath: "${expressPath}" interceptor for method: ${methodConfig.calculatedMiddlewares.length}`,
-    // );
-
-    const middlewareHandlers = methodConfig.calculatedMiddlewares
-      .map(middlewareClassFun => {
-        const middlewareInstance: TaonBaseMiddleware = this.getInstanceBy(
-          middlewareClassFun as any,
-        );
-        if (
-          middlewareInstance &&
-          _.isFunction(middlewareInstance.interceptServerMethod)
-        ) {
-          const middlewareFn = ClassHelpers.asyncHandler(
-            async (
-              req: ExpressRequest,
-              res: ExpressResponse,
-              next: ExpressNextFunction,
-            ) => {
-              await middlewareInstance.interceptServerMethod(
-                {
-                  req,
-                  res,
-                  next,
-                },
-                {
-                  methodName: methodConfig.methodName as any,
-                  expressPath,
-                  httpRequestType: methodConfig.type,
-                },
-              );
-            },
-          );
-          return middlewareFn;
-        }
-      })
-      .filter(f => !!f) as ExpressRequestHandler[];
-
-    // const url = this.uri;
-
-    //#region get result
-    const getResult = async (
-      resolvedParams: any[],
-      req: ExpressRequest,
-      res: ExpressResponse,
-      results: Models.Http.RequestResults,
-    ) => {
-      const response: Models.Http.Response<any> =
-        methodConfig.descriptor.value.apply(
-          /**
-           * Context for method @GET,@PUT etc.
-           */
-          this.getInstanceBy(target as any),
-          /**
-           * Params for method @GET, @PUT etc.
-           */
-          resolvedParams,
-        );
-
-      let result = await getResponseValue(response, { req, res, results });
-      return result;
-    };
-    //#endregion
-
-    // console.log(`BACKEND: expressPath: "${expressPath}" `);
-    //#endregion
-
-    if (UtilsOs.isElectron) {
-      //#region @backend
-      const ipcKeyName = TaonHelpers.ipcKeyNameRequest(
-        target,
-        methodConfig,
-        expressPath,
-      );
-      const electron = require('electron');
-
-      (electron.ipcMain as typeof ipcMain).on(
-        ipcKeyName,
-        async (event, paramsFromBrowser) => {
-          const responseJsonData = await getResult(
-            paramsFromBrowser,
-            void 0,
-            void 0,
-            { t, expressPath },
-          );
-          const sendToIpsMainOn = TaonHelpers.ipcKeyNameResponse(
-            target,
-            methodConfig,
-            expressPath,
-          );
-          // console.log({ sendToIpsMainOn });
-          event.sender.send(sendToIpsMainOn, responseJsonData);
-        },
-      );
-      return {
-        expressPath,
-        method: methodConfig.type,
-      };
-      //#endregion
-    }
-
-    if (!this.isRemoteHost) {
-      //#region apply dummy websql express routers
-      //#region @websql
-      if (UtilsOs.isWebSQL) {
-        if (!this.expressApp[httpMethodType.toLowerCase()]) {
-          this.expressApp[httpMethodType.toLowerCase()] = () => {};
-          // TODO add middlewares for WEBSQL and ELECTRON mode
-        }
-      }
-      //#endregion
-      //#endregion
-
-      //#region @backend
-      // console.log('this.expressApp', this.expressApp);
-      // this.logHttp &&
-      //   console.log(`[${httpMethodType.toUpperCase()}] ${expressPath} `);
-
-      this.expressApp[httpMethodType.toLowerCase()](
-        expressPath,
-        ...middlewareHandlers,
-        async (req: ExpressRequest, res: ExpressResponse) => {
-          // console.log(`[${httpMethodType.toUpperCase()}] ${expressPath} `);
-
-          // @ts-expect-error
-          if (controllerInstance?.beforeEachRequest) {
-            try {
-              await (controllerInstance as TaonBaseController) // @ts-expect-error
-                ?.beforeEachRequest({
-                  req,
-                  res,
-                  expressPath,
-                  classConfig,
-                  methodConfig,
-                  t,
-                } as Models.TaonCtrlBeforeEachRequestParams);
-            } catch (error) {
-              const { errroResult, status } = ClassHelpers.mapFnError(
-                error,
-                res,
-              );
-              if (UtilsOs.isRunningInCloudflareWorker()) {
-                console.error(errroResult);
-              }
-              res.status(status).json(errroResult);
-              return;
-            }
-          }
-
-          //#region process params
-          const args: any[] = [];
-          const tLang = req.headers[localFileLangHeader];
-          // console.log({ tLang });
-          if (tLang) {
-            await t.changeFileLang(tLang as any);
-          }
-
-          let bodyFormDataFiles: TaonUploadedFile[] = [];
-
-          let tBody = req.body;
-          const requestContentType = req.headers['content-type'] || '';
-          const isRequestFormData = requestContentType.startsWith(
-            'multipart/form-data',
-          );
-
-          if (isRequestFormData) {
-            const { files, formData } = await requestToFormData(req);
-            bodyFormDataFiles = files;
-            // TODO handle somehow file
-            tBody = formData;
-          } else {
-            tBody = req.body;
-          }
-
-          let tParams = req.params;
-          let tQuery: Object = req.query;
-
-          // console.log({ tBody, tParams, tQuery, methodConfig });
-
-          if (!isRequestFormData) {
-            //#region process body params
-            const bodyParamsToProcess = Object.values(
-              methodConfig.parameters,
-            ).filter(f => f.paramType === 'Body');
-
-            if (bodyParamsToProcess.length > 0) {
-              const isUsingWholeBody = !_.isUndefined(
-                bodyParamsToProcess.find(c => !c.paramName),
-              );
-
-              if (isUsingWholeBody && bodyParamsToProcess.length > 1) {
-                const notEmpty = bodyParamsToProcess
-                  .filter(f => !!f.paramName)
-                  .map(c => `@Body('${c.paramName}') ${c.paramName}`)
-                  .join(', ');
-
-                throw new Error(
-                  `
-
-                  You are using more than ONE body param @Body() without name.
-
-                  Or
-
-                  your are overriding method with wrong params (like below)
-
-                  class ParentClass {
-                    ...
-                    @${methodConfig.type?.toUpperCase()}()
-                    ${methodConfig.methodName as any}(@Body()) {
-                      // parent method
-                    }
-                     ...
-                  }
-
-                  class ${classConfig.className} extends AnyParentClass {
-                    ...
-                    @${methodConfig.type?.toUpperCase()}()
-                    ${methodConfig.methodName as any}(${notEmpty}) { // ERROR
-                      // your overrided method
-                    }
-                    ...
-                  }
-                  `,
-                );
-              }
-
-              if (isUsingWholeBody) {
-                try {
-                  const mappinForEntityBody = JSON.parse(
-                    TaonHelpers.firstStringOrElemFromArray(
-                      req.headers[
-                        Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS
-                      ],
-                    ) ?? '{}',
-                  );
-                  tBody = encodeMapping(tBody, mappinForEntityBody);
-
-                  //#region handle circural item in body params
-                  if (
-                    req.headers[Symbols.old.CIRCURAL_OBJECTS_MAP_BODY_PARAM]
-                  ) {
-                    try {
-                      const circs = JSON.parse(
-                        TaonHelpers.firstStringOrElemFromArray(
-                          req.headers[
-                            Symbols.old.CIRCURAL_OBJECTS_MAP_BODY_PARAM
-                          ],
-                        ) ?? '{}',
-                      );
-                      tBody = JSON10.applyCircularMapping(tBody, circs);
-                    } catch (e) {
-                      console.error(e);
-                    }
-                  }
-                  //#endregion
-                } catch (e) {
-                  console.error(e);
-                }
-              } else {
-                for (const bodyParamToProcess of bodyParamsToProcess) {
-                  try {
-                    const paramName = bodyParamToProcess.paramName;
-                    const mappingForEntityBodyForParam = JSON.parse(
-                      TaonHelpers.firstStringOrElemFromArray(
-                        req.headers[
-                          `${Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS}${paramName.toLowerCase()}`
-                        ],
-                      ) ?? '{}',
-                    );
-                    tBody[paramName] = encodeMapping(
-                      tBody[paramName],
-                      mappingForEntityBodyForParam,
-                    );
-                  } catch (e) {
-                    console.error(e);
-                  }
-                }
-              }
-            }
-            //#endregion
-
-            //#region handle query params
-            const queryParamsToProcess = Object.values(
-              methodConfig.parameters,
-            ).filter(f => f.paramType === 'Query');
-
-            if (queryParamsToProcess.length > 0) {
-              const isUsingWholeQueryParamBody = !_.isUndefined(
-                queryParamsToProcess.find(c => !c.paramName),
-              );
-
-              if (
-                isUsingWholeQueryParamBody &&
-                queryParamsToProcess.length > 1
-              ) {
-                throw new Error(
-                  `You can use only ONE query param @Query() without name.`,
-                );
-              }
-
-              if (isUsingWholeQueryParamBody) {
-                try {
-                  const entity = JSON.parse(
-                    TaonHelpers.firstStringOrElemFromArray(
-                      req.headers[
-                        Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS
-                      ],
-                    ) ?? '{}',
-                  );
-                  tQuery = TaonHelpers.parseJSONwithStringJSONs(
-                    encodeMapping(tQuery, entity),
-                  );
-                  if (
-                    req.headers[Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM]
-                  ) {
-                    //#region handle circular items in query params
-                    try {
-                      const circs = JSON.parse(
-                        TaonHelpers.firstStringOrElemFromArray(
-                          req.headers[
-                            Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM
-                          ],
-                        ) ?? '{}',
-                      );
-                      tQuery = JSON10.applyCircularMapping(tQuery, circs);
-                    } catch (e) {
-                      console.error(e);
-                    }
-                    //#endregion
-                  }
-                } catch (e) {
-                  console.error(e);
-                }
-              } else {
-                for (const queryParm of queryParamsToProcess) {
-                  try {
-                    const queryParamName = queryParm.paramName;
-                    const entityForParam = JSON.parse(
-                      TaonHelpers.firstStringOrElemFromArray(
-                        req.headers[
-                          `${Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${queryParamName.toLowerCase()}`
-                        ],
-                      ) ?? '{}',
-                    );
-                    let beforeTransofrm = tQuery[queryParamName];
-                    if (_.isString(beforeTransofrm)) {
-                      try {
-                        const paresed =
-                          TaonHelpers.tryTransformParam(beforeTransofrm);
-                        beforeTransofrm = paresed;
-                      } catch (e) {}
-                    }
-                    const afterEncoding = encodeMapping(
-                      beforeTransofrm,
-                      entityForParam,
-                    );
-                    tQuery[queryParamName] =
-                      TaonHelpers.parseJSONwithStringJSONs(afterEncoding);
-                  } catch (e) {
-                    console.error(e);
-                  }
-                }
-              }
-            }
-            //#endregion
-          }
-
-          //#region set proper arguments for backend function
-          Object.keys(methodConfig.parameters).forEach(paramName => {
-            let p: Partial<ParamConfig> = methodConfig.parameters[paramName];
-            if (p.paramType === 'Path' && tParams) {
-              args.push(tParams[p.paramName]);
-            }
-            if (p.paramType === 'Query' && tQuery) {
-              if (p.paramName) {
-                args.push(tQuery[p.paramName]);
-              } else {
-                args.push(tQuery);
-              }
-            }
-
-            if (p.paramType === 'Header' && req.headers) {
-              args.push(req.headers[p.paramName.toLowerCase()]);
-            }
-            if (p.paramType === 'Cookie' && req.cookies) {
-              args.push(req.cookies[p.paramName]);
-            }
-            if (p.paramType === 'Body' && tBody) {
-              if (p.paramName && typeof tBody === 'object') {
-                args.push(tBody[p.paramName]);
-              } else {
-                args.push(tBody);
-              }
-            }
-          });
-          //#endregion
-
-          //#endregion
-
-          const resolvedParams = args
-            .reverse()
-            .map(v => TaonHelpers.tryTransformParam(v));
-
-          //#region process request
-          try {
-            const resultFromCtrlExec = await getResult(
-              resolvedParams,
-              req,
-              res,
-              { bodyFormDataFiles, t, expressPath },
-            );
-
-            if (res.headersSent) {
-              return;
-            }
-
-            const responseType = methodConfig.overrideResponseType as
-              | FetchResponseType
-              | undefined;
-
-            if (methodConfig.overrideExpressSendAsHtml) {
-              res.setHeader('Content-Type', 'text/html');
-              res.send(resultFromCtrlExec);
-              return;
-            }
-
-            switch (responseType) {
-              //#region stream
-
-              case FetchResponseType.Stream: {
-                if (!(resultFromCtrlExec instanceof ReadableStream)) {
-                  throw new Error(
-                    `[taon] Expected ReadableStream for response type "${FetchResponseType.Stream}".`,
-                  );
-                }
-
-                res.setHeader(
-                  'Content-Type',
-                  res.getHeader('Content-Type') || 'application/octet-stream',
-                );
-
-                if (UtilsOs.isRunningInCloudflareWorker()) {
-                  res.send(resultFromCtrlExec);
-                  return;
-                }
-                //#region @esmRemove
-                const reader = resultFromCtrlExec.getReader();
-
-                try {
-                  while (true) {
-                    const { done, value } = await reader.read();
-
-                    if (done) {
-                      break;
-                    }
-
-                    if (!res.write(Buffer.from(value))) {
-                      await new Promise<void>(resolve => {
-                        res.once('drain', resolve);
-                      });
-                    }
-                  }
-
-                  res.end();
-                } finally {
-                  reader.releaseLock();
-                }
-                //#endregion
-                return;
-              }
-
-              //#endregion
-
-              //#region blob
-
-              case FetchResponseType.Blob: {
-                if (resultFromCtrlExec instanceof Blob) {
-                  const blob = resultFromCtrlExec;
-
-                  res.setHeader(
-                    'Content-Type',
-                    blob.type || 'application/octet-stream',
-                  );
-
-                  res.setHeader('Content-Length', blob.size.toString());
-
-                  const buffer = Buffer.from(await blob.arrayBuffer());
-
-                  res.end(buffer);
-
-                  return;
-                }
-
-                // Keep your old base64 support if you need backward compatibility.
-                if (_.isString(resultFromCtrlExec)) {
-                  const match = /^data:(.+?);base64,(.+)$/.exec(
-                    resultFromCtrlExec,
-                  );
-
-                  if (!match) {
-                    throw new Error(
-                      `[taon] Expected Blob or base64 data URL for response type "${FetchResponseType.Blob}".`,
-                    );
-                  }
-
-                  const [, contentType, fileBase64] = match;
-
-                  const buffer = Buffer.from(fileBase64, 'base64');
-
-                  res.setHeader('Content-Type', contentType);
-
-                  res.setHeader('Content-Length', buffer.length.toString());
-
-                  res.end(buffer);
-
-                  return;
-                }
-
-                throw new Error(
-                  `[taon] Expected Blob for response type "${FetchResponseType.Blob}".`,
-                );
-              }
-
-              //#endregion
-
-              //#region array buffer
-
-              case FetchResponseType.ArrayBuffer: {
-                if (!(resultFromCtrlExec instanceof ArrayBuffer)) {
-                  throw new Error(
-                    `[taon] Expected ArrayBuffer for response type "${FetchResponseType.ArrayBuffer}".`,
-                  );
-                }
-
-                const buffer = Buffer.from(resultFromCtrlExec);
-
-                res.setHeader(
-                  'Content-Type',
-                  res.getHeader('Content-Type') || 'application/octet-stream',
-                );
-
-                res.setHeader('Content-Length', buffer.length.toString());
-
-                res.end(buffer);
-
-                return;
-              }
-
-              //#endregion
-
-              //#region text
-
-              case FetchResponseType.Text: {
-                if (!_.isString(resultFromCtrlExec)) {
-                  throw new Error(
-                    `[taon] Expected string for response type "${FetchResponseType.Text}".`,
-                  );
-                }
-
-                res.type('text/plain');
-
-                res.send(resultFromCtrlExec);
-
-                return;
-              }
-
-              //#endregion
-
-              //#region document
-
-              case FetchResponseType.Document: {
-                if (!_.isString(resultFromCtrlExec)) {
-                  throw new Error(
-                    `[taon] Expected HTML string for response type "${FetchResponseType.Document}".`,
-                  );
-                }
-
-                res.type('text/html');
-
-                res.send(resultFromCtrlExec);
-
-                return;
-              }
-
-              //#endregion
-
-              //#region form data
-
-              case FetchResponseType.FormData: {
-                if (!(resultFromCtrlExec instanceof FormData)) {
-                  throw new Error(
-                    `[taon] Expected FormData for response type "${FetchResponseType.FormData}".`,
-                  );
-                }
-
-                throw new Error(
-                  `[taon] FormData response serialization is not implemented yet.`,
-                );
-              }
-
-              //#endregion
-
-              //#region json
-
-              case FetchResponseType.Json:
-              case undefined: {
-                await new EntityProcess(res).run(resultFromCtrlExec);
-
-                return;
-              }
-
-              //#endregion
-
-              default: {
-                throw new Error(
-                  `[taon] Unsupported response type: ${responseType}`,
-                );
-              }
-            }
-          } catch (error) {
-            if (UtilsStdinStdoutLogger.startedRegistering()) {
-              console.error(
-                `HTTP ERROR [ctx=${this.contextName}][${expressPath}]`,
-                error,
-              );
-            }
-
-            if (res.headersSent) {
-              // SKIP FURTHER PROCESSING IF RESPONSE ALREADY SENT
-              return;
-            }
-            if (methodConfig.overrideExpressSendAsHtml) {
-              res.setHeader('Content-Type', 'text/html');
-              res.send(error);
-              return;
-            }
-
-            const { errroResult, status } = ClassHelpers.mapFnError(error, res);
-
-            res.status(status).json(errroResult);
-            return;
-          }
-          //#endregion
-        },
-      );
-      //#endregion
-    }
-
-    return {
-      expressPath: expressPath,
-      method: methodConfig.type,
-    };
-  }
-  //#endregion
-
-  //#region methods & getters / init client
-  /**
-   * client can be browser or nodejs (when remote host)
-   */
-  private initClient(
-    target: Function,
-    httpRequestType: CoreModels.HttpMethod,
-    methodConfig: Partial<MethodConfig>, // Models.Http.Rest.MethodConfig,
-    expressPath: string,
-  ): void {
-    const ctx = this;
-    // const controllerInstance = this.getInstanceBy(
-    //   target as any,
-    // ) as TaonBaseController;
-
-    // console.log({ clientExpressPath: expressPath });
-    // console.log(
-    //   `CLIENT: expressPath: "${expressPath}" interceptor for method: ${methodConfig.calculatedMiddlewares?.length} `,
-    // );
-
-    //#region init middlewares
-    const middlewares = methodConfig.calculatedMiddlewares;
-    const middlewaresInstances = middlewares
-      .map(f => this.getInstanceBy(f as any) as TaonBaseMiddleware)
-      .filter(f => _.isFunction(f.interceptClientMethod));
-
-    middlewaresInstances.forEach(instance => {
-      const middlewareName = ClassHelpers.getName(instance);
-      // middlewareName - only needed for inheritace and uniqness of interceptors
-      const interceptorKey = `${middlewareName}-${methodConfig.type?.toUpperCase()}-${expressPath}`;
-      Resource.methodsInterceptors.set(interceptorKey, {
-        intercept: ({ req, next }) => {
-          return instance.interceptClientMethod(
-            {
-              req,
-              next,
-            },
-            {
-              methodName: methodConfig.methodName as any,
-              expressPath,
-              httpRequestType: httpRequestType,
-            },
-          );
-        },
-      });
-    });
-    //#endregion
-
-    // : { received: any; /* Rest<any, any>  */ }
-    // this.logHttp &&
-    //   console.log(`${httpRequestType?.toUpperCase()} ${expressPath} `);
-    // console.log('INITING', methodConfig); // TODO inject in static
-    //#region resolve storage
-    // TODO not a good idea
-    const storage = globalThis;
-    //#endregion
-
-    const orgMethods = target.prototype[methodConfig.methodName as any];
-
-    //#region handle electron ipc request
-
-    if (UtilsOs.isElectron) {
-      const ipcRenderer = (window as any).require('electron').ipcRenderer;
-      target.prototype[methodConfig.methodName as any] = function (...args) {
-        const received = new Promise(async (resolve, reject) => {
-          const headers = {};
-          const { request, response } = TaonHelpers.websqlMocks(headers);
-
-          //#region @browser
-          ipcRenderer.once(
-            TaonHelpers.ipcKeyNameResponse(target, methodConfig, expressPath),
-            (event, responseData) => {
-              let res: any = responseData;
-              // console.log({ responseData });
-              try {
-                const body = res;
-                const responseStrinOrBlob: any =
-                  Helpers.isBlob(body) || _.isString(body)
-                    ? body
-                    : JSON.stringify(body);
-                res = new HttpResponse(
-                  `${ctx.uriOrigin}${
-                    '' // TODO express path
-                  }${methodConfig.path} `,
-                  methodConfig.type,
-                  {} as FetchResponse,
-                  responseStrinOrBlob,
-                  RestHeaders.from(headers),
-                  200,
-                  {
-                    // responseMapping: {
-                    //   // entity: ()=>  TODO for electron
-                    // },
-                  },
-                  false,
-                );
-
-                resolve(res);
-              } catch (error) {
-                console.error(error);
-                reject(error);
-              }
-            },
-          );
-          ipcRenderer.send(
-            TaonHelpers.ipcKeyNameRequest(target, methodConfig, expressPath),
-            args,
-          );
-          //#endregion
-        });
-        received['observable'] = from(received);
-        return {
-          received,
-          request(axiosConfig: Ng2RestFetchRequestConfig) {
-            return received;
-          },
-        } as Models.Http.ClientAction<any>;
-      };
-      return;
-    }
-    //#endregion
-
-    //#region handling web sql request
-    //#region @websqlOnly
-
-    //#region resolve variables
-    const MIN_TIMEOUT = 100;
-    const MIN_TIMEOUT_STEP = 10;
-
-    const globalThisVar = globalThis; // TODO not a good idea! probably should be in context
-
-    const timeout =
-      globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_TIMEOUT] || MIN_TIMEOUT;
-
-    let updateFun: Subject<number> =
-      globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN];
-    if (!globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN]) {
-      globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN] = new Subject();
-    }
-    updateFun = globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN];
-
-    let startFun: Subject<void> =
-      globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN_START];
-    if (!globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN_START]) {
-      globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN_START] = new Subject();
-    }
-    startFun = globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN_START];
-
-    let doneFun: Subject<void> =
-      globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN_DONE];
-    if (!globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN_DONE]) {
-      globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN_DONE] = new Subject();
-    }
-    doneFun = globalThisVar[Symbols.old.WEBSQL_REST_PROGRESS_FUN_DONE];
-
-    let periodsToUpdate = 0;
-    if (timeout >= MIN_TIMEOUT) {
-      periodsToUpdate = Math.floor(timeout / MIN_TIMEOUT_STEP);
-    }
-    //#endregion
-
-    //#region web sql periods to wait
-    const periods = async () => {
-      startFun.next();
-      for (let n = 1; n <= periodsToUpdate; n++) {
-        // if (n === 0) {
-        // updateFun.next(0)
-        // } else {
-        let upValue = Math.round(((MIN_TIMEOUT_STEP * n) / timeout) * 100);
-        if (upValue > 100) {
-          upValue = 100;
-        }
-        // console.log(`ping upValue: ${ upValue } `)
-        updateFun.next(upValue);
-        // }
-        await new Promise((resolve, reject) => {
-          setTimeout(() => {
-            resolve(void 0);
-          }, MIN_TIMEOUT_STEP);
-        });
-        // console.log('pong')
-      }
-      doneFun.next();
-    };
-    //#endregion
-
-    target.prototype[methodConfig.methodName as any] = function (...args) {
-      // if (!target.prototype[methodConfig.methodName][subjectHandler]) {
-      //   target.prototype[methodConfig.methodName][subjectHandler] = new Subject();
-      // }
-      const received = new Promise(async (resolve, reject) => {
-        const headers = {};
-        const { request, response } = TaonHelpers.websqlMocks(headers);
-
-        let res: any;
-        try {
-          res = await Helpers.runSyncOrAsync({
-            functionFn: orgMethods,
-            context: this,
-            arrayOfParams: args,
-          });
-          // console.log({ res1: res })
-          if (typeof res === 'function') {
-            res = await Helpers.runSyncOrAsync({
-              functionFn: res,
-              context: this,
-              arrayOfParams: [request, response],
-            });
-          }
-          // console.log({ res2: res })
-          if (typeof res === 'function') {
-            res = await Helpers.runSyncOrAsync({
-              functionFn: res,
-              context: this,
-              arrayOfParams: [request, response],
-            });
-          }
-          // console.log({ res3: res })
-
-          if (typeof res === 'object' && res?.received) {
-            res = await res.received;
-          }
-
-          const body = res;
-          const stringOrBlobData: any =
-            Helpers.isBlob(body) || _.isString(body)
-              ? body
-              : JSON.stringify(body);
-
-          // TODO SHOULD BE IMPLEMENTED IN NG2-REST
-          res = new HttpResponse(
-            `${ctx.uriOrigin}${
-              '' // TODO express path
-            }${methodConfig.path} `,
-            methodConfig.type,
-            {} as FetchResponse,
-            stringOrBlobData,
-            RestHeaders.from(headers),
-            200,
-            {},
-            false,
-          );
-
-          // TODO blob should be blob not json
-          // console.log('NEXT', res);
-          // target.prototype[methodConfig.methodName][subjectHandler].next(res);
-
-          await periods();
-          resolve(res);
-        } catch (error) {
-          await periods();
-          console.error(error);
-          // error = new Ng2RestModels.HttpResponseError('Error during websql request',
-          //   JSON.stringify(error));
-          // target.prototype[methodConfig.methodName][subjectHandler].error(error);
-          reject(error);
-        }
-      });
-      received['observable'] = from(received);
-      // debugger
-      if (UtilsOs.isWebSQL) {
-        return {
-          received,
-          request(axiosConfig: Ng2RestFetchRequestConfig) {
-            // console.log('request', axiosConfgi);
-            return received;
-          },
-        } as Models.Http.ClientAction<any>;
-      }
-    };
-    if (UtilsOs.isWebSQL) {
-      // @ts-ignore
-      return undefined as any as Models.Http.ClientAction<any>;
-    }
-    //#endregion
-    //#endregion
-
-    //#region handle normal request
-
-    target.prototype[methodConfig.methodName as any] = function (
-      this: { t: Translation },
-      ...args
-    ): Models.Http.ClientAction<any> {
-      // console.log('this t', { t: this.t });
-      // console.log('[init method browser] FRONTEND expressPath', expressPa/h)
-      // const productionMode = FrameworkContext.isProductionMode;
-
-      //#region resolve frontend parameters
-
-      //#region set initial header
-      if (!storage[Symbols.old.ENDPOINT_META_CONFIG])
-        storage[Symbols.old.ENDPOINT_META_CONFIG] = {};
-      if (!storage[Symbols.old.ENDPOINT_META_CONFIG][ctx.uriOrigin])
-        storage[Symbols.old.ENDPOINT_META_CONFIG][ctx.uriOrigin] = {};
-      const endpoints = storage[Symbols.old.ENDPOINT_META_CONFIG];
-
-      let rest: ReturnType<typeof Resource.create>;
-      const requestHeaders = RestHeaders.from({});
-
-      if (this.t) {
-        requestHeaders.set(localFileLangHeader, this.t.localFileLang);
-      }
-
-      if (!endpoints[ctx.uriOrigin][expressPath]) {
-        if (
-          methodConfig.overrideContentType &&
-          !methodConfig.overrideResponseType
-        ) {
-          rest = Resource.create(ctx.uriOrigin, expressPath, {
-            responseMapping: {
-              entity: Symbols.old.MAPPING_CONFIG_HEADER,
-              circular: Symbols.old.CIRCURAL_OBJECTS_MAP_BODY_PARAM,
-            },
-          });
-          requestHeaders.apply({
-            'Content-Type': methodConfig.overrideContentType,
-            Accept: methodConfig.overrideContentType,
-          });
-        } else if (
-          methodConfig.overrideContentType &&
-          methodConfig.overrideResponseType
-        ) {
-          rest = Resource.create(ctx.uriOrigin, expressPath, {
-            responseMapping: {
-              entity: Symbols.old.MAPPING_CONFIG_HEADER,
-              circular: Symbols.old.CIRCURAL_OBJECTS_MAP_BODY_PARAM,
-            },
-          });
-          requestHeaders.apply({
-            'Content-Type': methodConfig.overrideContentType,
-            Accept: methodConfig.overrideContentType,
-            [ResponseTypeFetchHeaderKey]: methodConfig.overrideResponseType,
-          });
-        } else if (
-          !methodConfig.overrideContentType &&
-          methodConfig.overrideResponseType
-        ) {
-          rest = Resource.create(ctx.uriOrigin, expressPath, {
-            responseMapping: {
-              entity: Symbols.old.MAPPING_CONFIG_HEADER,
-              circular: Symbols.old.CIRCURAL_OBJECTS_MAP_BODY_PARAM,
-            },
-          });
-          requestHeaders.apply({
-            [ResponseTypeFetchHeaderKey]: methodConfig.overrideResponseType,
-          });
-        } else {
-          rest = Resource.create(
-            ctx.uriOrigin,
-            expressPath,
-            {
-              responseMapping: {
-                entity: Symbols.old.MAPPING_CONFIG_HEADER,
-                circular: Symbols.old.CIRCURAL_OBJECTS_MAP_BODY_PARAM,
-              },
-            },
-            // Symbols.old.MAPPING_CONFIG_HEADER as any,
-            // Symbols.old.CIRCURAL_OBJECTS_MAP_BODY as any,
-          );
-        }
-
-        endpoints[ctx.uriOrigin][expressPath] = rest;
-      } else {
-        rest = endpoints[ctx.uriOrigin][expressPath] as any;
-      }
-      //#endregion
-
-      const method = httpRequestType.toLowerCase();
-
-      const pathPrams = {};
-      let queryParams = {};
-      let bodyObjectOnFE = {};
-
-      args.forEach((param, i) => {
-        let currentParam: Partial<ParamConfig> = void 0 as any;
-
-        for (let pp in methodConfig.parameters) {
-          let v = methodConfig.parameters[pp];
-          if (v.index === i) {
-            currentParam = v;
-            break;
-          }
-        }
-
-        if (!currentParam) {
-          const errorMessage =
-            `[${config.frameworkName}] Unable to resolve parameter` +
-            ` at index ${i} for method ${methodConfig.methodName as any}
-            at path ${expressPath}.
-
-
-            Did you forget @GET('param'), @POST etc. for you parmas?
-
-            `;
-
-          throw new Error(errorMessage);
-        }
-
-        const optionsDecodeHeader = {
-          useFirstArrayItemClassNameForAllElements: true,
-        };
-
-        if (currentParam.paramType === 'Path') {
-          //#region handle path params
-          pathPrams[currentParam.paramName] = param;
-          //#endregion
-        }
-        if (currentParam.paramType === 'Query') {
-          //#region handle query params
-          if (currentParam.paramName) {
-            const mapping = decodeMappingForHeaderJson(
-              param,
-              optionsDecodeHeader,
-            );
-            if (mapping) {
-              requestHeaders.set(
-                `${Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS}${currentParam.paramName.toLowerCase()}`,
-                JSON.stringify(mapping),
-              );
-            }
-            queryParams[currentParam.paramName] = param;
-          } else {
-            const mapping = decodeMappingForHeaderJson(
-              param,
-              optionsDecodeHeader,
-            );
-            if (mapping) {
-              requestHeaders.set(
-                Symbols.old.MAPPING_CONFIG_HEADER_QUERY_PARAMS,
-                JSON.stringify(mapping),
-              );
-            }
-            queryParams = _.cloneDeep(param);
-
-            if (currentParam.sendCircuralObject) {
-              //#region process circural object form fe
-              let circuralFromItem = [];
-              queryParams = JSON10.parse(
-                JSON10.stringify(queryParams, void 0, void 0, circs => {
-                  circuralFromItem = circs;
-                }),
-              );
-              requestHeaders.set(
-                Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM,
-                JSON10.stringify(circuralFromItem),
-              );
-              //#endregion
-            }
-          }
-          //#endregion
-        }
-        if (currentParam.paramType === 'Header') {
-          //#region handler header params
-          if (currentParam.paramName) {
-            if (currentParam.paramName === Symbols.old.MDC_KEY) {
-              // parese MDC
-              requestHeaders.set(
-                currentParam.paramName,
-                encodeURIComponent(JSON.stringify(param)),
-              );
-            } else {
-              requestHeaders.set(currentParam.paramName, param);
-            }
-          } else {
-            for (let header in param) {
-              requestHeaders.set(header, param[header]);
-            }
-          }
-          //#endregion
-        }
-        if (currentParam.paramType === 'Cookie') {
-          //#region handle cookie params
-          Resource.Cookies.write(
-            currentParam.paramName,
-            param,
-            currentParam.expireInSeconds,
-          );
-          //#endregion
-        }
-        if (currentParam.paramType === 'Body') {
-          //#region handle body params
-          const isFormDataOrBinary =
-            !_.isBoolean(param) &&
-            !_.isNumber(param) &&
-            ClassHelpers.getName(param) === 'FormData';
-
-          // console.log({ param, isFormDataOrBinary });
-
-          if (currentParam.paramName) {
-            //#region handle in param
-            if (isFormDataOrBinary) {
-              //#region prevent posting/putting not full body as FormData
-              throw new Error(`[taon - framework] Don use param names when posting / putting FormData.
-              Use this:
-// ...
-(@Taon.Http.Param.Body() formData: FormData) ...
-// ...
-
-instead
-  // ...
-  (@Taon.Http.Param.Body('${currentParam.paramName}') formData: FormData) ...
-// ...
-`);
-              //#endregion
-            }
-            const mapping = decodeMappingForHeaderJson(
-              param,
-              optionsDecodeHeader,
-            );
-            if (mapping) {
-              requestHeaders.set(
-                `${Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS}${currentParam.paramName.toLowerCase()}`,
-                JSON.stringify(mapping),
-              );
-            }
-            bodyObjectOnFE[currentParam.paramName] = param;
-            //#endregion
-          } else {
-            //#region handle whoel body
-            if (!isFormDataOrBinary) {
-              const mapping = decodeMappingForHeaderJson(
-                param,
-                optionsDecodeHeader,
-              );
-              if (mapping) {
-                requestHeaders.set(
-                  Symbols.old.MAPPING_CONFIG_HEADER_BODY_PARAMS,
-                  JSON.stringify(mapping),
-                );
-              }
-            }
-
-            bodyObjectOnFE = param;
-
-            if (currentParam.sendCircuralObject && !isFormDataOrBinary) {
-              //#region process circural object form fe
-              let circuralFromItem = [];
-              bodyObjectOnFE = JSON10.parse(
-                JSON10.stringify(bodyObjectOnFE, void 0, void 0, circs => {
-                  circuralFromItem = circs;
-                }),
-              );
-              requestHeaders.set(
-                Symbols.old.CIRCURAL_OBJECTS_MAP_BODY_PARAM,
-                JSON10.stringify(circuralFromItem),
-              );
-              //#endregion
-            }
-            //#endregion
-          }
-          //#endregion
-        }
-      });
-
-      //#endregion
-
-      const httpResultObj: Models.Http.ClientAction<any> = {
-        get received() {
-          return rest
-            .model(pathPrams, { headers: requestHeaders })
-            [method](bodyObjectOnFE, [queryParams]);
-        },
-        request(fetchConfig?: Ng2RestFetchRequestConfig) {
-          // fetchConfig = fetchConfig || {};
-          // if (fetchConfig.reauthenticateOn401 === null) {
-          //   fetchConfig.reauthenticateOn401 = undefined;
-          // } else {
-          //   fetchConfig.reauthenticateOn401 = async () => {
-          //     try {
-          //       console.log('trying request to refresh()');
-
-          //       const response = // @ts-expect-error
-          //         await controllerInstance.tryRefreshAccessToken();
-          //       console.log('done trying request to refresh()');
-          //       return response;
-          //     } catch {
-          //       return false;
-          //     }
-          //   };
-          // }
-
-          return rest
-            .model(pathPrams, { headers: requestHeaders })
-            [method](bodyObjectOnFE, [queryParams], fetchConfig);
-        },
-      };
-      return httpResultObj as Models.Http.ClientAction<any>;
-    };
     //#endregion
   }
   //#endregion

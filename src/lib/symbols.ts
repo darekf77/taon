@@ -128,3 +128,14 @@ export namespace Symbols {
     export const ERROR_MESSAGES_CLASS_NAME_MATCH = `Please check if your "class name" matches  @Controller( className ) or @Entity( className )`;
   }
 }
+
+export const expostHeadersCross = [
+  'Content-Type',
+  'Authorization',
+  'X-Requested-With',
+  'Content-Range',
+  Symbols.old.X_TOTAL_COUNT,
+  Symbols.old.MAPPING_CONFIG_HEADER,
+  Symbols.old.CIRCURAL_OBJECTS_MAP_BODY_PARAM,
+  Symbols.old.CIRCURAL_OBJECTS_MAP_QUERY_PARAM,
+];

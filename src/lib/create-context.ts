@@ -179,7 +179,7 @@ const createContextFn = <
      */
     async __ref() {
       if (!endpointContextRef.inited) {
-        await endpointContextRef.init({
+        await endpointContextRef.endpointCore.init({
           initFromRecrusiveContextResovle: true,
         });
       }
@@ -258,7 +258,7 @@ const createContextFn = <
             `${CoreModels.queryExtract} -- #${'reg' + 'ion'} ${endpointContextRef.contextName}`,
           );
 
-        await endpointContextRef.init(overrideOptions);
+        await endpointContextRef.endpointCore.init(overrideOptions);
 
         if (endpointContextRef.abstract) {
           throw new Error(`Abstract context can not be initialized`);
@@ -309,7 +309,7 @@ const createContextFn = <
         endpointContextRef.initControllers({
           overrideExpressApp: overrideOptions.overrideExpressApp,
         });
-        await endpointContextRef.startServer();
+        await endpointContextRef.endpointServer.startServer();
         //#region @websqlb
         endpointContextRef.writeActiveRoutes();
         //#endregion
