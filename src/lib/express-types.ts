@@ -5,6 +5,9 @@ export type ExpressResponse<T = any> = Response<T>;
 export type ExpressRequest<T = any> = Request<T> & {
   /**
    * @taon-dev/session userId
+   *
+   * when userId = 9007199254740991 (Number.MAX_SAFE_INTEGER) mean you are using
+   * localhost root mode (ctx.isLocalhostBackend === true)
    */
   userId: number | string;
   /**

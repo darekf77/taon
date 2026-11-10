@@ -36,7 +36,6 @@ export class TaonBaseController<
   UPLOAD_FILE_QUERY_PARAMS = {},
   CONTOROLLER = any,
 > extends TaonBaseInjector {
-
   /**
    * This should be overrided in controller
    */
@@ -83,9 +82,7 @@ export class TaonBaseController<
   //#endregion
 
   public getThisControllerMethodFullUrl(methodName: keyof CONTOROLLER): string {
-    const isLocalhost =
-      this.ctx.frontendHostUri.origin.includes('://localhost:');
-    const origin = isLocalhost
+    const origin = this.ctx.isLocalhostBackend
       ? this.ctx.uri.origin
       : this.ctx.frontendHostUri.origin;
 

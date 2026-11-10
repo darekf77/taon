@@ -26,10 +26,6 @@ export type MigrationStatus = 'completed' | 'pending';
 export class ContextDbMigrations {
   //#region fields
 
-  //#region fields / migration table name
-  readonly DEFAULT_MIGRATION_TABLE_NAME = TAON_MIGRATION_META_TABLE_NAME;
-  //#endregion
-
   //#region fields / migration statuses
   readonly MIGRATION_STATUS_COMPLETED: MigrationStatus = 'completed';
 
@@ -38,7 +34,7 @@ export class ContextDbMigrations {
 
   //#region fields / migration table schema
   readonly table = new Table({
-    name: this.DEFAULT_MIGRATION_TABLE_NAME,
+    name: TAON_MIGRATION_META_TABLE_NAME,
     columns: [
       {
         name: 'id',
@@ -82,7 +78,51 @@ export class ContextDbMigrations {
       // },
     ],
   });
+
   //#endregion
+
+  public get TAON_MIGRATION_META__CREATE_QUERY(): string {
+    return this.createSqliteTableSql(this.table);
+  }
+
+  private createSqliteTableSql(table: Table): string {
+    //#region @backendFunc
+    const quoteIdentifier = (name: string): string =>
+      `"${name.replace(/"/g, '""')}"`;
+
+    const columns = table.columns.map(column => {
+      const parts = [quoteIdentifier(column.name)];
+
+      if (column.isGenerated && column.generationStrategy === 'increment') {
+        if (!column.isPrimary || column.type.toLowerCase() !== 'integer') {
+          throw new Error(
+            `SQLite AUTOINCREMENT requires an INTEGER PRIMARY KEY: ${column.name}`,
+          );
+        }
+
+        parts.push('INTEGER PRIMARY KEY AUTOINCREMENT');
+      } else {
+        parts.push(
+          column.length ? `${column.type}(${column.length})` : column.type,
+        );
+
+        if (column.isPrimary) parts.push('PRIMARY KEY');
+        if (!column.isNullable) parts.push('NOT NULL');
+      }
+
+      if (column.isUnique) parts.push('UNIQUE');
+
+      // Defaults in this Table are already SQL expressions.
+      if (column.default !== undefined) {
+        parts.push('DEFAULT', String(column.default));
+      }
+
+      return `  ${parts.join(' ')}`;
+    });
+
+    return `CREATE TABLE IF NOT EXISTS ${quoteIdentifier(table.name)} (\n${columns.join(',\n')}\n);`;
+    //#endregion
+  }
 
   //#endregion
 
@@ -101,14 +141,10 @@ export class ContextDbMigrations {
     await queryRunner.startTransaction();
 
     // Check if the table already exists
-    const hasTable = await queryRunner.hasTable(
-      this.DEFAULT_MIGRATION_TABLE_NAME,
-    );
+    const hasTable = await queryRunner.hasTable(TAON_MIGRATION_META_TABLE_NAME);
     if (hasTable) {
       this.ctx.logMigrations &&
-        console.log(
-          `Table ${this.DEFAULT_MIGRATION_TABLE_NAME} already exists.`,
-        );
+        console.log(`Table ${TAON_MIGRATION_META_TABLE_NAME} already exists.`);
       await queryRunner.commitTransaction();
       await queryRunner.release();
       return; // Exit early if the table exists
@@ -117,7 +153,7 @@ export class ContextDbMigrations {
     try {
       await queryRunner.createTable(this.table);
       await queryRunner.createIndex(
-        this.DEFAULT_MIGRATION_TABLE_NAME,
+        TAON_MIGRATION_META_TABLE_NAME,
         new TableIndex({
           name: 'IDX_NAME',
           columnNames: ['name'],
@@ -146,7 +182,7 @@ export class ContextDbMigrations {
       name,
       (
         await queryRunner.query(
-          `SELECT * FROM ${this.DEFAULT_MIGRATION_TABLE_NAME} WHERE context = $1`,
+          `SELECT * FROM ${TAON_MIGRATION_META_TABLE_NAME} WHERE context = $1`,
           [this.ctx.contextName],
         )
       ).map(m => m.name),
@@ -203,7 +239,7 @@ export class ContextDbMigrations {
 
       // Fetch applied migrations from the database
       const appliedMigrationsForContext = await queryRunner.query(
-        `SELECT name FROM ${this.DEFAULT_MIGRATION_TABLE_NAME}
+        `SELECT name FROM ${TAON_MIGRATION_META_TABLE_NAME}
          WHERE status = $1 AND context = $2`,
         [this.MIGRATION_STATUS_COMPLETED, this.ctx.contextName],
       );
@@ -232,7 +268,7 @@ export class ContextDbMigrations {
 
         // Remove the reverted migration from the tracking table
         await queryRunner.query(
-          `DELETE FROM ${this.DEFAULT_MIGRATION_TABLE_NAME} WHERE name = $1`,
+          `DELETE FROM ${TAON_MIGRATION_META_TABLE_NAME} WHERE name = $1`,
           [migrationName],
         );
       }
@@ -270,7 +306,7 @@ export class ContextDbMigrations {
     await queryRunner.startTransaction();
     let ok = true;
     try {
-      await queryRunner.clearTable(this.DEFAULT_MIGRATION_TABLE_NAME);
+      await queryRunner.clearTable(TAON_MIGRATION_META_TABLE_NAME);
       await queryRunner.commitTransaction();
     } catch (error) {
       ok = false;
@@ -310,7 +346,7 @@ export class ContextDbMigrations {
 
       // Fetch already applied migrations from the database
       const allMigrationsInDb = await queryRunner.query(
-        `SELECT name FROM ${this.DEFAULT_MIGRATION_TABLE_NAME}`,
+        `SELECT name FROM ${TAON_MIGRATION_META_TABLE_NAME}`,
       );
 
       const allMigrationInDBNames = allMigrationsInDb.map(m => m.name);
@@ -329,7 +365,7 @@ export class ContextDbMigrations {
 
         // Insert migration as 'complete' without running
         await queryRunner.query(
-          `INSERT INTO ${this.DEFAULT_MIGRATION_TABLE_NAME} (name, status, context, applied_at) ` +
+          `INSERT INTO ${TAON_MIGRATION_META_TABLE_NAME} (name, status, context, applied_at) ` +
             `VALUES ($1, $2, $3, CURRENT_TIMESTAMP)`,
           [
             migrationName,
@@ -341,7 +377,7 @@ export class ContextDbMigrations {
 
       // update all pending migrations to completed
       await queryRunner.query(
-        `UPDATE ${this.DEFAULT_MIGRATION_TABLE_NAME}
+        `UPDATE ${TAON_MIGRATION_META_TABLE_NAME}
          SET status = $1, applied_at = CURRENT_TIMESTAMP
          WHERE status = $2`,
         [this.MIGRATION_STATUS_COMPLETED, this.MIGRATION_STATUS_PENDING],
@@ -400,7 +436,7 @@ export class ContextDbMigrations {
 
       // Fetch applied migrations from the database
       const appliedMigrationsForContext = await queryRunner.query(
-        `SELECT name, status FROM ${this.DEFAULT_MIGRATION_TABLE_NAME} ` +
+        `SELECT name, status FROM ${TAON_MIGRATION_META_TABLE_NAME} ` +
           `WHERE context = $1`,
         [this.ctx.contextName],
       );
@@ -432,19 +468,23 @@ export class ContextDbMigrations {
             `Completing pending migration: ${pendingContextMigration.name}`,
           );
         this.ctx.isOnlyGatheringSQLFromMigraitons &&
-          console.log(`${CoreModels.queryExtract} -- #${'reg' + 'ion'} ${migrationName}`);
+          console.log(
+            `${CoreModels.queryExtract} -- #${'reg' + 'ion'} ${migrationName}`,
+          );
         await migrationInstance.up(queryRunner);
 
         // Update migration status to 'complete'
         await queryRunner.query(
-          `UPDATE ${this.DEFAULT_MIGRATION_TABLE_NAME}
+          `UPDATE ${TAON_MIGRATION_META_TABLE_NAME}
            SET status = $1, applied_at = CURRENT_TIMESTAMP
            WHERE name = $2`,
           [this.MIGRATION_STATUS_COMPLETED, pendingContextMigration.name],
         );
 
         this.ctx.isOnlyGatheringSQLFromMigraitons &&
-          console.log(`${CoreModels.queryExtract} -- #${'end' + 'reg' + 'ion'} ${migrationName}`);
+          console.log(
+            `${CoreModels.queryExtract} -- #${'end' + 'reg' + 'ion'} ${migrationName}`,
+          );
       }
       //#endregion
 
@@ -462,11 +502,13 @@ export class ContextDbMigrations {
           console.log(`Applying new migration: ${migrationName}`);
 
         this.ctx.isOnlyGatheringSQLFromMigraitons &&
-          console.log(`${CoreModels.queryExtract} -- #${'reg' + 'ion'} ${migrationName}`);
+          console.log(
+            `${CoreModels.queryExtract} -- #${'reg' + 'ion'} ${migrationName}`,
+          );
 
         // Insert migration as 'pending' before execution
         await queryRunner.query(
-          `INSERT INTO ${this.DEFAULT_MIGRATION_TABLE_NAME} (name, status, context, applied_at) ` +
+          `INSERT INTO ${TAON_MIGRATION_META_TABLE_NAME} (name, status, context, applied_at) ` +
             `VALUES ($1, $2, $3, NULL)`,
           [migrationName, this.MIGRATION_STATUS_PENDING, this.ctx.contextName],
         );
@@ -478,20 +520,22 @@ export class ContextDbMigrations {
 
           // Update migration to 'complete' after successful execution
           await queryRunner.query(
-            `UPDATE ${this.DEFAULT_MIGRATION_TABLE_NAME} ` +
+            `UPDATE ${TAON_MIGRATION_META_TABLE_NAME} ` +
               `SET status = '${this.MIGRATION_STATUS_COMPLETED}', applied_at = CURRENT_TIMESTAMP ` +
               `WHERE name = $1`,
             [migrationName],
           );
           this.ctx.isOnlyGatheringSQLFromMigraitons &&
-            console.log(`${CoreModels.queryExtract} -- #${'end' + 'reg' + 'ion'} ${migrationName}`);
+            console.log(
+              `${CoreModels.queryExtract} -- #${'end' + 'reg' + 'ion'} ${migrationName}`,
+            );
         } catch (error) {
           this.ctx.logMigrations &&
             console.error(`Failed to apply migration: ${migrationName}`, error);
 
           // Rollback pending migration entry
           await queryRunner.query(
-            `DELETE FROM ${this.DEFAULT_MIGRATION_TABLE_NAME} WHERE name = $1`,
+            `DELETE FROM ${TAON_MIGRATION_META_TABLE_NAME} WHERE name = $1`,
             [migrationName],
           );
 

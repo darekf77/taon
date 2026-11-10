@@ -259,8 +259,9 @@ export abstract class TaonBaseStorageController<
   }
 
   //#region methods / multipart owner
-  private multipartOwner(req: ExpressRequest): string {
+  protected multipartOwner(req: ExpressRequest): string {
     //#region @backendFunc
+
     if (
       (typeof req.userId !== 'string' && typeof req.userId !== 'number') ||
       !String(req.userId).trim() ||
@@ -268,6 +269,9 @@ export abstract class TaonBaseStorageController<
       (typeof req.userId === 'number' &&
         (!Number.isSafeInteger(req.userId) || req.userId < 0))
     ) {
+      if (this.ctx.isLocalhostBackend) {
+        return String(Number.MAX_SAFE_INTEGER);
+      }
       Taon.error({
         message: 'Authentication is required for multipart uploads.',
         status: 401,

@@ -1133,6 +1133,18 @@ export class EndpointContext {
   }
   //#endregion
 
+  //#region methods & getters / is Localhost
+
+  public get isLocalhostBackend(): boolean {
+    const originUrl = this.frontendHostUri;
+    return (
+      originUrl.hostname === 'localhost' ||
+      originUrl.hostname === '127.0.0.1' ||
+      originUrl.hostname === '[::1]'
+    );
+  }
+  //#endregion
+
   //#region methods & getters / host
 
   get host(): string | undefined {
