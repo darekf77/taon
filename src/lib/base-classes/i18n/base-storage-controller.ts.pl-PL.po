@@ -4,19 +4,19 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/lib/base-classes/base-storage-controller.ts:439
-#: src/lib/base-classes/base-storage-controller.ts:533
-#: src/lib/base-classes/base-storage-controller.ts:553
-#: src/lib/base-classes/base-storage-controller.ts:574
-#: src/lib/base-classes/base-storage-controller.ts:763
-#: src/lib/base-classes/base-storage-controller.ts:797
+#: src/lib/base-classes/base-storage-controller.ts:443
+#: src/lib/base-classes/base-storage-controller.ts:537
+#: src/lib/base-classes/base-storage-controller.ts:557
+#: src/lib/base-classes/base-storage-controller.ts:578
+#: src/lib/base-classes/base-storage-controller.ts:767
+#: src/lib/base-classes/base-storage-controller.ts:801
 msgid "Invalid or not provided \"key\" parameter"
 msgstr ""
 
-#: src/lib/base-classes/base-storage-controller.ts:449
+#: src/lib/base-classes/base-storage-controller.ts:453
 msgid "Invalid or expired storage download token."
 msgstr "Nieprawidłowy lub wygasły token pobierania pliku z magazynu."
 
-#: src/lib/base-classes/base-storage-controller.ts:455
+#: src/lib/base-classes/base-storage-controller.ts:459
 msgid "A valid storage download token is required."
 msgstr "Wymagany jest prawidłowy token pobierania pliku z magazynu."
