@@ -1,4 +1,4 @@
-export const INIT_TIMEOUT_MS = 5_000;
+export const INIT_TIMEOUT_MS = 10_000;
 
 export class TaonInitializationTimeoutError extends Error {
   constructor() {

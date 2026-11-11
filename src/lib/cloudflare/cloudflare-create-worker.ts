@@ -474,7 +474,7 @@ export function createWorkerAdapter(
         const errorName = err?.name || '-unknow-err-';
 
         resHeaders.set(CoreModels.TaonRetryLogicHeader, '1');
-        resHeaders.set(CoreModels.TaonMaxRetriesLogicHeader, '10');
+        resHeaders.set(CoreModels.TaonMaxRetriesLogicHeader, '20');
         resHeaders.set(CoreModels.TaonXRetryCauseHeader, errorName);
         resHeaders.set(
           CoreModels.TaonXStatusHeader,
