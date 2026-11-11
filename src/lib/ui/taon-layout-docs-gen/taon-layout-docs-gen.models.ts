@@ -9,6 +9,8 @@ export interface DocsHeading {
 export interface DocsMenuItem {
   pathToMd: string;
   customTitle?: string;
+  group?: string;
+  recommended?: string;
 }
 
 export interface IndexData {
