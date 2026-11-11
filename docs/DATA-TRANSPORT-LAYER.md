@@ -11,18 +11,26 @@ abstraction layer based on what you need.
 
 Communication layers/protocols handled by **Taon**:
 
-###  Standard TCP (local or remote server)
-NodeJS (local or remote) Server or app => Angular Website <br>
-(REST,WS,TCP already included - UDP in future)
+###  Standard TCP/WS 
+**Standard NodeJS Server App** <=> **Angular Website** <br>
+TCP/WS(TCP Upgrade protocol) already included, UDP in future
+
+###  Standard TCP 
+**Clouflare Worker App** <=> **Angular Website** <br>
+TCP only - no realtime communicaiton
 
 ###  Websql MODE 
-Server like app in browser => Angular Website<br>
-*(browser JavaScript - broadcast api in future)*
+**Server App Inside Browser** <=> **Angular Website**<br>
+Cross browser tabs communication with - broadcast api in future
 
 ###  Electron app
-Electron backend => Angular Website in Electron<br>
-*(Electron IPC already included)*
+**Electron Backend App** <=> **Angular Website in Electron**<br>
+Electron IPC already included
 
-###  Backend Nodejs Workers
-NodeJS Server or app => NodeJS Server or app<br>
-*(REST,TCP already included - WS, IPC in future)*
+---
+
+### Also There is a support for backend/backend communication
+
+(Backend/Backend) Nodejs Servers / Cloudfalre Workers
+NodeJS Server App <=> NodeJS Server Appp<br>
+
