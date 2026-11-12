@@ -7,6 +7,7 @@ import { EndpointContext } from '../endpoint-context';
 import { ClassHelpers } from '../helpers/class-helpers';
 import { Symbols } from '../symbols';
 
+import { TaonBaseAbstractEntity } from './base-abstract-entity';
 import { TaonBaseCustomRepository } from './base-custom-repository';
 import type { TaonBaseRepository } from './base-repository';
 //#endregion
@@ -29,7 +30,9 @@ export class TaonBaseInjector {
    * class initialization hook
    * taon after class instace creation
    */
+  //#region methods /
   async _(): Promise<void> {}
+  //#endregion
   //#endregion
 
   //#region context
@@ -58,11 +61,18 @@ export class TaonBaseInjector {
   }
   //#endregion
 
+  //#region inject
+  protected inject<T>(ctor: new (...args: any[]) => T): T {
+    return this.__createProxy<T>(ctor, {});
+  }
+  //#endregion
+
   //#region inject / repo for entity
   /**
    * inject crud repo for entity
    */
-  protected injectRepo<T>(
+  //#region methods / inject repo
+  protected injectRepo<T extends TaonBaseAbstractEntity>(
     entityForCrud: new (...args: any[]) => T,
   ): TaonBaseRepository<T> {
     const repoProxy = this.__createProxy(entityForCrud, {
@@ -71,8 +81,12 @@ export class TaonBaseInjector {
     return repoProxy as any;
   }
   //#endregion
+  //#endregion
 
   //#region inject / custom repository
+  /**
+   * @deprecated use this.inject(...)
+   */
   protected injectCustomRepository<T extends TaonBaseCustomRepository>(
     cutomRepositoryClass: new (...args: any[]) => T,
   ): T {
@@ -82,9 +96,15 @@ export class TaonBaseInjector {
   //#endregion
 
   //#region inject / kv repository
+  /**
+   * @deprecated use this.inject(...)
+   */
   protected injectKvRepository<T extends TaonBaseCustomRepository>(
     cutomRepositoryClass: new (...args: any[]) => T,
   ): T {
+    /**
+     * @deprecated use this.inject(...)
+     */
     const repoProxy = this.__createProxy<T>(cutomRepositoryClass, {});
     return repoProxy;
   }
@@ -92,6 +112,7 @@ export class TaonBaseInjector {
 
   //#region inject / custom repo
   /**
+   * @deprecated use this.inject(...)
    * aliast to this.injectRepository()
    */
   protected injectCustomRepo<T extends TaonBaseCustomRepository>(
@@ -104,6 +125,7 @@ export class TaonBaseInjector {
 
   //#region inject / controller
   /**
+   * @deprecated use this.inject(...)
    * example usage:
    * ...
    * exampleController = this.injectController(ExampleController);
@@ -116,6 +138,7 @@ export class TaonBaseInjector {
 
   //#region inject / subscriber
   /**
+   * @deprecated use this.inject(...)
    * example usage:
    * ...
    * exampleSubscriber = this.injectSubscriber(ExampleSubscriber)
@@ -128,15 +151,19 @@ export class TaonBaseInjector {
 
   //#region inject / ctrl
   /**
+   * @deprecated use this.inject(...)
    * aliast to .injectController()
    */
+  //#region methods / inject ctrl
   protected injectCtrl<T>(ctor: new (...args: any[]) => T): T {
     return this.injectController<T>(ctor);
   }
   //#endregion
+  //#endregion
 
   //#region inject / middleware
   /**
+   * @deprecated use this.inject(...)
    * inject middleware for context
    */
   protected injectMiddleware<T>(ctor: new (...args: any[]) => T): T {
@@ -146,6 +173,8 @@ export class TaonBaseInjector {
 
   //#region inject / provider
   /**
+   *
+   * @deprecated use this.inject(...)
    * inject provider for context
    */
   protected injectProvider<T>(ctor: new (...args: any[]) => T): T {
@@ -205,11 +234,12 @@ export class TaonBaseInjector {
   }
   //#endregion
 
-  //#region inject / __ inject
+  //#region create proxy
   /**
    * Inject: Controllers, Providers, Repositories, Services, etc.
    * TODO  addd nest js injecting
    */
+  //#region methods / create proxy
   protected __createProxy<T>(
     ctor: new (...args: any[]) => T,
     options?: {
@@ -253,5 +283,6 @@ export class TaonBaseInjector {
       },
     ) as T;
   }
+  //#endregion
   //#endregion
 }

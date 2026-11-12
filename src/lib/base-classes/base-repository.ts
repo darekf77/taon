@@ -25,6 +25,7 @@ import { TaonBaseRepositoryClassName } from '../constants';
 import { TaonRepository } from '../decorators/classes/repository-decorator';
 import { ClassHelpers } from '../helpers/class-helpers';
 
+import type { TaonBaseAbstractEntity } from './base-abstract-entity';
 import { TaonBaseCustomRepository } from './base-custom-repository';
 
 //#endregion
@@ -37,7 +38,7 @@ export interface TaonUpdateOptions<Entity> {
 
 @TaonRepository({ className: TaonBaseRepositoryClassName })
 export abstract class TaonBaseRepository<
-  Entity extends { id?: any },
+  Entity extends TaonBaseAbstractEntity,
 > extends TaonBaseCustomRepository {
   private REPOS_CACHE_KEY = Symbol('repository cache inside instance');
   //#region dummy fields

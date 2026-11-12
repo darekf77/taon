@@ -18,6 +18,7 @@ import { Models, TaonPaginationQuery } from '../models';
 import { Symbols } from '../symbols';
 import { Validators } from '../validators';
 
+import type { TaonBaseAbstractEntity } from './base-abstract-entity';
 import { TaonBaseController } from './base-controller';
 import { TaonBaseRepository, TaonUpdateOptions } from './base-repository';
 //#endregion
@@ -27,7 +28,7 @@ import { TaonBaseRepository, TaonUpdateOptions } from './base-repository';
  */
 @TaonController({ className: 'TaonBaseCrudController' })
 export abstract class TaonBaseCrudController<
-  Entity,
+  Entity extends TaonBaseAbstractEntity,
   UPLOAD_FILE_QUERY_PARAMS = {},
   ControllerClass = any,
 > extends TaonBaseController<UPLOAD_FILE_QUERY_PARAMS> {
