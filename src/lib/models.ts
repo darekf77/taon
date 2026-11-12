@@ -98,14 +98,14 @@ export namespace Models {
    * synchronize: true , dropSchema: true
    * use migrations: true
    *
-   * MIGRATIONS (default for production)
+   * PRESERVE_DATA__RUN_MIGRATIONS (default for production)
    * Do not drop tables, only run migrations
    * synchronize: false, dropSchema: false
    * use migrations: true
    */
   export enum DBRecreateMode {
-    DROP_DB_MIGRATIONS = 'DROP_DB__RUN_MIGRATIONS',
-    PRESERVE_DATA_MIGRATIONS = 'PRESERVE_DATA__RUN_MIGRATIONS',
+    DROP_DB__RUN_MIGRATIONS = 'DROP_DB__RUN_MIGRATIONS',
+    PRESERVE_DATA__RUN_MIGRATIONS = 'PRESERVE_DATA__RUN_MIGRATIONS',
   }
 
   export type DBRecreateModeType = `${DBRecreateMode}`;
