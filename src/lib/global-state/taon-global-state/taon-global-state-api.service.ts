@@ -10,7 +10,7 @@ import { TaonGlobalStateController } from './taon-global-state.controller';
 
 @Injectable()
 export class TaonGlobalStateApiService extends TaonBaseAngularService {
-  private taonGlobalStateController = this.injectController(TaonGlobalStateController);
+  private taonGlobalStateController = this.inject(TaonGlobalStateController);
 
   public get allMyEntities$(): Observable<TAON_GLOBAL_STATE[]> {
     return this.taonGlobalStateController.getAll().request!().observable.pipe(

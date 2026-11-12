@@ -12,7 +12,7 @@ import { TaonTransactionRegistryProvider } from './taon-transaction-registry.pro
   // allowedEvents: ['afterUpdate'],
 })
 export class TaonTransactionRegistrySubscriber extends TaonBaseSubscriberForEntity {
-  taonTransactionRegistryProvider = this.injectProvider(TaonTransactionRegistryProvider);
+  taonTransactionRegistryProvider = this.inject(TaonTransactionRegistryProvider);
 
   listenTo(): typeof TAON_TANSACTION_REGISTRY {
     return TAON_TANSACTION_REGISTRY;

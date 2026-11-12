@@ -9,7 +9,7 @@ import { TaonTransactionRegistryController } from './taon-transaction-registry.c
 
 @Injectable()
 export class TaonTransactionRegistryApiService extends TaonBaseAngularService {
-  private taonTransactionRegistryController = this.injectController(
+  private taonTransactionRegistryController = this.inject(
     TaonTransactionRegistryController,
   );
 

@@ -21,7 +21,7 @@ import { TaonGlobalStateStatus } from './taon-global-state.models';
 export class TaonGlobalStateController extends TaonBaseCrudController<TAON_GLOBAL_STATE> {
   entityClassResolveFn: () => typeof TAON_GLOBAL_STATE = () => TAON_GLOBAL_STATE;
 
-  taonGlobalStateRepository = this.injectCustomRepo(TaonGlobalStateRepository);
+  taonGlobalStateRepository = this.inject(TaonGlobalStateRepository);
 
   @GET()
   getStatus(): Taon.Response<TaonGlobalStateStatus> {

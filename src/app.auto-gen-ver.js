@@ -80,7 +80,7 @@ export const AppTstaon = `// // ${'@'}ts-nocheck
 //   providedIn: 'root',
 // })
 // export class UserApiService extends TaonBaseAngularService {
-//   userController = this.injectController(UserController);
+//   userController = this.inject(UserController);
 
 //   getAll(): Observable<User[]> {
 //     return this.userController

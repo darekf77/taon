@@ -11,7 +11,7 @@ import { TaonGlobalStateProvider } from './taon-global-state.provider';
   // allowedEvents: ['afterUpdate'],
 })
 export class TaonGlobalStateSubscriber extends TaonBaseSubscriberForEntity {
-  taonGlobalStateProvider = this.injectProvider(TaonGlobalStateProvider);
+  taonGlobalStateProvider = this.inject(TaonGlobalStateProvider);
   listenTo(): typeof TAON_GLOBAL_STATE {
     return TAON_GLOBAL_STATE;
   }

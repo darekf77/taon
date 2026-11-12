@@ -23,7 +23,7 @@ export class TaonTransactionRegistryController extends TaonBaseCrudController<
   entityClassResolveFn: () => typeof TAON_TANSACTION_REGISTRY = () =>
     TAON_TANSACTION_REGISTRY;
 
-  taonTransactionRegistryRepository = this.injectCustomRepo(
+  taonTransactionRegistryRepository = this.inject(
     TaonTransactionRegistryRepository,
   );
 

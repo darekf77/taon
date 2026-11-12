@@ -50,7 +50,7 @@ export abstract class TaonBaseStorageController<
   UPLOAD_FILE_QUERY_PARAMS = {},
   CONTOROLLER = any,
 > extends TaonBaseController<UPLOAD_FILE_QUERY_PARAMS, CONTOROLLER> {
-  // taonStorageRepository = this.injectCustomRepo(TaonBaseStorageRepository);
+  // taonStorageRepository = this.inject(TaonBaseStorageRepository);
 
   public readonly storage = new TaonBaseStorageBackend(this);
 

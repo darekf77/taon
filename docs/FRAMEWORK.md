@@ -463,7 +463,7 @@ Api service is a place where you can:
 export class UserApiService extends TaonBaseAngularService {
   // for now - only injectable here are controllers
   // controllers should be a "glue" between backend and frontend
-  userControlller = this.injectController(UserController);
+  userControlller = this.inject(UserController);
 
   getAll() { // observables api
     return this.userControlller.getAll()
