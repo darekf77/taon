@@ -28,7 +28,7 @@
     },
   ],
 
-  "generateTranslationsFor": ["en-US", "pl-PL"],
+  "generateTranslationsFor": ["en-US", "pl-PL", "de-DE"],
   "isomorphicDependenciesForNpmLib": [],
 
   // TODO change it to devDependencies

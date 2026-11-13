@@ -29,9 +29,11 @@ import {
   RouterLink,
   RouterLinkActive,
 } from '@angular/router';
+import { Translation } from '@taon-dev/i18n/src';
 import Fuse from 'fuse.js';
 import { filter, map } from 'rxjs';
 
+import { Replecables } from '../../constants';
 import {
   DocsHeading,
   DocsMenuItem,
@@ -39,6 +41,11 @@ import {
   ResultData,
 } from '../taon-layout-docs-gen/taon-layout-docs-gen.models';
 //#endregion
+
+const t = Translation.for(
+  Replecables.__FILE_RELATIVE_PATH__,
+  Replecables.__LANG_IMPORT_MAP__,
+);
 
 @Component({
   selector: 'taon-layout-docs-gen-ng-docs',
@@ -63,6 +70,8 @@ import {
 })
 export class TaonLayoutDocsGenNgDocsComponent implements OnInit {
   //#region fields & getters
+  t = t.for(this);
+
   public activeHeadingId: string | undefined;
 
   private readonly router = inject(Router);
@@ -215,6 +224,7 @@ export class TaonLayoutDocsGenNgDocsComponent implements OnInit {
 
   //#endregion
 
+  //#region constructor
   constructor() {
     effect(() => {
       if (!this.searchOpen()) {
@@ -252,6 +262,7 @@ export class TaonLayoutDocsGenNgDocsComponent implements OnInit {
       );
     });
   }
+  //#endregion
 
   //#region hooks
   ngOnInit(): void {}

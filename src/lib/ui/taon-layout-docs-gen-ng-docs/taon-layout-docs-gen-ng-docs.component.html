@@ -20,7 +20,9 @@
         <!-- #region reading shortcuts -->
         <div class="docs-reading-shortcuts">
           @if (readingShortcuts().length) {
-            <span class="docs-reading-label">Last/recommended to read:</span>
+            <span class="docs-reading-label"
+              >{{ t.gettext('Recommended Reading') }}:</span
+            >
 
             <nav
               class="docs-reading-links"

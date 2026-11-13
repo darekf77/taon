@@ -67,7 +67,7 @@
   top: 80px;
   max-height: calc(100dvh - 100px);
   overflow-y: auto;
-  overscroll-behavior: contain;
+  overscroll-behavior-y: auto;
 }
 
 .docs-sidebar {
@@ -121,7 +121,7 @@
 
 @media (min-width: 1024px) {
   .docs-layout {
-    grid-template-columns: 240px minmax(0, 1fr) 200px;
+    grid-template-columns: 240px minmax(0, 1fr) 250px;
 
     &:has(> :last-child.page-main-content) {
       grid-template-columns: 240px minmax(0, 1fr);
