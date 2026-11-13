@@ -9,6 +9,28 @@
   }
 
   .docs-code-copy {
+    display: inline-grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+  }
+
+  .docs-code-copy .material-icons {
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  // .docs-code-block {
+  //   position: relative;
+  // }
+
+  // .docs-code-block pre {
+  //   padding-top: 2.75rem;
+  // }
+
+  .docs-code-copy {
     position: absolute;
     top: 0.5rem;
     right: 0.5rem;

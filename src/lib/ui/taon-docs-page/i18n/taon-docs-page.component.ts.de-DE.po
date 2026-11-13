@@ -1,0 +1,13 @@
+msgid ""
+msgstr ""
+"Language: de-DE\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: src/lib/ui/taon-docs-page/taon-docs-page.component.ts:57
+msgid "Could not copy code"
+msgstr "Code konnte nicht kopiert werden"
+
+#: src/lib/ui/taon-docs-page/taon-docs-page.component.ts:63
+msgid "Copied to clipboard"
+msgstr "In die Zwischenablage kopiert"
