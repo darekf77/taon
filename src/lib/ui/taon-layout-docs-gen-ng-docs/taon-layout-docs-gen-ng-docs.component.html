@@ -54,7 +54,7 @@
                     {{
                       item.recommended?.trim() ||
                         item.customTitle ||
-                        item.pathToMd
+                        item.pathToMd | translate
                     }}
                   </a>
                 }
@@ -148,7 +148,7 @@
                 (mouseenter)="selectedSearchResultIndex.set(i)"
                 (click)="openSearchResult(result)">
                 <div class="font-semibold">
-                  {{ result.headingTitle }}
+                  {{ result.headingTitle | translate }}
                 </div>
 
                 <div class="mt-1 text-sm opacity-60">
@@ -212,7 +212,7 @@
                 [class.pl-11]="heading.level === 3"
                 [class.font-medium]="heading.level === 1"
                 (click)="scrollToHeading(heading)">
-                {{ heading.title }}
+                {{ heading.title | translate }}
               </button>
             }
           }
@@ -262,7 +262,7 @@
                 [class.!font-semibold]="activeHeadingId === heading.id"
                 [class.!border-blue-500]="activeHeadingId === heading.id"
                 (click)="scrollToHeading(heading)">
-                {{ heading.title }}
+                {{ heading.title | translate }}
               </button>
             }
             <button
@@ -292,7 +292,7 @@
     mat-stroked-button
     (click)="scrollToTop()">
     <mat-icon>arrow_upward</mat-icon>
-    Back To Top
+    {{ t.gettext('Back To Top') }}
   </button>
   <!-- #endregion -->
 </div>
@@ -310,14 +310,14 @@
         <mat-icon>chevron_left</mat-icon>
         <span>{{ t.gettext('All documentation') }}</span>
       </button>
-      <div class="docs-sidebar-title">{{ group }}</div>
+      <div class="docs-sidebar-title">{{ group | translate }}</div>
     } @else {
       @for (group of sidebarGroups(); track group) {
         <button
           type="button"
           class="docs-sidebar-row"
           (click)="showSidebarGroup(group)">
-          <span>{{ group }}</span>
+          <span>{{ group | translate }}</span>
           <mat-icon>chevron_right</mat-icon>
         </button>
       }
@@ -334,7 +334,7 @@
           class="docs-sidebar-category"
           role="group"
           [attr.aria-label]="entry.name">
-          <div class="docs-sidebar-title">{{ entry.name }}</div>
+          <div class="docs-sidebar-title">{{ entry.name | translate }}</div>
 
           <div class="docs-sidebar-category-links">
             @for (item of entry.items; track item.pathToMd) {
@@ -366,7 +366,7 @@
     }"
     ariaCurrentWhenActive="page"
     (click)="menuItemClick.emit(item); closeMobileToc()">
-    {{ item.customTitle || item.pathToMd }}
+    {{ item.customTitle || item.pathToMd | translate }}
   </a>
 </ng-template>
 <!-- #endregion -->

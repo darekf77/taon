@@ -21,6 +21,10 @@ msgstr ""
 msgid "Back to the top"
 msgstr ""
 
+#: src/lib/ui/taon-layout-docs-gen-ng-docs/taon-layout-docs-gen-ng-docs.component.html:295
+msgid "Back To Top"
+msgstr ""
+
 #: src/lib/ui/taon-layout-docs-gen-ng-docs/taon-layout-docs-gen-ng-docs.component.html:311
 msgid "All documentation"
 msgstr ""

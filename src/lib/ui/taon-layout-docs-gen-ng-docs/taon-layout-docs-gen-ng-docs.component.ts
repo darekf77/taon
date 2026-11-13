@@ -30,7 +30,7 @@ import {
   RouterLink,
   RouterLinkActive,
 } from '@angular/router';
-import { Translation } from '@taon-dev/i18n/src';
+import { TranslatePipe, Translation } from '@taon-dev/i18n/src';
 import Fuse from 'fuse.js';
 import { filter, map } from 'rxjs';
 
@@ -62,6 +62,7 @@ const t = Translation.for(
     MatInputModule,
     MatFormFieldModule,
     MatSidenavModule,
+    TranslatePipe,
   ],
   templateUrl: './taon-layout-docs-gen-ng-docs.component.html',
   styleUrls: [
