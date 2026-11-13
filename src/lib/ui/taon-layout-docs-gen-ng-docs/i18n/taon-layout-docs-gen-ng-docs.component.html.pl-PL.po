@@ -7,3 +7,20 @@ msgstr ""
 #: src/lib/ui/taon-layout-docs-gen-ng-docs/taon-layout-docs-gen-ng-docs.component.html:24
 msgid "Recommended Reading"
 msgstr "Rekomendowane Ostatnie"
+
+#: src/lib/ui/taon-layout-docs-gen-ng-docs/taon-layout-docs-gen-ng-docs.component.html:31
+msgid "Scroll recommended reading left"
+msgstr ""
+
+#: src/lib/ui/taon-layout-docs-gen-ng-docs/taon-layout-docs-gen-ng-docs.component.html:68
+#: src/lib/ui/taon-layout-docs-gen-ng-docs/taon-layout-docs-gen-ng-docs.component.html:69
+msgid "Scroll recommended reading right"
+msgstr ""
+
+#: src/lib/ui/taon-layout-docs-gen-ng-docs/taon-layout-docs-gen-ng-docs.component.html:274
+msgid "Back to the top"
+msgstr ""
+
+#: src/lib/ui/taon-layout-docs-gen-ng-docs/taon-layout-docs-gen-ng-docs.component.html:311
+msgid "All documentation"
+msgstr ""

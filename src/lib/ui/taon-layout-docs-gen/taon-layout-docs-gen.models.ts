@@ -11,6 +11,7 @@ export interface DocsMenuItem {
   customTitle?: string;
   group?: string;
   recommended?: string;
+  category?: string;
 }
 
 export interface IndexData {

@@ -16,7 +16,7 @@
         <mat-icon>menu</mat-icon>
       </button>
 
-      <div class="flex-1">
+      <div class="min-w-0 flex-1">
         <!-- #region reading shortcuts -->
         <div class="docs-reading-shortcuts">
           @if (readingShortcuts().length) {
@@ -24,30 +24,54 @@
               >{{ t.gettext('Recommended Reading') }}:</span
             >
 
+            @if (readingLinksOverflow()) {
+              <button
+                mat-icon-button
+                type="button"
+                [attr.aria-label]="t.gettext('Scroll recommended reading left')"
+                (click)="scrollReadingLinks(-1)">
+                <mat-icon>chevron_left</mat-icon>
+              </button>
+            }
             <nav
+              #readingLinks
               class="docs-reading-links"
               aria-label="Recent and recommended reading">
-              @for (item of readingShortcuts(); track item.pathToMd) {
-                <a
-                  class="docs-reading-chip"
-                  [routerLink]="baseHref + '/' + item.pathToMd"
-                  routerLinkActive="docs-reading-chip-active"
-                  [routerLinkActiveOptions]="{
-                    paths: 'exact',
-                    queryParams: 'ignored',
-                    matrixParams: 'ignored',
-                    fragment: 'ignored',
-                  }"
-                  ariaCurrentWhenActive="page"
-                  (click)="menuItemClick.emit(item)">
-                  {{
-                    item.recommended?.trim() ||
-                      item.customTitle ||
-                      item.pathToMd
-                  }}
-                </a>
-              }
+              <div class="docs-reading-track">
+                @for (item of readingShortcuts(); track item.pathToMd) {
+                  <a
+                    class="docs-reading-chip"
+                    [routerLink]="baseHref + '/' + item.pathToMd"
+                    routerLinkActive="docs-reading-chip-active"
+                    [routerLinkActiveOptions]="{
+                      paths: 'exact',
+                      queryParams: 'ignored',
+                      matrixParams: 'ignored',
+                      fragment: 'ignored',
+                    }"
+                    ariaCurrentWhenActive="page"
+                    (click)="menuItemClick.emit(item)">
+                    {{
+                      item.recommended?.trim() ||
+                        item.customTitle ||
+                        item.pathToMd
+                    }}
+                  </a>
+                }
+              </div>
             </nav>
+
+            @if (readingLinksOverflow()) {
+              <button
+                mat-icon-button
+                type="button"
+                [attr.aria-label]="
+                  t.gettext('Scroll recommended reading right')
+                "
+                (click)="scrollReadingLinks(1)">
+                <mat-icon>chevron_right</mat-icon>
+              </button>
+            }
           }
         </div>
         <!-- #endregion -->
@@ -241,6 +265,14 @@
                 {{ heading.title }}
               </button>
             }
+            <button
+              type="button"
+              [class.visible]="showScrollToTopWhenScrollDown"
+              class="docs-page-back-to-top"
+              (click)="scrollToTop()">
+              <mat-icon>keyboard_arrow_up</mat-icon>
+              {{ t.gettext('Back to the top') }}
+            </button>
           </nav>
         </div>
       </aside>
@@ -270,34 +302,48 @@
   <nav
     class="docs-sidebar-nav"
     aria-label="Documentation">
-    @if (sidebarGroup; as group) {
+    @if (sidebarGroup(); as group) {
       <button
         type="button"
         class="docs-sidebar-row"
         (click)="showSidebarGroup(null)">
         <mat-icon>chevron_left</mat-icon>
-        All documentation
+        <span>{{ t.gettext('All documentation') }}</span>
       </button>
       <div class="docs-sidebar-title">{{ group }}</div>
+    } @else {
+      @for (group of sidebarGroups(); track group) {
+        <button
+          type="button"
+          class="docs-sidebar-row"
+          (click)="showSidebarGroup(group)">
+          <span>{{ group }}</span>
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      }
     }
 
-    @for (entry of sidebarEntries(); track entry) {
-      @if (entry.kind === 'group') {
-        @if (!sidebarGroup) {
-          <button
-            type="button"
-            class="docs-sidebar-row"
-            (click)="showSidebarGroup(entry.name)">
-            <span>{{ entry.name }}</span>
-            <mat-icon>chevron_right</mat-icon>
-          </button>
-        } @else if (sidebarGroup === entry.name) {
-          @for (item of entry.items; track item.pathToMd) {
-            <ng-container
-              *ngTemplateOutlet="pageLink; context: { $implicit: item }" />
-          }
-        }
-      } @else if (!sidebarGroup) {
+    @for (
+      entry of sidebarCategories();
+      track entry.kind === 'category'
+        ? 'category:' + entry.name
+        : 'page:' + entry.item.pathToMd
+    ) {
+      @if (entry.kind === 'category') {
+        <div
+          class="docs-sidebar-category"
+          role="group"
+          [attr.aria-label]="entry.name">
+          <div class="docs-sidebar-title">{{ entry.name }}</div>
+
+          <div class="docs-sidebar-category-links">
+            @for (item of entry.items; track item.pathToMd) {
+              <ng-container
+                *ngTemplateOutlet="pageLink; context: { $implicit: item }" />
+            }
+          </div>
+        </div>
+      } @else {
         <ng-container
           *ngTemplateOutlet="pageLink; context: { $implicit: entry.item }" />
       }

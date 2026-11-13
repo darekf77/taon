@@ -1,6 +1,7 @@
 //#region imports
 import { CommonModule } from '@angular/common';
 import {
+  afterRenderEffect,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -34,6 +35,7 @@ import Fuse from 'fuse.js';
 import { filter, map } from 'rxjs';
 
 import { Replecables } from '../../constants';
+import { TaonAdminService } from '../taon-admin-mode-configuration/taon-admin.service';
 import {
   DocsHeading,
   DocsMenuItem,
@@ -78,10 +80,16 @@ export class TaonLayoutDocsGenNgDocsComponent implements OnInit {
 
   private readonly activatedRoute = inject(ActivatedRoute);
 
-  @Input({
-    required: true,
-  })
-  baseHref: string;
+  private readonly baseHrefValue = signal('');
+
+  @Input({ required: true })
+  set baseHref(value: string) {
+    this.baseHrefValue.set(value);
+  }
+
+  get baseHref(): string {
+    return this.baseHrefValue();
+  }
 
   readonly menuItems = input<DocsMenuItem[]>([]);
 
@@ -115,6 +123,23 @@ export class TaonLayoutDocsGenNgDocsComponent implements OnInit {
 
     return [...shortcuts.values()];
   });
+
+  protected readonly readingLinksOverflow = signal(false);
+
+  private readonly readingLinksRef =
+    viewChild<ElementRef<HTMLElement>>('readingLinks');
+
+  protected scrollReadingLinks(direction: -1 | 1): void {
+    const links = this.readingLinksRef()?.nativeElement;
+    if (!links) {
+      return;
+    }
+
+    links.scrollBy({
+      left: direction * links.clientWidth,
+      behavior: 'smooth',
+    });
+  }
   //#endregion
 
   private readonly navigationPath = toSignal(
@@ -130,34 +155,15 @@ export class TaonLayoutDocsGenNgDocsComponent implements OnInit {
     group: string | null;
   } | null>(null);
 
-  protected readonly sidebarEntries = computed(() => {
-    const entries: Array<
-      | { kind: 'group'; name: string; items: DocsMenuItem[] }
-      | { kind: 'page'; item: DocsMenuItem }
-    > = [];
-    const groups = new Map<string, DocsMenuItem[]>();
+  protected readonly sidebarGroups = computed(() => [
+    ...new Set(
+      this.menuItems()
+        .map(item => item.group?.trim())
+        .filter((name): name is string => Boolean(name)),
+    ),
+  ]);
 
-    for (const item of this.menuItems()) {
-      const name = item.group?.trim();
-      if (!name) {
-        entries.push({ kind: 'page', item });
-        continue;
-      }
-
-      const existing = groups.get(name);
-      if (existing) {
-        existing.push(item);
-      } else {
-        const items = [item];
-        groups.set(name, items);
-        entries.push({ kind: 'group', name, items });
-      }
-    }
-
-    return entries;
-  });
-
-  protected get sidebarGroup(): string | null {
+  protected readonly sidebarGroup = computed(() => {
     const path = this.navigationPath();
     const selection = this.sidebarSelection();
     if (selection?.path === path) {
@@ -179,11 +185,43 @@ export class TaonLayoutDocsGenNgDocsComponent implements OnInit {
         )
         ?.group?.trim() || null
     );
-  }
+  });
 
   protected showSidebarGroup(group: string | null): void {
     this.sidebarSelection.set({ path: this.navigationPath(), group });
   }
+
+  protected readonly sidebarCategories = computed(() => {
+    const group = this.sidebarGroup();
+    const entries: Array<
+      | { kind: 'category'; name: string; items: DocsMenuItem[] }
+      | { kind: 'page'; item: DocsMenuItem }
+    > = [];
+    const categories = new Map<string, DocsMenuItem[]>();
+
+    for (const item of this.menuItems()) {
+      if ((item.group?.trim() || null) !== group) {
+        continue;
+      }
+
+      const name = item.category?.trim();
+      if (!name) {
+        entries.push({ kind: 'page', item });
+        continue;
+      }
+
+      const existing = categories.get(name);
+      if (existing) {
+        existing.push(item);
+      } else {
+        const items = [item];
+        categories.set(name, items);
+        entries.push({ kind: 'category', name, items });
+      }
+    }
+
+    return entries;
+  });
 
   @Input() indexData: IndexData[] = [];
 
@@ -215,6 +253,8 @@ export class TaonLayoutDocsGenNgDocsComponent implements OnInit {
 
   public showScrollToTop = false;
 
+  public showScrollToTopWhenScrollDown = false;
+
   protected get searchResults(): ResultData[] {
     return this.search(this.searchQuery());
   }
@@ -226,6 +266,26 @@ export class TaonLayoutDocsGenNgDocsComponent implements OnInit {
 
   //#region constructor
   constructor() {
+    afterRenderEffect(onCleanup => {
+      const links = this.readingLinksRef()?.nativeElement;
+      const track = links?.firstElementChild;
+
+      if (!links || !track) {
+        this.readingLinksOverflow.set(false);
+        return;
+      }
+
+      const updateOverflow = () => {
+        this.readingLinksOverflow.set(links.scrollWidth > links.clientWidth);
+      };
+
+      const observer = new ResizeObserver(updateOverflow);
+      observer.observe(links);
+      observer.observe(track);
+      onCleanup(() => observer.disconnect());
+      updateOverflow();
+    });
+
     effect(() => {
       if (!this.searchOpen()) {
         return;
@@ -502,6 +562,7 @@ export class TaonLayoutDocsGenNgDocsComponent implements OnInit {
     const farEnoughFromTop = currentScrollY > 200;
 
     this.showScrollToTop = scrollingUp && farEnoughFromTop;
+    this.showScrollToTopWhenScrollDown = farEnoughFromTop;
 
     this.lastScrollY = currentScrollY;
   }

@@ -1,5 +1,20 @@
 // #region route outlet styling
 :host ::ng-deep router-outlet + * {
+  .docs-code-block {
+    position: relative;
+  }
+
+  .docs-code-block pre {
+    padding-top: 2.75rem;
+  }
+
+  .docs-code-copy {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 1;
+  }
+
   .taon-md-doc {
     min-width: 0;
     line-height: 1.75;

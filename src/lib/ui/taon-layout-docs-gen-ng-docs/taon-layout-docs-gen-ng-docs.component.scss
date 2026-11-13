@@ -2,6 +2,62 @@
   display: block;
 }
 
+.docs-reading-shortcuts > button {
+  flex: 0 0 auto;
+}
+
+.docs-reading-links {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.docs-reading-track {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  gap: 6px;
+  padding: 4px 3px;
+}
+
+.docs-sidebar-category {
+  min-width: 0;
+}
+
+.docs-sidebar-category-links {
+  display: grid;
+  gap: 4px;
+  margin-inline-start: 10px;
+  padding-inline-start: 6px;
+  border-inline-start: 1px solid
+    color-mix(in srgb, currentColor 15%, transparent);
+}
+
+.docs-page-back-to-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  margin-block-start: 8px;
+  padding: 8px;
+  border-radius: 6px;
+  color: inherit;
+  font-size: 0.875rem;
+  text-align: start;
+  opacity: 0;
+  pointer-events: none;
+
+  &.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  &:hover {
+    background: color-mix(in srgb, currentColor 7%, transparent);
+  }
+}
+
 // #region reading shortcuts
 .docs-reading-shortcuts {
   display: flex;
