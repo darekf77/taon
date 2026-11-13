@@ -121,7 +121,7 @@ export abstract class TaonBaseRepository<
       If ${resolvedRepoName} is a Taon Custom Repository, then use this:
 
       ...
-       ${_.lowerFirst(resolvedRepoName)} = injectCustomRepository(${resolvedRepoName});
+       ${_.lowerFirst(resolvedRepoName)} = inject(${resolvedRepoName});
       ...
 
       `;

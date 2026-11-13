@@ -48,10 +48,10 @@ for building/testing/deploying modern:<br>
 \+
 [Visual Studio Code](https://www.electronjs.org/)/ [VScodium](https://vscodium.com/) plugins ✅
 
-\+ Documentation websites with:<br>
+<!-- \+ Documentation websites with:<br>
 - [MkDocs](https://www.mkdocs.org/) beautifull material wrapper for *.md docs files ✅<br>
 - [Storybook](https://storybook.js.org/docs/get-started/angular) ui elements documentation (NOT READY YET)<br>
-- [Compodoc](https://compodoc.app/) docs from comments (NOT READY YET) <br>
+- [Compodoc](https://compodoc.app/) docs from comments (NOT READY YET) <br> -->
 
 
 
