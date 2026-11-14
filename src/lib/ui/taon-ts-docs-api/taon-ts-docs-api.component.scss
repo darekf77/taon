@@ -1,0 +1,44 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+.taon-ts-docs {
+  color: inherit;
+}
+.ts-docs-sidebar,
+.taon-ts-docs main,
+.ts-docs-member {
+  border-color: var(--mat-sys-outline-variant, #d5d9e0);
+}
+.ts-docs-nav-item:hover {
+  background: var(--mat-sys-surface-container, #f2f3f6);
+}
+.ts-docs-selected,
+.ts-docs-active-filter {
+  background: var(--mat-sys-secondary-container, #dbe6ff) !important;
+  color: var(--mat-sys-on-secondary-container, #17345d) !important;
+}
+.ts-docs-tag {
+  font-size: 0.72rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: var(--mat-sys-surface-container-high, #e8ebf1);
+}
+.ts-docs-code {
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  background: var(--mat-sys-surface-container, #f2f3f6);
+}
+@media (max-width: 760px) {
+  .taon-ts-docs {
+    flex-direction: column;
+  }
+  .ts-docs-sidebar {
+    width: 100%;
+  }
+}

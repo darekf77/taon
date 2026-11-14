@@ -1,0 +1,159 @@
+<div class="taon-ts-docs flex min-h-[480px] gap-4">
+  @if (showNavigation()) {
+    <aside class="ts-docs-sidebar w-72 shrink-0 rounded-lg border p-3">
+      <mat-form-field
+        appearance="outline"
+        class="w-full">
+        <mat-label>Search API</mat-label>
+        <input
+          matInput
+          [value]="search()"
+          (input)="search.set($any($event.target).value)" />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+      <div class="mb-3 flex flex-wrap gap-1">
+        @for (kind of kinds; track kind) {
+          <button
+            mat-button
+            class="!min-w-0 !px-2"
+            [class.ts-docs-active-filter]="kindFilter() === kind"
+            (click)="kindFilter.set(kind)">
+            {{ kind }}
+          </button>
+        }
+      </div>
+      <nav
+        class="max-h-[75vh] overflow-auto"
+        aria-label="TypeScript API symbols">
+        @for (symbol of filteredSymbols(); track symbol.id) {
+          <button
+            type="button"
+            class="ts-docs-nav-item flex w-full items-center gap-2 rounded-md px-2 py-2 text-left"
+            [class.ts-docs-selected]="selected()?.id === symbol.id"
+            (click)="select(symbol.id)">
+            <mat-icon class="!text-lg">{{ iconFor(symbol) }}</mat-icon>
+            <span class="min-w-0 flex-1 truncate">{{ symbol.name }}</span>
+            <span class="text-xs opacity-60">{{ symbol.kind }}</span>
+          </button>
+        } @empty {
+          <p class="p-3 text-sm opacity-70">No matching symbols.</p>
+        }
+      </nav>
+    </aside>
+  }
+  <main class="min-w-0 flex-1 rounded-lg border p-5">
+    @if (selected(); as symbol) {
+      <div class="mb-2 flex flex-wrap items-center gap-2">
+        <mat-icon>{{ iconFor(symbol) }}</mat-icon>
+        <span class="ts-docs-tag">{{ symbol.kind }}</span>
+        @if (symbol.taonCategory && symbol.taonCategory !== 'other') {
+          <span class="ts-docs-tag">{{ symbol.taonCategory }}</span>
+        }
+        @if (symbol.exported) {
+          <span class="ts-docs-tag">exported</span>
+        }
+      </div>
+      <h1 class="mb-2 break-all text-2xl font-semibold">{{ symbol.name }}</h1>
+      <p class="mb-4 break-all text-xs opacity-60">
+        {{ symbol.fileId }}:{{ symbol.locations[0]?.line }}
+      </p>
+      @if (symbol.docs.description) {
+        <p class="mb-5 whitespace-pre-wrap">{{ symbol.docs.description }}</p>
+      }
+      @if (symbol.docs.tags.length) {
+        <section class="mb-5">
+          <h2 class="mb-2 text-lg font-medium">JSDoc</h2>
+          @for (tag of symbol.docs.tags; track $index) {
+            <p class="mb-1 text-sm">
+              <strong>&#64;{{ tag.name }}</strong> {{ tag.text }}
+            </p>
+          }
+        </section>
+      }
+      @if (symbol.type) {
+        <section class="mb-5">
+          <h2 class="mb-2 text-lg font-medium">Type</h2>
+          <pre class="ts-docs-code"><code>{{ symbol.type.text }}</code></pre>
+        </section>
+      }
+      @if (symbol.heritage.length) {
+        <section class="mb-5">
+          <h2 class="mb-2 text-lg font-medium">Inheritance</h2>
+          @for (h of symbol.heritage; track $index) {
+            <p class="mb-1">
+              <strong>{{ h.kind }}</strong> <code>{{ h.type.text }}</code>
+            </p>
+          }
+        </section>
+      }
+      @if (symbol.decorators.length) {
+        <section class="mb-5">
+          <h2 class="mb-2 text-lg font-medium">Decorators</h2>
+          @for (decorator of symbol.decorators; track $index) {
+            <pre
+              class="ts-docs-code"><code>&#64;{{ decorator.expression }}</code></pre>
+          }
+        </section>
+      }
+      @if (symbol.signatures.length) {
+        <section class="mb-5">
+          <h2 class="mb-2 text-lg font-medium">Signatures</h2>
+          @for (signature of symbol.signatures; track $index) {
+            <pre class="ts-docs-code"><code>{{ signature.text }}</code></pre>
+          }
+        </section>
+      }
+      @if (members().length) {
+        <section class="mb-5">
+          <h2 class="mb-3 text-lg font-medium">Members</h2>
+          @for (member of members(); track member.id) {
+            <article class="ts-docs-member mb-3 rounded-lg border p-4">
+              <div class="mb-2 flex flex-wrap items-center gap-2">
+                <h3 class="font-semibold">{{ member.name }}</h3>
+                <span class="ts-docs-tag">{{ member.kind }}</span>
+                <span class="ts-docs-tag">{{ member.visibility }}</span>
+                @if (member.static) {
+                  <span class="ts-docs-tag">static</span>
+                }
+              </div>
+              @if (member.docs.description) {
+                <p class="mb-2 whitespace-pre-wrap text-sm">
+                  {{ member.docs.description }}
+                </p>
+              }
+              @if (member.type) {
+                <pre
+                  class="ts-docs-code"><code>{{ member.type.text }}</code></pre>
+              }
+              @for (signature of member.signatures; track $index) {
+                <pre
+                  class="ts-docs-code"><code>{{ signature.text }}</code></pre>
+              }
+              @for (tag of member.docs.tags; track $index) {
+                <p class="mt-1 text-xs">
+                  <strong>&#64;{{ tag.name }}</strong> {{ tag.text }}
+                </p>
+              }
+            </article>
+          }
+        </section>
+      }
+      @if (related().length) {
+        <section>
+          <h2 class="mb-2 text-lg font-medium">Related types</h2>
+          <div class="flex flex-wrap gap-2">
+            @for (item of related(); track item.id) {
+              <button
+                mat-stroked-button
+                (click)="select(item.id)">
+                {{ item.name }}
+              </button>
+            }
+          </div>
+        </section>
+      }
+    } @else {
+      <p class="opacity-70">No TypeScript symbols available.</p>
+    }
+  </main>
+</div>
