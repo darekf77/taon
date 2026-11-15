@@ -32,11 +32,11 @@ import {
   DocsMenuItem,
   IndexData,
   ResultData,
-} from './taon-layout-docs-gen.models';
+} from './taon-layout-docs-mkdocs-like.models';
 //#endregion
 
 @Component({
-  selector: 'taon-layout-docs-gen',
+  selector: 'taon-layout-docs-mkdocs-like',
   standalone: true,
   imports: [
     CommonModule,
@@ -49,14 +49,14 @@ import {
     MatFormFieldModule,
     MatSidenavModule,
   ],
-  templateUrl: './taon-layout-docs-gen.component.html',
+  templateUrl: './taon-layout-docs-mkdocs-like.component.html',
   styleUrls: [
-    './taon-layout-docs-gen.component.scss',
-    './taon-layout-docs-gen-router-outlet.component.scss',
+    './taon-layout-docs-mkdocs-like.component.scss',
+    './taon-layout-docs-mkdocs-like-router-outlet.component.scss',
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TaonLayoutDocsGenComponent implements OnInit {
+export class TaonLayoutDocsMkdocsLikeComponent implements OnInit {
   //#region fields & getters
   public activeHeadingId: string | undefined;
 
@@ -448,7 +448,7 @@ export class TaonLayoutDocsGenComponent implements OnInit {
         filePath: result.item.filePath,
         headingId: result.item.headingId,
         headingTitle: result.item.headingTitle,
-
+        api: result.item.api,
         headingContentPart: this.createSnippet(
           result.item.text,
           normalizedQuery,

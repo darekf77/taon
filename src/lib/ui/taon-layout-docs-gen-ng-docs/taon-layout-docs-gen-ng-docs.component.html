@@ -78,13 +78,15 @@
       </div>
 
       <!-- SEARCH -->
-      <button
-        mat-icon-button
-        class="!shrink-0"
-        aria-label="Search docs"
-        (click)="toggleSearch()">
-        <mat-icon>search</mat-icon>
-      </button>
+      @if (!hideDocsSearch()) {
+        <button
+          mat-icon-button
+          class="!shrink-0"
+          aria-label="Search docs"
+          (click)="toggleSearch()">
+          <mat-icon>search</mat-icon>
+        </button>
+      }
     </div>
   </header>
   <!-- #endregion -->

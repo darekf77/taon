@@ -1,4 +1,4 @@
-// taon-layout-docs-gen.models.ts
+// taon-layout-docs-mkdocs-like.models.ts
 
 export interface DocsHeading {
   id: string;
@@ -18,6 +18,7 @@ export interface IndexData {
   filePath: string;
 
   headingId: string;
+  api?: boolean;
   headingTitle: string;
 
   /**
@@ -36,6 +37,7 @@ export interface ResultData {
   filePath: string;
   headingId: string;
   headingTitle: string;
+  api: boolean;
 
   /**
    * Short relevant preview/snippet.

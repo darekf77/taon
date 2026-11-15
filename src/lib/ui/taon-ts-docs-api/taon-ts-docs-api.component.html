@@ -1,16 +1,18 @@
 <div class="taon-ts-docs flex min-h-[480px] gap-4">
   @if (showNavigation()) {
     <aside class="ts-docs-sidebar w-72 shrink-0 rounded-lg border p-3">
-      <mat-form-field
-        appearance="outline"
-        class="w-full">
-        <mat-label>Search API</mat-label>
-        <input
-          matInput
-          [value]="search()"
-          (input)="search.set($any($event.target).value)" />
-        <mat-icon matSuffix>search</mat-icon>
-      </mat-form-field>
+      @if (showSearch()) {
+        <mat-form-field
+          appearance="outline"
+          class="w-full">
+          <mat-label>Search API</mat-label>
+          <input
+            matInput
+            [value]="search()"
+            (input)="search.set($any($event.target).value)" />
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+      }
       <div class="mb-3 flex flex-wrap gap-1">
         @for (kind of kinds; track kind) {
           <button

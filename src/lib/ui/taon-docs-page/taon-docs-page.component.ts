@@ -19,7 +19,7 @@ import { Translation } from '@taon-dev/i18n/src';
 import { BehaviorSubject, Subject } from 'rxjs';
 
 import { Replecables } from '../../constants';
-import { DocsHeading } from '../taon-layout-docs-gen/taon-layout-docs-gen.models';
+import { DocsHeading } from '../taon-layout-docs-mkdocs-like/taon-layout-docs-mkdocs-like.models';
 
 const t = Translation.for(
   Replecables.__FILE_RELATIVE_PATH__,

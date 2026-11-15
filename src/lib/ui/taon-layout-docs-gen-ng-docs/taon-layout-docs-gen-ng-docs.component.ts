@@ -41,7 +41,7 @@ import {
   DocsMenuItem,
   IndexData,
   ResultData,
-} from '../taon-layout-docs-gen/taon-layout-docs-gen.models';
+} from '../taon-layout-docs-mkdocs-like/taon-layout-docs-mkdocs-like.models';
 //#endregion
 
 const t = Translation.for(
@@ -80,6 +80,13 @@ export class TaonLayoutDocsGenNgDocsComponent implements OnInit {
   private readonly router = inject(Router);
 
   private readonly activatedRoute = inject(ActivatedRoute);
+
+  readonly hideDocsSearch = toSignal(
+    this.activatedRoute.queryParamMap.pipe(
+      map(params => params.has('apiSymbol')),
+    ),
+    { initialValue: false },
+  );
 
   private readonly baseHrefValue = signal('');
 
@@ -490,7 +497,10 @@ export class TaonLayoutDocsGenNgDocsComponent implements OnInit {
     this.searchOpen.set(false);
     this.searchQuery.set('');
 
-    const urlToNavigate = `${this.baseHref}/${result.filePath}#${encodeURIComponent(result.headingId)}`;
+    const urlToNavigate = result.api
+      ? `${this.baseHref}/${result.filePath}?apiSymbol=${encodeURIComponent(result.headingId)}`
+      : `${this.baseHref}/${result.filePath}#${encodeURIComponent(result.headingId)}`;
+
     // console.log({ urlToNavigate });
     void this.router.navigateByUrl(urlToNavigate);
 
@@ -649,7 +659,7 @@ export class TaonLayoutDocsGenNgDocsComponent implements OnInit {
         filePath: result.item.filePath,
         headingId: result.item.headingId,
         headingTitle: result.item.headingTitle,
-
+        api: result.item.api,
         headingContentPart: this.createSnippet(
           result.item.text,
           normalizedQuery,

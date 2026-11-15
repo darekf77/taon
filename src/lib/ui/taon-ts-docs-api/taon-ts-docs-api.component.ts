@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  inject,
   input,
   signal,
 } from '@angular/core';
@@ -11,14 +12,17 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { BehaviorSubject } from 'rxjs';
+
+import { DocsHeading } from '../taon-layout-docs-mkdocs-like';
 
 import {
   TaonTsDocsGraph,
   TaonTsDocsMember,
   TaonTsDocsSymbol,
 } from './taon-ts-docs.models';
-import { BehaviorSubject } from 'rxjs';
-import { DocsHeading } from '../taon-layout-docs-gen';
+import { ActivatedRoute, Router } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'taon-ts-docs-api',
@@ -47,6 +51,20 @@ export class TaonTsDocsApiComponent {
   readonly kindFilter = signal('all');
 
   readonly internalSelection = signal<string | null>(null);
+
+  readonly showSearch = input(true);
+
+  readonly queryParamNavigation = input(false);
+
+  private readonly route = inject(ActivatedRoute, { optional: true });
+
+  private readonly router = inject(Router, { optional: true });
+
+  private readonly queryParams = this.route
+    ? toSignal(this.route.queryParamMap, {
+        initialValue: this.route.snapshot.queryParamMap,
+      })
+    : null;
 
   readonly kinds = [
     'all',
@@ -78,13 +96,33 @@ export class TaonTsDocsApiComponent {
   });
 
   readonly selected = computed(() => {
-    const id = this.selectedSymbolId() ?? this.internalSelection();
+    const navigationId =
+      this.queryParamNavigation() && this.queryParams
+        ? this.queryParams().get('apiSymbol')
+        : this.internalSelection();
+
+    const id = this.selectedSymbolId() ?? navigationId;
+
     return (
       (id ? this.graph().symbols[id] : undefined) ??
       this.filteredSymbols()[0] ??
       null
     );
   });
+
+  select(id: string): void {
+    if (this.queryParamNavigation() && this.router && this.route) {
+      void this.router.navigate([], {
+        relativeTo: this.route,
+        queryParams: { apiSymbol: id },
+        queryParamsHandling: 'merge',
+        preserveFragment: true,
+      });
+      return;
+    }
+
+    this.internalSelection.set(id);
+  }
 
   readonly members = computed(
     () =>
@@ -104,10 +142,6 @@ export class TaonTsDocsApiComponent {
       .map(target => this.graph().symbols[target])
       .filter((s): s is TaonTsDocsSymbol => !!s && s.id !== id);
   });
-
-  select(id: string): void {
-    this.internalSelection.set(id);
-  }
 
   iconFor(symbol: TaonTsDocsSymbol): string {
     if (symbol.taonCategory === 'controller') return 'api';
