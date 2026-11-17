@@ -1,6 +1,7 @@
 /_changelog
 /!templates-subprojects/**/package.json
 /.ai
+/.ai/examples
 /.babelrc
 /.DS_Store
 /.editorconfig

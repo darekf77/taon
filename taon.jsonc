@@ -10,6 +10,7 @@
     "progress",
     "open",
     "cfonts",
+    "playwright",
     "jsonc-parser",
     "tnp",
   ],
