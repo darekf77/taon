@@ -1,8 +1,5 @@
-<div class="min-h-screen">
-  <!-- ========================================================= -->
-  <!-- TOP NAVIGATION -->
-  <!-- ========================================================= -->
-
+<!-- #region docs shell -->
+<div class="docs-shell">
   <!-- #region header -->
   <header class="docs-header">
     <div
@@ -91,12 +88,8 @@
   </header>
   <!-- #endregion -->
 
-  <!-- ========================================================= -->
-  <!-- SEARCH -->
-  <!-- ========================================================= -->
-
+  <!-- #region search -->
   @if (searchOpen()) {
-    <!-- #region search -->
     <div
       class="fixed inset-0 z-50 bg-black/30 p-4 md:p-10"
       (click)="closeSearch()">
@@ -166,12 +159,8 @@
         </div>
       </div>
     </div>
-    <!-- #endregion -->
   }
-
-  <!-- ========================================================= -->
-  <!-- MOBILE NAVIGATION -->
-  <!-- ========================================================= -->
+  <!-- #endregion -->
 
   <!-- #region mobile navigation -->
   @if (mobileTocOpen()) {
@@ -193,7 +182,18 @@
           </button>
         </div>
 
-        <ng-container *ngTemplateOutlet="sidebar" />
+        <nav
+          class="docs-sidebar-nav"
+          aria-label="Documentation">
+          <ng-container
+            *ngTemplateOutlet="
+              sidebarEntries;
+              context: {
+                $implicit: sidebarEntriesByGroup().get(null) ?? [],
+                mobile: true,
+              }
+            " />
+        </nav>
 
         <div class="p-3">
           @if (pageHeadings.length) {
@@ -205,7 +205,6 @@
                 type="button"
                 class="block w-full rounded-md py-2 pr-3 text-left text-sm opacity-75 transition hover:bg-black/5 hover:opacity-100 dark:hover:bg-white/5"
                 [class.!opacity-100]="activeHeadingId === heading.id"
-                [class.!font-semibold]="activeHeadingId === heading.id"
                 [class.!font-semibold]="activeHeadingId === heading.id"
                 [class.underline]="activeHeadingId === heading.id"
                 [class.dark:!bg-white]="activeHeadingId === heading.id"
@@ -224,25 +223,24 @@
   }
   <!-- #endregion -->
 
-  <!-- ========================================================= -->
-  <!-- PAGE -->
-  <!-- ========================================================= -->
-
   <!-- #region page -->
   <div
-    class="mx-auto grid max-w-[1600px] grid-cols-1 gap-8 px-4 py-6 md:px-6 docs-layout">
+    class="mx-auto grid w-full max-w-[1600px] grid-cols-1 gap-8 px-4 py-6 md:px-6 docs-layout">
     <aside class="hidden lg:block">
       <div class="docs-sidebar">
         <ng-container *ngTemplateOutlet="sidebar" />
       </div>
     </aside>
 
-    <main class="min-w-0 page-main-content">
+    <main
+      #docsContent
+      class="min-w-0 page-main-content"
+      (scroll)="onDocsScroll(docsContent.scrollTop)">
       <ng-content></ng-content>
     </main>
 
     @if (pageHeadings.length) {
-      <aside class="hidden lg:block">
+      <aside class="docs-right-column hidden lg:block">
         <div class="docs-page-nav">
           <button
             type="button"
@@ -279,27 +277,24 @@
         </div>
       </aside>
     }
+
+    <!-- #region floating back-to-top button -->
+    <button
+      class="scroll-to-top"
+      [class.visible]="showScrollToTop"
+      type="button"
+      mat-stroked-button
+      (click)="scrollToTop()">
+      <mat-icon>arrow_upward</mat-icon>
+      {{ t.gettext('Back To Top') }}
+    </button>
+    <!-- #endregion -->
   </div>
   <!-- #endregion -->
-
-  <!-- ========================================================= -->
-  <!-- SCROLL TO TOP -->
-  <!-- ========================================================= -->
-
-  <!-- #region button scroll top -->
-  <button
-    class="scroll-to-top"
-    [class.visible]="showScrollToTop"
-    type="button"
-    mat-stroked-button
-    (click)="scrollToTop()">
-    <mat-icon>arrow_upward</mat-icon>
-    {{ t.gettext('Back To Top') }}
-  </button>
-  <!-- #endregion -->
 </div>
+<!-- #endregion -->
 
-<!-- #region documentation sidebar -->
+<!-- #region desktop sidebar -->
 <ng-template #sidebar>
   <nav
     class="docs-sidebar-nav"
@@ -313,44 +308,76 @@
         <span>{{ t.gettext('All documentation') }}</span>
       </button>
       <div class="docs-sidebar-title">{{ group | translate }}</div>
-    } @else {
-      @for (group of sidebarGroups(); track group) {
+    }
+
+    <ng-container
+      *ngTemplateOutlet="
+        sidebarEntries;
+        context: { $implicit: desktopSidebarEntries() }
+      " />
+  </nav>
+</ng-template>
+
+<!-- #endregion -->
+
+<!-- #region sidebar entries and page links -->
+<ng-template
+  #sidebarEntries
+  let-entries
+  let-mobile="mobile">
+  @for (
+    entry of entries;
+    track entry.kind === 'page'
+      ? 'page:' + entry.item.pathToMd
+      : entry.kind + ':' + entry.name
+  ) {
+    @if (entry.kind === 'group') {
+      @if (mobile) {
+        <details
+          class="docs-mobile-group"
+          name="docs-mobile-groups"
+          [open]="activePageGroup() === entry.name">
+          <summary class="docs-sidebar-row">
+            <span>{{ entry.name | translate }}</span>
+            <mat-icon aria-hidden="true">expand_more</mat-icon>
+          </summary>
+
+          <ng-container
+            *ngTemplateOutlet="
+              sidebarEntries;
+              context: {
+                $implicit: sidebarEntriesByGroup().get(entry.name) ?? [],
+              }
+            " />
+        </details>
+      } @else {
         <button
           type="button"
           class="docs-sidebar-row"
-          (click)="showSidebarGroup(group)">
-          <span>{{ group | translate }}</span>
+          (click)="showSidebarGroup(entry.name)">
+          <span>{{ entry.name | translate }}</span>
           <mat-icon>chevron_right</mat-icon>
         </button>
       }
-    }
+    } @else if (entry.kind === 'category') {
+      <div
+        class="docs-sidebar-category"
+        role="group"
+        [attr.aria-label]="entry.name">
+        <div class="docs-sidebar-title">{{ entry.name | translate }}</div>
 
-    @for (
-      entry of sidebarCategories();
-      track entry.kind === 'category'
-        ? 'category:' + entry.name
-        : 'page:' + entry.item.pathToMd
-    ) {
-      @if (entry.kind === 'category') {
-        <div
-          class="docs-sidebar-category"
-          role="group"
-          [attr.aria-label]="entry.name">
-          <div class="docs-sidebar-title">{{ entry.name | translate }}</div>
-
-          <div class="docs-sidebar-category-links">
-            @for (item of entry.items; track item.pathToMd) {
-              <ng-container
-                *ngTemplateOutlet="pageLink; context: { $implicit: item }" />
-            }
-          </div>
+        <div class="docs-sidebar-category-links">
+          @for (item of entry.items; track item.pathToMd) {
+            <ng-container
+              *ngTemplateOutlet="pageLink; context: { $implicit: item }" />
+          }
         </div>
-      } @else {
-        <ng-container
-          *ngTemplateOutlet="pageLink; context: { $implicit: entry.item }" />
-      }
+      </div>
+    } @else {
+      <ng-container
+        *ngTemplateOutlet="pageLink; context: { $implicit: entry.item }" />
     }
-  </nav>
+  }
 </ng-template>
 
 <ng-template

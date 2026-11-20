@@ -1,19 +1,50 @@
+// #region viewport layout
 :host {
   display: block;
 }
 
+.docs-shell {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
+  height: max(0px, calc(100dvh - var(--docs-top, 0px)));
+}
+
+.docs-layout {
+  position: relative;
+  min-height: 0;
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.docs-layout > aside {
+  min-height: 0;
+}
+
+.page-main-content {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  scroll-padding-block-start: 12px;
+}
+
+@media (min-width: 1024px) {
+  .docs-layout {
+    grid-template-columns: 240px minmax(0, 1fr) 250px;
+
+    &:not(:has(> .docs-right-column)) {
+      grid-template-columns: 240px minmax(0, 1fr);
+    }
+  }
+}
+// #endregion
+
+// #region reading shortcuts
 .docs-reading-shortcuts > button {
   flex: 0 0 auto;
 }
 
-.docs-reading-links {
-  flex: 1 1 0;
-  min-width: 0;
-  overflow-x: auto;
-  scrollbar-width: thin;
-}
-
 .docs-reading-track {
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   width: max-content;
@@ -21,44 +52,6 @@
   padding: 4px 3px;
 }
 
-.docs-sidebar-category {
-  min-width: 0;
-}
-
-.docs-sidebar-category-links {
-  display: grid;
-  gap: 4px;
-  margin-inline-start: 10px;
-  padding-inline-start: 6px;
-  border-inline-start: 1px solid
-    color-mix(in srgb, currentColor 15%, transparent);
-}
-
-.docs-page-back-to-top {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  width: 100%;
-  margin-block-start: 8px;
-  padding: 8px;
-  border-radius: 6px;
-  color: inherit;
-  font-size: 0.875rem;
-  text-align: start;
-  opacity: 0;
-  pointer-events: none;
-
-  &.visible {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  &:hover {
-    background: color-mix(in srgb, currentColor 7%, transparent);
-  }
-}
-
-// #region reading shortcuts
 .docs-reading-shortcuts {
   display: flex;
   flex: 1;
@@ -74,6 +67,7 @@
 }
 
 .docs-reading-links {
+  flex: 1 1 0;
   display: flex;
   align-items: center;
   min-width: 0;
@@ -117,13 +111,24 @@
 // #endregion
 
 // #region documentation navigation
+.docs-sidebar-category {
+  min-width: 0;
+}
+
+.docs-sidebar-category-links {
+  display: grid;
+  gap: 4px;
+  margin-inline-start: 10px;
+  padding-inline-start: 6px;
+  border-inline-start: 1px solid
+    color-mix(in srgb, currentColor 15%, transparent);
+}
+
 .docs-sidebar,
 .docs-page-nav {
-  position: sticky;
-  top: 80px;
-  max-height: calc(100dvh - 100px);
+  max-height: 100%;
   overflow-y: auto;
-  overscroll-behavior-y: auto;
+  overscroll-behavior-y: contain;
 }
 
 .docs-sidebar {
@@ -175,22 +180,37 @@
   font-weight: 600;
 }
 
-@media (min-width: 1024px) {
-  .docs-layout {
-    grid-template-columns: 240px minmax(0, 1fr) 250px;
+// #endregion
 
-    &:has(> :last-child.page-main-content) {
-      grid-template-columns: 240px minmax(0, 1fr);
-    }
+// #region mobile group panels
+.docs-mobile-group {
+  min-width: 0;
+  border-radius: 8px;
+  background: color-mix(in srgb, currentColor 4%, transparent);
+
+  > summary {
+    cursor: pointer;
+    list-style: none;
   }
+
+  > summary::-webkit-details-marker {
+    display: none;
+  }
+
+  &[open] > summary mat-icon {
+    transform: rotate(180deg);
+  }
+}
+
+.docs-mobile-group + .docs-mobile-group {
+  margin-block-start: 4px;
 }
 // #endregion
 
+// #region docs toolbar
 .docs-header {
-  position: sticky;
-  top: 0px;
-  left: 0;
-  right: 0;
+  min-width: 0;
+  position: relative;
   z-index: 40;
 
   border-bottom: 1px solid rgb(0 0 0 / 10%);
@@ -201,6 +221,7 @@
 
 .docs-mobile-only {
   display: none !important;
+  flex-shrink: 0;
 }
 
 @media (max-width: 1023px) {
@@ -209,19 +230,45 @@
   }
 }
 
-// #region scroll to top button
+// #endregion
+
+// #region scroll to top buttons
+.docs-page-back-to-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  margin-block-start: 8px;
+  padding: 8px;
+  border-radius: 6px;
+  color: inherit;
+  font-size: 0.875rem;
+  text-align: start;
+  opacity: 0;
+  pointer-events: none;
+
+  &.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  &:hover {
+    background: color-mix(in srgb, currentColor 7%, transparent);
+  }
+}
+
 .scroll-to-top {
   background-color: white;
   border: 0px !important;
   color: gray !important;
-  position: fixed !important;
+  position: absolute !important;
 
   left: 50% !important;
   right: auto !important;
-  top: 70px !important;
+  top: 8px !important;
   bottom: auto !important;
 
-  z-index: 1000;
+  z-index: 30;
 
   transform: translateX(-50%) translateY(-8px);
 

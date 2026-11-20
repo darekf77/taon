@@ -1,5 +1,5 @@
 //#region imports
-import { CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import {
   afterRenderEffect,
   ChangeDetectionStrategy,
@@ -44,6 +44,11 @@ import {
 } from '../taon-layout-docs-mkdocs-like/taon-layout-docs-mkdocs-like.models';
 //#endregion
 
+type SidebarEntry =
+  | { kind: 'group'; name: string }
+  | { kind: 'category'; name: string; items: DocsMenuItem[] }
+  | { kind: 'page'; item: DocsMenuItem };
+
 const t = Translation.for(
   Replecables.__FILE_RELATIVE_PATH__,
   Replecables.__LANG_IMPORT_MAP__,
@@ -78,6 +83,13 @@ export class TaonLayoutDocsGenNgDocsComponent implements OnInit {
   public activeHeadingId: string | undefined;
 
   private readonly router = inject(Router);
+
+  private readonly document = inject(DOCUMENT);
+
+  private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+
+  private readonly docsContentRef =
+    viewChild<ElementRef<HTMLElement>>('docsContent');
 
   private readonly activatedRoute = inject(ActivatedRoute);
 
@@ -163,20 +175,8 @@ export class TaonLayoutDocsGenNgDocsComponent implements OnInit {
     group: string | null;
   } | null>(null);
 
-  protected readonly sidebarGroups = computed(() => [
-    ...new Set(
-      this.menuItems()
-        .map(item => item.group?.trim())
-        .filter((name): name is string => Boolean(name)),
-    ),
-  ]);
-
-  protected readonly sidebarGroup = computed(() => {
-    const path = this.navigationPath();
-    const selection = this.sidebarSelection();
-    if (selection?.path === path) {
-      return selection.group;
-    }
+  protected readonly activePageGroup = computed(() => {
+    this.navigationPath();
 
     return (
       this.menuItems()
@@ -195,41 +195,67 @@ export class TaonLayoutDocsGenNgDocsComponent implements OnInit {
     );
   });
 
+  protected readonly sidebarGroup = computed(() => {
+    const path = this.navigationPath();
+    const selection = this.sidebarSelection();
+
+    return selection?.path === path ? selection.group : this.activePageGroup();
+  });
+
   protected showSidebarGroup(group: string | null): void {
     this.sidebarSelection.set({ path: this.navigationPath(), group });
   }
 
-  protected readonly sidebarCategories = computed(() => {
-    const group = this.sidebarGroup();
-    const entries: Array<
-      | { kind: 'category'; name: string; items: DocsMenuItem[] }
-      | { kind: 'page'; item: DocsMenuItem }
-    > = [];
-    const categories = new Map<string, DocsMenuItem[]>();
+  protected readonly sidebarEntriesByGroup = computed(() => {
+    const rootEntries: SidebarEntry[] = [];
+    const entriesByGroup = new Map<string | null, SidebarEntry[]>([
+      [null, rootEntries],
+    ]);
+    const categoriesByGroup = new Map<
+      string | null,
+      Map<string, DocsMenuItem[]>
+    >();
 
     for (const item of this.menuItems()) {
-      if ((item.group?.trim() || null) !== group) {
-        continue;
+      const group = item.group?.trim() || null;
+      const category = item.category?.trim();
+
+      let entries = entriesByGroup.get(group);
+      if (!entries) {
+        entries = [];
+        entriesByGroup.set(group, entries);
+        if (group !== null) {
+          rootEntries.push({ kind: 'group', name: group });
+        }
       }
 
-      const name = item.category?.trim();
-      if (!name) {
+      if (!category) {
         entries.push({ kind: 'page', item });
         continue;
       }
 
-      const existing = categories.get(name);
+      let categories = categoriesByGroup.get(group);
+      if (!categories) {
+        categories = new Map();
+        categoriesByGroup.set(group, categories);
+      }
+
+      const existing = categories.get(category);
       if (existing) {
         existing.push(item);
       } else {
         const items = [item];
-        categories.set(name, items);
-        entries.push({ kind: 'category', name, items });
+        categories.set(category, items);
+        entries.push({ kind: 'category', name: category, items });
       }
     }
 
-    return entries;
+    return entriesByGroup;
   });
+
+  protected readonly desktopSidebarEntries = computed(
+    () => this.sidebarEntriesByGroup().get(this.sidebarGroup()) ?? [],
+  );
 
   @Input() indexData: IndexData[] = [];
 
@@ -275,6 +301,54 @@ export class TaonLayoutDocsGenNgDocsComponent implements OnInit {
   //#region constructor
   constructor() {
     afterRenderEffect(onCleanup => {
+      const host = this.host.nativeElement;
+      let siteHeader: HTMLElement | undefined;
+
+      const updateHeight = () => {
+        const firstStickyHeader = Array.from(
+          this.document.body.querySelectorAll('header'),
+        ).find(
+          header =>
+            !host.contains(header) &&
+            getComputedStyle(header).position === 'sticky' &&
+            header.getClientRects().length > 0,
+        );
+
+        if (firstStickyHeader !== siteHeader) {
+          observer.disconnect();
+          siteHeader = firstStickyHeader;
+
+          if (siteHeader) {
+            observer.observe(siteHeader);
+          }
+        }
+
+        const top = Math.max(
+          0,
+          host.getBoundingClientRect().top,
+          siteHeader?.getBoundingClientRect().bottom ?? 0,
+        );
+        host.style.setProperty('--docs-top', `${top}px`);
+      };
+
+      const observer = new ResizeObserver(updateHeight);
+      window.addEventListener('resize', updateHeight);
+      updateHeight();
+
+      onCleanup(() => {
+        observer.disconnect();
+        window.removeEventListener('resize', updateHeight);
+      });
+    });
+
+    afterRenderEffect(() => {
+      this.navigationPath();
+
+      const content = this.docsContentRef()?.nativeElement;
+      content?.scrollTo({ top: 0, behavior: 'instant' });
+    });
+
+    afterRenderEffect(onCleanup => {
       const links = this.readingLinksRef()?.nativeElement;
       const track = links?.firstElementChild;
 
@@ -283,13 +357,34 @@ export class TaonLayoutDocsGenNgDocsComponent implements OnInit {
         return;
       }
 
+      const strip = links.parentElement!;
+      const label = strip.querySelector<HTMLElement>('.docs-reading-label');
+
       const updateOverflow = () => {
-        this.readingLinksOverflow.set(links.scrollWidth > links.clientWidth);
+        const gap = parseFloat(getComputedStyle(strip).columnGap) || 0;
+        const linksStyle = getComputedStyle(links);
+        const linksPadding =
+          parseFloat(linksStyle.paddingLeft) +
+          parseFloat(linksStyle.paddingRight);
+
+        const labelSpace = label?.getClientRects().length
+          ? label.getBoundingClientRect().width + gap
+          : 0;
+
+        const availableWidth = strip.clientWidth - labelSpace - linksPadding;
+        const trackWidth = track.getBoundingClientRect().width;
+
+        this.readingLinksOverflow.set(trackWidth > availableWidth + 1);
+        // console.log('readingLinksOverflow', this.readingLinksOverflow());
       };
 
       const observer = new ResizeObserver(updateOverflow);
-      observer.observe(links);
+      observer.observe(strip);
       observer.observe(track);
+      if (label) {
+        observer.observe(label);
+      }
+
       onCleanup(() => observer.disconnect());
       updateOverflow();
     });
@@ -420,6 +515,12 @@ export class TaonLayoutDocsGenNgDocsComponent implements OnInit {
   }
 
   private scrollToElementWhenStable(fragment: string): void {
+    const view = this.document.defaultView;
+    if (!view) {
+      return;
+    }
+
+    const path = this.currentRoutePath;
     let previousTop: number | undefined;
     let stableFrames = 0;
     let attempts = 0;
@@ -428,16 +529,28 @@ export class TaonLayoutDocsGenNgDocsComponent implements OnInit {
     const requiredStableFrames = 3;
 
     const check = () => {
-      const element = document.getElementById(fragment);
+      if (
+        !this.host.nativeElement.isConnected ||
+        this.currentRoutePath !== path ||
+        this.activatedRoute.snapshot.fragment !== fragment
+      ) {
+        return;
+      }
 
-      if (!element) {
+      const content = this.docsContentRef()?.nativeElement;
+      const element = this.document.getElementById(fragment);
+
+      if (!content || !element || !content.contains(element)) {
         if (++attempts < maxAttempts) {
-          requestAnimationFrame(check);
+          view.requestAnimationFrame(check);
         }
         return;
       }
 
-      const top = element.getBoundingClientRect().top + window.scrollY;
+      const top =
+        content.scrollTop +
+        element.getBoundingClientRect().top -
+        content.getBoundingClientRect().top;
 
       if (previousTop !== undefined && Math.abs(top - previousTop) < 1) {
         stableFrames++;
@@ -449,18 +562,15 @@ export class TaonLayoutDocsGenNgDocsComponent implements OnInit {
       attempts++;
 
       if (stableFrames >= requiredStableFrames || attempts >= maxAttempts) {
-        element.scrollIntoView({
-          behavior: 'instant',
-          block: 'start',
-        });
+        this.scrollDocsToHeading(fragment, 'instant');
 
         return;
       }
 
-      requestAnimationFrame(check);
+      view.requestAnimationFrame(check);
     };
 
-    requestAnimationFrame(check);
+    view.requestAnimationFrame(check);
   }
   //#endregion
 
@@ -507,9 +617,7 @@ export class TaonLayoutDocsGenNgDocsComponent implements OnInit {
     if (this.currentRoutePath.endsWith(`${this.baseHref}/${result.filePath}`)) {
       this.activeHeadingId = result.headingId;
 
-      document.getElementById(result.headingId)?.scrollIntoView({
-        behavior: 'instant',
-      });
+      this.scrollDocsToHeading(result.headingId, 'instant');
     }
   }
   //#endregion
@@ -522,7 +630,7 @@ export class TaonLayoutDocsGenNgDocsComponent implements OnInit {
 
   //#region methods / scroll to top
   protected scrollToTop(): void {
-    window.scrollTo({
+    this.docsContentRef()?.nativeElement.scrollTo({
       top: 0,
       behavior: 'smooth',
     });
@@ -550,10 +658,7 @@ export class TaonLayoutDocsGenNgDocsComponent implements OnInit {
 
     this.activeHeadingId = heading.id;
 
-    document.getElementById(heading.id)?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start',
-    });
+    this.scrollDocsToHeading(heading.id, 'smooth');
 
     void this.router.navigate([], {
       relativeTo: this.activatedRoute,
@@ -564,51 +669,35 @@ export class TaonLayoutDocsGenNgDocsComponent implements OnInit {
   }
   //#endregion
 
-  //#region methods / window scroll
-  @HostListener('window:scroll')
-  public onWindowScroll(): void {
-    const currentScrollY = window.scrollY;
+  //#region methods / docs scrolling
+  private scrollDocsToHeading(id: string, behavior: ScrollBehavior): void {
+    const content = this.docsContentRef()?.nativeElement;
+    const element = this.document.getElementById(id);
 
-    const scrollingUp = currentScrollY < this.lastScrollY;
-    const farEnoughFromTop = currentScrollY > 200;
+    if (!content || !element || !content.contains(element)) {
+      return;
+    }
 
-    this.showScrollToTop = scrollingUp && farEnoughFromTop;
-    this.showScrollToTopWhenScrollDown = farEnoughFromTop;
+    const scrollPadding =
+      parseFloat(getComputedStyle(content).scrollPaddingTop) || 0;
 
-    this.lastScrollY = currentScrollY;
+    content.scrollTo({
+      top:
+        content.scrollTop +
+        element.getBoundingClientRect().top -
+        content.getBoundingClientRect().top -
+        content.clientTop -
+        scrollPadding,
+      behavior,
+    });
   }
-  //#endregion
 
-  //#region update active heading
-  private updateActiveHeading(): void {
-    // console.log('updating heading');
-    const headerOffset = 90;
+  protected onDocsScroll(scrollTop: number): void {
+    const farEnoughFromTop = scrollTop > 200;
 
-    let activeHeadingId: string | undefined;
-
-    for (const heading of this.pageHeadings) {
-      const element = document.getElementById(heading.id);
-
-      if (!element) {
-        continue;
-      }
-
-      const top = element.getBoundingClientRect().top;
-
-      if (top <= headerOffset) {
-        activeHeadingId = heading.id;
-      } else {
-        break;
-      }
-    }
-
-    // When we're above the first heading, optionally consider
-    // the first heading active.
-    if (!activeHeadingId && this.pageHeadings.length) {
-      activeHeadingId = this.pageHeadings[0].id;
-    }
-
-    this.activeHeadingId = activeHeadingId;
+    this.showScrollToTop = scrollTop < this.lastScrollY && farEnoughFromTop;
+    this.showScrollToTopWhenScrollDown = farEnoughFromTop;
+    this.lastScrollY = scrollTop;
   }
   //#endregion
 
