@@ -1,5 +1,6 @@
 // THIS FILE IS GENERATED - DO NOT MODIFY
 
 // THIS FILE IS GENERATED - DO NOT MODIFY
-
+export const MIGRATIONS_CLASSES_FOR_TaonGlobalStateContext = {};
+export const MIGRATIONS_CLASSES_FOR_TaonTransactionRegistryContext = {};
 // THIS FILE IS GENERATED - DO NOT MODIFY
