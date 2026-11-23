@@ -273,7 +273,8 @@ const createContextFn = <
         if (
           endpointContextRef.connection &&
           !UtilsOs.isRunningInCloudflareWorker() &&
-          !UtilsOs.isRunningInCliMode()
+          !UtilsOs.isRunningInCliMode() &&
+          !UtilsOs.isRunningInElectron()
         ) {
           const task = Helpers.actionStarted(`Creating sql db graph`);
           // await UtilsSQLdbGraph.createPng(
