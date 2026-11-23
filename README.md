@@ -99,6 +99,19 @@ npm i -g taon
 SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm i -g taon
 ```
 
+## How to update Taon's core container
+
+Update active core containers for your current cli version
+
+( for taon@**21** => container-**21** )
+
+```bash
+taon sync 
+```
+
+for other containers you have to reinstall whole taon, ex.
+`npm i -g taon@19` and then `taon sync`
+ 
 
 ##  How to uninstall taon from local machine
 Taon stores a big global container (in ~/.taon) for npm packages <br>
